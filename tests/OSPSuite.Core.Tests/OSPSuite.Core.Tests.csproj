@@ -1,0 +1,798 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8389E18C-5B97-412D-A2CA-2269AF687F03}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OSPSuite</RootNamespace>
+    <AssemblyName>OSPSuite.Core.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Data.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FakeItEasy">
+      <HintPath>..\..\packages\FakeItEasy.2.3.3\lib\net40\FakeItEasy.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.2.0.7\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\..\packages\MathNet.Numerics.3.17.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.BDDHelper">
+      <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.0.1\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.FuncParser">
+      <HintPath>..\..\packages\OSPSuite.FuncParser.2.0.0.1\lib\net45\OSPSuite.FuncParser.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Serializer">
+      <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.SimModel">
+      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.1\lib\net45\OSPSuite.SimModel.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.TeXReporting">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.1\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Utility">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="SX">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.2.8\lib\net45\SX.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Commands\CommandExpressionParserSpecs.cs" />
+    <Compile Include="Commands\CommandExtensionsSpecs.cs" />
+    <Compile Include="Commands\CommandHelperForSpecs.cs" />
+    <Compile Include="Commands\CommandIdSpecs.cs" />
+    <Compile Include="Commands\CommandsExpanderSpecs.cs" />
+    <Compile Include="Commands\HistoryItemFactorySpecs.cs" />
+    <Compile Include="Commands\HistoryManagerExtensionsSpecs.cs" />
+    <Compile Include="Commands\HistoryManagerSpecs.cs" />
+    <Compile Include="Commands\MacroCommandExtensionsSpecs.cs" />
+    <Compile Include="Commands\MacroCommandSpecs.cs" />
+    <Compile Include="Commands\RenameObservedDataCommandSpecs.cs" />
+    <Compile Include="Commands\RollBackCommandFactorySpecs.cs" />
+    <Compile Include="Commands\RollBackCommandSpecs.cs" />
+    <Compile Include="Commands\OSPSuiteCommandExtensionsSpecs.cs" />
+    <Compile Include="Converter\v5_2\DataRepositoryConverterSpecs.cs" />
+    <Compile Include="Converter\v5_2\DimensionConverterSpecs.cs" />
+    <Compile Include="Converter\v5_2\DimensionMapperSpecs.cs" />
+    <Compile Include="Converter\v5_2\FormulaMapperSpecs.cs" />
+    <Compile Include="Converter\v5_2\UsingFormulaConverterSpecs.cs" />
+    <Compile Include="Converter\v5_4\Converter53To54Specs.cs" />
+    <Compile Include="Converter\v5_5\Converter541To551Specs.cs" />
+    <Compile Include="Converter\v5_6\Converter551To561Specs.cs" />
+    <Compile Include="Converter\v6_0\Converter56To601Specs.cs" />
+    <Compile Include="Converter\v6_1\Converter60To61Specs.cs" />
+    <Compile Include="Converter\v6_3\Converter62To63Specs.cs" />
+    <Compile Include="Converter\v6_4\Converter63To64Specs.cs" />
+    <Compile Include="Core\AddObservedDataMetaDataCommandSpecs.cs" />
+    <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
+    <Compile Include="Core\AliasCreatorSpecs.cs" />
+    <Compile Include="Core\Chart\ChartFontAndSizeSettingsSpecs.cs" />
+    <Compile Include="Core\Chart\UnitToMinorIntervalMapperSpecs.cs" />
+    <Compile Include="Helpers\TestObjectBaseFactory.cs" />
+    <Compile Include="Helpers\ARootContainer.cs" />
+    <Compile Include="Core\ArrayExtensionsSpecs.cs" />
+    <Compile Include="Core\AxisSpecs.cs" />
+    <Compile Include="Core\BaseDimensionRepresentationSpecs.cs" />
+    <Compile Include="Core\BaseDimensionRepresentationXmlSerializerSpecs.cs" />
+    <Compile Include="Core\BaseGridSpecs.cs" />
+    <Compile Include="Core\BinIntervalsCreatorSpecs.cs" />
+    <Compile Include="Core\BinIntervalSpecs.cs" />
+    <Compile Include="Core\BuildConfigurationSpecs.cs" />
+    <Compile Include="Core\BuildConfigurationValidatorSpecs.cs" />
+    <Compile Include="Core\BuildingBlockDiffBuilderSpecs.cs" />
+    <Compile Include="Core\BuildingBlockXmlSerializerSpecs.cs" />
+    <Compile Include="Core\CalculationMethodXmlSerializerSpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationDescriptionCreatorSpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationFactorySpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationRunInitializerSpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationToCalculationMethodPermutationMapperSpecs.cs" />
+    <Compile Include="Core\ChangeObservedDataMetaDataCommandSpecs.cs" />
+    <Compile Include="Core\ChartTemplatePersistorSpecs.cs" />
+    <Compile Include="Core\CircularReferenceCheckerSpecs.cs" />
+    <Compile Include="Core\ClassificationSpecs.cs" />
+    <Compile Include="Core\CloneManagerForBuildingBlockSpecs.cs" />
+    <Compile Include="Core\CloneManagerForModelSpecs.cs" />
+    <Compile Include="Core\CommandTaskSpecs.cs" />
+    <Compile Include="Core\ComparerSettingsXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ComparisonSpecs.cs" />
+    <Compile Include="Core\ConcentrationBasedFormulaUpdaterSpecs.cs" />
+    <Compile Include="Core\ConcentrationBaseModelIntegrationTests.cs" />
+    <Compile Include="Core\ConfidenceIntervalCalculatorSpecs.cs" />
+    <Compile Include="Core\ConfidenceIntervalDataRepositoryCreatorSpecs.cs" />
+    <Compile Include="Core\ConstantFormulaSpecs.cs" />
+    <Compile Include="Core\ContainerBuilderToContainerMapperSpecs.cs" />
+    <Compile Include="Core\ContainerDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ContainerExtensionsSpecs.cs" />
+    <Compile Include="Core\ContainerSpecs.cs" />
+    <Compile Include="Core\ContainerTaskSpecs.cs" />
+    <Compile Include="Core\ContainerXmlSerializerSpecs.cs" />
+    <Compile Include="Core\CreateExportModelVisitorSpecs.cs" />
+    <Compile Include="Core\CreationMetaDataFactorySpecs.cs" />
+    <Compile Include="Core\CreationMetaDataSpecs.cs" />
+    <Compile Include="Core\CurveChartSpecs.cs" />
+    <Compile Include="Core\CurveChartTemplateSpecs.cs" />
+    <Compile Include="Core\CurveChartToCurveChartTemplateMapperSpecs.cs" />
+    <Compile Include="Core\CurveOptionsSpecs.cs" />
+    <Compile Include="Core\DataColumnExtensionsSpecs.cs" />
+    <Compile Include="Core\DataColumnLoader.cs" />
+    <Compile Include="Core\DataColumnSpecs.cs" />
+    <Compile Include="Core\DataColumnXmlSerializerSpecs.cs" />
+    <Compile Include="Core\DataInfoXmlSerializerSpecs.cs" />
+    <Compile Include="Core\DataRepositoryConverterSpecs.cs" />
+    <Compile Include="Core\DataRepositoryExtensionsSpecs.cs" />
+    <Compile Include="Core\DataRepositorySpecs.cs" />
+    <Compile Include="Core\DataRepositoryTaskSpecs.cs" />
+    <Compile Include="Core\DataRepositoryXmlSerializerSpecs.cs" />
+    <Compile Include="Core\DataRowDataSpecs.cs" />
+    <Compile Include="Core\DescriptorCriteriaSpecs.cs" />
+    <Compile Include="Core\DimensionExtensionsSpecs.cs" />
+    <Compile Include="Core\DimensionFactoryExtensionSpecs.cs" />
+    <Compile Include="Core\DimensionFactorySpecs.cs" />
+    <Compile Include="Core\DisplayUnitMapSpecs.cs" />
+    <Compile Include="Core\DisplayUnitsManagerSpecs.cs" />
+    <Compile Include="Core\DisplayUnitUpdaterSpecs.cs" />
+    <Compile Include="Core\DistributedParameterSpecs.cs" />
+    <Compile Include="Core\DistributionFormulaFactorySpecs.cs" />
+    <Compile Include="Core\DoubleExtensionsSpecs.cs" />
+    <Compile Include="Core\DynamicFormulaDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EntityPathResolverSpecs.cs" />
+    <Compile Include="Core\EntitySpecs.cs" />
+    <Compile Include="Core\EntityValidatorSpecs.cs" />
+    <Compile Include="Core\EntityXmlSerializerSpecs.cs" />
+    <Compile Include="Core\EnumerableExtensionsSpecs.cs" />
+    <Compile Include="Core\EventAssignmentDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventAssingmentBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventBuilderTaskIntegrationTests.cs" />
+    <Compile Include="Core\EventBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\EventDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventExportSerializerSpecs.cs" />
+    <Compile Include="Core\EventGroupBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventGroupDiffBuilderSpecs.cs" />
+    <Compile Include="Core\EventXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ExplicitFormulaDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ExplicitFormulaExportSerializerSpecs.cs" />
+    <Compile Include="Core\ExplicitFormulaExtensionsSpecs.cs" />
+    <Compile Include="Core\ExplicitFormulaParserSpecs.cs" />
+    <Compile Include="Core\ExplicitFormulaSpecs.cs" />
+    <Compile Include="Core\ExtendedPropertySpecs.cs" />
+    <Compile Include="Core\ExtendedPropertyStoreSpecs.cs" />
+    <Compile Include="Core\FavoriteTaskSpecs.cs" />
+    <Compile Include="Core\FloatExtensionsSpecs.cs" />
+    <Compile Include="Core\FormulaBuilderToFormulaMapperSpecs.cs" />
+    <Compile Include="Core\FormulaCacheSpecs.cs" />
+    <Compile Include="Core\FormulaCacheXmlSerializerSpecs.cs" />
+    <Compile Include="Core\FormulaExtensionsSpecs.cs" />
+    <Compile Include="Core\FormulaTaskSpecs.cs" />
+    <Compile Include="Core\FormulaUsablePathExtensionsSpecs.cs" />
+    <Compile Include="Core\FormulaUsablePathSpecs.cs" />
+    <Compile Include="Core\FormulaUsableXmlSerializerSpecs.cs" />
+    <Compile Include="Core\FormulaUsageCheckerSpecs.cs" />
+    <Compile Include="Core\FormulaXmlSerializerSpecs.cs" />
+    <Compile Include="Core\GroupRepositoryPersistorSpecs.cs" />
+    <Compile Include="Core\GroupSpecs.cs" />
+    <Compile Include="Core\IdentificationParameterFactorySpecs.cs" />
+    <Compile Include="Core\IdentificationParameterSpecs.cs" />
+    <Compile Include="Core\IdentificationParameterTaskSpecs.cs" />
+    <Compile Include="Core\IndividualResultsSpecs.cs" />
+    <Compile Include="Core\IntegerExtensionSpecs.cs" />
+    <Compile Include="Core\IWithExtensionSpecs.cs" />
+    <Compile Include="Core\JacobianMatrixCalculatorSpecs.cs" />
+    <Compile Include="Core\JournalComparisonTaskSpecs.cs" />
+    <Compile Include="Core\JournalDiagramFactorySpecs.cs" />
+    <Compile Include="Core\JournalLoaderSpecs.cs" />
+    <Compile Include="Core\JournalPageFactorySpecs.cs" />
+    <Compile Include="Core\JournalPageSpecs.cs" />
+    <Compile Include="Core\JournalPageTaskSpecs.cs" />
+    <Compile Include="Core\JournalSearchContextFinderSpecs.cs" />
+    <Compile Include="Core\JournalSearchTaskSpecs.cs" />
+    <Compile Include="Core\JournalSessionConnectorSpecs.cs" />
+    <Compile Include="Core\JournalSpecs.cs" />
+    <Compile Include="Core\JournalTaskSpecs.cs" />
+    <Compile Include="Core\KeyPathMapperSpecs.cs" />
+    <Compile Include="Core\KeywordReplacerCollectionSpecs.cs" />
+    <Compile Include="Core\KeywordReplacerTaskSpecs.cs" />
+    <Compile Include="Core\KeywordWithPathReplacerSpecs.cs" />
+    <Compile Include="Core\LinearInterpolationSpecs.cs" />
+    <Compile Include="Core\LogNormalDistributionSpecs.cs" />
+    <Compile Include="Core\MatchAllConditionSpecs.cs" />
+    <Compile Include="Core\MatchTagConditionSpecs.cs" />
+    <Compile Include="Core\MathExtensionsSpecs.cs" />
+    <Compile Include="Core\MatrixCalculatorSpecs.cs" />
+    <Compile Include="Helpers\MiniEnvironmentSerializerBaseSpecs.cs" />
+    <Compile Include="Core\ModelConstructorIntegrationTests.cs" />
+    <Compile Include="Core\ModelDiffBuilderSpecs.cs" />
+    <Compile Include="Helpers\ModellingXmlSerializerBaseSpecs.cs" />
+    <Compile Include="Core\ModelReferenceCacheSpecs.cs" />
+    <Compile Include="Core\ModelSpecs.cs" />
+    <Compile Include="Core\ModelValidatorSpecs.cs" />
+    <Compile Include="Core\ModelXmlSerializerSpecs.cs" />
+    <Compile Include="Core\MoleculeAmountSpecs.cs" />
+    <Compile Include="Core\MoleculeBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\MoleculeBuilderToMoleculeAmountMapperSpecs.cs" />
+    <Compile Include="Core\MoleculeBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\MoleculeBuildingBlockSpecs.cs" />
+    <Compile Include="Core\MoleculeBuildingBlockValidatorSpecs.cs" />
+    <Compile Include="Core\MoleculeListSpecs.cs" />
+    <Compile Include="Core\MoleculePropertiesContainerTaskSpecs.cs" />
+    <Compile Include="Core\MoleculeStartValuesBuildingBlockSpecs.cs" />
+    <Compile Include="Core\MoleculeStartValuesCreatorSpecs.cs" />
+    <Compile Include="Core\MoleculeStartValueSpecs.cs" />
+    <Compile Include="Core\MonteCarloOptimizerSpecs.cs" />
+    <Compile Include="Core\MultipleOralSpecs.cs" />
+    <Compile Include="Core\MultipleParameterIdentificationRunFactorySpecs.cs" />
+    <Compile Include="Core\MultipleParameterIdentificationRunInitializerSpecs.cs" />
+    <Compile Include="Core\NeighborhoodBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\NeighborhoodBuilderFactorySpecs.cs" />
+    <Compile Include="Core\NeighborhoodBuilderToNeighborhoodMapperSpecs.cs" />
+    <Compile Include="Core\NeighborhoodBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\NeighborhoodExtensionsSpecs.cs" />
+    <Compile Include="Core\NeighborhoodSpecs.cs" />
+    <Compile Include="Core\NeighborhoodXmlSerializerSpecs.cs" />
+    <Compile Include="Core\NormalDistributionDataCreatorSpecs.cs" />
+    <Compile Include="Core\NormalDistributionFormulaSpecs.cs" />
+    <Compile Include="Core\NotificationTypeExtensionsSpecs.cs" />
+    <Compile Include="Core\NotMatchTagConditionSpecs.cs" />
+    <Compile Include="Core\ObjectBaseExtensionsSpecs.cs" />
+    <Compile Include="Core\ObjectBaseFactorySpecs.cs" />
+    <Compile Include="Core\ObjectBaseSpecs.cs" />
+    <Compile Include="Core\ObjectBaseXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ObjectComparerSpecs.cs" />
+    <Compile Include="Core\ObjectIdResetterSpecs.cs" />
+    <Compile Include="Core\ObjectPathExtensionsSpecs.cs" />
+    <Compile Include="Core\ObjectPathFactorySpecs.cs" />
+    <Compile Include="Core\ObjectPathSpecs.cs" />
+    <Compile Include="Core\ObjectPathXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ObjectReferencingRetrieverSpecs.cs" />
+    <Compile Include="Core\ObserverBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ObserverBuilderTaskSpecs.cs" />
+    <Compile Include="Core\ObserverBuilderToObserverMapperSpecs.cs" />
+    <Compile Include="Core\ObserverBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ObserverExportSerializerSpecs.cs" />
+    <Compile Include="Core\OptimizationAlgorithmSpecs.cs" />
+    <Compile Include="Core\OutputIntervalExportSpecs.cs" />
+    <Compile Include="Core\OutputIntervalFactorySpecs.cs" />
+    <Compile Include="Core\OutputMappingSpecs.cs" />
+    <Compile Include="Core\OutputResidualsSpecs.cs" />
+    <Compile Include="Core\OutputSchemaExportSerializerSpecs.cs" />
+    <Compile Include="Core\OutputSchemaFactorySpecs.cs" />
+    <Compile Include="Core\OutputSchemaSpecs.cs" />
+    <Compile Include="Core\OutputSelectionsSpecs.cs" />
+    <Compile Include="Core\OutputSelectionUpdaterSpecs.cs" />
+    <Compile Include="Core\ParameterBuilderCollectionToParameterCollectionMapperSpecs.cs" />
+    <Compile Include="Core\ParameterBuilderExtensionsSpecs.cs" />
+    <Compile Include="Core\ParameterBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ParameterConverterSpecs.cs" />
+    <Compile Include="Core\ParameterDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ParameterExtensionsSpecs.cs" />
+    <Compile Include="Core\ParameterFactorySpecs.cs" />
+    <Compile Include="Core\ParameterFlagAttributeMapperSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationAlgorithmSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationAlgorithmToOptmizationAlgorithmMapperSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationConfigurationSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationEngineSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationRunFactorySpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationRunnerSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationRunResultSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationRunSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationSimulationPathUpdaterSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationSimulationSwapCorrectorSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationSimulationSwapValidatorSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationTaskSpecs.cs" />
+    <Compile Include="Core\ParameterIdentificationValidatorSpecs.cs" />
+    <Compile Include="Core\ParameterSpecs.cs" />
+    <Compile Include="Core\ParametersReportCreatorSpecs.cs" />
+    <Compile Include="Core\ParameterStartValuesBuildingBlockSpecs.cs" />
+    <Compile Include="Core\ParameterStartValuesCreatorSpecs.cs" />
+    <Compile Include="Core\ParameterStartValueSpecs.cs" />
+    <Compile Include="Core\PKParameterModeExtensionsSpecs.cs" />
+    <Compile Include="Core\PKParameterRepositorySpecs.cs" />
+    <Compile Include="Core\PKParameterRepositoryXmlSerializerSpecs.cs" />
+    <Compile Include="Core\PKParameterXmlSerializerSpecs.cs" />
+    <Compile Include="Core\PKSimBuildingBlockTypeExtensionsSpecs.cs" />
+    <Compile Include="Core\PKValuesCalculatorSpecs.cs" />
+    <Compile Include="Core\PointXmlSerializerSpecs.cs" />
+    <Compile Include="Core\PopulationDataSplitterSpecs.cs" />
+    <Compile Include="Core\PopulationRunnerIntegrationTests.cs" />
+    <Compile Include="Core\ProcessBuilderExtensionsSpecs.cs" />
+    <Compile Include="Core\ProcessBuilderXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ProcessRateParameterCreatorSpecs.cs" />
+    <Compile Include="Core\ProcessXmlSerializerSpecs.cs" />
+    <Compile Include="Core\QuantityAndContainerXmlSerializerSpecs.cs" />
+    <Compile Include="Core\QuantityDiffBuilderSpecs.cs" />
+    <Compile Include="Core\QuantityExportSerializerSpecs.cs" />
+    <Compile Include="Core\QuantityInfoXmlSerializerSpecs.cs" />
+    <Compile Include="Core\QuantitySpecs.cs" />
+    <Compile Include="Core\QuantityTypeExtensionsSpecs.cs" />
+    <Compile Include="Core\QuantityValuesExtensionsSpecs.cs" />
+    <Compile Include="Core\QuantityValuesSpecs.cs" />
+    <Compile Include="Core\QuantityValuesUpdaterSpecs.cs" />
+    <Compile Include="Core\QuantityXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ReactionBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ReactionBuilderSpecs.cs" />
+    <Compile Include="Core\ReactionBuilderToReactionMapperSpecs.cs" />
+    <Compile Include="Core\ReactionCreatorSpecs.cs" />
+    <Compile Include="Core\ReactionDiffBuilderSpecs.cs" />
+    <Compile Include="Core\ReactionPartnerBuilderToReactionPartnerMapperSpecs.cs" />
+    <Compile Include="Core\ReactionXmlSerializerSpecs.cs" />
+    <Compile Include="Core\ReferencesResolverSpecs.cs" />
+    <Compile Include="Core\RelatedItemFactorySpecs.cs" />
+    <Compile Include="Core\RelatedItemSerializerSpecs.cs" />
+    <Compile Include="Core\RelatedItemTypeRetrieverSpecs.cs" />
+    <Compile Include="Core\RemoveObservedDataFromProjectCommandSpecs.cs" />
+    <Compile Include="Core\RemoveObservedDataMetaDataCommandSpecs.cs" />
+    <Compile Include="Core\RemoveObservedDataRowCommandSpecs.cs" />
+    <Compile Include="Core\ReportConfigurationSpecs.cs" />
+    <Compile Include="Core\ResidualCalculatorSpecs.cs" />
+    <Compile Include="Core\ResidualDistibutionDataCreatorSpecs.cs" />
+    <Compile Include="Core\ResidualResultSpecs.cs" />
+    <Compile Include="Core\ScaleDivisorCalculatorSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisEngineSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisPKAnalysesTaskSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisRunResultCalculatorSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisSimulationSwapCorrectorSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisSpecs.cs" />
+    <Compile Include="Core\SensitivityAnalysisValidatorSpecs.cs" />
+    <Compile Include="Core\SensitivityParameterSpecs.cs" />
+    <Compile Include="Core\SerializationContextSpecs.cs" />
+    <Compile Include="Core\SetObservedDataColumnUnitCommandSpecs.cs" />
+    <Compile Include="Core\SetObservedDataValueCommandSpecs.cs" />
+    <Compile Include="Core\SimModelBatchSpecs.cs" />
+    <Compile Include="Core\SimModelDoubleAttributeMapperSpecs.cs" />
+    <Compile Include="Core\SimModelExporterIntegrationTests.cs" />
+    <Compile Include="Core\SimModelManagerIntegrationTests.cs" />
+    <Compile Include="Core\SimpleKeywordReplacerSpecs.cs" />
+    <Compile Include="Core\SimulationConfigurationXmlSerializerSpecs.cs" />
+    <Compile Include="Core\SimulationPersistorSpecs.cs" />
+    <Compile Include="Core\SimulationQuantitySelectionSpecs.cs" />
+    <Compile Include="Core\SimulationReferenceUpdaterSpecs.cs" />
+    <Compile Include="Core\SimulationResultsExtensionsSpecs.cs" />
+    <Compile Include="Core\SimulationResultsSpecs.cs" />
+    <Compile Include="Core\SimulationSettingsDiffBuilderSpecs.cs" />
+    <Compile Include="Core\SimulationSettingsSpecs.cs" />
+    <Compile Include="Core\SimulationXmlSerializerSpecs.cs" />
+    <Compile Include="Core\SizeXmlSerializerSpecs.cs" />
+    <Compile Include="Core\SolverSettingsExportSerializerSpecs.cs" />
+    <Compile Include="Core\SpatialStructureFactorySpecs.cs" />
+    <Compile Include="Core\SpatialStructureSpecs.cs" />
+    <Compile Include="Core\StandardParameterIdentificationRunFactorySpecs.cs" />
+    <Compile Include="Core\StandardParameterIdentificationRunInitializerSpecs.cs" />
+    <Compile Include="Core\StartValueBuildingBlockDiffBuilderSpecs.cs" />
+    <Compile Include="Core\StartValueDiffBuilderSpecs.cs" />
+    <Compile Include="Core\StartValueXmlSerializerSpecs.cs" />
+    <Compile Include="Core\StringExtensionsSpecs.cs" />
+    <Compile Include="Core\SumFormulaSpecs.cs" />
+    <Compile Include="Core\TableFormulaDiffBuilderSpecs.cs" />
+    <Compile Include="Core\TableFormulaExportXmlSerializerSpecs.cs" />
+    <Compile Include="Core\TableFormulaSpecs.cs" />
+    <Compile Include="Core\TableFormulaToDataRepositoryMapperSpecs.cs" />
+    <Compile Include="Core\TableFormulaToTableFormulaExportMapperSpecs.cs" />
+    <Compile Include="Core\TableFormulaWithOffsetExportSerializerSpecs.cs" />
+    <Compile Include="Core\TableFormulaWithOffsetSpecs.cs" />
+    <Compile Include="Core\TagsSpecs.cs" />
+    <Compile Include="Core\TimeGridRestrictorSpecs.cs" />
+    <Compile Include="Core\TimeGridUpdaterSpecs.cs" />
+    <Compile Include="Core\TimePathSpecs.cs" />
+    <Compile Include="Core\TimeProfileConfidenceIntervalCalculatorSpecs.cs" />
+    <Compile Include="Core\TimeSpanExtensionsSpecs.cs" />
+    <Compile Include="Core\TopContainerPathReplacerSpecs.cs" />
+    <Compile Include="Core\TransferOptimizedParametersToSimulationsTaskSpecs.cs" />
+    <Compile Include="Core\TransportBuilderDiffBuilderSpecs.cs" />
+    <Compile Include="Core\TransportBuilderSpecs.cs" />
+    <Compile Include="Core\TransportBuilderToTransportMapperSpecs.cs" />
+    <Compile Include="Core\TransportDiffBuilderSpecs.cs" />
+    <Compile Include="Core\TransportXmlSerializerSpecs.cs" />
+    <Compile Include="Core\UniformDistributionSpecs.cs" />
+    <Compile Include="Helpers\UnitTestContextSpecificationSpecs.cs" />
+    <Compile Include="Core\UnitXmlSerializerSpecs.cs" />
+    <Compile Include="Core\UpdateObservedDataMolWeightCommandSpecs.cs" />
+    <Compile Include="Core\UsingDimensionConverterSpecs.cs" />
+    <Compile Include="Core\UsingFormulaExtensionsSpecs.cs" />
+    <Compile Include="Core\ValidationResultSpecs.cs" />
+    <Compile Include="Core\ValueComparerSpecs.cs" />
+    <Compile Include="Core\VariableExportSerializerSpecs.cs" />
+    <Compile Include="Core\VariationDataSpecs.cs" />
+    <Compile Include="Core\WeightedObservedDataSpecs.cs" />
+    <Compile Include="Core\WithDimensionAndDisplayUnitExtensionsSpecs.cs" />
+    <Compile Include="Core\WithIdRepositorySpecs.cs" />
+    <Compile Include="Helpers\XmlSerializerBaseSpecs.cs" />
+    <Compile Include="Helpers\AssertForSpecs.cs" />
+    <Compile Include="Helpers\BuildConfigurationForSpecs.cs" />
+    <Compile Include="Helpers\ConstantsForSpecs.cs" />
+    <Compile Include="Helpers\DimensionFactoryForSpecs.cs" />
+    <Compile Include="Helpers\GroupRepositoryForSpecs.cs" />
+    <Compile Include="Helpers\ModelHelperForSpecs.cs" />
+    <Compile Include="Helpers\ReactionDimensionRetrieverForSpecs.cs" />
+    <Compile Include="Helpers\SerializationHelperForSpecs.cs" />
+    <Compile Include="Helpers\SimulationHelperForSpecs.cs" />
+    <Compile Include="Helpers\ConcentrationBaseModelHelperForSpecs.cs" />
+    <Compile Include="Helpers\DomainHelperForSpecs.cs" />
+    <Compile Include="Helpers\FakeItEasyExtensions.cs" />
+    <Compile Include="Helpers\HeavyWorkManagerForSpecs.cs" />
+    <Compile Include="Helpers\TestProject.cs" />
+    <Compile Include="Importer\DataImporterSpecs.cs" />
+    <Compile Include="Importer\Data\DataImporterSettingsSpecs.cs" />
+    <Compile Include="Importer\ImportDataTableSpecs.cs" />
+    <Compile Include="Importer\ImporterSpecs.cs" />
+    <Compile Include="Importer\Mappers\MetaDataCategoryToNamingPatternMapperSpecs.cs" />
+    <Compile Include="Importer\Mappers\NamingPatternToRepositoryNameMapperSpecs.cs" />
+    <Compile Include="Importer\Presenters\ExcelPreviewPresenterSpecs.cs" />
+    <Compile Include="Importer\Presenters\ImportDataTableGridPresenterSpecs.cs" />
+    <Compile Include="Importer\Presenters\NamingPatternPresenterSpecs.cs" />
+    <Compile Include="Importer\Services\ColumnCaptionHelperSpecs.cs" />
+    <Compile Include="Importer\Services\LowerLimitOfQuantificationTaskSpecs.cs" />
+    <Compile Include="Importer\Services\RepositoryNamingTaskSpecs.cs" />
+    <Compile Include="Infrastructure\CastleWindsorContainerSpecs.cs" />
+    <Compile Include="Infrastructure\CommandMetaDataToCommandMapperSpecs.cs" />
+    <Compile Include="Infrastructure\HistoryItemMetaDataRepositorySpecs.cs" />
+    <Compile Include="Infrastructure\HistoryManagerPersistorSpecs.cs" />
+    <Compile Include="Infrastructure\Log4NetLogFactorySpecs.cs" />
+    <Compile Include="Infrastructure\Log4NetLoggerSpecs.cs" />
+    <Compile Include="Infrastructure\SessionManagerSpecs.cs" />
+    <Compile Include="Infrastructure\SharpLibCompressionSpecs.cs" />
+    <Compile Include="Infrastructure\WindsorLifeStyleMapperSpecs.cs" />
+    <Compile Include="Presentation\AbstractNodeSpecs.cs" />
+    <Compile Include="Presentation\ActivateSkinCommandSpecs.cs" />
+    <Compile Include="Presentation\ActiveSubjectRetrieverSpecs.cs" />
+    <Compile Include="Presentation\ApplicationControllerSpecs.cs" />
+    <Compile Include="Presentation\ApplicationIconSpecs.cs" />
+    <Compile Include="Presentation\BatchUpdateSpecs.cs" />
+    <Compile Include="Presentation\ButtonGroupSpecs.cs" />
+    <Compile Include="Presentation\CategorialParameterIdentificationRunModePresenterSpecs.cs" />
+    <Compile Include="Presentation\CategorialRunModeToCategorialRunModeDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\ChartDisplayPresenterSpecs.cs" />
+    <Compile Include="Presentation\ChartEditorPresenterSpecs.cs" />
+    <Compile Include="Presentation\ChartExportSettingsPresenterSpecs.cs" />
+    <Compile Include="Presentation\ChartFactorySpecs.cs" />
+    <Compile Include="Presentation\ChartFromTemplateServiceSpecs.cs" />
+    <Compile Include="Presentation\ChartTemplateManagerPresenterSpecs.cs" />
+    <Compile Include="Presentation\ClassificationTypeToRootNodeTypeMapperSpecs.cs" />
+    <Compile Include="Presentation\CloneParameterIdentificationPresenterSpecs.cs" />
+    <Compile Include="Presentation\CloneParameterIdentificationUICommandSpecs.cs" />
+    <Compile Include="Presentation\CloseAllButMdiViewCommandSpecs.cs" />
+    <Compile Include="Presentation\CloseAllMdiViewCommandSpecs.cs" />
+    <Compile Include="Presentation\CloseMdiViewCommandSpecs.cs" />
+    <Compile Include="Presentation\CommentPresenterSpecs.cs" />
+    <Compile Include="Presentation\CommentTaskSpecs.cs" />
+    <Compile Include="Presentation\CompareObjectsUICommandSpecs.cs" />
+    <Compile Include="Presentation\ComparerSettingsPresenterSpecs.cs" />
+    <Compile Include="Presentation\ComparisonPresenterSpecs.cs" />
+    <Compile Include="Presentation\ContextMenuFactorySpecs.cs" />
+    <Compile Include="Presentation\ContextMenuSpecs.cs" />
+    <Compile Include="Presentation\CurveSettingsPresenterSpecs.cs" />
+    <Compile Include="Presentation\CurveTemplatePresenterSpecs.cs" />
+    <Compile Include="Presentation\DataRepositoryChartPresenterSpecs.cs" />
+    <Compile Include="Presentation\DataRepositoryDataPresenterSpecs.cs" />
+    <Compile Include="Presentation\DataRepositoryMetaDataPresenterSpecs.cs" />
+    <Compile Include="Presentation\DataTableToHtmlMapperSpecs.cs" />
+    <Compile Include="Presentation\DefaultPresenterSettingsSpecs.cs" />
+    <Compile Include="Presentation\DeleteSelectedObservedDataUICommandSpecs.cs" />
+    <Compile Include="Presentation\DiffItemToDiffItemDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\DisplayNameProviderSpecs.cs" />
+    <Compile Include="Presentation\DisplayUnitRetrieverSpecs.cs" />
+    <Compile Include="Presentation\DisplayUnitsPresenterSpecs.cs" />
+    <Compile Include="Presentation\DragEventArgsExtensionsSpecs.cs" />
+    <Compile Include="Presentation\DxValidatableDTOSpecs.cs" />
+    <Compile Include="Presentation\EditDisplayUnitsPresenterSpecs.cs" />
+    <Compile Include="Presentation\EditMultipleDataRepositoriesMetaDataPresenterSpecs.cs" />
+    <Compile Include="Presentation\EditMultipleMetaDataUICommandSpecs.cs" />
+    <Compile Include="Presentation\EditObservedDataTaskSpecs.cs" />
+    <Compile Include="Presentation\EditParameterIdentificationPresenterSpecs.cs" />
+    <Compile Include="Presentation\EntityValidationTaskSpecs.cs" />
+    <Compile Include="Presentation\ExportParameterIdentificationToMatlabUICommandSpecs.cs" />
+    <Compile Include="Presentation\ExportParameterIdentificationToRUICommandSpecs.cs" />
+    <Compile Include="Presentation\FontsTaskSpecs.cs" />
+    <Compile Include="Presentation\HeavyWorkManagerSpecs.cs" />
+    <Compile Include="Presentation\HistoryBrowserPresenterSpecs.cs" />
+    <Compile Include="Presentation\ImportFileSelectionDTOSpecs.cs" />
+    <Compile Include="Presentation\JournalDiagramPresenterSpecs.cs" />
+    <Compile Include="Presentation\JournalPageDTOSpecs.cs" />
+    <Compile Include="Presentation\JournalPageEditorFormPresenterSpecs.cs" />
+    <Compile Include="Presentation\JournalPageEditorPresenterSpecs.cs" />
+    <Compile Include="Presentation\JournalPagePreviewPresenterSpecs.cs" />
+    <Compile Include="Presentation\JournalPageToJournalPageDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\JournalPresenterSpecs.cs" />
+    <Compile Include="Presentation\JournalSearchPresenterSpecs.cs" />
+    <Compile Include="Presentation\LabelPresenterSpecs.cs" />
+    <Compile Include="Presentation\LabelTaskSpecs.cs" />
+    <Compile Include="Presentation\MainComparisonPresenterSpecs.cs" />
+    <Compile Include="Presentation\MathNetExtensionsForSpecs.cs" />
+    <Compile Include="Presentation\MathNetExtensionsSpecs.cs" />
+    <Compile Include="Presentation\MatrixToDataTableMapperSpecs.cs" />
+    <Compile Include="Presentation\MessageStatusFilterDTOSpecs.cs" />
+    <Compile Include="Presentation\MetaDataDTOSpecs.cs" />
+    <Compile Include="Presentation\ModalChartTemplateManagerPresenterSpecs.cs" />
+    <Compile Include="Presentation\MRUProviderSpecs.cs" />
+    <Compile Include="Presentation\MultipleParameterIdentificationFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\MultipleParameterIdentificationResultsPresenterSpecs.cs" />
+    <Compile Include="Presentation\MultipleParameterIdentificationRunModePresenterSpecs.cs" />
+    <Compile Include="Presentation\NameClassificationPresenterSpecs.cs" />
+    <Compile Include="Presentation\NonEmptyNameDTOSpecs.cs" />
+    <Compile Include="Presentation\NullSimulationQuantitySelectionDTOSpecs.cs" />
+    <Compile Include="Presentation\ObjectBaseDTOSpecs.cs" />
+    <Compile Include="Presentation\ObjectUICommandSpecs.cs" />
+    <Compile Include="Presentation\ObservedDataDragDropBinderSpecs.cs" />
+    <Compile Include="Presentation\ObservedDataInExplorerPresenterSpecs.cs" />
+    <Compile Include="Presentation\OpenMRUProjectCommandSpecs.cs" />
+    <Compile Include="Presentation\OptimizationAlgorithmToOptimizationAlgorithmPropertiesMapperSpecs.cs" />
+    <Compile Include="Presentation\OptimizedParameterDTOSpecs.cs" />
+    <Compile Include="Presentation\OutputIntervalDTOSpecs.cs" />
+    <Compile Include="Presentation\OutputMappingToOutputMappingDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationConfidenceIntervalPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationConfigurationPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationConfigurationToParameterIdentificationConfigurationDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationCorrelationMatrixPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationCovarianceMatrixPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationDataSelectionPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationErrorHistoryFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationExportTaskSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationIdentificationParametersPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationLinkedParametersPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationMatrixPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationOutputMappingPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationParameterSelectionPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationParametersFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationPredictedVsObservedChartPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationPredictedVsObservedFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationResidualHistogramPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationResidualVsTimeChartPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationResultsPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationRunPropertiesPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationRunResultToRunResultDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationSimulationSelectionPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationTimeProfileChartPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationTimeProfileFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationWeightedObservedDataCollectorPresenterSpecs.cs" />
+    <Compile Include="Presentation\ParameterIdentificationWeightedObservedDataPresenterSpecs.cs" />
+    <Compile Include="Presentation\PathToPathElementsMapperSpecs.cs" />
+    <Compile Include="Presentation\PredictedVsObservedChartServiceSpecs.cs" />
+    <Compile Include="Presentation\PresenterSettingsTaskSpecs.cs" />
+    <Compile Include="Presentation\PresenterSubjectSpecs.cs" />
+    <Compile Include="Presentation\QuantityListPresenterSpecs.cs" />
+    <Compile Include="Presentation\QuantityPathElementDTOSpecs.cs" />
+    <Compile Include="Presentation\QuantityPathToQuantityDisplayPathMapperSpecs.cs" />
+    <Compile Include="Presentation\QuantitySelectionPresenterSpecs.cs" />
+    <Compile Include="Presentation\QuantityToQuantitySelectionDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\QuantityToSimulationQuantitySelectionDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\RegionResolverSpecs.cs" />
+    <Compile Include="Presentation\RelatedItemComparablePresenterSpecs.cs" />
+    <Compile Include="Presentation\RelatedItemsPresenterSpecs.cs" />
+    <Compile Include="Presentation\RenameObjectDTOSpecs.cs" />
+    <Compile Include="Presentation\RenameObjectPresenterSpecs.cs" />
+    <Compile Include="Presentation\RenameParameterIdentificationUICommandSpecs.cs" />
+    <Compile Include="Presentation\SelectionSimulationPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisParameterSelectionPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisParametersPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisPKParameterAnalysisPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisTaskSpecs.cs" />
+    <Compile Include="Presentation\SensitivityParameterFactorySpecs.cs" />
+    <Compile Include="Presentation\SimpleChartPresenterSpecs.cs" />
+    <Compile Include="Presentation\SimulationParametersPresenterSpecs.cs" />
+    <Compile Include="Presentation\SimulationQuantitySelectionToLinkedParameterDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\SingleParameterIdentificationFeedbackPresenterSpecs.cs" />
+    <Compile Include="Presentation\SingleParameterIdentificationResultsPresenterSpecs.cs" />
+    <Compile Include="Presentation\StandardParameterIdentificationRunModePresenterSpecs.cs" />
+    <Compile Include="Presentation\StringExtensionsSpecs.cs" />
+    <Compile Include="Presentation\SubPresenterHelper.cs" />
+    <Compile Include="Presentation\SubPresenterManagerSpecs.cs" />
+    <Compile Include="Helpers\TestNode.cs" />
+    <Compile Include="Presentation\TreeNodeExtensionSpecs.cs" />
+    <Compile Include="Presentation\TreeNodeFactorySpecs.cs" />
+    <Compile Include="Presentation\UICommandExtensionsSpecs.cs" />
+    <Compile Include="Presentation\ValidatableDTOExtensionsSpecs.cs" />
+    <Compile Include="Presentation\ValidatableDTOSpecs.cs" />
+    <Compile Include="Presentation\WeightedDataRepositoryDataPresenterSpecs.cs" />
+    <Compile Include="Presentation\WeightedDataRepositoryToDataTableMapperSpecs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisterTaskForSpecs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\packages\OSPSuite.SimModelSolver_CVODES282.2.0.0.1\lib\net45\OSPSuite.SimModelSolver_CVODES282.dll">
+      <Link>OSPSuite.SimModelSolver_CVODES282.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="..\..\src\Common\OSPSuite.Dimensions.xml">
+      <Link>OSPSuite.Dimensions.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\src\Common\OSPSuite.PKParameters.xml">
+      <Link>OSPSuite.PKParameters.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\packages\OSPSuite.SimModel.2.0.0.1\OSPSuite.SimModel\OSPSuite.SimModel.xsd">
+      <Link>OSPSuite.SimModel.xsd</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="app.config" />
+    <None Include="Data\EventsAppKeywordReplacement.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\MultipleDosing_0_8_16.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\multi_admin_oral.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\simple_IV_53.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\simple_IV_56.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\SingleDosing.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\SingleDosing_CL.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\SingleDosing_IV_30.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test1.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test2.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test3.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test4.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test5.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\warnings.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
+      <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
+      <Name>OSPSuite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj">
+      <Project>{9545FA35-289D-4457-9461-C5F940694607}</Project>
+      <Name>OSPSuite.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
+      <Project>{2F8B2246-4458-494A-9A62-3F6E6F62082A}</Project>
+      <Name>OSPSuite.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
+      <Project>{10AD6F46-ACA2-4005-91E6-CE84FEEE9419}</Project>
+      <Name>OSPSuite.Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

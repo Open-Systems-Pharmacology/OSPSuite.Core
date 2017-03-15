@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <description>Common resources for the Open Systems Pharmacology Suite</description>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Open-Systems-Pharmacology</authors>
+    <owners>Open-Systems-Pharmacology</owners>
+    <projectUrl>https://github.com/Open-Systems-Pharmacology/$id$</projectUrl>
+    <licenseUrl>https://github.com/Open-Systems-Pharmacology/$id$/blob/master/LICENSE</licenseUrl>
+    <iconUrl>https://github.com/Open-Systems-Pharmacology/Suite/blob/master/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright © 2017 - Open Systems Pharmacology Community</copyright>
+    <tags>open-systems-pharmacology</tags>
+  </metadata>
+  <files>
+    <file src="bin\$configuration$\$id$.pdb" target="lib\net452" />
+  </files>
+</package>

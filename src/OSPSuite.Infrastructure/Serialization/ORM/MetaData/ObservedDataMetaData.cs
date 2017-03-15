@@ -1,0 +1,14 @@
+﻿using NHibernate;
+
+namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
+{
+   public class ObservedDataMetaData: MetaData<string>, IUpdatableFrom<ObservedDataMetaData>
+   {
+       public virtual DataRepositoryMetaData DataRepository { get; set; }
+
+      public void UpdateFrom(ObservedDataMetaData source, ISession session)
+      {
+         DataRepository = source.DataRepository;
+      }
+   }
+}

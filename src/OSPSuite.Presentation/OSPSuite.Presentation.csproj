@@ -1,0 +1,721 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F8B2246-4458-494A-9A62-3F6E6F62082A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OSPSuite.Presentation</RootNamespace>
+    <AssemblyName>OSPSuite.Presentation</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\OSPSuite.Presentation.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Serializer">
+      <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.TeXReporting">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.1\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Utility">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="SX">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.2.8\lib\net45\SX.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Binders\ObservedDataDragDropBinder.cs" />
+    <Compile Include="Charts\ChartEditorLayoutTemplate.cs" />
+    <Compile Include="Core\ApplicationController.cs" />
+    <Compile Include="Core\ButtonGroupId.cs" />
+    <Compile Include="Core\ClassificationTemplate.cs" />
+    <Compile Include="Core\CloseSubjectPresenterInvokerBase.cs" />
+    <Compile Include="Core\CommonColors.cs" />
+    <Compile Include="Core\DefaultPresentationSettings.cs" />
+    <Compile Include="Core\DragDropInfo.cs" />
+    <Compile Include="Core\IBatchUpdatable.cs" />
+    <Compile Include="Core\IViewItem.cs" />
+    <Compile Include="Core\TabbedPresenterSettings.cs" />
+    <Compile Include="Core\ToolTipPart.cs" />
+    <Compile Include="DataChartConstants.cs" />
+    <Compile Include="Diagram\BaseDiagramManager.cs" />
+    <Compile Include="Diagram\Elements\BayerColors.cs" />
+    <Compile Include="Diagram\Elements\DiagramColors.cs" />
+    <Compile Include="Diagram\Elements\DiagramOptions.cs" />
+    <Compile Include="Diagram\Elements\IBaseForceLayout.cs" />
+    <Compile Include="Diagram\Elements\IContainerBaseLayouter.cs" />
+    <Compile Include="Diagram\Elements\IContainerBaseXmlSerializer.cs" />
+    <Compile Include="Diagram\Elements\IForceLayoutConfiguration.cs" />
+    <Compile Include="Diagram\Elements\ILayerLayouter.cs" />
+    <Compile Include="Diagram\Elements\INeighborhoodNode.cs" />
+    <Compile Include="Diagram\Elements\JournalDiagramBackground.cs" />
+    <Compile Include="DTO\CategoryDTO.cs" />
+    <Compile Include="DTO\Charts\CurveTemplateDTO.cs" />
+    <Compile Include="DTO\Commands\IHistoryItemDTO.cs" />
+    <Compile Include="DTO\Commands\IHistoryItemDTOList.cs" />
+    <Compile Include="DTO\Commands\LabelDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\CategorialRunModeDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\ConstraintParameterDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\IdentificationParameterDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\LinkedParameterDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\MultiOptimizationRunResultDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\OptimizedParameterDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\OutputMappingDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\ParameterConfidenceIntervalDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\ParameterFeedbackDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\ParameterIdentificationConfigurationDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\ParameterIdentificationRunResultDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\RunPropertyDTO.cs" />
+    <Compile Include="DTO\ParameterIdentifications\RunResultDTO.cs" />
+    <Compile Include="DTO\SensitivityAnalyses\SensitivityParameterDTO.cs" />
+    <Compile Include="DTO\SimulationParameterSelectionDTO.cs" />
+    <Compile Include="DTO\SimulationQuantitySelectionDTO.cs" />
+    <Compile Include="DTO\SimulationSelectionDTO.cs" />
+    <Compile Include="DTO\ValidationMessageDTO.cs" />
+    <Compile Include="DTO\ValueDTO.cs" />
+    <Compile Include="Extensions\CurveChartExtensions.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Mappers\BaseDataTableMapper.cs" />
+    <Compile Include="Mappers\DataTableToHtmlClipboardFormatMapper.cs" />
+    <Compile Include="Mappers\DataTableToHtmlMapper.cs" />
+    <Compile Include="Mappers\DataTableToTextMapper.cs" />
+    <Compile Include="Mappers\IDataTableToStringMapper.cs" />
+    <Compile Include="Mappers\IHistoryItemDTOEnumerableToHistoryItemDTOList.cs" />
+    <Compile Include="Mappers\IHistoryToHistoryDTOMapper.cs" />
+    <Compile Include="Presenters\Importer\ExcelPreviewPresenter.cs" />
+    <Compile Include="Presenters\Importer\Fonts.cs" />
+    <Compile Include="Presenters\Importer\ImportDataTableGridPresenter.cs" />
+    <Compile Include="Presenters\Importer\ImporterPresenter.cs" />
+    <Compile Include="Presenters\Importer\NamingPatternPresenter.cs" />
+    <Compile Include="Mappers\AbstractQuantityToSimulationQuantitySelectionDTOMapper.cs" />
+    <Compile Include="Mappers\CategoryDTORepository.cs" />
+    <Compile Include="Mappers\DataColumnToPathElementsMapper.cs" />
+    <Compile Include="Mappers\IParameterToParameterDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\CategorialRunModeToCategorialRunModeDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\IIdentificationParameterToIdentificationParameterDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\MatrixToDataTableMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\OutputMappingToOutputMappingDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\ParameterIdentificationConfigurationToParameterIdentificationConfigurationDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\ParameterIdentificationRunResultToRunResultDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\SimulationQuantitySelectionToLinkedParameterDTOMapper.cs" />
+    <Compile Include="Mappers\ParameterIdentifications\WeightedDataRepositoryToDataTableMapper.cs" />
+    <Compile Include="Mappers\ParameterToParameterDTOInContainerMapper.cs" />
+    <Compile Include="Mappers\QuantityPathToQuantityDisplayPathMapper.cs" />
+    <Compile Include="Mappers\QuantityToSimulationParameterSelectionDTOMapper.cs" />
+    <Compile Include="Mappers\QuantityToSimulationQuantitySelectionDTOMapper.cs" />
+    <Compile Include="Mappers\SensitivityAnalyses\SensitivityAnalysisRunResultToDataTableMapper.cs" />
+    <Compile Include="Mappers\SensitivityAnalyses\SensitivityParameterToSensitivityParameterDTOMapper.cs" />
+    <Compile Include="Mappers\ValidationMessageToValidationMessageDTOMapper.cs" />
+    <Compile Include="MenuAndBars\ButtonGroup.cs" />
+    <Compile Include="MenuAndBars\ButtonGroupExpressions.cs" />
+    <Compile Include="MenuAndBars\IUICommand.cs" />
+    <Compile Include="MenuAndBars\MenuBarButton.cs" />
+    <Compile Include="MenuAndBars\MenuBarButtonExtensions.cs" />
+    <Compile Include="MenuAndBars\MenuBarCheckButton.cs" />
+    <Compile Include="MenuAndBars\MenuBarItem.cs" />
+    <Compile Include="MenuAndBars\MenuBarItemExtensions.cs" />
+    <Compile Include="MenuAndBars\MenuBarSubMenu.cs" />
+    <Compile Include="MenuAndBars\MenuBarSubMenuExtensions.cs" />
+    <Compile Include="MenuAndBars\RibbonBarItem.cs" />
+    <Compile Include="MenuAndBars\RibbonBarItemExtensions.cs" />
+    <Compile Include="MenuAndBars\StatusBarElement.cs" />
+    <Compile Include="MenuAndBars\StatusBarElementExpression.cs" />
+    <Compile Include="Nodes\AbstractNode.cs" />
+    <Compile Include="Nodes\GroupNode.cs" />
+    <Compile Include="Nodes\ITreeNode.cs" />
+    <Compile Include="Nodes\ParameterIdentificationNode.cs" />
+    <Compile Include="Nodes\SensitivityAnalysisNode.cs" />
+    <Compile Include="Nodes\TextNode.cs" />
+    <Compile Include="Nodes\TreeNodeExtensions.cs" />
+    <Compile Include="Nodes\TreeNodeFactory.cs" />
+    <Compile Include="Nodes\UsedObservedDataNode.cs" />
+    <Compile Include="Presenters\AbstractParameterSelectionPresenter.cs" />
+    <Compile Include="Presenters\AbstractToggleablePresenter.cs" />
+    <Compile Include="Presenters\Charts\AxisSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartDisplayPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartEditorAndDisplayPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartEditorPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartExportSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartTemplateDetailsPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartTemplateManagerPresenter.cs" />
+    <Compile Include="Presenters\Charts\ChartTemplateMenuPresenter.cs" />
+    <Compile Include="Presenters\Charts\CurveSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\CurveTemplatePresenter.cs" />
+    <Compile Include="Presenters\Charts\DataBrowserPresenter.cs" />
+    <Compile Include="Presenters\Charts\DataColumnsDTO.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Presenters\Charts\IAxisAdapter.cs" />
+    <Compile Include="Presenters\Charts\ICurveAdapter.cs" />
+    <Compile Include="Presenters\Charts\ModalChartTemplateManagerPresenter.cs" />
+    <Compile Include="Presenters\Charts\PresenterWithColumnSettings.cs" />
+    <Compile Include="Presenters\Charts\SimpleChartPresenter.cs" />
+    <Compile Include="Presenters\Charts\SimulationAnalysisChartPresenter.cs" />
+    <Compile Include="Presenters\Commands\ColumnProperties.cs" />
+    <Compile Include="Presenters\Commands\CommentPresenter.cs" />
+    <Compile Include="Presenters\Commands\HistoryBrowserConfiguration.cs" />
+    <Compile Include="Presenters\Commands\HistoryBrowserPresenter.cs" />
+    <Compile Include="Presenters\Commands\HistoryBrowserProperties.cs" />
+    <Compile Include="Presenters\Commands\HistoryColumns.cs" />
+    <Compile Include="Presenters\Commands\LabelPresenter.cs" />
+    <Compile Include="Presenters\ContextMenus\JournalDiagramBackgroundContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\JournalMenuBarButtons.cs" />
+    <Compile Include="Presenters\ContextMenus\JournalPageNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\MultipleBaseNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\ParameterIdentificationContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\ParameterIdentificationMenuBarButtons.cs" />
+    <Compile Include="Presenters\ContextMenus\RelatedItemNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\SensitivityAnalysisContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\SensitivityAnalysisFolderTreeNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\SensitivityAnalysisGroupingFolderTreeNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\SensitivityAnalysisMenuBarButtons.cs" />
+    <Compile Include="Presenters\Diagram\BaseDiagramPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalDiagramMainPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalDiagramPresenter.cs" />
+    <Compile Include="Presenters\ParameterAnalysablesInExplorerPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\AbstractParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationConfidenceIntervalPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationMatrixPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfilePredictionIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileVPCIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\EditSensitivityAnalysisPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\ISensitivityAnalysisItemPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisFeedbackEditorSettings.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisFeedbackPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisItem.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisParameterSelectionPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisParametersPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisPKParameterAnalysisPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisResultsPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisSetValuePresenter.cs" />
+    <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
+    <Compile Include="Presenters\Charts\SingleAxisSettingsModalPresenter.cs" />
+    <Compile Include="Presenters\Charts\SingleAxisSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\SingleCurveSettingsModalPresenter.cs" />
+    <Compile Include="Presenters\Charts\SingleCurveSettingsPresenter.cs" />
+    <Compile Include="Presenters\Charts\UsedChangedEventArgs.cs" />
+    <Compile Include="Presenters\AbstractClonePresenter.cs" />
+    <Compile Include="Presenters\ContextMenus\AxisContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\CurveChartContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\CurveContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\ParameterIdentificationClassificationNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\ParameterIdentificationFolderContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\ParameterIdentificationSimulationNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\RootNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\SimulationAnalysisPresenterContextMenuFactory.cs" />
+    <Compile Include="Presenters\EditAnalyzablePresenter.cs" />
+    <Compile Include="Presenters\ExtendedPropertiesPresenter.cs" />
+    <Compile Include="Presenters\ISimulationAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ISimulationAnalysisPresenterFactory.cs" />
+    <Compile Include="Presenters\Nodes\RootNodeTypes.cs" />
+    <Compile Include="Presenters\ObservedData\BaseDataRepositoryDataPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\DataRepositoryChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\CategorialParameterIdentificationRunModePresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\CloneObjectBasePresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\EditParameterIdentificationPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\IdentificationParameterEventArgs.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationItemPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationRunModePresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationSingleRunAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\MultipleParameterIdentificationFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\MultipleParameterIdentificationResultsPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\MultipleParameterIdentificationRunModePresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationAnalysisChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationChartFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationConfigurationPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationCorrelationAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationCovarianceAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationDataSelectionPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationErrorHistoryFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationFeedbackEditorSettings.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationIdentificationParametersPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationItem.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationLinkedParametersPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationMatrixAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationOutputMappingPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationParameterSelectionPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationParametersFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationPredictedVsObservedChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationPredictedVsObservedFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationResidualHistogramPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationResidualVsTimeChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationResultsPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationRunPropertiesPresenter.cs" />
+    <Compile Include="Presenters\SimulationParametersPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationSimulationSelectionPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationSingleRunAnalysisPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationWeightedObservedDataCollectorPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationWeightedObservedDataPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\SelectionSimulationPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\SimulationEventArgs.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\SingleParameterIdentificationFeedbackPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\SingleParameterIdentificationResultsPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\StandardParameterIdentificationRunModePresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\WeightedDataRepositoryDataPresenter.cs" />
+    <Compile Include="Presenters\PresenterConstants.cs" />
+    <Compile Include="Presenters\ValidationMessagesPresenter.cs" />
+    <Compile Include="Serialization\ChartEditorSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\DataPersistor.cs" />
+    <Compile Include="Serialization\GridColumnSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\ParameterIdentificationFeedbackEditorSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\SensitivityAnalysisFeedbackEditorSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\TabbedPresenterSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\ViewSettingsXmlSerializer.cs" />
+    <Compile Include="Services\Charts\ChartEditorLayoutTask.cs" />
+    <Compile Include="Charts\ChartLayoutTemplateRepository.cs" />
+    <Compile Include="Services\Charts\ChartPresenterContext.cs" />
+    <Compile Include="Services\Charts\ChartTemplatingTask.cs" />
+    <Compile Include="Services\Charts\FontsTask.cs" />
+    <Compile Include="Services\Charts\ICurveAdapterFactory.cs" />
+    <Compile Include="Services\Commands\CommentTask.cs" />
+    <Compile Include="Services\Commands\LabelTask.cs" />
+    <Compile Include="Services\DirectoryMapSettings.cs" />
+    <Compile Include="Services\EntityValidationTask.cs" />
+    <Compile Include="Services\BooleanAsStringFormatter.cs" />
+    <Compile Include="Services\IDiagramLayoutTask.cs" />
+    <Compile Include="Services\Importer\DataImporter.cs" />
+    <Compile Include="Services\Importer\Importer.cs" />
+    <Compile Include="Services\Importer\ImporterTask.cs" />
+    <Compile Include="Services\Importer\LowerLimitOfQuantificationTask.cs" />
+    <Compile Include="Services\Importer\RepositoryNamingTask.cs" />
+    <Compile Include="Services\Importer\SmartXLS.cs" />
+    <Compile Include="Services\ParameterIdentifications\IdentificationParameterNameFormatter.cs" />
+    <Compile Include="Services\IntFormatter.cs" />
+    <Compile Include="Services\IntParameterFormatter.cs" />
+    <Compile Include="Services\ISingleStartPresenterTask.cs" />
+    <Compile Include="Services\ParameterFormatter.cs" />
+    <Compile Include="Services\ParameterIdentifications\IOptimizedParameterRangeImageCreator.cs" />
+    <Compile Include="Services\ParameterIdentifications\ParameterIdentificationExportTask.cs" />
+    <Compile Include="Services\ParameterIdentifications\PredictedVsObservedChartService.cs" />
+    <Compile Include="Services\ParameterIdentificationTask.cs" />
+    <Compile Include="Services\SensitivityAnalyses\SensitivityAnalysisTask.cs" />
+    <Compile Include="Services\SplitToUpperCaseFormatter.cs" />
+    <Compile Include="Services\TimeSpanFormatter.cs" />
+    <Compile Include="Services\ValueDTOFormatter.cs" />
+    <Compile Include="Settings\ChartEditorSettings.cs" />
+    <Compile Include="Settings\GridColumnSettings.cs" />
+    <Compile Include="Settings\JournalPageEditorSettings.cs" />
+    <Compile Include="Core\MenuBarItemExtensions.cs" />
+    <Compile Include="Core\MenuBarItemId.cs" />
+    <Compile Include="Core\IPresenterSettings.cs" />
+    <Compile Include="Core\PresenterSubject.cs" />
+    <Compile Include="Core\SubPresenterItem.cs" />
+    <Compile Include="Core\SubPresenterManager.cs" />
+    <Compile Include="Core\WorkspaceLayout.cs" />
+    <Compile Include="Core\WorkspaceLayoutItem.cs" />
+    <Compile Include="DTO\CellValueChangedDTO.cs" />
+    <Compile Include="DTO\DefaultUnitMapDTO.cs" />
+    <Compile Include="DTO\DiffItemDTO.cs" />
+    <Compile Include="DTO\DxValidatableDTO.cs" />
+    <Compile Include="DTO\ImportFileSelectionDTO.cs" />
+    <Compile Include="DTO\IParameterDTO.cs" />
+    <Compile Include="DTO\IRenameObjectDTOFactory.cs" />
+    <Compile Include="DTO\IWithDisplayUnitDTO.cs" />
+    <Compile Include="DTO\Journal\JournalDTO.cs" />
+    <Compile Include="DTO\Journal\JournalPageDTO.cs" />
+    <Compile Include="DTO\Journal\JournalSearchDTO.cs" />
+    <Compile Include="DTO\MessageStatusFilterDTO.cs" />
+    <Compile Include="DTO\MetaDataDTO.cs" />
+    <Compile Include="DTO\NonEmptyNameDTO.cs" />
+    <Compile Include="DTO\ObjectBaseDTO.cs" />
+    <Compile Include="DTO\ObjectSelectionDTO.cs" />
+    <Compile Include="DTO\OutputIntervalDTO.cs" />
+    <Compile Include="DTO\ParameterDTORules.cs" />
+    <Compile Include="DTO\PathElement.cs" />
+    <Compile Include="DTO\PathElementDTO.cs" />
+    <Compile Include="DTO\PathRepresentableDTO.cs" />
+    <Compile Include="DTO\PathRepresentableDTOExtensions.cs" />
+    <Compile Include="DTO\QuantitySelectionDTO.cs" />
+    <Compile Include="DTO\RenameObjectDTO.cs" />
+    <Compile Include="DTO\ValidatableDTO.cs" />
+    <Compile Include="DTO\ValidatableDTOExtensions.cs" />
+    <Compile Include="Events\Events.cs" />
+    <Compile Include="Extensions\DragEventArgsExtensions.cs" />
+    <Compile Include="Extensions\PointExtensions.cs" />
+    <Compile Include="Extensions\PresenterWithContextMenuExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TreeNodesExtensions.cs" />
+    <Compile Include="HelpId.cs" />
+    <Compile Include="IPresentationUserSettings.cs" />
+    <Compile Include="Mappers\DiffItemToDiffItemDTOMapper.cs" />
+    <Compile Include="Mappers\DiffItemDTOsToDataTableMapper.cs" />
+    <Compile Include="Mappers\ClassificationTypeToRootNodeTypeMapper.cs" />
+    <Compile Include="Mappers\JournalPageToJournalPageDTOMapper.cs" />
+    <Compile Include="Mappers\PathToPathElementsMapper.cs" />
+    <Compile Include="Mappers\QuantityToQuantitySelectionDTOMapper.cs" />
+    <Compile Include="Presenters\AbstractDisposableContainerPresenter.cs" />
+    <Compile Include="Presenters\AbstractReportingPresenter.cs" />
+    <Compile Include="Presenters\BatchUpdate.cs" />
+    <Compile Include="Presenters\Classifications\ClassificationPresenter.cs" />
+    <Compile Include="Presenters\Comparisons\ComparerSettingsPresenter.cs" />
+    <Compile Include="Presenters\Comparisons\ComparisonPresenter.cs" />
+    <Compile Include="Presenters\ContextMenus\ClassificationCommonContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\ClassificationNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\CommonMenuBarButtons.cs" />
+    <Compile Include="Presenters\ContextMenus\ComparisonCommonContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\ComparisonGroupingFolderTreeNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\ContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\ContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\ContextMenuSpecificationFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\JournalContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\JournalPageContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\MultipleNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\MultipleObservedDataNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\NodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\ObjectBaseCommonContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\ObservedDataClassificationCommonContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\ObservedDataClassificationNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\SimulationClassificationCommonContextMenuItems.cs" />
+    <Compile Include="Presenters\ContextMenus\SimulationClassificationNodeContextMenu.cs" />
+    <Compile Include="Presenters\ContextMenus\TabbedMdiChildViewContextMenuFactory.cs" />
+    <Compile Include="Presenters\ContextMenus\ViewItemContextMenuFactory.cs" />
+    <Compile Include="Presenters\DisplayUnitsPresenter.cs" />
+    <Compile Include="Presenters\EditDescriptionPresenter.cs" />
+    <Compile Include="Presenters\AbstractExplorerPresenter.cs" />
+    <Compile Include="Presenters\EditDisplayUnitsPresenter.cs" />
+    <Compile Include="Presenters\EditOutputSelectionsPresenter.cs" />
+    <Compile Include="Presenters\IChartTemplateManagerPresenter.cs" />
+    <Compile Include="Presenters\ISimulationSettingsItemPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalPageEditorFormPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalPageEditorPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalPagePreviewPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalPresenter.cs" />
+    <Compile Include="Presenters\Journal\JournalSearchPresenter.cs" />
+    <Compile Include="Presenters\Journal\RelatedItemComparablePresenter.cs" />
+    <Compile Include="Presenters\Journal\RelatedItemsPresenter.cs" />
+    <Compile Include="Presenters\LogPresenter.cs" />
+    <Compile Include="Presenters\Main\IMainViewItemPresenter.cs" />
+    <Compile Include="Presenters\Main\IMainViewPresenter.cs" />
+    <Compile Include="Presenters\IPresenterWithSettings.cs" />
+    <Compile Include="Presenters\IQuantityPresenter.cs" />
+    <Compile Include="Presenters\Classifications\NameClassificationPresenter.cs" />
+    <Compile Include="Presenters\Main\AbstractMainViewPresenter.cs" />
+    <Compile Include="Presenters\IUnitsInColumnPresenter.cs" />
+    <Compile Include="Presenters\Main\AbstractMenuAndToolBarPresenter.cs" />
+    <Compile Include="Presenters\Comparisons\MainComparisonPresenter.cs" />
+    <Compile Include="Presenters\Nodes\ClassificationNode.cs" />
+    <Compile Include="Presenters\ContextMenus\MultipleTreeNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\Nodes\ObjectWithIdAndNameNode.cs" />
+    <Compile Include="Presenters\Nodes\ObservedDataNode.cs" />
+    <Compile Include="Presenters\Nodes\RootNode.cs" />
+    <Compile Include="Presenters\Nodes\RootNodeType.cs" />
+    <Compile Include="Presenters\ContextMenus\TreeNodeContextMenuFactory.cs" />
+    <Compile Include="Presenters\ObjectBasePresenter.cs" />
+    <Compile Include="Presenters\ObservedData\DataRepositoryDataPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\DataRepositoryMetaDataPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\EditDataRepositoryPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\EditMultipleDataRepositoriesMetaDataPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\ObservedDataInExplorerPresenter.cs" />
+    <Compile Include="Presenters\ObservedData\ObservedDataItems.cs" />
+    <Compile Include="Presenters\QuantityListPresenter.cs" />
+    <Compile Include="Presenters\Classifications\RenameClassificationPresenter.cs" />
+    <Compile Include="Presenters\RenameObjectPresenter.cs" />
+    <Compile Include="Presenters\SingleStartContainerPresenter.cs" />
+    <Compile Include="Presenters\SubjectPresenter.cs" />
+    <Compile Include="Repositories\ButtonGroupRepository.cs" />
+    <Compile Include="Repositories\MenuBarItemRepository.cs" />
+    <Compile Include="Serialization\DefaultPresentationSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\Extensions\XmlSerializerRepositoryExtensions.cs" />
+    <Compile Include="Serialization\IPresentationXmlSerializer.cs" />
+    <Compile Include="Serialization\JournalPageEditorSettingsXmlSerializer.cs" />
+    <Compile Include="Serialization\WorkspaceLayoutItemXmlSerializer.cs" />
+    <Compile Include="Serialization\WorkspaceLayoutXmlSerializer.cs" />
+    <Compile Include="Services\ActiveSubjectRetriever.cs" />
+    <Compile Include="Services\ChartFactory.cs" />
+    <Compile Include="Services\ChartFromTemplateService.cs" />
+    <Compile Include="Services\DisplayUnitRetriever.cs" />
+    <Compile Include="Services\EditObservedDataTask.cs" />
+    <Compile Include="Services\ExceptionManager.cs" />
+    <Compile Include="Services\DisplayNameProvider.cs" />
+    <Compile Include="Services\IJournalExportTask.cs" />
+    <Compile Include="Services\IProjectTask.cs" />
+    <Compile Include="Services\ISkinManager.cs" />
+    <Compile Include="Services\IToolTipPartCreator.cs" />
+    <Compile Include="Services\MRUProvider.cs" />
+    <Compile Include="Services\PresentationSettingsTask.cs" />
+    <Compile Include="Settings\ViewSettings.cs" />
+    <Compile Include="UICommands\ActivateSkinCommand.cs" />
+    <Compile Include="UICommands\ActiveObjectUICommand.cs" />
+    <Compile Include="UICommands\AddRelatedItemsToActiveJournalPageUICommand.cs" />
+    <Compile Include="UICommands\CloneParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\CloneSensitivityAnalysisCommand.cs" />
+    <Compile Include="UICommands\CloseAllButMdiViewCommand.cs" />
+    <Compile Include="UICommands\CloseAllMdiViewCommand.cs" />
+    <Compile Include="UICommands\CloseMdiViewCommand.cs" />
+    <Compile Include="UICommands\ComparisonVisibilityUICommand.cs" />
+    <Compile Include="UICommands\ConcreteTypeRegistrationConvention.cs" />
+    <Compile Include="UICommands\CompareObjectsUICommand.cs" />
+    <Compile Include="UICommands\CreateJournalPageUICommand.cs" />
+    <Compile Include="UICommands\CreateParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\CreateSensisitivityAnalysisBasedOnSimulationUICommand.cs" />
+    <Compile Include="UICommands\CreateSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\DeleteParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\DeleteSelectedObservedDataUICommand.cs" />
+    <Compile Include="UICommands\DeleteSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\EditAxisUICommand.cs" />
+    <Compile Include="UICommands\EditCurveUICommand.cs" />
+    <Compile Include="UICommands\EditParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\EditSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\ExportJournalToFileUICommand.cs" />
+    <Compile Include="UICommands\ExportObservedDataToExcelCommand.cs" />
+    <Compile Include="UICommands\ExportParameterIdentificationToMatLabUICommand.cs" />
+    <Compile Include="UICommands\ExportParameterIdentificationToRUICommand.cs" />
+    <Compile Include="UICommands\GarbageCollectionCommand.cs" />
+    <Compile Include="UICommands\JournalDiagramVisibilityUICommand.cs" />
+    <Compile Include="UICommands\JournalEditorVisibiliyUICommand.cs" />
+    <Compile Include="UICommands\JournalVisibilityCommand.cs" />
+    <Compile Include="UICommands\LoadFavoritesFromFileUICommand.cs" />
+    <Compile Include="UICommands\MainViewItemPresenterVisibilityCommand.cs" />
+    <Compile Include="UICommands\ManageDisplayUnitsUICommand.cs" />
+    <Compile Include="UICommands\OpenMRUProjectCommand.cs" />
+    <Compile Include="UICommands\ParameterIdentificationFeedbackViewVisibilityUICommand.cs" />
+    <Compile Include="UICommands\RefreshJournalUICommand.cs" />
+    <Compile Include="UICommands\RenameObjectBaseUICommand.cs" />
+    <Compile Include="UICommands\RenameParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\RenameSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\RunParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\RunPresenterCommand.cs" />
+    <Compile Include="UICommands\EditMultipleMetaDataUICommand.cs" />
+    <Compile Include="UICommands\RunSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\SaveFavoritesToFileUICommand.cs" />
+    <Compile Include="UICommands\SearchJournalUICommand.cs" />
+    <Compile Include="UICommands\SelectJournalUICommand.cs" />
+    <Compile Include="UICommands\SensitivityAnalysisFeedbackViewVisibilityUICommand.cs" />
+    <Compile Include="UICommands\ShowHelpCommand.cs" />
+    <Compile Include="UICommands\StartParameterIdentificationAnalysisUICommand.cs" />
+    <Compile Include="UICommands\StartSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\StopParameterIdentificationUICommand.cs" />
+    <Compile Include="UICommands\StopSensitivityAnalysisUICommand.cs" />
+    <Compile Include="UICommands\UICommandExtensions.cs" />
+    <Compile Include="UICommands\UpdateAllDisplayUnitsUICommand.cs" />
+    <Compile Include="Views\Charts\DataColumnFormatter.cs" />
+    <Compile Include="Views\Charts\IAxisSettingsView.cs" />
+    <Compile Include="Views\Charts\IChartDisplayView.cs" />
+    <Compile Include="Views\Charts\IChartEditorAndDisplayControl.cs" />
+    <Compile Include="Views\Charts\IChartEditorView.cs" />
+    <Compile Include="Views\Charts\IChartExportSettingsView.cs" />
+    <Compile Include="Views\Charts\IChartSettingsView.cs" />
+    <Compile Include="Views\Charts\IChartTemplateDetailsView.cs" />
+    <Compile Include="Views\Charts\ICurveSettingsView.cs" />
+    <Compile Include="Views\Charts\ICurveTemplateView.cs" />
+    <Compile Include="Views\Charts\IDataBrowserView.cs" />
+    <Compile Include="Views\Charts\IModalChartTemplateManagerView.cs" />
+    <Compile Include="Views\Charts\ISimpleChartView.cs" />
+    <Compile Include="Views\Charts\ISingleAxisSettingsModalView.cs" />
+    <Compile Include="Views\Charts\ISingleAxisSettingsView.cs" />
+    <Compile Include="Views\Charts\ISingleCurveSettingsModalView.cs" />
+    <Compile Include="Views\Charts\ISingleCurveSettingsView.cs" />
+    <Compile Include="Views\Charts\IViewWithColumnSettings.cs" />
+    <Compile Include="Views\Commands\ICommentView.cs" />
+    <Compile Include="Views\Commands\IHistoryBrowserView.cs" />
+    <Compile Include="Views\Commands\ILabelView.cs" />
+    <Compile Include="Views\Comparisons\IMainComparisonView.cs" />
+    <Compile Include="Views\Diagram\IBaseDiagramView.cs" />
+    <Compile Include="Views\Importer\IExcelPreviewView.cs" />
+    <Compile Include="Views\Importer\IImportDataTableGridView.cs" />
+    <Compile Include="Views\Importer\IImporterView.cs" />
+    <Compile Include="Views\Importer\INamingPatternView.cs" />
+    <Compile Include="Views\Journal\IJournalDiagramMainView.cs" />
+    <Compile Include="Views\Journal\IJournalDiagramView.cs" />
+    <Compile Include="Views\ExplorerViewExtensions.cs" />
+    <Compile Include="Views\Comparisons\IComparerSettingsView.cs" />
+    <Compile Include="Views\Comparisons\IComparisonView.cs" />
+    <Compile Include="Views\ContextMenus\IContextMenuView.cs" />
+    <Compile Include="Views\IChartTemplateManagerView.cs" />
+    <Compile Include="Views\IDisplayUnitsView.cs" />
+    <Compile Include="Views\IEditAnalyzableView.cs" />
+    <Compile Include="Views\IEditDisplayUnitsView.cs" />
+    <Compile Include="Views\IEditOutputSelectionsView.cs" />
+    <Compile Include="Views\IExplorerView.cs" />
+    <Compile Include="Views\IExtendedPropertiesView.cs" />
+    <Compile Include="Views\ILogView.cs" />
+    <Compile Include="Views\IMainView.cs" />
+    <Compile Include="Views\IMenuAndToolBarView.cs" />
+    <Compile Include="Views\IObjectBaseView.cs" />
+    <Compile Include="Views\IStatusBarView.cs" />
+    <Compile Include="UICommands\ObjectUICommands.cs" />
+    <Compile Include="Views\IQuantityListView.cs" />
+    <Compile Include="Views\IQuantitySelectionView.cs" />
+    <Compile Include="PresentationRegister.cs" />
+    <Compile Include="Presenters\AbstractPresenter.cs" />
+    <Compile Include="Presenters\AbstractCommandCollectorPresenter.cs" />
+    <Compile Include="Presenters\AbstractSubPresenter.cs" />
+    <Compile Include="Presenters\AbstractDisposableCommandCollectorPresenter.cs" />
+    <Compile Include="Presenters\AbstractDisposableSubPresenterContainerPresenter.cs" />
+    <Compile Include="Presenters\AbstractDisposablePresenter.cs" />
+    <Compile Include="Presenters\HeavyWorkPresenter.cs" />
+    <Compile Include="Presenters\IHeavyWorkPresenterFactory.cs" />
+    <Compile Include="Presenters\IPresenter.cs" />
+    <Compile Include="Presenters\IReleasable.cs" />
+    <Compile Include="Presenters\ISingleStartPresenter.cs" />
+    <Compile Include="Presenters\QuantitySelectionPresenter.cs" />
+    <Compile Include="Presenters\SingleStartPresenter.cs" />
+    <Compile Include="Presenters\WizardPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Regions\IRegion.cs" />
+    <Compile Include="Regions\RegionName.cs" />
+    <Compile Include="Regions\RegionResolver.cs" />
+    <Compile Include="Services\HeavyWorkManager.cs" />
+    <Compile Include="Views\IExceptionView.cs" />
+    <Compile Include="Views\IHeavyWorkView.cs" />
+    <Compile Include="Views\IMdiChildView.cs" />
+    <Compile Include="Views\IReportingView.cs" />
+    <Compile Include="Views\IShell.cs" />
+    <Compile Include="Views\IToggleableView.cs" />
+    <Compile Include="Views\IUxTreeView.cs" />
+    <Compile Include="Views\IValidationMessagesView.cs" />
+    <Compile Include="Views\IView.cs" />
+    <Compile Include="Views\IWizardView.cs" />
+    <Compile Include="Presenters\ObservedData\IDataRepositoryItemPresenter.cs" />
+    <Compile Include="Views\Journal\IJournalPageEditorFormView.cs" />
+    <Compile Include="Views\Journal\IJournalPageEditorView.cs" />
+    <Compile Include="Views\Journal\IJournalPagePreviewView.cs" />
+    <Compile Include="Views\Journal\IJournalSearchView.cs" />
+    <Compile Include="Views\Journal\IJournalView.cs" />
+    <Compile Include="Views\Journal\IRelatedItemComparableView.cs" />
+    <Compile Include="Views\Journal\IRelatedItemsView.cs" />
+    <Compile Include="Views\ObservedData\IBaseDataRepositoryDataView.cs" />
+    <Compile Include="Views\ObservedData\IDataRepositoryChartView.cs" />
+    <Compile Include="Views\ObservedData\IDataRepositoryDataView.cs" />
+    <Compile Include="Views\ObservedData\IDataRepositoryMetaDataView.cs" />
+    <Compile Include="Views\ObservedData\IEditDataRepositoryView.cs" />
+    <Compile Include="Views\ObservedData\IEditMultipleDataRepositoriesMetaDataView.cs" />
+    <Compile Include="Views\ParameterIdentifications\ICategorialParameterIdentificationRunModeView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IEditParameterIdentificationView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IMultipleParameterIdentificationRunModeView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationChartFeedbackView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationConfidenceIntervalView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationConfigurationView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationCovarianceAnalysisView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationMatrixView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationDataSelectionView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationErrorHistoryFeedbackView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationFeedbackView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationIdentificationParametersView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationLinkedParametersView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationMultipleRunsAnalysisView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationOutputMappingView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationParameterSelectionView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationParametersFeedbackView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationResidualHistogramView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationResultsView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationRunPropertiesView.cs" />
+    <Compile Include="Views\ISimulationParametersView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationSimulationSelectionView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationSingleRunAnalysisView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationWeightedObservedDataCollectorView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IParameterIdentificationWeightedObservedDataView.cs" />
+    <Compile Include="Views\ParameterIdentifications\ISelectionSimulationView.cs" />
+    <Compile Include="Views\ParameterIdentifications\ISingleParameterIdentificationFeedbackView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IStandardParameterIdentificationRunModeView.cs" />
+    <Compile Include="Views\ParameterIdentifications\IWeightedDataRepositoryDataView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\IEditSensitivityAnalysisView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisFeedbackView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisParameterSelectionView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisParametersView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisPKParameterAnalysisView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisResultsView.cs" />
+    <Compile Include="Views\SensitivityAnalyses\ISensitivityAnalysisSetValueView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Layouts\Standard View.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Layouts\Tabbed View.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Layouts\TwoTabs View.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Layouts\Variable X-Axis View.xml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.r" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.m" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj">
+      <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
+      <Name>OSPSuite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj">
+      <Project>{10AD6F46-ACA2-4005-91E6-CE84FEEE9419}</Project>
+      <Name>OSPSuite.Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="OSPSuite.Presentation.nuspec" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

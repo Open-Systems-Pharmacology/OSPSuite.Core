@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A3DF5E6B-9EC5-4F19-9240-8050B23459B4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OSPSuite.UI</RootNamespace>
+    <AssemblyName>OSPSuite.UI.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.BonusSkins.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.BonusSkins.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Charts.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Charts.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Office.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Office.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.PivotGrid.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.PivotGrid.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Printing.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.RichEdit.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraBars.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraBars.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2.UI, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2.Wizard, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.Wizard.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraEditors.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraEditors.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraLayout.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraLayout.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraNavBar.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraNavBar.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPivotGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPivotGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPrinting.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPrinting.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2.Extensions, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraTreeList.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraTreeList.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraVerticalGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraVerticalGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="FakeItEasy">
+      <HintPath>..\..\packages\FakeItEasy.2.3.3\lib\net40\FakeItEasy.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OSPSuite.BDDHelper">
+      <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.0.1\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Utility">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="ClipboardTaskSpecs.cs" />
+    <Compile Include="ColumnMappingControlSpecs.cs" />
+    <Compile Include="FormExtensionsSpecs.cs" />
+    <Compile Include="HistoryItemDTOListSpecs.cs" />
+    <Compile Include="HistoryToHistoryDTOMapperSpecs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UxTreeViewSpecs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Data\Test1.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test2.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test3.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test4.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Test5.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
+      <Project>{46cb3fbc-88b4-4016-aec9-91c165ea5671}</Project>
+      <Name>OSPSuite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
+      <Project>{2f8b2246-4458-494a-9a62-3f6e6f62082a}</Project>
+      <Name>OSPSuite.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
+      <Project>{10ad6f46-aca2-4005-91e6-ce84feee9419}</Project>
+      <Name>OSPSuite.Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj">
+      <Project>{956bdd93-1426-4527-9797-f9c479bd6bc5}</Project>
+      <Name>OSPSuite.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OSPSuite.Core.Tests\OSPSuite.Core.Tests.csproj">
+      <Project>{8389E18C-5B97-412D-A2CA-2269AF687F03}</Project>
+      <Name>OSPSuite.Core.Tests</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

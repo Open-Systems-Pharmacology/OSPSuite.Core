@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="ChartLayoutsFolder" />
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="ChartLayouts">
+            <Component Id="cmp0F0C611BBCF4F39097D3259B653B2E5F" Directory="ChartLayoutsFolder" Guid="{199D060E-687E-4406-A9E9-42527F219408}">
+                <File Id="fil13A38EA16D7D0AA8D1C063CE387694DF" KeyPath="yes" Source="$(var.DeployDir)\Standard View.xml" />
+            </Component>
+            <Component Id="cmp048C5C36945E9251586FE6D527102BFA" Directory="ChartLayoutsFolder" Guid="{FFD275A4-5E77-4560-9747-EF3790DB6006}">
+                <File Id="fil886522E75A9D5ACA50FCE23F738B8D98" KeyPath="yes" Source="$(var.DeployDir)\Tabbed View.xml" />
+            </Component>
+            <Component Id="cmp0B3C81071A74AFE6B0FAACFCA5F8C283" Directory="ChartLayoutsFolder" Guid="{02AB610E-448E-496D-9A30-C0CC84B0C73A}">
+                <File Id="filA9CD8214804FD339546423CBA04319CE" KeyPath="yes" Source="$(var.DeployDir)\TwoTabs View.xml" />
+            </Component>
+            <Component Id="cmp9BEBC2291711566AE4D87C8F29166A0E" Directory="ChartLayoutsFolder" Guid="{4E4312F1-98F1-4A0C-B699-C9BC4E0E08D8}">
+                <File Id="fil2E6BB67C4449E11E27C68691320038B3" KeyPath="yes" Source="$(var.DeployDir)\Variable X-Axis View.xml" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

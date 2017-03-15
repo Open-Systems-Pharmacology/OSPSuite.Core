@@ -1,0 +1,535 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6457DB7A-E3C9-48E0-A886-601570E0C060}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OSPSuite.Starter</RootNamespace>
+    <AssemblyName>OSPSuite.Starter</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>OSPSuite.Starter.TestProgram</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.4.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Windsor.3.4.0\lib\net45\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DevExpress.BonusSkins.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.BonusSkins.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Charts.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Charts.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Office.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Office.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.PivotGrid.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.PivotGrid.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Printing.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.RichEdit.v16.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraBars.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraBars.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2.UI, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v16.2.Wizard, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.Wizard.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraEditors.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraEditors.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraLayout.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraLayout.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraNavBar.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraNavBar.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPivotGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPivotGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPrinting.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPrinting.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2.Extensions, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraTreeList.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraTreeList.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraVerticalGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraVerticalGrid.v16.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Northwoods.Go, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Draw, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Draw.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Instruments, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Instruments.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Layout, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Layout.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Pdf, Version=5.1.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Pdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Svg, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Svg.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Northwoods.Go.Xml, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Xml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OSPSuite.DataBinding">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.2.0.0.1\lib\net45\OSPSuite.DataBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.DataBinding.DevExpress">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.0.0.1\lib\net45\OSPSuite.DataBinding.DevExpress.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Serializer">
+      <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.Utility">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.SQLite, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.104.0\lib\net451\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Bootstrapping\ApplicationStartup.cs" />
+    <Compile Include="Presenters\ComparisonTestPresenter.cs" />
+    <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
+    <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
+    <Compile Include="Presenters\ExplorerTestPresenter.cs" />
+    <Compile Include="Presenters\IJournalRichEditFormPresenter.cs" />
+    <Compile Include="Presenters\ImporterTestPresenter.cs" />
+    <Compile Include="Presenters\JournalPresenter.cs" />
+    <Compile Include="Presenters\MainComparisonPresenter.cs" />
+    <Compile Include="Presenters\MenuAndToolBarPresenter.cs" />
+    <Compile Include="Presenters\MenuBarItemRepository.cs" />
+    <Compile Include="Presenters\OptimizationStarterPresenter.cs" />
+    <Compile Include="Presenters\PivotGridTestPresenter.cs" />
+    <Compile Include="Presenters\RegionNames.cs" />
+    <Compile Include="Presenters\ShellPresenter.cs" />
+    <Compile Include="Tasks\ClassificationTypeToRootNodeTypeMapper.cs" />
+    <Compile Include="Tasks\MyContext.cs" />
+    <Compile Include="Tasks\MyExceptionManager.cs" />
+    <Compile Include="Tasks\ObjectTypeResolver.cs" />
+    <Compile Include="Tasks\ParameterValueSetCommand.cs" />
+    <Compile Include="Tasks\SimulationSelector.cs" />
+    <Compile Include="Tasks\Starters\CommandBrowserStarter.cs" />
+    <Compile Include="Tasks\Starters\ComparisonTestStarter.cs" />
+    <Compile Include="Tasks\Starters\DataRepositoryStarter.cs" />
+    <Compile Include="Tasks\Starters\ExplorerTestStarter.cs" />
+    <Compile Include="Tasks\Starters\ImporterStarter.cs" />
+    <Compile Include="Tasks\Starters\JournalTestStarter.cs" />
+    <Compile Include="Tasks\Starters\GridTestStarter.cs" />
+    <Compile Include="Tasks\Starters\ChartTestStarter.cs" />
+    <Compile Include="Tasks\ApplicationConfiguration.cs" />
+    <Compile Include="Tasks\ChangePropagator.cs" />
+    <Compile Include="Forms\GridViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GridViewForm.Designer.cs">
+      <DependentUpon>GridViewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tasks\ApplicationDescriminator.cs" />
+    <Compile Include="Tasks\PresentationUserSettings.cs" />
+    <Compile Include="ConstantsForSpecs.cs" />
+    <Compile Include="CreateDataForQuantityVisitor.cs" />
+    <Compile Include="Tasks\DimensionRetriever.cs" />
+    <Compile Include="Tasks\GroupRepository.cs" />
+    <Compile Include="Tasks\License.cs" />
+    <Compile Include="Tasks\ProgressManager.cs" />
+    <Compile Include="Layouts.cs" />
+    <Compile Include="Presenters\JournalTestPresenter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\RelatedItemDescriptionCreator.cs" />
+    <Compile Include="Tasks\Starters\OptimizationStarter.cs" />
+    <Compile Include="Tasks\Starters\PivotGridStarter.cs" />
+    <Compile Include="Tasks\Starters\ShellStarter.cs" />
+    <Compile Include="Tasks\Starters\SimpleUIStarter.cs" />
+    <Compile Include="Tasks\Starters\TestStarter.cs" />
+    <Compile Include="Tasks\ImporterConfigurationDataGenerator.cs" />
+    <Compile Include="Tasks\ToolTipPartCreator.cs" />
+    <Compile Include="Tasks\Workspace.cs" />
+    <Compile Include="Tasks\CloneManager.cs" />
+    <Compile Include="Tasks\OSPSuiteExecutionContext.cs" />
+    <Compile Include="Tasks\ProjectRetriever.cs" />
+    <Compile Include="TestRegister.cs" />
+    <Compile Include="Views\ComparisonTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ComparisonTestView.Designer.cs">
+      <DependentUpon>ComparisonTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataRepositoryTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\DataRepositoryTestView.Designer.cs">
+      <DependentUpon>DataRepositoryTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FormMain.designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IDataRepositoryTestView.cs" />
+    <Compile Include="Views\ExplorerForTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ExplorerForTestView.Designer.cs">
+      <DependentUpon>ExplorerForTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExplorerTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ExplorerTestView.Designer.cs">
+      <DependentUpon>ExplorerTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IComparisonTestView.cs" />
+    <Compile Include="Views\IExplorerForTestView.cs" />
+    <Compile Include="Views\IExplorerTestView.cs" />
+    <Compile Include="Views\IImporterTestView.cs" />
+    <Compile Include="Views\IJournalRichEditFormView.cs" />
+    <Compile Include="Views\IJournalTestView.cs" />
+    <Compile Include="Views\ImporterTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ImporterTestView.Designer.cs">
+      <DependentUpon>ImporterTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IOptimizationStarterView.cs" />
+    <Compile Include="Views\IPivotGridTestView.cs" />
+    <Compile Include="Views\IShellVIew.cs" />
+    <Compile Include="Views\ITestView.cs" />
+    <Compile Include="Views\JournalRichEditFormView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\JournalRichEditFormView.Designer.cs">
+      <DependentUpon>JournalRichEditFormView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JournalTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\JournalTestView.Designer.cs">
+      <DependentUpon>JournalTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presenters\TestPresenter.cs" />
+    <Compile Include="Views\OptimizationStarterView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\OptimizationStarterView.Designer.cs">
+      <DependentUpon>OptimizationStarterView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PivotGridTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\PivotGridTestView.Designer.cs">
+      <DependentUpon>PivotGridTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShellView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ShellView.Designer.cs">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SimpleUIStarterView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SimpleUIStarterView.designer.cs">
+      <DependentUpon>SimpleUIStarterView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StaticCommandList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\StaticCommandList.designer.cs">
+      <DependentUpon>StaticCommandList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TestView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\TestView.Designer.cs">
+      <DependentUpon>TestView.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Forms\GridViewForm.resx">
+      <DependentUpon>GridViewForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QuantitySelectionForm.resx">
+      <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChartTestProgramForm.resx">
+      <DependentUpon>ChartTestProgramForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Views\ComparisonTestView.resx">
+      <DependentUpon>ComparisonTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\DataRepositoryTestView.resx">
+      <DependentUpon>DataRepositoryTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ExplorerTestView.resx">
+      <DependentUpon>ExplorerTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ImporterTestView.resx">
+      <DependentUpon>ImporterTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\JournalRichEditFormView.resx">
+      <DependentUpon>JournalRichEditFormView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\JournalTestView.resx">
+      <DependentUpon>JournalTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\OptimizationStarterView.resx">
+      <DependentUpon>OptimizationStarterView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\PivotGridTestView.resx">
+      <DependentUpon>PivotGridTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ShellView.resx">
+      <DependentUpon>ShellView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SimpleUIStarterView.resx">
+      <DependentUpon>SimpleUIStarterView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\StaticCommandList.resx">
+      <DependentUpon>StaticCommandList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\TestView.resx">
+      <DependentUpon>TestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="QuantitySelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QuantitySelectionForm.Designer.cs">
+      <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleExceptionManager.cs" />
+    <Compile Include="Tasks\ChartTemplatingTask.cs" />
+    <Compile Include="TestConverterter.cs" />
+    <Compile Include="TestEnvironment.cs" />
+    <Compile Include="TestProgram.cs" />
+    <Compile Include="TestProgramButton.cs" />
+    <Compile Include="ChartTestProgramForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChartTestProgramForm.Designer.cs">
+      <DependentUpon>ChartTestProgramForm.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fish.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
+      <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
+      <Name>OSPSuite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj">
+      <Project>{9545FA35-289D-4457-9461-C5F940694607}</Project>
+      <Name>OSPSuite.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
+      <Project>{2F8B2246-4458-494A-9A62-3F6E6F62082A}</Project>
+      <Name>OSPSuite.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
+      <Project>{10AD6F46-ACA2-4005-91E6-CE84FEEE9419}</Project>
+      <Name>OSPSuite.Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj">
+      <Project>{956BDD93-1426-4527-9797-F9C479BD6BC5}</Project>
+      <Name>OSPSuite.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OSPSuite.Core.Tests\OSPSuite.Core.Tests.csproj">
+      <Project>{8389E18C-5B97-412D-A2CA-2269AF687F03}</Project>
+      <Name>OSPSuite.Core.Tests</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets'))" />
+  </Target>
+</Project>

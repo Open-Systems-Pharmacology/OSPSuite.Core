@@ -1,0 +1,58 @@
+﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
+
+namespace OSPSuite.Core.Comparison
+{
+   public class ParameterDiffBuilder : DiffBuilder<IParameter>
+   {
+      private readonly QuantityDiffBuilder _quantityDiffBuilder;
+      private readonly IObjectComparer _objectComparer;
+
+      public ParameterDiffBuilder(QuantityDiffBuilder quantityDiffBuilder, IObjectComparer objectComparer)
+      {
+         _quantityDiffBuilder = quantityDiffBuilder;
+         _objectComparer = objectComparer;
+      }
+
+      public override void Compare(IComparison<IParameter> comparison)
+      {
+         if (!ShouldCompareParametersIn(comparison))
+            return;
+
+         _quantityDiffBuilder.Compare(comparison);
+         CompareValues(x => x.BuildMode, x => x.BuildMode, comparison);
+
+         if (shouldCompareRHSFormula(comparison))
+            _objectComparer.Compare(comparison.ChildComparison(x => x.RHSFormula));
+         else
+            CompareValues(x => x.RHSFormula != null, Captions.Diff.IsStateVariable, comparison);
+
+         if (comparison.Settings.OnlyComputingRelevant)
+            return;
+
+         CompareValues(x => x.Visible, x => x.Visible, comparison);
+      }
+
+      private bool shouldCompareRHSFormula(IComparison<IParameter> comparison)
+      {
+         if (!comparison.ComparedObjectsDefined)
+            return false;
+
+         return comparison.Object1.RHSFormula != null && comparison.Object2.RHSFormula != null;
+      }
+
+      public bool ShouldCompareParametersIn(IComparison<IParameter> comparison)
+      {
+         if (!comparison.ComparedObjectsDefined)
+            return true;
+
+         var parameter1 = comparison.Object1;
+         var parameter2 = comparison.Object2;
+         if (parameter1.Visible && parameter2.Visible)
+            return true;
+
+         //at least one parameter hidden
+         return comparison.Settings.CompareHiddenEntities;
+      }
+   }
+}
