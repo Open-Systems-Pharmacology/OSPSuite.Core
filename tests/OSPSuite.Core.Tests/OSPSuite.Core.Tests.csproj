@@ -704,10 +704,10 @@
       <Link>OSPSuite.SimModelSolver_CVODES282.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="..\..\src\Common\OSPSuite.Dimensions.xml">
+    <Content Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
       <Link>OSPSuite.Dimensions.xml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="..\..\src\Common\OSPSuite.PKParameters.xml">
       <Link>OSPSuite.PKParameters.xml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
