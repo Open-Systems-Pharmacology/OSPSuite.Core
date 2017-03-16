@@ -473,6 +473,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\Common\OSPSuite.PKParameters.xml">
+      <Link>OSPSuite.PKParameters.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
+      <Link>OSPSuite.Dimensions.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="fish.bmp" />
   </ItemGroup>
   <ItemGroup>

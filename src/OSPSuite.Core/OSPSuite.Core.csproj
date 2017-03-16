@@ -1039,18 +1039,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Common\OSPSuite.Dimensions.xml">
-      <Link>OSPSuite.Dimensions.xml</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\Common\OSPSuite.PKParameters.xml">
-      <Link>OSPSuite.PKParameters.xml</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj">
       <Project>{10ad6f46-aca2-4005-91e6-ce84feee9419}</Project>
       <Name>OSPSuite.Assets</Name>
