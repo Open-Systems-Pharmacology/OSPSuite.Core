@@ -1,5 +1,3 @@
-* text
-
 *.bmp binary
 *.dll binary
 *.gif binary
@@ -7,6 +5,18 @@
 *.png binary
 *.snk binary
 *.exe binary
+*.ico binary
+*.pksim5 binary
+*.mbp3 binary
+*.xls binary
+*.xlsx binary
+*.sbj binary
+*.doc binary
+*.docx binary
+*.mdb binary
+*.TIF binary
+*.ico binary
+
 
 *.ascx text
 *.cd text
@@ -38,5 +48,6 @@
 *.wsf text
 *.xml text
 *.xunit text
+*.pkml text
 
 *.sln text eol=crlf merge=union
