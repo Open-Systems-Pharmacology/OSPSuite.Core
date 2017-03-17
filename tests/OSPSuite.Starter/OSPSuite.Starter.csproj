@@ -240,7 +240,6 @@
     <Compile Include="Presenters\ShellPresenter.cs" />
     <Compile Include="Tasks\ClassificationTypeToRootNodeTypeMapper.cs" />
     <Compile Include="Tasks\MyContext.cs" />
-    <Compile Include="Tasks\MyExceptionManager.cs" />
     <Compile Include="Tasks\ObjectTypeResolver.cs" />
     <Compile Include="Tasks\ParameterValueSetCommand.cs" />
     <Compile Include="Tasks\SimulationSelector.cs" />
@@ -459,7 +458,6 @@
     <Compile Include="QuantitySelectionForm.Designer.cs">
       <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleExceptionManager.cs" />
     <Compile Include="Tasks\ChartTemplatingTask.cs" />
     <Compile Include="TestConverterter.cs" />
     <Compile Include="TestEnvironment.cs" />

@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
-using Process = System.Diagnostics.Process;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
    public partial class ExceptionView : XtraForm, IExceptionView
    {
-      private string _supportEmail;
       private string _assemblyInfo;
-      private const int _maxEmailSize = 1964;
+      private string _issueTrackerUrl;
       private const string _couldNotCopyToClipboard = "Unable to copy the information to the clipboard.";
       public object MainView { private get; set; }
 
@@ -25,7 +22,6 @@ namespace OSPSuite.UI.Views
       {
          InitializeComponent();
          initializeResources();
-         btnSendEmail.Click += (o, e) => sendEmail();
          btnCopyToClipboard.Click += (o, e) => copyToClipboard();
       }
 
@@ -39,13 +35,19 @@ namespace OSPSuite.UI.Views
          lblDescription.AllowHtmlString = true;
          MinimizeBox = false;
          MaximizeBox = false;
-         btnSendEmail.Text = "Send Email...";
-         btnCopyToClipboard.Text = "Copy to Clipboard";
-         btnOk.Text = "Close";
+         btnCopyToClipboard.Text = Captions.CopyToClipboard;
+         btnClose.Text = Captions.CloseButton;
          layoutItemOk.AdjustButtonSize();
          layoutItemCopyToClipbord.AdjustButtonSize();
-         layoutItemSendEmail.AdjustButtonSize();
-         Description = Captions.ExceptionViewDescription(Constants.SUPPORT_EMAIL);
+         layoutGroupException.Text = Captions.Exception;
+         layoutGroupStackTraceException.Text = Captions.StackTrace;
+         issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
+         ActiveControl = btnClose;
+      }
+
+      private void goToIssueTracker(OpenLinkEventArgs e)
+      {
+         e.EditValue = _issueTrackerUrl;
       }
 
       public string Description
@@ -57,19 +59,14 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public void Initialize(string caption, ApplicationIcon icon, string emailSubject, string supportEmail)
-      {
-         Initialize(caption, icon, emailSubject, supportEmail, "Exception", "Stack Trace");
-      }
-
-      public void Initialize(string caption, ApplicationIcon icon, string emailSubject, string supportEmail, string exceptionDisplay, string fullStackTraceDisplay)
+      public void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName)
       {
          Text = caption;
          Icon = icon;
-         layoutGroupException.Text = exceptionDisplay;
-         layoutGroupStackTraceException.Text = fullStackTraceDisplay;
-         _assemblyInfo = emailSubject;
-         _supportEmail = supportEmail;
+         _assemblyInfo = productInfo;
+         _issueTrackerUrl = issueTrackerUrl;
+         Description = Captions.ExceptionViewDescription(issueTrackerUrl);
+         issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);
       }
 
       private void copyToClipboard()
@@ -105,39 +102,12 @@ namespace OSPSuite.UI.Views
 
       private string fullContent()
       {
-         return string.Format("{0}\n\nStack trace:\n{1}", ExceptionMessage, FullStackTrace);
-      }
-
-      private void showException(Exception ex)
-      {
-         showException(ex.FullMessage());
+         return $"Application:\n{_assemblyInfo}\n\n{ExceptionMessage}\n\nStack trace:\n{FullStackTrace}";
       }
 
       private void showException(string message)
       {
          XtraMessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-      }
-
-      private void sendEmail()
-      {
-         try
-         {
-
-            //0A makes new line available in outlook!
-            var fullMessage = fullContent().Replace(Environment.NewLine, "%0A");
-
-            if(fullMessage.Length > _maxEmailSize)
-            {
-               fullMessage = string.Format("Please copy the error content using the '{0}' button.", btnCopyToClipboard.Text);
-            }
-
-            var psi = new ProcessStartInfo(string.Format("mailto:{0}?subject={1}&body={2}", _supportEmail, _assemblyInfo, fullMessage));
-            Process.Start(psi);
-         }
-         catch (Exception ex)
-         {
-            showException(ex);
-         }
       }
 
       public string ExceptionMessage
@@ -181,5 +151,7 @@ namespace OSPSuite.UI.Views
          FullStackTrace = exception.FullStackTrace();
          Display();
       }
+
+   
    }
 }

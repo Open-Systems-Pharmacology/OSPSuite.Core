@@ -1,6 +1,8 @@
-﻿using OSPSuite.Presentation.Presenters;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -18,6 +20,7 @@ namespace OSPSuite.Starter.Presenters
       void StartParameterIdentificationTest();
       void StartCommandBrowserTest();
       void StartSimpleUITest();
+      void StartExceptionView();
 
    }
 
@@ -113,6 +116,12 @@ namespace OSPSuite.Starter.Presenters
       public void StartSimpleUITest()
       {
          _simpleUIStarter.Start();
+      }
+
+      public void StartExceptionView()
+      {
+         Parameter parameter = null;
+         this.DoWithinExceptionHandler(() => parameter.Value = 10);
       }
    }
 }

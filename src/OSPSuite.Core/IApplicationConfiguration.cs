@@ -23,8 +23,7 @@ namespace OSPSuite.Core
       ///    Path of the pk analyses file
       /// </summary>
       string PKParametersFilePath { get; set; }
-
-
+      
       /// <summary>
       /// Path of the license agreement file
       /// </summary>
@@ -71,5 +70,10 @@ namespace OSPSuite.Core
       /// Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent one down to the first available one)
       /// </summary>
       IEnumerable<string> UserApplicationSettingsFilePaths { get; }
+
+      /// <summary>
+      /// Returns the url of the issue tracker
+      /// </summary>
+      string IssueTrackerUrl { get; }
    }
 }

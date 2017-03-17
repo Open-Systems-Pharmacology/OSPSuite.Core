@@ -26,6 +26,7 @@ namespace OSPSuite.Starter.Views
          startParameterIdentificationTestButton.Click += (sender, args) => OnEvent(_presenter.StartParameterIdentificationTest);
          startCommandBrowserTestButton.Click += (sender, args) => OnEvent(_presenter.StartCommandBrowserTest);
          startSimpleUITestButton.Click += (sender, args) => OnEvent(_presenter.StartSimpleUITest);
+         startExceptionViewButton.Click += (sender, args) => OnEvent(_presenter.StartExceptionView);
       }
 
       public override void InitializeResources()
@@ -43,6 +44,7 @@ namespace OSPSuite.Starter.Views
          startParameterIdentificationTestButton.Text = "Start Parameter Identification Test";
          startCommandBrowserTestButton.Text = "Start Command Browser Test";
          startSimpleUITestButton.Text = "Simple UI Test";
+         startExceptionViewButton.Text = "Start Exception View";
       }
 
       public void AttachPresenter(ITestPresenter presenter)

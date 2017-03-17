@@ -42,7 +42,7 @@ namespace OSPSuite.Starter
          container.Register<IProjectRetriever, ProjectRetriever>(LifeStyle.Singleton);
          container.Register<IWorkspace, Workspace>(LifeStyle.Singleton);
          container.Register<IFileLocker, FileLocker>(LifeStyle.Singleton);
-         container.Register<IExceptionManager, SimpleExceptionManager>(LifeStyle.Singleton);
+         container.Register<IExceptionManager, ExceptionManager>(LifeStyle.Singleton);
          container.Register<IProgressManager, ProgressManager>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
          container.Register<IReactionDimensionRetriever, DimensionRetriever>(LifeStyle.Singleton);
