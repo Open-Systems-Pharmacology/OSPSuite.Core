@@ -196,9 +196,9 @@ namespace OSPSuite.Assets
          return "New name for the cloned {0} '{1}'".FormatWith(entityType, name);
       }
 
-      public static string ContactSupport(string support)
+      public static string ContactSupport(string forumUrl)
       {
-         return $"For more information or questions, please visit the Open Systems Pharmacology Forum ({support}).";
+         return $"For more information or questions, please visit the Open Systems Pharmacology Forum ({forumUrl}).";
       }
 
       public static string CreatedOn(string creationDate)
