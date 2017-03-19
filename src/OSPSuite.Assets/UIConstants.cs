@@ -249,9 +249,9 @@ namespace OSPSuite.Assets
          sb.AppendLine("To best address the error, please enter an issue in our issue tracker:");
          sb.AppendLine($"    1 - Visit <b>{issueTrackerUrl}</b> or click on the link below");
          sb.AppendLine("    2 - Click on the <b>New Issue</b> button");
-         sb.AppendLine($"    3 - Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description");
-         sb.AppendLine("    2 - Describe the steps you took prior to the problem emerging");
-         sb.AppendLine("    3 - if possible, attach your project file to the issue (do not attach confidential information).");
+         sb.AppendLine("    3 - Describe the steps you took prior to the problem emerging");
+         sb.AppendLine($"    4 - Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description");
+         sb.AppendLine("    5 - if possible, attach your project file to the issue (do not attach confidential information)");
          sb.AppendLine();
          sb.AppendLine("Note: A GitHub account is required to create an issue");
          return sb.ToString();
