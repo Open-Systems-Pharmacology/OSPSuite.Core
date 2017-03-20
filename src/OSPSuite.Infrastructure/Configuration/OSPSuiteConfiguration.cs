@@ -22,6 +22,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract string ProductNameWithTrademark { get; }
       public abstract ApplicationIcon Icon { get; }
       public abstract string UserSettingsFileName { get; }
+      public abstract string IssueTrackerUrl { get; }
 
       public string FullVersion => $"{Version} - Build {AssemblyVersion.Revision}";
 

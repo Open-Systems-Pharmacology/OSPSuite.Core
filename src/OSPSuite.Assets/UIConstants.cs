@@ -175,6 +175,11 @@ namespace OSPSuite.Assets
       public static readonly string DataTable = "DataTable";
       public static readonly string Label = "Label";
       public static readonly string Comments = "Comments";
+      public static readonly string CopyToClipboard = "Copy to Clipboard";
+      public static readonly string Exception = "Exception";
+      public static readonly string StackTrace = "Stack Trace";
+
+      public static string IssueTrackerLinkFor(string application) => $"Go to {application} Issue Tracker";
 
       public static string ReallyDeleteAllObservedData(IEnumerable<string> anythingNotDeleted)
       {
@@ -191,9 +196,9 @@ namespace OSPSuite.Assets
          return "New name for the cloned {0} '{1}'".FormatWith(entityType, name);
       }
 
-      public static string ContactSupport(string support)
+      public static string ContactSupport(string forumUrl)
       {
-         return $"For more information, please contact your SB-Suite support ({support})";
+         return $"For more information or questions, please visit the Open Systems Pharmacology Forum ({forumUrl}).";
       }
 
       public static string CreatedOn(string creationDate)
@@ -236,17 +241,19 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
-      public static string ExceptionViewDescription(string supportEmail)
+      public static string ExceptionViewDescription(string issueTrackerUrl)
       {
          var sb = new StringBuilder();
          sb.AppendLine("oops...something went terribly wrong.");
          sb.AppendLine();
-         sb.AppendLine($"To best address the error, please send us an email at <B>{supportEmail}</B> with:");
-         sb.AppendLine("    1 - the information below");
-         sb.AppendLine("    2 - the steps you took prior to the problem emerging");
-         sb.AppendLine("    3 - if possible, attach your project file to the email (do not send confidential information by email).");
+         sb.AppendLine("To best address the error, please enter an issue in our issue tracker:");
+         sb.AppendLine($"    1 - Visit <b>{issueTrackerUrl}</b> or click on the link below");
+         sb.AppendLine("    2 - Click on the <b>New Issue</b> button");
+         sb.AppendLine("    3 - Describe the steps you took prior to the problem emerging");
+         sb.AppendLine($"    4 - Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description");
+         sb.AppendLine("    5 - if possible, attach your project file to the issue (do not attach confidential information)");
          sb.AppendLine();
-         sb.AppendLine("<I>Be assured that your project file will be kept confidential and will <B>only</B> be used by our developers to understand what went wrong.</I>");
+         sb.AppendLine("Note: A GitHub account is required to create an issue");
          return sb.ToString();
       }
 

@@ -62,11 +62,11 @@ namespace OSPSuite.Core.Domain
       public const string NAN = "<NaN>";
       public static readonly string CHILD = "Child";
 
-      public static readonly string SUPPORT_EMAIL = "support@systems-biology.com";
       public static readonly string PRODUCT_SITE = "www.open-systems-pharmacology.org";
       public static readonly string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
       public static readonly string HELP_NAMESPACE = "Open Systems Pharmacology Suite.chm";
       public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
+      public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
 
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;

@@ -20,8 +20,8 @@ namespace OSPSuite.Presentation.Services
       {
          _dialogCreator = dialogCreator;
          _exceptionView = exceptionView;
-         var emailSubject = $"Error in {configuration.ProductNameWithTrademark} {configuration.FullVersion}";
-         _exceptionView.Initialize($"{configuration.ProductName}-Error", configuration.Icon, emailSubject, Constants.SUPPORT_EMAIL);
+         var productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
+         _exceptionView.Initialize($"{productInfo} - Error", configuration.Icon, productInfo, configuration.IssueTrackerUrl, configuration.ProductName);
       }
 
       public override void LogException(Exception ex)
@@ -58,7 +58,7 @@ namespace OSPSuite.Presentation.Services
          if (isWrapperException(ex))
             return ExceptionMessageFrom(ex.InnerException);
 
-         return string.Format("{0}\n{1}", ex.FullMessage(), Captions.ContactSupport(Constants.SUPPORT_EMAIL));
+         return $"{ex.FullMessage()}\n{Captions.ContactSupport(Constants.FORUM_SITE)}";
       }
 
       private static bool isWrapperException(Exception ex)
@@ -68,7 +68,7 @@ namespace OSPSuite.Presentation.Services
 
       public static string ExceptionMessageWithStackTraceFrom(Exception ex)
       {
-         return string.Format("{0}\n\nStack trace:\n{1}", ExceptionMessageFrom(ex), ex.FullStackTrace());
+         return $"{ExceptionMessageFrom(ex)}\n\nStack trace:\n{ex.FullStackTrace()}";
       }
    }
 }
