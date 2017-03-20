@@ -5,6 +5,7 @@ Core functionalities of the Open Systems Pharmacology Suite.
 ## Code Status
 [![NuGet version](https://img.shields.io/nuget/v/OSPSuite.Core.svg?style=flat)](https://www.nuget.org/packages/OSPSuite.Core)
 [![Build status](https://ci.appveyor.com/api/projects/status/w3ecxmp3grryc5ts/branch/master?svg=true&passingText=master%20-%20passing)](https://ci.appveyor.com/project/open-systems-pharmacology-ci/ospsuite-core/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/rwmcintosh/OSPSuite.Core/badge.svg?branch=master)](https://coveralls.io/github/rwmcintosh/OSPSuite.Core?branch=master)
 
 ## Code of conduct
 Everyone interacting in the Open Systems Pharmacology community (codebases, issue trackers, chat rooms, mailing lists etc...) is expected to follow the Open Systems Pharmacology [code of conduct](https://github.com/Open-Systems-Pharmacology/Suite/blob/master/CODE_OF_CONDUCT.md).
@@ -14,6 +15,3 @@ We encourage contribution to the Open Systems Pharmacology community. Before get
 
 ## License
 OSPSuite.Core is released under the [GPLv2 License](LICENSE).
-
-## Coverage
-[![Coverage Status](https://coveralls.io/repos/github/rwmcintosh/OSPSuite.Core/badge.svg?branch=master)](https://coveralls.io/github/rwmcintosh/OSPSuite.Core?branch=master)
