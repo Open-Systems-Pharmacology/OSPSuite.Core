@@ -15,7 +15,6 @@
     <tags>open-systems-pharmacology</tags>
   </metadata>
   <files>
-    <file src="..\common\OSPSuite.PKParameters.xml" target="OSPSuite.Core" />
     <file src="bin\$configuration$\$id$.pdb" target="lib\net452" />
   </files>
 </package>

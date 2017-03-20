@@ -1,3 +1,6 @@
 [submodule "src/OSPSuite.Dimensions"]
 	path = src/OSPSuite.Dimensions
 	url = https://github.com/Open-Systems-Pharmacology/OSPSuite.Dimensions.git
+[submodule "src/OSPSuite.PKParameters"]
+	path = src/OSPSuite.PKParameters
+	url = https://github.com/Open-Systems-Pharmacology/OSPSuite.PKParameters.git
