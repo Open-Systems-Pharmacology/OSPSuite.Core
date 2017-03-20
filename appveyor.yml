@@ -38,6 +38,10 @@ test:
     - OSPSuite.Core.Tests.dll
     - OSPSuite.UI.Tests.dll
 
+environment:
+  COVERALLS_REPO_TOKEN:
+        secure: tElMt6ZvRe3aviaEfHimM4zoEcxApeAJPliCUMlO9+Z4x0LcD7GwPaGQITpwppKf
+
 install:
  - git submodule update --init --recursive
  - ps: >-

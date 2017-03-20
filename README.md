@@ -14,3 +14,6 @@ We encourage contribution to the Open Systems Pharmacology community. Before get
 
 ## License
 OSPSuite.Core is released under the [GPLv2 License](LICENSE).
+
+## Coverage
+[![Coverage Status](https://coveralls.io/repos/github/rwmcintosh/OSPSuite.Core/badge.svg?branch=master)](https://coveralls.io/github/rwmcintosh/OSPSuite.Core?branch=master)
