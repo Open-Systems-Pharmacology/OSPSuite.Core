@@ -32,6 +32,7 @@ build:
   publish_nuget: true
   verbosity: minimal
   include_nuget_references: true
+  project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
 
