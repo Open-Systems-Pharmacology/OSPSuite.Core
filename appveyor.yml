@@ -2,6 +2,8 @@ configuration: Debug
 
 environment:
   app_version: '7.1.0'
+  COVERALLS_REPO_TOKEN:
+        secure: tElMt6ZvRe3aviaEfHimM4zoEcxApeAJPliCUMlO9+Z4x0LcD7GwPaGQITpwppKf
 
 version: '%app_version%.{build}'
 
@@ -35,10 +37,6 @@ skip_branch_with_pr: true
 
 test_script:
   - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]* +[OSPSuite.UI]* "]
-
-environment:
-  COVERALLS_REPO_TOKEN:
-        secure: tElMt6ZvRe3aviaEfHimM4zoEcxApeAJPliCUMlO9+Z4x0LcD7GwPaGQITpwppKf
 
 install:
  - git submodule update --init --recursive
