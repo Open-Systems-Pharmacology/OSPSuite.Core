@@ -2,5 +2,5 @@
 	path = src/OSPSuite.Dimensions
 	url = https://github.com/Open-Systems-Pharmacology/OSPSuite.Dimensions.git
 [submodule "build-scripts"]
-	path = build-scripts
+	path = scripts
 	url = https://github.com/rwmcintosh/build-scripts.git

@@ -1,1 +1,1 @@
-require_relative 'build-scripts/coverage'
+require_relative 'scripts/coverage'
