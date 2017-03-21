@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Container;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Starter.Bootstrapping;
 using OSPSuite.Starter.Presenters;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter
 {
@@ -31,7 +31,6 @@ namespace OSPSuite.Starter
          if (column.DataInfo.Origin == ColumnOrigins.Observation) path.Add(column.Name);
          return path;
       }
-
 
       public static string IdentificationKeyDefintion(DataColumn col)
       {
@@ -68,7 +67,7 @@ namespace OSPSuite.Starter
       {
          ApplicationStartup.Initialize();
 
-           Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
+         Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
       }
    }
 
