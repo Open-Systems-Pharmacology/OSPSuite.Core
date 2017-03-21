@@ -37,7 +37,7 @@ build:
 skip_branch_with_pr: true
 
 test_script:
-  - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]* +[OSPSuite.UI]* "]
+  - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]*"]
 
 install:
  - git submodule update --init --recursive
