@@ -2,6 +2,8 @@ configuration: Debug
 
 environment:
   app_version: '7.1.0'
+  COVERALLS_REPO_TOKEN:
+    secure: RNtCVakeVmnnxGR4djlmhBbE83cx/t4sqqFkqhQLeHw8uf5n5UT0rvYGdkNseeIi/Ab5+RIITpexnKCP
 
 version: '%app_version%.{build}'
 
@@ -9,7 +11,7 @@ assembly_info:
   patch: true
   file: SolutionInfo.*
   assembly_version: "{version}"
-  assembly_file_version: "{version}"  
+  assembly_file_version: "{version}"	
 
 cache:
   packages -> **\packages.config  
@@ -27,16 +29,11 @@ before_build:
   - nuget restore
 
 build:
-  publish_nuget: true
   verbosity: minimal
-  include_nuget_references: true
+  project: OSPSuite.Core.sln
 
-skip_branch_with_pr: true
-
-test:
-  assemblies:
-    - OSPSuite.Core.Tests.dll
-    - OSPSuite.UI.Tests.dll
+test_script:
+  - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]*"]
 
 install:
  - git submodule update --init --recursive
@@ -44,18 +41,3 @@ install:
     (new-object net.webclient).DownloadFile('https://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi', 'C:\\msxml.msi')
 
     Start-Process msiexec.exe -ArgumentList /i, C:\msxml.msi, /quiet, /qn, /norestart -Wait
-
-skip_commits:
-  files:
-    - '*.md'
-
-pull_requests: 
-  do_not_increment_build_number: true     
-
-nuget: 
-  disable_publish_on_pr: true  
-
-notifications:
-  - provider: Slack
-    incoming_webhook:      
-      secure: 4MH9Em6TtrKalq6808dhPOqypTfYBJvVlqPaa9akNyF1h7st5qNdNezFp6T+bWXqrcZ4q/smtPcJ7LkUFHL46JDYUFlIL8FDz+ApX/vP+x0=
