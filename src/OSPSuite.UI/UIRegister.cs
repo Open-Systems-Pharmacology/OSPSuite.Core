@@ -1,4 +1,5 @@
 ﻿using DevExpress.XtraRichEdit;
+using Northwoods.Go;
 using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
@@ -36,6 +37,14 @@ namespace OSPSuite.UI
 
          //Register open types
          container.Register(typeof(PathElementsBinder<>), typeof(PathElementsBinder<>));
+      }
+
+      /// <summary>
+      /// This needs to be set as early as possible (before GoDiagram component is being instantiated)
+      /// </summary>
+      public static string GoDiagramKey
+      {
+         set { GoView.LicenseKey = value; }
       }
    }
 }
