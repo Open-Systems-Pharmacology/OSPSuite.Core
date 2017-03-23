@@ -4,14 +4,17 @@ using Castle.Facilities.TypedFactory;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Converter.v5_2;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Journal;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Collections;
@@ -27,6 +30,8 @@ namespace OSPSuite.Helpers
    {
       public override void GlobalContext()
       {
+         if (IoC.Container != null) return;
+
          base.GlobalContext();
          var container = new CastleWindsorContainer();
 
@@ -34,7 +39,6 @@ namespace OSPSuite.Helpers
          IoC.RegisterImplementationOf(IoC.Container);
 
          container.WindsorContainer.AddFacility<TypedFactoryFacility>();
-         container.AddRegister(x => x.FromType<CoreRegister>());
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
          container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
@@ -45,42 +49,71 @@ namespace OSPSuite.Helpers
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
          container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
+
          var stringCompression = A.Fake<IStringCompression>();
          A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
          A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
-
          container.RegisterImplementationOf(stringCompression);
+
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
          container.RegisterImplementationOf(A.Fake<IDisplayUnitRetriever>());
          container.RegisterImplementationOf(A.Fake<IDataRepositoryTask>());
+         container.RegisterImplementationOf(A.Fake<IOSPSuiteExecutionContext>());
+         container.RegisterImplementationOf(A.Fake<IProjectRetriever>());
+         container.RegisterImplementationOf(A.Fake<IApplicationDiscriminator>());
+         container.RegisterImplementationOf(A.Fake<IRelatedItemDescriptionCreator>());
+         container.RegisterImplementationOf(A.Fake<IJournalDiagramManagerFactory>());
+
          var applicationConfiguration = A.Fake<IApplicationConfiguration>();
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);
-         IoC.Container.RegisterImplementationOf(applicationConfiguration);
+         container.RegisterImplementationOf(applicationConfiguration);
 
-         var groupRepository = IoC.Resolve<IGroupRepository>();
-         var moBiGroup = new Group { Name = Constants.Groups.MOBI, Id="1" };
-         var undefinedGroup = new Group { Name = Constants.Groups.UNDEFINED, Id = "0" };
-         var solverSettingsGroup = new Group { Name = Constants.Groups.SOLVER_SETTINGS, Id = "2" };
-         groupRepository.AddGroup(moBiGroup);
-         groupRepository.AddGroup(solverSettingsGroup);
-         groupRepository.AddGroup(undefinedGroup);
+         initGroupRepository();
 
          var progressMananager = A.Fake<IProgressManager>();
          A.CallTo(() => progressMananager.Create()).Returns(A.Fake<IProgressUpdater>());
-         IoC.Container.RegisterImplementationOf(progressMananager);
+         container.RegisterImplementationOf(progressMananager);
 
-         var register = new CoreSerializerRegister();
-         IoC.Container.AddRegister(x => x.FromInstance(register));
-         register.PerformMappingForSerializerIn(IoC.Container);
+         using (container.OptimizeDependencyResolution())
+         {
+            container.AddRegister(x => x.FromType<CoreRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureRegister>());
+            var register = new CoreSerializerRegister();
+            container.AddRegister(x => x.FromInstance(register));
+            register.PerformMappingForSerializerIn(container);
+         }
 
+         initializeDimensions();
+
+         Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+      }
+
+      private static void initGroupRepository()
+      {
+         var groupRepository = IoC.Resolve<IGroupRepository>();
+         var moBiGroup = new Group {Name = Constants.Groups.MOBI, Id = "1"};
+         var undefinedGroup = new Group {Name = Constants.Groups.UNDEFINED, Id = "0"};
+         var solverSettingsGroup = new Group {Name = Constants.Groups.SOLVER_SETTINGS, Id = "2"};
+         groupRepository.AddGroup(moBiGroup);
+         groupRepository.AddGroup(solverSettingsGroup);
+         groupRepository.AddGroup(undefinedGroup);
+      }
+
+      private static void initializeDimensions()
+      {
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         var persistor = IoC.Resolve<IDimensionFactoryPersistor>();   
+         var persistor = IoC.Resolve<IDimensionFactoryPersistor>();
          persistor.Load(dimensionFactory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.Dimensions.xml"));
          dimensionFactory.AddDimension(Constants.Dimension.NO_DIMENSION);
          var dimensionMapper = IoC.Resolve<IDimensionMapper>();
          dimensionMapper.DummyDimensionsForConversion.Each(dimensionFactory.AddDimension);
+      }
 
-         Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         var withIdRepository = IoC.Resolve<IWithIdRepository>();
+         withIdRepository.Clear();
       }
    }
 
