@@ -3,7 +3,7 @@ configuration: Debug
 environment:
   app_version: '7.1.0'
   COVERALLS_REPO_TOKEN:
-    secure: RNtCVakeVmnnxGR4djlmhBbE83cx/t4sqqFkqhQLeHw8uf5n5UT0rvYGdkNseeIi/Ab5+RIITpexnKCP
+    secure: RNtCVakeVmnnxGR4djlmhBbE83cx/t4sqqFkqhQLeHw8uf5n5UT0rvYGdkNseeIi
 
 version: '%app_version%.{build}'
 
@@ -33,7 +33,7 @@ build:
   project: OSPSuite.Core.sln
 
 test_script:
-  - rake "cover['+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM* -[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars -[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus', OSPSuite.Core.Tests.csproj]"
+  - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM* -[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars -[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus",OSPSuite.Core.Tests.csproj]
 
 install:  
  - git submodule update --init --recursive
