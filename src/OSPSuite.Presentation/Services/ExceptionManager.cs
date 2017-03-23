@@ -15,13 +15,14 @@ namespace OSPSuite.Presentation.Services
    {
       private readonly IDialogCreator _dialogCreator;
       private readonly IExceptionView _exceptionView;
+      private readonly string _productInfo;
 
       public ExceptionManager(IDialogCreator dialogCreator, IExceptionView exceptionView, IApplicationConfiguration configuration)
       {
          _dialogCreator = dialogCreator;
          _exceptionView = exceptionView;
-         var productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
-         _exceptionView.Initialize($"{productInfo} - Error", configuration.Icon, productInfo, configuration.IssueTrackerUrl, configuration.ProductName);
+         _productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
+         _exceptionView.Initialize($"{_productInfo} - Error", configuration.Icon, _productInfo, configuration.IssueTrackerUrl, configuration.ProductName);
       }
 
       public override void LogException(Exception ex)
@@ -34,9 +35,21 @@ namespace OSPSuite.Presentation.Services
          }
          else
          {
-            _exceptionView.Display(ex);
-            this.LogError(ex);
+            showException(ex);
          }
+      }
+
+      private void showException(Exception ex)
+      {
+         var message = ex.FullMessage();
+         var stackTrace = ex.FullStackTrace();
+         _exceptionView.Display(message, stackTrace, clipboardContentFrom(message, stackTrace));
+         this.LogError(ex);
+      }
+
+      private string clipboardContentFrom(string message, string stackTrace)
+      {
+         return $"Application:\n{_productInfo}\n\n{message}\n\nStack trace:\n```\n{stackTrace}\n```";
       }
 
       private static bool isInfoException(Exception ex)

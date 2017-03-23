@@ -5,6 +5,7 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 14.0.24720.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9ED8AA66-5E2F-4900-846B-4D2758832061}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor-coverage.yml = appveyor-coverage.yml
 		appveyor.yml = appveyor.yml
 		copy_to_mobi.bat = copy_to_mobi.bat
 		copy_to_pksim.bat = copy_to_pksim.bat
