@@ -592,6 +592,7 @@
     <Compile Include="Presentation\EditObservedDataTaskSpecs.cs" />
     <Compile Include="Presentation\EditParameterIdentificationPresenterSpecs.cs" />
     <Compile Include="Presentation\EntityValidationTaskSpecs.cs" />
+    <Compile Include="Presentation\ExceptionManagerSpecs.cs" />
     <Compile Include="Presentation\ExportParameterIdentificationToMatlabUICommandSpecs.cs" />
     <Compile Include="Presentation\ExportParameterIdentificationToRUICommandSpecs.cs" />
     <Compile Include="Presentation\FontsTaskSpecs.cs" />

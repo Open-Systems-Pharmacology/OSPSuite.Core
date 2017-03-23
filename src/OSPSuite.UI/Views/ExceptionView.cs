@@ -13,8 +13,9 @@ namespace OSPSuite.UI.Views
 {
    public partial class ExceptionView : XtraForm, IExceptionView
    {
-      private string _assemblyInfo;
+      private string _productInfo;
       private string _issueTrackerUrl;
+      private string _cliboardContent;
       private const string _couldNotCopyToClipboard = "Unable to copy the information to the clipboard.";
       public object MainView { private get; set; }
 
@@ -63,7 +64,7 @@ namespace OSPSuite.UI.Views
       {
          Text = caption;
          Icon = icon;
-         _assemblyInfo = productInfo;
+         _productInfo = productInfo;
          _issueTrackerUrl = issueTrackerUrl;
          Description = Captions.ExceptionViewDescription(issueTrackerUrl);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);
@@ -97,14 +98,10 @@ namespace OSPSuite.UI.Views
 
       private void copyToClipboardOnUIThread()
       {
-         Clipboard.SetText(fullContent());
+         Clipboard.SetText(_cliboardContent);
       }
 
-      private string fullContent()
-      {
-         return $"Application:\n{_assemblyInfo}\n\n{ExceptionMessage}\n\nStack trace:\n{FullStackTrace}";
-      }
-
+    
       private void showException(string message)
       {
          XtraMessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -145,13 +142,12 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public void Display(Exception exception)
+      public void Display(string message, string stackTrace, string clipboardContent)
       {
-         ExceptionMessage = exception.FullMessage();
-         FullStackTrace = exception.FullStackTrace();
+         ExceptionMessage = message;
+         FullStackTrace = stackTrace;
+         _cliboardContent = clipboardContent;
          Display();
       }
-
-   
    }
 }
