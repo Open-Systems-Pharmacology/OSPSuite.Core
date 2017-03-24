@@ -34,6 +34,11 @@ build:
 
 skip_branch_with_pr: true
 
+branches:
+  only:
+  - master
+  - develop
+
 test:
   assemblies:
     - OSPSuite.Core.Tests.dll
