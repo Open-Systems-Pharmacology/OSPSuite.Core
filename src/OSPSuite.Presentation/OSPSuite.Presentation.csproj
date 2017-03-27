@@ -126,7 +126,6 @@
     <Compile Include="Mappers\IDataTableToStringMapper.cs" />
     <Compile Include="Mappers\IHistoryItemDTOEnumerableToHistoryItemDTOList.cs" />
     <Compile Include="Mappers\IHistoryToHistoryDTOMapper.cs" />
-    <Compile Include="Presenters\ContextMenus\ContextMenuRegistrationConvention.cs" />
     <Compile Include="Presenters\Importer\ExcelPreviewPresenter.cs" />
     <Compile Include="Presenters\Importer\Fonts.cs" />
     <Compile Include="Presenters\Importer\ImportDataTableGridPresenter.cs" />

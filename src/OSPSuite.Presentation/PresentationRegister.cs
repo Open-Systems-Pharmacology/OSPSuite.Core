@@ -85,7 +85,7 @@ namespace OSPSuite.Presentation
          {
             scan.AssemblyContainingType<PresenterRegister>();
             scan.IncludeNamespaceContainingType<IContextMenu>();
-            scan.WithConvention<ContextMenuRegistrationConvention>();
+            scan.WithConvention<AllInterfacesAndConcreteTypeRegistrationConvention>();
          });
       }
 
