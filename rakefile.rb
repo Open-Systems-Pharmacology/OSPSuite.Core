@@ -1,6 +1,21 @@
 require_relative 'scripts/coverage'
 require_relative 'scripts/copy-dependencies'
 
+task :cover do 
+  filter = []
+  filter << "+[OSPSuite.Core]*"
+  filter << "+[OSPSuite.Infrastructure]*"
+  filter << "+[OSPSuite.Presentation]*"
+
+  #exclude namespaces that are tested from applications
+  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting*"
+  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM*"
+  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars"
+  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus"
+
+  Coverage.cover(filter, "OSPSuite.Core.Tests.csproj")
+end
+
 task :copy_to_pksim do
 	copy_to_app '../PK-Sim/src/PKSim/bin/Debug/'
 end

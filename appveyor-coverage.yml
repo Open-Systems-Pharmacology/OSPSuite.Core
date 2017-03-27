@@ -2,8 +2,6 @@ configuration: Debug
 
 environment:
   app_version: '7.1.0'
-  COVERALLS_REPO_TOKEN:
-    secure: RNtCVakeVmnnxGR4djlmhBbE83cx/t4sqqFkqhQLeHw8uf5n5UT0rvYGdkNseeIi
 
 version: '%app_version%.{build}'
 
@@ -33,10 +31,11 @@ build:
   project: OSPSuite.Core.sln
 
 test_script:
-  - rake cover["+[OSPSuite.Core]* +[OSPSuite.Assets]* +[OSPSuite.Infrastructure]* +[OSPSuite.Presentation]* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting* -[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM* -[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars -[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus",OSPSuite.Core.Tests.csproj]
+  - rake cover
 
 install:  
- - set PATH=C:\Ruby22\bin;%PATH%
+ - set PATH=C:\Ruby22\bin;C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+ - pip install codecov
  - git submodule update --init --recursive
  - ps: >-
     (new-object net.webclient).DownloadFile('https://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi', 'C:\\msxml.msi')
