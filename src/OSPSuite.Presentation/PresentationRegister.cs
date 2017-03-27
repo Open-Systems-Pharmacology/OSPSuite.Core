@@ -55,17 +55,10 @@ namespace OSPSuite.Presentation
             scan.ExcludeType<DataColumnToPathElementsMapper>();
          });
 
-         container.AddScanner(scan =>
-         {
-            scan.AssemblyContainingType<PresenterRegister>();
-            //Commands
-            scan.IncludeNamespaceContainingType<GarbageCollectionCommand>();
+         registerUICommands(container);
 
-            //Context Menus
-            scan.IncludeNamespaceContainingType<IContextMenu>();
-            scan.WithConvention(new ConcreteTypeRegistrationConvention());
-         });
-
+         registerContextMenus(container);
+         
          registerSingleStartPresenters(container);
 
          //OPEN TYPES
@@ -84,6 +77,26 @@ namespace OSPSuite.Presentation
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();
          container.Register<ChartEditorSettings, ChartEditorSettings>();
          container.Register<ChartPresenterContext, ChartPresenterContext>();
+      }
+
+      private static void registerContextMenus(IContainer container)
+      {
+         container.AddScanner(scan =>
+         {
+            scan.AssemblyContainingType<PresenterRegister>();
+            scan.IncludeNamespaceContainingType<IContextMenu>();
+            scan.WithConvention<ContextMenuRegistrationConvention>();
+         });
+      }
+
+      private static void registerUICommands(IContainer container)
+      {
+         container.AddScanner(scan =>
+         {
+            scan.AssemblyContainingType<PresenterRegister>();
+            scan.IncludeNamespaceContainingType<GarbageCollectionCommand>();
+            scan.WithConvention<ConcreteTypeRegistrationConvention>();
+         });
       }
 
       private static void registerSingleStartPresenters(IContainer container)
