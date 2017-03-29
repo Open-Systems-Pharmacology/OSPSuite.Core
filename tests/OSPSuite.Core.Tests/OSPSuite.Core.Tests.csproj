@@ -166,7 +166,9 @@
     <Compile Include="Core\AliasCreatorSpecs.cs" />
     <Compile Include="Core\Chart\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\Chart\UnitToMinorIntervalMapperSpecs.cs" />
+    <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
+    <Compile Include="Helpers\SimulationNode.cs" />
     <Compile Include="Helpers\TestObjectBaseFactory.cs" />
     <Compile Include="Helpers\ARootContainer.cs" />
     <Compile Include="Core\ArrayExtensionsSpecs.cs" />
@@ -559,6 +561,7 @@
     <Compile Include="Presentation\ChartFactorySpecs.cs" />
     <Compile Include="Presentation\ChartFromTemplateServiceSpecs.cs" />
     <Compile Include="Presentation\ChartTemplateManagerPresenterSpecs.cs" />
+    <Compile Include="Presentation\ClassificationPresenterSpecs.cs" />
     <Compile Include="Presentation\ClassificationTypeToRootNodeTypeMapperSpecs.cs" />
     <Compile Include="Presentation\CloneParameterIdentificationPresenterSpecs.cs" />
     <Compile Include="Presentation\CloneParameterIdentificationUICommandSpecs.cs" />
@@ -624,6 +627,7 @@
     <Compile Include="Presentation\NonEmptyNameDTOSpecs.cs" />
     <Compile Include="Presentation\NullSimulationQuantitySelectionDTOSpecs.cs" />
     <Compile Include="Presentation\ObjectBaseDTOSpecs.cs" />
+    <Compile Include="Presentation\ObjectBaseNodeSpecs.cs" />
     <Compile Include="Presentation\ObjectUICommandSpecs.cs" />
     <Compile Include="Presentation\ObservedDataDragDropBinderSpecs.cs" />
     <Compile Include="Presentation\ObservedDataInExplorerPresenterSpecs.cs" />
@@ -690,6 +694,7 @@
     <Compile Include="Presentation\StandardParameterIdentificationRunModePresenterSpecs.cs" />
     <Compile Include="Presentation\StringExtensionsSpecs.cs" />
     <Compile Include="Presentation\SubPresenterHelper.cs" />
+    <Compile Include="Presentation\SubPresenterItemSpecs.cs" />
     <Compile Include="Presentation\SubPresenterManagerSpecs.cs" />
     <Compile Include="Helpers\TestNode.cs" />
     <Compile Include="Presentation\TreeNodeExtensionSpecs.cs" />

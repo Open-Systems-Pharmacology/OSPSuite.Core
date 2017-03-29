@@ -5,10 +5,9 @@ namespace OSPSuite.Helpers
 {
    public class TestNode : AbstractNode<string>
    {
-      private readonly string _id;
       private readonly string _name;
 
-      public TestNode():this(string.Empty)
+      public TestNode() : this(string.Empty)
       {
       }
 
@@ -17,18 +16,13 @@ namespace OSPSuite.Helpers
       {
       }
 
-      public TestNode(string id, string name):base(id)
+      public TestNode(string id, string name) : base(id)
       {
-         _id = id;
+         Id = id;
          _name = name;
          Text = _name;
       }
 
-      public override string Id
-      {
-         get { return _id; }
-      }
-
-    
+      public override string Id { get; }
    }
 }
