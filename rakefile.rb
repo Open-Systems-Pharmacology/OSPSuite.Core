@@ -10,8 +10,8 @@ task :cover do
   #exclude namespaces that are tested from applications
   filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting*"
   filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM*"
-  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars"
-  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus"
+  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars*"
+  filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
   Coverage.cover(filter, "OSPSuite.Core.Tests.csproj")
 end

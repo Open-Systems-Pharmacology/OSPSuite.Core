@@ -19,9 +19,6 @@ namespace OSPSuite.Core.Domain
          return Subject.ExtendedPropertyValueFor(propertyName);
       }
 
-      public DataRepository Repository
-      {
-         get { return Subject; }
-      }
+      public DataRepository Repository => Subject;
    }
 }
