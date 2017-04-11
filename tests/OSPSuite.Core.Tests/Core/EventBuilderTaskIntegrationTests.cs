@@ -7,7 +7,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_event_builder_task : ContextForModelConstructorIntegration
+   public abstract class concern_for_EventBuilderTask : ContextForModelConstructorIntegration
    {
       protected CreationResult _creationResult;
 
@@ -18,7 +18,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_creating_simulation_with_many_floating_molecules_and_nested_applications_and_nonapplication_eventgroups : concern_for_event_builder_task
+   public class When_creating_simulation_with_many_floating_molecules_and_nested_applications_and_nonapplication_eventgroups : concern_for_EventBuilderTask
    {
       private IList<IEventGroup> _allEventGroups;
       private const string C1 = "C1";
