@@ -32,10 +32,11 @@ namespace OSPSuite.UI.Controls
          _clipboardTask = new ClipboardTask();
          _barManager = new BarManager {Form = this};
          _popupMenu = new PopupMenu(_barManager);
-         _barManager.SetPopupContextMenu(this, _popupMenu);
 
-         if (addDefaultPopup)
-            initializePopup();
+         if (!addDefaultPopup) return;
+
+         _barManager.SetPopupContextMenu(this, _popupMenu);
+         initializePopup();
       }
 
       /// <summary>
