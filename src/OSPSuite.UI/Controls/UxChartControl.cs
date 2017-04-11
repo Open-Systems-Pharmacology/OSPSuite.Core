@@ -33,10 +33,8 @@ namespace OSPSuite.UI.Controls
          _barManager = new BarManager {Form = this};
          _popupMenu = new PopupMenu(_barManager);
 
-         if (!addDefaultPopup) return;
-
-         _barManager.SetPopupContextMenu(this, _popupMenu);
-         initializePopup();
+         if (addDefaultPopup)
+            initializePopup();
       }
 
       /// <summary>
@@ -104,6 +102,7 @@ namespace OSPSuite.UI.Controls
 
       private void initializePopup()
       {
+         _barManager.SetPopupContextMenu(this, _popupMenu);
          AddPopupMenu(Captions.CopyAsImage, CopyToClipboard, ApplicationIcons.Paste);
       }
 
