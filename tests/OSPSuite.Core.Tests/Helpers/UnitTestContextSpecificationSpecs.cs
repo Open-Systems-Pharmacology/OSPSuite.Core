@@ -63,6 +63,8 @@ namespace OSPSuite.Helpers
          container.RegisterImplementationOf(A.Fake<IApplicationDiscriminator>());
          container.RegisterImplementationOf(A.Fake<IRelatedItemDescriptionCreator>());
          container.RegisterImplementationOf(A.Fake<IJournalDiagramManagerFactory>());
+         container.RegisterImplementationOf(A.Fake<ICoreUserSettings>());
+         container.RegisterImplementationOf(A.Fake<ICoreSimulationFactory>());
 
          var applicationConfiguration = A.Fake<IApplicationConfiguration>();
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);

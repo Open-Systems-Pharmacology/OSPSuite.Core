@@ -10,7 +10,6 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Reporting;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Container;
@@ -81,6 +80,8 @@ namespace OSPSuite.Core
 
          reigsterConverters(container);
 
+         registerParameterIdentificationRunFactories(container);
+
          //FACTORIES
          container.RegisterFactory<IDiagramModelFactory>();
          container.RegisterFactory<IModelValidatorFactory>();
@@ -123,6 +124,13 @@ namespace OSPSuite.Core
             scan.WithConvention<RegisterTypeConvention<IDiffBuilder>>();
          });
          container.Register<EnumerableComparer, EnumerableComparer>();
+      }
+
+      private static void registerParameterIdentificationRunFactories(IContainer container)
+      {
+         container.Register<IParameterIdentificationRunSpecificationFactory, CategorialParameterIdentificationRunFactory>();
+         container.Register<IParameterIdentificationRunSpecificationFactory, MultipleParameterIdentificationRunFactory>();
+         container.Register<IParameterIdentificationRunSpecificationFactory, StandardParameterIdentificationRunFactory>();
       }
    }
 }
