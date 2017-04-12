@@ -70,12 +70,21 @@ namespace OSPSuite.UI.Views.Importer
             prevPage.Appearance.Header.Font = Fonts.NonSelectedTabHeaderFont;
       }
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         layoutItemSelectRange.AdjustLongButtonSize();
+         layoutItemImportAll.AdjustButtonSize();
+         layoutItemImport.AdjustButtonSize();
+         btnSelectRange.InitWithImage(ApplicationIcons.PreviewOriginData, Captions.Importer.PreviewExcelData);
+         resetImportButtonText();
+      }
+
       public void StartImport(string sourceFile, ImportTableConfiguration configuration, Mode mode)
       {
          var metaDataCategories = configuration.MetaDataCategories;
          _mode = mode;
          _columnInfos = configuration.ColumnInfos;
-         btnSelectRange.InitWithImage(ApplicationIcons.PreviewOriginData, Captions.Importer.PreviewExcelData);
 
          var importDataTable = _importMapper.ConvertToImportDataTable(metaDataCategories, _columnInfos);
 
