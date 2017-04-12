@@ -33,21 +33,17 @@
          this.SourcePage = new DevExpress.XtraTab.XtraTabPage();
          this.layoutControlSourceTab = new DevExpress.XtraLayout.LayoutControl();
          this.btnSelectRange = new DevExpress.XtraEditors.SimpleButton();
-         this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();
          this.openSourceFileControlPanel = new DevExpress.XtraEditors.PanelControl();
          this.columnMappingControlPanel = new DevExpress.XtraEditors.PanelControl();
          this.sourceFilePreviewControlPanel = new DevExpress.XtraEditors.PanelControl();
-         this.btnImport = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlGroupSourceTab = new DevExpress.XtraLayout.LayoutControlGroup();
          this.Mapping = new DevExpress.XtraLayout.LayoutControlItem();
          this.Preview = new DevExpress.XtraLayout.LayoutControlItem();
          this.splitterItem = new DevExpress.XtraLayout.SplitterItem();
          this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.layoutItemSelectRange = new DevExpress.XtraLayout.LayoutControlItem();
          this.ImportsPage = new DevExpress.XtraTab.XtraTabPage();
          this.layoutControlTab = new DevExpress.XtraLayout.LayoutControl();
          this.panelImportedTabs = new DevExpress.XtraEditors.PanelControl();
@@ -59,6 +55,10 @@
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutItemImportAll = new DevExpress.XtraLayout.LayoutControlItem();
+         this.btnImport = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutItemImport = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
          this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
@@ -81,10 +81,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemSelectRange)).BeginInit();
          this.ImportsPage.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlTab)).BeginInit();
          this.layoutControlTab.SuspendLayout();
@@ -98,6 +96,8 @@
          this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportAll)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemImport)).BeginInit();
          this.SuspendLayout();
          // 
          // btnCancel
@@ -107,8 +107,8 @@
          // 
          // btnOk
          // 
-         this.btnOk.Location = new System.Drawing.Point(468, 12);
-         this.btnOk.Size = new System.Drawing.Size(153, 22);
+         this.btnOk.Location = new System.Drawing.Point(459, 12);
+         this.btnOk.Size = new System.Drawing.Size(162, 22);
          // 
          // layoutControlBase
          // 
@@ -128,8 +128,8 @@
          // 
          // layoutItemOK
          // 
-         this.layoutItemOK.Location = new System.Drawing.Point(456, 0);
-         this.layoutItemOK.Size = new System.Drawing.Size(157, 26);
+         this.layoutItemOK.Location = new System.Drawing.Point(447, 0);
+         this.layoutItemOK.Size = new System.Drawing.Size(166, 26);
          // 
          // layoutItemCancel
          // 
@@ -139,7 +139,7 @@
          // emptySpaceItemBase
          // 
          this.emptySpaceItemBase.Location = new System.Drawing.Point(228, 0);
-         this.emptySpaceItemBase.Size = new System.Drawing.Size(228, 26);
+         this.emptySpaceItemBase.Size = new System.Drawing.Size(219, 26);
          // 
          // layoutItemExtra
          // 
@@ -169,12 +169,12 @@
          // layoutControlSourceTab
          // 
          this.layoutControlSourceTab.AllowCustomization = false;
-         this.layoutControlSourceTab.Controls.Add(this.btnSelectRange);
+         this.layoutControlSourceTab.Controls.Add(this.btnImport);
          this.layoutControlSourceTab.Controls.Add(this.btnImportAll);
+         this.layoutControlSourceTab.Controls.Add(this.btnSelectRange);
          this.layoutControlSourceTab.Controls.Add(this.openSourceFileControlPanel);
          this.layoutControlSourceTab.Controls.Add(this.columnMappingControlPanel);
          this.layoutControlSourceTab.Controls.Add(this.sourceFilePreviewControlPanel);
-         this.layoutControlSourceTab.Controls.Add(this.btnImport);
          this.layoutControlSourceTab.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControlSourceTab.Location = new System.Drawing.Point(0, 0);
          this.layoutControlSourceTab.Name = "layoutControlSourceTab";
@@ -188,24 +188,11 @@
          // btnSelectRange
          // 
          this.btnSelectRange.Location = new System.Drawing.Point(12, 497);
-         this.btnSelectRange.MaximumSize = new System.Drawing.Size(120, 22);
-         this.btnSelectRange.MinimumSize = new System.Drawing.Size(120, 22);
          this.btnSelectRange.Name = "btnSelectRange";
-         this.btnSelectRange.Size = new System.Drawing.Size(120, 22);
+         this.btnSelectRange.Size = new System.Drawing.Size(285, 22);
          this.btnSelectRange.StyleController = this.layoutControlSourceTab;
-         this.btnSelectRange.TabIndex = 8;
+         this.btnSelectRange.TabIndex = 9;
          this.btnSelectRange.Text = "btnSelectRange";
-         // 
-         // btnImportAll
-         // 
-         this.btnImportAll.Location = new System.Drawing.Point(566, 497);
-         this.btnImportAll.MaximumSize = new System.Drawing.Size(78, 22);
-         this.btnImportAll.MinimumSize = new System.Drawing.Size(78, 22);
-         this.btnImportAll.Name = "btnImportAll";
-         this.btnImportAll.Size = new System.Drawing.Size(78, 22);
-         this.btnImportAll.StyleController = this.layoutControlSourceTab;
-         this.btnImportAll.TabIndex = 5;
-         this.btnImportAll.Text = "Import All";
          // 
          // openSourceFileControlPanel
          // 
@@ -228,15 +215,6 @@
          this.sourceFilePreviewControlPanel.Size = new System.Drawing.Size(371, 411);
          this.sourceFilePreviewControlPanel.TabIndex = 6;
          // 
-         // btnImport
-         // 
-         this.btnImport.Location = new System.Drawing.Point(648, 497);
-         this.btnImport.Name = "btnImport";
-         this.btnImport.Size = new System.Drawing.Size(77, 22);
-         this.btnImport.StyleController = this.layoutControlSourceTab;
-         this.btnImport.TabIndex = 4;
-         this.btnImport.Text = "Import";
-         // 
          // layoutControlGroupSourceTab
          // 
          this.layoutControlGroupSourceTab.CustomizationFormText = "Root";
@@ -247,12 +225,12 @@
             this.Preview,
             this.splitterItem,
             this.layoutControlGroup2,
-            this.layoutControlItem1,
-            this.layoutControlItem3,
-            this.layoutControlItem5,
-            this.emptySpaceItem1});
+            this.emptySpaceItem1,
+            this.layoutItemSelectRange,
+            this.layoutItemImportAll,
+            this.layoutItemImport});
          this.layoutControlGroupSourceTab.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroupSourceTab.Name = "layoutControlGroupSourceTab";
+         this.layoutControlGroupSourceTab.Name = "Root";
          this.layoutControlGroupSourceTab.Size = new System.Drawing.Size(737, 531);
          this.layoutControlGroupSourceTab.TextVisible = false;
          // 
@@ -307,47 +285,22 @@
          this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem2.TextVisible = false;
          // 
-         // layoutControlItem1
-         // 
-         this.layoutControlItem1.Control = this.btnImport;
-         this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
-         this.layoutControlItem1.Location = new System.Drawing.Point(636, 485);
-         this.layoutControlItem1.MaxSize = new System.Drawing.Size(81, 26);
-         this.layoutControlItem1.MinSize = new System.Drawing.Size(81, 26);
-         this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(81, 26);
-         this.layoutControlItem1.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
-         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem1.TextVisible = false;
-         // 
-         // layoutControlItem3
-         // 
-         this.layoutControlItem3.Control = this.btnImportAll;
-         this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
-         this.layoutControlItem3.Location = new System.Drawing.Point(554, 485);
-         this.layoutControlItem3.Name = "layoutControlItem3";
-         this.layoutControlItem3.Size = new System.Drawing.Size(82, 26);
-         this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem3.TextVisible = false;
-         // 
-         // layoutControlItem5
-         // 
-         this.layoutControlItem5.Control = this.btnSelectRange;
-         this.layoutControlItem5.CustomizationFormText = "layoutControlItem5";
-         this.layoutControlItem5.Location = new System.Drawing.Point(0, 485);
-         this.layoutControlItem5.Name = "layoutControlItem5";
-         this.layoutControlItem5.Size = new System.Drawing.Size(124, 26);
-         this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem5.TextVisible = false;
-         // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
-         this.emptySpaceItem1.Location = new System.Drawing.Point(124, 485);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(289, 485);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(430, 26);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(166, 26);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // layoutItemSelectRange
+         // 
+         this.layoutItemSelectRange.Control = this.btnSelectRange;
+         this.layoutItemSelectRange.Location = new System.Drawing.Point(0, 485);
+         this.layoutItemSelectRange.Name = "layoutItemSelectRange";
+         this.layoutItemSelectRange.Size = new System.Drawing.Size(289, 26);
+         this.layoutItemSelectRange.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemSelectRange.TextVisible = false;
          // 
          // ImportsPage
          // 
@@ -465,6 +418,42 @@
          this.layoutControlItem4.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem4.TextVisible = false;
          // 
+         // btnImportAll
+         // 
+         this.btnImportAll.Location = new System.Drawing.Point(467, 497);
+         this.btnImportAll.Name = "btnImportAll";
+         this.btnImportAll.Size = new System.Drawing.Size(68, 22);
+         this.btnImportAll.StyleController = this.layoutControlSourceTab;
+         this.btnImportAll.TabIndex = 10;
+         this.btnImportAll.Text = "btnImportAll";
+         // 
+         // layoutItemImportAll
+         // 
+         this.layoutItemImportAll.Control = this.btnImportAll;
+         this.layoutItemImportAll.Location = new System.Drawing.Point(455, 485);
+         this.layoutItemImportAll.Name = "layoutItemImportAll";
+         this.layoutItemImportAll.Size = new System.Drawing.Size(72, 26);
+         this.layoutItemImportAll.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemImportAll.TextVisible = false;
+         // 
+         // btnImport
+         // 
+         this.btnImport.Location = new System.Drawing.Point(539, 497);
+         this.btnImport.Name = "btnImport";
+         this.btnImport.Size = new System.Drawing.Size(186, 22);
+         this.btnImport.StyleController = this.layoutControlSourceTab;
+         this.btnImport.TabIndex = 11;
+         this.btnImport.Text = "btnImport";
+         // 
+         // layoutItemImport
+         // 
+         this.layoutItemImport.Control = this.btnImport;
+         this.layoutItemImport.Location = new System.Drawing.Point(527, 485);
+         this.layoutItemImport.Name = "layoutItemImport";
+         this.layoutItemImport.Size = new System.Drawing.Size(190, 26);
+         this.layoutItemImport.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemImport.TextVisible = false;
+         // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -499,10 +488,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemSelectRange)).EndInit();
          this.ImportsPage.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlTab)).EndInit();
          this.layoutControlTab.ResumeLayout(false);
@@ -516,6 +503,8 @@
          this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportAll)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemImport)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -529,16 +518,12 @@
       private DevExpress.XtraLayout.LayoutControl layoutControlSourceTab;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroupSourceTab;
       private DevExpress.XtraLayout.SplitterItem splitterItem;
-      private DevExpress.XtraEditors.SimpleButton btnImport;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private DevExpress.XtraEditors.PanelControl columnMappingControlPanel;
       private DevExpress.XtraEditors.PanelControl sourceFilePreviewControlPanel;
       private DevExpress.XtraEditors.PanelControl openSourceFileControlPanel;
       private DevExpress.XtraLayout.LayoutControlItem Preview;
       private DevExpress.XtraLayout.LayoutControlItem Mapping;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-      private DevExpress.XtraEditors.SimpleButton btnImportAll;
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
@@ -550,8 +535,12 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem7;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup2;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup3;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraEditors.SimpleButton btnSelectRange;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemSelectRange;
+      private DevExpress.XtraEditors.SimpleButton btnImport;
+      private DevExpress.XtraEditors.SimpleButton btnImportAll;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemImportAll;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemImport;
    }
 }
