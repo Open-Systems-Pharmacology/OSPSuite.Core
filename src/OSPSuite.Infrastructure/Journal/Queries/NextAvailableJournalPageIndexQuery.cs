@@ -15,7 +15,7 @@ namespace OSPSuite.Infrastructure.Journal.Queries
 
       public override int Query(NextAvailableJournalPageIndex query)
       {
-         var sql = "SELECT MAX(UniqueIndex) as UniqueIndex FROM {0}".FormatWith(Db.JournalPages.TableName);
+         var sql = $"SELECT MAX(UniqueIndex) as UniqueIndex FROM {Db.JournalPages.TableName}";
          var dataRow = Db.Connection.ExecuteQueryForSingleRow(sql);
          return dataRow.ValueAt<int>("UniqueIndex") + 1;
       }

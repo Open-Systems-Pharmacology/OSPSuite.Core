@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain
          int i = 1;
          while (forbiddenAliases.ContainsItem(alias))
          {
-            alias = string.Format("{0}{1}", baseAlias, i++);
+            alias = $"{baseAlias}{i++}";
          }
          return alias;
       }
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain
          double d;
          if(double.TryParse(name, out d))
          {
-            return string.Format("_{0}", name);
+            return $"_{name}";
          }
          return name;
       }

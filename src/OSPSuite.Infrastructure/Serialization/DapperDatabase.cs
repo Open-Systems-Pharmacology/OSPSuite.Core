@@ -117,7 +117,7 @@ namespace OSPSuite.Infrastructure.Serialization
          /// </summary>
          public bool DeleteWhere(string deleteCondition, dynamic data)
          {
-            return _database.Execute("DELETE FROM " + TableName + " WHERE {0}".FormatWith(deleteCondition), data) > 0;
+            return _database.Execute($"DELETE FROM {TableName} WHERE {deleteCondition}", data) > 0;
          }
 
          /// <summary>
@@ -132,17 +132,17 @@ namespace OSPSuite.Infrastructure.Serialization
 
          public IEnumerable<T> GetWhere(string getCondition, dynamic data)
          {
-            return _database.DoInConnection(() => _database.Query<T>("SELECT * FROM " + TableName + " WHERE {0}".FormatWith(getCondition), data));
+            return _database.DoInConnection(() => _database.Query<T>($"SELECT * FROM {TableName}  WHERE {getCondition}", data));
          }
 
          public T First()
          {
-            return _database.DoInConnection(() => _database.Query<T>("SELECT * FROM " + TableName + " LIMIT 1").FirstOrDefault());
+            return _database.DoInConnection(() => _database.Query<T>($"SELECT * FROM {TableName} LIMIT 1").FirstOrDefault());
          }
 
          public IEnumerable<T> All()
          {
-            return _database.DoInConnection(() => _database.Query<T>("SELECT * FROM " + TableName));
+            return _database.DoInConnection(() => _database.Query<T>($"SELECT * FROM {TableName}"));
          }
 
          private static readonly ConcurrentDictionary<Type, List<string>> paramNameCache = new ConcurrentDictionary<Type, List<string>>();

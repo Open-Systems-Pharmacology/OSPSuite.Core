@@ -345,7 +345,7 @@ namespace OSPSuite.Core.Domain.Services
 
          string unit = dimension.BaseUnit.Name;
          if (!string.IsNullOrEmpty(unit))
-            unit = string.Format(" [{0}]", unit);
+            unit = $" [{unit}]";
 
          return unit;
       }

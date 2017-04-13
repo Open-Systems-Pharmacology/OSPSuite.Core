@@ -14,7 +14,7 @@ namespace OSPSuite.Core
    {
       public static DataColumn GetDataColumnFrom(string excelFileNameWithoutExtension)
       {
-         var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data\\{0}.xls".FormatWith(excelFileNameWithoutExtension));
+         var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Data\\{excelFileNameWithoutExtension}.xls");
          DataTable dataTable;
          using (var workBook = new WorkBook())
          {

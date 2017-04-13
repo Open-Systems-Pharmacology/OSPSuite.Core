@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Journal
 
    public class CannotCreateNewItemForPersitedEntity : JournalException
    {
-      public CannotCreateNewItemForPersitedEntity(string id) : base("Cannot create a new item for an existing id: {0}".FormatWith(id))
+      public CannotCreateNewItemForPersitedEntity(string id) : base($"Cannot create a new item for an existing id: {id}")
       {
       }
    }
