@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Domain
       public const int DEFAULT_TEMPLATE_WARNING_THRESHOLD = 10;
       public const double DEFAULT_SCALE_DIVISOR = 1;
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
+      public const string DEFAULT_CHART_LAYOUT = "Standard View";
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";

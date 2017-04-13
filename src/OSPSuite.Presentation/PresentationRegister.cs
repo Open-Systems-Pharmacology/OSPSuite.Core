@@ -12,6 +12,7 @@ using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.UICommands;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation
@@ -66,9 +67,9 @@ namespace OSPSuite.Presentation
          container.Register(typeof(IParameterToParameterDTOInContainerMapper<>), typeof(ParameterToParameterDTOInContainerMapper<>));
          container.Register(typeof(ICloneObjectBasePresenter<>), typeof(CloneObjectBasePresenter<>));
 
-         //SINGLETON
+         //SINGLETONS
          container.Register<IJournalPageEditorFormPresenter, JournalPageEditorFormPresenter>(LifeStyle.Singleton);
-         container.Register<IChartLayoutTemplateRepository, ChartLayoutTemplateRepository>(LifeStyle.Singleton);
+         container.Register<IChartLayoutTemplateRepository, IStartable, ChartLayoutTemplateRepository>(LifeStyle.Singleton);
          container.Register<IParameterIdentificationFeedbackPresenter, ParameterIdentificationFeedbackPresenter>(LifeStyle.Singleton);
          container.Register<IHistoryBrowserConfiguration, HistoryBrowserConfiguration>(LifeStyle.Singleton);
          container.Register<DirectoryMapSettings, DirectoryMapSettings>(LifeStyle.Singleton);
