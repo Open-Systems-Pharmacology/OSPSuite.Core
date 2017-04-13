@@ -185,7 +185,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public Unit Unit { get; private set; }
       public string UnableToResolveParametersMessage { get; private set; }
 
-      public UnableToResolveParametersException(Unit unit, string unableToResolveParametersMessage) : base(string.Format("Unable to convert to {0}.\n{1}", unit.Name, unableToResolveParametersMessage))
+      public UnableToResolveParametersException(Unit unit, string unableToResolveParametersMessage) : base($"Unable to convert to {unit.Name}.\n{unableToResolveParametersMessage}")
       {
          Unit = unit;
          UnableToResolveParametersMessage = unableToResolveParametersMessage;

@@ -80,7 +80,7 @@ namespace OSPSuite.Core.Domain.Formulas
       {
          var formula = startValueParameter.IsAmountBased()
             ? createReferenceStartValueFormula(Constants.START_VALUE_ALIAS, Constants.MOLECULE_CONCENTRATION_IN_AMOUNT_FORMULA)
-            : createReferenceStartValueFormula(string.Format("{0} * {1}", Constants.START_VALUE_ALIAS, Constants.VOLUME_ALIAS), Constants.MOLECULE_AMOUNT_FORMULA);
+            : createReferenceStartValueFormula($"{Constants.START_VALUE_ALIAS} * {Constants.VOLUME_ALIAS}", Constants.MOLECULE_AMOUNT_FORMULA);
 
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.Parameters.START_VALUE)
             .WithAlias(Constants.START_VALUE_ALIAS)

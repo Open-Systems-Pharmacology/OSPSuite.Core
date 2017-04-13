@@ -50,7 +50,7 @@ namespace OSPSuite.Core
             for (int i = 0; i < orderedValues.Count / _intervals.Count; i++)
             {
                double value = orderedValues[(orderedValues.Count / _intervals.Count) * binIndex + i];
-               _intervals[binIndex].Contains(value).ShouldBeTrue("BinIndex = {0}, value = {1}".FormatWith(binIndex, value));
+               _intervals[binIndex].Contains(value).ShouldBeTrue($"BinIndex = {binIndex}, value = {value}");
             }
          }
       }

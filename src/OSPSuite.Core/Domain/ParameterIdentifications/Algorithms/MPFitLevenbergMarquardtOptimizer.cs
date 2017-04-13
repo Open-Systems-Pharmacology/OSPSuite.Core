@@ -132,7 +132,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
                errorMsg = Error.MPFit.NotEnoughDegreesOfFreedom;
                break;
             default:
-               errorMsg = Error.MPFit.UnknownStatus.FormatWith(status);
+               errorMsg = Error.MPFit.UnknownStatus(status.ToString());
                break;
          }
 

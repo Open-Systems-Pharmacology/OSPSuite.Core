@@ -123,7 +123,7 @@ namespace OSPSuite.Helpers
    {
       public SimulationTransfer LoadPKMLFile(string pkmlName)
       {
-         var projectFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data\\{0}.pkml".FormatWith(pkmlName));
+         var projectFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Data\\{pkmlName}.pkml");
          return SerializationHelperForSpecs.Load(projectFile);
       }
 

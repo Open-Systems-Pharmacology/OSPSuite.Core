@@ -1,12 +1,10 @@
 using System;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
-   
    public class BothNeighborsSatisfyingCriteriaException : OSPSuiteException
    {
       public BothNeighborsSatisfyingCriteriaException(INeighborhood neighborhood) : base(Error.BothNeighborsSatisfying(neighborhood.Name))
@@ -16,19 +14,14 @@ namespace OSPSuite.Core.Domain
 
    public class NotUniqueIdException : ArgumentException
    {
-      private static string ERROR_MESSAGE = "Id {0} not unique";
-
-      public NotUniqueIdException(string id)
-         : base(string.Format(ERROR_MESSAGE, id))
+      public NotUniqueIdException(string id) : base($"Id {id} not unique")
       {
       }
    }
 
    public class NotUniqueNameException : OSPSuiteException
    {
-      private const string _errorMessage = "Name '{0}' is not unique in parent container '{1}'";
-
-      public NotUniqueNameException(string childName, string containerName) : this(_errorMessage.FormatWith(childName, containerName))
+      public NotUniqueNameException(string childName, string containerName) : this($"Name '{childName}' is not unique in parent container '{containerName}'")
       {
       }
 
@@ -41,7 +34,7 @@ namespace OSPSuite.Core.Domain
    public class ValuePointAlreadyExistsForPointException : OSPSuiteException
    {
       public ValuePointAlreadyExistsForPointException(ValuePoint point)
-         : base(string.Format("A point for x={0} was already added with y={1}", point.X, point.Y))
+         : base($"A point for x={point.X} was already added with y={point.Y}")
       {
       }
    }

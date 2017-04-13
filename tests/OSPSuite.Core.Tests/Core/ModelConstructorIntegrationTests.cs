@@ -347,7 +347,7 @@ namespace OSPSuite.Core
             var builder = _buildConfiguration.BuilderFor(entity);
             if (builder != null) continue;
             if (entity.IsNamed(Constants.NEIGHBORHOODS)) continue;
-            errorList.Add("No builder found for {0}".FormatWith(entity.Name));
+            errorList.Add($"No builder found for {entity.Name}");
          }
 
          errorList.Count.ShouldBeEqualTo(0, errorList.ToString("\n"));

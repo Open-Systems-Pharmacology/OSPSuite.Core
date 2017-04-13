@@ -189,7 +189,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public override string ToString()
       {
-         return string.Format("Path={0}, Name={1}", ContainerPath, Name);
+         return $"Path={ContainerPath}, Name={Name}";
       }
    }
 }
