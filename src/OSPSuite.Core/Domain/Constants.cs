@@ -207,7 +207,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string CHART_LAYOUT_FILTER = XmlFilter("Chart Layout");
          public static readonly string PDF_FILE_FILTER = FileFilter("Report", PDF_EXTENSION);
          public static readonly string XML_FILE_FILTER = XmlFilter("Xml");
-         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|(Excel file  *{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
+         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
          public static readonly string EXCEL_OPEN_FILE_FILTER = string.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
          public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", ".docx");
