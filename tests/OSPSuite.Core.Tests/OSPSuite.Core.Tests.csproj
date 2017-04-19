@@ -168,6 +168,7 @@
     <Compile Include="Core\AliasCreatorSpecs.cs" />
     <Compile Include="Core\Chart\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\Chart\UnitToMinorIntervalMapperSpecs.cs" />
+    <Compile Include="Core\ConstantsSpecs.cs" />
     <Compile Include="Core\RegistrationSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
