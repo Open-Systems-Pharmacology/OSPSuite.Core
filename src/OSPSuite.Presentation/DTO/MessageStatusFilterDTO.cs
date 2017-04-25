@@ -21,19 +21,17 @@ namespace OSPSuite.Presentation.DTO
       {
          get
          {
+            var status = NotificationType.None;
             if (Info)
-               return NotificationType.Info;
-
+               status |= NotificationType.Info;
             if (Error)
-               return NotificationType.Error;
-
+               status |= NotificationType.Error;
             if (Warning)
-               return NotificationType.Warning;
-
+               status |= NotificationType.Warning;
             if (Debug)
-               return NotificationType.Debug;
+               status |= NotificationType.Debug;
 
-            return NotificationType.None;
+            return status;
          }
       }
    }
