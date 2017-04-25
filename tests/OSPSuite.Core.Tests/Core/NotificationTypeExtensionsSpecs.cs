@@ -23,7 +23,6 @@ namespace OSPSuite.Core
          (NotificationType.Error).Is(NotificationType.Error | NotificationType.Info).ShouldBeTrue();
          (NotificationType.Info).Is(NotificationType.Info | NotificationType.Error).ShouldBeTrue();
          (NotificationType.Error).Is(NotificationType.Info | NotificationType.Warning).ShouldBeFalse();
-         (NotificationType.All).Is(NotificationType.None).ShouldBeTrue();
          (NotificationType.All).Is(NotificationType.Info).ShouldBeTrue();
          (NotificationType.All).Is(NotificationType.Error).ShouldBeTrue();
          (NotificationType.All).Is(NotificationType.Warning).ShouldBeTrue();
