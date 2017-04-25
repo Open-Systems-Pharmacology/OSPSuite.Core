@@ -70,27 +70,30 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Default notification type
       /// </summary>
-      None = 0,
+      None = 1 << 0,
 
       /// <summary>
       ///    Indicating a problem that may produce an incorrect model
       /// </summary>
-      Warning = 2 << 0,
+      Warning = 1 << 1,
 
       /// <summary>
       ///    Indicating a problem that leads to a corrupted model
       /// </summary>
-      Error = 2 << 1,
+      Error = 1 << 2,
 
       /// <summary>
       ///    Indicating a message. Model is valid
       /// </summary>
-      Info = 2 << 2,
+      Info = 1 << 3,
 
       /// <summary>
       ///    Indicates a debug information. Is only use for development
       /// </summary>
-      Debug = 2 << 3,
+      Debug = 1 << 4,
+
+
+      All = None | Debug | Warning | Info | Error
    }
 
    public static class MessageTypeExtensions
