@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Presentation.DTO;
 
 namespace OSPSuite.Presentation.Mappers

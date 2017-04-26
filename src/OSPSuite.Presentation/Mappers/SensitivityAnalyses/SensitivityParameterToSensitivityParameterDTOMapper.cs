@@ -1,4 +1,5 @@
-﻿using OSPSuite.Utility;
+﻿using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Utility;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Presentation.DTO.SensitivityAnalyses;
 

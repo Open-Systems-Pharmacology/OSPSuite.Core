@@ -100,6 +100,10 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="AllInterfacesAndConcreteTypeRegistrationConvention.cs" />
+    <Compile Include="Batch\BatchOutputValues.cs" />
+    <Compile Include="Batch\BatchSimulationExport.cs" />
+    <Compile Include="Batch\Mappers\SimulationResultsToBatchSimulationExportMapper.cs" />
+    <Compile Include="Batch\ParameterValue.cs" />
     <Compile Include="Chart\Axis.cs" />
     <Compile Include="Chart\AxisCountMode.cs" />
     <Compile Include="Chart\CurveDataTemplate.cs" />
@@ -130,6 +134,8 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
+    <Compile Include="Domain\PathElement.cs" />
     <Compile Include="Domain\Services\IDataRepositoryTask.cs" />
     <Compile Include="Domain\Services\ObservedDataTask.cs" />
     <Compile Include="Domain\Services\ParameterIdentifications\TransferOptimizedParametersToSimulationsTask.cs" />
@@ -498,6 +504,7 @@
     <Compile Include="Services\CircularReferenceChecker.cs" />
     <Compile Include="Services\IDisplayNameProvider.cs" />
     <Compile Include="Services\ILogger.cs" />
+    <Compile Include="Services\ISimulationResultsExporter.cs" />
     <Compile Include="Services\LogEntry.cs" />
     <Compile Include="Services\LoggerExtensions.cs" />
     <Compile Include="Services\RelatedItemTypeRetriever.cs" />

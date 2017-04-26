@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Presentation.DTO;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
