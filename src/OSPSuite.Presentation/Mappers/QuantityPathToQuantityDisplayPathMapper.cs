@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Mappers
          return DisplayPathAsStringFrom(DisplayPathFor(simulation, column), pathElementsToUse);
       }
 
-      public virtual PathElements DisplayPathFor(ISimulation simulation, DataColumn column)
+      protected virtual PathElements DisplayPathFor(ISimulation simulation, DataColumn column)
       {
          return displayPathForColumn(column, simulation);
       }
