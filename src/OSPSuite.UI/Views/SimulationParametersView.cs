@@ -6,6 +6,7 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Utility.Format;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Services;

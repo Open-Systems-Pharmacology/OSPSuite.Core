@@ -4,6 +4,7 @@ using FakeItEasy;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;

@@ -1,4 +1,5 @@
-﻿using OSPSuite.Presentation.DTO;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.DTO;
 
 namespace OSPSuite.Presentation.Presenters
 {

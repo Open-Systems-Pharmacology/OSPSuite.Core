@@ -8,6 +8,7 @@ using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;

@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers
 {
-   public interface IQuantityPathToQuantityDisplayPathMapper
-   {
-      PathElements DisplayPathFor(ISimulation simulation, DataColumn column);
-      string DisplayPathAsStringFor(ISimulation simulation, DataColumn column, bool addSimulationName = false);
-      string DisplayPathAsStringFor(ISimulation simulation, DataColumn column, string simulationName);
-      string DisplayPathAsStringFor(ISimulation simulation, DataColumn column, IEnumerable<PathElement> pathElementsToUse);
-      string DisplayPathAsStringFor(IQuantity quantity, bool addSimulationName = false);
-      string DisplayPathAsStringFor(IQuantity quantity, IEnumerable<PathElement> pathElementsToUse);
-   }
-
    public class QuantityPathToQuantityDisplayPathMapper : IQuantityPathToQuantityDisplayPathMapper
    {
       private readonly IObjectPathFactory _objectPathFactory;
@@ -61,7 +52,7 @@ namespace OSPSuite.Presentation.Mappers
          return DisplayPathAsStringFrom(DisplayPathFor(simulation, column), pathElementsToUse);
       }
 
-      public virtual PathElements DisplayPathFor(ISimulation simulation, DataColumn column)
+      protected virtual PathElements DisplayPathFor(ISimulation simulation, DataColumn column)
       {
          return displayPathForColumn(column, simulation);
       }

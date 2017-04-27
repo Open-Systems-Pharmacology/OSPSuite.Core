@@ -176,6 +176,14 @@ namespace OSPSuite.Core.Domain
          //end of  delete
       }
 
+      public static class RegistryPaths
+      {
+         public const string PKSIM_REG_PATH = @"Open Systems Pharmacology\PK-Sim\";
+         public const string MOBI_REG_PATH = @"Open Systems Pharmacology\MoBi\";
+         public const string INSTALL_DIR = "InstallDir";
+         public const string INSTALL_PATH = "InstallPath";
+      }
+
       public static class Groups
       {
          public const string UNDEFINED = "UNDEFINED";

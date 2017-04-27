@@ -182,6 +182,7 @@
     <Compile Include="Services\ReportTemplateRepository.cs" />
     <Compile Include="Services\SessionManager.cs" />
     <Compile Include="Services\SharpLibCompression.cs" />
+    <Compile Include="Services\SimulationResultsExporter.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
