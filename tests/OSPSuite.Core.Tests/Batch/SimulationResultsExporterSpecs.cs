@@ -58,9 +58,9 @@ namespace PKSim.BatchTool
       }
 
       [Observation]
-      public async Task should_create_a_data_table_with_all_results_from_the_simulation_and_export_it_to_the_file()
+      public void should_create_a_data_table_with_all_results_from_the_simulation_and_export_it_to_the_file()
       {
-         await sut.ExportToCsvAsync(_simulation, _results, _fileName);
+         sut.ExportToCsvAsync(_simulation, _results, _fileName).Wait();
          FileHelper.FileExists(_fileName).ShouldBeTrue();
       }
    }
@@ -77,9 +77,9 @@ namespace PKSim.BatchTool
       }
 
       [Observation]
-      public async Task should_create_a_batch_simulation_export_object_and_export_it_to_the_file()
+      public void should_create_a_batch_simulation_export_object_and_export_it_to_the_file()
       {
-         await sut.ExportToJsonAsync(_simulation, _results, _fileName);
+         sut.ExportToJsonAsync(_simulation, _results, _fileName).Wait();
          FileHelper.FileExists(_fileName).ShouldBeTrue();
       }
    }

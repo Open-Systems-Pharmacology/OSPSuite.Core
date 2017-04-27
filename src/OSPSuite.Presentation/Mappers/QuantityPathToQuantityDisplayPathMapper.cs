@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Presentation.DTO; 
+using OSPSuite.Presentation.DTO;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers
 {
-  
-
    public class QuantityPathToQuantityDisplayPathMapper : IQuantityPathToQuantityDisplayPathMapper
    {
       private readonly IObjectPathFactory _objectPathFactory;
