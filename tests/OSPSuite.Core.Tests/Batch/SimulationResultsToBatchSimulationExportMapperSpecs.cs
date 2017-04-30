@@ -33,6 +33,8 @@ namespace OSPSuite.Batch
       private DataColumn _col1;
       private DataColumn _col2;
       private Parameter _parameter;
+      private double _absTol = 1e-2;
+      private double _relTol = 1e-3;
 
       protected override void Context()
       {
@@ -47,6 +49,9 @@ namespace OSPSuite.Batch
             }
          };
 
+         _simulation.SimulationSettings.Solver.AbsTol = _absTol;
+         _simulation.SimulationSettings.Solver.RelTol = _relTol;
+         
          _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {1f, 2f, 3f}};
          _col1 = new DataColumn("Drug1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {10f, 20f, 30f}};
          _col2 = new DataColumn("Drug2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {100f, 200f, 300f}};
@@ -67,6 +72,8 @@ namespace OSPSuite.Batch
       public void should_return_an_object_having_the_expected_simulation_properties()
       {
          _simulationExport.Name.ShouldBeEqualTo(_simulation.Name);
+         _simulationExport.AbsTol.ShouldBeEqualTo(_absTol);
+         _simulationExport.RelTol.ShouldBeEqualTo(_relTol);
       }
 
       [Observation]
@@ -87,7 +94,7 @@ namespace OSPSuite.Batch
       [Observation]
       public void should_have_set_the_time_values_using_display_units()
       {
-         _simulationExport.Time.ShouldBeEqualTo(_baseGrid.ConvertToDisplayValues(_baseGrid.Values));
+         _simulationExport.Times.ShouldBeEqualTo(_baseGrid.ConvertToDisplayValues(_baseGrid.Values));
       }
 
       [Observation]
