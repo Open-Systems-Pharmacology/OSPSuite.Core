@@ -90,12 +90,21 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_set_the_molweight_in_amounts_and_observers_when_available()
       {
-         foreach (var dataColumn in _results.Where(x => !x.IsBaseGrid()))
+         foreach (var dataColumn in _results.AllButBaseGrid())
          {
             if (molWeightShouldBeSetFor(dataColumn))
                dataColumn.DataInfo.MolWeight.ShouldBeEqualTo(250);
             else
                dataColumn.DataInfo.MolWeight.ShouldBeNull();
+         }
+      }
+
+      [Observation]
+      public void should_have_set_comparison_threshold_for_observers_and_variables()
+      {
+         foreach (var dataColumn in _results.AllButBaseGrid())
+         {
+           dataColumn.DataInfo.ComparisonThreshold.ShouldNotBeNull();
          }
       }
 

@@ -104,8 +104,9 @@
     <Reference Include="OSPSuite.Serializer">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.SimModel">
-      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.1\lib\net45\OSPSuite.SimModel.dll</HintPath>
+    <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.12\lib\net45\OSPSuite.SimModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="OSPSuite.TeXReporting">
       <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.1\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
@@ -114,8 +115,8 @@
       <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SX, Version=2.6.3.1, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.3.1\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.6.3.3, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.3.3\lib\net45\SX.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -171,6 +172,7 @@
     <Compile Include="Core\Chart\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\Chart\UnitToMinorIntervalMapperSpecs.cs" />
     <Compile Include="Core\ConstantsSpecs.cs" />
+    <Compile Include="Core\DataInfoSpecs.cs" />
     <Compile Include="Core\RegistrationSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
@@ -744,7 +746,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\packages\OSPSuite.SimModel.2.0.0.1\OSPSuite.SimModel\OSPSuite.SimModel.xsd">
+    <None Include="..\..\packages\OSPSuite.SimModel.2.0.0.12\OSPSuite.SimModel\OSPSuite.SimModel.xsd">
       <Link>OSPSuite.SimModel.xsd</Link>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

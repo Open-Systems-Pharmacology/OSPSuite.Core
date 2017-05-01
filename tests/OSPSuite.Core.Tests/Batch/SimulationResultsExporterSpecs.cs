@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -14,7 +13,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Utility;
 
-namespace PKSim.BatchTool
+namespace OSPSuite.Batch
 {
    public abstract class concern_for_SimulationResultsExporter : ContextSpecification<ISimulationResultsExporter>
    {

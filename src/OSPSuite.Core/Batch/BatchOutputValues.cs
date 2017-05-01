@@ -4,7 +4,7 @@
    {
       public string Path { get; set; }
       public float[] Values { get; set; }
-      public double Threshold { get; set; }
       public string Dimension { get; set; }
+      public double ComparisonThreshold { get; set; }
    }
 }

@@ -46,10 +46,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///   Returns the full path as string
       /// </summary>
-      public string PathAsString
-      {
-         get { return _path.ToPathString(); }
-      }
+      public string PathAsString => _path.ToPathString();
 
       /// <summary>
       ///   Full path of quantity for which data were saved.
@@ -85,7 +82,7 @@ namespace OSPSuite.Core.Domain.Data
 
       public override int GetHashCode()
       {
-         return (PathAsString != null ? PathAsString.GetHashCode() : 0);
+         return PathAsString?.GetHashCode() ?? 0;
       }
 
       public override string ToString()

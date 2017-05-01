@@ -55,6 +55,7 @@ namespace OSPSuite.Batch
          
          _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {1f, 2f, 3f}};
          _col1 = new DataColumn("Drug1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {10f, 20f, 30f}};
+         _col1.DataInfo.ComparisonThreshold = 1e-2f;
          _col2 = new DataColumn("Drug2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {100f, 200f, 300f}};
 
          _dataRepository = new DataRepository {_col1, _col2};
@@ -81,16 +82,16 @@ namespace OSPSuite.Batch
       public void should_have_created_one_output_value_for_each_output_results()
       {
          _simulationExport.OutputValues.Count.ShouldBeEqualTo(2);
-         verifyOutputExport(_simulationExport.OutputValues[0], _col1, "PATH1", 1.5, _col1.Dimension);
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, "PATH2", 1.5, _col2.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[0], _col1, "PATH1", _col1.DataInfo.ComparisonThreshold.Value, _col1.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[1], _col2, "PATH2", 0, _col2.Dimension);
       }
 
-      private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double threshold, IDimension dimension)
+      private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double comparisonThreshold, IDimension dimension)
       {
          outputValues.Path.ShouldBeEqualTo(path);
          outputValues.Values.ShouldBeEqualTo(column.ConvertToDisplayValues(column.Values));
          outputValues.Dimension.ShouldBeEqualTo(dimension.Name);
-         outputValues.Threshold.ShouldBeEqualTo(threshold);
+         outputValues.ComparisonThreshold.ShouldBeEqualTo(comparisonThreshold);
       }
 
       [Observation]
