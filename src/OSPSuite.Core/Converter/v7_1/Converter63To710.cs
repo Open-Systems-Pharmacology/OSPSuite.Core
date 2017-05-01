@@ -1,12 +1,12 @@
 ﻿using System.Xml.Linq;
-using OSPSuite.Serializer.Xml.Extensions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml.Extensions;
+using OSPSuite.Serializer.Xml.Extensions;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Converter.v6_4
+namespace OSPSuite.Core.Converter.v7_1
 {
-   public class Converter63To64 : IObjectConverter
+   public class Converter63To710 : IObjectConverter
    {
       public bool IsSatisfiedBy(int version)
       {
@@ -15,13 +15,13 @@ namespace OSPSuite.Core.Converter.v6_4
 
       public int Convert(object objectToUpdate)
       {
-         return PKMLVersion.V6_4_2;
+         return PKMLVersion.V7_1_0;
       }
 
       public int ConvertXml(XElement element)
       {
          element.DescendantsAndSelfNamed("CurveChartTemplate").Each(convertCurveChartTemplate);
-         return PKMLVersion.V6_4_2;
+         return PKMLVersion.V7_1_0;
       }
 
       private void convertCurveChartTemplate(XElement chartTemplateElement)
