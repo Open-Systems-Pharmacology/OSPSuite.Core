@@ -2,7 +2,6 @@
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Batch.Mappers
@@ -14,12 +13,10 @@ namespace OSPSuite.Core.Batch.Mappers
 
    public class SimulationResultsToBatchSimulationExportMapper : ISimulationResultsToBatchSimulationExportMapper
    {
-      private readonly IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       private readonly IObjectPathFactory _objectPathFactory;
 
-      public SimulationResultsToBatchSimulationExportMapper(IQuantityPathToQuantityDisplayPathMapper quantityDisplayPathMapper, IObjectPathFactory objectPathFactory)
+      public SimulationResultsToBatchSimulationExportMapper(IObjectPathFactory objectPathFactory)
       {
-         _quantityDisplayPathMapper = quantityDisplayPathMapper;
          _objectPathFactory = objectPathFactory;
       }
 
@@ -34,7 +31,7 @@ namespace OSPSuite.Core.Batch.Mappers
             RelTol = simulation.SimulationSettings.Solver.RelTol,
          };
 
-         results.AllButBaseGrid().Each(c => simulationExport.OutputValues.Add(quantityResultsFrom(simulation, c)));
+         results.AllButBaseGrid().Each(c => simulationExport.OutputValues.Add(quantityResultsFrom(c)));
 
          return simulationExport;
       }
@@ -48,11 +45,11 @@ namespace OSPSuite.Core.Batch.Mappers
          }).ToList();
       }
 
-      private BatchOutputValues quantityResultsFrom(ISimulation simulation, DataColumn column)
+      private BatchOutputValues quantityResultsFrom( DataColumn column)
       {
          return new BatchOutputValues
          {
-            Path = _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, column),
+            Path = column.PathAsString,
             //ComparisonThreshold should alwyas have a value. If for some reason it is not set, using 0 ensures that value should be compared exactly
             ComparisonThreshold = column.DataInfo.ComparisonThreshold.GetValueOrDefault(0),
             Values = displayValuesFor(column),
