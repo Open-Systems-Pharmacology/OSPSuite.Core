@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Batch
@@ -80,14 +81,15 @@ namespace OSPSuite.Batch
       public void should_have_created_one_output_value_for_each_output_results()
       {
          _simulationExport.OutputValues.Count.ShouldBeEqualTo(2);
-         verifyOutputExport(_simulationExport.OutputValues[0], _col1, "PATH1", 1.5);
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, "PATH2", 1.5);
+         verifyOutputExport(_simulationExport.OutputValues[0], _col1, "PATH1", 1.5, _col1.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[1], _col2, "PATH2", 1.5, _col2.Dimension);
       }
 
-      private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double threshold)
+      private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double threshold, IDimension dimension)
       {
          outputValues.Path.ShouldBeEqualTo(path);
          outputValues.Values.ShouldBeEqualTo(column.ConvertToDisplayValues(column.Values));
+         outputValues.Dimension.ShouldBeEqualTo(dimension.Name);
          outputValues.Threshold.ShouldBeEqualTo(threshold);
       }
 

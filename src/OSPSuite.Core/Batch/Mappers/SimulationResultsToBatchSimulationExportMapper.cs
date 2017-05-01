@@ -55,7 +55,8 @@ namespace OSPSuite.Core.Batch.Mappers
             Path = _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, column),
             //TODO READ THRESHOLD FROM COLUMN EXTENDED PROPERTIES WHEN READY
             Threshold = 1.5f,
-            Values = displayValuesFor(column)
+            Values = displayValuesFor(column),
+            Dimension = column.Dimension.Name
          };
       }
 
