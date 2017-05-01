@@ -52,10 +52,17 @@ namespace OSPSuite.Batch
          _simulation.SimulationSettings.Solver.RelTol = _relTol;
          
          _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {1f, 2f, 3f}};
-         _col1 = new DataColumn("Drug1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {10f, 20f, 30f}};
-         _col1.DataInfo.ComparisonThreshold = 1e-2f;
-         _col2 = new DataColumn("Drug2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) {Values = new[] {100f, 200f, 300f}};
-
+         _col1 = new DataColumn("Drug1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            Values = new[] {10f, 20f, 30f},
+            QuantityInfo = {Path = new[] {"P1", "P2"}},
+            DataInfo = {ComparisonThreshold = 1e-2f}
+         };
+         _col2 = new DataColumn("Drug2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            Values = new[] {100f, 200f, 300f},
+            QuantityInfo = {Path = new[] {"P3", "P4"}}
+         };
          _dataRepository = new DataRepository {_col1, _col2};
 
          
@@ -80,7 +87,7 @@ namespace OSPSuite.Batch
       {
          _simulationExport.OutputValues.Count.ShouldBeEqualTo(2);
          verifyOutputExport(_simulationExport.OutputValues[0], _col1, _col1.PathAsString, _col1.DataInfo.ComparisonThreshold.Value, _col1.Dimension);
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col1.PathAsString, 0, _col2.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col2.PathAsString, 0, _col2.Dimension);
       }
 
       private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double comparisonThreshold, IDimension dimension)
