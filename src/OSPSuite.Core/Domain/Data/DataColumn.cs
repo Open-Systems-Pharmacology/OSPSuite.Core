@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Data
       public DataRepository Repository
       {
          set { _repository = value == null ? null : new WeakRef<DataRepository>(value); }
-         get { return _repository != null ? _repository.Target : null; }
+         get { return _repository?.Target; }
       }
 
       public virtual bool IsInRepository()
@@ -94,14 +94,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    Returns true if the column values only contain one element otherwise false
       /// </summary>
-      public virtual bool HasSingleValue
-      {
-         get
-         {
-            if (_values == null) return false;
-            return _values.Count == 1;
-         }
-      }
+      public virtual bool HasSingleValue => _values?.Count == 1;
 
       /// <summary>
       ///    Set or gets the values of the given columns. Always returns an array having the same dimension as the base grid
@@ -131,7 +124,7 @@ namespace OSPSuite.Core.Domain.Data
             if (value != null && BaseGrid != null && value.Count != BaseGrid.Count && value.Count != 1)
                throw new ArgumentException("Values.Length = " + value.Count + " != " + BaseGrid.Count + " = BaseGrid.Count");
 
-            _values = value != null ? value.ToList() : null;
+            _values = value?.ToList();
             _cachedValues = null;
          }
       }

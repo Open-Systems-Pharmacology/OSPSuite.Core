@@ -1121,6 +1121,7 @@ namespace OSPSuite.Helpers
          AreEqualMcQuantityInfo(x1.QuantityInfo, x2.QuantityInfo);
          AreEqualMcDataInfo(x1.DataInfo, x2.DataInfo);
          x1.DataInfo.LLOQ.ShouldBeEqualTo(x2.DataInfo.LLOQ);
+         x1.DataInfo.ComparisonThreshold.ShouldBeEqualTo(x2.DataInfo.ComparisonThreshold);
 
          Assert.AreEqual(x1.RelatedColumns.Count(), x2.RelatedColumns.Count());
          foreach (var relCol1 in x1.RelatedColumns)

@@ -53,8 +53,8 @@ namespace OSPSuite.Core.Batch.Mappers
          return new BatchOutputValues
          {
             Path = _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, column),
-            //TODO READ THRESHOLD FROM COLUMN EXTENDED PROPERTIES WHEN READY
-            Threshold = 1.5f,
+            //ComparisonThreshold should alwyas have a value. If for some reason it is not set, using 0 ensures that value should be compared exactly
+            ComparisonThreshold = column.DataInfo.ComparisonThreshold.GetValueOrDefault(0),
             Values = displayValuesFor(column),
             Dimension = column.Dimension.Name
          };

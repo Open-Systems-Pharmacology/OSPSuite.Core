@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    All Extended properties
       /// </summary>
-      public virtual ExtendedProperties ExtendedProperties { get; private set; }
+      public virtual ExtendedProperties ExtendedProperties { get; }
 
       public DataRepository() : this(Guid.NewGuid().ToString())
       {

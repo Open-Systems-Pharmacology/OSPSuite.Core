@@ -24,6 +24,7 @@ namespace OSPSuite.Core
             Values = new[] {1.0F, 2.1F, -3.4F}
          };
          x1.DataInfo.LLOQ = 1.0F;
+         x1.DataInfo.ComparisonThreshold = 1e-2F;
 
          var dr1 = new DataRepository("id") {x1};
          var dr2 = SerializeAndDeserialize(dr1);
