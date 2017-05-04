@@ -140,6 +140,7 @@
     <Compile Include="Domain\Services\IDataRepositoryTask.cs" />
     <Compile Include="Domain\Services\ObservedDataTask.cs" />
     <Compile Include="Domain\Services\ParameterIdentifications\TransferOptimizedParametersToSimulationsTask.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Importer\ColumnInfo.cs" />
     <Compile Include="Importer\ColumnMapping.cs" />
     <Compile Include="Importer\DataImporterSettings.cs" />
