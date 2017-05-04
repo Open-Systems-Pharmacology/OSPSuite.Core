@@ -87,15 +87,7 @@ namespace OSPSuite.Batch
       {
          _simulationExport.OutputValues.Count.ShouldBeEqualTo(2);
          verifyOutputExport(_simulationExport.OutputValues[0], _col1, _col1.PathAsString, _col1.DataInfo.ComparisonThreshold.Value, _col1.Dimension);
-<<<<<<< 162ba7b8bd4deb5e8a0046010219d0cf56817f29
-<<<<<<< 04237971bbe1d7a273f7be40c5cc00d21ac05591
          verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col2.PathAsString, 0, _col2.Dimension);
-=======
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col1.PathAsString, 0, _col2.Dimension);
->>>>>>> Fixes #62 use full output path
-=======
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col2.PathAsString, 0, _col2.Dimension);
->>>>>>> Fixes #62 use full output path
       }
 
       private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double comparisonThreshold, IDimension dimension)
