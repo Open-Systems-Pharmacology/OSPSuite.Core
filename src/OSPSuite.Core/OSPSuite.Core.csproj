@@ -201,7 +201,7 @@
     <Compile Include="Comparison\TableFormulaDiffBuilder.cs" />
     <Compile Include="Comparison\ValuePointDiffBuilder.cs" />
     <Compile Include="Converter\v6_3\Converter62To63.cs" />
-    <Compile Include="Converter\v6_4\Converter63To64.cs" />
+    <Compile Include="Converter\v7_1\Converter63To710.cs" />
     <Compile Include="Diagram\IReactionNode.cs" />
     <Compile Include="Domain\BinInterval.cs" />
     <Compile Include="Domain\CalculationMethodCache.cs" />
