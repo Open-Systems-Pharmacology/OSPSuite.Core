@@ -69,5 +69,6 @@ namespace OSPSuite.Starter.Tasks
       public string LicenseAgreementFilePath { get; }
 
       public string IssueTrackerUrl => "https://github.com/Open-Systems-Pharmacology/PK-Sim/issues";
+      public string OSPSuiteNameWithVersion  =>  $"OSPSuite - {Version}";
    }
 }

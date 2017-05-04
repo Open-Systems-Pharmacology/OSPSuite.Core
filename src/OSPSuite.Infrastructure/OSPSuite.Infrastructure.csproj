@@ -183,6 +183,7 @@
     <Compile Include="Services\SessionManager.cs" />
     <Compile Include="Services\SharpLibCompression.cs" />
     <Compile Include="Services\SimulationResultsExporter.cs" />
+    <Compile Include="Services\StartableProcess.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>

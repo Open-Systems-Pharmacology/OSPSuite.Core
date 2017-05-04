@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Reflection;
-using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Maths.Statistics;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services
 {
@@ -29,7 +28,7 @@ namespace OSPSuite.Presentation.Services
       {
          if (isInfoException(ex))
          {
-            var message = ExceptionMessageFrom(ex);
+            var message = ex.ExceptionMessage();
             _dialogCreator.MessageBoxInfo(message);
             this.LogInfo(message);
          }
@@ -57,31 +56,13 @@ namespace OSPSuite.Presentation.Services
          if (ex == null)
             return false;
 
-         if (isWrapperException(ex))
+         if (ex.IsWrapperException())
             return isInfoException(ex.InnerException);
 
          if (ex.IsAnImplementationOf<NotFoundException>())
             return false;
 
          return ex.IsAnImplementationOf<OSPSuiteException>() || ex.IsAnImplementationOf<DistributionException>();
-      }
-
-      public static string ExceptionMessageFrom(Exception ex)
-      {
-         if (isWrapperException(ex))
-            return ExceptionMessageFrom(ex.InnerException);
-
-         return $"{ex.FullMessage()}\n{Captions.ContactSupport(Constants.FORUM_SITE)}";
-      }
-
-      private static bool isWrapperException(Exception ex)
-      {
-         return ex.IsAnImplementationOf<TargetInvocationException>() || ex.IsAnImplementationOf<AggregateException>();
-      }
-
-      public static string ExceptionMessageWithStackTraceFrom(Exception ex)
-      {
-         return $"{ExceptionMessageFrom(ex)}\n\nStack trace:\n{ex.FullStackTrace()}";
       }
    }
 }
