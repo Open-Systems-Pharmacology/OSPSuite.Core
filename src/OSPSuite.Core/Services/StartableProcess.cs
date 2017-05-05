@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 
-namespace OSPSuite.Infrastructure.Services
+namespace OSPSuite.Core.Services
 {
    public class StartableProcess : IDisposable
    {
