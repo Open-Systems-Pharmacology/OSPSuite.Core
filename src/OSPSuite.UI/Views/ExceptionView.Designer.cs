@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.UI.Views
+﻿using OSPSuite.UI.Controls;
+
+namespace OSPSuite.UI.Views
 {
    partial class ExceptionView
    {
@@ -34,7 +36,6 @@
          this.tbException = new DevExpress.XtraEditors.MemoEdit();
          this.tbFullException = new DevExpress.XtraEditors.MemoEdit();
          this.btnClose = new DevExpress.XtraEditors.SimpleButton();
-         this.lblDescription = new DevExpress.XtraEditors.LabelControl();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemOk = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
@@ -43,9 +44,10 @@
          this.layoutGroupException = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemException = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemCopyToClipbord = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemIssueTracker = new DevExpress.XtraLayout.LayoutControlItem();
+         this.richEditControl = new UxRichEditControl();
+         this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.issueTrackerLink.Properties)).BeginInit();
@@ -59,19 +61,19 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutGroupException)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemException)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemCopyToClipbord)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemIssueTracker)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.richEditControl);
          this.layoutControl.Controls.Add(this.issueTrackerLink);
          this.layoutControl.Controls.Add(this.btnCopyToClipboard);
          this.layoutControl.Controls.Add(this.tbException);
          this.layoutControl.Controls.Add(this.tbFullException);
          this.layoutControl.Controls.Add(this.btnClose);
-         this.layoutControl.Controls.Add(this.lblDescription);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
          this.layoutControl.Name = "layoutControl";
@@ -84,7 +86,7 @@
          // issueTrackerLink
          // 
          this.issueTrackerLink.EditValue = "issueTrackerLink";
-         this.issueTrackerLink.Location = new System.Drawing.Point(12, 29);
+         this.issueTrackerLink.Location = new System.Drawing.Point(12, 36);
          this.issueTrackerLink.Name = "issueTrackerLink";
          this.issueTrackerLink.Properties.Appearance.BackColor = System.Drawing.Color.Transparent;
          this.issueTrackerLink.Properties.Appearance.Options.UseBackColor = true;
@@ -95,7 +97,7 @@
          // 
          // btnCopyToClipboard
          // 
-         this.btnCopyToClipboard.Location = new System.Drawing.Point(382, 29);
+         this.btnCopyToClipboard.Location = new System.Drawing.Point(382, 36);
          this.btnCopyToClipboard.Name = "btnCopyToClipboard";
          this.btnCopyToClipboard.Size = new System.Drawing.Size(269, 22);
          this.btnCopyToClipboard.StyleController = this.layoutControl;
@@ -104,9 +106,9 @@
          // 
          // tbException
          // 
-         this.tbException.Location = new System.Drawing.Point(142, 87);
+         this.tbException.Location = new System.Drawing.Point(142, 92);
          this.tbException.Name = "tbException";
-         this.tbException.Size = new System.Drawing.Size(497, 163);
+         this.tbException.Size = new System.Drawing.Size(497, 162);
          this.tbException.StyleController = this.layoutControl;
          this.tbException.TabIndex = 6;
          // 
@@ -128,15 +130,6 @@
          this.btnClose.TabIndex = 4;
          this.btnClose.Text = "OK";
          // 
-         // lblDescription
-         // 
-         this.lblDescription.Location = new System.Drawing.Point(12, 12);
-         this.lblDescription.Name = "lblDescription";
-         this.lblDescription.Size = new System.Drawing.Size(63, 13);
-         this.lblDescription.StyleController = this.layoutControl;
-         this.lblDescription.TabIndex = 7;
-         this.lblDescription.Text = "lblDescription";
-         // 
          // layoutControlGroup1
          // 
          this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
@@ -148,9 +141,9 @@
             this.layoutGroupStackTraceException,
             this.layoutGroupException,
             this.layoutItemCopyToClipbord,
-            this.layoutItemDescription,
             this.emptySpaceItem2,
-            this.layoutItemIssueTracker});
+            this.layoutItemIssueTracker,
+            this.layoutItemDescription});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(663, 522);
@@ -181,9 +174,9 @@
          this.layoutGroupStackTraceException.ExpandButtonVisible = true;
          this.layoutGroupStackTraceException.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemFullException});
-         this.layoutGroupStackTraceException.Location = new System.Drawing.Point(0, 254);
+         this.layoutGroupStackTraceException.Location = new System.Drawing.Point(0, 258);
          this.layoutGroupStackTraceException.Name = "layoutGroupFullException";
-         this.layoutGroupStackTraceException.Size = new System.Drawing.Size(643, 222);
+         this.layoutGroupStackTraceException.Size = new System.Drawing.Size(643, 218);
          // 
          // layoutItemFullException
          // 
@@ -199,9 +192,9 @@
          this.layoutGroupException.CustomizationFormText = "layoutControlGroup2";
          this.layoutGroupException.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemException});
-         this.layoutGroupException.Location = new System.Drawing.Point(0, 43);
+         this.layoutGroupException.Location = new System.Drawing.Point(0, 50);
          this.layoutGroupException.Name = "layoutGroupException";
-         this.layoutGroupException.Size = new System.Drawing.Size(643, 211);
+         this.layoutGroupException.Size = new System.Drawing.Size(643, 208);
          // 
          // layoutItemException
          // 
@@ -209,34 +202,24 @@
          this.layoutItemException.CustomizationFormText = "layoutItemException";
          this.layoutItemException.Location = new System.Drawing.Point(0, 0);
          this.layoutItemException.Name = "layoutItemException";
-         this.layoutItemException.Size = new System.Drawing.Size(619, 167);
+         this.layoutItemException.Size = new System.Drawing.Size(619, 166);
          this.layoutItemException.TextSize = new System.Drawing.Size(115, 13);
          // 
          // layoutItemCopyToClipbord
          // 
          this.layoutItemCopyToClipbord.Control = this.btnCopyToClipboard;
          this.layoutItemCopyToClipbord.CustomizationFormText = "layoutItemCopyToClipbord";
-         this.layoutItemCopyToClipbord.Location = new System.Drawing.Point(370, 17);
+         this.layoutItemCopyToClipbord.Location = new System.Drawing.Point(370, 24);
          this.layoutItemCopyToClipbord.Name = "layoutItemCopyToClipbord";
          this.layoutItemCopyToClipbord.Size = new System.Drawing.Size(273, 26);
          this.layoutItemCopyToClipbord.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemCopyToClipbord.TextVisible = false;
          // 
-         // layoutItemDescription
-         // 
-         this.layoutItemDescription.Control = this.lblDescription;
-         this.layoutItemDescription.CustomizationFormText = "layoutItemDescription";
-         this.layoutItemDescription.Location = new System.Drawing.Point(0, 0);
-         this.layoutItemDescription.Name = "layoutItemDescription";
-         this.layoutItemDescription.Size = new System.Drawing.Size(643, 17);
-         this.layoutItemDescription.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemDescription.TextVisible = false;
-         // 
          // emptySpaceItem2
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
          this.emptySpaceItem2.CustomizationFormText = "emptySpaceItem2";
-         this.emptySpaceItem2.Location = new System.Drawing.Point(276, 17);
+         this.emptySpaceItem2.Location = new System.Drawing.Point(276, 24);
          this.emptySpaceItem2.Name = "emptySpaceItem2";
          this.emptySpaceItem2.Size = new System.Drawing.Size(94, 26);
          this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
@@ -244,11 +227,29 @@
          // layoutItemIssueTracker
          // 
          this.layoutItemIssueTracker.Control = this.issueTrackerLink;
-         this.layoutItemIssueTracker.Location = new System.Drawing.Point(0, 17);
+         this.layoutItemIssueTracker.Location = new System.Drawing.Point(0, 24);
          this.layoutItemIssueTracker.Name = "layoutItemIssueTracker";
          this.layoutItemIssueTracker.Size = new System.Drawing.Size(276, 26);
          this.layoutItemIssueTracker.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemIssueTracker.TextVisible = false;
+         // 
+         // richEditControl
+         // 
+         this.richEditControl.Location = new System.Drawing.Point(12, 12);
+         this.richEditControl.Name = "richEditControl";
+         this.richEditControl.Options.Export.Rtf.ExportTheme = true;
+         this.richEditControl.Size = new System.Drawing.Size(639, 20);
+         this.richEditControl.TabIndex = 10;
+         this.richEditControl.Text = "richEditControl1";
+         // 
+         // layoutItemDescription
+         // 
+         this.layoutItemDescription.Control = this.richEditControl;
+         this.layoutItemDescription.Location = new System.Drawing.Point(0, 0);
+         this.layoutItemDescription.Name = "layoutItemDescription";
+         this.layoutItemDescription.Size = new System.Drawing.Size(643, 24);
+         this.layoutItemDescription.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemDescription.TextVisible = false;
          // 
          // ExceptionView
          // 
@@ -275,9 +276,9 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutGroupException)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemException)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemCopyToClipbord)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemIssueTracker)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -295,12 +296,12 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutItemFullException;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupException;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemException;
-      private DevExpress.XtraEditors.LabelControl lblDescription;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
       private DevExpress.XtraEditors.SimpleButton btnCopyToClipboard;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemCopyToClipbord;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
       private DevExpress.XtraEditors.HyperLinkEdit issueTrackerLink;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemIssueTracker;
+      private UxRichEditControl richEditControl;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
    }
 }

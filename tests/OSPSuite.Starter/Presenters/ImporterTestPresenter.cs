@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraEditors;
 using OSPSuite.Core.Domain;
@@ -42,6 +43,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartWithTestSettings()
       {
+         throw new Exception();
          promptForImports(_importer.ImportDataSets(
             _dataGenerator.DefaultTestMetaDataCategories(),
             _dataGenerator.DefaultTestConcentrationImportConfiguration(),

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
+using DevExpress.XtraRichEdit;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -32,8 +34,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         lblDescription.AutoSizeMode = LabelAutoSizeMode.Vertical;
-         lblDescription.AllowHtmlString = true;
+         richEditControl.AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode.Vertical;
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -44,6 +45,14 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
+         richEditControl.ActiveViewType = RichEditViewType.Simple;
+         layoutItemDescription.TextVisible = false;
+         richEditControl.Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
+         richEditControl.ActiveView.BackColor = BackColor;
+         richEditControl.BorderStyle = BorderStyles.NoBorder;
+         richEditControl.PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
+         richEditControl.Enabled = false;
+         richEditControl.Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)
@@ -56,8 +65,26 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            lblDescription.Text = value;
+            richEditControl.Document.HtmlText = formatForRichEdit(value);
          }
+      }
+
+      private string formatForRichEdit(string value)
+      {
+         return @"
+   <style>
+div {
+    font-family: 'Tahoma';
+   font-size: 8.25;
+}
+
+p {
+   padding: 0px;
+   margin: 10px;
+} 
+</style>
+<div>
+" + value + "</div>";
       }
 
       public void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName)
@@ -101,7 +128,7 @@ namespace OSPSuite.UI.Views
          Clipboard.SetText(_cliboardContent);
       }
 
-    
+
       private void showException(string message)
       {
          XtraMessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -134,7 +161,7 @@ namespace OSPSuite.UI.Views
       {
          try
          {
-            ShowDialog((Form) MainView);
+            ShowDialog((Form)MainView);
          }
          catch (Exception)
          {
