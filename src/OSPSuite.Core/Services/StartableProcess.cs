@@ -10,13 +10,13 @@ namespace OSPSuite.Core.Services
       private readonly Process _process;
       private bool _exited;
 
-      public StartableProcess(string filePath, params string[] arguments)
+      public StartableProcess(string applicationPath, params string[] arguments)
       {
          _process = new Process
          {
             StartInfo = new ProcessStartInfo
             {
-               FileName = filePath,
+               FileName = applicationPath,
                Arguments = string.Join(" ", arguments)
             }
          };
