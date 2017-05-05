@@ -12,6 +12,7 @@ using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -54,9 +55,8 @@ namespace OSPSuite.Core
             scan.ExcludeType<ParameterIdentificationRunner>();
             scan.ExcludeType<SensitivityAnalysisRunner>();
 
-            //PKSim registers its own implementation
+            //PK-Sim registers its own implementation
             scan.ExcludeType<ObjectIdResetter>();
-
 
             if (!RegisterParameter)
             {
@@ -89,6 +89,7 @@ namespace OSPSuite.Core
          container.RegisterFactory<ISimModelBatchFactory>();
          container.RegisterFactory<IParameterIdentificationRunInitializerFactory>();
          container.RegisterFactory<ISensitivityAnalysisEngineFactory>();
+         container.RegisterFactory<IStartableProcessFactory>();
 
          //Register Optimization algorithm explicitely
          container.Register<IOptimizationAlgorithm, NelderMeadOptimizer>(Constants.OptimizationAlgorithm.NELDER_MEAD_PKSIM);
