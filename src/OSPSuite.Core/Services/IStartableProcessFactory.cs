@@ -7,7 +7,7 @@
       /// </summary>
       /// <param name="applicationPath">Full path of application to start</param>
       /// <param name="arguments">Command line arguments</param>
-      /// <returns></returns>
+      /// <returns>A <see cref="StartableProcess"/> monitoring the application located at <paramref name="applicationPath"/></returns>
       StartableProcess CreateStartableProcess(string applicationPath, params string[] arguments);
    }
 }
