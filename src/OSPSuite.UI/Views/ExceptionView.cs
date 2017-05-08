@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
+using DevExpress.XtraRichEdit;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -32,8 +34,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         lblDescription.AutoSizeMode = LabelAutoSizeMode.Vertical;
-         lblDescription.AllowHtmlString = true;
+         
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -44,6 +45,8 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
+         layoutItemDescription.TextVisible = false;
+         htmlLabel.ActiveView.BackColor = BackColor;
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)
@@ -56,7 +59,7 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            lblDescription.Text = value;
+            htmlLabel.Caption(value);
          }
       }
 
@@ -101,7 +104,7 @@ namespace OSPSuite.UI.Views
          Clipboard.SetText(_cliboardContent);
       }
 
-    
+
       private void showException(string message)
       {
          XtraMessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -134,7 +137,7 @@ namespace OSPSuite.UI.Views
       {
          try
          {
-            ShowDialog((Form) MainView);
+            ShowDialog((Form)MainView);
          }
          catch (Exception)
          {

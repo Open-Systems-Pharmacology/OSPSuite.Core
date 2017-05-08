@@ -276,6 +276,9 @@
     <Compile Include="Controls\UxHistogramControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\UxHtmlLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\UxImageTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
