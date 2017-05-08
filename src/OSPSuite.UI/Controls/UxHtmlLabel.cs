@@ -27,7 +27,7 @@ namespace OSPSuite.UI.Controls
          ActiveViewType = RichEditViewType.Simple;
       }
 
-      public UxHtmlLabel() : this("Tahoma", 8.25)
+      public UxHtmlLabel() : this("Tahoma", UIConstants.DEFAULT_HTML_FONT_SIZE)
       {
 
       }

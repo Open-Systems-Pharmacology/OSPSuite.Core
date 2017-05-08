@@ -11,6 +11,8 @@ namespace OSPSuite.UI
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";
 
+      public const double DEFAULT_HTML_FONT_SIZE = 8.25;
+
       /// <summary>
       ///    Size used for icons displayed in tab
       /// </summary>
