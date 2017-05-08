@@ -28,6 +28,8 @@ namespace OSPSuite.UI
       /// </summary>
       public static IconSize ICON_SIZE_TREE_VIEW = IconSizes.Size24x24;
 
+      public const string DEFAULT_HTML_FONT = "Tahoma";
+
       public static class Size
       {
          private static readonly double _scaleFactor = createScaleFactor();
