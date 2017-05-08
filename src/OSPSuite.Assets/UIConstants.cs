@@ -1018,7 +1018,7 @@ namespace OSPSuite.Assets
          }
       }
 
-      public static string FormatForRichEditExceptionView(string value, string fontFamily, double fontSize)
+      public static string FormatForRichEditExceptionView(string caption, string fontFamily, double fontSize)
       {
          return @"
             <style>
@@ -1032,7 +1032,7 @@ namespace OSPSuite.Assets
                   margin: 5px;
                } 
             </style>
-            <div>" + value + "  </div>";
+            <div>" + caption + "  </div>";
       }
    }
 
