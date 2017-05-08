@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         htmlLabel.AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode.Vertical;
+         
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -45,14 +45,8 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
-         htmlLabel.ActiveViewType = RichEditViewType.Simple;
          layoutItemDescription.TextVisible = false;
-         htmlLabel.Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
          htmlLabel.ActiveView.BackColor = BackColor;
-         htmlLabel.BorderStyle = BorderStyles.NoBorder;
-         htmlLabel.PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
-         htmlLabel.Enabled = false;
-         htmlLabel.Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)

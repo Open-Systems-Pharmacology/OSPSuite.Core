@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 using DevExpress.Utils.Controls;
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraRichEdit;
 
 namespace OSPSuite.UI.Controls
 {
@@ -14,6 +16,15 @@ namespace OSPSuite.UI.Controls
       {
          _fontSize = fontSize;
          _fontFamily = fontFamily;
+
+         AutoSizeMode = AutoSizeMode.Vertical;
+         Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
+         ActiveView.BackColor = BackColor;
+         BorderStyle = BorderStyles.NoBorder;
+         PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
+         Enabled = false;
+         Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
+         ActiveViewType = RichEditViewType.Simple;
       }
 
       public UxHtmlLabel() : this("Tahoma", 8.25)
