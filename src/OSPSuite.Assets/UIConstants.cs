@@ -241,12 +241,12 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
-      private static void appendListItem(string listItem, StringBuilder sb)
+      public static void AppendListItem(string listItem, StringBuilder sb)
       {
          sb.Append($"<li>{listItem}</li>");
       }
 
-      private static void appendLine(string lineToAppend, StringBuilder sb)
+      public static void AppendLine(string lineToAppend, StringBuilder sb)
       {
          sb.Append($"<p>{lineToAppend}</p>");
       }
@@ -254,18 +254,18 @@ namespace OSPSuite.Assets
       public static string ExceptionViewDescription(string issueTrackerUrl)
       {
          var sb = new StringBuilder();
-         appendLine("oops...something went terribly wrong.", sb);
-         appendLine(string.Empty, sb);
-         appendLine("To best address the error, please enter an issue in our issue tracker:", sb);
+         AppendLine("oops...something went terribly wrong.", sb);
+         AppendLine(string.Empty, sb);
+         AppendLine("To best address the error, please enter an issue in our issue tracker:", sb);
          sb.Append("<ol>");
-         appendListItem($"Visit <b>{issueTrackerUrl}</b> or click on the link below", sb);
-         appendListItem("Click on the <b>New Issue</b> button", sb);
-         appendListItem("Describe the steps you took prior to the problem emerging", sb);
-         appendListItem($"Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description", sb);
-         appendListItem("if possible, attach your project file to the issue (do not attach confidential information)", sb);
+         AppendListItem($"Visit <b>{issueTrackerUrl}</b> or click on the link below", sb);
+         AppendListItem("Click on the <b>New Issue</b> button", sb);
+         AppendListItem("Describe the steps you took prior to the problem emerging", sb);
+         AppendListItem($"Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description", sb);
+         AppendListItem("if possible, attach your project file to the issue (do not attach confidential information)", sb);
          sb.Append("</ol>");
-         appendLine(string.Empty, sb);
-         appendLine("Note: A GitHub account is required to create an issue", sb);
+         AppendLine(string.Empty, sb);
+         AppendLine("Note: A GitHub account is required to create an issue", sb);
          return sb.ToString();
       }
 
@@ -1016,23 +1016,6 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
          }
-      }
-
-      public static string FormatForRichEditExceptionView(string caption, string fontFamily, double fontSize)
-      {
-         return @"
-            <style>
-               div {
-                   font-family: '" + fontFamily + @"';
-                  font-size: '" + fontSize + @"';
-               }
-
-               p {
-                  padding: 0px;
-                  margin: 5px;
-               } 
-            </style>
-            <div>" + caption + "  </div>";
       }
    }
 

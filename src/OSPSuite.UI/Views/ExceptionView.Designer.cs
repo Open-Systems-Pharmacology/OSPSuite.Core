@@ -46,7 +46,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemCopyToClipbord = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemIssueTracker = new DevExpress.XtraLayout.LayoutControlItem();
-         this.richEditControl = new UxRichEditControl();
+         this.htmlLabel = new UxHtmlLabel();
          this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -68,7 +68,7 @@ namespace OSPSuite.UI.Views
          // 
          // layoutControl
          // 
-         this.layoutControl.Controls.Add(this.richEditControl);
+         this.layoutControl.Controls.Add(this.htmlLabel);
          this.layoutControl.Controls.Add(this.issueTrackerLink);
          this.layoutControl.Controls.Add(this.btnCopyToClipboard);
          this.layoutControl.Controls.Add(this.tbException);
@@ -235,16 +235,16 @@ namespace OSPSuite.UI.Views
          // 
          // richEditControl
          // 
-         this.richEditControl.Location = new System.Drawing.Point(12, 12);
-         this.richEditControl.Name = "richEditControl";
-         this.richEditControl.Options.Export.Rtf.ExportTheme = true;
-         this.richEditControl.Size = new System.Drawing.Size(639, 20);
-         this.richEditControl.TabIndex = 10;
-         this.richEditControl.Text = "richEditControl1";
+         this.htmlLabel.Location = new System.Drawing.Point(12, 12);
+         this.htmlLabel.Name = "htmlLabel";
+         this.htmlLabel.Options.Export.Rtf.ExportTheme = true;
+         this.htmlLabel.Size = new System.Drawing.Size(639, 20);
+         this.htmlLabel.TabIndex = 10;
+         this.htmlLabel.Text = "richEditControl1";
          // 
          // layoutItemDescription
          // 
-         this.layoutItemDescription.Control = this.richEditControl;
+         this.layoutItemDescription.Control = this.htmlLabel;
          this.layoutItemDescription.Location = new System.Drawing.Point(0, 0);
          this.layoutItemDescription.Name = "layoutItemDescription";
          this.layoutItemDescription.Size = new System.Drawing.Size(643, 24);
@@ -301,7 +301,7 @@ namespace OSPSuite.UI.Views
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
       private DevExpress.XtraEditors.HyperLinkEdit issueTrackerLink;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemIssueTracker;
-      private UxRichEditControl richEditControl;
+      private UxHtmlLabel htmlLabel;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
    }
 }

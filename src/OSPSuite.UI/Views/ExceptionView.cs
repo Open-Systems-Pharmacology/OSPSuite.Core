@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         richEditControl.AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode.Vertical;
+         htmlLabel.AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode.Vertical;
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -45,14 +45,14 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
-         richEditControl.ActiveViewType = RichEditViewType.Simple;
+         htmlLabel.ActiveViewType = RichEditViewType.Simple;
          layoutItemDescription.TextVisible = false;
-         richEditControl.Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
-         richEditControl.ActiveView.BackColor = BackColor;
-         richEditControl.BorderStyle = BorderStyles.NoBorder;
-         richEditControl.PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
-         richEditControl.Enabled = false;
-         richEditControl.Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
+         htmlLabel.Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
+         htmlLabel.ActiveView.BackColor = BackColor;
+         htmlLabel.BorderStyle = BorderStyles.NoBorder;
+         htmlLabel.PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
+         htmlLabel.Enabled = false;
+         htmlLabel.Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)
@@ -65,7 +65,7 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            richEditControl.Document.HtmlText = Captions.FormatForRichEditExceptionView(value, Font.FontFamily.Name, Font.Size);
+            htmlLabel.Caption(value);
          }
       }
 

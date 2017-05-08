@@ -43,6 +43,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartWithTestSettings()
       {
+         throw new Exception();
          promptForImports(_importer.ImportDataSets(
             _dataGenerator.DefaultTestMetaDataCategories(),
             _dataGenerator.DefaultTestConcentrationImportConfiguration(),
