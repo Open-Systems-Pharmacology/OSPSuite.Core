@@ -65,26 +65,8 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            richEditControl.Document.HtmlText = formatForRichEdit(value);
+            richEditControl.Document.HtmlText = Captions.FormatForRichEditExceptionView(value, Font.FontFamily.Name, Font.Size);
          }
-      }
-
-      private string formatForRichEdit(string value)
-      {
-         return @"
-   <style>
-div {
-    font-family: 'Tahoma';
-   font-size: 8.25;
-}
-
-p {
-   padding: 0px;
-   margin: 10px;
-} 
-</style>
-<div>
-" + value + "</div>";
       }
 
       public void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName)

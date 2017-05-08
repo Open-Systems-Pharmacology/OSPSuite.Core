@@ -306,7 +306,7 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
 
-    
+
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
@@ -1016,6 +1016,23 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
          }
+      }
+
+      public static string FormatForRichEditExceptionView(string value, string fontFamily, double fontSize)
+      {
+         return @"
+            <style>
+               div {
+                   font-family: '" + fontFamily + @"';
+                  font-size: '" + fontSize + @"';
+               }
+
+               p {
+                  padding: 0px;
+                  margin: 5px;
+               } 
+            </style>
+            <div>" + value + "  </div>";
       }
    }
 
