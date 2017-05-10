@@ -1,51 +1,40 @@
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 using DevExpress.Utils.Controls;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraRichEdit;
+using AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode;
 
 namespace OSPSuite.UI.Controls
 {
    public class UxHtmlLabel : UxRichEditControl, IXtraResizableControl
    {
-      private static readonly object _layoutInfoChanged = new object();
-      private static string _fontFamily;
-      private static double _fontSize;
+      private readonly object _layoutInfoChanged = new object();
+      public string FontFamily { get; set; } = UIConstants.DEFAULT_HTML_FONT;
+      public double FontSize { get; set; } = UIConstants.DEFAULT_HTML_FONT_SIZE;
 
-      public UxHtmlLabel(string fontFamily, double fontSize)
+      public UxHtmlLabel()
       {
-         _fontSize = fontSize;
-         _fontFamily = fontFamily;
-
          AutoSizeMode = AutoSizeMode.Vertical;
          Options.VerticalScrollbar.Visibility = RichEditScrollbarVisibility.Hidden;
          ActiveView.BackColor = BackColor;
          BorderStyle = BorderStyles.NoBorder;
          PopupMenuShowing += (o, e) => e.Menu.Items.Clear();
          Enabled = false;
-         Views.SimpleView.Padding = new System.Windows.Forms.Padding(0);
+         Views.SimpleView.Padding = new Padding(0);
          ActiveViewType = RichEditViewType.Simple;
-      }
-
-      public UxHtmlLabel() : this(UIConstants.DEFAULT_HTML_FONT, UIConstants.DEFAULT_HTML_FONT_SIZE)
-      {
-
       }
 
       event EventHandler IXtraResizableControl.Changed
       {
-         add
-         {
-            Events.AddHandler(_layoutInfoChanged, value);
-         }
-         remove
-         {
-            Events.RemoveHandler(_layoutInfoChanged, value);
-         }
+         add { Events.AddHandler(_layoutInfoChanged, value); }
+         remove { Events.RemoveHandler(_layoutInfoChanged, value); }
       }
+
       protected void RaiseChanged()
       {
-         var changed = (EventHandler)Events[_layoutInfoChanged];
+         var changed = (EventHandler) Events[_layoutInfoChanged];
          changed?.Invoke(this, EventArgs.Empty);
       }
 
@@ -61,24 +50,21 @@ namespace OSPSuite.UI.Controls
          RaiseChanged();
       }
 
-      public void Caption(string caption, string fontFamily = "", double? fontSize = 8.25)
+      public void Caption(string caption)
       {
-          Document.HtmlText = stylizeHtmlText(fontFamily, fontSize) + $"<div>{caption}</div>";
+         Document.HtmlText = $"{stylizeHtmlText}<div>{caption}</div>";
       }
 
-      private static string stylizeHtmlText(string fontFamily, double? fontSize)
-      {
-         return $@"
+      private string stylizeHtmlText => $@"
             <style>
                div {{
-                   font-family: '{(string.IsNullOrEmpty(fontFamily) ? _fontFamily : fontFamily)}';
-                  font-size: '{fontSize ?? _fontSize}';
+                   font-family: '{FontFamily}';
+                  font-size: '{FontSize}';
                }}
                p {{
                   padding: 0px;
                   margin: 5px;
                }}
             </style>";
-      }
    }
 }
