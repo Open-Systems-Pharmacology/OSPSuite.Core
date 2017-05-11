@@ -50,9 +50,9 @@ namespace OSPSuite.UI.Controls
          RaiseChanged();
       }
 
-      public void Caption(string caption)
+      public string Caption
       {
-         Document.HtmlText = $"{stylizeHtmlText}<div>{caption}</div>";
+         set => Document.HtmlText = $"{stylizeHtmlText}<div>{value}</div>";
       }
 
       private string stylizeHtmlText => $@"
