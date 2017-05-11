@@ -52,7 +52,7 @@ namespace OSPSuite.UI.Controls
 
       public string Caption
       {
-         set => Document.HtmlText = $"{stylizeHtmlText}<div>{value}</div>";
+         set { Document.HtmlText = $"{stylizeHtmlText}<div>{value}</div>"; }
       }
 
       private string stylizeHtmlText => $@"
