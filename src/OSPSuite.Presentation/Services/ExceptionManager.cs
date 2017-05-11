@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Services
          _dialogCreator = dialogCreator;
          _exceptionView = exceptionView;
          _productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
-         _exceptionView.Initialize($"{_productInfo} - Error", configuration.Icon, _productInfo, configuration.IssueTrackerUrl, configuration.ProductName);
+         _exceptionView.Initialize($"{_productInfo} - Error", configuration.Icon,  configuration.IssueTrackerUrl, configuration.ProductName);
       }
 
       public override void LogException(Exception ex)

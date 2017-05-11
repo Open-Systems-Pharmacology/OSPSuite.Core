@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
-using DevExpress.XtraRichEdit;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
    public partial class ExceptionView : XtraForm, IExceptionView
    {
-      private string _productInfo;
       private string _issueTrackerUrl;
       private string _cliboardContent;
       private const string _couldNotCopyToClipboard = "Unable to copy the information to the clipboard.";
@@ -59,15 +55,14 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            htmlLabel.Caption(value);
+            htmlLabel.Caption = value;
          }
       }
 
-      public void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName)
+      public void Initialize(string caption, ApplicationIcon icon,  string issueTrackerUrl, string productName)
       {
          Text = caption;
          Icon = icon;
-         _productInfo = productInfo;
          _issueTrackerUrl = issueTrackerUrl;
          Description = Captions.ExceptionViewDescription(issueTrackerUrl);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);

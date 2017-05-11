@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Views
       /// <summary>
       ///    Initialize the view with caption and icon. The assembly info contains information about the calling assembly 
       /// </summary>
-      void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName);
+      void Initialize(string caption, ApplicationIcon icon,  string issueTrackerUrl, string productName);
 
       /// <summary>
       ///    set the text being displayed in the exception message field
