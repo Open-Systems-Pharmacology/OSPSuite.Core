@@ -60,6 +60,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private IOptimizationAlgorithm _optimizationAlgorithm;
       private CancellationToken _cancellationToken;
       private IParameterIdentifcationRunInitializer _runInitializer;
+      private List<IdentificationParameter> _variableParameters;
+      private List<IdentificationParameter> _fixedParameters;
 
       public OptimizationRunResult BestResult => RunResult.BestResult;
 
@@ -91,6 +93,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _residualCalculator = _residualCalculatorFactory.CreateFor(_parameterIdentification.Configuration);
          _parameterIdentification.AllSimulations.Each(s => _allSimModelBatches.Add(s, createSimModelBatch(s)));
          initializeParameterHistoryCache();
+         _variableParameters = _parameterIdentification.AllIdentificationParameters.Where(x => !x.IsFixed).ToList();
+         _fixedParameters = _parameterIdentification.AllIdentificationParameters.Where(x => x.IsFixed).ToList();
       }
 
       private void initializeParameterHistoryCache()
@@ -116,9 +120,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             RunResult.Status = RunStatus.Running;
             initialize();
-            var parameterConstraints = retrieveParameterConstraints();
 
-            RunResult.Properties = _optimizationAlgorithm.Optimize(parameterConstraints, performRun);
+            var variableParameterConstraints = retrieveVariableParameterConstraints();
+            RunResult.Properties = _optimizationAlgorithm.Optimize(variableParameterConstraints, performRun);
             calculateJacobian();
             RunResult.Status = RunStatus.RanToCompletion;
             return RunResult;
@@ -147,6 +151,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          _allSimModelBatches.Each(x => x.Clear());
          _allSimModelBatches.Clear();
+         _variableParameters.Clear();
+         _fixedParameters.Clear();
          _parameterIdentification = null;
          _runInitializer = null;
       }
@@ -229,10 +235,14 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private void updateParameterValues(IReadOnlyList<OptimizedParameterValue> values)
       {
-         if (_parameterIdentification.AllIdentificationParameters.Count != values.Count)
-            throw new ArgumentException(Error.IdentificationParametersAndValuesDoNotTheSameLength(_parameterIdentification.AllIdentificationParameters.Count, values.Count));
+         if (_variableParameters.Count != values.Count)
+            throw new ArgumentException(Error.IdentificationParametersAndValuesDoNotTheSameLength(_variableParameters.Count, values.Count));
 
-         _parameterIdentification.AllIdentificationParameters.Each((x, i) => addParameterValue(x, values[i].Value));
+         //Update variable parameters according to optimized parameter values
+         _variableParameters.Each((x, i) => addParameterValue(x, values[i].Value));
+
+         //Preserve fixed parameter values
+         _fixedParameters.Each((x, i) => addParameterValue(x, x.StartValue));
       }
 
       private void addParameterValue(IdentificationParameter identificationParameter, double value)
@@ -247,9 +257,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _parametersHistory[identificationParameter.Name].AddValue(value);
       }
 
-      private IReadOnlyList<OptimizedParameterConstraint> retrieveParameterConstraints()
+      private IReadOnlyList<OptimizedParameterConstraint> retrieveVariableParameterConstraints()
       {
-         return _parameterIdentification.AllIdentificationParameters.Select(x => new OptimizedParameterConstraint(x.Name, x.MinValueParameter.Value, x.MaxValueParameter.Value, x.StartValueParameter.Value, x.Scaling)).ToArray();
+         return _variableParameters.Select(x => new OptimizedParameterConstraint(x.Name, x.MinValueParameter.Value, x.MaxValueParameter.Value, x.StartValueParameter.Value, x.Scaling)).ToArray();
       }
    }
 }
