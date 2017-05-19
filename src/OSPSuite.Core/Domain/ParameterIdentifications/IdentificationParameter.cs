@@ -21,6 +21,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual IDimension Dimension => _allLinkedParameters.FirstOrDefault()?.Dimension;
       public virtual bool UseAsFactor { get; set; }
+      public virtual bool IsFixed { get; set; }
       public virtual Scalings Scaling { get; set; }
 
       /// <summary>
@@ -56,6 +57,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          if (sourceIdentificationParameter == null) return;
          UseAsFactor = sourceIdentificationParameter.UseAsFactor;
          Scaling = sourceIdentificationParameter.Scaling;
+         IsFixed = sourceIdentificationParameter.IsFixed;
          _allLinkedParameters.Clear();
          _allLinkedParameters.AddRange(sourceIdentificationParameter.AllLinkedParameters.Select(x => x.Clone()));
       }

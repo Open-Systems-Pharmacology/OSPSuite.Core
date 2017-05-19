@@ -638,6 +638,7 @@ namespace OSPSuite.Assets
          public static readonly string RunMessage = "Message";
          public static readonly string RunIndex = "Run #";
          public static readonly string UseAsFactor = "Use as Factor";
+         public static readonly string IsFixed = "Fixed";
          public static readonly string LLOQMode = "Transform data below LLOQ";
          public static readonly string RemoveLLOQMode = "Remove data below LLOQ";
          public static readonly string TimeProfileAnalysis = "Time Profile";
