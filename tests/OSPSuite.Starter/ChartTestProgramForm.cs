@@ -25,11 +25,12 @@ using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Views;
 using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Starter
 {
-   public partial class ChartTestProgramForm : Form, IShell
+   public partial class ChartTestProgramForm : BaseView
    {
       private readonly IDimensionFactory _dimensionFactory;
       private ICache<string, DataRepository> _dataRepositories;
@@ -162,7 +163,7 @@ namespace OSPSuite.Starter
          var newColumn = new DataColumn("Spec1A" + DateTime.Now.Second, q.Dimension, baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320), 
-            QuantityInfo = Helper.CreateQuantityInfo(q), Values = new[] {3F, 2F, 1F}
+            QuantityInfo = OSPSuite.Starter.Helper.CreateQuantityInfo(q), Values = new[] {3F, 2F, 1F}
          };
          _dataRepositories["Rep Ex3"].Add(newColumn);
          _dataRepositories["Rep Ex3"].Name = "Rep Ex3 New";
@@ -341,58 +342,9 @@ namespace OSPSuite.Starter
          Console.WriteLine("OnChartSave");
       }
 
-      public void InitializeBinding()
-      {
-         
-      }
-
-      public void InitializeResources()
-      {
-         
-      }
-
       private string _caption;
       private readonly ISimpleChartPresenter _simpleChartPresenter;
       private OSPSuiteXmlSerializerRepository _spSuiteXmlSerializerRepository;
-
-      public string Caption
-      {
-         get { return _caption; }
-         set
-         {
-            _caption = value;
-           CaptionChanged(this, new EventArgs()); 
-         } 
-      }
-
-      public event EventHandler CaptionChanged;
-      public bool HasError { get; private set; }
-      public void AttachPresenter(IPresenter presenter)
-      {
-         
-      }
-
-      public ApplicationIcon ApplicationIcon { get; set; }
-      public IMdiChildView ActiveView { get; private set; }
-      public void InWaitCursor(bool hourGlassVisible, bool forceCursorChange)
-      {
-         
-      }
-
-      public void Initialize()
-      {
-         
-      }
-
-      public void ShowHelp()
-      {
-         
-      }
-
-      public void DisplayNotification(string caption, string notification, string url)
-      {
-         
-      }
 
       private void simpleButton1Click(object sender, EventArgs e)
       {

@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
+using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Repositories;
 using OSPSuite.Presentation.Services;
@@ -24,10 +25,20 @@ namespace OSPSuite.Starter.Presenters
 
       protected override void AddRibbonPages()
       {
-         _view.AddPageGroupToPage(createGroup(), "Modeling");
+         _view.AddPageGroupToPage(createGroupModelling(), "Modeling");
+         _view.AddPageGroupToPage(createParmaeterIdentification(), "Modeling");
       }
 
-      private IButtonGroup createGroup()
+      private IButtonGroup createParmaeterIdentification()
+      {
+         var button = ParameterIdentificationMenuBarButtons.RunParameterIdentification(new MenuBarItemId("Run", 0));
+
+         return CreateButtonGroup.WithCaption("ParameterIdentification")
+            .WithButton(CreateRibbonButton.From(button))
+            .WithId("TEST");
+      }
+
+      private IButtonGroup createGroupModelling()
       {
          return CreateButtonGroup.WithCaption("TEST")
             .WithButton(createButton(ApplicationIcons.PopulationSimulationComparison, "Current"))
@@ -36,10 +47,14 @@ namespace OSPSuite.Starter.Presenters
 
       private IRibbonBarItem createButton(ApplicationIcon icon, string caption)
       {
-         return CreateRibbonButton.From(
-            CreateMenuButton.WithCaption(caption)
-               .WithIcon(icon)
-            );
+         return CreateRibbonButton.From(createMenuButton(icon,caption));
       }
+
+      private IMenuBarButton createMenuButton(ApplicationIcon icon, string caption)
+      {
+         return CreateMenuButton.WithCaption(caption)
+            .WithIcon(icon);
+      }
+
    }
 }

@@ -91,7 +91,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public Action<int> HotTracked
       {
-         set { _chartDisplayPresenter.HotTracked = value; }
+         set => _chartDisplayPresenter.HotTracked = value;
       }
 
       public void SetChartScale(Scalings scale)
@@ -102,8 +102,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public bool LogLinSelectionEnabled
       {
-         get { return _view.LogLinSelectionEnabled; }
-         set { _view.LogLinSelectionEnabled = value; }
+         get => _view.LogLinSelectionEnabled;
+         set => _view.LogLinSelectionEnabled = value;
       }
 
       private void exportToPDF()
