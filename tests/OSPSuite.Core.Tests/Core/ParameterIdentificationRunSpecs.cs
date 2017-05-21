@@ -126,61 +126,6 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_the_parameter_identification_runner_is_running_a_parameter_identification_with_fixed_parameters : concern_for_ParameterIdentificationRun
-   {
-      private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
-      private IReadOnlyList<OptimizedParameterConstraint> _constraints;
-      private IParameter _parameter3;
-      private ParameterSelection _parameterSelection3;
-      private IdentificationParameter _fixedIdentificationParameter;
-
-      protected override void Context()
-      {
-         base.Context();
-
-         A.CallTo(_algorithm).WithReturnType<OptimizationRunProperties>()
-            .Invokes(x =>
-            {
-               _constraints = x.GetArgument<IReadOnlyList<OptimizedParameterConstraint>>(0);
-               _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
-            })
-            .Returns(A.Fake<OptimizationRunProperties>());
-
-         sut.Run(_cancellationToken);
-
-      }
-
-      protected override void PerformExtraInitializationSteps()
-      {
-         _parameter3 = A.Fake<IParameter>();
-         _parameter3.Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
-         _parameter3.Value = 100;
-         _parameterSelection3 = ParameterSelectionFor(_parameter3, "ParameterPath3");
-
-         _fixedIdentificationParameter = DomainHelperForSpecs.IdentificationParameter("Fixed IdParam", min: 0, max: 200, startValue: 60, isFixed: true);
-         _fixedIdentificationParameter.AddLinkedParameter(_parameterSelection3);
-         _parameterIdentification.AddIdentificationParameter(_fixedIdentificationParameter);
-      }
-
-      protected override void Because()
-      {
-         _objectiveFunction(new[] { new OptimizedParameterValue("A", 100.0, 50d) });
-      }
-
-      [Observation]
-      public void should_initialize_the_optimization_algorithm_with_all_non_fixed_parameters()
-      {
-         _constraints.Count.ShouldBeEqualTo(1);
-         _constraints[0].Name.ShouldBeEqualTo(_identificationParameter.Name);
-      }
-
-      [Observation]
-      public void should_initialize_the_batch_simulation_with_the_fixed_value()
-      {
-         A.CallTo(() => _simModelBatch.UpdateParameterValue(_parameterSelection3.Path, _fixedIdentificationParameter.StartValue)).MustHaveHappened();
-      }
-   }
-
    public class When_initializing_the_parameter_identification_run_with_a_parameter_identification : concern_for_ParameterIdentificationRun
    {
       private IReadOnlyList<string> _parameters;
@@ -533,6 +478,60 @@ namespace OSPSuite.Core
       public void should_initialize_the_sim_model_batch_for_sensitivity()
       {
          A.CallTo(() => _simModelBatch.InitializeForSensitivity()).MustHaveHappened();
+      }
+   }
+
+   public class When_the_parameter_identification_runner_is_running_a_parameter_identification_with_fixed_parameters : concern_for_ParameterIdentificationRun
+   {
+      private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
+      private IReadOnlyList<OptimizedParameterConstraint> _constraints;
+      private IParameter _parameter3;
+      private ParameterSelection _parameterSelection3;
+      private IdentificationParameter _fixedIdentificationParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         A.CallTo(_algorithm).WithReturnType<OptimizationRunProperties>()
+            .Invokes(x =>
+            {
+               _constraints = x.GetArgument<IReadOnlyList<OptimizedParameterConstraint>>(0);
+               _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
+            })
+            .Returns(A.Fake<OptimizationRunProperties>());
+
+         sut.Run(_cancellationToken);
+      }
+
+      protected override void PerformExtraInitializationSteps()
+      {
+         _parameter3 = A.Fake<IParameter>();
+         _parameter3.Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         _parameter3.Value = 100;
+         _parameterSelection3 = ParameterSelectionFor(_parameter3, "ParameterPath3");
+
+         _fixedIdentificationParameter = DomainHelperForSpecs.IdentificationParameter("Fixed IdParam", min: 0, max: 200, startValue: 60, isFixed: true);
+         _fixedIdentificationParameter.AddLinkedParameter(_parameterSelection3);
+         _parameterIdentification.AddIdentificationParameter(_fixedIdentificationParameter);
+      }
+
+      protected override void Because()
+      {
+         _objectiveFunction(new[] {new OptimizedParameterValue("A", 100.0, 50d)});
+      }
+
+      [Observation]
+      public void should_initialize_the_optimization_algorithm_with_all_non_fixed_parameters()
+      {
+         _constraints.Count.ShouldBeEqualTo(1);
+         _constraints[0].Name.ShouldBeEqualTo(_identificationParameter.Name);
+      }
+
+      [Observation]
+      public void should_initialize_the_batch_simulation_with_the_fixed_value()
+      {
+         A.CallTo(() => _simModelBatch.UpdateParameterValue(_parameterSelection3.Path, _fixedIdentificationParameter.StartValue)).MustHaveHappened();
       }
    }
 }
