@@ -123,7 +123,7 @@ namespace OSPSuite.Core
    {
       private IReadOnlyList<string> _parameters;
       private List<DataRepository> _observedDataList;
-
+   
       protected override void Context()
       {
          base.Context();
