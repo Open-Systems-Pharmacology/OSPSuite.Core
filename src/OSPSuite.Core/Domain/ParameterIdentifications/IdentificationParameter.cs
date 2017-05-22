@@ -117,10 +117,15 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public double OptimizedParameterValueFor(OptimizedParameterValue optimizedParameterValue, ParameterSelection linkedParameter)
       {
-         if (UseAsFactor)
-            return optimizedParameterValue.Value * linkedParameter.Parameter.Value;
+         return OptimizedParameterValueFor(optimizedParameterValue.Value, linkedParameter);
+      }
 
-         return optimizedParameterValue.Value;
+      public double OptimizedParameterValueFor(double optimalValue, ParameterSelection linkedParameter)
+      {
+         if (UseAsFactor)
+            return optimalValue * linkedParameter.Parameter.Value;
+
+         return optimalValue;
       }
    }
 }

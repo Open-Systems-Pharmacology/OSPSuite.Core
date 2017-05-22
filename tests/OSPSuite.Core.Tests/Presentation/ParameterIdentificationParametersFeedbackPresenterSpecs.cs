@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation
       protected List<ParameterFeedbackDTO> _allParameterFeedbackDTO;
       protected List<IRunPropertyDTO> _allPropertiesDTO;
       protected IParameterIdentificationExportTask _exportTask;
+      private IdentificationParameter _identificationParameter3;
 
       protected override void Context()
       {
@@ -34,9 +35,12 @@ namespace OSPSuite.Presentation
          _paramterIdentification = new ParameterIdentification();
          _identificationParameter1 = createIdentificationParameter("P1", 10, 0, 20);
          _identificationParameter2 = createIdentificationParameter("P2", 20, 5, 40);
+         _identificationParameter3 = createIdentificationParameter("P3", 20, 5, 40);
+         _identificationParameter3.IsFixed = true;
 
          _paramterIdentification.AddIdentificationParameter(_identificationParameter1);
          _paramterIdentification.AddIdentificationParameter(_identificationParameter2);
+         _paramterIdentification.AddIdentificationParameter(_identificationParameter3);
 
          A.CallTo(() => _view.BindTo(A<IEnumerable<ParameterFeedbackDTO>>._, A<IEnumerable<IRunPropertyDTO>>._))
             .Invokes(x =>
@@ -63,10 +67,16 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_create_one_parameter_entry_for_each_identified_parameter()
+      public void should_create_one_parameter_entry_for_each_variable_identified_parameter()
       {
          _allParameterFeedbackDTO.ExistsByName("P1").ShouldBeTrue();
          _allParameterFeedbackDTO.ExistsByName("P2").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_create_a_parameter_entry_for_fixed_identification_parameter()
+      {
+         _allParameterFeedbackDTO.ExistsByName("P3").ShouldBeTrue();
       }
 
       [Observation]

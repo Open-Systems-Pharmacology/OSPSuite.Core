@@ -1,9 +1,9 @@
-﻿using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 {
@@ -24,20 +24,30 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
       public ParameterIdentificationRunResultDTO MapFrom(ParameterIdentification parameterIdentification, ParameterIdentificationRunResult runResult)
       {
          var runResultDTO = new ParameterIdentificationRunResultDTO(runResult);
-        
+
          runResult.BestResult.Values.Each(x =>
          {
             var optimizedParameterDTO = mapFrom(x, parameterIdentification);
-            if (optimizedParameterDTO != null)
-            {
-               runResultDTO.AddOptimizedParameter(optimizedParameterDTO);
-               if (runResultDTO.LegendImage == null)
-                  runResultDTO.LegendImage = _optimizedParameterRangeImageCreator.CreateLegendFor(optimizedParameterDTO);
-            }
+            addOptimizedParameterDTOTo(optimizedParameterDTO, runResultDTO);
+         });
 
+         parameterIdentification.AllFixedIdentificationParameters.Each(x =>
+         {
+            var fixedParameterDTO = mapFrom(x, x.StartValue);
+            addOptimizedParameterDTOTo(fixedParameterDTO, runResultDTO);
          });
 
          return runResultDTO;
+      }
+
+      private void addOptimizedParameterDTOTo(OptimizedParameterDTO optimizedParameterDTO, ParameterIdentificationRunResultDTO runResultDTO)
+      {
+         if (optimizedParameterDTO != null)
+         {
+            runResultDTO.AddOptimizedParameter(optimizedParameterDTO);
+            if (runResultDTO.LegendImage == null)
+               runResultDTO.LegendImage = _optimizedParameterRangeImageCreator.CreateLegendFor(optimizedParameterDTO);
+         }
       }
 
       private OptimizedParameterDTO mapFrom(OptimizedParameterValue optimizedParameterValue, ParameterIdentification parameterIdentification)
@@ -46,13 +56,18 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
          if (identificationParameter == null)
             return null;
 
-         var dto= new OptimizedParameterDTO
+         return mapFrom(identificationParameter, optimizedParameterValue.Value);
+      }
+
+      private OptimizedParameterDTO mapFrom(IdentificationParameter identificationParameter, double optimalValue)
+      {
+         var dto = new OptimizedParameterDTO
          {
-            Name = optimizedParameterValue.Name,
-            OptimalValue = mapFrom(optimizedParameterValue.Value, identificationParameter.StartValueParameter),
-            StartValue = mapFrom(optimizedParameterValue.StartValue, identificationParameter.StartValueParameter),
-            MinValue = mapFrom(identificationParameter.MinValueParameter.Value, identificationParameter.MinValueParameter),
-            MaxValue = mapFrom(identificationParameter.MaxValueParameter.Value, identificationParameter.MaxValueParameter),
+            Name = identificationParameter.Name,
+            OptimalValue = mapFrom(optimalValue, identificationParameter.StartValueParameter),
+            StartValue = mapFrom(identificationParameter.StartValue, identificationParameter.StartValueParameter),
+            MinValue = mapFrom(identificationParameter.MinValue, identificationParameter.MinValueParameter),
+            MaxValue = mapFrom(identificationParameter.MaxValue, identificationParameter.MaxValueParameter),
             Scaling = identificationParameter.Scaling
          };
          dto.RangeImage = _optimizedParameterRangeImageCreator.CreateFor(dto);
