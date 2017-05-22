@@ -22,10 +22,10 @@ namespace OSPSuite.Presentation.DTO
 
    public abstract class ValidatableDTO<T> : ValidatableDTO where T : IValidatable, INotifier
    {
-      protected ValidatableDTO(T parameter)
+      protected ValidatableDTO(T underlyingObject)
       {
-         this.AddRulesFrom(parameter);
-         parameter.PropertyChanged += (o, e) => RaisePropertyChanged(e.PropertyName);
+         this.AddRulesFrom(underlyingObject);
+         underlyingObject.PropertyChanged += (o, e) => RaisePropertyChanged(e.PropertyName);
       }
    }
 }

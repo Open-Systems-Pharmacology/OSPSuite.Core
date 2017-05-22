@@ -28,19 +28,19 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
          runResult.BestResult.Values.Each(x =>
          {
             var optimizedParameterDTO = mapFrom(x, parameterIdentification);
-            addOptimizedParameterDTOTo(optimizedParameterDTO, runResultDTO);
+            addOptimizedParameterDTOTo(runResultDTO, optimizedParameterDTO);
          });
 
          parameterIdentification.AllFixedIdentificationParameters.Each(x =>
          {
             var fixedParameterDTO = mapFrom(x, x.StartValue);
-            addOptimizedParameterDTOTo(fixedParameterDTO, runResultDTO);
+            addOptimizedParameterDTOTo(runResultDTO, fixedParameterDTO);
          });
 
          return runResultDTO;
       }
 
-      private void addOptimizedParameterDTOTo(OptimizedParameterDTO optimizedParameterDTO, ParameterIdentificationRunResultDTO runResultDTO)
+      private void addOptimizedParameterDTOTo(ParameterIdentificationRunResultDTO runResultDTO, OptimizedParameterDTO optimizedParameterDTO)
       {
          if (optimizedParameterDTO != null)
          {
