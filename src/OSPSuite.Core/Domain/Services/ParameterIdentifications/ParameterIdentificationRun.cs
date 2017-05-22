@@ -93,8 +93,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _residualCalculator = _residualCalculatorFactory.CreateFor(_parameterIdentification.Configuration);
          _parameterIdentification.AllSimulations.Each(s => _allSimModelBatches.Add(s, createSimModelBatch(s)));
          initializeParameterHistoryCache();
-         _variableParameters = _parameterIdentification.AllIdentificationParameters.Where(x => !x.IsFixed).ToList();
-         _fixedParameters = _parameterIdentification.AllIdentificationParameters.Where(x => x.IsFixed).ToList();
+         _variableParameters = _parameterIdentification.AllVariableIdentificationParameters.ToList();
+         _fixedParameters = _parameterIdentification.AllFixedIdentificationParameters.ToList();
       }
 
       private void initializeParameterHistoryCache()
@@ -151,8 +151,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          _allSimModelBatches.Each(x => x.Clear());
          _allSimModelBatches.Clear();
-         _variableParameters.Clear();
-         _fixedParameters.Clear();
+         _variableParameters?.Clear();
+         _fixedParameters?.Clear();
          _parameterIdentification = null;
          _runInitializer = null;
       }

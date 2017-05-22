@@ -242,7 +242,7 @@
     <Compile Include="Domain\SensitivityAnalyses\SensitivityAnalysisRunResult.cs" />
     <Compile Include="Domain\SensitivityAnalyses\SensitivityParameter.cs" />
     <Compile Include="Domain\SensitivityAnalyses\VariationData.cs" />
-    <Compile Include="Domain\Services\IParameterIdentificationValidator.cs" />
+    <Compile Include="Domain\Services\ParameterIdentificationValidator.cs" />
     <Compile Include="Domain\Services\ISimulationSelector.cs" />
     <Compile Include="Domain\Services\ModelFinalizer.cs" />
     <Compile Include="Domain\Services\ISetParameterTask.cs" />

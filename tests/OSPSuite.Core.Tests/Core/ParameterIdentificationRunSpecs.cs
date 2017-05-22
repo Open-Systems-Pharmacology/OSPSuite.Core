@@ -159,7 +159,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_retrieve_a_new_instance_of_the_residual_calculator_based_on_the_parameter_identification_configuraiton()
+      public void should_retrieve_a_new_instance_of_the_residual_calculator_based_on_the_parameter_identification_configuration()
       {
          A.CallTo(() => _residualCalculatorFactory.CreateFor(_parameterIdentification.Configuration)).MustHaveHappened();
       }

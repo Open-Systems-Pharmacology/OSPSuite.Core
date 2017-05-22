@@ -17,8 +17,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    {
       public JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, ICache<ISimulation, ISimModelBatch> simModelBatches)
       {
-         var allIdentificationParameters = parameterIdentification.AllIdentificationParameters;
-         var matrix = new JacobianMatrix(allIdentificationParameters.AllNames());
+         var allVariableIdentificationParameters = parameterIdentification.AllVariableIdentificationParameters.ToList();
+         var matrix = new JacobianMatrix(allVariableIdentificationParameters.AllNames());
 
          foreach (var outputMappings in parameterIdentification.AllOutputMappings.GroupBy(x => x.FullOutputPath))
          {
@@ -27,8 +27,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             var fullOutputPath = outputMappings.Key;
             var outputResult = runResult.SimulationResultFor(fullOutputPath);
 
-            matrix.AddRows(jacobianRowFrom(runResult, fullOutputPath, outputResult, allIdentificationParameters, outputMapping, simModelBatch));
-            matrix.AddPartialDerivatives(partialDerivativesFrom(fullOutputPath, outputResult, allIdentificationParameters, outputMapping, simModelBatch));
+            matrix.AddRows(jacobianRowFrom(runResult, fullOutputPath, outputResult, allVariableIdentificationParameters, outputMapping, simModelBatch));
+            matrix.AddPartialDerivatives(partialDerivativesFrom(fullOutputPath, outputResult, allVariableIdentificationParameters, outputMapping, simModelBatch));
          }
 
          return matrix;
