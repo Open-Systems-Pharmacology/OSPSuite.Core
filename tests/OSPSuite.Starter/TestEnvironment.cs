@@ -1,16 +1,15 @@
 using OSPSuite.Utility.Container;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Starter
 {
-   internal class TestEnvironment
+   public class TestEnvironment
    {
       protected IModel _model;
  
-      internal TestEnvironment()
+      public TestEnvironment()
       {
          var buildConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateBuildConfiguration();
          var modelConstructor = IoC.Resolve<IModelConstructor>();
@@ -18,9 +17,6 @@ namespace OSPSuite.Starter
          _model = result.Model;
       }
 
-      public IModel Model
-      {
-         get { return _model; }
-      }
+      public IModel Model => _model;
    }
 }

@@ -231,10 +231,17 @@
     </Compile>
     <Compile Include="Bootstrapping\ApplicationStartup.cs" />
     <Compile Include="Domain\TestSimulation.cs" />
+    <Compile Include="Presenters\ChartTestPresenter.cs" />
     <Compile Include="Presenters\ComparisonTestPresenter.cs" />
     <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerTestPresenter.cs" />
+    <Compile Include="Tasks\DataRepositoryCreator.cs" />
+    <Compile Include="Views\ChartTestView.cs" />
+    <Compile Include="Views\ChartTestView.Designer.cs">
+      <DependentUpon>ChartTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IChartTestView.cs" />
     <Compile Include="Presenters\IJournalRichEditFormPresenter.cs" />
     <Compile Include="Presenters\ImporterTestPresenter.cs" />
     <Compile Include="Presenters\JournalPresenter.cs" />
@@ -408,15 +415,14 @@
     <EmbeddedResource Include="QuantitySelectionForm.resx">
       <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ChartTestProgramForm.resx">
-      <DependentUpon>ChartTestProgramForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Views\ChartTestView.resx">
+      <DependentUpon>ChartTestView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\ComparisonTestView.resx">
       <DependentUpon>ComparisonTestView.cs</DependentUpon>
     </EmbeddedResource>
@@ -485,12 +491,6 @@
     <Compile Include="TestEnvironment.cs" />
     <Compile Include="TestProgram.cs" />
     <Compile Include="TestProgramButton.cs" />
-    <Compile Include="ChartTestProgramForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ChartTestProgramForm.Designer.cs">
-      <DependentUpon>ChartTestProgramForm.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
