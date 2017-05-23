@@ -32,6 +32,7 @@ namespace OSPSuite.UI.Controls
          _clipboardTask = new ClipboardTask();
          _barManager = new BarManager {Form = this};
          _popupMenu = new PopupMenu(_barManager);
+         _barManager.SetPopupContextMenu(this, _popupMenu);
 
          if (addDefaultPopup)
             initializePopup();
@@ -102,7 +103,6 @@ namespace OSPSuite.UI.Controls
 
       private void initializePopup()
       {
-         _barManager.SetPopupContextMenu(this, _popupMenu);
          AddPopupMenu(Captions.CopyAsImage, CopyToClipboard, ApplicationIcons.Paste);
       }
 
