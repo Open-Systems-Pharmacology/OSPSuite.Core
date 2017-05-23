@@ -221,8 +221,10 @@ namespace OSPSuite.Starter.Presenters
 
       public void LoadSettings()
       {
-         var fileName = getFileName(new OpenFileDialog());
-         if (string.IsNullOrEmpty(fileName)) return;
+         var fileDialog = new OpenFileDialog();
+         var fileName = getFileName(fileDialog);
+         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
+            return;
 
          var settingsPersister = new DataPersistor(_ospSuiteXmlSerializerRepository);
          var settings = settingsPersister.Load<ChartEditorAndDisplaySettings>(fileName);
@@ -231,8 +233,10 @@ namespace OSPSuite.Starter.Presenters
 
       public void LoadTemplate()
       {
-         var fileName = getFileName(new OpenFileDialog());
-         if (string.IsNullOrEmpty(fileName)) return;
+         var fileDialog = new OpenFileDialog();
+         var fileName = getFileName(fileDialog);
+         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
+            return;
 
          var chartTemplate = _chartTemplatePersistor.DeserializeFromFile(fileName);
          ChartDisplayPresenter.DataSource = null;
@@ -292,8 +296,10 @@ namespace OSPSuite.Starter.Presenters
 
       public void LoadChart()
       {
-         var fileName = getFileName(new OpenFileDialog());
-         if (string.IsNullOrEmpty(fileName)) return;
+         var fileDialog = new OpenFileDialog();
+         var fileName = getFileName(fileDialog);
+         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
+            return;
 
          var dataPersitor = new DataPersistor(_ospSuiteXmlSerializerRepository);
          _dataRepositories = dataPersitor.Load<ICache<string, DataRepository>>(fileName.Replace(".", "_d."), _dimensionFactory);
@@ -316,10 +322,12 @@ namespace OSPSuite.Starter.Presenters
          fileDialog.FilterIndex = 2;
          fileDialog.RestoreDirectory = true;
 
-         var fileName = fileDialog.FileName;
+         string fileName;
 
-         if (fileDialog.ShowDialog() != DialogResult.OK) fileName = string.Empty;
-         if (!fileDialog.CheckFileExists) fileName = string.Empty;
+         if (fileDialog.ShowDialog() != DialogResult.OK)
+            fileName = string.Empty;
+         else
+            fileName = fileDialog.FileName;
 
          return fileName;
       }
