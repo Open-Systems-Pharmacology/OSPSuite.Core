@@ -29,7 +29,8 @@ namespace OSPSuite.Infrastructure.Services
             }
 
             workBook.setSheetName(SheetIndex.Report, reportOptions.SheetName);
-            workBook.write(reportOptions.ReportFullPath);
+
+            ExportToExcelTask.SaveWorkbook(reportOptions.ReportFullPath, workBook);
 
             if (reportOptions.OpenReport)
                FileHelper.TryOpenFile(reportOptions.ReportFullPath);
