@@ -46,14 +46,14 @@ namespace OSPSuite.Infrastructure.Services
                   workbookConfiguration(workBook, dataTable);
             }
 
-            saveWorkbook(fileName, workBook);
+            SaveWorkbook(fileName, workBook);
          }
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
       }
 
-      private static void saveWorkbook(string fileName, WorkBook workBook)
+      public static void SaveWorkbook(string fileName, WorkBook workBook)
       {
          FileHelper.TrySaveFile(fileName, () =>
          {
