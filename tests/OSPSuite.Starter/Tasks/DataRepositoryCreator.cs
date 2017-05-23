@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Starter.Tasks
 {
    public interface IDataRepositoryCreator
    {
-      ICache<string, DataRepository> CreateDataRepositories(IContainer model);
+      IEnumerable<DataRepository> CreateOriginalDataRepositories(IContainer model);
+      IEnumerable<DataRepository> CreateCalculationRepositories(int numberOfCalculations, IContainer model, int index);
+      IEnumerable<DataRepository> CreateObservationRepositories(int numberOfObservations, IContainer model, int index);
    }
 
    public class DataRepositoryCreator : IDataRepositoryCreator
@@ -21,33 +22,32 @@ namespace OSPSuite.Starter.Tasks
       {
          _dimensionFactory = dimensionFactory;
       }
-      public ICache<string, DataRepository> CreateDataRepositories(IContainer model)
+      public IEnumerable<DataRepository> CreateOriginalDataRepositories(IContainer model)
       {
-         ICache<string, DataRepository> dataRepositories = new Cache<string, DataRepository>(dr => dr.Name);
-         var rep1 = new DataRepository().WithName("Repository With Calculation 1");
+         var dataRepositories = new List<DataRepository>();
+         var repositoryWithCalculation1 = new DataRepository().WithName("Repository With Calculation 1");
          var rep2 = new DataRepository().WithName("Repository With Calculation 2");
          var rep3 = new DataRepository().WithName("Repository Ex 3");
          var rep4 = new DataRepository().WithName("Repository Dashed Exception");
 
-         dataRepositories.Add(rep1);
+         dataRepositories.Add(repositoryWithCalculation1);
          dataRepositories.Add(rep2);
          dataRepositories.Add(rep3);
          dataRepositories.Add(rep4);
 
-         var baseGridWithManyPoints = createBaseGridWithManyPoints(rep1.Name);
+         var baseGridWithManyPoints = createBaseGridWithManyPoints(repositoryWithCalculation1.Name);
          var longBaseGridWithFewPoints = createLongBaseGridWithFewPoints(baseGridWithManyPoints.Dimension.Unit(Constants.Dimension.Units.Days), rep2.Name);
          var baseGridWithFewPoints = createBaseGridWithFewPoints(rep3.Name);
          var logarithmicBaseGrid = createLogarithmicBaseGrid(rep4.Name, baseGridWithFewPoints);
 
-         createCalculatedData(model, rep1, baseGridWithManyPoints, rep2, longBaseGridWithFewPoints);
+         createCalculatedData(model, repositoryWithCalculation1, baseGridWithManyPoints, rep2, longBaseGridWithFewPoints);
 
          //create measurement data
          const string exSource = "Experimental Study 1";
          var exDate = new DateTime(2009, 10, 26);
 
-         var organism = model.GetSingleChildByName<IContainer>("Organism");
-         var lung = organism.GetSingleChildByName<IContainer>("Lung");
-         var quantity1 = lung.GetSingleChildByName<IQuantity>("Q");
+         var organism = getOrganismFromModel(model);
+         var quantity1 = getQuantityFromOrganism(organism);
 
          createRepository2DataColumns(quantity1, longBaseGridWithFewPoints, exDate, exSource).Each(column => rep2.Add(column));
 
@@ -56,6 +56,68 @@ namespace OSPSuite.Starter.Tasks
          createRepository4DataColumns(quantity1, logarithmicBaseGrid, exDate, exSource).Each(column => rep4.Add(column));
 
          return dataRepositories;
+      }
+
+      private static IContainer getOrganismFromModel(IContainer model)
+      {
+         return model.GetSingleChildByName<IContainer>("Organism");
+      }
+
+      private static IQuantity getQuantityFromOrganism(IContainer organism)
+      {
+         var lung = organism.GetSingleChildByName<IContainer>("Lung");
+         var quantity1 = lung.GetSingleChildByName<IQuantity>("Q");
+         return quantity1;
+      }
+
+      public IEnumerable<DataRepository> CreateCalculationRepositories(int numberOfCalculations, IContainer model, int index)
+      {
+         
+         var repositoryName = $"Calculation Repository {index}";
+         var dataRepository = createRepository(numberOfCalculations, model, repositoryName, ColumnOrigins.Calculation);
+
+         yield return dataRepository;
+      }
+
+      private DataRepository createRepository(int numberOfCalculations, IContainer model, string repositoryName, ColumnOrigins columnOrigins)
+      {
+         var dataRepository = new DataRepository().WithName(repositoryName);
+         var baseGrid = createBaseGridWithManyPoints(dataRepository.Name);
+
+         for (int i = 0; i < numberOfCalculations; i++)
+         {
+            dataRepository.Add(calculationColumnFor(baseGrid, i, model, columnOrigins));
+         }
+         return dataRepository;
+      }
+
+      public IEnumerable<DataRepository> CreateObservationRepositories(int numberOfObservations, IContainer model, int index)
+      {
+         var repositoryName = $"Observation Repository {index}";
+         var dataRepository = createRepository(numberOfObservations, model, repositoryName, ColumnOrigins.Observation);
+
+         yield return dataRepository;
+      }
+
+      private DataColumn calculationColumnFor(BaseGrid baseGrid, int index, IContainer model, ColumnOrigins columnOrigins)
+      {
+         var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
+
+         var column = new DataColumn($"CalculationColumn {index}", quantity.Dimension, baseGrid)
+         {
+            DataInfo = new DataInfo(columnOrigins),
+            QuantityInfo = Helper.CreateQuantityInfo(quantity)
+         };
+
+         var values = new List<float>();
+         baseGrid.Values.Each(x =>
+         {
+            values.Add((float)Math.Abs(Math.Sin(x)));
+         });
+
+         column.Values = values;
+
+         return column;
       }
 
       private static IEnumerable<DataColumn> createRepository2DataColumns(IQuantity q1, BaseGrid longBaseGridWithFewPoints, DateTime exDate, string exSource)
