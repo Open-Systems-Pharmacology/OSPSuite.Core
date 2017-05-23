@@ -36,6 +36,7 @@ namespace OSPSuite.UI.Services
          createPointSeries("seriesStart", MarkerKind.Square, startValue).LegendText = Captions.StartValue;
 
          _chart.XYDiagram.AxisY.Visibility = DefaultBoolean.False;
+         _chart.XYDiagram.AxisY.WholeRange.AutoSideMargins = false;
          _chart.XYDiagram.DefaultPane.BorderVisible = false;
 
          var image = new Bitmap(_chartSize.Width, _chartSize.Height);
