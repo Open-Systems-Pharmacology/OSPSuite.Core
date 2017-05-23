@@ -1,4 +1,5 @@
 using OSPSuite.Core.Commands;
+using OSPSuite.Starter.Presenters;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {
@@ -16,7 +17,6 @@ namespace OSPSuite.Starter.Tasks.Starters
 
       public override void Start()
       {
-
          base.Start(1200, 800);
          _presenter.InitializeWith(new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>());
       }

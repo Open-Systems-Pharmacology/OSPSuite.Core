@@ -237,7 +237,9 @@
     <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerTestPresenter.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
-    <Compile Include="Views\ChartTestView.cs" />
+    <Compile Include="Views\ChartTestView.cs" >
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Views\ChartTestView.Designer.cs">
       <DependentUpon>ChartTestView.cs</DependentUpon>
     </Compile>

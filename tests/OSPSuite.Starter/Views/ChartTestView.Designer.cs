@@ -30,6 +30,8 @@
       private void InitializeComponent()
       {
          this.uxLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.redrawChartButton = new DevExpress.XtraEditors.SimpleButton();
+         this.clearChartButton = new DevExpress.XtraEditors.SimpleButton();
          this.numberOfObservationsTextEdit = new DevExpress.XtraEditors.TextEdit();
          this.addObservationsButton = new DevExpress.XtraEditors.SimpleButton();
          this.numberOfCalculationsTextEdit = new DevExpress.XtraEditors.TextEdit();
@@ -60,11 +62,7 @@
          this.addCalculationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.numberOfCalculationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.numberOfObservationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.clearChartButton = new DevExpress.XtraEditors.SimpleButton();
          this.clearChartLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.enableViewUpdateCheckEdit = new DevExpress.XtraEditors.CheckEdit();
-         this.enableViewUpdateLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.redrawChartButton = new DevExpress.XtraEditors.SimpleButton();
          this.redrawChartLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.uxLayoutControl)).BeginInit();
@@ -90,8 +88,6 @@
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.clearChartLayoutItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.enableViewUpdateCheckEdit.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.enableViewUpdateLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.redrawChartLayoutItem)).BeginInit();
          this.SuspendLayout();
          // 
@@ -99,7 +95,6 @@
          // 
          this.uxLayoutControl.AllowCustomization = false;
          this.uxLayoutControl.Controls.Add(this.redrawChartButton);
-         this.uxLayoutControl.Controls.Add(this.enableViewUpdateCheckEdit);
          this.uxLayoutControl.Controls.Add(this.clearChartButton);
          this.uxLayoutControl.Controls.Add(this.numberOfObservationsTextEdit);
          this.uxLayoutControl.Controls.Add(this.addObservationsButton);
@@ -123,6 +118,24 @@
          this.uxLayoutControl.Size = new System.Drawing.Size(1370, 686);
          this.uxLayoutControl.TabIndex = 0;
          this.uxLayoutControl.Text = "uxLayoutControl1";
+         // 
+         // redrawChartButton
+         // 
+         this.redrawChartButton.Location = new System.Drawing.Point(12, 90);
+         this.redrawChartButton.Name = "redrawChartButton";
+         this.redrawChartButton.Size = new System.Drawing.Size(238, 22);
+         this.redrawChartButton.StyleController = this.uxLayoutControl;
+         this.redrawChartButton.TabIndex = 27;
+         this.redrawChartButton.Text = "Redraw Chart";
+         // 
+         // clearChartButton
+         // 
+         this.clearChartButton.Location = new System.Drawing.Point(12, 64);
+         this.clearChartButton.Name = "clearChartButton";
+         this.clearChartButton.Size = new System.Drawing.Size(238, 22);
+         this.clearChartButton.StyleController = this.uxLayoutControl;
+         this.clearChartButton.TabIndex = 25;
+         this.clearChartButton.Text = "Clear Repositories";
          // 
          // numberOfObservationsTextEdit
          // 
@@ -160,7 +173,7 @@
          // 
          // originalConfigurationButton
          // 
-         this.originalConfigurationButton.Location = new System.Drawing.Point(12, 139);
+         this.originalConfigurationButton.Location = new System.Drawing.Point(12, 116);
          this.originalConfigurationButton.Name = "originalConfigurationButton";
          this.originalConfigurationButton.Size = new System.Drawing.Size(238, 22);
          this.originalConfigurationButton.StyleController = this.uxLayoutControl;
@@ -169,7 +182,7 @@
          // 
          // removeDatalessCurvesButton
          // 
-         this.removeDatalessCurvesButton.Location = new System.Drawing.Point(12, 321);
+         this.removeDatalessCurvesButton.Location = new System.Drawing.Point(12, 298);
          this.removeDatalessCurvesButton.Name = "removeDatalessCurvesButton";
          this.removeDatalessCurvesButton.Size = new System.Drawing.Size(238, 22);
          this.removeDatalessCurvesButton.StyleController = this.uxLayoutControl;
@@ -178,7 +191,7 @@
          // 
          // reloadMenusButton
          // 
-         this.reloadMenusButton.Location = new System.Drawing.Point(12, 295);
+         this.reloadMenusButton.Location = new System.Drawing.Point(12, 272);
          this.reloadMenusButton.Name = "reloadMenusButton";
          this.reloadMenusButton.Size = new System.Drawing.Size(238, 22);
          this.reloadMenusButton.StyleController = this.uxLayoutControl;
@@ -187,7 +200,7 @@
          // 
          // refreshDisplayButton
          // 
-         this.refreshDisplayButton.Location = new System.Drawing.Point(12, 269);
+         this.refreshDisplayButton.Location = new System.Drawing.Point(12, 246);
          this.refreshDisplayButton.Name = "refreshDisplayButton";
          this.refreshDisplayButton.Size = new System.Drawing.Size(238, 22);
          this.refreshDisplayButton.StyleController = this.uxLayoutControl;
@@ -196,7 +209,7 @@
          // 
          // loadSettingsButton
          // 
-         this.loadSettingsButton.Location = new System.Drawing.Point(12, 243);
+         this.loadSettingsButton.Location = new System.Drawing.Point(12, 220);
          this.loadSettingsButton.Name = "loadSettingsButton";
          this.loadSettingsButton.Size = new System.Drawing.Size(238, 22);
          this.loadSettingsButton.StyleController = this.uxLayoutControl;
@@ -205,7 +218,7 @@
          // 
          // saveSettingsButton
          // 
-         this.saveSettingsButton.Location = new System.Drawing.Point(12, 217);
+         this.saveSettingsButton.Location = new System.Drawing.Point(12, 194);
          this.saveSettingsButton.Name = "saveSettingsButton";
          this.saveSettingsButton.Size = new System.Drawing.Size(238, 22);
          this.saveSettingsButton.StyleController = this.uxLayoutControl;
@@ -214,7 +227,7 @@
          // 
          // loadChartButton
          // 
-         this.loadChartButton.Location = new System.Drawing.Point(12, 191);
+         this.loadChartButton.Location = new System.Drawing.Point(12, 168);
          this.loadChartButton.Name = "loadChartButton";
          this.loadChartButton.Size = new System.Drawing.Size(238, 22);
          this.loadChartButton.StyleController = this.uxLayoutControl;
@@ -223,7 +236,7 @@
          // 
          // saveChartButton
          // 
-         this.saveChartButton.Location = new System.Drawing.Point(12, 165);
+         this.saveChartButton.Location = new System.Drawing.Point(12, 142);
          this.saveChartButton.Name = "saveChartButton";
          this.saveChartButton.Size = new System.Drawing.Size(238, 22);
          this.saveChartButton.StyleController = this.uxLayoutControl;
@@ -265,7 +278,6 @@
             this.numberOfCalculationsLayoutItem,
             this.numberOfObservationsLayoutItem,
             this.clearChartLayoutItem,
-            this.enableViewUpdateLayoutItem,
             this.redrawChartLayoutItem});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "Root";
@@ -293,7 +305,7 @@
          // saveChartLayoutItem
          // 
          this.saveChartLayoutItem.Control = this.saveChartButton;
-         this.saveChartLayoutItem.Location = new System.Drawing.Point(0, 153);
+         this.saveChartLayoutItem.Location = new System.Drawing.Point(0, 130);
          this.saveChartLayoutItem.Name = "saveChartLayoutItem";
          this.saveChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.saveChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -302,7 +314,7 @@
          // loadChartLayoutItem
          // 
          this.loadChartLayoutItem.Control = this.loadChartButton;
-         this.loadChartLayoutItem.Location = new System.Drawing.Point(0, 179);
+         this.loadChartLayoutItem.Location = new System.Drawing.Point(0, 156);
          this.loadChartLayoutItem.Name = "loadChartLayoutItem";
          this.loadChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.loadChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -311,7 +323,7 @@
          // saveSettingsLayoutItem
          // 
          this.saveSettingsLayoutItem.Control = this.saveSettingsButton;
-         this.saveSettingsLayoutItem.Location = new System.Drawing.Point(0, 205);
+         this.saveSettingsLayoutItem.Location = new System.Drawing.Point(0, 182);
          this.saveSettingsLayoutItem.Name = "saveSettingsLayoutItem";
          this.saveSettingsLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.saveSettingsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -320,7 +332,7 @@
          // loadSettingsLayoutItem
          // 
          this.loadSettingsLayoutItem.Control = this.loadSettingsButton;
-         this.loadSettingsLayoutItem.Location = new System.Drawing.Point(0, 231);
+         this.loadSettingsLayoutItem.Location = new System.Drawing.Point(0, 208);
          this.loadSettingsLayoutItem.Name = "loadSettingsLayoutItem";
          this.loadSettingsLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.loadSettingsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -329,7 +341,7 @@
          // refreshDisplayLayoutItem
          // 
          this.refreshDisplayLayoutItem.Control = this.refreshDisplayButton;
-         this.refreshDisplayLayoutItem.Location = new System.Drawing.Point(0, 257);
+         this.refreshDisplayLayoutItem.Location = new System.Drawing.Point(0, 234);
          this.refreshDisplayLayoutItem.Name = "refreshDisplayLayoutItem";
          this.refreshDisplayLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.refreshDisplayLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -345,7 +357,7 @@
          // reloadMenusLayoutItem
          // 
          this.reloadMenusLayoutItem.Control = this.reloadMenusButton;
-         this.reloadMenusLayoutItem.Location = new System.Drawing.Point(0, 283);
+         this.reloadMenusLayoutItem.Location = new System.Drawing.Point(0, 260);
          this.reloadMenusLayoutItem.Name = "reloadMenusLayoutItem";
          this.reloadMenusLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.reloadMenusLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -354,16 +366,16 @@
          // removeDatalessCurvesLayoutItem
          // 
          this.removeDatalessCurvesLayoutItem.Control = this.removeDatalessCurvesButton;
-         this.removeDatalessCurvesLayoutItem.Location = new System.Drawing.Point(0, 309);
+         this.removeDatalessCurvesLayoutItem.Location = new System.Drawing.Point(0, 286);
          this.removeDatalessCurvesLayoutItem.Name = "removeDatalessCurvesLayoutItem";
-         this.removeDatalessCurvesLayoutItem.Size = new System.Drawing.Size(242, 357);
+         this.removeDatalessCurvesLayoutItem.Size = new System.Drawing.Size(242, 380);
          this.removeDatalessCurvesLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.removeDatalessCurvesLayoutItem.TextVisible = false;
          // 
          // originalConfigurationLayoutItem
          // 
          this.originalConfigurationLayoutItem.Control = this.originalConfigurationButton;
-         this.originalConfigurationLayoutItem.Location = new System.Drawing.Point(0, 127);
+         this.originalConfigurationLayoutItem.Location = new System.Drawing.Point(0, 104);
          this.originalConfigurationLayoutItem.Name = "originalConfigurationLayoutItem";
          this.originalConfigurationLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.originalConfigurationLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -405,15 +417,6 @@
          this.numberOfObservationsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.numberOfObservationsLayoutItem.TextVisible = false;
          // 
-         // clearChartButton
-         // 
-         this.clearChartButton.Location = new System.Drawing.Point(12, 64);
-         this.clearChartButton.Name = "clearChartButton";
-         this.clearChartButton.Size = new System.Drawing.Size(238, 22);
-         this.clearChartButton.StyleController = this.uxLayoutControl;
-         this.clearChartButton.TabIndex = 25;
-         this.clearChartButton.Text = "Clear Repositories";
-         // 
          // clearChartLayoutItem
          // 
          this.clearChartLayoutItem.Control = this.clearChartButton;
@@ -423,37 +426,10 @@
          this.clearChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.clearChartLayoutItem.TextVisible = false;
          // 
-         // enableViewUpdateCheckEdit
-         // 
-         this.enableViewUpdateCheckEdit.Location = new System.Drawing.Point(12, 90);
-         this.enableViewUpdateCheckEdit.Name = "enableViewUpdateCheckEdit";
-         this.enableViewUpdateCheckEdit.Properties.Caption = "Allow Chart Updates";
-         this.enableViewUpdateCheckEdit.Size = new System.Drawing.Size(238, 19);
-         this.enableViewUpdateCheckEdit.StyleController = this.uxLayoutControl;
-         this.enableViewUpdateCheckEdit.TabIndex = 26;
-         // 
-         // enableViewUpdateLayoutItem
-         // 
-         this.enableViewUpdateLayoutItem.Control = this.enableViewUpdateCheckEdit;
-         this.enableViewUpdateLayoutItem.Location = new System.Drawing.Point(0, 78);
-         this.enableViewUpdateLayoutItem.Name = "enableViewUpdateLayoutItem";
-         this.enableViewUpdateLayoutItem.Size = new System.Drawing.Size(242, 23);
-         this.enableViewUpdateLayoutItem.TextSize = new System.Drawing.Size(0, 0);
-         this.enableViewUpdateLayoutItem.TextVisible = false;
-         // 
-         // redrawChartButton
-         // 
-         this.redrawChartButton.Location = new System.Drawing.Point(12, 113);
-         this.redrawChartButton.Name = "redrawChartButton";
-         this.redrawChartButton.Size = new System.Drawing.Size(238, 22);
-         this.redrawChartButton.StyleController = this.uxLayoutControl;
-         this.redrawChartButton.TabIndex = 27;
-         this.redrawChartButton.Text = "Redraw Chart";
-         // 
          // redrawChartLayoutItem
          // 
          this.redrawChartLayoutItem.Control = this.redrawChartButton;
-         this.redrawChartLayoutItem.Location = new System.Drawing.Point(0, 101);
+         this.redrawChartLayoutItem.Location = new System.Drawing.Point(0, 78);
          this.redrawChartLayoutItem.Name = "redrawChartLayoutItem";
          this.redrawChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.redrawChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -490,8 +466,6 @@
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.clearChartLayoutItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.enableViewUpdateCheckEdit.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.enableViewUpdateLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.redrawChartLayoutItem)).EndInit();
          this.ResumeLayout(false);
 
@@ -532,8 +506,6 @@
       private DevExpress.XtraLayout.LayoutControlItem numberOfObservationsLayoutItem;
       private DevExpress.XtraEditors.SimpleButton clearChartButton;
       private DevExpress.XtraLayout.LayoutControlItem clearChartLayoutItem;
-      private DevExpress.XtraEditors.CheckEdit enableViewUpdateCheckEdit;
-      private DevExpress.XtraLayout.LayoutControlItem enableViewUpdateLayoutItem;
       private DevExpress.XtraEditors.SimpleButton redrawChartButton;
       private DevExpress.XtraLayout.LayoutControlItem redrawChartLayoutItem;
    }

@@ -41,8 +41,6 @@ namespace OSPSuite.Starter.Presenters
       void AddObservations(int numberOfObservations);
       void AddCalculations(int numberOfCalculations);
       void ClearChart();
-      void EndUpdate();
-      void BeginUpdate();
    }
 
    public class ChartTestPresenter : AbstractCommandCollectorPresenter<IChartTestView, IChartTestPresenter>, IChartTestPresenter
@@ -142,16 +140,6 @@ namespace OSPSuite.Starter.Presenters
             ChartEditorPresenter.RemoveDataRepository(repository);
          });
          _dataRepositories.Clear();
-      }
-
-      public void EndUpdate()
-      {
-         ChartDisplayPresenter.BeginUpdate();
-      }
-
-      public void BeginUpdate()
-      {
-         ChartDisplayPresenter.EndUpdate();
       }
 
       public IChartDisplayPresenter ChartDisplayPresenter => _chartEditorAndDisplayPresenter.DisplayPresenter;

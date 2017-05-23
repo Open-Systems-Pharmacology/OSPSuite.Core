@@ -22,7 +22,6 @@ namespace OSPSuite.Starter.Views
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         enableViewUpdateCheckEdit.CheckState = CheckState.Checked;
 
          saveChartButton.Click += (o, e) => OnEvent(saveChart);
          loadChartButton.Click += (o, e) => OnEvent(loadChart);
@@ -36,8 +35,6 @@ namespace OSPSuite.Starter.Views
          addObservationsButton.Click += (o, e) => OnEvent(createObservations);
          clearChartButton.Click += (o, e) => OnEvent(clearChart);
          redrawChartButton.Click += (o, e) => OnEvent(redrawChart);
-
-         enableViewUpdateCheckEdit.CheckStateChanged += (o, e) => OnEvent(checkChanged);
          
          NumberOfObservations = 10;
          NumberOfCalculations = 10;
@@ -51,14 +48,6 @@ namespace OSPSuite.Starter.Views
       private void redrawChart()
       {
          _presenter.RefreshDisplay();
-      }
-
-      private void checkChanged()
-      {
-         if(enableViewUpdateCheckEdit.Checked)
-            _presenter.EndUpdate();
-         else
-            _presenter.BeginUpdate();
       }
 
       private void clearChart()
