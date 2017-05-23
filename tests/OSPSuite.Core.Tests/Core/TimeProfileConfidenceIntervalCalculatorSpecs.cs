@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       protected ParameterIdentification _parameterIdentification;
       protected ParameterIdentificationRunResult _runResult;
       private List<OutputMapping> _allOutputMappings;
-      private List<IdentificationParameter> _allIdentificationParameters;
+      private List<IdentificationParameter> _allVariableIdentificationParameters;
       protected OutputMapping _output1;
       private ISimulation _simulation1;
       protected OutputMapping _output2;
@@ -60,12 +60,12 @@ namespace OSPSuite.Core
          _runResult = A.Fake<ParameterIdentificationRunResult>();
          _runResult.JacobianMatrix = new JacobianMatrix(parameterNames);
          _allOutputMappings = new List<OutputMapping>();
-         _allIdentificationParameters = new List<IdentificationParameter>();
+         _allVariableIdentificationParameters = new List<IdentificationParameter>();
          _residualResults = new ResidualsResult();
          _runResult.BestResult.ResidualsResult = _residualResults;
 
          A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(_allOutputMappings);
-         A.CallTo(() => _parameterIdentification.AllIdentificationParameters).Returns(_allIdentificationParameters);
+         A.CallTo(() => _parameterIdentification.AllVariableIdentificationParameters).Returns(_allVariableIdentificationParameters);
 
          _simulation1 = A.Fake<ISimulation>().WithName("S1");
          _simulation2 = A.Fake<ISimulation>().WithName("S2");
@@ -97,8 +97,8 @@ namespace OSPSuite.Core
          A.CallTo(() => _ps2_2.Dimension).Returns(_ps1_2.Dimension);
          _identificationParameter2.AddLinkedParameter(_ps2_2);
 
-         _allIdentificationParameters.Add(_identificationParameter1);
-         _allIdentificationParameters.Add(_identificationParameter2);
+         _allVariableIdentificationParameters.Add(_identificationParameter1);
+         _allVariableIdentificationParameters.Add(_identificationParameter2);
 
          _observedData1 = A.Fake<DataRepository>();
          _observedData2 = A.Fake<DataRepository>();

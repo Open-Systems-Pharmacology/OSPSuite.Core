@@ -2,29 +2,45 @@
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using DevExpress.XtraEditors;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Repositories;
+using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Views;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Presenters
 {
    public interface IOptimizationStarterPresenter : IPresenter<IOptimizationStarterView>
    {
       void StartMatrixTest();
+      void StartParameterIdentificationTest();
    }
 
    public class OptimizationStarterPresenter : AbstractPresenter<IOptimizationStarterView, IOptimizationStarterPresenter>, IOptimizationStarterPresenter
    {
       private readonly IParameterIdentificationMatrixView _matrixView;
       private readonly IMatrixToDataTableMapper _matrixToDataTableMapper;
+      private readonly IParameterIdentificationTask _parameterIdentificationTask;
+      private readonly IShellPresenter _shellPresenter;
+      private readonly ISimulationRepository _simulationRepository;
 
-      public OptimizationStarterPresenter(IOptimizationStarterView view, IParameterIdentificationMatrixView matrixView, IMatrixToDataTableMapper matrixToDataTableMapper) : base(view)
+      public OptimizationStarterPresenter(IOptimizationStarterView view, IParameterIdentificationMatrixView matrixView, IMatrixToDataTableMapper matrixToDataTableMapper, IParameterIdentificationTask parameterIdentificationTask, 
+         IShellPresenter shellPresenter, ISimulationRepository simulationRepository) : base(view)
       {
          _matrixView = matrixView;
          _matrixToDataTableMapper = matrixToDataTableMapper;
+         _parameterIdentificationTask = parameterIdentificationTask;
+         _shellPresenter = shellPresenter;
+         _simulationRepository = simulationRepository;
       }
 
       public void StartMatrixTest()
@@ -33,6 +49,15 @@ namespace OSPSuite.Starter.Presenters
          form.FillWith(_matrixView as Control);
          _matrixView.BindTo(getDataTable(), 22);
          form.ShowDialog();
+      }
+
+      public void StartParameterIdentificationTest()
+      {
+         _shellPresenter.Start();
+         var paramterIdentification = _parameterIdentificationTask.CreateParameterIdentificationBasedOn(_simulationRepository.All());
+         var presenter = IoC.Resolve<IEditParameterIdentificationPresenter>();
+         presenter.InitializeWith(new OSPSuiteMacroCommand<OSPSuiteExecutionContext>());
+         presenter.Edit(paramterIdentification);
       }
 
       private DataTable getDataTable()

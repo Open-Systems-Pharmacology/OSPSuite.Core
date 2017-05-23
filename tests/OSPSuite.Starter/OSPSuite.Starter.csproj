@@ -192,6 +192,10 @@
     <Reference Include="OSPSuite.Serializer">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.0.0.4, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.4\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    </Reference>
     <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
       <Private>True</Private>
@@ -226,6 +230,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Bootstrapping\ApplicationStartup.cs" />
+    <Compile Include="Domain\TestSimulation.cs" />
     <Compile Include="Presenters\ComparisonTestPresenter.cs" />
     <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
@@ -240,6 +245,16 @@
     <Compile Include="Presenters\PivotGridTestPresenter.cs" />
     <Compile Include="Presenters\RegionNames.cs" />
     <Compile Include="Presenters\ShellPresenter.cs" />
+    <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
+    <Compile Include="Services\CompoundCalculationMethodRepository.cs" />
+    <Compile Include="Services\CoreUserSettings.cs" />
+    <Compile Include="Services\DataNamingService.cs" />
+    <Compile Include="Services\FullPathDisplayResolver.cs" />
+    <Compile Include="Services\LazyLoadTask.cs" />
+    <Compile Include="Services\ParameterAnalysableParameterSelector.cs" />
+    <Compile Include="Services\ParameterToParameterDTOMapper.cs" />
+    <Compile Include="Services\SimulationRepository.cs" />
+    <Compile Include="Services\TransferOptimizedParametersToSimulationsTask.cs" />
     <Compile Include="Tasks\ClassificationTypeToRootNodeTypeMapper.cs" />
     <Compile Include="Tasks\MyContext.cs" />
     <Compile Include="Tasks\ObjectTypeResolver.cs" />

@@ -71,7 +71,7 @@ namespace OSPSuite.Core
 
       protected void CheckOptimizedValues()
       {
-         //optimizing (x[0]-3)^2+(x[1]-4)^2 mit constraints 
+         //optimizing (x[0]-3)^2+(x[1]-4)^2 with constraints 
          //                                     0 <= x[0] <=2
          //                                     0 <= x[1] <=10
          //should return x[0]=2; x[1]=4

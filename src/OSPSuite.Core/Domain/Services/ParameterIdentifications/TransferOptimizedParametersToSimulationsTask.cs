@@ -1,11 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Exceptions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
@@ -52,17 +53,23 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             if (identificationParameter == null)
                throw new OSPSuiteException(Error.IdentificationParameterCannotBeFound(optimizedParameter.Name));
 
-            identificationParameter.AllLinkedParameters.Each(linkedParameter => macroCommand.Add(updateParameterValue(identificationParameter, optimizedParameter, linkedParameter)));
+            macroCommand.AddRange(setOptimalParameterValueIn(identificationParameter, optimizedParameter.Value));
          }
+
+         macroCommand.AddRange(parameterIdentification.AllFixedIdentificationParameters.SelectMany(x => setOptimalParameterValueIn(x, x.StartValue)));
 
          return macroCommand;
       }
 
-      private ICommand updateParameterValue(IdentificationParameter identificationParameter, OptimizedParameterValue optimizedParameter, ParameterSelection linkedParameter)
+      private IEnumerable<ICommand> setOptimalParameterValueIn(IdentificationParameter identificationParameter, double optimalValue)
       {
-         var value = identificationParameter.OptimizedParameterValueFor(optimizedParameter, linkedParameter);
+         return identificationParameter.AllLinkedParameters.Select(linkedParameter => updateParameterValue(identificationParameter, optimalValue, linkedParameter));
+      }
+
+      private ICommand updateParameterValue(IdentificationParameter identificationParameter, double optimialValue, ParameterSelection linkedParameter)
+      {
+         var value = identificationParameter.OptimizedParameterValueFor(optimialValue, linkedParameter);
          return _parameterTask.SetParameterValue(linkedParameter.Parameter, value, linkedParameter.Simulation);
       }
    }
-
 }

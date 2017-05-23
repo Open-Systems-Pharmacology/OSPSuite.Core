@@ -23,10 +23,12 @@ namespace OSPSuite.Core
       protected ParameterIdentification _parameterIdentification;
       private IdentificationParameter _identificationParameter1;
       private IdentificationParameter _identificationParameter2;
+      protected IdentificationParameter _identificationParameter3;
       protected ParameterSelection _linkedParameter1;
       protected ParameterSelection _linkedParameter2;
       protected ParameterSelection _linkedParameter3;
       protected IDialogCreator _dialogCreator;
+      protected ParameterSelection _linkedParameter4;
 
       protected override void Context()
       {
@@ -40,6 +42,8 @@ namespace OSPSuite.Core
 
          _identificationParameter1 = new IdentificationParameter();
          _identificationParameter2 = new IdentificationParameter {UseAsFactor = true};
+         _identificationParameter3 = new IdentificationParameter { IsFixed = true, };
+         _identificationParameter3.Add(DomainHelperForSpecs.ConstantParameterWithValue(25).WithName(Constants.Parameters.START_VALUE));
 
          _linkedParameter1 = A.Fake<ParameterSelection>();
          A.CallTo(() => _linkedParameter1.Parameter).Returns(DomainHelperForSpecs.ConstantParameterWithValue(2));
@@ -52,12 +56,19 @@ namespace OSPSuite.Core
          A.CallTo(() => _linkedParameter3.Parameter).Returns(DomainHelperForSpecs.ConstantParameterWithValue(4));
          A.CallTo(() => _linkedParameter3.Dimension).Returns(Constants.Dimension.NO_DIMENSION);
 
+         _linkedParameter4 = A.Fake<ParameterSelection>();
+         A.CallTo(() => _linkedParameter4.Parameter).Returns(DomainHelperForSpecs.ConstantParameterWithValue(5));
+         A.CallTo(() => _linkedParameter4.Dimension).Returns(Constants.Dimension.NO_DIMENSION);
+
+
          _identificationParameter1.AddLinkedParameter(_linkedParameter1);
          _identificationParameter2.AddLinkedParameter(_linkedParameter2);
          _identificationParameter2.AddLinkedParameter(_linkedParameter3);
+         _identificationParameter3.AddLinkedParameter(_linkedParameter4);
 
          A.CallTo(() => _parameterIdentification.IdentificationParameterByName("P1")).Returns(_identificationParameter1);
          A.CallTo(() => _parameterIdentification.IdentificationParameterByName("P2")).Returns(_identificationParameter2);
+         A.CallTo(() => _parameterIdentification.AllFixedIdentificationParameters).Returns(new []{_identificationParameter3});
 
          sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator);
 
@@ -79,8 +90,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _runResult.Status = RunStatus.RanToCompletion
-            ;
+         _runResult.Status = RunStatus.RanToCompletion;
       }
 
       protected override void Because()
@@ -92,7 +102,7 @@ namespace OSPSuite.Core
       public void should_create_one_command_for_each_parameter_to_update()
       {
          var macro = _command.DowncastTo<IMacroCommand>();
-         macro.Count.ShouldBeEqualTo(3);
+         macro.Count.ShouldBeEqualTo(4);
       }
 
       [Observation]
@@ -103,9 +113,15 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_use_the_value_if_the_corresponding_identification_parameter_is_using_a_factor()
+      public void should_use_the_value_if_the_corresponding_identification_parameter_is_not_using_a_factor()
       {
          A.CallTo(() => _parameterTask.SetParameterValue(_linkedParameter1.Parameter, 10, _linkedParameter1.Simulation)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_use_the_identification_parameter_start_value_if_the_corresponding_identification_parameter_is_fixed()
+      {
+         A.CallTo(() => _parameterTask.SetParameterValue(_linkedParameter4.Parameter, _identificationParameter3.StartValue, _linkedParameter4.Simulation)).MustHaveHappened();
       }
 
       [Observation]

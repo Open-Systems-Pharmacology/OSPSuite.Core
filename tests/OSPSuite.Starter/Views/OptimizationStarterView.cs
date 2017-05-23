@@ -16,11 +16,18 @@ namespace OSPSuite.Starter.Views
       {
          base.InitializeBinding();
          btnMatrix.Click += (o, e) => OnEvent(() => _presenter.StartMatrixTest());
+         btnParameterIdentification.Click += (o, e) => OnEvent(() => _presenter.StartParameterIdentificationTest());
       }
 
       public void AttachPresenter(IOptimizationStarterPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         btnParameterIdentification.Text = "Start Parameter Identification";
       }
    }
 }

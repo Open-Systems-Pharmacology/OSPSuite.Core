@@ -61,14 +61,17 @@ namespace OSPSuite.Helpers
          return parameter;
       }
 
-      public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5)
+      public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5, bool isFixed = false)
       {
-         return new IdentificationParameter
+         var identificationParameter=  new IdentificationParameter
          {
             ConstantParameterWithValue(min).WithName(Constants.Parameters.MIN_VALUE),
             ConstantParameterWithValue(startValue).WithName(Constants.Parameters.START_VALUE),
             ConstantParameterWithValue(max).WithName(Constants.Parameters.MAX_VALUE)
          }.WithName(name);
+
+         identificationParameter.IsFixed = isFixed;
+         return identificationParameter;
       }
 
       public static DataRepository ObservedData(string id = "TestData")

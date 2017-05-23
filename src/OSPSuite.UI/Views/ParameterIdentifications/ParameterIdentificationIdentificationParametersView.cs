@@ -112,6 +112,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithRepository(x => _booleanRepository)
             .OnChanged += dto => OnEvent(() => _presenter.UseAsFactorChanged(dto));
 
+         _gridViewBinder.Bind(x => x.IsFixed)
+            .WithCaption(Captions.ParameterIdentification.IsFixed)
+            .WithRepository(x => _booleanRepository);
+
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH)

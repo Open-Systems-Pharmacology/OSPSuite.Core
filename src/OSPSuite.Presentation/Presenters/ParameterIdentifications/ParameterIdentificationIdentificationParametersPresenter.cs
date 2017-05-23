@@ -105,6 +105,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          updateView();
       }
 
+    
       public void UpdateStartValueFromSimulation(IdentificationParameterDTO identificationParameterDTO)
       {
          _identificationParameterTask.UpdateStartValuesFromSimulation(identificationParameterDTO.IdentificationParameter);

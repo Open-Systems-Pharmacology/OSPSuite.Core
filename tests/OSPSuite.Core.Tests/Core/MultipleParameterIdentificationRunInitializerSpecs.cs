@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
@@ -36,8 +36,11 @@ namespace OSPSuite.Core
          A.CallTo(() => _cloneManager.Clone(_parameterIdentification)).ReturnsLazily(x =>
          {
             var clone = new ParameterIdentification();
-            var ip = DomainHelperForSpecs.IdentificationParameter(min: 10, max: 20, startValue: 15);
+            var ip = DomainHelperForSpecs.IdentificationParameter(min: 10, max: 20, startValue: 15).WithName("PARA1");
             clone.AddIdentificationParameter(ip);
+
+            var fixedIp = DomainHelperForSpecs.IdentificationParameter(min: 20, max: 40, startValue: 30, isFixed: true).WithName("PARA2");
+            clone.AddIdentificationParameter(fixedIp);
             return clone;
          });
 
@@ -50,11 +53,18 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_randomized_the_start_values()
+      public void should_have_randomized_the_start_values_of_variable_parameters()
       {
-         var ip = _result.AllIdentificationParameters.First();
+         var ip = _result.AllIdentificationParameters[0];
          ip.StartValueParameter.Value.ShouldBeGreaterThanOrEqualTo(10);
          ip.StartValueParameter.Value.ShouldBeSmallerThanOrEqualTo(20);
+      }
+
+      [Observation]
+      public void should_not_have_randomized_the_start_values_of_fixed_paramters()
+      {
+         var ip = _result.AllIdentificationParameters[1];
+         ip.StartValue.ShouldBeEqualTo(30);
       }
    }
 }

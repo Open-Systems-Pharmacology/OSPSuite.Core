@@ -638,6 +638,7 @@ namespace OSPSuite.Assets
          public static readonly string RunMessage = "Message";
          public static readonly string RunIndex = "Run #";
          public static readonly string UseAsFactor = "Use as Factor";
+         public static readonly string IsFixed = "Fixed";
          public static readonly string LLOQMode = "Transform data below LLOQ";
          public static readonly string RemoveLLOQMode = "Remove data below LLOQ";
          public static readonly string TimeProfileAnalysis = "Time Profile";
@@ -1559,7 +1560,7 @@ namespace OSPSuite.Assets
       public static readonly string CreateParameterIdentification = "Create a new parameter identification.";
       public static readonly string CreateSensitivityAnalysis = "Create a new sensitivity analysis.";
       public static readonly string RunParameterIdentification = "Run the active parameter identification.";
-      public static readonly string StopParameterIdentification = "Stop the current Parparameterameter identification.";
+      public static readonly string StopParameterIdentification = "Stop the current parameter identification.";
       public static readonly string UnlinkParameter = "Unlink the Parameter";
       public static readonly string TimeProfileAnalysisDescription = "Create a new chart displaying the optimized time profile in comparison to the observed data.";
       public static readonly string PredictedVsObservedAnalysisDescription = "Create a new chart displaying the optimized output vs. the observed data.";
@@ -1571,7 +1572,7 @@ namespace OSPSuite.Assets
       public static readonly string CovarianceMatrix = "Show the covariance matrix.";
       public static readonly string TimeProfilePredictionInterval = "Plot a pointwise linearization of the 95% prediction interval due to both the parameter uncertainty and the measurement error. This plot is only available for measured quantities.";
       public static readonly string TimeProfileConfidenceInterval = "Plot a pointwise linearization of the 95% confidence interval due to the parameter uncertainty.";
-      public static string TimeProfileVPCInterval = "Plot a pointwise linearization of the 95% visual predictive check interval due to the measurement error. This plot is only available for measured quantities.";
+      public static readonly string TimeProfileVPCInterval = "Plot a pointwise linearization of the 95% visual predictive check interval due to the measurement error. This plot is only available for measured quantities.";
       public static readonly string RunSensitivityAnalysis = "Run the active sensitivity analysis.";
       public static readonly string StopSensitivityanalysis = "Stop the current sensitivity analysis.";
    }

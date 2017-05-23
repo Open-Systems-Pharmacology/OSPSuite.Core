@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private void randomizeStartValuesFor(ParameterIdentification parameterIdentification)
       {
-         parameterIdentification.AllIdentificationParameters.Each(x =>
+         parameterIdentification.AllVariableIdentificationParameters.Each(x =>
          {
             x.StartValueParameter.Value = generatedRandomStartValueFor(x);
          });
