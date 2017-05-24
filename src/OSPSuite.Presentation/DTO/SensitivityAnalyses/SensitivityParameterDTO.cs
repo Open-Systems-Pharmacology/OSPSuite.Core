@@ -13,21 +13,25 @@ namespace OSPSuite.Presentation.DTO.SensitivityAnalyses
          SensitivityParameter = sensitivityParameter;
       }
 
-      public string Name => SensitivityParameter.Name;
+      public string Name
+      {
+         get => SensitivityParameter.Name;
+         set => SensitivityParameter.Name = value;
+      }
 
       public IParameterDTO VariationRangeParameter { get; set; }
       public IParameterDTO NumberOfStepsParameter { get; set; }
 
       public double VariationRange
       {
-         get { return VariationRangeParameter.Value; }
-         set { VariationRangeParameter.Value = value; }
+         get => VariationRangeParameter.Value;
+         set => VariationRangeParameter.Value = value;
       }
 
       public uint NumberOfSteps
       {
-         get { return NumberOfStepsParameter.Value.ConvertedTo<uint>(); }
-         set { NumberOfStepsParameter.Value = value; }
+         get => NumberOfStepsParameter.Value.ConvertedTo<uint>();
+         set => NumberOfStepsParameter.Value = value;
       }
    }
 }

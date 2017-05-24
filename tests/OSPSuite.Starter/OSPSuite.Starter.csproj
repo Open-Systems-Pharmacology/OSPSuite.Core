@@ -236,8 +236,10 @@
     <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerTestPresenter.cs" />
+    <Compile Include="Presenters\SensitivityAnalysisStarterPresenter.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
-    <Compile Include="Views\ChartTestView.cs" >
+    <Compile Include="Tasks\Starters\SensitivityAnalysisStarter.cs" />
+    <Compile Include="Views\ChartTestView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Views\ChartTestView.Designer.cs">
@@ -354,6 +356,7 @@
     </Compile>
     <Compile Include="Views\IOptimizationStarterView.cs" />
     <Compile Include="Views\IPivotGridTestView.cs" />
+    <Compile Include="Views\ISensitivityAnalysisStarterView.cs" />
     <Compile Include="Views\IShellVIew.cs" />
     <Compile Include="Views\ITestView.cs" />
     <Compile Include="Views\JournalRichEditFormView.cs">
@@ -380,6 +383,12 @@
     </Compile>
     <Compile Include="Views\PivotGridTestView.Designer.cs">
       <DependentUpon>PivotGridTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SensitivityAnalysisStarterView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\SensitivityAnalysisStarterView.Designer.cs">
+      <DependentUpon>SensitivityAnalysisStarterView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ShellView.cs">
       <SubType>Form</SubType>
@@ -451,6 +460,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\PivotGridTestView.resx">
       <DependentUpon>PivotGridTestView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SensitivityAnalysisStarterView.resx">
+      <DependentUpon>SensitivityAnalysisStarterView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ShellView.resx">
       <DependentUpon>ShellView.cs</DependentUpon>
