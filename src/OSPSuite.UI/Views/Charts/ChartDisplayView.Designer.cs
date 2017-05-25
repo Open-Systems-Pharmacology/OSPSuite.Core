@@ -55,11 +55,11 @@ namespace OSPSuite.UI.Views.Charts
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-         this.chartControl = new UxChartControl(useDefaultPopupMechanism: false);
+         this._chartControl = new UxChartControl(useDefaultPopupMechanism: false);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._barManager)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.chartControl)).BeginInit();
-         this.chartControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this._chartControl)).BeginInit();
+         this._chartControl.SuspendLayout();
          this.SuspendLayout();
          // 
          // _barManager
@@ -140,21 +140,21 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // chartControl
          // 
-         this.chartControl.BackColor = System.Drawing.Color.Transparent;
-         this.chartControl.Controls.Add(this.barDockControlLeft);
-         this.chartControl.Controls.Add(this.barDockControlRight);
-         this.chartControl.Controls.Add(this.barDockControlBottom);
-         this.chartControl.Controls.Add(this.barDockControlTop);
-         this.chartControl.Description = "";
-         this.chartControl.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.chartControl.EmptyChartText.Text = "";
-         this.chartControl.Location = new System.Drawing.Point(0, 0);
-         this.chartControl.Name = "chartControl";
-         this.chartControl.SeriesSerializable = new DevExpress.XtraCharts.Series[0];
-         this.chartControl.Size = new System.Drawing.Size(389, 321);
-         this.chartControl.SmallChartText.Text = "Increase the chart\'s size,\r\nto view its layout.\r\n    ";
-         this.chartControl.TabIndex = 4;
-         this.chartControl.Title = "";
+         this._chartControl.BackColor = System.Drawing.Color.Transparent;
+         this._chartControl.Controls.Add(this.barDockControlLeft);
+         this._chartControl.Controls.Add(this.barDockControlRight);
+         this._chartControl.Controls.Add(this.barDockControlBottom);
+         this._chartControl.Controls.Add(this.barDockControlTop);
+         this._chartControl.Description = "";
+         this._chartControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this._chartControl.EmptyChartText.Text = "";
+         this._chartControl.Location = new System.Drawing.Point(0, 0);
+         this._chartControl.Name = "_chartControl";
+         this._chartControl.SeriesSerializable = new DevExpress.XtraCharts.Series[0];
+         this._chartControl.Size = new System.Drawing.Size(389, 321);
+         this._chartControl.SmallChartText.Text = "Increase the chart\'s size,\r\nto view its layout.\r\n    ";
+         this._chartControl.TabIndex = 4;
+         this._chartControl.Title = "";
          chartTitle1.Font = new System.Drawing.Font("Arial", 16F);
          chartTitle1.Text = "";
          chartTitle1.WordWrap = true;
@@ -211,7 +211,7 @@ namespace OSPSuite.UI.Views.Charts
          chartTitle14.Font = new System.Drawing.Font("Arial", 12F);
          chartTitle14.Text = "";
          chartTitle14.WordWrap = true;
-         this.chartControl.Titles.AddRange(new DevExpress.XtraCharts.ChartTitle[] {
+         this._chartControl.Titles.AddRange(new DevExpress.XtraCharts.ChartTitle[] {
             chartTitle1,
             chartTitle2,
             chartTitle3,
@@ -230,13 +230,13 @@ namespace OSPSuite.UI.Views.Charts
          // ChartDisplayView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-         this.Controls.Add(this.chartControl);
+         this.Controls.Add(this._chartControl);
          this.Name = "ChartDisplayView";
          this.Size = new System.Drawing.Size(389, 321);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._barManager)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.chartControl)).EndInit();
-         this.chartControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this._chartControl)).EndInit();
+         this._chartControl.ResumeLayout(false);
          this.ResumeLayout(false);
 
     }
@@ -252,6 +252,6 @@ namespace OSPSuite.UI.Views.Charts
     private DevExpress.XtraBars.BarDockControl barDockControlBottom;
     private DevExpress.XtraBars.BarDockControl barDockControlLeft;
     private DevExpress.XtraBars.BarDockControl barDockControlRight;
-    private UxChartControl chartControl;
+    private UxChartControl _chartControl;
   }
 }
