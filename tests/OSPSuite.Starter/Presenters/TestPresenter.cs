@@ -18,6 +18,7 @@ namespace OSPSuite.Starter.Presenters
       void StartDataRepositoryTest();
       void StartPivotGridTest();
       void StartParameterIdentificationTest();
+      void StartSentitivityAnalysisTest();
       void StartCommandBrowserTest();
       void StartSimpleUITest();
       void StartExceptionView();
@@ -38,11 +39,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly IOptimizationStarter _optimzationStarter;
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
+      private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
 
       public TestPresenter(ITestView view, IChartTestStarter chartTestStarter, IGridTestStarter girdTestStarter, 
          IJournalTestStarter journalTestStarter, IComparisonTestStarter comparisonTestStarter, IExplorerTestStarter explorerTestStarter,
          IImporterStarter importerStarter, IShellStarter shellStarter, IDataRepositoryStarter dataRepositoryStarter, IPivotGridStarter pivotGridStarter,
-         IOptimizationStarter optimzationStarter,ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter) : base(view)
+         IOptimizationStarter optimzationStarter,ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter) : base(view)
       {
          _chartTestStarter = chartTestStarter;
          _girdTestStarter = girdTestStarter;
@@ -56,6 +58,7 @@ namespace OSPSuite.Starter.Presenters
          _optimzationStarter = optimzationStarter;
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
+         _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
       }
 
       public void StartChartTest()
@@ -106,6 +109,11 @@ namespace OSPSuite.Starter.Presenters
       public void StartParameterIdentificationTest()
       {
          _optimzationStarter.Start();
+      }
+
+      public void StartSentitivityAnalysisTest()
+      {
+         _sensitivityAnalysisStarter.Start();
       }
 
       public void StartCommandBrowserTest()

@@ -29,10 +29,10 @@
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.btnParameterIdentification = new DevExpress.XtraEditors.SimpleButton();
          this.btnMatrix = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.btnParameterIdentification = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -53,6 +53,15 @@
          this.layoutControl.Size = new System.Drawing.Size(293, 449);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
+         // 
+         // btnParameterIdentification
+         // 
+         this.btnParameterIdentification.Location = new System.Drawing.Point(12, 38);
+         this.btnParameterIdentification.Name = "btnParameterIdentification";
+         this.btnParameterIdentification.Size = new System.Drawing.Size(269, 22);
+         this.btnParameterIdentification.StyleController = this.layoutControl;
+         this.btnParameterIdentification.TabIndex = 5;
+         this.btnParameterIdentification.Text = "btnParameterIdentification";
          // 
          // btnMatrix
          // 
@@ -83,15 +92,6 @@
          this.layoutControlItem1.Size = new System.Drawing.Size(273, 26);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
-         // 
-         // btnParameterIdentification
-         // 
-         this.btnParameterIdentification.Location = new System.Drawing.Point(12, 38);
-         this.btnParameterIdentification.Name = "btnParameterIdentification";
-         this.btnParameterIdentification.Size = new System.Drawing.Size(269, 22);
-         this.btnParameterIdentification.StyleController = this.layoutControl;
-         this.btnParameterIdentification.TabIndex = 5;
-         this.btnParameterIdentification.Text = "btnParameterIdentification";
          // 
          // layoutControlItem2
          // 
