@@ -13,6 +13,9 @@ namespace OSPSuite.UI.Controls
 {
    public class UxChartControl : ChartControl
    {
+      private const int TITLE_DEFAULT_FONT_SIZE = 16;
+      private const int DESCRIPTION_DEFAULT_FONT_SIZE = 12;
+
       private readonly ChartTitle _title;
       private readonly ChartTitle _description;
       private readonly ClipboardTask _clipboardTask;
@@ -23,8 +26,8 @@ namespace OSPSuite.UI.Controls
       {
          Titles.Clear();
 
-         _title = createTitle(16, StringAlignment.Center, ChartTitleDockStyle.Top);
-         _description = createTitle(12, StringAlignment.Near, ChartTitleDockStyle.Bottom);
+         _title = createTitle(TITLE_DEFAULT_FONT_SIZE, StringAlignment.Center, ChartTitleDockStyle.Top);
+         _description = createTitle(DESCRIPTION_DEFAULT_FONT_SIZE, StringAlignment.Near, ChartTitleDockStyle.Bottom);
 
          Titles.Add(_title);
          Titles.Add(_description);
