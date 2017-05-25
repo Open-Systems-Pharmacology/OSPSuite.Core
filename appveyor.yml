@@ -36,6 +36,12 @@ build:
 
 skip_branch_with_pr: true
 
+branches:
+  only:
+  - version7.2.0
+#  - master
+#  - develop
+
 test:
   assemblies:
     - OSPSuite.Core.Tests.dll
