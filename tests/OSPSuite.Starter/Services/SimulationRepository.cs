@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Starter.Domain;
-using SimModelNET;
 using ISimulation = OSPSuite.Core.Domain.ISimulation;
 
 namespace OSPSuite.Starter.Services
@@ -33,7 +32,6 @@ namespace OSPSuite.Starter.Services
 
       private TestSimulation createSimulation()
       {
-         XMLSchemaCache.InitializeFromFile("./OSPSuite.SimModel.xsd");
          var buildConfiguration = _modelHelper.CreateBuildConfiguration();
          var result = _modelConstructor.CreateModelFrom(buildConfiguration, "Test");
          var simulation = new TestSimulation

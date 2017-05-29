@@ -17,6 +17,7 @@ using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.UI;
+using SimModelNET;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Starter.Bootstrapping
@@ -26,6 +27,7 @@ namespace OSPSuite.Starter.Bootstrapping
       public static void Initialize()
       {
          initializeDependency();
+         XMLSchemaCache.InitializeFromFile("./OSPSuite.SimModel.xsd");
          fillDimensions(IoC.Resolve<IDimensionFactory>());
       }
 
