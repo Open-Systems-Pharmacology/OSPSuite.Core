@@ -31,13 +31,13 @@ namespace OSPSuite.UI.Controls
       private DataTable rowSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows());
       private DataTable table => _gridViewToDataTableMapper.MapFrom(this);
       private DataTable rectangularSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows(), GetSelectedCells);
+
       /// <summary>
       ///    Color used for cell that are locked/disabled (End of gradient)
       /// </summary>
       protected Color _colorDisabled = Color.LightGray;
 
-
-      public UxGridView(GridControl gridControl): base(gridControl)
+      public UxGridView(GridControl gridControl) : base(gridControl)
       {
          DoInit();
       }
@@ -265,7 +265,7 @@ namespace OSPSuite.UI.Controls
       {
          get
          {
-            var viewInfo = (GridViewInfo)GetViewInfo();
+            var viewInfo = (GridViewInfo) GetViewInfo();
             FieldInfo fi = typeof(GridView).GetField("scrollInfo", BindingFlags.Instance | BindingFlags.NonPublic);
             Rectangle oldBounds = viewInfo.Bounds;
 
@@ -274,7 +274,7 @@ namespace OSPSuite.UI.Controls
                int height = viewInfo.CalcRealViewHeight(new Rectangle(0, 0, Int32.MaxValue, Int32.MaxValue));
                viewInfo.CalcRealViewHeight(oldBounds);
 
-               var scrollInfo = (ScrollInfo)fi.GetValue(this);
+               var scrollInfo = (ScrollInfo) fi.GetValue(this);
                if (scrollInfo.HScrollVisible)
                   height += scrollInfo.HScrollSize;
 
@@ -387,6 +387,11 @@ namespace OSPSuite.UI.Controls
          if (popupMenuShowingEventArgs.HitInfo.HitTest != GridHitTest.RowIndicator)
             return;
 
+         // If this is a template detail view for master/detail pattern, it won't have any rows.
+         // In that case, don't add any context menu items, they will be added by the template clone.
+         if (GetSelectedRows().Length == 0)
+            return;
+
          addCommonCopyMenuItems(gridViewMenu);
 
          if (gridIsCellSelectMode())
@@ -431,8 +436,8 @@ namespace OSPSuite.UI.Controls
 
       private void processSelectiveCopyToClipboard()
       {
-         if(rectangularAreaIsSelected())
-            copyTableToClipboard(rectangularSelectionOnlyTable, includeHeaders:false);
+         if (rectangularAreaIsSelected())
+            copyTableToClipboard(rectangularSelectionOnlyTable, includeHeaders: false);
          else
             copyRowSelectionToClipboard();
       }
@@ -474,6 +479,9 @@ namespace OSPSuite.UI.Controls
       private bool areaIsRectangular()
       {
          var selectedRows = GetSelectedRows();
+         if (!selectedRows.Any())
+            return false;
+
          var firstRow = selectedRows.First();
          var firstRowColumnsSelected = GetSelectedCells(firstRow);
 
@@ -492,6 +500,8 @@ namespace OSPSuite.UI.Controls
 
       private void copyTableToClipboard(DataTable dataTable, bool includeHeaders = true)
       {
+         if (dataTable.Rows.Count == 0)
+            return;
          Clipboard.SetDataObject(_clipboardCopyTask.CreateDataObject(dataTable, includeHeaders));
       }
    }
