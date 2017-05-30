@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Starter.Domain;
+using ISimulation = OSPSuite.Core.Domain.ISimulation;
 
 namespace OSPSuite.Starter.Services
 {
@@ -32,7 +33,7 @@ namespace OSPSuite.Starter.Services
       private TestSimulation createSimulation()
       {
          var buildConfiguration = _modelHelper.CreateBuildConfiguration();
-         var result = _modelConstructor.CreateModelFrom(buildConfiguration, "MyModel");
+         var result = _modelConstructor.CreateModelFrom(buildConfiguration, "Test");
          var simulation = new TestSimulation
          {
             BuildConfiguration = buildConfiguration,
@@ -41,7 +42,7 @@ namespace OSPSuite.Starter.Services
          };
 
          var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable);
-         var first = allPersistable.First(x=>x.Dimension.Name==Constants.Dimension.AMOUNT);
+         var first = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.AMOUNT);
          simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(first), QuantityType.Molecule));
 
          _projectRetriever.CurrentProject.AddObservedData(observedDataFor(first));
@@ -62,7 +63,7 @@ namespace OSPSuite.Starter.Services
          };
 
 
-         var obsData = new DataRepository{Name = "ObsData" };
+         var obsData = new DataRepository {Name = "ObsData"};
          obsData.Add(values);
          return obsData;
       }

@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.ObservedData
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.btnAddData = new DevExpress.XtraEditors.SimpleButton();
@@ -156,7 +156,7 @@ namespace OSPSuite.UI.Views.ObservedData
 
       #endregion
 
-      protected DevExpress.XtraGrid.GridControl  gridControl;
+      protected UxGridControl gridControl;
       protected UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       protected DevExpress.XtraEditors.SimpleButton btnAddData;

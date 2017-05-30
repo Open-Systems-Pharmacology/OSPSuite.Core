@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.Charts
          DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
          this.layoutControl = new UxLayoutControl();
          this.loadTemplateButton = new DevExpress.XtraEditors.SimpleButton();
-         this.gridTemplates = new DevExpress.XtraGrid.GridControl();
+         this.gridTemplates = new UxGridControl();
          this.gridViewTemplates = new UxGridView();
          this.panelTemplateView = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -207,7 +207,7 @@ namespace OSPSuite.UI.Views.Charts
       #endregion
 
       private UxLayoutControl layoutControl;
-      private DevExpress.XtraGrid.GridControl gridTemplates;
+      private UxGridControl gridTemplates;
       private UxGridView gridViewTemplates;
       private DevExpress.XtraEditors.PanelControl panelTemplateView;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;

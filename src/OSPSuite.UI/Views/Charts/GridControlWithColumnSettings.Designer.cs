@@ -32,27 +32,25 @@ namespace OSPSuite.UI.Views.Charts
     private void InitializeComponent()
     {
       components = new System.ComponentModel.Container();
-      _gridView = new GridView();
-      ((ISupportInitialize)(_gridView)).BeginInit();
+      GridView = new GridView();
+      ((ISupportInitialize)(GridView)).BeginInit();
       ((ISupportInitialize)(this)).BeginInit();
       SuspendLayout();
       // 
       // _gridView
       // 
-      _gridView.GridControl = this;
-      _gridView.Name = "_gridView";
+      GridView.GridControl = this;
+      GridView.Name = "GridView";
       // 
       // GridControlWithColumnSettings
       // 
-      MainView = _gridView;
-      ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[]{ _gridView });
-      ((ISupportInitialize)(_gridView)).EndInit();
+      MainView = GridView;
+      ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[]{ GridView });
+      ((ISupportInitialize)(GridView)).EndInit();
       ((ISupportInitialize)(this)).EndInit();
       ResumeLayout(false);
     }
 
     #endregion
-
-    private GridView _gridView;
   }
 }

@@ -1,4 +1,5 @@
-﻿using UxGridView = OSPSuite.UI.Controls.UxGridView;
+﻿using OSPSuite.UI.Controls;
+using UxGridView = OSPSuite.UI.Controls.UxGridView;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -32,7 +33,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView(gridControl);
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -114,7 +115,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private System.ComponentModel.BackgroundWorker backgroundWorker1;
       private DevExpress.XtraLayout.LayoutControl layoutControl;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;

@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Charts
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.mainView = new UxGridView();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
@@ -72,7 +72,7 @@ namespace OSPSuite.UI.Views.Charts
 
       #endregion
 
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView mainView;
    }
 }
