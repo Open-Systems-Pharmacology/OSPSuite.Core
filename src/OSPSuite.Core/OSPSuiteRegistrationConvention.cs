@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Container.Conventions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
@@ -43,6 +45,9 @@ namespace OSPSuite.Core
 
          if (!serviceTypes.Any())
             return false;
+
+         if (concreteType.IsAnImplementationOf<IStartable>())
+            serviceTypes.Add(typeof(IStartable));
 
          container.Register(serviceTypes, concreteType, lifeStyle);
 

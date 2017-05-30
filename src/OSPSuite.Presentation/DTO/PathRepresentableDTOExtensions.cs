@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Presentation.DTO

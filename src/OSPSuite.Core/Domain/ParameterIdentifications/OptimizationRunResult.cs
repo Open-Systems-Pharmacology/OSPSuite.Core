@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual IReadOnlyList<DataRepository> SimulationResults
       {
-         get { return _simulationResults;}
+         get { return _simulationResults; }
          set
          {
             _simulationResults.Clear();
@@ -53,12 +53,12 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       private void updateResultsOrigin()
       {
-         _simulationResults.SelectMany(x=>x.AllButBaseGrid()).Each(x=>x.DataInfo.Origin = ColumnOrigins.CalculationAuxiliary);            
+         _simulationResults.SelectMany(x => x.AllButBaseGrid()).Each(x => x.DataInfo.Origin = ColumnOrigins.CalculationAuxiliary);
       }
 
       public virtual double TotalError => ResidualsResult?.TotalError ?? double.PositiveInfinity;
-      public virtual IReadOnlyCollection<OutputResiduals> AllOutputResiduals => ResidualsResult?.AllOutputResiduals;
-      public virtual IReadOnlyList<Residual> AllResiduals => ResidualsResult?.AllResiduals;
+      public virtual IReadOnlyCollection<OutputResiduals> AllOutputResiduals => ResidualsResult?.AllOutputResiduals ?? new List<OutputResiduals>();
+      public virtual IReadOnlyList<Residual> AllResiduals => ResidualsResult?.AllResiduals ?? new List<Residual>();
 
       public virtual IReadOnlyList<double> AllResidualValues
       {
@@ -79,6 +79,5 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       {
          return ResidualsResult.AllOutputResidualsFor(fullOutputPath).SelectMany(x => x.Residuals);
       }
-
    }
 }

@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Domain
       public const int DEFAULT_TEMPLATE_WARNING_THRESHOLD = 10;
       public const double DEFAULT_SCALE_DIVISOR = 1;
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
+      public const string DEFAULT_CHART_LAYOUT = "Standard View";
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
@@ -67,6 +68,7 @@ namespace OSPSuite.Core.Domain
       public static readonly string HELP_NAMESPACE = "Open Systems Pharmacology Suite.chm";
       public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
       public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
+      public static readonly string SUITE_NAME = "Open Systems Pharmacology Suite";
 
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
@@ -175,6 +177,14 @@ namespace OSPSuite.Core.Domain
          //end of  delete
       }
 
+      public static class RegistryPaths
+      {
+         public const string PKSIM_REG_PATH = @"Open Systems Pharmacology\PK-Sim\";
+         public const string MOBI_REG_PATH = @"Open Systems Pharmacology\MoBi\";
+         public const string INSTALL_DIR = "InstallDir";
+         public const string INSTALL_PATH = "InstallPath";
+      }
+
       public static class Groups
       {
          public const string UNDEFINED = "UNDEFINED";
@@ -198,6 +208,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string XLSX_EXTENSION = ".xlsx";
          public static readonly string TEXT_EXTENSION = ".txt";
          public static readonly string JSON_EXTENSION = ".json";
+         public static readonly string DOCX_EXTENSION = ".docs";
 
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
          public static readonly string UNITS_FILE_FILTER = XmlFilter("Units");
@@ -206,10 +217,10 @@ namespace OSPSuite.Core.Domain
          public static readonly string CHART_LAYOUT_FILTER = XmlFilter("Chart Layout");
          public static readonly string PDF_FILE_FILTER = FileFilter("Report", PDF_EXTENSION);
          public static readonly string XML_FILE_FILTER = XmlFilter("Xml");
-         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|(Excel file  *{1})|*{1}", XLS_EXTENSION, XLSX_EXTENSION);
+         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
          public static readonly string EXCEL_OPEN_FILE_FILTER = string.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
-         public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", ".docx");
+         public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", DOCX_EXTENSION);
          public static readonly string PKML_FILE_FILTER = FileFilter("Shared Modeling", PKML_EXTENSION);
          public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLS_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
@@ -218,6 +229,9 @@ namespace OSPSuite.Core.Domain
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
 
+         public static readonly string JSON_FILTER = $"*{JSON_EXTENSION}";
+         public static readonly string XML_FILTER = $"*{XML_EXTENSION}";
+
          public static string XmlFilter(string caption)
          {
             return FileFilter(caption, XML_EXTENSION);
@@ -225,7 +239,12 @@ namespace OSPSuite.Core.Domain
 
          public static string FileFilter(string caption, string extension)
          {
-            return $"{caption} File (*{extension})|*{extension}";
+            return $"{caption} File ({filter(extension)})|{filter(extension)}";
+         }
+
+         private static string filter(string extension)
+         {
+            return $"*{extension}";
          }
       }
 

@@ -9,7 +9,7 @@ assembly_info:
   patch: true
   file: SolutionInfo.*
   assembly_version: "{version}"
-  assembly_file_version: "{version}"	
+  assembly_file_version: "{version}"  
 
 cache:
   packages -> **\packages.config  
@@ -24,14 +24,21 @@ before_build:
   - nuget sources add -name funcparser -source https://ci.appveyor.com/nuget/ospsuite-funcparser 
   - nuget sources add -name simmodel -source https://ci.appveyor.com/nuget/ospsuite-simmodel
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes-282
+  - nuget sources add -name smartxls -source https://ci.appveyor.com/nuget/ospsuite-smartxls
   - nuget restore
 
 build:
   publish_nuget: true
   verbosity: minimal
   include_nuget_references: true
+  project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
+
+branches:
+  only:
+    - master
+    - develop
 
 test:
   assemblies:
@@ -48,6 +55,12 @@ install:
 skip_commits:
   files:
     - '*.md'
+
+pull_requests: 
+  do_not_increment_build_number: true     
+
+nuget: 
+  disable_publish_on_pr: true  
 
 notifications:
   - provider: Slack

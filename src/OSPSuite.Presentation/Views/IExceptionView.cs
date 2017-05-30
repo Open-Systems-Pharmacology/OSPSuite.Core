@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Views
       /// <summary>
       ///    Initialize the view with caption and icon. The assembly info contains information about the calling assembly 
       /// </summary>
-      void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName);
+      void Initialize(string caption, ApplicationIcon icon,  string issueTrackerUrl, string productName);
 
       /// <summary>
       ///    set the text being displayed in the exception message field
@@ -26,9 +26,9 @@ namespace OSPSuite.Presentation.Views
       string FullStackTrace { set; }
 
       /// <summary>
-      ///    Displays the view, set the owner form and also sets exception and stack trace bypassing the value sets by the user
+      ///    Displays the view, set the owner form and also sets exception, stack trace and clipboard content
       /// </summary>
-      void Display(Exception e);
+      void Display(string message, string stackTrace, string clipboardContent);
 
       /// <summary>
       ///    Displays the view for the given owner

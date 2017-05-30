@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Data
       ObservationAuxiliary, // if Observation and AuxiliaryType defined
 
       /// <summary>
-      /// Column is based on calculation values but is used in a different context (for example ParameterIdentification plots)
+      ///    Column is based on calculation values but is used in a different context (for example ParameterIdentification plots)
       /// </summary>
       CalculationAuxiliary
    }
@@ -43,8 +43,6 @@ namespace OSPSuite.Core.Domain.Data
 
    public class DataInfo
    {
-      private readonly ExtendedProperties _extendedProperties;
-
       public ColumnOrigins Origin { get; set; }
 
       /// <summary>
@@ -82,6 +80,19 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public double? MolWeight { get; set; }
 
+      /// <summary>
+      ///    Meta Information on the current column (organ, compartment for observed data etc.)
+      /// </summary>
+      public ExtendedProperties ExtendedProperties { get; }
+
+      public float? LLOQ { get; set; }
+
+      /// <summary>
+      ///    Indicates the threshold that should be used to compare two output columns. This will only be set for calculate
+      ///    columns
+      /// </summary>
+      public float? ComparisonThreshold { get; set; }
+
       [Obsolete("For serialization")]
       public DataInfo() : this(ColumnOrigins.Undefined)
       {
@@ -101,23 +112,15 @@ namespace OSPSuite.Core.Domain.Data
          Source = source;
          Category = category;
          MolWeight = molWeight;
-         _extendedProperties = new ExtendedProperties();
+         ExtendedProperties = new ExtendedProperties();
       }
 
-      /// <summary>
-      ///    Meta Information on the current column (organ, compartment for observed data etc.)
-      /// </summary>
-      public ExtendedProperties ExtendedProperties => _extendedProperties;
-
-      public float? LLOQ { get; set; }
-
-      /// <summary>
-      ///    Returns a clone of the DataInfo
-      /// </summary>
       public DataInfo Clone()
       {
          var dataInfo = new DataInfo(Origin, AuxiliaryType, DisplayUnitName, Date, Source, Category, MolWeight);
-         dataInfo.ExtendedProperties.UpdateFrom(_extendedProperties);
+         dataInfo.ExtendedProperties.UpdateFrom(ExtendedProperties);
+         dataInfo.LLOQ = LLOQ;
+         dataInfo.ComparisonThreshold = ComparisonThreshold;
          return dataInfo;
       }
    }

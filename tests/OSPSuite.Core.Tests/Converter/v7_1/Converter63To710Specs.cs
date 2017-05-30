@@ -2,19 +2,19 @@
 using System.Xml.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Converter.v6_4;
+using OSPSuite.Core.Converter.v7_1;
 
-namespace OSPSuite.Converter.v6_4
+namespace OSPSuite.Converter.v7_1
 {
-   public abstract class concern_for_Converter63To64 : ContextSpecification<Converter63To64>
+   public abstract class concern_for_Converter63To710 : ContextSpecification<Converter63To710>
    {
       protected override void Context()
       {
-         sut = new Converter63To64();
+         sut = new Converter63To710();
       }
    }
 
-   public class When_converting_a_curve_chart_template_element : concern_for_Converter63To64
+   public class When_converting_a_curve_chart_template_element : concern_for_Converter63To710
    {
       private XElement _chartTemplateElement;
 

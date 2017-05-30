@@ -2,13 +2,11 @@
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
-
-// ReSharper disable InconsistentNaming
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
@@ -26,7 +24,7 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          var constraints = CreateConstraints();
-         sut.Optimize(constraints, objectiveFunction);
+         sut.Optimize(constraints, ObjectiveFunction);
       }
 
       protected virtual IReadOnlyList<OptimizedParameterConstraint> CreateConstraints()
@@ -45,13 +43,13 @@ namespace OSPSuite.Core
       /// </summary>
       /// <param name="values"></param>
       /// <returns></returns>
-      protected virtual OptimizationRunResult objectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
+      protected virtual OptimizationRunResult ObjectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
       {
          var residualResult = new ResidualsResult();
          var outputResiduals = new OutputResiduals("A|B", new DataRepository(), new[]
          {
-            new Residual(0, values[0].Value - 3,1),
-            new Residual(0, values[1].Value - 4,1)
+            new Residual(0, values[0].Value - 3, 1),
+            new Residual(0, values[1].Value - 4, 1)
          });
          residualResult.AddOutputResiduals(outputResiduals);
 
@@ -88,7 +86,7 @@ namespace OSPSuite.Core
       }
    }
 
-   class When_optimizing_using_Monte_carlo : concern_for_OptimizationAlgorithm
+   public class When_optimizing_using_monte_carlo : concern_for_OptimizationAlgorithm
    {
       protected override IOptimizationAlgorithm CreateOptimizationAlgorithm()
       {
@@ -131,6 +129,7 @@ namespace OSPSuite.Core
    public class When_optimizing_using_MPFit_LM_with_invalid_start_values : concern_for_OptimizationAlgorithm
    {
       private OSPSuiteException _exception;
+
       protected override IOptimizationAlgorithm CreateOptimizationAlgorithm()
       {
          return new MPFitLevenbergMarquardtOptimizer();
@@ -141,7 +140,7 @@ namespace OSPSuite.Core
          var constraint1 = new OptimizedParameterConstraint("x[0]", 0, 2, double.PositiveInfinity, Scalings.Linear);
          var constraint2 = new OptimizedParameterConstraint("x[1]", 0, 10, 1, Scalings.Linear);
 
-         return new List<OptimizedParameterConstraint>() { constraint1, constraint2 };
+         return new List<OptimizedParameterConstraint>() {constraint1, constraint2};
       }
 
       protected override void Because()
@@ -166,14 +165,14 @@ namespace OSPSuite.Core
    public class When_optimizing_using_MPFit_LM_with_error_in_objective_function : concern_for_OptimizationAlgorithm
    {
       private OSPSuiteException _exception;
-      private string _objectiveFunctionErrorMessage = "Warum ist die Banane krumm?";
+      private readonly string _objectiveFunctionErrorMessage = "Warum ist die Banane krumm?";
 
       protected override IOptimizationAlgorithm CreateOptimizationAlgorithm()
       {
          return new MPFitLevenbergMarquardtOptimizer();
       }
 
-      protected override OptimizationRunResult objectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
+      protected override OptimizationRunResult ObjectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
       {
          var residualResult = new ResidualsResult()
          {
@@ -213,7 +212,7 @@ namespace OSPSuite.Core
    {
       private OSPSuiteException _exception;
 
-      protected override OptimizationRunResult objectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
+      protected override OptimizationRunResult ObjectiveFunction(IReadOnlyList<OptimizedParameterValue> values)
       {
          return new OptimizationRunResult
          {

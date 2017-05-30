@@ -21,6 +21,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Category);
          Map(x => x.MolWeight);
          Map(x => x.LLOQ).WithMappingName(Constants.Serialization.Attribute.LLOQ);
+         Map(x => x.ComparisonThreshold);
          MapEnumerable(x => x.ExtendedProperties, addFunction);
       }
 

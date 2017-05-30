@@ -140,7 +140,7 @@ namespace OSPSuite.Core.Domain.Services
             .Select(n => n.Substring(baseFormat.Length));
 
          //try to convert them to an int
-         return string.Format("{0}{1}", baseFormat, getNextAvailableIndexBasedOn(allUsedNamesMatchingBaseFormat));
+         return $"{baseFormat}{getNextAvailableIndexBasedOn(allUsedNamesMatchingBaseFormat)}";
       }
 
       private int getNextAvailableIndexBasedOn(IEnumerable<string> allUsedNamesMatchingBaseFormat)

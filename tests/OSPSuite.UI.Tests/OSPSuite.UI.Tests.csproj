@@ -31,93 +31,93 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.BonusSkins.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.BonusSkins.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.BonusSkins.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.BonusSkins.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Charts.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Charts.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Charts.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Charts.v16.2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Data.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.6\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Office.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Office.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Office.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Office.v16.2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.PivotGrid.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.PivotGrid.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.PivotGrid.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.PivotGrid.v16.2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Printing.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.Printing.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Printing.v16.2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.RichEdit.v16.2.Core, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.RichEdit.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.RichEdit.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.RichEdit.v16.2.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.4\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.6\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraBars.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraBars.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraBars.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraBars.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2.UI, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.UI.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v16.2.UI, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.UI.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2.Wizard, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraCharts.v16.2.Wizard.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v16.2.Wizard, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.Wizard.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraEditors.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraEditors.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraEditors.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraEditors.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraGrid.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraLayout.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraLayout.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraLayout.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraLayout.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraNavBar.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraNavBar.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraNavBar.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraNavBar.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPivotGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPivotGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraPivotGrid.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraPrinting.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPrinting.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraPrinting.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraRichEdit.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v16.2.Extensions, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraRichEdit.v16.2.Extensions.dll</HintPath>
+    <Reference Include="DevExpress.XtraRichEdit.v16.2.Extensions, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraRichEdit.v16.2.Extensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraTreeList.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraTreeList.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraTreeList.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v16.2, Version=16.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.4\lib\net452\DevExpress.XtraVerticalGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraVerticalGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraVerticalGrid.v16.2.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="FakeItEasy">
       <HintPath>..\..\packages\FakeItEasy.2.3.3\lib\net40\FakeItEasy.dll</HintPath>
@@ -129,8 +129,9 @@
     <Reference Include="OSPSuite.BDDHelper">
       <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.0.1\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -156,6 +157,11 @@
     <Compile Include="UxTreeViewSpecs.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\packages\OSPSuite.SimModel.2.0.0.12\OSPSuite.SimModel\OSPSuite.SimModel.xsd">
+      <Link>OSPSuite.SimModel.xsd</Link>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
     <None Include="Data\Test1.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

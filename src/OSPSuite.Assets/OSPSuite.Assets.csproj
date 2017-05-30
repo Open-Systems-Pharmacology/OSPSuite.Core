@@ -34,8 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OSPSuite.Utility">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,8 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\Absorption.ico" />
-    <None Include="packages.config" />
     <None Include="OSPSuite.Assets.nuspec" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\AgingPopulationSimulation.ico" />

@@ -193,7 +193,7 @@ namespace OSPSuite.Assets
 
       public static string CloneObjectBase(string entityType, string name)
       {
-         return "New name for the cloned {0} '{1}'".FormatWith(entityType, name);
+         return $"New name for the cloned {entityType} '{name}'";
       }
 
       public static string ContactSupport(string forumUrl)
@@ -203,17 +203,17 @@ namespace OSPSuite.Assets
 
       public static string CreatedOn(string creationDate)
       {
-         return "Created on {0}".FormatWith(creationDate);
+         return $"Created on {creationDate}";
       }
 
       public static string ClonedOn(string creationDate, string clonedFrom)
       {
-         return "Cloned from '{0}' on {1}".FormatWith(clonedFrom, creationDate);
+         return $"Cloned from '{clonedFrom}' on {creationDate}";
       }
 
       public static string ConfiguredOn(string creationDate)
       {
-         return "Configured on {0}".FormatWith(creationDate);
+         return $"Configured on {creationDate}";
       }
 
       public static string ChartFingerprintDataFrom(string projectName, string simulationName, string dateString)
@@ -241,30 +241,42 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
+      public static void AppendListItem(string listItem, StringBuilder sb)
+      {
+         sb.Append($"<li>{listItem}</li>");
+      }
+
+      public static void AppendLine(string lineToAppend, StringBuilder sb)
+      {
+         sb.Append($"<p>{lineToAppend}</p>");
+      }
+
       public static string ExceptionViewDescription(string issueTrackerUrl)
       {
          var sb = new StringBuilder();
-         sb.AppendLine("oops...something went terribly wrong.");
-         sb.AppendLine();
-         sb.AppendLine("To best address the error, please enter an issue in our issue tracker:");
-         sb.AppendLine($"    1 - Visit <b>{issueTrackerUrl}</b> or click on the link below");
-         sb.AppendLine("    2 - Click on the <b>New Issue</b> button");
-         sb.AppendLine("    3 - Describe the steps you took prior to the problem emerging");
-         sb.AppendLine($"    4 - Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description");
-         sb.AppendLine("    5 - if possible, attach your project file to the issue (do not attach confidential information)");
-         sb.AppendLine();
-         sb.AppendLine("Note: A GitHub account is required to create an issue");
+         AppendLine("oops...something went terribly wrong.", sb);
+         AppendLine(string.Empty, sb);
+         AppendLine("To best address the error, please enter an issue in our issue tracker:", sb);
+         sb.Append("<ol>");
+         AppendListItem($"Visit <b>{issueTrackerUrl}</b> or click on the link below", sb);
+         AppendListItem("Click on the <b>New Issue</b> button", sb);
+         AppendListItem("Describe the steps you took prior to the problem emerging", sb);
+         AppendListItem($"Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description", sb);
+         AppendListItem("if possible, attach your project file to the issue (do not attach confidential information)", sb);
+         sb.Append("</ol>");
+         AppendLine(string.Empty, sb);
+         AppendLine("Note: A GitHub account is required to create an issue", sb);
          return sb.ToString();
       }
 
       public static string EnterNameEntityCaption(string type)
       {
-         return "Enter name for {0}".FormatWith(type, type);
+         return $"Enter name for {type}";
       }
 
       public static string RenameEntityCaption(string type, string name)
       {
-         return "New name for {0} '{1}'".FormatWith(type, name);
+         return $"New name for {type} '{name}'";
       }
 
       public static class Importer
@@ -294,7 +306,7 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
 
-    
+
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
@@ -442,12 +454,12 @@ namespace OSPSuite.Assets
 
          public static string CreatedAtBy(string formattedDate, string by)
          {
-            return "Created on {0} by {1}".FormatWith(formattedDate, by);
+            return $"Created on {formattedDate} by {by}";
          }
 
          public static string UpdatedAtBy(string formattedDate, string by)
          {
-            return "Last updated on {0} by {1}".FormatWith(formattedDate, by);
+            return $"Last updated on {formattedDate} by {by}";
          }
 
          public static readonly string ReallyDeleteMultipleRelatedItems = "Really delete Related Items?";
@@ -1284,7 +1296,7 @@ namespace OSPSuite.Assets
          public static readonly string InitialConstraintsInconsistent = "Initial constraints inconsistent";
          public static readonly string NotEnoughDegreesOfFreedom = "Not enough degrees of freedom";
          public static readonly string ErrorObjectiveFunction = "Error in objective function: {0}";
-         public static readonly string UnknownStatus = "Unknown status: {0}";
+         public static string UnknownStatus(string status) => $"Unknown status: {status}";
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
       }
@@ -1370,22 +1382,22 @@ namespace OSPSuite.Assets
 
       public static string ValueSmallerThanMax(string parameterName, string value, string unit)
       {
-         return "Value for {0} should be less than or equal to {1} {2}".FormatWith(parameterName, value, unit);
+         return $"Value for {parameterName} should be less than or equal to {value} {unit}";
       }
 
       public static string ValueBiggerThanMin(string parameterName, string value, string unit)
       {
-         return "Value for {0} should be greater than or equal to {1} {2}".FormatWith(parameterName, value, unit);
+         return $"Value for {parameterName} should be greater than or equal to {value} {unit}";
       }
 
       public static string ValueStrictBiggerThanMin(string parameterName, string value, string unit)
       {
-         return "Value for {0} should be strictly greater than {1} {2}".FormatWith(parameterName, value, unit);
+         return $"Value for {parameterName} should be strictly greater than {value} {unit}";
       }
 
       public static string ValueStrictSmallerThanMax(string parameterName, string value, string unit)
       {
-         return "Value for {0} should be strictly less than {1} {2}".FormatWith(parameterName, value, unit);
+         return $"Value for {parameterName} should be strictly less than {value} {unit}";
       }
 
       public static string StartValueDefinedForNonPhysicalContainer(string moleculeName, string containerPath)
@@ -1606,7 +1618,7 @@ namespace OSPSuite.Assets
 
       public static string CreateProjectDescription(string version)
       {
-         return "Project started with version {0}".FormatWith(version);
+         return $"Project started with version {version}";
       }
 
       public static string SetMetaDataAddedCommandDescripton(string name, string value)

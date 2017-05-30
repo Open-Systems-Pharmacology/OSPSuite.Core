@@ -12,6 +12,7 @@ using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.UICommands;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation
@@ -55,17 +56,10 @@ namespace OSPSuite.Presentation
             scan.ExcludeType<DataColumnToPathElementsMapper>();
          });
 
-         container.AddScanner(scan =>
-         {
-            scan.AssemblyContainingType<PresenterRegister>();
-            //Commands
-            scan.IncludeNamespaceContainingType<GarbageCollectionCommand>();
+         registerUICommands(container);
 
-            //Context Menus
-            scan.IncludeNamespaceContainingType<IContextMenu>();
-            scan.WithConvention(new ConcreteTypeRegistrationConvention());
-         });
-
+         registerContextMenus(container);
+         
          registerSingleStartPresenters(container);
 
          //OPEN TYPES
@@ -73,9 +67,9 @@ namespace OSPSuite.Presentation
          container.Register(typeof(IParameterToParameterDTOInContainerMapper<>), typeof(ParameterToParameterDTOInContainerMapper<>));
          container.Register(typeof(ICloneObjectBasePresenter<>), typeof(CloneObjectBasePresenter<>));
 
-         //SINGLETON
+         //SINGLETONS
          container.Register<IJournalPageEditorFormPresenter, JournalPageEditorFormPresenter>(LifeStyle.Singleton);
-         container.Register<IChartLayoutTemplateRepository, ChartLayoutTemplateRepository>(LifeStyle.Singleton);
+         container.Register<IChartLayoutTemplateRepository, IStartable, ChartLayoutTemplateRepository>(LifeStyle.Singleton);
          container.Register<IParameterIdentificationFeedbackPresenter, ParameterIdentificationFeedbackPresenter>(LifeStyle.Singleton);
          container.Register<IHistoryBrowserConfiguration, HistoryBrowserConfiguration>(LifeStyle.Singleton);
          container.Register<DirectoryMapSettings, DirectoryMapSettings>(LifeStyle.Singleton);
@@ -84,6 +78,26 @@ namespace OSPSuite.Presentation
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();
          container.Register<ChartEditorSettings, ChartEditorSettings>();
          container.Register<ChartPresenterContext, ChartPresenterContext>();
+      }
+
+      private static void registerContextMenus(IContainer container)
+      {
+         container.AddScanner(scan =>
+         {
+            scan.AssemblyContainingType<PresenterRegister>();
+            scan.IncludeNamespaceContainingType<IContextMenu>();
+            scan.WithConvention<AllInterfacesAndConcreteTypeRegistrationConvention>();
+         });
+      }
+
+      private static void registerUICommands(IContainer container)
+      {
+         container.AddScanner(scan =>
+         {
+            scan.AssemblyContainingType<PresenterRegister>();
+            scan.IncludeNamespaceContainingType<GarbageCollectionCommand>();
+            scan.WithConvention<ConcreteTypeRegistrationConvention>();
+         });
       }
 
       private static void registerSingleStartPresenters(IContainer container)

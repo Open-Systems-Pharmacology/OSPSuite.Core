@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Domain.Services
          formulaInAmount.Dimension = amountDimension;
 
          var volumeAlias = _formulaTask.AddParentVolumeReferenceToFormula(formulaInAmount);
-         formulaInAmount.FormulaString = string.Format("({0})*{1}", formulaInAmount.FormulaString, volumeAlias);
+         formulaInAmount.FormulaString = $"({formulaInAmount.FormulaString})*{volumeAlias}";
           return formulaInAmount;
       }
 

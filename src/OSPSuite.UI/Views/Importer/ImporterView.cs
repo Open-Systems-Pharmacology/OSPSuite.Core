@@ -70,12 +70,21 @@ namespace OSPSuite.UI.Views.Importer
             prevPage.Appearance.Header.Font = Fonts.NonSelectedTabHeaderFont;
       }
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         layoutItemSelectRange.AdjustLongButtonSize();
+         layoutItemImportAll.AdjustButtonSize();
+         layoutItemImport.AdjustButtonSize();
+         btnSelectRange.InitWithImage(ApplicationIcons.PreviewOriginData, Captions.Importer.PreviewExcelData);
+         resetImportButtonText();
+      }
+
       public void StartImport(string sourceFile, ImportTableConfiguration configuration, Mode mode)
       {
          var metaDataCategories = configuration.MetaDataCategories;
          _mode = mode;
          _columnInfos = configuration.ColumnInfos;
-         btnSelectRange.InitWithImage(ApplicationIcons.PreviewOriginData, Captions.Importer.PreviewExcelData);
 
          var importDataTable = _importMapper.ConvertToImportDataTable(metaDataCategories, _columnInfos);
 
@@ -472,7 +481,7 @@ namespace OSPSuite.UI.Views.Importer
 
             if (newTables.Count == 0)
             {
-               XtraMessageBox.Show("Nothing imported!", base.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+               XtraMessageBox.Show("Nothing imported!", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                return;
             }
 
@@ -535,7 +544,7 @@ namespace OSPSuite.UI.Views.Importer
             if (_imports.Tables.Cast<ImportDataTable>().Any(existingTable => existingTable.Source == sourceSheet))
             {
                overwrite =
-               (XtraMessageBox.Show(OVERWRITE_QUERY_TEXT, base.Text, MessageBoxButtons.YesNo,
+               (XtraMessageBox.Show(OVERWRITE_QUERY_TEXT, Text, MessageBoxButtons.YesNo,
                    MessageBoxIcon.Question) ==
                 DialogResult.Yes);
                asked = true;
@@ -553,8 +562,7 @@ namespace OSPSuite.UI.Views.Importer
          foreach (var sheet in sheets)
          {
             if (!preview.Tables.Contains(sheet)) continue;
-            ColumnMappingControl cmc;
-            cmc = _columnMappingControls.ContainsKey(sheet)
+            var cmc = _columnMappingControls.ContainsKey(sheet)
                ? getExistingColumnMappingControl(sheet)
                : createNewColumnMappingControl(preview, sheet);
             cmc.ValidateMapping();
@@ -586,8 +594,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private ColumnMappingControl getExistingColumnMappingControl(string sheet)
       {
-         ColumnMappingControl cmc;
-         cmc = _columnMappingControls[sheet];
+         var cmc = _columnMappingControls[sheet];
          cmc.OnMappingCompleted += setImportFlagToTrue;
          cmc.OnMissingMapping += setImportFlagToFalse;
          cmc.OnMappingCompleted -= onColumnMappingMappingCompleted;
@@ -629,27 +636,31 @@ namespace OSPSuite.UI.Views.Importer
       private void cleanMemory()
       {
          _namingView = null;
-         _openSourceFileControl.OnOpenSourceFile -= openSourceFileEvent;
-         _openSourceFileControl = null;
+         if (_openSourceFileControl != null)
+         {
+            _openSourceFileControl.OnOpenSourceFile -= openSourceFileEvent;
+            _openSourceFileControl = null;
+         }
+
          if (_imports != null)
          {
             foreach (ImportDataTable table in _imports.Tables)
             {
-               if (table.MetaData != null) table.MetaData.Dispose();
+               table.MetaData?.Dispose();
                table.Dispose();
             }
             _imports.Dispose();
          }
          if (_importDataTable != null)
          {
-            if (_importDataTable.MetaData != null) _importDataTable.MetaData.Dispose();
+            _importDataTable.MetaData?.Dispose();
             _importDataTable.Dispose();
          }
 
          CleanUpHelper.ReleaseEvents(_dataSetControl);
-         if (_dataSetControl != null) _dataSetControl.Dispose();
+         _dataSetControl?.Dispose();
          CleanUpHelper.ReleaseEvents(_sourceFilePreviewControl);
-         if (_sourceFilePreviewControl != null) _sourceFilePreviewControl.Dispose();
+         _sourceFilePreviewControl?.Dispose();
          CleanUpHelper.ReleaseControls(Controls);
          Controls.Clear();
 
@@ -666,7 +677,7 @@ namespace OSPSuite.UI.Views.Importer
          _columnInfos = null;
 
          cleanColumnMappingControls();
-         if (_columnMappingControls != null) _columnMappingControls.Clear();
+         _columnMappingControls?.Clear();
          _columnMappingControls = null;
 
          columnMappingControlPanel.Controls.Clear();

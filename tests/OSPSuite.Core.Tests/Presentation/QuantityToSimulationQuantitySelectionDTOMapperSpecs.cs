@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 

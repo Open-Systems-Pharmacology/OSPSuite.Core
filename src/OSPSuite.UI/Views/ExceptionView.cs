@@ -7,14 +7,13 @@ using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
    public partial class ExceptionView : XtraForm, IExceptionView
    {
-      private string _assemblyInfo;
       private string _issueTrackerUrl;
+      private string _cliboardContent;
       private const string _couldNotCopyToClipboard = "Unable to copy the information to the clipboard.";
       public object MainView { private get; set; }
 
@@ -31,8 +30,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         lblDescription.AutoSizeMode = LabelAutoSizeMode.Vertical;
-         lblDescription.AllowHtmlString = true;
+         
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -43,6 +41,8 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
+         layoutItemDescription.TextVisible = false;
+         htmlLabel.ActiveView.BackColor = BackColor;
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)
@@ -55,15 +55,14 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            lblDescription.Text = value;
+            htmlLabel.Caption = value;
          }
       }
 
-      public void Initialize(string caption, ApplicationIcon icon, string productInfo, string issueTrackerUrl, string productName)
+      public void Initialize(string caption, ApplicationIcon icon,  string issueTrackerUrl, string productName)
       {
          Text = caption;
          Icon = icon;
-         _assemblyInfo = productInfo;
          _issueTrackerUrl = issueTrackerUrl;
          Description = Captions.ExceptionViewDescription(issueTrackerUrl);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);
@@ -97,13 +96,9 @@ namespace OSPSuite.UI.Views
 
       private void copyToClipboardOnUIThread()
       {
-         Clipboard.SetText(fullContent());
+         Clipboard.SetText(_cliboardContent);
       }
 
-      private string fullContent()
-      {
-         return $"Application:\n{_assemblyInfo}\n\n{ExceptionMessage}\n\nStack trace:\n{FullStackTrace}";
-      }
 
       private void showException(string message)
       {
@@ -137,7 +132,7 @@ namespace OSPSuite.UI.Views
       {
          try
          {
-            ShowDialog((Form) MainView);
+            ShowDialog((Form)MainView);
          }
          catch (Exception)
          {
@@ -145,13 +140,12 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public void Display(Exception exception)
+      public void Display(string message, string stackTrace, string clipboardContent)
       {
-         ExceptionMessage = exception.FullMessage();
-         FullStackTrace = exception.FullStackTrace();
+         ExceptionMessage = message;
+         FullStackTrace = stackTrace;
+         _cliboardContent = clipboardContent;
          Display();
       }
-
-   
    }
 }

@@ -1,20 +1,8 @@
-﻿using OSPSuite.Utility.Collections;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.DTO
 {
-   /// <summary>
-   ///    One path element
-   /// </summary>
-   public enum PathElement
-   {
-      Simulation,
-      TopContainer,
-      Container,
-      BottomCompartment,
-      Molecule,
-      Name
-   }
-
    /// <summary>
    ///    A cache returning for each path element the corresonding <see cref="PathElementDTO" />
    /// </summary>

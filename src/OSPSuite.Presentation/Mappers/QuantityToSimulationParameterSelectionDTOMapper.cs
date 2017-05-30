@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Presentation.DTO;
 

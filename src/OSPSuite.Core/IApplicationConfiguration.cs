@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain;
 namespace OSPSuite.Core
 {
    /// <summary>
-   /// Standard interface defining common properties for all application in the suite
+   ///    Standard interface defining common properties for all application in the suite
    /// </summary>
    public interface IApplicationConfiguration
    {
@@ -23,9 +23,9 @@ namespace OSPSuite.Core
       ///    Path of the pk analyses file
       /// </summary>
       string PKParametersFilePath { get; set; }
-      
+
       /// <summary>
-      /// Path of the license agreement file
+      ///    Path of the license agreement file
       /// </summary>
       string LicenseAgreementFilePath { get; }
 
@@ -50,30 +50,36 @@ namespace OSPSuite.Core
       string BuildVersion { get; }
 
       /// <summary>
-      /// Returns the name of the application
+      ///    Returns the name of the application
       /// </summary>
       string ProductName { get; }
 
       /// <summary>
-      /// Returns the product corresponding to the current application
+      ///    Returns the product corresponding to the current application
       /// </summary>
       Origin Product { get; }
 
       /// <summary>
-      /// Returns the name of the application with trademark
+      ///    Returns the name of the application with trademark
       /// </summary>
       string ProductNameWithTrademark { get; }
 
       ApplicationIcon Icon { get; }
 
       /// <summary>
-      /// Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent one down to the first available one)
+      ///    Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent
+      ///    one down to the first available one)
       /// </summary>
       IEnumerable<string> UserApplicationSettingsFilePaths { get; }
 
       /// <summary>
-      /// Returns the url of the issue tracker
+      ///    Returns the url of the issue tracker
       /// </summary>
       string IssueTrackerUrl { get; }
+
+      /// <summary>
+      ///    Returns the name of the suite with the Version in format X.Y.Z
+      /// </summary>
+      string OSPSuiteNameWithVersion { get; }
    }
 }

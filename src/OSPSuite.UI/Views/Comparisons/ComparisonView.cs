@@ -6,6 +6,7 @@ using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;

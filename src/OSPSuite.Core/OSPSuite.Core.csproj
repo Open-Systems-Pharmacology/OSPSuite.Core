@@ -73,15 +73,17 @@
     <Reference Include="OSPSuite.Serializer">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.SimModel">
-      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.1\lib\net45\OSPSuite.SimModel.dll</HintPath>
+    <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.12\lib\net45\OSPSuite.SimModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.0.1, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.1\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.0.0.4, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.4\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="OSPSuite.Utility">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.1\lib\net45\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -99,6 +101,10 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="AllInterfacesAndConcreteTypeRegistrationConvention.cs" />
+    <Compile Include="Batch\BatchOutputValues.cs" />
+    <Compile Include="Batch\BatchSimulationExport.cs" />
+    <Compile Include="Batch\Mappers\SimulationResultsToBatchSimulationExportMapper.cs" />
+    <Compile Include="Batch\ParameterValue.cs" />
     <Compile Include="Chart\Axis.cs" />
     <Compile Include="Chart\AxisCountMode.cs" />
     <Compile Include="Chart\CurveDataTemplate.cs" />
@@ -129,9 +135,12 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
+    <Compile Include="Domain\PathElement.cs" />
     <Compile Include="Domain\Services\IDataRepositoryTask.cs" />
     <Compile Include="Domain\Services\ObservedDataTask.cs" />
     <Compile Include="Domain\Services\ParameterIdentifications\TransferOptimizedParametersToSimulationsTask.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Importer\ColumnInfo.cs" />
     <Compile Include="Importer\ColumnMapping.cs" />
     <Compile Include="Importer\DataImporterSettings.cs" />
@@ -193,7 +202,7 @@
     <Compile Include="Comparison\TableFormulaDiffBuilder.cs" />
     <Compile Include="Comparison\ValuePointDiffBuilder.cs" />
     <Compile Include="Converter\v6_3\Converter62To63.cs" />
-    <Compile Include="Converter\v6_4\Converter63To64.cs" />
+    <Compile Include="Converter\v7_1\Converter63To710.cs" />
     <Compile Include="Diagram\IReactionNode.cs" />
     <Compile Include="Domain\BinInterval.cs" />
     <Compile Include="Domain\CalculationMethodCache.cs" />
@@ -497,6 +506,8 @@
     <Compile Include="Services\CircularReferenceChecker.cs" />
     <Compile Include="Services\IDisplayNameProvider.cs" />
     <Compile Include="Services\ILogger.cs" />
+    <Compile Include="Services\ISimulationResultsExporter.cs" />
+    <Compile Include="Services\IStartableProcessFactory.cs" />
     <Compile Include="Services\LogEntry.cs" />
     <Compile Include="Services\LoggerExtensions.cs" />
     <Compile Include="Services\RelatedItemTypeRetriever.cs" />
@@ -1019,6 +1030,7 @@
     <Compile Include="Domain\Services\IObservedDataConfiguration.cs" />
     <Compile Include="Services\IExportToExcelTask.cs" />
     <Compile Include="Services\KeyPathMapper.cs" />
+    <Compile Include="Services\StartableProcess.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

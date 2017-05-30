@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public string VariablePattern
       {
-         get { return string.Format("{0}_{1}", Variable, _iterationPattern); }
+         get { return $"{Variable}_{_iterationPattern}"; }
       }
 
       /// <summary>
@@ -83,8 +83,8 @@ namespace OSPSuite.Core.Domain.Formulas
 
       private void addDynamicVariablesToFormula(ExplicitFormula explicitFormula, StringBuilder stringBuilder, IFormulaUsable formulaUsable, int index0, IObjectPathFactory objectPathFactory)
       {
-         string index1 = string.Format("{0}", index0 + 1);
-         string currentVariable = string.Format("{0}_{1}", Variable, index1);
+         string index1 = $"{index0 + 1}";
+         string currentVariable = $"{Variable}_{index1}";
 
          //replace current variable in formula string and add reference to the explicit formula
          string formulaStringPart = FormulaString.Replace(VariablePattern, currentVariable);

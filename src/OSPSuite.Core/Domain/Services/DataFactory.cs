@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using OSPSuite.Utility.Collections;
-using SimModelNET;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
+using SimModelNET;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -18,7 +18,10 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <param name="simulation">the core simulation for which results should be retrieved</param>
       /// <param name="simModelSimulation">the simmodel simulation containing the results</param>
-      /// <param name="repositoryName">The optional name for the repository. If not provided, the standard name retrieved from the <see cref="IDataNamingService"/> will be used</param>
+      /// <param name="repositoryName">
+      ///    The optional name for the repository. If not provided, the standard name retrieved from
+      ///    the <see cref="IDataNamingService" /> will be used
+      /// </param>
       /// <returns></returns>
       DataRepository CreateRepository(IModelCoreSimulation simulation, SimModelNET.ISimulation simModelSimulation, string repositoryName = null);
 
@@ -80,7 +83,11 @@ namespace OSPSuite.Core.Domain.Services
       {
          var column = new DataColumn(_dataNamingService.GetEntityName(yValues.EntityId), quantity.Dimension, xValues)
          {
-            DataInfo = {Origin = ColumnOrigins.Calculation},
+            DataInfo =
+            {
+               Origin = ColumnOrigins.Calculation,
+               ComparisonThreshold = (float) yValues.ComparisonThreshold
+            },
             Values = new List<float>(yValues.Values.ToFloatArray()),
             QuantityInfo = new QuantityInfo(yValues.Name, quantityPath, quantity.QuantityType),
             DisplayUnit = _displayUnitRetriever.PreferredUnitFor(quantity)

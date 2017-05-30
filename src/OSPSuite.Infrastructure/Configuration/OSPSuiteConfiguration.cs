@@ -75,5 +75,6 @@ namespace OSPSuite.Infrastructure.Configuration
 
       protected abstract string ApplicationFolderPathWithRevision(string revision);
       public virtual string LicenseAgreementFilePath { get; } = Constants.LICENSE_AGREEMENT_FILE_NAME;
+      public string OSPSuiteNameWithVersion => $"{Constants.SUITE_NAME} - {Version}";
    }
 }

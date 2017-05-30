@@ -2,12 +2,12 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using OSPSuite.Assets;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -19,12 +19,12 @@ namespace OSPSuite.UI.Controls
       private readonly BarManager _barManager;
       private readonly PopupMenu _popupMenu;
 
-      public UxChartControl(bool addDefaultPopup = true)
+      public UxChartControl(bool useDefaultPopupMechanism = true, bool addCopyToClipboardMenu = true)
       {
          Titles.Clear();
 
          _title = new ChartTitle {Text = string.Empty, Font = new Font("Arial", 16), Alignment = StringAlignment.Center, Dock = ChartTitleDockStyle.Top, WordWrap = true};
-         _description = new ChartTitle { Text = string.Empty, Font = new Font("Arial", 12), Alignment = StringAlignment.Near, Dock = ChartTitleDockStyle.Bottom, WordWrap = true };
+         _description = new ChartTitle {Text = string.Empty, Font = new Font("Arial", 12), Alignment = StringAlignment.Near, Dock = ChartTitleDockStyle.Bottom, WordWrap = true};
 
          Titles.Add(_title);
          Titles.Add(_description);
@@ -32,10 +32,9 @@ namespace OSPSuite.UI.Controls
          _clipboardTask = new ClipboardTask();
          _barManager = new BarManager {Form = this};
          _popupMenu = new PopupMenu(_barManager);
-         _barManager.SetPopupContextMenu(this, _popupMenu);
 
-         if (addDefaultPopup)
-            initializePopup();
+         if (useDefaultPopupMechanism)
+            initializePopup(addCopyToClipboardMenu);
       }
 
       /// <summary>
@@ -101,9 +100,17 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      private void initializePopup()
+      private void initializePopup(bool addCopyToClipboardMenu)
       {
-         AddPopupMenu(Captions.CopyAsImage, CopyToClipboard, ApplicationIcons.Paste);
+         _barManager.SetPopupContextMenu(this, _popupMenu);
+
+         if (addCopyToClipboardMenu)
+            AddCopyToCliboardMenu();
+      }
+
+      public void AddCopyToCliboardMenu()
+      {
+         AddPopupMenu(MenuNames.CopyToClipboard, CopyToClipboard, ApplicationIcons.Copy);
       }
 
       public DiagramCoordinates DiagramCoordinatesAt(HotTrackEventArgs e)

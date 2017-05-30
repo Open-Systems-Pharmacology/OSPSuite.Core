@@ -261,7 +261,7 @@ namespace OSPSuite.UI.Binders
          switch (Axis.NumberMode)
          {
             case NumberModes.Scientific:
-               pattern = "V:E{0}".FormatWith(_numericFormatterOptions.DecimalPlace);
+               pattern = $"V:E{_numericFormatterOptions.DecimalPlace}";
                break;
             case NumberModes.Normal:
                pattern = "V:G";

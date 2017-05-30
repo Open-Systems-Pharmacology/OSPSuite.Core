@@ -9,6 +9,7 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;

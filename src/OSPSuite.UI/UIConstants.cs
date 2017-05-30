@@ -11,6 +11,8 @@ namespace OSPSuite.UI
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";
 
+      public const double DEFAULT_HTML_FONT_SIZE = 8.25;
+
       /// <summary>
       ///    Size used for icons displayed in tab
       /// </summary>
@@ -25,6 +27,8 @@ namespace OSPSuite.UI
       ///    Size used for icons displayed in tree view
       /// </summary>
       public static IconSize ICON_SIZE_TREE_VIEW = IconSizes.Size24x24;
+
+      public const string DEFAULT_HTML_FONT = "Tahoma";
 
       public static class Size
       {

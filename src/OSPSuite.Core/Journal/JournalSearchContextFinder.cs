@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Journal
       {
          var escapedPattern = Regex.Escape(searchPattern);
          return "(?<before>(?:\\S+\\s){0," + CONTEXT_WORD_COUNT + "}\\S*)?" + //up to CONTEXT_WORD_COUNT words BEFORE the match
-                "(?<search>{0})".FormatWith(escapedPattern) + //actual match
+                $"(?<search>{escapedPattern})"+ //actual match
                 "(?<after>\\S*(?:\\s\\S+){0," + CONTEXT_WORD_COUNT + "})?"; //up to CONTEXT_WORD_COUNT words AFTER the match
       }
 

@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Core;
@@ -10,6 +9,7 @@ using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -32,7 +32,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition);
 
       /// <summary>
-      /// If no curves have been added to the chart, then <paramref name="hint"/> text will appear in place of the empty chart
+      ///    If no curves have been added to the chart, then <paramref name="hint" /> text will appear in place of the empty
+      ///    chart
       /// </summary>
       void SetNoCurvesSelectedHint(string hint);
 
@@ -43,12 +44,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class ChartEditorAndDisplayPresenter : AbstractCommandCollectorPresenter<IChartEditorAndDisplayControl, IChartEditorAndDisplayPresenter>, IChartEditorAndDisplayPresenter
    {
       private readonly IChartEditorAndDisplayControl _chartEditorAndDisplayControl;
-      private readonly IChartEditorPresenter _chartEditorPresenter;
-      private readonly IChartDisplayPresenter _chartDisplayPresenter;
       private readonly IChartEditorLayoutTask _chartEditorLayoutTask;
       private readonly IStartOptions _startOptions;
       private readonly IPresentationUserSettings _presentationUserSettings;
-      public Action PostEditorLayout { get; set; } = () => {};
+      public Action PostEditorLayout { get; set; } = () => { };
 
       public ChartEditorAndDisplayPresenter(IChartEditorAndDisplayControl chartEditorAndDisplayControl, IChartDisplayPresenter chartDisplayPresenter,
          IChartEditorPresenter chartEditorPresenter, IChartEditorLayoutTask chartEditorLayoutTask, IStartOptions startOptions,
@@ -56,43 +55,33 @@ namespace OSPSuite.Presentation.Presenters.Charts
          : base(chartEditorAndDisplayControl)
       {
          _chartEditorAndDisplayControl = chartEditorAndDisplayControl;
-         _chartDisplayPresenter = chartDisplayPresenter;
-         _chartEditorPresenter = chartEditorPresenter;
+         DisplayPresenter = chartDisplayPresenter;
+         EditorPresenter = chartEditorPresenter;
          _chartEditorLayoutTask = chartEditorLayoutTask;
          _startOptions = startOptions;
          _presentationUserSettings = presentationUserSettings;
-         _chartEditorAndDisplayControl.AddDisplay(_chartDisplayPresenter.Control);
-         _chartEditorAndDisplayControl.AddEditor(_chartEditorPresenter.View);
+         _chartEditorAndDisplayControl.AddDisplay(DisplayPresenter.Control);
+         _chartEditorAndDisplayControl.AddEditor(EditorPresenter.View);
 
-         AddSubPresenters(_chartEditorPresenter, chartDisplayPresenter);
-
+         AddSubPresenters(EditorPresenter, chartDisplayPresenter);
       }
 
-      public Control Control
-      {
-         get { return _chartEditorAndDisplayControl as Control; }
-      }
+      public Control Control => _chartEditorAndDisplayControl as Control;
 
       public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
       {
-         _chartDisplayPresenter.SetCurveNameDefinition(curveNameDefinition);
-         _chartEditorPresenter.SetCurveNameDefinition(curveNameDefinition);
+         DisplayPresenter.SetCurveNameDefinition(curveNameDefinition);
+         EditorPresenter.SetCurveNameDefinition(curveNameDefinition);
       }
 
       public void SetNoCurvesSelectedHint(string hint)
       {
-         _chartDisplayPresenter.SetNoCurvesSelectedHint(hint);
+         DisplayPresenter.SetNoCurvesSelectedHint(hint);
       }
 
-      public IChartDisplayPresenter DisplayPresenter
-      {
-         get { return _chartDisplayPresenter; }
-      }
+      public IChartDisplayPresenter DisplayPresenter { get; }
 
-      public IChartEditorPresenter EditorPresenter
-      {
-         get { return _chartEditorPresenter; }
-      }
+      public IChartEditorPresenter EditorPresenter { get; }
 
       public void CopySettingsFrom(ChartEditorAndDisplaySettings settings)
       {
@@ -101,7 +90,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void CopySettingsFrom(ChartEditorAndDisplaySettings settings, bool loadEditorLayout, bool loadColumnSettings)
       {
-         _chartEditorPresenter.CopySettingsFrom(settings.EditorSettings, loadEditorLayout, loadColumnSettings);
+         if (settings == null) return;
+         EditorPresenter.CopySettingsFrom(settings.EditorSettings, loadEditorLayout, loadColumnSettings);
          _chartEditorAndDisplayControl.LoadLayoutFromString(settings.DockingLayout);
       }
 
@@ -109,7 +99,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          return new ChartEditorAndDisplaySettings
          {
-            EditorSettings = _chartEditorPresenter.CreateSettings(),
+            EditorSettings = EditorPresenter.CreateSettings(),
             DockingLayout = _chartEditorAndDisplayControl.SaveLayoutToString()
          };
       }
@@ -141,7 +131,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             if (_startOptions.IsDeveloperMode)
             {
                chartLayoutButton.AddItem(CreateMenuButton.WithCaption(MenuNames.CustomizeEditorLayout)
-                  .WithActionCommand(_chartEditorPresenter.ShowCustomizationForm)
+                  .WithActionCommand(EditorPresenter.ShowCustomizationForm)
                   .AsGroupStarter()
                   .ForDeveloper());
 
