@@ -8,8 +8,9 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class JournalTestStarter : TestStarter<IJournalTestPresenter>, IJournalTestStarter
    {
-      public JournalTestStarter(IJournalTestPresenter presenter) : base(presenter)
+      public override void Start()
       {
+         base.Start(1200, 800);
       }
    }
 }

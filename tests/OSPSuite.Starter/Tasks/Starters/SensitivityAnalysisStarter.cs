@@ -9,8 +9,5 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class SensitivityAnalysisStarter : TestStarter<ISensitivityAnalysisStarterPresenter>, ISensitivityAnalysisStarter
    {
-      public SensitivityAnalysisStarter(ISensitivityAnalysisStarterPresenter presenter) : base(presenter)
-      {
-      }
    }
 }

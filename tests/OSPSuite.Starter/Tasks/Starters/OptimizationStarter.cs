@@ -9,8 +9,5 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class OptimizationStarter : TestStarter<IOptimizationStarterPresenter>, IOptimizationStarter
    {
-      public OptimizationStarter(IOptimizationStarterPresenter presenter) : base(presenter)
-      {
-      }
    }
 }

@@ -238,14 +238,22 @@
     <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
     <Compile Include="Presenters\ExplorerTestPresenter.cs" />
+    <Compile Include="Presenters\HistogramTestPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalysisStarterPresenter.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
+    <Compile Include="Tasks\Starters\HistogramTestStarter.cs" />
     <Compile Include="Tasks\Starters\SensitivityAnalysisStarter.cs" />
     <Compile Include="Views\ChartTestView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Views\ChartTestView.Designer.cs">
       <DependentUpon>ChartTestView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HistogramTestView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\HistogramTestView.Designer.cs">
+      <DependentUpon>HistogramTestView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\IChartTestView.cs" />
     <Compile Include="Presenters\IJournalRichEditFormPresenter.cs" />
@@ -347,6 +355,7 @@
     <Compile Include="Views\IComparisonTestView.cs" />
     <Compile Include="Views\IExplorerForTestView.cs" />
     <Compile Include="Views\IExplorerTestView.cs" />
+    <Compile Include="Views\IHistogramTestView.cs" />
     <Compile Include="Views\IImporterTestView.cs" />
     <Compile Include="Views\IJournalRichEditFormView.cs" />
     <Compile Include="Views\IJournalTestView.cs" />
@@ -447,6 +456,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\HistogramTestView.resx">
+      <DependentUpon>HistogramTestView.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImporterTestView.resx">
       <DependentUpon>ImporterTestView.cs</DependentUpon>

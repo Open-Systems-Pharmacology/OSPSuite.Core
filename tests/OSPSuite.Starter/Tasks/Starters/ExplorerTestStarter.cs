@@ -8,9 +8,5 @@ namespace OSPSuite.Starter.Tasks.Starters
    }
    public class ExplorerTestStarter : TestStarter<IExplorerTestPresenter>, IExplorerTestStarter
    {
-      public ExplorerTestStarter(IExplorerTestPresenter presenter)
-         : base(presenter)
-      {
-      }
    }
 }

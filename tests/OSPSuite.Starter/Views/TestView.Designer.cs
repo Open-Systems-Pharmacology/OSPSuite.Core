@@ -29,6 +29,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.startSensitivityAnalysisTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startExceptionViewButton = new DevExpress.XtraEditors.SimpleButton();
          this.startSimpleUITestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startCommandBrowserTestButton = new DevExpress.XtraEditors.SimpleButton();
@@ -56,8 +57,9 @@
          this.layoutControlItem11 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem12 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem13 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.startSensitivityAnalysisTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlItem14 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.startHistogramTestButton = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutControlItem15 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -76,10 +78,12 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem12)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem13)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem14)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem15)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.startHistogramTestButton);
          this.layoutControl.Controls.Add(this.startSensitivityAnalysisTestButton);
          this.layoutControl.Controls.Add(this.startExceptionViewButton);
          this.layoutControl.Controls.Add(this.startSimpleUITestButton);
@@ -101,6 +105,15 @@
          this.layoutControl.Size = new System.Drawing.Size(426, 466);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
+         // 
+         // startSensitivityAnalysisTestButton
+         // 
+         this.startSensitivityAnalysisTestButton.Location = new System.Drawing.Point(12, 272);
+         this.startSensitivityAnalysisTestButton.Name = "startSensitivityAnalysisTestButton";
+         this.startSensitivityAnalysisTestButton.Size = new System.Drawing.Size(402, 22);
+         this.startSensitivityAnalysisTestButton.StyleController = this.layoutControl;
+         this.startSensitivityAnalysisTestButton.TabIndex = 17;
+         this.startSensitivityAnalysisTestButton.Text = "startSensitivityAnalysisTestButton";
          // 
          // startExceptionViewButton
          // 
@@ -237,7 +250,8 @@
             this.layoutControlItem11,
             this.layoutControlItem12,
             this.layoutControlItem13,
-            this.layoutControlItem14});
+            this.layoutControlItem14,
+            this.layoutControlItem15});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(426, 466);
@@ -356,18 +370,9 @@
          this.layoutControlItem13.Control = this.startExceptionViewButton;
          this.layoutControlItem13.Location = new System.Drawing.Point(0, 338);
          this.layoutControlItem13.Name = "layoutControlItem13";
-         this.layoutControlItem13.Size = new System.Drawing.Size(406, 108);
+         this.layoutControlItem13.Size = new System.Drawing.Size(406, 26);
          this.layoutControlItem13.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem13.TextVisible = false;
-         // 
-         // startSensitivityAnalysisTestButton
-         // 
-         this.startSensitivityAnalysisTestButton.Location = new System.Drawing.Point(12, 272);
-         this.startSensitivityAnalysisTestButton.Name = "startSensitivityAnalysisTestButton";
-         this.startSensitivityAnalysisTestButton.Size = new System.Drawing.Size(402, 22);
-         this.startSensitivityAnalysisTestButton.StyleController = this.layoutControl;
-         this.startSensitivityAnalysisTestButton.TabIndex = 17;
-         this.startSensitivityAnalysisTestButton.Text = "startSensitivityAnalysisTestButton";
          // 
          // layoutControlItem14
          // 
@@ -377,6 +382,24 @@
          this.layoutControlItem14.Size = new System.Drawing.Size(406, 26);
          this.layoutControlItem14.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem14.TextVisible = false;
+         // 
+         // startHistogramTestButton
+         // 
+         this.startHistogramTestButton.Location = new System.Drawing.Point(12, 376);
+         this.startHistogramTestButton.Name = "startHistogramTestButton";
+         this.startHistogramTestButton.Size = new System.Drawing.Size(402, 22);
+         this.startHistogramTestButton.StyleController = this.layoutControl;
+         this.startHistogramTestButton.TabIndex = 18;
+         this.startHistogramTestButton.Text = "startHistogramTestButton";
+         // 
+         // layoutControlItem15
+         // 
+         this.layoutControlItem15.Control = this.startHistogramTestButton;
+         this.layoutControlItem15.Location = new System.Drawing.Point(0, 364);
+         this.layoutControlItem15.Name = "layoutControlItem15";
+         this.layoutControlItem15.Size = new System.Drawing.Size(406, 82);
+         this.layoutControlItem15.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem15.TextVisible = false;
          // 
          // TestView
          // 
@@ -403,6 +426,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem12)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem13)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem14)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem15)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -439,5 +463,7 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem13;
       private DevExpress.XtraEditors.SimpleButton startSensitivityAnalysisTestButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem14;
+      private DevExpress.XtraEditors.SimpleButton startHistogramTestButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem15;
    }
 }

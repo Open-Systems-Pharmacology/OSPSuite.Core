@@ -79,11 +79,11 @@ namespace OSPSuite.UI.Controls
          if (!distributionData.IsRangeSpecified)
             return;
 
+         var templateView = SeriesTemplate.View as BarSeriesView;
+         if (templateView != null)
+            templateView.BarWidth = distributionData.BarWidth;
+
          AxisX.WholeRange.SetMinMaxValues(distributionData.XMinValue, distributionData.XMaxValue);
-         foreach (var barSeriesView in barSeriesViews)
-         {
-            barSeriesView.BarWidth = distributionData.BarWidth;
-         }
       }
 
       private void plot<T>(DistributionData<T> dataToPlot, DistributionSettings settings)

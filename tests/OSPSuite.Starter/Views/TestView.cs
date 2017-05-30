@@ -28,6 +28,7 @@ namespace OSPSuite.Starter.Views
          startSimpleUITestButton.Click += (sender, args) => OnEvent(_presenter.StartSimpleUITest);
          startExceptionViewButton.Click += (sender, args) => OnEvent(_presenter.StartExceptionView);
          startSensitivityAnalysisTestButton.Click += (sender, args) => OnEvent(_presenter.StartSentitivityAnalysisTest);
+         startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
       }
 
       public override void InitializeResources()
@@ -47,6 +48,7 @@ namespace OSPSuite.Starter.Views
          startSimpleUITestButton.Text = "Simple UI Test";
          startExceptionViewButton.Text = "Start Exception View";
          startSensitivityAnalysisTestButton.Text = "Start Sensitivity Analysis Test";
+         startHistogramTestButton.Text = "Start Histogram Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)
