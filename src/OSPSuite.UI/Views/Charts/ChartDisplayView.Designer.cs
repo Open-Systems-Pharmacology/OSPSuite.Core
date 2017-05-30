@@ -55,7 +55,7 @@ namespace OSPSuite.UI.Views.Charts
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-         this._chartControl = new UxChartControl(useDefaultPopupMechanism: false);
+         this.chartControl = new UxChartControl(useDefaultPopupMechanism: false);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._barManager)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._chartControl)).BeginInit();
