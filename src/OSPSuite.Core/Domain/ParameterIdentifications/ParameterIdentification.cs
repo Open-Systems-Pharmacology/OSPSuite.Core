@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
@@ -109,6 +109,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual IReadOnlyList<OutputMapping> AllOutputMappings => OutputMappings.All;
       public virtual IReadOnlyList<IdentificationParameter> AllIdentificationParameters => _allIdentificationParameters;
+      public virtual IEnumerable<IdentificationParameter> AllVariableIdentificationParameters => AllIdentificationParameters.Where(x => !x.IsFixed);
+      public virtual IEnumerable<IdentificationParameter> AllFixedIdentificationParameters => AllIdentificationParameters.Where(x => x.IsFixed);
       public virtual IReadOnlyList<ISimulation> AllSimulations => _allSimulations;
       public virtual OptimizationAlgorithmProperties AlgorithmProperties => Configuration.AlgorithmProperties;
 

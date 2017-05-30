@@ -33,9 +33,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.gridProperties = new DevExpress.XtraGrid.GridControl();
+         this.gridProperties = new UxGridControl();
          this.gridViewProperties = new UxGridView();
-         this.gridParameters = new DevExpress.XtraGrid.GridControl();
+         this.gridParameters = new UxGridControl();
          this.gridViewParameters = new UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemParameters = new DevExpress.XtraLayout.LayoutControlItem();
@@ -192,11 +192,11 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       #endregion
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
-      private DevExpress.XtraGrid.GridControl gridParameters;
+      private UxGridControl gridParameters;
       private UxGridView gridViewParameters;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemParameters;
-      private DevExpress.XtraGrid.GridControl gridProperties;
+      private UxGridControl gridProperties;
       private UxGridView gridViewProperties;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemRunProperties;
       private DevExpress.XtraEditors.SimpleButton btnExportParametersHistory;

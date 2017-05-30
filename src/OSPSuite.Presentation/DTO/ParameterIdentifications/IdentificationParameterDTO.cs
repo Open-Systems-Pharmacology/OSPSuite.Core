@@ -18,14 +18,20 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public bool UseAsFactor
       {
-         get { return IdentificationParameter.UseAsFactor; }
-         set { IdentificationParameter.UseAsFactor = value; }
+         get => IdentificationParameter.UseAsFactor;
+         set => IdentificationParameter.UseAsFactor = value;
+      }
+
+      public bool IsFixed
+      {
+         get => IdentificationParameter.IsFixed;
+         set => IdentificationParameter.IsFixed = value;
       }
 
       public Scalings Scaling
       {
-         get { return IdentificationParameter.Scaling; }
-         set { IdentificationParameter.Scaling = value; }
+         get => IdentificationParameter.Scaling;
+         set => IdentificationParameter.Scaling = value;
       }
 
       /// <summary>
@@ -33,8 +39,8 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       /// </summary>
       public double StartValue
       {
-         get { return StartValueParameter.Value; }
-         set { StartValueParameter.Value = value; }
+         get => StartValueParameter.Value;
+         set => StartValueParameter.Value = value;
       }
 
       /// <summary>
@@ -42,8 +48,8 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       /// </summary>
       public double MinValue
       {
-         get { return MinValueParameter.Value; }
-         set { MinValueParameter.Value = value; }
+         get => MinValueParameter.Value;
+         set => MinValueParameter.Value = value;
       }
 
       /// <summary>
@@ -51,8 +57,8 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       /// </summary>
       public double MaxValue
       {
-         get { return MaxValueParameter.Value; }
-         set { MaxValueParameter.Value = value; }
+         get => MaxValueParameter.Value;
+         set => MaxValueParameter.Value = value;
       }
    }
 }

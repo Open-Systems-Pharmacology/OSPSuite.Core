@@ -206,7 +206,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public Action<int> HotTracked
       {
-         set { View.HotTracked = value; }
+         set => View.HotTracked = value;
       }
 
       public ChartDisplayPresenter(
@@ -232,13 +232,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisAdapters = new Cache<AxisTypes, IAxisAdapter>(a => a.AxisType);
          _curveAdapters = new Cache<string, ICurveAdapter>(c => c.Id);
          _quickCurveAdapterCache = new Cache<string, ICurveAdapter>(onMissingKey: key => null);
-         ExportToPDF = () => { throw new OSPSuiteException(Error.NotImplemented); };
+         ExportToPDF = () => throw new OSPSuiteException(Error.NotImplemented);
          _legendIndexPropertyName = Helpers.Property<ICurve>(x => x.LegendIndex).Name;
       }
 
       public ICurveChart DataSource
       {
-         get { return _chart; }
+         get => _chart;
          set
          {
             if (_chart != null)
@@ -270,10 +270,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public Control Control
-      {
-         get { return _chartDisplayView as Control; }
-      }
+      public Control Control => _chartDisplayView as Control;
 
       public void BeginUpdate()
       {
@@ -346,14 +343,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public event DragEventHandler DragOver
       {
-         add { _chartDisplayView.DragOver += value; }
-         remove { _chartDisplayView.DragOver -= value; }
+         add => _chartDisplayView.DragOver += value;
+         remove => _chartDisplayView.DragOver -= value;
       }
 
       public event DragEventHandler DragDrop
       {
-         add { _chartDisplayView.DragDrop += value; }
-         remove { _chartDisplayView.DragDrop -= value; }
+         add => _chartDisplayView.DragDrop += value;
+         remove => _chartDisplayView.DragDrop -= value;
       }
 
       public void ResetVisibleRange()

@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
+using DevExpress.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
@@ -104,9 +107,12 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _colName = _gridViewBinder.AutoBind(x => x.Name)
+         _colName = _gridViewBinder.Bind(x => x.Name)
             .WithCaption(Captions.Name)
             .WithOnValueSet((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
+            
+         _colName.XtraColumn.SortMode = ColumnSortMode.Value;
+         _colName.XtraColumn.SortOrder = ColumnSortOrder.Ascending;
 
          _gridViewBinder.Bind(x => x.NumberOfSteps)
             .WithCaption(Captions.SensitivityAnalysis.NumberOfSteps)

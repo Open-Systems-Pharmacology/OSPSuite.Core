@@ -167,7 +167,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _cloneManager = A.Fake<ICloneManager>();
-         _sourceParameterIdentification = new IdentificationParameter { Name = "TOTO" };
+         _sourceParameterIdentification = new IdentificationParameter { Name = "TOTO", IsFixed = true, UseAsFactor = false};
          _sourceParameterIdentification.AddLinkedParameter(_parameterSelection);
       }
 
@@ -180,6 +180,8 @@ namespace OSPSuite.Core
       public void should_update_the_base_properties()
       {
          sut.Name.ShouldBeEqualTo("TOTO");
+         sut.IsFixed.ShouldBeEqualTo(_sourceParameterIdentification.IsFixed);
+         sut.UseAsFactor.ShouldBeEqualTo(_sourceParameterIdentification.UseAsFactor);
       }
 
       [Observation]

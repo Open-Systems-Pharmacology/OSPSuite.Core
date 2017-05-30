@@ -160,9 +160,8 @@ namespace OSPSuite.Core.Domain.Data
       /// <param name="columnValues">Cache containg the id of the columns to update as key and the corresponding value.</param>
       public void InsertValues(float baseValue, Cache<string, float> columnValues)
       {
-         bool replaced;
          var baseGrid = BaseGrid;
-         var index = baseGrid.InsertOrReplace(baseValue, out replaced);
+         var index = baseGrid.InsertOrReplace(baseValue, out bool replaced);
 
          foreach (var column in columnValues.KeyValues.Where(x => Contains(x.Key)).Select(x => GetColumn(x.Key)))
          {

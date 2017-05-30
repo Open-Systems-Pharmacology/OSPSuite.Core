@@ -30,12 +30,11 @@ namespace OSPSuite.Starter.Tasks
 
       public void Register(IWithId objectToRegister)
       {
-         throw new NotSupportedException();
+
       }
 
       public void Unregister(IWithId objectToUnregister)
       {
-         throw new NotSupportedException();
       }
 
       public T Resolve<T>()
@@ -45,7 +44,6 @@ namespace OSPSuite.Starter.Tasks
 
       public void PublishEvent<T>(T eventToPublish)
       {
-         throw new NotSupportedException();
       }
 
       public T Get<T>(string id) where T : class, IWithId

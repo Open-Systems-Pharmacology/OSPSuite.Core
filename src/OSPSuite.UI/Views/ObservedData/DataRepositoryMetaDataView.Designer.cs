@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.ObservedData
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -210,7 +210,7 @@ namespace OSPSuite.UI.Views.ObservedData
 
       #endregion
 
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;

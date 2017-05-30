@@ -127,7 +127,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void onGridMouseDoubleClick(object sender, MouseEventArgs e)
       {
-         var grid = sender as GridControl;
+         var grid = sender as UxGridControl;
 
          var hitInfo = grid?.MainView.CalcHitInfo(e.Location) as GridHitInfo;
          if (hitInfo == null) return;
@@ -205,7 +205,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
-         var grid = e.SelectedControl as GridControl;
+         var grid = e.SelectedControl as UxGridControl;
 
          var view = grid?.GetViewAt(e.ControlMousePosition) as GridView;
 

@@ -1,28 +1,25 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Dragging;
 using DevExpress.XtraGrid.Localization;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Charts
 {
-   internal partial class GridControlWithColumnSettings : GridControl
+   internal partial class GridControlWithColumnSettings : UxGridControl
    {
-      protected GridView GridView
-      {
-         get { return _gridView; }
-      }
+      protected GridView GridView { get; private set; }
 
       internal GridControlWithColumnSettings()
       {
          InitializeComponent();
 
          GridView.MouseUp += onMouseUp;
-         GridView.GridMenuItemClick += onGridMenuItemClick; 
+         GridView.GridMenuItemClick += onGridMenuItemClick;
          GridView.DragObjectDrop += onDragObjectDrop;
       }
 
@@ -61,14 +58,5 @@ namespace OSPSuite.UI.Views.Charts
              && (e.DropInfo as ColumnPositionInfo).InGroupPanel)
             (e.DragObject as GridColumn).FieldNameSortGroup = string.Empty;
       }
-
-     
-
-  
-
-     
-
-    
-     
    }
 }

@@ -20,10 +20,23 @@ namespace OSPSuite.Starter.Tasks.Starters
 
       public virtual void Start()
       {
-         var form = new XtraForm();
+         Start(0, 0);
+      }
 
+      public virtual void Start(int width, int height)
+      {
+         XtraForm form;
+         if (height == 0 || width == 0)
+            form = new XtraForm();
+         else
+         {
+            form = new XtraForm
+            {
+               Height = height,
+               Width = width
+            };
+         }
          form.FillWith(_presenter.BaseView);
-
          form.Show();
       }
    }

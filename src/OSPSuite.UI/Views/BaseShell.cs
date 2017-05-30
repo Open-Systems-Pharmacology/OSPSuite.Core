@@ -268,7 +268,7 @@ namespace OSPSuite.UI.Views
 
       public virtual string Caption
       {
-         get { return Text; }
+         get => Text;
          set
          {
             Text = value;

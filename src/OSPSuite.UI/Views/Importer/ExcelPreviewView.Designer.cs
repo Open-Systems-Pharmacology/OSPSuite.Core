@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Views.Importer
       private void InitializeComponent()
       {
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-         this.excelGridControl = new DevExpress.XtraGrid.GridControl();
+         this.excelGridControl = new UxGridControl();
          this.excelGridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -162,7 +162,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraGrid.GridControl excelGridControl;
+      private UxGridControl excelGridControl;
       private UxGridView excelGridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private DevExpress.XtraEditors.LabelControl lblRangeSelectHint;

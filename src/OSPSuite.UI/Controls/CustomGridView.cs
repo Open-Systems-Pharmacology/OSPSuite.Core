@@ -89,7 +89,7 @@ namespace OSPSuite.UI.Controls
       }
    }
 
-   public class CustomGridControl : GridControl
+   public class CustomGridControl : UxGridControl
    {
       protected override void RegisterAvailableViewsCore(InfoCollection collection)
       {

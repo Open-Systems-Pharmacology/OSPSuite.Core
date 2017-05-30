@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.btnTransferToSimulations = new DevExpress.XtraEditors.SimpleButton();
          this.panelProperties = new DevExpress.XtraEditors.PanelControl();
-         this.gridParameters = new DevExpress.XtraGrid.GridControl();
+         this.gridParameters = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemOptimizedParameters = new DevExpress.XtraLayout.LayoutControlItem();
@@ -190,7 +190,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private DevExpress.XtraGrid.GridControl gridParameters;
+      private UxGridControl gridParameters;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemOptimizedParameters;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupRunResultProperties;

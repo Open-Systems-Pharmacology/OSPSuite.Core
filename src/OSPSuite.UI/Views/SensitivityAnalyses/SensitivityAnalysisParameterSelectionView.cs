@@ -46,6 +46,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          btnAddParameters.Click += (o, e) => OnEvent(() => _presenter.AddSelectedParameters());
          btnRemoveParameters.Click += (o, e) => OnEvent(() => _presenter.RemoveParameters());
          btnAddAllConstantParameters.Click += (o, e) => OnEvent(() => _presenter.AddAllConstantParameters());
+
          _screenBinder.Bind(x => x.Simulation).To(cbSimulationSelector)
             .WithImages(x => _presenter.IconFor(x))
             .WithValues(x => x.AllSimulations)

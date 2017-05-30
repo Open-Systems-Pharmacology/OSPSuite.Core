@@ -67,8 +67,8 @@ namespace OSPSuite.Presentation
 
    internal class ValidatableDTOForSpecs : ValidatableDTO<ValidatableForSpecs>
    {
-      public ValidatableDTOForSpecs(ValidatableForSpecs underlyingObject)
-         : base(underlyingObject)
+      public ValidatableDTOForSpecs(ValidatableForSpecs parameter)
+         : base(parameter)
       {
       }
    }
