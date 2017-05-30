@@ -110,7 +110,7 @@ namespace OSPSuite.UI.Controls
 
       private void initializePopup(bool addCopyToClipboardMenu)
       {
-         _barManager.SetPopupContextMenu(this, _popupMenu);
+         _barManager.SetPopupContextMenu(this, PopupMenu);
 
          if (addCopyToClipboardMenu)
             AddCopyToCliboardMenu();
