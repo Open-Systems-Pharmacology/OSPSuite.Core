@@ -36,8 +36,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
          
-         this.gridControl = new OSPSuite.UI.Controls.UxMasterDetailGridControl();
-         this.optimizedParametersView = new UxMasterDetailGridView(gridControl);
+         this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
+         this.optimizedParametersView = new UxGridView(gridControl);
          this.mainView = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -139,9 +139,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private UxMasterDetailGridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView mainView;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemResults;
-      private UxMasterDetailGridView optimizedParametersView;
+      private UxGridView optimizedParametersView;
    }
 }

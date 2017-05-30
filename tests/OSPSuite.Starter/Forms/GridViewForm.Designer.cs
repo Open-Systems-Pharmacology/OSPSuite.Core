@@ -31,7 +31,7 @@ namespace OSPSuite.Starter.Forms
       private void InitializeComponent()
       {
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-         this.gridControl1 = new DevExpress.XtraGrid.GridControl();
+         this.gridControl1 = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -117,7 +117,7 @@ namespace OSPSuite.Starter.Forms
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraGrid.GridControl gridControl1;
+      private UxGridControl gridControl1;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
    }

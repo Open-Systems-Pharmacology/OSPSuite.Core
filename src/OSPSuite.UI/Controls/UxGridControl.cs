@@ -6,11 +6,11 @@ using DevExpress.XtraGrid.Views.Base;
 namespace OSPSuite.UI.Controls
 {
    [ToolboxItem(true)]
-   public class UxMasterDetailGridControl : GridControl
+   public class UxGridControl : GridControl
    {
       protected override BaseView CreateDefaultView()
       {
-         return CreateView("UxMasterDetailGridView");
+         return CreateView("UxGridView");
       }
 
       protected override void RegisterAvailableViewsCore(InfoCollection collection)
@@ -22,11 +22,11 @@ namespace OSPSuite.UI.Controls
 
    public class UxGridViewInfoRegistrator : GridInfoRegistrator
    {
-      public override string ViewName => "UxMasterDetailGridView";
+      public override string ViewName => "UxGridView";
 
       public override BaseView CreateView(GridControl grid)
       {
-         return new UxMasterDetailGridView(grid);
+         return new UxGridView(grid);
       }
    }
 }

@@ -263,7 +263,7 @@
     <Compile Include="Controls\UxDockPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\UxMasterDetailGridControl.cs">
+    <Compile Include="Controls\UxGridControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\UxGridView.cs">
@@ -291,9 +291,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\UxLineTypeEdit.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\UxMasterDetailGridView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\UxMRUEdit.cs">

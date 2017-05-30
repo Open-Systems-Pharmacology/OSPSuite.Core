@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Journal
       {
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
          this.btnRunComparison = new DevExpress.XtraEditors.SimpleButton();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.lblWarning = new DevExpress.XtraEditors.LabelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -177,7 +177,7 @@ namespace OSPSuite.UI.Views.Journal
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraEditors.SimpleButton btnRunComparison;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraEditors.LabelControl lblWarning;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;

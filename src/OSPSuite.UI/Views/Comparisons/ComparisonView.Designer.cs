@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.Comparisons
       {
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
          this.lblNoDifference = new DevExpress.XtraEditors.LabelControl();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemGrid = new DevExpress.XtraLayout.LayoutControlItem();
@@ -182,7 +182,7 @@ namespace OSPSuite.UI.Views.Comparisons
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemGrid;
       private DevExpress.XtraEditors.LabelControl lblNoDifference;

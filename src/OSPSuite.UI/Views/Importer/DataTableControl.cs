@@ -10,13 +10,14 @@ using DevExpress.XtraGrid.Localization;
 using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
    public partial class DataTableControl : XtraUserControl
    {
-      private GridControl _grid;
+      private UxGridControl _grid;
 
       public DataTableControl(DataTable table)
       {
@@ -32,7 +33,7 @@ namespace OSPSuite.UI.Views.Importer
          this.DoWithinWaitCursor(() =>
          {
             Controls.Clear();
-            _grid = new GridControl {DataSource = Table};
+            _grid = new UxGridControl { DataSource = Table};
             Controls.Add(_grid);
             _grid.Dock = DockStyle.Fill;
 
@@ -84,7 +85,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private static void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
-         var grid = e.SelectedControl as GridControl;
+         var grid = e.SelectedControl as UxGridControl;
          if (grid == null) return;
 
          var view = grid.GetViewAt(e.ControlMousePosition) as GridView;

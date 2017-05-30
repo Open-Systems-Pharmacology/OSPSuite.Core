@@ -15,6 +15,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Presentation.Services.Importer;
+using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.Importer
@@ -29,7 +30,7 @@ namespace OSPSuite.UI.Views.Importer
       private ImportDataTable _table;
       private readonly IImageListRetriever _imageListRetriever;
       private ColumnMapping _contextMappingRow;
-      private readonly GridControl _grid;
+      private readonly UxGridControl _grid;
       private readonly Dictionary<string, ImageComboBoxEdit> _editorsForDisplay;
       private readonly Dictionary<string, ImageComboBoxEdit> _editorsForEditing;
       private IColumnCaptionHelper _columnCaptionHelper;
@@ -66,7 +67,7 @@ namespace OSPSuite.UI.Views.Importer
          createMapping();
          createAutoMapping();
 
-         _grid = new GridControl { DataSource = Mapping };
+         _grid = new UxGridControl { DataSource = Mapping };
          Controls.Add(_grid);
          _grid.Dock = DockStyle.Fill;
 
@@ -197,7 +198,7 @@ namespace OSPSuite.UI.Views.Importer
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
       {
          var comboBoxEdit = sender as ImageComboBoxEdit;
-         var gridControl = comboBoxEdit?.Parent as GridControl;
+         var gridControl = comboBoxEdit?.Parent as UxGridControl;
          var view = gridControl?.FocusedView as ColumnView;
          if (view == null) return;
 

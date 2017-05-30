@@ -32,6 +32,8 @@ namespace OSPSuite.UI.Controls
       private DataTable table => _gridViewToDataTableMapper.MapFrom(this);
       private DataTable rectangularSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows(), GetSelectedCells);
 
+      protected override string ViewName => "UxGridView";
+
       /// <summary>
       ///    Color used for cell that are locked/disabled (End of gradient)
       /// </summary>
