@@ -1,6 +1,7 @@
 using DevExpress.XtraEditors;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {
@@ -11,12 +12,7 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public abstract class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
    {
-      protected readonly TPresenter _presenter;
-
-      protected TestStarter(TPresenter presenter)
-      {
-         _presenter = presenter;
-      }
+      protected TPresenter _presenter;
 
       public virtual void Start()
       {
@@ -25,6 +21,7 @@ namespace OSPSuite.Starter.Tasks.Starters
 
       public virtual void Start(int width, int height)
       {
+         _presenter = IoC.Resolve<TPresenter>();
          XtraForm form;
          if (height == 0 || width == 0)
             form = new XtraForm();

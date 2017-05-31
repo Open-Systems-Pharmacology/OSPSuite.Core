@@ -8,8 +8,5 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class ImporterStarter : TestStarter<IImporterTestPresenter>, IImporterStarter
    {
-      public ImporterStarter(IImporterTestPresenter presenter) : base(presenter)
-      {
-      }
    }
 }

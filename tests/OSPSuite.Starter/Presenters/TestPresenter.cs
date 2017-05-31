@@ -23,6 +23,7 @@ namespace OSPSuite.Starter.Presenters
       void StartSimpleUITest();
       void StartExceptionView();
 
+      void StartHistogramTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -40,11 +41,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
+      private readonly IHistogramTestStarter _histogramTestStarter;
 
       public TestPresenter(ITestView view, IChartTestStarter chartTestStarter, IGridTestStarter girdTestStarter, 
          IJournalTestStarter journalTestStarter, IComparisonTestStarter comparisonTestStarter, IExplorerTestStarter explorerTestStarter,
          IImporterStarter importerStarter, IShellStarter shellStarter, IDataRepositoryStarter dataRepositoryStarter, IPivotGridStarter pivotGridStarter,
-         IOptimizationStarter optimzationStarter,ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter) : base(view)
+         IOptimizationStarter optimzationStarter,ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter, IHistogramTestStarter histogramTestStarter) : base(view)
       {
          _chartTestStarter = chartTestStarter;
          _girdTestStarter = girdTestStarter;
@@ -59,6 +61,12 @@ namespace OSPSuite.Starter.Presenters
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
          _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
+         _histogramTestStarter = histogramTestStarter;
+      }
+
+      public void StartHistogramTest()
+      {
+         _histogramTestStarter.Start();
       }
 
       public void StartChartTest()

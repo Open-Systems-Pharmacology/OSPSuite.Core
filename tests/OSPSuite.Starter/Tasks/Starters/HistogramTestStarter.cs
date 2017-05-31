@@ -2,11 +2,11 @@ using OSPSuite.Starter.Presenters;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {
-   public interface IJournalTestStarter : ITestStarter
+   public interface IHistogramTestStarter : ITestStarter
    {
    }
 
-   public class JournalTestStarter : TestStarter<IJournalTestPresenter>, IJournalTestStarter
+   public class HistogramTestStarter : TestStarter<IHistogramTestPresenter>, IHistogramTestStarter
    {
       public override void Start()
       {

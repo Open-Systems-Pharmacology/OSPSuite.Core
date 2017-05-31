@@ -9,10 +9,6 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class PivotGridStarter : TestStarter<IPivotGridTestPresenter>, IPivotGridStarter
    {
-      public PivotGridStarter(IPivotGridTestPresenter presenter) : base(presenter)
-      {
-      }
-
       public override void Start()
       {
          base.Start();

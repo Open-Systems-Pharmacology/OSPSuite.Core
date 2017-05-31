@@ -8,8 +8,5 @@ namespace OSPSuite.Starter.Tasks.Starters
    }
    public class ComparisonTestStarter : TestStarter<IComparisonTestPresenter>, IComparisonTestStarter
    {
-      public ComparisonTestStarter(IComparisonTestPresenter presenter) : base(presenter)
-      {
-      }
    }
 }

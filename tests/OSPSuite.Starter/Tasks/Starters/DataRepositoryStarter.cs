@@ -13,7 +13,7 @@ namespace OSPSuite.Starter.Tasks.Starters
    {
       private readonly IImportObservedDataTask _importObservedDataTask;
 
-      public DataRepositoryStarter(IDataRepositoryTestPresenter presenter, IImportObservedDataTask importObservedDataTask) : base(presenter)
+      public DataRepositoryStarter(IImportObservedDataTask importObservedDataTask)
       {
          _importObservedDataTask = importObservedDataTask;
       }
