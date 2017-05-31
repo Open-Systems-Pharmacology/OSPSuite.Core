@@ -36,7 +36,7 @@ namespace OSPSuite.UI.Views.Charts
          this.maxTextBox = new DevExpress.XtraEditors.TextEdit();
          this.minTextBox = new DevExpress.XtraEditors.TextEdit();
          this.captionTextBox = new DevExpress.XtraEditors.TextEdit();
-         this.gridLinesCheckEdit = new DevExpress.XtraEditors.CheckEdit();
+         this.gridLinesCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.defaultColorColorEdit = new UxColorPickEditWithHistory();
          this.scalingComboBox = new UxScalingsEdit();
          this.unitComboBox = new DevExpress.XtraEditors.ComboBoxEdit();

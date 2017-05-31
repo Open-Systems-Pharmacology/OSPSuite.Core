@@ -30,7 +30,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.chkRefreshFeedback = new DevExpress.XtraEditors.CheckEdit();
+         this.chkRefreshFeedback = new OSPSuite.UI.Controls.UxCheckEdit();
          this.panelContent = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();

@@ -31,7 +31,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.chkCalculateJacobian = new DevExpress.XtraEditors.CheckEdit();
+         this.chkCalculateJacobian = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lblLLOQUsageDescription = new DevExpress.XtraEditors.LabelControl();
          this.lblLLOQModeDescription = new DevExpress.XtraEditors.LabelControl();
          this.cbOptionSelection = new DevExpress.XtraEditors.ComboBoxEdit();

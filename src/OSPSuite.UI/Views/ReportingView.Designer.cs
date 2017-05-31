@@ -30,15 +30,15 @@
       private void InitializeComponent()
       {
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-         this.chkOpenReportAfterCreation = new DevExpress.XtraEditors.CheckEdit();
+         this.chkOpenReportAfterCreation = new OSPSuite.UI.Controls.UxCheckEdit();
          this.cbFont = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.chkDraft = new DevExpress.XtraEditors.CheckEdit();
-         this.chkDeleteWorkingFolder = new DevExpress.XtraEditors.CheckEdit();
+         this.chkDraft = new OSPSuite.UI.Controls.UxCheckEdit();
+         this.chkDeleteWorkingFolder = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lblTemplateDescription = new DevExpress.XtraEditors.LabelControl();
          this.cbReportTemplates = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.chkSaveReportArtifacts = new DevExpress.XtraEditors.CheckEdit();
+         this.chkSaveReportArtifacts = new OSPSuite.UI.Controls.UxCheckEdit();
          this.rgColor = new DevExpress.XtraEditors.RadioGroup();
-         this.chkVerbose = new DevExpress.XtraEditors.CheckEdit();
+         this.chkVerbose = new OSPSuite.UI.Controls.UxCheckEdit();
          this.tbAuthor = new DevExpress.XtraEditors.TextEdit();
          this.tbSubtitle = new DevExpress.XtraEditors.TextEdit();
          this.tbTitle = new DevExpress.XtraEditors.TextEdit();

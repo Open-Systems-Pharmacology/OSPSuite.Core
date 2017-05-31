@@ -41,6 +41,10 @@ namespace OSPSuite.UI.Views.Comparisons
             .To(chkOnlyComputeModelRelevantProperties)
             .WithCaption(Captions.Comparisons.OnlyComputeModelRelevantProperties);
 
+         _screenBinder.Bind(x => x.CompareHiddenEntities)
+            .To(chkCompareHiddenEntities)
+            .WithCaption(Captions.Comparisons.CompareHiddenEntities);
+
          _screenBinder.Bind(x => x.FormulaComparison)
             .To(cbFormulaComparisonMode)
             .WithValues(x => _presenter.FormulaComparisonValues)
