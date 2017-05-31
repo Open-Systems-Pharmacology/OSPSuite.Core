@@ -32,9 +32,9 @@ namespace OSPSuite.UI.Views.Charts
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.visibleInLegendCheckEdit = new DevExpress.XtraEditors.CheckEdit();
+         this.visibleInLegendCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.colorEdit = new UxColorPickEditWithHistory();
-         this.visibleCheckEdit = new DevExpress.XtraEditors.CheckEdit();
+         this.visibleCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lineThicknessComboBox = new UxLineThicknessEdit();
          this.symbolComboBox = new UxSymbolEdit();
          this.lineStyleComboBox = new UxLineTypeEdit();

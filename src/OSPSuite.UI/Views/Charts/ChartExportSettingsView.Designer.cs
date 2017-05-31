@@ -36,8 +36,8 @@ namespace OSPSuite.UI.Views.Charts
          this.tbHeight = new DevExpress.XtraEditors.TextEdit();
          this.layoutControl = new UxLayoutControl();
          this.fontSizeOriginComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.includeOriginDataInChartCheckEdit = new DevExpress.XtraEditors.CheckEdit();
-         this.cePreviewSettings = new DevExpress.XtraEditors.CheckEdit();
+         this.includeOriginDataInChartCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
+         this.cePreviewSettings = new OSPSuite.UI.Controls.UxCheckEdit();
          this.cbFontSizeDescription = new DevExpress.XtraEditors.ComboBoxEdit();
          this.cbFontSizeTitle = new DevExpress.XtraEditors.ComboBoxEdit();
          this.cbFontSizeLegend = new DevExpress.XtraEditors.ComboBoxEdit();
