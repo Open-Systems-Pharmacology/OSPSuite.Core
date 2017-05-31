@@ -172,11 +172,6 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      private IEnumerable<BarSeriesView> barSeriesViews
-      {
-         get { return allBarSeries.Select(x => x.View.DowncastTo<BarSeriesView>()); }
-      }
-
       private IEnumerable<Series> allBarSeries
       {
          get
