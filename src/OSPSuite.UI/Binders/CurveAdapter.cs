@@ -162,7 +162,7 @@ namespace OSPSuite.UI.Binders
 
       private void createAndBindSeries(IEnumerable<string> yColumnNames)
       {
-         var series = createSeries<ScatterLineSeriesView>(Curve.Id, ViewType.ScatterLine, yColumnNames.ToArray(), x => x.EnableAntialiasing = DefaultBoolean.True);
+         var series = createSeries(Curve.Id, ViewType.ScatterLine, yColumnNames.ToArray());
 
          if (dataMode == DataModes.StdDevA || dataMode == DataModes.StdDevG)
          {
@@ -184,7 +184,7 @@ namespace OSPSuite.UI.Binders
 
       private void createPointLineSeries()
       {
-         var series = createSeries<ScatterLineSeriesView>($"{Curve.Id}_Line", ViewType.ScatterLine, Y, x=> { x.EnableAntialiasing = DefaultBoolean.True; });
+         var series = createSeries($"{Curve.Id}_Line", ViewType.ScatterLine, Y);
          series.ShowInLegend = true;
          series.Visible = Curve.CurveOptions.IsReallyVisible;
       }
