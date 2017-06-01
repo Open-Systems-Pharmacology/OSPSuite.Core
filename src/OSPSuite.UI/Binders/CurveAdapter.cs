@@ -6,6 +6,7 @@ using System.Linq;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
+using DevExpress.Utils.Design;
 using DevExpress.XtraCharts;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -161,7 +162,7 @@ namespace OSPSuite.UI.Binders
 
       private void createAndBindSeries(IEnumerable<string> yColumnNames)
       {
-         var series = createSeries(Curve.Id, ViewType.ScatterLine, yColumnNames.ToArray());
+         var series = createSeries<ScatterLineSeriesView>(Curve.Id, ViewType.ScatterLine, yColumnNames.ToArray(), x => x.EnableAntialiasing = DefaultBoolean.True);
 
          if (dataMode == DataModes.StdDevA || dataMode == DataModes.StdDevG)
          {
@@ -183,7 +184,7 @@ namespace OSPSuite.UI.Binders
 
       private void createPointLineSeries()
       {
-         var series = createSeries($"{Curve.Id}_Line", ViewType.ScatterLine, Y);
+         var series = createSeries<ScatterLineSeriesView>($"{Curve.Id}_Line", ViewType.ScatterLine, Y, x=> { x.EnableAntialiasing = DefaultBoolean.True; });
          series.ShowInLegend = true;
          series.Visible = Curve.CurveOptions.IsReallyVisible;
       }
@@ -245,6 +246,10 @@ namespace OSPSuite.UI.Binders
             LabelsVisibility = DefaultBoolean.False,
             Visible = Curve.Visible
          };
+
+         if (viewType == ViewType.ScatterLine)
+            configureScatterLineView(series.View as ScatterLineSeriesView);
+
          series.ValueDataMembers.AddRange(valueDataMembers);
 
          var view = series.View as TSeriesView;
@@ -256,6 +261,13 @@ namespace OSPSuite.UI.Binders
          _series.Add(series);
 
          return series;
+      }
+
+      private void configureScatterLineView(ScatterLineSeriesView scatterLineSeriesView)
+      {
+         if (scatterLineSeriesView == null)
+            return;
+         scatterLineSeriesView.EnableAntialiasing = DefaultBoolean.True;
       }
 
       private enum DataModes
