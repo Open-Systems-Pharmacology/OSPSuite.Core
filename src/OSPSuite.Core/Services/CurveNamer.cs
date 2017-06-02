@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -44,16 +45,19 @@ namespace OSPSuite.Core.Services
 
          curveCharts.Each(chart =>
          {
-            chart.Curves.Each(curve =>
-            {
-               var dataColumn = curve.yData;
-               if (hasOriginalName(simulation, dataColumn, curve))
-               {
-                  curvesHavingOriginalName.Add(curve);
-               }
-            });
+            curvesHavingOriginalName.AddRange(curvesFromChartWithOriginalName(simulation, chart));
          });
          return curvesHavingOriginalName;
+      }
+
+      private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart)
+      {
+         var curvesWithOriginalName = chart.Curves.Where(curve =>
+         {
+            var dataColumn = curve.yData;
+            return hasOriginalName(simulation, dataColumn, curve);
+         });
+         return curvesWithOriginalName;
       }
    }
 }
