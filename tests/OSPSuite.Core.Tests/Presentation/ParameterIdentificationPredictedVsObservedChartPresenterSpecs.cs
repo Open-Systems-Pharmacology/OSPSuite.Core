@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using OSPSuite.BDDHelper;
 using FakeItEasy;
-using OSPSuite.Core;
+using OSPSuite.BDDHelper;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -27,7 +26,7 @@ namespace OSPSuite.Presentation
    {
       private IParameterIdentificationSingleRunAnalysisView _view;
       private IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
-      private IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
+      private ICurveNamer _curveNamer;
       private IDataColumnToPathElementsMapper _dataColumnToPathElementsMapper;
       private IChartTemplatingTask _chartTemplatingTask;
       private IPresentationSettingsTask _presentationSettingsTask;
@@ -48,7 +47,7 @@ namespace OSPSuite.Presentation
       {
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
-         _quantityDisplayPathMapper = A.Fake<IQuantityPathToQuantityDisplayPathMapper>();
+         _curveNamer = A.Fake<ICurveNamer>();
          _dataColumnToPathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
@@ -59,7 +58,7 @@ namespace OSPSuite.Presentation
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.ChartEditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
-         A.CallTo(() => _chartPresenterContext.QuantityDisplayPathMapper).Returns(_quantityDisplayPathMapper);
+         A.CallTo(() => _chartPresenterContext.CurveNamer).Returns(_curveNamer);
          A.CallTo(() => _chartPresenterContext.DataColumnToPathElementsMapper).Returns(_dataColumnToPathElementsMapper);
          A.CallTo(() => _chartPresenterContext.TemplatingTask).Returns(_chartTemplatingTask);
          A.CallTo(() => _chartPresenterContext.PresenterSettingsTask).Returns(_presentationSettingsTask);
@@ -77,10 +76,10 @@ namespace OSPSuite.Presentation
          sut = new ParameterIdentificationPredictedVsObservedChartPresenter(_view, _chartPresenterContext, _predictedVsObservedService);
 
          _parameterIdentificationRunResult = A.Fake<ParameterIdentificationRunResult>();
-         A.CallTo(() => _parameterIdentification.Results).Returns(new[] { _parameterIdentificationRunResult });
+         A.CallTo(() => _parameterIdentification.Results).Returns(new[] {_parameterIdentificationRunResult});
 
          _residualResults = new ResidualsResult();
-         _optimizationRunResult = new OptimizationRunResult { ResidualsResult = _residualResults, SimulationResults = new List<DataRepository> { simulationData } };
+         _optimizationRunResult = new OptimizationRunResult {ResidualsResult = _residualResults, SimulationResults = new List<DataRepository> {simulationData}};
          _parameterIdentificationRunResult.BestResult = _optimizationRunResult;
 
          sut.InitializeAnalysis(_predictedVsObservedChart);
@@ -103,15 +102,15 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _quantity.Dimension).Returns(DomainHelperForSpecs.NoDimension());
 
          var simulationQuantitySelection = A.Fake<SimulationQuantitySelection>();
-         _outputMapping = new OutputMapping { OutputSelection = simulationQuantitySelection };
+         _outputMapping = new OutputMapping {OutputSelection = simulationQuantitySelection};
          A.CallTo(() => simulationQuantitySelection.Quantity).Returns(_quantity);
 
 
-         _outputMappings = new[] { _outputMapping };
+         _outputMappings = new[] {_outputMapping};
          A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(_outputMappings);
          _firstObservationDataColumn = _observationData.FirstDataColumn();
          _firstObservationDataColumn.Dimension = DomainHelperForSpecs.NoDimension();
-         A.CallTo(() => _parameterIdentification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _firstObservationDataColumn });
+         A.CallTo(() => _parameterIdentification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_firstObservationDataColumn});
       }
 
       protected override void Because()

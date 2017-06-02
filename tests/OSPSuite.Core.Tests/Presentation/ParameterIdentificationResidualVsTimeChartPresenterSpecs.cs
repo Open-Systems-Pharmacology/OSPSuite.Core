@@ -1,15 +1,14 @@
 ﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -25,7 +24,6 @@ namespace OSPSuite.Presentation
       protected IPresentationSettingsTask _presentationSettingsTask;
       protected IParameterIdentificationSingleRunAnalysisView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
-      protected IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       protected IDataColumnToPathElementsMapper _pathElementsMapper;
       protected IChartTemplatingTask _chartTemplatingTask;
 
@@ -38,6 +36,7 @@ namespace OSPSuite.Presentation
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetreiver;
       private ChartPresenterContext _chartPresenterContext;
+      private ICurveNamer _curveNamer;
 
       protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
 
@@ -46,7 +45,7 @@ namespace OSPSuite.Presentation
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
-         _quantityDisplayPathMapper = A.Fake<IQuantityPathToQuantityDisplayPathMapper>();
+         _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
@@ -55,7 +54,7 @@ namespace OSPSuite.Presentation
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.ChartEditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
-         A.CallTo(() => _chartPresenterContext.QuantityDisplayPathMapper).Returns(_quantityDisplayPathMapper);
+         A.CallTo(() => _chartPresenterContext.CurveNamer).Returns(_curveNamer);
          A.CallTo(() => _chartPresenterContext.DataColumnToPathElementsMapper).Returns(_pathElementsMapper);
          A.CallTo(() => _chartPresenterContext.TemplatingTask).Returns(_chartTemplatingTask);
          A.CallTo(() => _chartPresenterContext.PresenterSettingsTask).Returns(_presentationSettingsTask);
@@ -106,9 +105,9 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _outputMapping3.WeightedObservedData.ObservedData).Returns(observation3);
 
 
-         _outputResiduals1 = new OutputResiduals("OutputPath1", _outputMapping1.WeightedObservedData, new[] {new Residual(11f, 12f, 1), new Residual(21f, 22f, 1) });
-         _outputResiduals2 = new OutputResiduals("OutputPath2", _outputMapping2.WeightedObservedData, new[] {new Residual(31f, 32f, 1), new Residual(41f, 42f, 1) });
-         _outputResiduals3 = new OutputResiduals("OutputPath1", _outputMapping3.WeightedObservedData, new[] {new Residual(51f, 52f, 1), new Residual(61f, 62f, 1) });
+         _outputResiduals1 = new OutputResiduals("OutputPath1", _outputMapping1.WeightedObservedData, new[] {new Residual(11f, 12f, 1), new Residual(21f, 22f, 1)});
+         _outputResiduals2 = new OutputResiduals("OutputPath2", _outputMapping2.WeightedObservedData, new[] {new Residual(31f, 32f, 1), new Residual(41f, 42f, 1)});
+         _outputResiduals3 = new OutputResiduals("OutputPath1", _outputMapping3.WeightedObservedData, new[] {new Residual(51f, 52f, 1), new Residual(61f, 62f, 1)});
 
          _residualResults.AddOutputResiduals(_outputResiduals1);
          _residualResults.AddOutputResiduals(_outputResiduals2);
@@ -160,7 +159,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { DomainHelperForSpecs.ObservedData() });
+         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] {DomainHelperForSpecs.ObservedData()});
          sut.InitializeAnalysis(_residualVsTimeChart, _parameterIdentification);
 
          //only zero marker

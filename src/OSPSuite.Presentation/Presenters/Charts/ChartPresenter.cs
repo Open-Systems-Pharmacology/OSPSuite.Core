@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -12,6 +9,9 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
       }
-      
+
       public virtual void LoadSettingsForSubject(IWithId subject)
       {
          _settings = _chartPresenterContext.PresenterSettingsTask.PresentationSettingsFor<DefaultPresentationSettings>(this, subject);
@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return Equals(eventToHandle.WithChartTemplates, _withChartTemplates);
       }
 
-      protected void LoadTemplate(CurveChartTemplate curveChartTemplate, bool warnIfNumberOfCurvesAboveThreshold= true)
+      protected void LoadTemplate(CurveChartTemplate curveChartTemplate, bool warnIfNumberOfCurvesAboveThreshold = true)
       {
          _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(
             Chart,
@@ -143,7 +143,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             NameForColumn, warnIfNumberOfCurvesAboveThreshold: warnIfNumberOfCurvesAboveThreshold);
       }
 
-  
       public void RemoveDataRepositoryFromEditor(DataRepository dataRepository)
       {
          ChartEditorPresenter.RemoveDataRepository(dataRepository);
@@ -201,7 +200,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected virtual string NameForColumn(DataColumn dataColumn)
       {
-         return _chartPresenterContext.QuantityDisplayPathMapper.DisplayPathAsStringFor(SimulationFor(dataColumn), dataColumn, addSimulationName: true);
+         return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn);
       }
 
       public virtual void Clear()
