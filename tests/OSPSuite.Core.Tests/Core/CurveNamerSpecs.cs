@@ -68,7 +68,7 @@ namespace OSPSuite.Core
 
    public class When_gathering_curves_that_have_original_name_for_simulation : concern_for_CurveNamer
    {
-      private IReadOnlyList<ICurve> _originallyNamedCurves;
+      private IEnumerable<ICurve> _originallyNamedCurves;
 
       protected override void Because()
       {

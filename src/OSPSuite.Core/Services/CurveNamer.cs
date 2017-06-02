@@ -4,14 +4,18 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
    public interface ICurveNamer
    {
       string CurveNameForColumn(ISimulation simulation, DataColumn dataColumn);
-      IReadOnlyList<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts);
+
+      /// <summary>
+      /// Returns the curves from the <paramref name="curveCharts"/> whose name still matches with the curve path and the <paramref name="simulation"/>
+      /// if the curve was named with this namer, this indicates the name has not changed
+      /// </summary>
+      IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts);
    }
 
    public class CurveNamer : ICurveNamer
@@ -39,15 +43,9 @@ namespace OSPSuite.Core.Services
          return string.Equals(curve.Name, originalCurveName);
       }
 
-      public IReadOnlyList<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts)
+      public IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts)
       {
-         var curvesHavingOriginalName = new List<ICurve>();
-
-         curveCharts.Each(chart =>
-         {
-            curvesHavingOriginalName.AddRange(curvesFromChartWithOriginalName(simulation, chart));
-         });
-         return curvesHavingOriginalName;
+         return curveCharts.SelectMany(chart => curvesFromChartWithOriginalName(simulation, chart));
       }
 
       private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart)
