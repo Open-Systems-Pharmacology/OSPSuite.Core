@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using FakeItEasy;
+﻿using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Services;
 
 namespace OSPSuite.Commands
 {
@@ -21,6 +19,7 @@ namespace OSPSuite.Commands
       private BaseGrid _baseGrid;
       protected DataColumn _column;
       protected IOSPSuiteExecutionContext _executionContext;
+      protected IDataRepositoryNamer _dataRepositoryNamer;
 
       protected override void Context()
       {
@@ -32,6 +31,7 @@ namespace OSPSuite.Commands
          sut = new RenameObservedDataCommand(_dataRepository, _newName);
          _baseGrid = new BaseGrid("Time", _timeDimension);
          _column = new DataColumn("Col", _concDimension, _baseGrid);
+
          var quantityInfo = new QuantityInfo(_column.Name, new[] {_oldName, ObjectTypes.ObservedData, "Organ", "Compartment", "Drug", _column.Name}, QuantityType.Undefined);
          _baseGrid.QuantityInfo = new QuantityInfo("time", new[] {_oldName, ObjectTypes.ObservedData}, QuantityType.BaseGrid);
          _column.QuantityInfo = quantityInfo;
@@ -40,6 +40,22 @@ namespace OSPSuite.Commands
          _executionContext = A.Fake<IOSPSuiteExecutionContext>();
 
          A.CallTo(() => _executionContext.Project.ObservedDataBy(_dataRepository.Id)).Returns(_dataRepository);
+         _dataRepositoryNamer = A.Fake<IDataRepositoryNamer>();
+         A.CallTo(() => _executionContext.Resolve<IDataRepositoryNamer>()).Returns(_dataRepositoryNamer);
+      }
+   }
+
+   public class When_renaming_observed_data : concern_for_RenameObservedDataCommand
+   {
+      protected override void Because()
+      {
+         sut.Execute(_executionContext);
+      }
+
+      [Observation]
+      public void the_data_repository_renamer_is_used_to_rename()
+      {
+         A.CallTo(() => _dataRepositoryNamer.Rename(_dataRepository, _newName)).MustHaveHappened();
       }
    }
 
@@ -51,35 +67,10 @@ namespace OSPSuite.Commands
       }
 
       [Observation]
-      public void the_name_change_should_be_reversed_on_the_repository()
+      public void the_data_repository_renamer_must_be_used_twice()
       {
-         _dataRepository.Name.ShouldBeEqualTo(_oldName);
-      }
-
-      [Observation]
-      public void should_also_revert_the_name_of_the_repository_in_the_columns()
-      {
-         _dataRepository.Each(column => column.QuantityInfo.Path.First().ShouldBeEqualTo(_oldName));
-      }
-   }
-
-   public class When_renaming_an_observed_data : concern_for_RenameObservedDataCommand
-   {
-      protected override void Because()
-      {
-         sut.Execute(_executionContext);
-      }
-
-      [Observation]
-      public void should_have_renamed_the_repository()
-      {
-         _dataRepository.Name.ShouldBeEqualTo(_newName);
-      }
-
-      [Observation]
-      public void should_also_rename_the_name_of_the_repository_in_the_columns()
-      {
-         _dataRepository.Each(column => column.QuantityInfo.Path.First().ShouldBeEqualTo(_newName));
+         A.CallTo(() => _dataRepositoryNamer.Rename(_dataRepository, _newName)).MustHaveHappened();
+         A.CallTo(() => _dataRepositoryNamer.Rename(_dataRepository, _oldName)).MustHaveHappened();
       }
    }
 }

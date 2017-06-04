@@ -1,11 +1,9 @@
 ﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -25,7 +23,6 @@ namespace OSPSuite.Presentation
       protected IPresentationSettingsTask _presentationSettingsTask;
       protected IParameterIdentificationMultipleRunsAnalysisView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
-      protected IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       protected IDataColumnToPathElementsMapper _pathElementsMapper;
       protected IChartTemplatingTask _chartTemplatingTask;
       protected ParameterIdentificationTimeProfileChart _timeProfileAnalysis;
@@ -42,13 +39,14 @@ namespace OSPSuite.Presentation
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetreiver;
       private ChartPresenterContext _chartPresenterContext;
+      private ICurveNamer _curveNamer;
 
       protected override void Context()
       {
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _view = A.Fake<IParameterIdentificationMultipleRunsAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
-         _quantityDisplayPathMapper = A.Fake<IQuantityPathToQuantityDisplayPathMapper>();
+         _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
@@ -59,7 +57,7 @@ namespace OSPSuite.Presentation
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.ChartEditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
-         A.CallTo(() => _chartPresenterContext.QuantityDisplayPathMapper).Returns(_quantityDisplayPathMapper);
+         A.CallTo(() => _chartPresenterContext.CurveNamer).Returns(_curveNamer);
          A.CallTo(() => _chartPresenterContext.DataColumnToPathElementsMapper).Returns(_pathElementsMapper);
          A.CallTo(() => _chartPresenterContext.TemplatingTask).Returns(_chartTemplatingTask);
          A.CallTo(() => _chartPresenterContext.PresenterSettingsTask).Returns(_presentationSettingsTask);

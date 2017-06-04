@@ -194,6 +194,8 @@
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
+    <Compile Include="Services\CurveNamer.cs" />
+    <Compile Include="Services\DataRepositoryNamer.cs" />
     <Compile Include="Services\IDialogCreator.cs" />
     <Compile Include="Services\IReportingTask.cs" />
     <Compile Include="Services\IReportTask.cs" />
