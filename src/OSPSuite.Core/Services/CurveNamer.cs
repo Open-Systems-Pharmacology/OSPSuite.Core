@@ -50,12 +50,11 @@ namespace OSPSuite.Core.Services
 
       private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart)
       {
-         var curvesWithOriginalName = chart.Curves.Where(curve =>
+         return chart.Curves.Where(curve =>
          {
             var dataColumn = curve.yData;
             return hasOriginalName(simulation, dataColumn, curve);
          });
-         return curvesWithOriginalName;
       }
    }
 }
