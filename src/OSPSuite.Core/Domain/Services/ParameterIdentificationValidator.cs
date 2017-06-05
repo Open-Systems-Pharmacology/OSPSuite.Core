@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -36,10 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!parameterIdentification.AllIdentificationParameters.Any())
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.NoIdentificationParameterDefined);
 
-         allIdentificaitonParametersWithUndefinedLinkedParametersIn(parameterIdentification).Each(p =>
-         {
-            validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.LinkedParameterIsNotValidInIdentificationParameter(p.Name));
-         });
+         allIdentificaitonParametersWithUndefinedLinkedParametersIn(parameterIdentification).Each(p => { validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.LinkedParameterIsNotValidInIdentificationParameter(p.Name)); });
 
          if (parameterIdentification.Configuration.AlgorithmProperties == null)
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.NoOptimizationAlgorithmSelected);
@@ -58,7 +55,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private void validateWeights(ParameterIdentification parameterIdentification, ValidationResult validationResult)
       {
-         if (allWeightedDataRepositoryWeights(parameterIdentification).Where(weight => weight < 0).Union(allDataPointWeights(parameterIdentification).Where(weight => weight < 0)).Any())
+         var allDataRepositoryWeights = allWeightedDataRepositoryWeights(parameterIdentification);
+         var allPointWeights = allDataPointWeights(parameterIdentification);
+
+         if (allDataRepositoryWeights.Union(allPointWeights).Any(weight => weight < 0))
          {
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.WeightValueCannotBeNegative);
          }
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private static IEnumerable<float> allDataPointWeights(ParameterIdentification parameterIdentification)
       {
-         return parameterIdentification.OutputMappings.All.SelectMany(x => x.WeightedObservedData.Weights);
+         return parameterIdentification.OutputMappings.All.Where(x => x.WeightedObservedData != null).SelectMany(x => x.WeightedObservedData.Weights);
       }
 
       private static IEnumerable<float> allWeightedDataRepositoryWeights(ParameterIdentification parameterIdentification)
@@ -89,5 +89,4 @@ namespace OSPSuite.Core.Domain.Services
          return parameterIdentification.OutputMappings.All.Where(outputMapping => outputMapping.Output == mapping.Output).Select(x => x.Scaling).Distinct();
       }
    }
-
 }

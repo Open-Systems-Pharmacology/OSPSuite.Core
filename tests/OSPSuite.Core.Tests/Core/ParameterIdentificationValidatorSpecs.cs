@@ -87,6 +87,36 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_validating_a_parameter_identification_with_an_output_mapping_not_mapped_to_any_observed_data : concern_for_ParameterIdentificationValidator
+   {
+      private ParameterIdentification _parameterIdentification;
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification = new ParameterIdentification();
+         var outputMapping = A.Fake<OutputMapping>();
+         ConfigureOutputMapping(outputMapping);
+         outputMapping.WeightedObservedData = null;
+         A.CallTo(() => outputMapping.IsValid).Returns(true);
+
+         _parameterIdentification.AddOutputMapping(outputMapping);
+         _parameterIdentification.Configuration.AlgorithmProperties = new OptimizationAlgorithmProperties("XX");
+         _parameterIdentification.AddIdentificationParameter(DomainHelperForSpecs.IdentificationParameter());
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_parameterIdentification);
+      }
+
+      [Observation]
+      public void The_validation_should_indicate_an_error()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
+
+
    public class When_validating_a_parameter_identification_with_an_observed_data_repository_weighted_negative : concern_for_ParameterIdentificationValidator
    {
       private ParameterIdentification _parameterIdentification;
