@@ -47,6 +47,27 @@ namespace OSPSuite.Core
 
    public class When_renaming_curves : concern_for_CurveNamer
    {
+      protected override void Context()
+      {
+         base.Context();
+         _simulation.Name = "simulationName";
+         A.CallTo(() => _simulation.Charts).Returns(_charts);
+      }
+
+      protected override void Because()
+      {
+         sut.RenameCurvesWithOriginalNames(_simulation, () => _simulation.Name="NewSimulationName", addSimulationName: true);
+      }
+
+      [Observation]
+      public void the_new_curve_name_should_use_new_simulation_name()
+      {
+         _curve.Name.ShouldBeEqualTo($"NewSimulationName:{_dataColumn.Name}");
+      }
+   }
+
+   public class When_generating_curve_names : concern_for_CurveNamer
+   {
       private string _newName;
       protected override void Context()
       {
@@ -56,7 +77,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _newName = sut.CurveNameForColumn(_simulation, _dataColumn);
+         _newName = sut.CurveNameForColumn(_simulation, _dataColumn, addSimulationName:true);
       }
 
       [Observation]

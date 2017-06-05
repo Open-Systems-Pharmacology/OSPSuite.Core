@@ -1,21 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
    public interface ICurveNamer
    {
-      string CurveNameForColumn(ISimulation simulation, DataColumn dataColumn);
+      string CurveNameForColumn(ISimulation simulation, DataColumn dataColumn, bool addSimulationName = true);
 
       /// <summary>
-      /// Returns the curves from the <paramref name="curveCharts"/> whose name still matches with the curve path and the <paramref name="simulation"/>
-      /// if the curve was named with this namer, this indicates the name has not changed
+      ///    Returns the curves from the <paramref name="curveCharts" /> whose name still matches with the curve path and the
+      ///    <paramref name="simulation" />
+      ///    if the curve was named with this namer, this indicates the name has not changed
       /// </summary>
-      IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts);
+      IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts, bool includingSimulationName = true);
+
+      /// <summary>
+      ///    Renames the curves from <paramref name="simulation"/> charts that have the same name as originally created.
+      ///    The list of curves to be renamed is created before running <paramref name="renameAction"/> and then after the action
+      ///    is run, the list is renamed. If <paramref name="addSimulationName"/> is true, it's expected that the original curve name and
+      ///    new curve name should have the simulation name added
+      /// </summary>
+      void RenameCurvesWithOriginalNames(ISimulation simulation, Action renameAction, bool addSimulationName = true);
    }
 
    public class CurveNamer : ICurveNamer
@@ -27,33 +38,37 @@ namespace OSPSuite.Core.Services
          _quantityPathToQuantityDisplayPathMapper = quantityPathToQuantityDisplayPathMapper;
       }
 
-      public string CurveNameForColumn(ISimulation simulation, DataColumn dataColumn)
+      public void RenameCurvesWithOriginalNames(ISimulation simulation, Action renameAction, bool addSimulationName = true)
       {
-         return curveNameForDataColumn(simulation, dataColumn);
+         var curveNamesToRename = CurvesWithOriginalName(simulation, simulation.Charts).ToList();
+
+         renameAction();
+
+         curveNamesToRename.Each(curve => { curve.Name = CurveNameForColumn(simulation, curve.yData, addSimulationName); });
       }
 
-      private string curveNameForDataColumn(ISimulation simulation, DataColumn dataColumn)
+      public string CurveNameForColumn(ISimulation simulation, DataColumn dataColumn, bool addSimulationName)
       {
-         return _quantityPathToQuantityDisplayPathMapper.DisplayPathAsStringFor(simulation, dataColumn, addSimulationName: true);
+         return _quantityPathToQuantityDisplayPathMapper.DisplayPathAsStringFor(simulation, dataColumn, addSimulationName);
       }
 
-      private bool hasOriginalName(ISimulation simulation, DataColumn dataColumn, ICurve curve)
+      private bool hasOriginalName(ISimulation simulation, DataColumn dataColumn, ICurve curve, bool includingSimulationName)
       {
-         var originalCurveName = curveNameForDataColumn(simulation, dataColumn);
+         var originalCurveName = CurveNameForColumn(simulation, dataColumn, includingSimulationName);
          return string.Equals(curve.Name, originalCurveName);
       }
 
-      public IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts)
+      public IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts, bool includingSimulationName = true)
       {
-         return curveCharts.SelectMany(chart => curvesFromChartWithOriginalName(simulation, chart));
+         return curveCharts.SelectMany(chart => curvesFromChartWithOriginalName(simulation, chart, includingSimulationName));
       }
 
-      private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart)
+      private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart, bool includingSimulationName)
       {
          return chart.Curves.Where(curve =>
          {
             var dataColumn = curve.yData;
-            return hasOriginalName(simulation, dataColumn, curve);
+            return hasOriginalName(simulation, dataColumn, curve, includingSimulationName);
          });
       }
    }
