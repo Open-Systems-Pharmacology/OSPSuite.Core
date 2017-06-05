@@ -80,17 +80,14 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.BindToSource(defaultUnits);
       }
 
-      public override bool HasError
-      {
-         get { return _gridViewBinder.HasError; }
-      }
+      public override bool HasError => _gridViewBinder.HasError;
 
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemAddUnitMap.AdjustButtonSize(UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
-         layoutItemLoadUnits.AdjustButtonSize(UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
-         layoutItemSaveUnits.AdjustButtonSize(UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
+         layoutItemAddUnitMap.AdjustTallButtonSize();
+         layoutItemLoadUnits.AdjustTallButtonSize();
+         layoutItemSaveUnits.AdjustTallButtonSize();
          btnAddUnitMap.InitWithImage(ApplicationIcons.Add, Captions.AddUnitMap, toolTip: ToolTips.AddUnitMap);
          btnLoadUnits.InitWithImage(ApplicationIcons.Load, Captions.LoadUnits, toolTip: ToolTips.LoadUnits);
          btnSaveUnits.InitWithImage(ApplicationIcons.Save, Captions.SaveUnits, toolTip: ToolTips.SaveUnits);
