@@ -19,12 +19,17 @@ namespace OSPSuite.UI.Extensions
 
       public static void AdjustLargeButtonSize(this LayoutControlItem layoutControlItem)
       {
-         layoutControlItem.AdjustButtonSize(UIConstants.Size.LARGE_BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
+         layoutControlItem.AdjustSize(UIConstants.Size.LARGE_BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
       }
 
       public static void AdjustLongButtonSize(this LayoutControlItem layoutControlItem)
       {
-         layoutControlItem.AdjustButtonSize(UIConstants.Size.LARGE_BUTTON_WIDTH, UIConstants.Size.BUTTON_HEIGHT);
+         layoutControlItem.AdjustSize(UIConstants.Size.LARGE_BUTTON_WIDTH, UIConstants.Size.BUTTON_HEIGHT);
+      }
+
+      public static void AdjustTallButtonSize(this LayoutControlItem layoutControlItem)
+      {
+         layoutControlItem.AdjustSize(UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.LARGE_BUTTON_HEIGHT);
       }
 
       /// <summary>
@@ -36,6 +41,9 @@ namespace OSPSuite.UI.Extensions
          layoutControlItem.SizeConstraintsType = SizeConstraintsType.Custom;
          layoutControlItem.MaxSize = size;
          layoutControlItem.MinSize = size;
+         //In case the control size became smaller that the previous min size, the max size is ignored. So we set it again 
+         layoutControlItem.MaxSize = size;
+         layoutControlItem.Size = size;
       }
 
       /// <summary>
@@ -65,23 +73,18 @@ namespace OSPSuite.UI.Extensions
          layoutControlItem.SizeConstraintsType = SizeConstraintsType.Custom;
          layoutControlItem.ControlMaxSize = size;
          layoutControlItem.ControlMinSize = size;
+         //In case the control size became smaller that the previous min size, the max size is ignored. So we set it again 
+         layoutControlItem.ControlMaxSize = size;
       }
 
       public static void AdjustButtonSize(this LayoutControlItem layoutControlItem)
       {
-         AdjustButtonSize(layoutControlItem, UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.BUTTON_HEIGHT);
-      }
-
-      public static void AdjustButtonSize(this LayoutControlItem layoutControlItem, int width, int height)
-      {
-         layoutControlItem.AdjustSize(width, height);
-         layoutControlItem.Size = new Size(width, height);
+         layoutControlItem.AdjustSize(UIConstants.Size.BUTTON_WIDTH, UIConstants.Size.BUTTON_HEIGHT);
       }
 
       public static void AdjustButtonSizeWithImageOnly(this LayoutControlItem layoutControlItem)
       {
          layoutControlItem.AdjustSize(UIConstants.Size.BUTTON_HEIGHT, UIConstants.Size.BUTTON_HEIGHT);
-         layoutControlItem.Size = new Size(UIConstants.Size.BUTTON_HEIGHT, UIConstants.Size.BUTTON_HEIGHT);
       }
    }
 }

@@ -182,8 +182,8 @@
       <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Xml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OSPSuite.DataBinding">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.2.0.0.1\lib\net45\OSPSuite.DataBinding.dll</HintPath>
+    <Reference Include="OSPSuite.DataBinding, Version=2.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.2.0.1.1\lib\net45\OSPSuite.DataBinding.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.DataBinding.DevExpress, Version=2.0.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.0.1.1\lib\net45\OSPSuite.DataBinding.DevExpress.dll</HintPath>
