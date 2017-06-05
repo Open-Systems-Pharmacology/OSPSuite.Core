@@ -1,3 +1,4 @@
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Converter.v5_2;

@@ -41,10 +41,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter.UpdateDataSelection(SelectedDescendentDataRepositoryColumnIds);
       }
 
-      public IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds
-      {
-         get { return selectDescendentDataRows(gridView.GetSelectedRows()).Select(getDataRepositoryColumnIdForRowHandle).ToList(); }
-      }
+      public IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds => selectDescendentDataRows(gridView.GetSelectedRows()).Select(getDataRepositoryColumnIdForRowHandle).ToList();
 
       private IEnumerable<int> selectDescendentDataRows(IEnumerable<int> selectedRowHandles)
       {
@@ -108,10 +105,7 @@ namespace OSPSuite.UI.Views.Charts
             gridColumn.OptionsFilter.FilterPopupMode = FilterPopupMode.CheckedList;
       }
 
-      public IReadOnlyList<string> SelectedDataColumnIds
-      {
-         get { return gridView.GetSelectedRows().Select(getDataRepositoryColumnIdForRowHandle).ToList(); }
-      }
+      public IReadOnlyList<string> SelectedDataColumnIds => gridView.GetSelectedRows().Select(getDataRepositoryColumnIdForRowHandle).ToList();
 
       private string getDataRepositoryColumnIdForRowHandle(int rowHandle)
       {
@@ -162,7 +156,7 @@ namespace OSPSuite.UI.Views.Charts
 
             if (!dragRect.Contains(new Point(e.X, e.Y)))
             {
-               var data = _presenter.SelectedDataColumnIds;
+               var data = _presenter.SelectedDataColumns;
                gridControl.DoDragDrop(data, DragDropEffects.Move);
                _downHitInfo = null;
                DXMouseEventArgs.GetMouseArgs(e).Handled = true;

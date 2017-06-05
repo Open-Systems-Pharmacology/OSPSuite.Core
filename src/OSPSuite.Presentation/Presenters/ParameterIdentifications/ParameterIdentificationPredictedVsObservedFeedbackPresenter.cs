@@ -38,10 +38,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          _view.BindToSelecteOutput();
 
-         _chartDisplayPresenter.DataSource = _chart;
+         _chartDisplayPresenter.Edit(_chart);
       }
 
-      protected override void AddCurvesFor(DataRepository repository, Action<DataColumn, ICurve> action)
+      protected override void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action)
       {
          plotAllCalculations(repository, (column, curve) =>
          {
@@ -50,7 +50,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          });
       }
 
-      private void plotAllCalculations(DataRepository dataRepository, Action<DataColumn, ICurve> action)
+      private void plotAllCalculations(DataRepository dataRepository, Action<DataColumn, Curve> action)
       {
          var calculationColumns = dataRepository.AllButBaseGrid();
          calculationColumns.Each(calculationColumn =>

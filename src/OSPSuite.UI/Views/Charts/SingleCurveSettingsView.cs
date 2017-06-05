@@ -12,7 +12,7 @@ namespace OSPSuite.UI.Views.Charts
 {
    public partial class SingleCurveSettingsView : BaseUserControl, ISingleCurveSettingsView
    {
-      private ScreenBinder<ICurve> _curveScreenBinder;
+      private ScreenBinder<Curve> _curveScreenBinder;
 
       public SingleCurveSettingsView()
       {
@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views.Charts
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _curveScreenBinder = new ScreenBinder<ICurve>();
+         _curveScreenBinder = new ScreenBinder<Curve>();
 
          _curveScreenBinder.Bind(x => x.Name).To(nameTextBox);
 
@@ -58,7 +58,7 @@ namespace OSPSuite.UI.Views.Charts
       {
       }
 
-      public void BindTo(ICurve curve)
+      public void BindTo(Curve curve)
       {
          _curveScreenBinder.BindToSource(curve);
       }

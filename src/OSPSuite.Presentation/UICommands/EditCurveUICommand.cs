@@ -4,7 +4,7 @@ using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class EditCurveUICommand : ObjectUICommand<ICurve>
+   public class EditCurveUICommand : ObjectUICommand<Curve>
    {
       private readonly IApplicationController _applicationController;
 

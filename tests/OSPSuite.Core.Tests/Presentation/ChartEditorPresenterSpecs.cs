@@ -1,10 +1,15 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Drawing;
+using OSPSuite.BDDHelper;
 using FakeItEasy;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation
 {
@@ -17,6 +22,12 @@ namespace OSPSuite.Presentation
       protected ICurveSettingsPresenter _curveSettingsPresenter;
       protected IDataBrowserPresenter _dataBrowserPresenter;
       protected IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
+      private IChartUpdater _chartUpdater;
+      private IEventPublisher _eventPublisher;
+      private IDimensionFactory _dimensionFactory;
+      protected CurveChart _chart;
+      protected BaseGrid _baseGrid;
+      protected DataColumn _standardColumn;
 
       protected override void Context()
       {
@@ -27,7 +38,19 @@ namespace OSPSuite.Presentation
          _curveSettingsPresenter = A.Fake<ICurveSettingsPresenter>();
          _dataBrowserPresenter = A.Fake<IDataBrowserPresenter>();
          _chartTemplateMenuPresenter = A.Fake<IChartTemplateMenuPresenter>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter);
+         _chartUpdater= A.Fake<IChartUpdater>();
+         _eventPublisher= A.Fake<IEventPublisher>();
+         _dimensionFactory= A.Fake<IDimensionFactory>();
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter,_chartUpdater, _eventPublisher, _dimensionFactory);
+
+         _chart = new CurveChart().WithAxes();
+         sut.Edit(_chart);
+
+         _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         _standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+         };
       }
    }
 
@@ -37,32 +60,27 @@ namespace OSPSuite.Presentation
       private DataColumn _hiddenColumn;
       private DataColumn _internalColumn;
       private DataColumn _auxiliaryObservedDataColumn;
-      private DataColumn _standardColumn;
 
       protected override void Context()
       {
          base.Context();
-         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         _hiddenColumn = new DataColumn("hidden", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
+         _hiddenColumn = new DataColumn("hidden", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation)
          };
 
-         _internalColumn = new DataColumn("Internal", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
+         _internalColumn = new DataColumn("Internal", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
             IsInternal = true
          };
 
-         _auxiliaryObservedDataColumn = new DataColumn("Auxiliary", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
+         _auxiliaryObservedDataColumn = new DataColumn("Auxiliary", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary),
          };
 
-         _standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
-         };
+    
 
          _dataRepository = new DataRepository {_hiddenColumn, _internalColumn, _auxiliaryObservedDataColumn, _standardColumn};
 
@@ -99,11 +117,104 @@ namespace OSPSuite.Presentation
       }
    }
 
+
+
+   internal class When_adding_a_new_curve_for_column_id_not_in_chart_and_default_settings_are_specified : concern_for_ChartEditorPresenter
+   {
+      private CurveOptions _defaultCurveOptions;
+      private Curve _newCurve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _defaultCurveOptions = new CurveOptions
+         {
+            Color = Color.Fuchsia,
+            LineThickness = 2,
+            VisibleInLegend = false,
+            Symbol = Symbols.Diamond,
+            LineStyle = LineStyles.DashDot
+         };
+      }
+
+      protected override void Because()
+      {
+         _newCurve = sut.AddCurveForColumn(_standardColumn, _defaultCurveOptions);
+      }
+
+      [Observation]
+      public void curve_options_should_be_updated_to_defaults()
+      {
+         _newCurve.CurveOptions.Color.ShouldBeEqualTo(Color.Fuchsia);
+         _newCurve.CurveOptions.LineThickness.ShouldBeEqualTo(2);
+         _newCurve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(false);
+         _newCurve.CurveOptions.Symbol.ShouldBeEqualTo(Symbols.Diamond);
+         _newCurve.CurveOptions.LineStyle.ShouldBeEqualTo(LineStyles.DashDot);
+      }
+   }
+
+   internal class When_adding_a_curve_to_the_chart : concern_for_ChartEditorPresenter
+   {
+      private Curve _newCurve;
+
+      protected override void Because()
+      {
+         _newCurve = sut.AddCurveForColumn(_standardColumn);
+      }
+
+      [Observation]
+      public void should_set_the_display_unit_of_the_underlying_data_to_the_selected_axis_units()
+      {
+         _newCurve.xData.DisplayUnit.ShouldBeEqualTo(_chart.AxisBy(AxisTypes.X).Unit);
+         _newCurve.yData.DisplayUnit.ShouldBeEqualTo(_chart.AxisBy(AxisTypes.Y).Unit);
+      }
+   }
+
+   internal class When_adding_a_curve_for_a_column_already_in_chart_and_default_settings_are_specified : concern_for_ChartEditorPresenter
+   {
+      private CurveOptions _defaultCurveOptions;
+      private CurveOptions _firstPlotCurveOptions;
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _firstPlotCurveOptions = new CurveOptions
+         {
+            Color = Color.Black,
+            LineThickness = 1,
+            VisibleInLegend = true
+         };
+
+         _defaultCurveOptions = new CurveOptions
+         {
+            Color = Color.Fuchsia,
+            LineThickness = 2,
+            VisibleInLegend = false
+         };
+
+         sut.AddCurveForColumn(_standardColumn, _firstPlotCurveOptions);
+      }
+
+      protected override void Because()
+      {
+         _curve = sut.AddCurveForColumn(_standardColumn, _defaultCurveOptions);
+      }
+
+      [Observation]
+      public void the_curve_options_should_not_have_been_updated_to_the_second_specified_values()
+      {
+         _curve.CurveOptions.Color.ShouldBeEqualTo(Color.Black);
+         _curve.CurveOptions.LineThickness.ShouldBeEqualTo(1);
+         _curve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(true);
+      }
+   }
+
+
    public class When_refreshing_a_data_repository_used_in_the_chart_editor_presenter : concern_for_ChartEditorPresenter
    {
       private DataRepository _dataRepository;
       private DataColumn _columnThatWillBeInternal;
-      private DataColumn _standardColumn;
       private DataColumn _newColumn;
       private DataColumn _columnThatWillBeRemoved;
 

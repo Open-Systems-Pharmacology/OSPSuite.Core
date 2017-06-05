@@ -12,10 +12,10 @@ namespace OSPSuite.Core.Chart
          chart.OriginText = Captions.ChartFingerprintDataFrom(projectName, simulationName, localTime);
       }
 
-      public static TChart WithAxes<TChart>(this TChart chart) where TChart : ICurveChart
+      public static TChart WithAxes<TChart>(this TChart chart) where TChart : CurveChart
       {
-         chart.Axes.Add(new Axis(AxisTypes.X));
-         chart.Axes.Add(new Axis(AxisTypes.Y) {Scaling = chart.DefaultYAxisScaling});
+         chart.AddAxis(new Axis(AxisTypes.X));
+         chart.AddAxis(new Axis(AxisTypes.Y) {Scaling = chart.DefaultYAxisScaling});
          return chart;
       }
    }

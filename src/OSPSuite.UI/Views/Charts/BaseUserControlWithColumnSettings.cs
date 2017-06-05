@@ -29,7 +29,7 @@ namespace OSPSuite.UI.Views.Charts
       public void ApplyAllColumnSettings()
       {
          _presenter.AllColumnSettings().OrderBy(x => x.VisibleIndex).Each(applyColumnSettings);
-         _gridView.CollapseAllGroups(); // otherwise an arbitrary group can be open (see MANTIS 2691)
+         _gridView.CollapseAllGroups(); // otherwise an arbitrary group can be open 
       }
 
       /// <summary>

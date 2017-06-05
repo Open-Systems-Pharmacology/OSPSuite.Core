@@ -21,13 +21,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <returns>A list of all the valid units</returns>
       IEnumerable<string> GetUnitsForDimension();
 
-      void Edit(IAxis axis);
+      void Edit(Axis axis);
    }
 
    public class SingleAxisSettingsPresenter : AbstractDisposablePresenter<ISingleAxisSettingsView, ISingleAxisSettingsPresenter>, ISingleAxisSettingsPresenter
    {
       private readonly IDimensionFactory _dimensionFactory;
-      private IAxis _axis;
+      private Axis _axis;
 
       public SingleAxisSettingsPresenter(ISingleAxisSettingsView view, IDimensionFactory dimensionFactory)
          : base(view)
@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dimensionFactory = dimensionFactory;
       }
 
-      public void Edit(IAxis axis)
+      public void Edit(Axis axis)
       {
          _axis = axis;
          _view.BindToSource(axis);
@@ -46,7 +46,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IEnumerable<IDimension> GetDimensionsForEditor(IDimension dimension)
       {
-         return _dimensionFactory.GetAllDimensionsForEditors(dimension);
+         return _dimensionFactory.AllDimensionsForEditors(dimension);
       }
 
       public IEnumerable<string> GetUnitsForDimension()

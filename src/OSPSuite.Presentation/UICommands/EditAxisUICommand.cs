@@ -4,7 +4,7 @@ using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class EditAxisUICommand : ObjectUICommand<IAxis>
+   public class EditAxisUICommand : ObjectUICommand<Axis>
    {
       private readonly IApplicationController _applicationController;
 

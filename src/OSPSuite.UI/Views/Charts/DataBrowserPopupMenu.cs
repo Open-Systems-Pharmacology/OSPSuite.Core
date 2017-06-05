@@ -33,8 +33,14 @@ namespace OSPSuite.UI.Views.Charts
          var ids = new List<string>();
          getChildRowIds(View, GroupRowHandle, ids);
          View.GridControl.Cursor = Cursors.WaitCursor;
-         try { _presenter.RaiseUsedChanged(ids, used); }
-         finally { View.GridControl.Cursor = Cursors.Default; }
+         try
+         {
+            _presenter.RaiseUsedChanged(ids, used);
+         }
+         finally
+         {
+            View.GridControl.Cursor = Cursors.Default;
+         }
       }
 
       private void getChildRowIds(GridView view, int groupRowHandle, List<string> ids)

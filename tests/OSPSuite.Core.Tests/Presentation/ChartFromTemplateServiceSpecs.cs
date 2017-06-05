@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation
    {
       protected IKeyPathMapper _keyPathMapper;
       protected IDimensionFactory _dimensionFactory;
-      protected ICurveChart _chart;
+      protected CurveChart _chart;
       protected List<DataColumn> _dataColumns;
       protected CurveChartTemplate _template;
       protected BaseGrid _baseGrid;
@@ -80,7 +80,7 @@ namespace OSPSuite.Presentation
          sut.InitializeChartFromTemplate(_chart, _dataColumns, _template);
       }
 
-      protected void ValidateCurve(ICurve curve, DataColumn xData, DataColumn yData, string name)
+      protected void ValidateCurve(Curve curve, DataColumn xData, DataColumn yData, string name)
       {
          curve.xData.ShouldBeEqualTo(xData);
          curve.yData.ShouldBeEqualTo(yData);

@@ -1,7 +1,5 @@
 using System.Drawing;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
@@ -29,7 +27,7 @@ namespace OSPSuite.Core.Chart
       yLinear
    }
 
-   public class CurveOptions : Notifier, ILatchable
+   public class CurveOptions : MyNotifier
    {
       private Color _color;
       private InterpolationModes _interpolationMode;
@@ -38,7 +36,6 @@ namespace OSPSuite.Core.Chart
       private Symbols _symbol;
       private bool _visible;
       private AxisTypes _yAxisType;
-      public bool IsLatched { get; set; }
       private bool _visibleInLegend;
       private int? _legendIndex;
       private bool _shouldShowLLOQ;
@@ -53,138 +50,92 @@ namespace OSPSuite.Core.Chart
          _symbol = Symbols.None;
          _lineThickness = 2;
          _shouldShowLLOQ = true;
-         VisibleInLegend = true;
+         _visibleInLegend = true;
       }
 
       public InterpolationModes InterpolationMode
       {
-         get { return _interpolationMode; }
-         set
-         {
-            _interpolationMode = value;
-            OnPropertyChanged();
-         }
+         get => _interpolationMode;
+         set => SetProperty(ref _interpolationMode, value, () => InterpolationMode);
       }
 
       public AxisTypes yAxisType
       {
-         get { return _yAxisType; }
-         set
-         {
-            _yAxisType = value;
-            OnPropertyChanged();
-         }
+         get => _yAxisType;
+         set => SetProperty(ref _yAxisType, value, () => yAxisType);
       }
 
       public bool Visible
       {
-         get { return _visible; }
-         set
-         {
-            _visible = value;
-            OnPropertyChanged();
-         }
+         get => _visible;
+         set => SetProperty(ref _visible, value, () => Visible);
       }
 
       /// <summary>
-      /// Returns if the curve should really be displayed (a curve visible but without any symbols or line is in fact hidden)
+      ///    Returns if the curve should really be displayed (a curve visible but without any symbols or line is in fact hidden)
       /// </summary>
       public bool IsReallyVisible => Visible && (LineStyle != LineStyles.None || Symbol != Symbols.None);
 
       public Color Color
       {
-         get { return _color; }
-         set
-         {
-            _color = value;
-            OnPropertyChanged();
-         }
+         get => _color;
+         set => SetProperty(ref _color, value, () => Color);
       }
 
       public LineStyles LineStyle
       {
-         get { return _lineStyle; }
-         set
-         {
-            _lineStyle = value;
-            OnPropertyChanged();
-         }
+         get => _lineStyle;
+         set => SetProperty(ref _lineStyle, value, () => LineStyle);
       }
 
       public Symbols Symbol
       {
-         get { return _symbol; }
-         set
-         {
-            _symbol = value;
-            OnPropertyChanged();
-         }
+         get => _symbol;
+         set => SetProperty(ref _symbol, value, () => Symbol);
       }
 
       public int LineThickness
       {
-         get { return _lineThickness; }
-         set
-         {
-            _lineThickness = value;
-            OnPropertyChanged();
-         }
+         get => _lineThickness;
+         set => SetProperty(ref _lineThickness, value, () => LineThickness);
       }
 
+      /// <summary>
+      ///    This value indicates relative place in the legend for this curve
+      /// </summary>
       public int? LegendIndex
       {
-         get { return _legendIndex; }
-         set
-         {
-            _legendIndex = value;
-            OnPropertyChanged();
-         }
+         get => _legendIndex;
+         set => SetProperty(ref _legendIndex, value, () => LegendIndex);
       }
 
       public bool ShouldShowLLOQ
       {
-         get { return _shouldShowLLOQ; }
-         set
-         {
-            _shouldShowLLOQ = value;
-            OnPropertyChanged();
-         }
+         get => _shouldShowLLOQ;
+         set => SetProperty(ref _shouldShowLLOQ, value, () => ShouldShowLLOQ);
       }
 
       public bool VisibleInLegend
       {
-         get { return _visibleInLegend; }
-         set
-         {
-            _visibleInLegend = value;
-            OnPropertyChanged();
-         }
+         get => _visibleInLegend;
+         set => SetProperty(ref _visibleInLegend, value, () => VisibleInLegend);
       }
 
       /// <summary>
-      ///    Updates all values defined from the given <paramref name="curveOptions" /> without raising any change event
+      ///    Updates all values defined from the given <paramref name="curveOptions" />
       /// </summary>
       public void UpdateFrom(CurveOptions curveOptions)
       {
-         this.DoWithinLatch(() =>
-         {
-            InterpolationMode = curveOptions.InterpolationMode;
-            yAxisType = curveOptions.yAxisType;
-            Visible = curveOptions.Visible;
-            Color = curveOptions.Color;
-            LineStyle = curveOptions.LineStyle;
-            Symbol = curveOptions.Symbol;
-            LineThickness = curveOptions.LineThickness;
-            VisibleInLegend = curveOptions.VisibleInLegend;
-            LegendIndex = curveOptions.LegendIndex;
-            ShouldShowLLOQ = curveOptions.ShouldShowLLOQ;
-         });
-      }
-
-      protected override void RaisePropertyChanged(string propertyName)
-      {
-         if (IsLatched) return;
-         base.RaisePropertyChanged(propertyName);
+         InterpolationMode = curveOptions.InterpolationMode;
+         yAxisType = curveOptions.yAxisType;
+         Visible = curveOptions.Visible;
+         Color = curveOptions.Color;
+         LineStyle = curveOptions.LineStyle;
+         Symbol = curveOptions.Symbol;
+         LineThickness = curveOptions.LineThickness;
+         VisibleInLegend = curveOptions.VisibleInLegend;
+         LegendIndex = curveOptions.LegendIndex;
+         ShouldShowLLOQ = curveOptions.ShouldShowLLOQ;
       }
 
       public CurveOptions Clone()

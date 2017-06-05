@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using OSPSuite.Core.Chart;
+using System.Windows.Forms;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -19,14 +20,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       where TView : IView<TPresenter>, IViewWithColumnSettings
       where TPresenter : IPresenter
    {
-      protected IItemNotifyCache<string, GridColumnSettings> _columnSettings;
+      protected Cache<string, GridColumnSettings> _columnSettings;
       public event Action<GridColumnSettings> ColumnSettingsChanged = delegate { };
 
       protected PresenterWithColumnSettings(TView view) : base(view)
       {
-         _columnSettings = new ItemNotifyCache<string, GridColumnSettings>(x => x.ColumnName);
+         _columnSettings = new Cache<string, GridColumnSettings>(x => x.ColumnName);
          SetDefaultColumnSettings();
-         _columnSettings.ItemChanged += onItemChanged;
       }
 
       public void ApplyAllColumnSettings()
@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onItemChanged(object sender, ItemChangedEventArgs args)
       {
-         ColumnSettingsChanged(args.Item as GridColumnSettings); //sender is the cache
+         //TODO ColumnSettingsChanged(args.Item as GridColumnSettings); //sender is the cache
       }
 
       protected abstract void SetDefaultColumnSettings();

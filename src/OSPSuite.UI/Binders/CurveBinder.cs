@@ -3,147 +3,129 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
-using DevExpress.Utils.Design;
 using DevExpress.XtraCharts;
-using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Utility.Extensions;
+using Axis = OSPSuite.Core.Chart.Axis;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.UI.Binders
 {
-   /// <summary>
-   ///    Adapter from Curve and its two Axes (DataChart.Data) to a Series and SeriesView (DevExpress.XtraCharts).
-   /// </summary>
-   internal class CurveAdapter : ICurveAdapter
+   internal abstract class CurveBinder : ICurveBinder
    {
-      public static FillMode SeriesMarkerFillMode = FillMode.Solid;
-      private ICache<AxisTypes, IAxisAdapter> _axisAdapters;
-      private readonly IAxis _xAxis;
-      private IAxis _yAxis;
+      private readonly ChartControl _chartControl;
+      private readonly AxisYBase _axisView;
+      private readonly DataMode _dataMode;
+      private readonly FillMode SeriesMarkerFillMode = FillMode.Solid;
+      private readonly Axis _xAxis;
+      private readonly Axis _yAxis;
 
       private readonly DataTable _dataTable;
-      private readonly List<Series> _series;
+      protected readonly List<Series> _series;
+      private readonly AxisTypes _yAxisType;
 
       private const string X = "X";
-      private const string Y = "Y";
+      protected const string Y = "Y";
       private const string Y2 = "Y2";
       private const string LOW = "Low";
       private const string HIGH = "High";
       private const string LLOQ_SUFFIX = "LLOQ";
-      private const string INDEX_OF_VALUE_IN_CURVE = "CurveIndex";
+      private const string INDEX_OF_VALUE_IN_CURVE = "IndexOfValueInCurve";
 
-      public CurveAdapter(ICurve curve, IAxis xAxis, IAxis yAxis)
+      protected CurveBinder(Curve curve, ChartControl chartControl, CurveChart chart, AxisYBase yAxisView, DataMode dataMode)
       {
+         _chartControl = chartControl;
+         _axisView = yAxisView;
+         _dataMode = dataMode;
          Curve = curve;
-         _xAxis = xAxis;
-         _yAxis = yAxis;
-
-         Curve.PropertyChanged += onCurvePropertyChanged;
-         _xAxis.PropertyChanged += onAxisPropertyChanged;
-         _yAxis.PropertyChanged += onAxisPropertyChanged;
-
-         _dataTable = new DataTable(Curve.Name);
+         _xAxis = chart.AxisBy(AxisTypes.X);
+         _yAxis = chart.AxisBy(curve.yAxisType);
+         _yAxisType = curve.yAxisType;
+         _dataTable = new DataTable(Curve.Id);
          _series = new List<Series>();
+
          initializeData();
-
-         refreshView();
-      }
-
-      ~CurveAdapter()
-      {
-         Dispose();
       }
 
       public int? LegendIndex => Curve.LegendIndex;
 
-      public ICurve Curve { get; }
+      public Curve Curve { get; }
 
       public void Dispose()
       {
          _dataTable.Dispose();
-         foreach (var series in Series)
+
+         foreach (var series in _series)
          {
+            _chartControl.Series.Remove(series);
             series.Dispose();
          }
-
-         Curve.PropertyChanged -= onCurvePropertyChanged;
-         _xAxis.PropertyChanged -= onAxisPropertyChanged;
-         _yAxis.PropertyChanged -= onAxisPropertyChanged;
       }
 
       private void initializeData()
       {
-         var yColumnNames = createData();
+         createData();
          refreshData();
-         createAndBindSeries(yColumnNames);
+         createAndBindSeries();
       }
 
-      private string getLegendText()
+      /// <summary>
+      ///    Implementation specific  Y columns to be added to the chart. Y always be added
+      /// </summary>
+      protected abstract IReadOnlyList<string> YColumnNames { get; }
+
+      private void createData()
       {
-         var legendText = !string.IsNullOrEmpty(Curve.Name) ? Curve.Name : Error.CurveNameMissing;
-         if (_axisAdapters == null || _axisAdapters.Count(x => x.Visible) <= 2)
-            return legendText;
+//         switch (dataMode)
+//         {
+//            case DataModes.SingleValue:
+//               yColumnNames.Add(Y);
+//               break;
+//
+//            case DataModes.StdDevG:
+//               yColumnNames.Add(LOW);
+//               yColumnNames.Add(HIGH);
+//               yColumnNames.Add(Y);
+//               yColumnNames.Add(Y2);
+//               break;
+//
+//            case DataModes.StdDevA:
+//               yColumnNames.Add(LOW);
+//               yColumnNames.Add(HIGH);
+//               yColumnNames.Add(Y);
+//               yColumnNames.Add(Y2);
+//               break;
+//
+//            case DataModes.StdDevGPop:
+//               yColumnNames.Add(LOW);
+//               yColumnNames.Add(HIGH);
+//               yColumnNames.Add(Y);
+//               break;
+//
+//            case DataModes.StdDevAPop:
+//               yColumnNames.Add(LOW);
+//               yColumnNames.Add(HIGH);
+//               yColumnNames.Add(Y);
+//               break;
+//         }
 
-         return $"({Curve.yAxisType}) {legendText}";
-      }
-
-      private IEnumerable<string> createData()
-      {
-         IList<string> yColumnNames = new List<string>();
-
-         switch (dataMode)
-         {
-            case DataModes.Invalid:
-               throw new InvalidArgumentException("Invalid RelatedColumns for " + Curve.yData.Name);
-
-            case DataModes.SingleValue:
-               yColumnNames.Add(Y);
-               break;
-
-            case DataModes.StdDevG:
-               yColumnNames.Add(LOW);
-               yColumnNames.Add(HIGH);
-               yColumnNames.Add(Y);
-               yColumnNames.Add(Y2);
-               break;
-
-            case DataModes.StdDevA:
-               yColumnNames.Add(LOW);
-               yColumnNames.Add(HIGH);
-               yColumnNames.Add(Y);
-               yColumnNames.Add(Y2);
-               break;
-
-            case DataModes.StdDevGPop:
-               yColumnNames.Add(LOW);
-               yColumnNames.Add(HIGH);
-               yColumnNames.Add(Y);
-               break;
-
-            case DataModes.StdDevAPop:
-               yColumnNames.Add(LOW);
-               yColumnNames.Add(HIGH);
-               yColumnNames.Add(Y);
-               break;
-         }
-
+         //Always added for each curve
          _dataTable.AddColumn<float>(X);
-         _dataTable.AddColumns<float>(yColumnNames);
+
+         _dataTable.AddColumns<float>(YColumnNames);
 
          if (HasLLOQ)
             _dataTable.AddColumns<float>(LLOQ_SUFFIX);
 
          _dataTable.AddColumn<int>(INDEX_OF_VALUE_IN_CURVE);
-
-         return yColumnNames;
       }
 
       public bool HasLLOQ => Curve.yData.DataInfo.LLOQ.HasValue;
@@ -160,26 +142,37 @@ namespace OSPSuite.UI.Binders
          }
       }
 
-      private void createAndBindSeries(IEnumerable<string> yColumnNames)
+      private void createAndBindSeries()
       {
-         var series = createSeries(Curve.Id, ViewType.ScatterLine, yColumnNames.ToArray());
+         var series = createSeries(Curve.Id, ViewType.ScatterLine, YColumnNames.ToArray());
 
-         if (dataMode == DataModes.StdDevA || dataMode == DataModes.StdDevG)
-         {
-            //add additional series for points and line and upper and lower markers
-            series.ShowInLegend = Curve.VisibleInLegend;
-            createPointLineSeries();
-            createUpperPointSeries();
-            createLowerPointSeries();
-         }
-
-         if (dataMode == DataModes.StdDevAPop || dataMode == DataModes.StdDevGPop)
-         {
-            createPointLineSeries();
-         }
+         PopulateSeries(series);
 
          if (HasLLOQ)
             createLowerLimitOfQuantificationSeries();
+         //
+         //         if (dataMode == DataModes.StdDevA || dataMode == DataModes.StdDevG)
+         //         {
+         //            //add additional series for points and line and upper and lower markers
+         //            series.ShowInLegend = Curve.VisibleInLegend;
+         //            createPointLineSeries();
+         //            createUpperPointSeries();
+         //            createLowerPointSeries();
+         //         }
+         //
+         //         if (dataMode == DataModes.StdDevAPop || dataMode == DataModes.StdDevGPop)
+         //         {
+         //            createPointLineSeries();
+         //         }
+
+         attachYAxisToSeries();
+
+         _chartControl.Series.AddRange(_series.ToArray());
+      }
+
+      protected virtual void PopulateSeries(Series series)
+      {
+         //implement specific behavior of required
       }
 
       private void createPointLineSeries()
@@ -238,7 +231,7 @@ namespace OSPSuite.UI.Binders
          var series = new Series(name, viewType)
          {
             ShowInLegend = false,
-            LegendText = getLegendText(),
+            LegendText = Curve.Name,
             DataSource = _dataTable,
             ArgumentScaleType = ScaleType.Numerical,
             ArgumentDataMember = X,
@@ -270,71 +263,17 @@ namespace OSPSuite.UI.Binders
          scatterLineSeriesView.EnableAntialiasing = DefaultBoolean.True;
       }
 
-      private enum DataModes
+      private void attachYAxisToSeries()
       {
-         Invalid,
-         SingleValue,
-         StdDevA,
-         StdDevG,
-         StdDevAPop,
-         StdDevGPop
-      }
-
-      private DataModes dataMode
-      {
-         get
-         {
-            if (!Curve.yData.RelatedColumns.Any())
-               return DataModes.SingleValue;
-
-            if (Curve.yData.RelatedColumns.Count() > 1)
-               return DataModes.Invalid;
-
-            if (Curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticStdDev))
-               return DataModes.StdDevA;
-
-            if (Curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricStdDev))
-               return DataModes.StdDevG;
-
-            if (Curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
-               return DataModes.StdDevAPop;
-
-            if (Curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
-               return DataModes.StdDevGPop;
-
-            return DataModes.Invalid;
-         }
-      }
-
-      /// <summary>
-      ///    AxisAdapters are used for maintaining of this association as well,
-      ///    but they are not available before the first series is added to the XtraCharts.ChartControl,
-      ///    no AxisView objects are available and so the AxisAdapters.
-      ///    Therefore they have to be attached afterwards, see ChartDisplayPresenter.AddCurve
-      /// </summary>
-      public void AttachAxisAdapters(ICache<AxisTypes, IAxisAdapter> axisAdapters)
-      {
-         _axisAdapters = axisAdapters;
          foreach (var series in _series)
          {
-            series.LegendText = getLegendText();
             var xySeriesView = series.View as XYDiagramSeriesViewBase;
             if (xySeriesView != null)
-               xySeriesView.AxisY = _axisAdapters[Curve.yAxisType].AxisView as AxisYBase;
+               xySeriesView.AxisY = _axisView;
          }
       }
-
-      public IReadOnlyList<Series> Series => _series;
 
       public string Id => Curve.Id;
-
-      public void RefreshLegendText()
-      {
-         foreach (var series in _series)
-         {
-            series.LegendText = getLegendText();
-         }
-      }
 
       public void Refresh()
       {
@@ -344,7 +283,7 @@ namespace OSPSuite.UI.Binders
 
       private void onAxisPropertyChanged(object sender, PropertyChangedEventArgs e)
       {
-         var axis = sender as IAxis;
+         var axis = sender as Axis;
          if (axis == null) return;
 
          if (!axisPropertyIsCoordinateSystemRelevant(e.PropertyName))
@@ -355,41 +294,41 @@ namespace OSPSuite.UI.Binders
 
       private bool axisPropertyIsCoordinateSystemRelevant(string propertyName)
       {
-         return (propertyName == Helpers.Property<IAxis>(a => a.UnitName).Name
-                 || propertyName == Helpers.Property<IAxis>(a => a.Scaling).Name
-                 || propertyName == Helpers.Property<IAxis>(a => a.NumberMode).Name);
+         return (propertyName == Helpers.Property<Axis>(a => a.UnitName).Name
+                 || propertyName == Helpers.Property<Axis>(a => a.Scaling).Name
+                 || propertyName == Helpers.Property<Axis>(a => a.NumberMode).Name);
       }
 
       private void onCurvePropertyChanged(object sender, PropertyChangedEventArgs e)
       {
-         var curve = sender as ICurve;
+         var curve = sender as Curve;
          if (curve == null) return;
 
-         if (e.PropertyName == Helpers.Property<ICurve>(c => c.Name).Name)
+         if (e.PropertyName == Helpers.Property<Curve>(c => c.Name).Name)
          {
             foreach (var s in _series)
             {
-               s.LegendText = getLegendText();
+//               s.LegendText = getLegendText();
             }
          }
-         else if (e.PropertyName == Helpers.Property<ICurve>(c => c.xData).Name
-                  || e.PropertyName == Helpers.Property<ICurve>(c => c.yData).Name
-                  || e.PropertyName == Helpers.Property<ICurve>(c => c.InterpolationMode).Name)
+         else if (e.PropertyName == Helpers.Property<Curve>(c => c.xData).Name
+                  || e.PropertyName == Helpers.Property<Curve>(c => c.yData).Name
+                  || e.PropertyName == Helpers.Property<Curve>(c => c.InterpolationMode).Name)
          {
             refreshData();
          }
-         else if (e.PropertyName == Helpers.Property<ICurve>(c => c.yAxisType).Name)
+         else if (e.PropertyName == Helpers.Property<Curve>(c => c.yAxisType).Name)
          {
             _yAxis.PropertyChanged -= onAxisPropertyChanged;
-            _yAxis = _axisAdapters[curve.yAxisType].Axis;
+//            _yAxis = _axisAdapters[curve.yAxisType].Axis;
             _yAxis.PropertyChanged += onAxisPropertyChanged;
 
             foreach (var series in _series)
             {
-               series.LegendText = getLegendText();
+//               series.LegendText = getLegendText();
                var xySeriesView = series.View as XYDiagramSeriesViewBase;
-               if (xySeriesView != null)
-                  xySeriesView.AxisY = _axisAdapters[curve.yAxisType].AxisView as AxisYBase;
+//               if (xySeriesView != null)
+//                  xySeriesView.AxisY = _axisAdapters[curve.yAxisType].AxisView as AxisYBase;
             }
 
             refreshData();
@@ -400,62 +339,69 @@ namespace OSPSuite.UI.Binders
 
       private void refreshView()
       {
-         var curveOptions = Curve.CurveOptions;
-         var series = _series[0];
-         if (series == null) return;
+         RefreshSeries();
+//
+//         switch (dataMode)
+//         {
+//            case DataModes.Invalid:
+//               throw new InvalidArgumentException($"Invalid RelatedColumns for {Curve.yData.Name}");
+//
+//            case DataModes.SingleValue:
+//
+//               SetSeriesOptionsForSingleValue(series);
+//               break;
+//
+//            case DataModes.StdDevG:
+//            case DataModes.StdDevA:
+//               if (!seriesIsCandleStick(series))
+//               {
+//                  series.ChangeView(ViewType.CandleStick);
+//               }
+//
+//               var financialSeriesView = series.View as FinancialSeriesViewBase;
+//               if (financialSeriesView != null)
+//               {
+//                  financialSeriesView.ReductionOptions.Visible = false;
+//                  financialSeriesView.LevelLineLength = 0;
+//                  financialSeriesView.LineThickness = 1;
+//                  financialSeriesView.Color = curveOptions.Color;
+//               }
+//
+//               updateLinkedSeries(series);
+//               break;
+//
+//            case DataModes.StdDevGPop:
+//            case DataModes.StdDevAPop:
+//               if (!seriesIsRangeArea(series))
+//               {
+//                  series.ChangeView(ViewType.RangeArea);
+//               }
+//
+//               var rangeAreaSeriesView = series.View as RangeAreaSeriesView;
+//               if (rangeAreaSeriesView != null)
+//               {
+//                  rangeAreaSeriesView.Marker1Visibility = DefaultBoolean.False;
+//                  rangeAreaSeriesView.Marker2Visibility = DefaultBoolean.False;
+//                  rangeAreaSeriesView.FillStyle.FillMode = FillMode.Solid;
+//                  rangeAreaSeriesView.Color = curveOptions.Color;
+//                  rangeAreaSeriesView.Transparency = Constants.Population.STD_DEV_CURVE_TRANSPARENCY;
+//               }
+//
+//               updateLinkedSeries(series);
+//               break;
+//         }
 
-         switch (dataMode)
-         {
-            case DataModes.Invalid:
-               throw new InvalidArgumentException($"Invalid RelatedColumns for {Curve.yData.Name}");
-
-            case DataModes.SingleValue:
-
-               setSeriesOptionsForSingleValue(series);
-               break;
-
-            case DataModes.StdDevG:
-            case DataModes.StdDevA:
-               if (!seriesIsCandleStick(series))
-               {
-                  series.ChangeView(ViewType.CandleStick);
-               }
-
-               var financialSeriesView = series.View as FinancialSeriesViewBase;
-               if (financialSeriesView != null)
-               {
-                  financialSeriesView.ReductionOptions.Visible = false;
-                  financialSeriesView.LevelLineLength = 0;
-                  financialSeriesView.LineThickness = 1;
-                  financialSeriesView.Color = curveOptions.Color;
-               }
-
-               updateLinkedSeries(series);
-               break;
-
-            case DataModes.StdDevGPop:
-            case DataModes.StdDevAPop:
-               if (!seriesIsRangeArea(series))
-               {
-                  series.ChangeView(ViewType.RangeArea);
-               }
-
-               var rangeAreaSeriesView = series.View as RangeAreaSeriesView;
-               if (rangeAreaSeriesView != null)
-               {
-                  rangeAreaSeriesView.Marker1Visibility = DefaultBoolean.False;
-                  rangeAreaSeriesView.Marker2Visibility = DefaultBoolean.False;
-                  rangeAreaSeriesView.FillStyle.FillMode = FillMode.Solid;
-                  rangeAreaSeriesView.Color = curveOptions.Color;
-                  rangeAreaSeriesView.Transparency = Constants.Population.STD_DEV_CURVE_TRANSPARENCY;
-               }
-
-               updateLinkedSeries(series);
-               break;
-         }
-
+         updateSeriesCaption();
          setLowerLimitOfQuantificationOptions();
+         ShowCurveInLegend(Curve.VisibleInLegend);
       }
+
+      private void updateSeriesCaption()
+      {
+         _series.Each(s => s.LegendText = Curve.Name);
+      }
+
+      protected abstract void RefreshSeries();
 
       private void updateLinkedSeries(Series series)
       {
@@ -471,7 +417,7 @@ namespace OSPSuite.UI.Binders
 
          //If we are dealing with more than one series, series at index 1 represents the series we need to deal with
          if (_series.Count > 1)
-            setSeriesOptionsForSingleValue(_series[1]);
+            SetSeriesOptionsForSingleValue(_series[1]);
       }
 
       private void setLowerLimitOfQuantificationOptions()
@@ -504,9 +450,9 @@ namespace OSPSuite.UI.Binders
       private bool seriesIsRangeArea(Series series) => seriesIs<RangeAreaSeriesView>(series);
       private bool seriesIsCandleStick(Series series) => seriesIs<CandleStickSeriesView>(series);
 
-      private bool seriesIs<TSeries>(Series series) where TSeries : SeriesViewBase => series.View.GetType() == typeof (TSeries);
+      private bool seriesIs<TSeries>(Series series) where TSeries : SeriesViewBase => series.View.GetType() == typeof(TSeries);
 
-      private void setSeriesOptionsForSingleValue(Series series)
+      protected void SetSeriesOptionsForSingleValue(Series series)
       {
          var curveOptions = Curve.CurveOptions;
 
@@ -523,7 +469,7 @@ namespace OSPSuite.UI.Binders
             xySeriesView.Color = curveOptions.Color;
 
          var pointSeriesView = series.View as PointSeriesView;
-         if (pointSeriesView != null)  
+         if (pointSeriesView != null)
          {
             pointSeriesView.PointMarkerOptions.Kind = mapFrom(curveOptions.Symbol);
             pointSeriesView.PointMarkerOptions.Size = DataChartConstants.Display.SeriesMarkerSize + Curve.LineThickness * Curve.LineThickness;
@@ -589,12 +535,7 @@ namespace OSPSuite.UI.Binders
 
       private void refreshData()
       {
-         string dataErrorMessage = "";
-
          _dataTable.Clear();
-         var mode = dataMode;
-         if (mode == DataModes.Invalid)
-            throw new InvalidArgumentException("Invalid RelatedColumns for " + Curve.yData.Name);
 
          if (!dimensionsConsistentToAxisUnits()) return; //show no values
 
@@ -603,7 +544,7 @@ namespace OSPSuite.UI.Binders
          var xUnit = xDimension.Unit(_xAxis.UnitName);
          var yUnit = yDimension.Unit(_yAxis.UnitName);
          var xData = Curve.xData;
-         var yData = activeYData();
+         var yData = ActiveYData;
          var baseGrid = activeBaseGrid(xData, yData);
 
          // works for different base grids
@@ -618,92 +559,81 @@ namespace OSPSuite.UI.Binders
                if (!isValidXValue(x) || !isValidYValue(y))
                   continue;
 
-               //float baseValue = rawBaseValue;
                var row = _dataTable.NewRow();
-               DataColumn relatedColumn;
-               double stdDev;
                row[X] = x;
-               row[INDEX_OF_VALUE_IN_CURVE] = baseGrid.Values.ToList().IndexOf(baseValue);
+               row[Y] = y;
+               row[INDEX_OF_VALUE_IN_CURVE] = baseGrid.IndexOf(baseValue);
+
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
-               row[Y] = y;
 
-               switch (mode)
-               {
-                  case DataModes.SingleValue:
-                     break;
-                  case DataModes.StdDevA:
-                     relatedColumn = yData.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
-                     stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, relatedColumn.GetValue(baseValue));
-                     if (!isValidValue(stdDev))
-                        stdDev = 0;
 
-                     row[HIGH] = y + stdDev;
-                     row[LOW] = y - stdDev;
-                     row[Y2] = y;
-
-                     if (!isValidYValue(y - stdDev))
-                        row[LOW] = y;
-
-                     break;
-                  case DataModes.StdDevG:
-                     relatedColumn = yData.GetRelatedColumn(AuxiliaryType.GeometricStdDev);
-                     stdDev = relatedColumn.GetValue(baseValue);
-                     if (!isValidValue(stdDev) || stdDev == 0)
-                        stdDev = 1;
-
-                     if (!isValidYValue(y / stdDev))
-                        continue;
-
-                     row[LOW] = y / stdDev;
-                     row[HIGH] = y * stdDev;
-                     row[Y2] = y;
-
-                     break;
-                  case DataModes.StdDevAPop:
-                     stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, Curve.yData.GetValue(baseValue));
-                     if (!isValidValue(stdDev))
-                        stdDev = 0;
-
-                     if (!isValidYValue(y - stdDev))
-                        continue;
-
-                     row[LOW] = y - stdDev;
-                     row[HIGH] = y + stdDev;
-
-                     break;
-                  case DataModes.StdDevGPop:
-                     stdDev = Curve.yData.GetValue(baseValue);
-                     if (!isValidValue(stdDev) || stdDev == 0)
-                        stdDev = 1;
-
-                     if (!isValidYValue(y / stdDev))
-                        continue;
-
-                     row[LOW] = y / stdDev;
-                     row[HIGH] = y * stdDev;
-                     break;
-                  default:
-                     throw new InvalidArgumentException("Invalid RelatedColumns for " + yData.Name);
-               }
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue);
+//               switch (mode)
+//               {
+//                  case DataModes.SingleValue:
+//                     break;
+//                  case DataModes.StdDevA:
+//                     relatedColumn = yData.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
+//                     stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, relatedColumn.GetValue(baseValue));
+//                     if (!isValidValue(stdDev))
+//                        stdDev = 0;
+//
+//                     row[HIGH] = y + stdDev;
+//                     row[LOW] = y - stdDev;
+//                     row[Y2] = y;
+//
+//                     if (!isValidYValue(y - stdDev))
+//                        row[LOW] = y;
+//
+//                     break;
+//                  case DataModes.StdDevG:
+//                     relatedColumn = yData.GetRelatedColumn(AuxiliaryType.GeometricStdDev);
+//                     stdDev = relatedColumn.GetValue(baseValue);
+//                     if (!isValidValue(stdDev) || stdDev == 0)
+//                        stdDev = 1;
+//
+//                     if (!isValidYValue(y / stdDev))
+//                        continue;
+//
+//                     row[LOW] = y / stdDev;
+//                     row[HIGH] = y * stdDev;
+//                     row[Y2] = y;
+//
+//                     break;
+//                  case DataModes.StdDevAPop:
+//                     stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, Curve.yData.GetValue(baseValue));
+//                     if (!isValidValue(stdDev))
+//                        stdDev = 0;
+//
+//                     if (!isValidYValue(y - stdDev))
+//                        continue;
+//
+//                     row[LOW] = y - stdDev;
+//                     row[HIGH] = y + stdDev;
+//
+//                     break;
+//                  case DataModes.StdDevGPop:
+//                     stdDev = Curve.yData.GetValue(baseValue);
+//                     if (!isValidValue(stdDev) || stdDev == 0)
+//                        stdDev = 1;
+//
+//                     if (!isValidYValue(y / stdDev))
+//                        continue;
+//
+//                     row[LOW] = y / stdDev;
+//                     row[HIGH] = y * stdDev;
+//                     break;
+//                  default:
+//                     throw new InvalidArgumentException("Invalid RelatedColumns for " + yData.Name);
+//               }
 
                _dataTable.Rows.Add(row);
             }
             catch (ArgumentOutOfRangeException)
             {
+               //can  happen when plotting X vs Y and using different base grid
             }
-            catch (Exception ex)
-            {
-               dataErrorMessage = ex.Message;
-            }
-         }
-
-         foreach (var series in _series)
-         {
-            series.LegendText = getLegendText();
-
-            if (!string.IsNullOrEmpty(dataErrorMessage))
-               series.LegendText = $"{series.LegendText}\n{dataErrorMessage}";
          }
 
          if (_xAxis.NumberMode == NumberModes.Relative)
@@ -714,6 +644,8 @@ namespace OSPSuite.UI.Binders
 
          _dataTable.EndLoadData();
       }
+
+      protected abstract void AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue);
 
       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
       {
@@ -726,16 +658,16 @@ namespace OSPSuite.UI.Binders
          throw new ArgumentException("InterpolationMode = " + Curve.InterpolationMode);
       }
 
-      private DataColumn activeYData()
-      {
-         if (dataMode == DataModes.StdDevAPop)
-            return Curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop);
-
-         if (dataMode == DataModes.StdDevGPop)
-            return Curve.yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop);
-
-         return Curve.yData;
-      }
+      protected abstract DataColumn ActiveYData { get; }
+//      {
+//         if (dataMode == DataModes.StdDevAPop)
+//            return Curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop);
+//
+//         if (dataMode == DataModes.StdDevGPop)
+//            return Curve.yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop);
+//
+//         return Curve.yData;
+//      }
 
       private bool isValidXValue(double x)
       {
@@ -747,7 +679,7 @@ namespace OSPSuite.UI.Binders
          return isValidAxisValue(y, _yAxis);
       }
 
-      private bool isValidAxisValue(double value, IAxis axis)
+      private bool isValidAxisValue(double value, Axis axis)
       {
          if (!isValidValue(value))
             return false;
@@ -762,7 +694,7 @@ namespace OSPSuite.UI.Binders
 
       private void setRelativeValues(string columnName)
       {
-         var max = getMax(columnName);
+         var max = GetMax(columnName);
          if (max <= 0) return;
 
          foreach (DataRow row in _dataTable.Rows)
@@ -773,27 +705,32 @@ namespace OSPSuite.UI.Binders
             if (columnName != Y)
                continue;
 
-            switch (dataMode)
-            {
-               case DataModes.StdDevG:
-               case DataModes.StdDevA:
-                  if (row[Y2] != DBNull.Value)
-                     row[Y2] = (float) row[Y2] / max;
-                  if (row[LOW] != DBNull.Value)
-                     row[LOW] = (float) row[LOW] / max;
-                  if (row[HIGH] != DBNull.Value)
-                     row[HIGH] = (float) row[HIGH] / max;
-                  break;
-               case DataModes.StdDevGPop:
-               case DataModes.StdDevAPop:
-                  if (row[HIGH] != DBNull.Value)
-                     row[HIGH] = (float) row[HIGH] / max;
-                  break;
-            }
+            SetRelatedRelativeValuesForRow(row, max);
+
+
+//            switch (dataMode)
+//            {
+//               case DataModes.StdDevG:
+//               case DataModes.StdDevA:
+//                  if (row[Y2] != DBNull.Value)
+//                     row[Y2] = (float) row[Y2] / max;
+//                  if (row[LOW] != DBNull.Value)
+//                     row[LOW] = (float) row[LOW] / max;
+//                  if (row[HIGH] != DBNull.Value)
+//                     row[HIGH] = (float) row[HIGH] / max;
+//                  break;
+//               case DataModes.StdDevGPop:
+//               case DataModes.StdDevAPop:
+//                  if (row[HIGH] != DBNull.Value)
+//                     row[HIGH] = (float) row[HIGH] / max;
+//                  break;
+//            }
          }
       }
 
-      private float getMax(string columnName)
+      protected abstract void SetRelatedRelativeValuesForRow(DataRow row, float max);
+
+      protected virtual float GetMax(string columnName)
       {
          float max = 0;
          DataRow maxRow = null;
@@ -809,13 +746,15 @@ namespace OSPSuite.UI.Binders
                maxRow = row;
             }
          }
-         if (columnName == Y && maxRow != null)
-         {
-            if (dataMode == DataModes.StdDevAPop)
-               max = ((float) maxRow[LOW] + (float) maxRow[HIGH]) / 2;
-            if (dataMode == DataModes.StdDevGPop)
-               max = (float) Math.Sqrt(((float) maxRow[LOW]) * ((float) maxRow[HIGH]));
-         }
+
+         //TODO OVERRIDE IN CurveBinder for STDDevGPOP and STDDevvAPOP
+//         if (columnName == Y && maxRow != null)
+//         {
+//            if (dataMode == DataModes.StdDevAPop)
+//               max = ((float) maxRow[LOW] + (float) maxRow[HIGH]) / 2;
+//            if (dataMode == DataModes.StdDevGPop)
+//               max = (float) Math.Sqrt(((float) maxRow[LOW]) * ((float) maxRow[HIGH]));
+//         }
          return max;
       }
 
@@ -832,7 +771,7 @@ namespace OSPSuite.UI.Binders
 
       private void updateSeriesVisibility(bool visible)
       {
-         Series.Each(s => s.Visible = visible);
+         _series.Each(s => s.Visible = visible);
       }
 
       public void ShowCurveInLegend(bool visibleInLegend)
@@ -841,8 +780,6 @@ namespace OSPSuite.UI.Binders
             setLegendVisibilityForCandleStickView(visibleInLegend);
          else
             _series[0].ShowInLegend = visibleInLegend;
-
-         refreshView();
       }
 
       private bool isCandleStickView()
@@ -863,6 +800,12 @@ namespace OSPSuite.UI.Binders
       public int OriginalCurveIndexForRow(DataRow row)
       {
          return (int) row[INDEX_OF_VALUE_IN_CURVE];
+      }
+
+      public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType)
+      {
+         return _dataMode == dataMode &&
+                _yAxisType == yAxisType;
       }
    }
 }

@@ -15,15 +15,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public interface IParameterIdentificationErrorHistoryFeedbackPresenter : IParameterIdentificationRunFeedbackPresenter
    {
+      CurveChart Chart { get; }
    }
 
    public class ParameterIdentificationErrorHistoryFeedbackPresenter : AbstractPresenter<IParameterIdentificationErrorHistoryFeedbackView, IParameterIdentificationErrorHistoryFeedbackPresenter>, IParameterIdentificationErrorHistoryFeedbackPresenter
    {
       private readonly IChartDisplayPresenter _chartDisplayPresenter;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly CurveChart _chart;
       private DataRepository _errorRepository;
       private DataColumn _errorColumn;
+      public CurveChart Chart { get; }
 
       public ParameterIdentificationErrorHistoryFeedbackPresenter(IParameterIdentificationErrorHistoryFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory) : base(view)
       {
@@ -31,9 +32,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _dimensionFactory = dimensionFactory;
          _view.AddChartView(_chartDisplayPresenter.View);
          AddSubPresenters(_chartDisplayPresenter);
-         _chart = new CurveChart().WithAxes();
-         _chart.Title = Captions.ParameterIdentification.ErrorHistory;
-         _chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
+         Chart = new CurveChart().WithAxes();
+         Chart.Title = Captions.ParameterIdentification.ErrorHistory;
+         Chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
       }
 
       public void EditParameterIdentification(ParameterIdentification parameterIdentification)
@@ -52,17 +53,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             curve.VisibleInLegend = false;
          });
 
-         _chart.Axes[AxisTypes.X].Caption = Captions.ParameterIdentification.NumberOfEvaluations;
-         _chart.Axes[AxisTypes.Y].Caption = Captions.ParameterIdentification.TotalError;
-         _chart.Axes[AxisTypes.Y].Scaling = Scalings.Linear;
+         Chart.AxisBy(AxisTypes.X).Caption = Captions.ParameterIdentification.NumberOfEvaluations;
+         Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.TotalError;
+         Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
 
-         _chartDisplayPresenter.DataSource = _chart;
-         _chartDisplayPresenter.View.SetFontAndSizeSettings(_chart.FontAndSize);
+         _chartDisplayPresenter.Edit(Chart);
+         _chartDisplayPresenter.View.SetFontAndSizeSettings(Chart.FontAndSize);
       }
 
-      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, ICurve> action=null)
+      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action=null)
       {
-         _chart.AddCurvesFor(dataRepository, x => x.Name, _dimensionFactory,  action);
+         Chart.AddCurvesFor(dataRepository, x => x.Name, _dimensionFactory,  action);
       }
 
       public void ClearReferences()
@@ -71,8 +72,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void ResetFeedback()
       {
-         _chart.Clear();
-         _chartDisplayPresenter.DataSource = null;
+         Chart.Clear();
+         _chartDisplayPresenter.Clear();
       }
 
       public void UpdateFeedback(ParameterIdentificationRunState runState)

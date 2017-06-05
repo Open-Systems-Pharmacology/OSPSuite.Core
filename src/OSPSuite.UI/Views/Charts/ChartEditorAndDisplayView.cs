@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Windows.Forms;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views;
@@ -9,9 +8,9 @@ using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
-   public partial class ChartEditorAndDisplayControl : BaseUserControl, IChartEditorAndDisplayControl
+   public partial class ChartEditorAndDisplayView : BaseUserControl, IChartEditorAndDisplayView
    {
-      public ChartEditorAndDisplayControl()
+      public ChartEditorAndDisplayView()
       {
          InitializeComponent();
 
@@ -38,9 +37,9 @@ namespace OSPSuite.UI.Views.Charts
          _contChartEditor.FillWith(view);
       }
 
-      public void AddDisplay(Control chartDisplayControl)
+      public void AddDisplay(IView view)
       {
-         _pnlChartDisplay.FillWith(chartDisplayControl);
+         _pnlChartDisplay.FillWith(view);
       }
 
       private MemoryStream streamFromString(string stringToConvert)

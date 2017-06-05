@@ -1,8 +1,6 @@
 ﻿using System;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
@@ -10,6 +8,9 @@ using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Extensions;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
@@ -26,11 +27,11 @@ namespace OSPSuite.UI.Views.Charts
       private readonly RepositoryItemComboBox _numberModeRepository;
       private readonly RepositoryItemComboBox _scalingRepository;
       private readonly RepositoryItemComboBox _unitRepository;
-      private readonly RepositoryItemComboBox _lineStyleRepository; 
+      private readonly RepositoryItemComboBox _lineStyleRepository;
       private readonly RepositoryItemColorEdit _colorRepository;
       private readonly RepositoryItemButtonEdit _deleteButtonRepository;
       private readonly RepositoryItemButtonEdit _addButtonRepository;
-      private GridViewBinder<IAxis> _gridBinderAxes;
+      private GridViewBinder<Axis> _gridBinderAxes;
 
       public AxisSettingsView()
       {
@@ -63,69 +64,37 @@ namespace OSPSuite.UI.Views.Charts
       public override void InitializeBinding()
       {
          // initialize RepositoryItems
-         _numberModeRepository.Items.AddRange(Enum.GetValues(typeof (NumberModes)));
+         _numberModeRepository.Items.AddRange(Enum.GetValues(typeof(NumberModes)));
          _lineStyleRepository.Items.AddRange(Enum.GetValues(typeof(LineStyles)));
 
-         _gridBinderAxes = new GridViewBinder<IAxis>(gridView) {BindingMode = BindingMode.TwoWay};
+         _gridBinderAxes = new GridViewBinder<Axis>(gridView) {BindingMode = BindingMode.TwoWay};
 
-         _gridBinderAxes.Bind(axis => axis.AxisType)
-            .AsReadOnly()
-            .XtraColumn.Tag = AxisOptionsColumns.AxisType.ToString();
+         createColumn(x => x.AxisType, AxisOptionsColumns.AxisType)
+            .AsReadOnly();
 
-         _gridBinderAxes.Bind(axis => axis.Caption)
-            .WithShowInColumnChooser(true)
-            .XtraColumn.Tag = AxisOptionsColumns.Caption.ToString();
+         createColumn(x => x.Caption, AxisOptionsColumns.Caption);
 
-         _gridBinderAxes.Bind(axis => axis.Dimension)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _dimensionRepository)
-            .WithEditorConfiguration(configureDimensionRepository)
-            .XtraColumn.Tag = AxisOptionsColumns.Dimension.ToString();
+         createColumn(x => x.Dimension, AxisOptionsColumns.Dimension, _dimensionRepository)
+            .WithEditorConfiguration(configureDimensionRepository);
 
-         _gridBinderAxes.Bind(axis => axis.UnitName)
-            .WithShowInColumnChooser(true)
-            .WithRepository(axis => _unitRepository)
-            .WithEditorConfiguration(configureUnitEditor)
-            // reset axis, if unit is changed
-            .WithOnChanged(axis => axis.ResetRange())
-            .XtraColumn.Tag = AxisOptionsColumns.UnitName.ToString();
+         createColumn(x => x.UnitName, AxisOptionsColumns.UnitName, _unitRepository, beforeNotificationAction: x => _presenter.UnitChanged(x))
+            .WithEditorConfiguration(configureUnitEditor);
 
-         _gridBinderAxes.Bind(axis => axis.Scaling)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _scalingRepository)
-            .XtraColumn.Tag = AxisOptionsColumns.Scaling.ToString();
+         createColumn(x => x.Scaling, AxisOptionsColumns.Scaling, _scalingRepository);
 
-         _gridBinderAxes.Bind(axis => axis.NumberMode)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _numberModeRepository)
-            .XtraColumn.Tag = AxisOptionsColumns.NumberMode.ToString();
+         createColumn(x => x.NumberMode, AxisOptionsColumns.NumberMode, _numberModeRepository);
 
-         _gridBinderAxes.Bind(axis => axis.Min)
-            .WithShowInColumnChooser(true)
-            .XtraColumn.Tag = AxisOptionsColumns.Min.ToString();
+         createColumn(x => x.Min, AxisOptionsColumns.Min);
 
-         _gridBinderAxes.Bind(axis => axis.Max)
-            .WithShowInColumnChooser(true)
-            .XtraColumn.Tag = AxisOptionsColumns.Max.ToString();
+         createColumn(x => x.Max, AxisOptionsColumns.Max);
 
-         _gridBinderAxes.Bind(axis => axis.GridLines)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _gridLinesRepository)
-            .XtraColumn.Tag = AxisOptionsColumns.GridLines.ToString();
+         createColumn(x => x.GridLines, AxisOptionsColumns.GridLines, _gridLinesRepository);
 
-         _gridBinderAxes.AutoBind(axis => axis.DefaultColor)
-            .WithShowInColumnChooser(true)
-            .WithRepository(axis => _colorRepository)
-            .WithToolTip(ToolTips.DefaultCurveColor)
-            .WithEditorConfiguration(disableForXAxis)
-            .XtraColumn.Tag = AxisOptionsColumns.DefaultColor.ToString();
+         createColumn(x => x.DefaultColor, AxisOptionsColumns.DefaultColor, _colorRepository, toolTip: ToolTips.DefaultCurveColor)
+            .WithEditorConfiguration(disableForXAxis);
 
-         _gridBinderAxes.AutoBind(axis => axis.DefaultLineStyle)
-            .WithShowInColumnChooser(true)
-            .WithRepository(axis => _lineStyleRepository)
-            .WithToolTip(ToolTips.DefaultLineStyle)
-            .WithEditorConfiguration(disableForXAxis)
-            .XtraColumn.Tag = AxisOptionsColumns.DefaultLineStyle.ToString();
+         createColumn(x => x.DefaultLineStyle, AxisOptionsColumns.DefaultLineStyle, _lineStyleRepository, toolTip: ToolTips.DefaultLineStyle)
+            .WithEditorConfiguration(disableForXAxis);
 
          //Add/Delete-column
          _gridBinderAxes.AddUnboundColumn()
@@ -137,15 +106,42 @@ namespace OSPSuite.UI.Views.Charts
          _gridBinderAxes.Changed += NotifyViewChanged;
       }
 
-      private static void disableForXAxis(BaseEdit baseEdit, IAxis axis)
+      private IGridViewBoundColumn<Axis, T> createColumn<T>(Expression<Func<Axis, T>> propertyToBindTo, AxisOptionsColumns axisOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true,  string toolTip = null, Action<Axis> beforeNotificationAction=null)
+      {
+         var column = _gridBinderAxes.Bind(propertyToBindTo)
+            .WithShowInColumnChooser(showInColumnChooser);
+
+         if (beforeNotificationAction != null)
+            column.WithOnValueSet((axis, value) => beforeNotificationAction(axis));
+
+         //Order is important: needs to be done after the beforeNotification if defined.      
+         column.WithOnValueSet((axis,value)=> notifyAxisPropertyChanged(axis));
+
+         if (repositoryItem != null)
+            column.WithRepository(axis => repositoryItem);
+
+         if (toolTip != null)
+            column.WithToolTip(ToolTips.DefaultLineStyle);
+
+         column.XtraColumn.Tag = axisOptionsColumn.ToString();
+
+         return column;
+      }
+
+      private void notifyAxisPropertyChanged(Axis axis)
+      {
+         _presenter.NotifyAxisPropertyChanged(axis);
+      }
+
+      private static void disableForXAxis(BaseEdit baseEdit, Axis axis)
       {
          if (axis.AxisType.IsYAxis()) return;
          baseEdit.Enabled = false;
       }
 
-      private void configureDimensionRepository(BaseEdit baseEdit, IAxis axis)
+      private void configureDimensionRepository(BaseEdit baseEdit, Axis axis)
       {
-         baseEdit.FillComboBoxEditorWith(_presenter.GetDimensions(axis.Dimension));
+         baseEdit.FillComboBoxEditorWith(_presenter.AllDimensions(axis.Dimension));
       }
 
       public void AttachPresenter(IAxisSettingsPresenter presenter)
@@ -154,12 +150,12 @@ namespace OSPSuite.UI.Views.Charts
          base.AttachPresenter(presenter);
       }
 
-      private void configureUnitEditor(BaseEdit baseEdit, IAxis axis)
+      private void configureUnitEditor(BaseEdit baseEdit, Axis axis)
       {
-         baseEdit.FillComboBoxEditorWith(_presenter.GetUnitNamesFor(axis.Dimension));
+         baseEdit.FillComboBoxEditorWith(_presenter.AllUnitNamesFor(axis.Dimension));
       }
 
-      private RepositoryItem getButton(IAxis axis)
+      private RepositoryItem getButton(Axis axis)
       {
          switch (axis.AxisType)
          {
@@ -178,7 +174,7 @@ namespace OSPSuite.UI.Views.Charts
          _gridBinderAxes.Rebind();
       }
 
-      public void BindToSource(ICache<AxisTypes, IAxis> axes)
+      public void BindToSource(IEnumerable<Axis> axes)
       {
          _gridBinderAxes.BindToSource(axes);
          Refresh();
@@ -192,7 +188,7 @@ namespace OSPSuite.UI.Views.Charts
       private void deleteButtonClick()
       {
          var focusedAxis = _gridBinderAxes.FocusedElement;
-         _presenter.RemoveAxis(focusedAxis.AxisType);
+         _presenter.RemoveAxis(focusedAxis);
       }
 
       private void addButtonClick()

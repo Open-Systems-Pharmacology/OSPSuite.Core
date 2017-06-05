@@ -7,7 +7,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public interface ISingleAxisSettingsModalPresenter : IDisposablePresenter
    {
       void ShowView();
-      void Edit(IAxis axis);
+      void Edit(Axis axis);
    }
 
    public class SingleAxisSettingsModalPresenter : AbstractDisposableContainerPresenter<ISingleAxisSettingsModalView, ISingleAxisSettingsModalPresenter>, ISingleAxisSettingsModalPresenter
@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _singleAxisSettingsPresenter = singleAxisSettingsPresenter;
       }
 
-      public void Edit(IAxis axis)
+      public void Edit(Axis axis)
       {
          _singleAxisSettingsPresenter.Edit(axis);
       }

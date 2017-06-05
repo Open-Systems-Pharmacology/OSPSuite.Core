@@ -5,6 +5,6 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface ISingleCurveSettingsView : IView<ISingleCurveSettingsPresenter>
    {
-      void BindTo(ICurve curve);
+      void BindTo(Curve curve);
    }
 }

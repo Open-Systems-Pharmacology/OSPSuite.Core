@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         _result = sut.GetFontFamilyNames();
+         _result = sut.AllFontFamilyNames;
       }
 
       [Observation]

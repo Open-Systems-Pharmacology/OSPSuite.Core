@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.UI.Views.Charts
 {
-   public partial class ChartEditorAndDisplayControl
+   public partial class ChartEditorAndDisplayView
   {
     /// <summary> 
     /// Required designer variable.
@@ -148,7 +148,7 @@
          this.Controls.Add(this.barDockControlRight);
          this.Controls.Add(this.barDockControlBottom);
          this.Controls.Add(this.barDockControlTop);
-         this.Name = "ChartEditorAndDisplayControl";
+         this.Name = "ChartEditorAndDisplayView";
          this.Size = new System.Drawing.Size(901, 619);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._dockManager)).EndInit();

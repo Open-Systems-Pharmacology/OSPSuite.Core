@@ -22,7 +22,7 @@ namespace OSPSuite.Core
 
    public class When_mapping_a_curve_chart_to_a_curve_chart_template : concern_for_CurveChartToCurveChartTemplateMapper
    {
-      private ICurveChart _curveChart;
+      private CurveChart _curveChart;
       private IDimensionFactory _dimensionFactory;
       private BaseGrid _xData;
       private DataColumn _yData;
@@ -42,11 +42,13 @@ namespace OSPSuite.Core
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _curveChart = new CurveChart {Name = "This is a chart"};
          _curveChart.FontAndSize.ChartHeight = 500;
-         _curveChart.Axes.Add(new Axis(AxisTypes.X));
+         _curveChart.AddAxis(new Axis(AxisTypes.X));
+         _curveChart.AddAxis(new Axis(AxisTypes.Y));
+         _curveChart.AddAxis(new Axis(AxisTypes.Y2));
          var curve = new Curve();
          curve.SetxData(_xData, _dimensionFactory);
          curve.SetyData(_yData, _dimensionFactory);
-         _curveChart.Curves.Add(curve);
+         _curveChart.AddCurve(curve);
       }
 
       protected override void Because()
@@ -55,11 +57,12 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_return_a_curve_template_containing_the_same_properties_as_the_give_curve()
+      public void should_return_a_curve_template_containing_the_same_properties_as_the_given_curve()
       {
          _curveChartTemplate.IncludeOriginData.ShouldBeEqualTo(_curveChart.IncludeOriginData);
-         _curveChartTemplate.Axes[AxisTypes.X].ShouldNotBeNull();
-         _curveChartTemplate.Axes.Contains(AxisTypes.Y).ShouldBeFalse();
+         _curveChartTemplate.AxisBy(AxisTypes.X).ShouldNotBeNull();
+         _curveChartTemplate.AxisBy(AxisTypes.Y).ShouldNotBeNull();
+         _curveChartTemplate.AxisBy(AxisTypes.Y3).ShouldBeNull();
       }
 
       [Observation]

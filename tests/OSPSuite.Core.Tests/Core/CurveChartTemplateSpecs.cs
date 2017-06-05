@@ -26,7 +26,7 @@ namespace OSPSuite.Core
          base.Context();
          _cloneManager= A.Fake<ICloneManager>();
          _sourceTemplate = new CurveChartTemplate {Name = "TOTO",ChartSettings = {BackColor = Color.Red}};
-         _sourceTemplate.Axes.Add(new Axis(AxisTypes.X));
+         _sourceTemplate.AddAxis(new Axis(AxisTypes.X));
          var curveTemplate = new CurveTemplate{Name = "XX"};
          _cloneCurve = new CurveTemplate();
          _sourceTemplate.Curves.Add(curveTemplate);

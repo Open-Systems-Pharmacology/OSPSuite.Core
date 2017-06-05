@@ -60,8 +60,8 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          _concentrationObservationColumn.Values = Enumerable.Repeat(0f, _concentrationObservationColumn.Values.Count).ToArray();
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
-         _predictedVsObservedChart.Axes[AxisTypes.Y].Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         _predictedVsObservedChart.AxisBy(AxisTypes.Y).Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
       }
 
       [Observation]
@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_dimension_selected_to_plot_identity_curve_should_be_fraction()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(DomainHelperForSpecs.NoDimension());
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(DomainHelperForSpecs.NoDimension());
       }
    }
 
@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_x_axis_should_be_set_to_the_correct_dimension()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.DisplayName.ShouldBeEqualTo(_fractionDimensionForSpecs.DisplayName);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.DisplayName.ShouldBeEqualTo(_fractionDimensionForSpecs.DisplayName);
       }
 
       [Observation]
@@ -192,9 +192,9 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_x_axis_of_the_chart_should_be_updated()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].Dimension);
-         _predictedVsObservedChart.Axes[AxisTypes.X].Scaling.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].Scaling);
-         _predictedVsObservedChart.Axes[AxisTypes.X].UnitName.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].UnitName);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).Dimension);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Scaling.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).Scaling);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).UnitName.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).UnitName);
       }
    }
 
@@ -229,7 +229,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_curve_x_axis_should_have_the_merged_dimension()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(_concentrationObservationColumn.Dimension);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(_concentrationObservationColumn.Dimension);
       }
 
       [Observation]

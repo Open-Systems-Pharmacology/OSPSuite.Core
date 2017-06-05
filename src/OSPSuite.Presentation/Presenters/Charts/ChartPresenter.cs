@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public abstract class ChartPresenter<TChart, TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IChartPresenter<TChart>
       where TView : IView<TPresenter>
       where TPresenter : IPresenter
-      where TChart : IChartWithObservedData
+      where TChart : ChartWithObservedData
    {
       protected readonly ChartPresenterContext _chartPresenterContext;
       protected DefaultPresentationSettings _settings;
@@ -56,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartPresenterContext = chartPresenterContext;
          AddSubPresenters(_chartPresenterContext.ChartEditorAndDisplayPresenter);
          _settings = new DefaultPresentationSettings();
-         _nameProperty = ReflectionHelper.PropertyFor<ICurve, string>(x => x.Name).Name;
+         _nameProperty = ReflectionHelper.PropertyFor<Curve, string>(x => x.Name).Name;
          _chartPresenterContext.ChartEditorAndDisplayPresenter.SetCurveNameDefinition(NameForColumn);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
@@ -83,11 +83,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected void BindChartToEditors()
       {
-         if (Equals(ChartDisplayPresenter.DataSource, Chart))
+         if (Equals(ChartDisplayPresenter.Chart, Chart))
             return;
 
-         ChartDisplayPresenter.DataSource = Chart;
-         ChartEditorPresenter.DataSource = Chart;
+         ChartDisplayPresenter.Edit(Chart);
+         ChartEditorPresenter.Edit(Chart);
 
          AddChartEventHandlers();
       }
@@ -205,8 +205,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void Clear()
       {
-         ChartEditorPresenter.DataSource = null;
-         ChartDisplayPresenter.DataSource = null;
+         ChartEditorPresenter.Clear();
+         ChartDisplayPresenter.Clear();
          ChartEditorPresenter.ColumnSettingsChanged -= columnSettingsChanged;
          ChartEditorPresenter.SetCurveNameDefinition(null);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(null);
@@ -275,17 +275,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected GridColumnSettings Column(BrowserColumns browserColumns)
       {
-         return ChartEditorPresenter.GetDataBrowserColumnSettings(browserColumns);
+         return ChartEditorPresenter.DataBrowserColumnSettingsFor(browserColumns);
       }
 
       protected GridColumnSettings Column(CurveOptionsColumns curveOptionsColumns)
       {
-         return ChartEditorPresenter.GetCurveOptionsColumnSettings(curveOptionsColumns);
+         return ChartEditorPresenter.CurveOptionsColumnSettingsFor(curveOptionsColumns);
       }
 
       protected GridColumnSettings Column(AxisOptionsColumns axisOptionsColumns)
       {
-         return ChartEditorPresenter.GetAxisOptionsColumnSettings(axisOptionsColumns);
+         return ChartEditorPresenter.AxisOptionsColumnSettingsFor(axisOptionsColumns);
       }
 
       protected void ClearButtons()

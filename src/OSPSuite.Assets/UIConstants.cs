@@ -1035,7 +1035,6 @@ namespace OSPSuite.Assets
       public static readonly string SessionDisposed = "Session was disposed";
       public static readonly string OutputMappingHasInconsistentDimension = "Output mapping has inconsistent dimension";
       public static readonly string WeightValueCannotBeNegative = "Weights cannot be negative";
-      public static readonly string CurveNameMissing = "Curve Name is missing";
       public static readonly string DifferentXAxisDimension = "Different from X axis dimension";
       public static readonly string DifferentYAxisDimension = "Different from Y axis dimension";
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
@@ -1263,13 +1262,14 @@ namespace OSPSuite.Assets
          return rowOutOfRange(firstDataRow, lastRow, "first data", sheetName);
       }
 
+      public static string RemoveHigherAxisTypeFirst(string type) => $"Please remove Y-Axis {type} first.";
+
       public static string LastDataRowLessThanFirstDataRow(int dataEndRow, int dataStartRow, string sheetName)
       {
          return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
       }
 
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
-
 
 
       public static class SensitivityAnalysis

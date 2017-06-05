@@ -38,8 +38,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          if (ChartIsBeingCreated)
          {
-            Chart.Axes[AxisTypes.Y].Caption = Captions.ParameterIdentification.Residuals;
-            Chart.Axes[AxisTypes.Y].Scaling = Scalings.Linear;
+            Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.Residuals;
+            Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
          }
 
          UpdateChartFromTemplate();

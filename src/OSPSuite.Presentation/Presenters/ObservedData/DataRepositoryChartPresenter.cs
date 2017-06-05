@@ -49,8 +49,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       private void plotObservedData(DataRepository dataRepository)
       {
          _simpleChartPresenter.PlotObservedData(dataRepository);
-         _simpleChartPresenter.Chart.Axes[AxisTypes.X].GridLines = true;
-         _simpleChartPresenter.Chart.Axes[AxisTypes.Y].GridLines = true;
+         _simpleChartPresenter.Chart.AxisBy(AxisTypes.X).GridLines = true;
+         _simpleChartPresenter.Chart.AxisBy(AxisTypes.Y).GridLines = true;
       }
 
       private bool shouldHandleEvent(ObservedDataEvent eventToHandle)

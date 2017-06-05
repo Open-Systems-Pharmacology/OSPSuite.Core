@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface ISingleCurveSettingsPresenter : IPresenter<ISingleCurveSettingsView>, IDisposablePresenter
    {
-      void Edit(ICurve subject);
+      void Edit(Curve subject);
    }
 
    public class SingleCurveSettingsPresenter : AbstractDisposablePresenter<ISingleCurveSettingsView, ISingleCurveSettingsPresenter>, ISingleCurveSettingsPresenter
@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
       }
 
-      public void Edit(ICurve subject)
+      public void Edit(Curve subject)
       {
          _view.BindTo(subject);
       }

@@ -18,9 +18,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       OutputMapping SelectedOutput { get; set; }
       IEnumerable<OutputMapping> AllOutputs { get; }
+      CurveChart Chart { get; }
    }
 
-   public abstract class ParameterIdentificationChartFeedbackPresenter<TChart> : AbstractPresenter<IParameterIdentificationChartFeedbackView, IParameterIdentificationChartFeedbackPresenter>, IParameterIdentificationRunFeedbackPresenter where TChart : ICurveChart
+   public abstract class ParameterIdentificationChartFeedbackPresenter<TChart> : AbstractPresenter<IParameterIdentificationChartFeedbackView, IParameterIdentificationChartFeedbackPresenter>, IParameterIdentificationRunFeedbackPresenter where TChart : CurveChart
    {
       protected readonly IDimensionFactory _dimensionFactory;
       protected DataColumn _bestColumn;
@@ -33,6 +34,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected readonly IChartDisplayPresenter _chartDisplayPresenter;
       protected readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly OutputMappingByFullOutputPathComparer _outputMappingComparer;
+
+      public CurveChart Chart =>_chart;
 
       protected ParameterIdentificationChartFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory, IDisplayUnitRetriever displayUnitRetriever, TChart chart) : base(view)
       {
@@ -74,7 +77,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public OutputMapping SelectedOutput
       {
-         get { return _selectedOutput; }
+         get => _selectedOutput;
          set
          {
             _selectedOutput = value;
@@ -107,7 +110,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          column.DisplayUnit = _displayUnitRetriever.PreferredUnitFor(column);
       }
 
-      protected abstract void AddCurvesFor(DataRepository repository, Action<DataColumn, ICurve> action);
+      protected abstract void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action);
 
       protected virtual void SelectedOutputChanged()
       {
@@ -134,7 +137,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public virtual void ResetFeedback()
       {
          _chart.Clear();
-         _chartDisplayPresenter.DataSource = null;
+         _chartDisplayPresenter.Clear();
       }
 
       public void UpdateFeedback(ParameterIdentificationRunState runState)

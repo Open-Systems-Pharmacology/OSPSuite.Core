@@ -184,11 +184,12 @@
     <Compile Include="..\..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Binders\AxisAdapter.cs" />
-    <Compile Include="Binders\CurveAdapter.cs" />
+    <Compile Include="Binders\AxisBinder.cs" />
+    <Compile Include="Binders\CurveBinder.cs" />
     <Compile Include="Binders\GridViewColumnUnitsMenuBinder.cs" />
     <Compile Include="Binders\OptimizedParametersBinder.cs" />
     <Compile Include="Binders\PathElementsBinder.cs" />
+    <Compile Include="Binders\SingleValueCurveBinder.cs" />
     <Compile Include="Binders\TokenEditBinder.cs" />
     <Compile Include="Binders\TreeNodeExplorerViewDragDropBinder.cs" />
     <Compile Include="Binders\UnitsMenuBinder.cs" />
@@ -454,8 +455,9 @@
     <Compile Include="RepositoryItems\UxRepositoryItemImageComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\AxisBinderFactory.cs" />
     <Compile Include="Services\ClipboardTask.cs" />
-    <Compile Include="Services\CurveAdapterFactory.cs" />
+    <Compile Include="Services\CurveBinderFactory.cs" />
     <Compile Include="Services\DiagramZoomRectangleService.cs" />
     <Compile Include="Services\DialogCreator.cs" />
     <Compile Include="Services\HourGlass.cs" />
@@ -539,11 +541,11 @@
     <Compile Include="Views\Charts\ChartDisplayView.Designer.cs">
       <DependentUpon>ChartDisplayView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Charts\ChartEditorAndDisplayControl.cs">
+    <Compile Include="Views\Charts\ChartEditorAndDisplayView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Charts\ChartEditorAndDisplayControl.Designer.cs">
-      <DependentUpon>ChartEditorAndDisplayControl.cs</DependentUpon>
+    <Compile Include="Views\Charts\ChartEditorAndDisplayView.Designer.cs">
+      <DependentUpon>ChartEditorAndDisplayView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Charts\ChartEditorView.cs">
       <SubType>UserControl</SubType>
@@ -1250,8 +1252,8 @@
       <DependentUpon>ChartDisplayView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Charts\ChartEditorAndDisplayControl.resx">
-      <DependentUpon>ChartEditorAndDisplayControl.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Charts\ChartEditorAndDisplayView.resx">
+      <DependentUpon>ChartEditorAndDisplayView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Charts\ChartEditorView.resx">

@@ -7,7 +7,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public interface ISingleCurveSettingsModalPresenter : IDisposablePresenter
    {
       void ShowView();
-      void Edit(ICurve curve);
+      void Edit(Curve curve);
    }
 
    public class SingleCurveSettingsModalPresenter : AbstractDisposableContainerPresenter<ISingleCurveSettingsModalView, ISingleCurveSettingsModalPresenter>, ISingleCurveSettingsModalPresenter
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _singleCurveSettingsPresenter = singleCurveSettingsPresenter;
       }
 
-      public void Edit(ICurve curve)
+      public void Edit(Curve curve)
       {
          _singleCurveSettingsPresenter.Edit(curve);
       }

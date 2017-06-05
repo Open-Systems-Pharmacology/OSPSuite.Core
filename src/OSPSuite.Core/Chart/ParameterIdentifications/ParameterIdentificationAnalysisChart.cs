@@ -62,29 +62,32 @@ namespace OSPSuite.Core.Chart.ParameterIdentifications
 
    public class ParameterIdentificationPredictedVsObservedChart : ParameterIdentificationAnalysisChart
    {
+
+      //     TODO REVIEW ALL
       public ParameterIdentificationPredictedVsObservedChart()
       {
          ChartSettings.LegendPosition = LegendPositions.BottomInside;
 
-         Axes.CollectionChanged += (o, e) => addEventHandlerForXAxis(e);
+         //TODO 
+//         Axes.CollectionChanged += (o, e) => addEventHandlerForXAxis(e);
       }
 
-      private void addEventHandlerForXAxis(NotifyCollectionChangedEventArgs e)
+//      private void addEventHandlerForXAxis(NotifyCollectionChangedEventArgs e)
+//      {
+//         if (e.NewItems != null && itemsContainsXAxis(e.NewItems))
+//         {
+//            Axes[AxisTypes.X].PropertyChanged += (o, args) => UpdateAxesVisibility();
+//         }
+//      }
+//
+//      private static bool itemsContainsXAxis(IList axes)
+//      {
+//         return axes.Cast<Axis>().Any(x => x.AxisType == AxisTypes.X);
+//      }
+//
+     public void UpdateAxesVisibility()
       {
-         if (e.NewItems != null && itemsContainsXAxis(e.NewItems))
-         {
-            Axes[AxisTypes.X].PropertyChanged += (o, args) => UpdateAxesVisibility();
-         }
-      }
-
-      private static bool itemsContainsXAxis(IList axes)
-      {
-         return axes.Cast<IAxis>().Any(x => x.AxisType == AxisTypes.X);
-      }
-
-      public void UpdateAxesVisibility()
-      {
-         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(Axes[AxisTypes.X].Dimension)).ToList();
+         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(AxisBy(AxisTypes.X).Dimension)).ToList();
 
          visibleAxes.Each(axis => axis.Visible = true);
          Axes.Except(visibleAxes).Each(axis => axis.Visible = false);

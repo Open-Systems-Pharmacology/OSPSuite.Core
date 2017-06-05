@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -17,104 +18,89 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool ContainsDataColumn(DataColumn dataColumn);
       void RemoveDataColumn(DataColumn dataColumn);
       void ClearDataColumns();
-      IReadOnlyList<string> SelectedDataColumnIds { get; }
 
       /// <summary>
-      /// Sets the Is Used property for each column in the <paramref name="usedDataRepositoryColumns"/> to true
-      /// and sets the remaining columns Is Used to false
+      ///    Sets the Is Used property for each column in the <paramref name="usedDataColumns" /> to true
+      ///    and sets the remaining columns Is Used to false
       /// </summary>
-      /// <param name="usedDataRepositoryColumns">Columns that are used</param>
-      void InitializeIsUsedForColumns(IEnumerable<string> usedDataRepositoryColumns);
+      /// <param name="usedDataColumns">Columns that are used</param>
+      void InitializeIsUsedForColumns(IReadOnlyList<DataColumn> usedDataColumns);
 
       /// <summary>
-      /// Event raised when one or more data repository columns Is Used property changes
+      ///    Event raised when one or more data repository columns Is Used property changes
       /// </summary>
       event EventHandler<UsedChangedEventArgs> UsedChanged;
 
-      void RaiseUsedChanged(IEnumerable<string> dataRepositoryColumnIds, bool used);
+      void RaiseUsedChanged(IEnumerable<DataColumn> dataColumns, bool used);
+      void RaiseUsedChanged(IEnumerable<string> dataColumnIds, bool used);
+
       event DragEventHandler DragOver;
       event DragEventHandler DragDrop;
 
       /// <summary>
-      /// Event raised when the user has changed the selected data
+      ///    Event raised when the user has changed the selected data
       /// </summary>
-      event Action<IEnumerable<string>> SelectedDataChanged;
+      event Action<IReadOnlyList<DataColumn>> SelectedDataChanged;
 
       /// <summary>
-      /// Called when the selected data has changed
+      ///    Called when the selected data has changed
       /// </summary>
-      /// <param name="dataRepositoryColumnIds">A list of data repository columns that are currently selected</param>
-      void UpdateDataSelection(IEnumerable<string> dataRepositoryColumnIds);
+      /// <param name="dataColumnIds">A list of data repository columns that are currently selected</param>
+      void UpdateDataSelection(IReadOnlyList<string> dataColumnIds);
 
       /// <summary>
-      /// For the column Id given, this returns whether or not the data is being used
+      ///    For the column Id given, this returns whether or not the data is being used
       /// </summary>
-      /// <param name="dataRepositoryColumnId">The data column id</param>
+      /// <param name="dataColumn">The data colum</param>
       /// <returns>true if the data is used in the chart otherwise false</returns>
-      bool IsUsed(string dataRepositoryColumnId);
+      bool IsUsed(DataColumn dataColumn);
 
       /// <summary>
-      /// Update the used/not used state for a list of columns
+      ///    Update the used/not used state for a list of columns
       /// </summary>
-      /// <param name="usedDataRepositoryColumnIds">The list of columns</param>
+      /// <param name="usedDataColumns">The list of columns</param>
       /// <param name="usedState">true if the columns should be used, otherwise false</param>
-      void SetUsedState(IEnumerable<string> usedDataRepositoryColumnIds, bool usedState);
+      void SetUsedState(IReadOnlyList<DataColumn> usedDataColumns, bool usedState);
 
       /// <summary>
-      /// Returns the descendant data repoository column ids. Distinct from <see cref="SelectedDataColumnIds"/> because
-      /// this will return all ancestor data from a group row in the data grid
+      ///    Returns the descendant data repoository column ids. Distinct from <see cref="SelectedDataColumns" /> because
+      ///    this will return all ancestor data from a group row in the data grid
       /// </summary>
       /// <returns>all selected rows, either by direct selection, or by parent relationship</returns>
-      IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds{get;}
+      IReadOnlyList<DataColumn> SelectedDescendentDataRepositoryColumns { get; }
+
+      IReadOnlyList<DataColumn> SelectedDataColumns { get; }
    }
 
-   /// <summary>
-   ///    Presenter for DataBrowser component.
-   ///    DataBrowser displays data repository columns as rows in a datatable in a XtraGrid with according
-   ///    filter/grouping/sorting functions.
-   /// </summary>
    internal class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
    {
       private readonly DataColumnsDTO _dataColumnsDTO;
-      public event Action<IEnumerable<string>> SelectedDataChanged;
-      public event EventHandler<UsedChangedEventArgs> UsedChanged;
+      private readonly Cache<string, DataColumn> _dataColumnCache;
+      public event Action<IReadOnlyList<DataColumn>> SelectedDataChanged = delegate { };
+      public event EventHandler<UsedChangedEventArgs> UsedChanged = delegate { };
 
-      public void RaiseUsedChanged(IEnumerable<string> dataRepositoryColumnIds, bool used)
-      {
-         UsedChanged(this, new UsedChangedEventArgs(dataRepositoryColumnIds , used));
-      }
-
-      private void raiseUsedChanged(string dataRepositoryColumnId, bool used)
-      {
-         RaiseUsedChanged(new[] {dataRepositoryColumnId}, used);
-      }
-
-      public DataBrowserPresenter(IDataBrowserView view)
-         : base(view)
+      public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
          _dataColumnsDTO = new DataColumnsDTO();
+         _dataColumnCache = new Cache<string, DataColumn>(x => x.Id);
          _view.SetDataSource(_dataColumnsDTO);
-         SelectedDataChanged += delegate {  };
       }
 
       protected override void SetDefaultColumnSettings()
       {
          AddColumnSettings(BrowserColumns.RepositoryName).WithCaption(Captions.Chart.DataBrowser.RepositoryName).GroupIndex = 0;
-
          AddColumnSettings(BrowserColumns.Simulation).WithCaption(Captions.SimulationPath);
          AddColumnSettings(BrowserColumns.TopContainer).WithCaption(Captions.TopContainerPath);
          AddColumnSettings(BrowserColumns.Container).WithCaption(Captions.ContainerPath);
          AddColumnSettings(BrowserColumns.BottomCompartment).WithCaption(Captions.BottomCompartmentPath);
          AddColumnSettings(BrowserColumns.Molecule).WithCaption(Captions.MoleculePath);
          AddColumnSettings(BrowserColumns.Name).WithCaption(Captions.NamePath);
-
          AddColumnSettings(BrowserColumns.BaseGridName).WithCaption(Captions.Chart.DataBrowser.BaseGridName).WithVisible(false);
          AddColumnSettings(BrowserColumns.ColumnId).WithCaption(Captions.Chart.DataBrowser.ColumnId).WithVisible(false);
          AddColumnSettings(BrowserColumns.OrderIndex).WithCaption(Captions.Chart.DataBrowser.OrderIndex).WithVisible(false);
          AddColumnSettings(BrowserColumns.DimensionName).WithCaption(Captions.Chart.DataBrowser.DimensionName);
          AddColumnSettings(BrowserColumns.QuantityType).WithCaption(Captions.Chart.DataBrowser.QuantityType).WithVisible(false);
          AddColumnSettings(BrowserColumns.QuantityName).WithCaption(Captions.Chart.DataBrowser.QuantityName);
-
          AddColumnSettings(BrowserColumns.HasRelatedColumns).WithCaption(Captions.Chart.DataBrowser.HasRelatedColumns).WithVisible(false);
          AddColumnSettings(BrowserColumns.Origin).WithCaption(Captions.Chart.DataBrowser.Origin).WithVisible(false);
          AddColumnSettings(BrowserColumns.Date).WithCaption(Captions.Chart.DataBrowser.Date).WithVisible(false);
@@ -130,6 +116,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void AddDataColumn(DataColumn dataColumn)
       {
+         _dataColumnCache.Add(dataColumn);
          _dataColumnsDTO.AddDataColumn(dataColumn);
       }
 
@@ -140,66 +127,85 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public bool ContainsDataColumn(DataColumn dataColumn)
       {
-         return _dataColumnsDTO.ContainsDataColumn(dataColumn.Id);
+         return _dataColumnCache.Contains(dataColumn.Id);
       }
 
       public void RemoveDataColumn(DataColumn dataColumn)
       {
-         if (!_dataColumnsDTO.Contains(dataColumn.Id)) return;
-         raiseUsedChanged(dataColumn.Id, false);
-         _dataColumnsDTO.RemoveDataColumn(dataColumn.Id);
+         if (!ContainsDataColumn(dataColumn)) return;
+
+         _dataColumnCache.Remove(dataColumn.Id);
+         _dataColumnsDTO.RemoveDataColumn(dataColumn);
+         raiseUsedChanged(dataColumn, false);
       }
 
       public void ClearDataColumns()
       {
-         foreach (var dataColumnId in _dataColumnsDTO.GetUsedDataRepositoryColumnIds())
-            raiseUsedChanged(dataColumnId, false);
+         foreach (var dataColumn in _dataColumnCache)
+         {
+            raiseUsedChanged(dataColumn, false);
+         }
+
+         _dataColumnCache.Clear();
          _dataColumnsDTO.Clear();
       }
 
-      public IReadOnlyList<string> SelectedDataColumnIds
+      public IReadOnlyList<string> SelectedDataColumnIds => _view.SelectedDataColumnIds;
+
+      public bool IsUsed(DataColumn dataColumn)
       {
-         get { return _view.SelectedDataColumnIds; }
+         return _dataColumnsDTO.IsUsed(dataColumn);
       }
 
-      public bool IsUsed(string dataRepositoryColumnId)
+      public IReadOnlyList<DataColumn> SelectedDescendentDataRepositoryColumns => columnsFrom(_view.SelectedDescendentDataRepositoryColumnIds);
+      public IReadOnlyList<DataColumn> SelectedDataColumns => columnsFrom(_view.SelectedDataColumnIds);
+
+      public void SetUsedState(IReadOnlyList<DataColumn> dataColumns, bool usedState)
       {
-         return _dataColumnsDTO.GetUsedDataRepositoryColumnIds().Contains(dataRepositoryColumnId);
+         _dataColumnsDTO.SetUsedValueForColumns(dataColumns, usedState);
+         RaiseUsedChanged(dataColumns, usedState);
       }
 
-      public IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds
+      public void InitializeIsUsedForColumns(IReadOnlyList<DataColumn> usedDataColumns)
       {
-         get{return _view.SelectedDescendentDataRepositoryColumnIds;}
-      } 
-
-      public void SetUsedState(IEnumerable<string> usedDataRepositoryColumnIds, bool usedState)
-      {
-         var columnIds = usedDataRepositoryColumnIds.ToList();
-
-         _dataColumnsDTO.SetUsedValueForColumns(columnIds, usedState);
-         RaiseUsedChanged(columnIds, usedState);
-      }
-
-      public void InitializeIsUsedForColumns(IEnumerable<string> usedDataRepositoryColumns)
-      {
-         _dataColumnsDTO.InitializeUsedColumn(usedDataRepositoryColumns);
+         _dataColumnsDTO.InitializeUsedColumn(usedDataColumns);
       }
 
       public event DragEventHandler DragOver
       {
-         add { _view.DragOver += value; }
-         remove { _view.DragOver -= value; }
+         add => _view.DragOver += value;
+         remove => _view.DragOver -= value;
       }
 
       public event DragEventHandler DragDrop
       {
-         add { _view.DragDrop += value; }
-         remove { _view.DragDrop -= value; }
+         add => _view.DragDrop += value;
+         remove => _view.DragDrop -= value;
       }
 
-      public void UpdateDataSelection(IEnumerable<string> dataRepositoryColumnIds)
+      public void RaiseUsedChanged(IEnumerable<DataColumn> dataColumns, bool used)
       {
-         SelectedDataChanged(dataRepositoryColumnIds);
+         UsedChanged(this, new UsedChangedEventArgs(dataColumns, used));
+      }
+
+      private void raiseUsedChanged(DataColumn dataColumn, bool used)
+      {
+         RaiseUsedChanged(new[] {dataColumn}, used);
+      }
+
+      public void RaiseUsedChanged(IEnumerable<string> dataColumnIds, bool used)
+      {
+         RaiseUsedChanged(columnsFrom(dataColumnIds), used);
+      }
+
+      public void UpdateDataSelection(IReadOnlyList<string> dataColumnIds)
+      {
+         SelectedDataChanged(columnsFrom(dataColumnIds));
+      }
+
+      private IReadOnlyList<DataColumn> columnsFrom(IEnumerable<string> dataColumnIds)
+      {
+         return dataColumnIds.Select(x => _dataColumnCache[x]).ToList();
       }
    }
 }

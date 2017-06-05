@@ -95,6 +95,7 @@
     <Compile Include="Diagram\Elements\INeighborhoodNode.cs" />
     <Compile Include="Diagram\Elements\JournalDiagramBackground.cs" />
     <Compile Include="DTO\CategoryDTO.cs" />
+    <Compile Include="DTO\Charts\CurveDTO.cs" />
     <Compile Include="DTO\Charts\CurveTemplateDTO.cs" />
     <Compile Include="DTO\Commands\IHistoryItemDTO.cs" />
     <Compile Include="DTO\Commands\IHistoryItemDTOList.cs" />
@@ -192,8 +193,8 @@
     <Compile Include="Presenters\Charts\DataColumnsDTO.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Presenters\Charts\IAxisAdapter.cs" />
-    <Compile Include="Presenters\Charts\ICurveAdapter.cs" />
+    <Compile Include="Presenters\Charts\IAxisBinder.cs" />
+    <Compile Include="Presenters\Charts\ICurveBinder.cs" />
     <Compile Include="Presenters\Charts\ModalChartTemplateManagerPresenter.cs" />
     <Compile Include="Presenters\Charts\PresenterWithColumnSettings.cs" />
     <Compile Include="Presenters\Charts\SimpleChartPresenter.cs" />
@@ -319,7 +320,8 @@
     <Compile Include="Services\Charts\ChartPresenterContext.cs" />
     <Compile Include="Services\Charts\ChartTemplatingTask.cs" />
     <Compile Include="Services\Charts\FontsTask.cs" />
-    <Compile Include="Services\Charts\ICurveAdapterFactory.cs" />
+    <Compile Include="Services\Charts\IAxisBinderFactory.cs" />
+    <Compile Include="Services\Charts\ICurveBinderFactory.cs" />
     <Compile Include="Services\Commands\CommentTask.cs" />
     <Compile Include="Services\Commands\LabelTask.cs" />
     <Compile Include="Services\DirectoryMapSettings.cs" />
@@ -544,7 +546,7 @@
     <Compile Include="Views\Charts\DataColumnFormatter.cs" />
     <Compile Include="Views\Charts\IAxisSettingsView.cs" />
     <Compile Include="Views\Charts\IChartDisplayView.cs" />
-    <Compile Include="Views\Charts\IChartEditorAndDisplayControl.cs" />
+    <Compile Include="Views\Charts\IChartEditorAndDisplayView.cs" />
     <Compile Include="Views\Charts\IChartEditorView.cs" />
     <Compile Include="Views\Charts\IChartExportSettingsView.cs" />
     <Compile Include="Views\Charts\IChartSettingsView.cs" />

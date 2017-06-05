@@ -1,57 +1,24 @@
 using System;
-using System.ComponentModel;
 using System.Drawing;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
-   public interface ICurve : INotifier, INotifying, IDataErrorInfo
+   public class Curve : MyNotifier, IValidatable
    {
-      string Id { get; }
-      string Name { get; set; }
-      string Description { get; set; }
-
-      DataColumn xData { get; }
-      DataColumn yData { get; }
-
-      IDimension XDimension { get; set; }
-      IDimension YDimension { get; set; }
-
-      void SetxData(DataColumn column, IDimensionFactory dimensionFactory);
-      void SetyData(DataColumn column, IDimensionFactory dimensionFactory);
-
-      CurveOptions CurveOptions { get; }
-      ErrorInfos<ICurve> ErrorInfos { get; }
-
-      InterpolationModes InterpolationMode { get; set; }
-      AxisTypes yAxisType { get; set; }
-      bool Visible { get; set; }
-      Color Color { get; set; }
-      LineStyles LineStyle { get; set; }
-      Symbols Symbol { get; set; }
-      int LineThickness { get; set; }
-      bool VisibleInLegend { get; set; }
-
-      /// <summary>
-      /// This value indicates relative place in the legend for this curve
-      /// </summary>
-      int? LegendIndex { get; set; }
-
-      bool ShowLLOQ { get; set; }
-   }
-
-   public class Curve : Notifier, ICurve
-   {
-      private readonly CurveOptions _curveOptions;
       private string _id;
       private string _name;
+      private IDimension _xDimension;
+      private IDimension _yDimension;
+      private string _description;
+      public CurveOptions CurveOptions { get; }
       private DataColumn _xData;
       private DataColumn _yData;
+      public IBusinessRuleSet Rules { get; }
 
-      public Curve()
-         : this(Guid.NewGuid().ToString())
+      public Curve() : this(Guid.NewGuid().ToString())
       {
       }
 
@@ -62,97 +29,9 @@ namespace OSPSuite.Core.Chart
          _description = string.Empty;
          _xData = null;
          _yData = null;
-         _curveOptions = new CurveOptions();
-         _curveOptions.PropertyChanged += onCurveOptionsPropertyChanged;
-         ErrorInfos = new ErrorInfos<ICurve>(this);
+         CurveOptions = new CurveOptions();
+         Rules = new BusinessRuleSet();
       }
-
-      private void onCurveOptionsPropertyChanged(object sender, PropertyChangedEventArgs e)
-      {
-         RaisePropertyChanged(e.PropertyName);
-      }
-
-      //Returns an error description set for the item's property
-      string IDataErrorInfo.this[string propertyName] => ErrorInfos[propertyName];
-
-      //Returns an error description set for the current item
-      string IDataErrorInfo.Error => ErrorInfos.Global;
-
-      private IDimension _yDimension;
-      private string _description;
-
-      public string Id
-      {
-         get { return _id; }
-         internal set
-         {
-            _id = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public string Description
-      {
-         get { return _description; }
-         set
-         {
-            _description = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public string Name
-      {
-         get { return _name; }
-         set
-         {
-            _name = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public DataColumn xData
-      {
-         get { return _xData; }
-         private set
-         {
-            _xData = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public DataColumn yData
-      {
-         get { return _yData; }
-         private set
-         {
-            _yData = value;
-            OnPropertyChanged();
-         }
-      }
-
-      private IDimension _xDimension;
-
-      public IDimension XDimension
-      {
-         get { return _xDimension; }
-         set
-         {
-            _xDimension = value;
-            OnPropertyChanged();
-         }
-      }
-
-      public IDimension YDimension
-      {
-         get { return _yDimension; }
-         set
-         {
-            _yDimension = value;
-            OnPropertyChanged();
-         }
-      }
-
 
       public void SetxData(DataColumn column, IDimensionFactory dimensionFactory)
       {
@@ -171,113 +50,146 @@ namespace OSPSuite.Core.Chart
             YDimension = dimensionFactory.GetMergedDimensionFor(yData);
       }
 
-      public CurveOptions CurveOptions => _curveOptions;
+      public string Id
+      {
+         get => _id;
+         internal set => SetProperty(ref _id, value, () => Id);
+      }
+
+      public string Description
+      {
+         get => _description;
+         set => SetProperty(ref _description, value, () => Description);
+      }
+
+      public string Name
+      {
+         get => _name;
+         set => SetProperty(ref _name, value, () => Name);
+      }
+
+      public virtual DataColumn xData
+      {
+         get => _xData;
+         set => SetProperty(ref _xData, value, () => xData);
+      }
+
+      public virtual DataColumn yData
+      {
+         get => _yData;
+         set => SetProperty(ref _yData, value, () => yData);
+      }
+
+      public virtual IDimension XDimension
+      {
+         get => _xDimension;
+         set => SetProperty(ref _xDimension, value, () => XDimension);
+      }
+
+      public virtual IDimension YDimension
+      {
+         get => _yDimension;
+         set => SetProperty(ref _yDimension, value, () => YDimension);
+      }
 
       public InterpolationModes InterpolationMode
       {
-         get { return _curveOptions.InterpolationMode; }
+         get => CurveOptions.InterpolationMode;
          set
          {
-            _curveOptions.InterpolationMode = value;
+            CurveOptions.InterpolationMode = value;
             OnPropertyChanged();
          }
       }
 
       public AxisTypes yAxisType
       {
-         get { return _curveOptions.yAxisType; }
+         get => CurveOptions.yAxisType;
          set
          {
-            _curveOptions.yAxisType = value;
+            CurveOptions.yAxisType = value;
             OnPropertyChanged();
          }
       }
 
       public bool Visible
       {
-         get { return _curveOptions.Visible; }
+         get => CurveOptions.Visible;
          set
          {
-            _curveOptions.Visible = value;
+            CurveOptions.Visible = value;
             OnPropertyChanged();
          }
       }
 
       public Color Color
       {
-         get { return _curveOptions.Color; }
+         get => CurveOptions.Color;
          set
          {
-            _curveOptions.Color = value;
+            CurveOptions.Color = value;
             OnPropertyChanged();
          }
       }
 
       public LineStyles LineStyle
       {
-         get { return _curveOptions.LineStyle; }
+         get => CurveOptions.LineStyle;
          set
          {
-            _curveOptions.LineStyle = value;
+            CurveOptions.LineStyle = value;
             OnPropertyChanged();
          }
       }
 
       public Symbols Symbol
       {
-         get { return _curveOptions.Symbol; }
+         get => CurveOptions.Symbol;
          set
          {
-            _curveOptions.Symbol = value;
+            CurveOptions.Symbol = value;
             OnPropertyChanged();
          }
       }
 
       public int LineThickness
       {
-         get { return _curveOptions.LineThickness; }
+         get => CurveOptions.LineThickness;
          set
          {
-            _curveOptions.LineThickness = value;
+            CurveOptions.LineThickness = value;
             OnPropertyChanged();
          }
       }
 
       public bool VisibleInLegend
       {
-         get { return _curveOptions.VisibleInLegend; }
+         get => CurveOptions.VisibleInLegend;
          set
          {
-            _curveOptions.VisibleInLegend = value;
+            CurveOptions.VisibleInLegend = value;
             OnPropertyChanged();
          }
       }
 
       public int? LegendIndex
       {
-         get { return _curveOptions.LegendIndex; }
+         get => CurveOptions.LegendIndex;
          set
          {
-            _curveOptions.LegendIndex = value;
+            CurveOptions.LegendIndex = value;
             OnPropertyChanged();
          }
       }
 
       public bool ShowLLOQ
       {
-         get { return _curveOptions.ShouldShowLLOQ; }
+         get => CurveOptions.ShouldShowLLOQ;
          set
          {
-            _curveOptions.ShouldShowLLOQ = value;
+            CurveOptions.ShouldShowLLOQ = value;
             OnPropertyChanged();
          }
-      }
-
-      public ErrorInfos<ICurve> ErrorInfos { get; }
-
-      public void DoRaisePropertyChanged(string propertyName)
-      {
-         RaisePropertyChanged(propertyName);
       }
    }
 }

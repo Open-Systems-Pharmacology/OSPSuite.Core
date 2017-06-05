@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Presentation.Extensions;
+using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -31,64 +30,56 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public interface ICurveSettingsPresenter : IPresenter<ICurveSettingsView>, IPresenterWithColumnSettings
    {
-      void SetDatasource(ICurveChart chart);
+      void Edit(CurveChart chart);
+      void Clear();
       Func<DataColumn, string> CurveNameDefinition { set; get; }
 
-      void RemoveCurve(string curveId);
+      void Remove(CurveDTO curve);
+      event Action<Curve> RemoveCurve;
 
-      /// <summary>
-      ///    Adds a new curve to a the chart for the <paramref name="columnId" /> if one does not already exist.
-      ///    Curve options will be applied if they are specified and a new curve is created.
-      /// </summary>
-      /// <returns>
-      ///    The new curve or existing if chart already contains a curve for the specified <paramref name="columnId" />
-      /// </returns>
-      ICurve AddCurveForColumn(string columnId, CurveOptions defaultCurveOptions = null);
+      void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns);
+      event Action<IReadOnlyList<DataColumn>> AddCurves;
 
-      void SetCurveXData(ICurve curve, string columnId);
-      void SetCurveYData(ICurve curve, string columnId);
+      void SetCurveXData(CurveDTO curve, DataColumn dataColumn);
+      void SetCurveYData(CurveDTO curve, DataColumn dataColumn);
 
-      IEnumerable<AxisTypes> GetAxisTypes();
-      string ToolTipFor(ICurve curve);
-      ICache<string, DataColumn> DataColumns { get; set; }
-      void MoveSeriesInLegend(ICurve curveBeingMoved, ICurve targetCurve);
+      IEnumerable<AxisTypes> AllYAxisTypes { get; }
+      string ToolTipFor(CurveDTO curveDTO);
+      void MoveSeriesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve);
+      void Refresh();
+
+      void NotifyCurvePropertyChange(CurveDTO curveDTO);
+      event Action<Curve> CurvePropertyChanged;         
    }
 
    internal class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter
    {
-      public ICache<string, DataColumn> DataColumns { get; set; }
       private readonly IDimensionFactory _dimensionFactory;
+
+      public event Action<Curve> RemoveCurve = delegate { };
+      public event Action<IReadOnlyList<DataColumn>> AddCurves = delegate { };
+
       public Func<DataColumn, string> CurveNameDefinition { get; set; }
-      private ICurveChart _chart;
-      private readonly string _unitPropertyName;
-      private readonly string _dimensionPropertyName;
-      private readonly string _xDimensionPropertyName;
-      private readonly string _yDimensionPropertyName;
-      private readonly string _yAxisTypePropertyName;
+      private CurveChart _chart;
+      private readonly List<CurveDTO> _allCurvesDTOs = new List<CurveDTO>();
 
       public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory) : base(view)
       {
          _dimensionFactory = dimensionFactory;
-         CurveNameDefinition = mcDataColumn => mcDataColumn.Name;
-         DataColumns = new Cache<string, DataColumn>(x => x.Id);
-         _unitPropertyName = Helpers.Property<IAxis>(x => x.UnitName).Name;
-         _dimensionPropertyName = Helpers.Property<IAxis>(x => x.Dimension).Name;
-         _xDimensionPropertyName = Helpers.Property<ICurve>(c => c.XDimension).Name;
-         _yDimensionPropertyName = Helpers.Property<ICurve>(c => c.YDimension).Name;
-         _yAxisTypePropertyName = Helpers.Property<ICurve>(c => c.yAxisType).Name;
+         CurveNameDefinition = column => column.Name;
       }
 
-      public void MoveSeriesInLegend(ICurve curveBeingMoved, ICurve targetCurve)
+      public void MoveSeriesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve)
       {
-         _chart.MoveSeriesInLegend(curveBeingMoved, targetCurve);
+         _chart.MoveSeriesInLegend(curveBeingMoved.Curve, targetCurve.Curve);
       }
 
-      public string ToolTipFor(ICurve curve)
+      public string ToolTipFor(CurveDTO curveDTO)
       {
-         if (CurveNameDefinition == null || curve.yData == null)
+         if (CurveNameDefinition == null || curveDTO.yData == null)
             return string.Empty;
 
-         return CurveNameDefinition(curve.yData);
+         return CurveNameDefinition(curveDTO.yData);
       }
 
       protected override void SetDefaultColumnSettings()
@@ -105,78 +96,95 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(CurveOptionsColumns.LineThickness).WithCaption(Captions.Chart.CurveOptions.LineThickness).WithVisible(false);
          AddColumnSettings(CurveOptionsColumns.Visible).WithCaption(Captions.Chart.CurveOptions.Visible);
          AddColumnSettings(CurveOptionsColumns.VisibleInLegend).WithCaption(Captions.Chart.CurveOptions.VisibleInLegend);
-         AddColumnSettings(CurveOptionsColumns.ShowLowerLimitOfQuantification).WithCaption(Captions.LLOQ);
+         AddColumnSettings(CurveOptionsColumns.ShowLowerLimitOfQuantification).WithCaption(Captions.LLOQ).WithVisible(false);
       }
 
-      public void SetDatasource(ICurveChart chart)
+      public void Edit(CurveChart chart)
       {
-         if (_chart != null)
-         {
-            _chart.Curves.ItemPropertyChanged -= onCurvesItemChanged;
-            _chart.Curves.CollectionChanged -= onCurvesCollectionChanged;
-            _chart.Axes.ItemPropertyChanged -= onAxesItemChanged;
-            _chart.Axes.CollectionChanged -= onAxesCollectionChanged;
-         }
-
          _chart = chart;
-
-         if (_chart != null)
-         {
-            _chart.Curves.ItemPropertyChanged += onCurvesItemChanged;
-            _chart.Curves.CollectionChanged += onCurvesCollectionChanged;
-
-            View.BindToSource(_chart.Curves);
-
-            _chart.Axes.ItemPropertyChanged += onAxesItemChanged;
-            _chart.Axes.CollectionChanged += onAxesCollectionChanged;
-         }
+         _allCurvesDTOs.Clear();
+         _chart?.Curves.Each(addCurve);
+         rebind();
       }
 
-      private void onCurvesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      public void Clear()
       {
-         if (e.Action != NotifyCollectionChangedAction.Add) return;
-
-         foreach (var item in e.NewItems)
-         {
-            var curve = item as ICurve;
-            if (curve == null) continue;
-            CurveAdded(curve);
-         }
+         Edit(null);
       }
 
-      private void onAxesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      public void Remove(CurveDTO curveDTO)
       {
-         //set yAxisType to y, if yAxis with current yAxisType of a curve is removed
-         if (e.Action != NotifyCollectionChangedAction.Remove) return;
+         RemoveCurve(curveDTO.Curve);
+      }
 
-         foreach (var item in e.OldItems)
+      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns)
+      {
+         AddCurves(dataColumns);
+      }
+
+      private CurveDTO mapFrom(Curve curve)
+      {
+         return new CurveDTO(curve, _chart);
+      }
+
+      public void Refresh()
+      {
+         foreach (var curve in _chart.Curves)
          {
-            var axis = item as IAxis;
-            if (axis == null) continue;
-            foreach (var curve in _chart.Curves.Where(curve => curve.yAxisType == axis.AxisType))
-            {
-               curve.yAxisType = AxisTypes.Y;
-            }
+            if (hasCurveDTOFor(curve))
+               continue;
+
+            addCurve(curve);
          }
+
+         foreach (var curveDTO in _allCurvesDTOs.ToList())
+         {
+            if (!_chart.HasCurve(curveDTO.Id))
+               _allCurvesDTOs.Remove(curveDTO);
+         }
+
+         rebind();
+      }
+
+      public void NotifyCurvePropertyChange(CurveDTO curveDTO)
+      {
+         CurvePropertyChanged(curveDTO.Curve);
+      }
+
+      public event Action<Curve> CurvePropertyChanged = delegate { };
+
+      private void rebind()
+      {
+         View.BindToSource(_allCurvesDTOs);
+      }
+
+      private void addCurve(Curve curve)
+      {
+         _allCurvesDTOs.Add(mapFrom(curve));
+      }
+
+      private bool hasCurveDTOFor(Curve curve)
+      {
+         return _allCurvesDTOs.Any(x => Equals(x.Curve, curve));
       }
 
       private void onCurvesItemChanged(object sender, ItemChangedEventArgs e)
       {
-         var curve = e.Item as ICurve;
+         var curve = e.Item as Curve;
          if (curve == null) return;
 
          if (propertyIsYAxisType(e.PropertyName) || propertyIsYDimension(e.PropertyName))
-            syncUnitsAndCheckDimension(curve, _chart.Axes[curve.yAxisType]);
+            syncUnitsAndCheckDimension(curve, _chart.AxisBy(curve.yAxisType));
 
          else if (propertyIsXDimension(e.PropertyName))
-            syncUnitsAndCheckDimension(curve, _chart.Axes[AxisTypes.X]);
+            syncUnitsAndCheckDimension(curve, _chart.AxisBy(AxisTypes.X));
 
          View.RefreshData();
       }
 
       private void onAxesItemChanged(object sender, ItemChangedEventArgs e)
       {
-         var axis = e.Item as IAxis;
+         var axis = e.Item as Axis;
          if (axis == null) return;
 
          if (!propertyIsDimension(e.PropertyName) && !propertyIsUnit(e.PropertyName))
@@ -192,105 +200,56 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private bool propertyIsXDimension(string propertyName)
       {
-         return string.Equals(propertyName, _xDimensionPropertyName);
+         return false;
       }
 
       private bool propertyIsYDimension(string propertyName)
       {
-         return string.Equals(propertyName, _yDimensionPropertyName);
+         return false;
       }
 
       private bool propertyIsYAxisType(string propertyName)
       {
-         return string.Equals(propertyName, _yAxisTypePropertyName);
+         return false;
       }
 
       private bool propertyIsUnit(string propertyName)
       {
-         return string.Equals(propertyName, _unitPropertyName);
+         return false;
       }
 
       private bool propertyIsDimension(string propertyName)
       {
-         return string.Equals(propertyName, _dimensionPropertyName);
+         return false;
       }
 
-      public void CurveAdded(ICurve curve)
+      public void CurveAdded(Curve curve)
       {
-         if (_chart.Axes.Contains(AxisTypes.X))
-            syncUnitsAndCheckDimension(curve, _chart.Axes[AxisTypes.X]);
-
-         if (_chart.Axes.Contains(curve.yAxisType))
-            syncUnitsAndCheckDimension(curve, _chart.Axes[curve.yAxisType]);
+         syncUnitsAndCheckDimension(curve, _chart.AxisBy(AxisTypes.X));
+         syncUnitsAndCheckDimension(curve, _chart.AxisBy(curve.yAxisType));
       }
 
-      public void RemoveCurve(string curveId)
+      public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
+
+      public void SetCurveXData(CurveDTO curve, DataColumn dataColumn)
       {
-         _chart.RemoveCurve(curveId);
+         _chart.SetxData(curve.Curve, dataColumn, _dimensionFactory);
       }
 
-      public ICurve AddCurveForColumn(string columnId, CurveOptions defaultCurveOptions = null)
+      public void SetCurveYData(CurveDTO curve, DataColumn dataColumn)
       {
-         var dataColumn = DataColumns[columnId];
-         var curve = _chart.CreateCurve(dataColumn.BaseGrid, dataColumn, CurveNameDefinition(dataColumn), _dimensionFactory);
-
-         // Settings already in chart, make no changes
-         if (_chart.Curves.Contains(curve.Id))
-            return _chart.Curves[curve.Id];
-
-         _chart.UpdateCurveColorAndStyle(curve, dataColumn, DataColumns);
-
-         if (defaultCurveOptions != null)
-            curve.CurveOptions.UpdateFrom(defaultCurveOptions);
-
-         _chart.AddCurve(curve);
-         return curve;
+         _chart.SetyData(curve.Curve, dataColumn, _dimensionFactory);
       }
 
-      public IEnumerable<AxisTypes> GetAxisTypes()
+      private void syncUnitsAndCheckDimension(Curve curve, Axis axis)
       {
-         var availableTypes = _chart.Axes.Keys.ToList();
-         // show only yAxisTypes
-         availableTypes.Remove(AxisTypes.X);
-         return availableTypes;
-      }
-
-      public void SetCurveXData(ICurve curve, string columnId)
-      {
-         _chart.SetxData(curve, DataColumns[columnId], _dimensionFactory);
-      }
-
-      public void SetCurveYData(ICurve curve, string columnId)
-      {
-         _chart.SetyData(curve, DataColumns[columnId], _dimensionFactory);
-      }
-
-      private void syncUnitsAndCheckDimension(ICurve curve, IAxis axis)
-      {
-         string errorInfo = string.Empty;
-         if (axis.AxisType == AxisTypes.X)
-         {
-            if (!curve.XDimension.HasSharedUnitNamesWith(axis.Dimension))
-               errorInfo = Error.DifferentXAxisDimension;
-
-            curve.ErrorInfos[c => c.xData] = errorInfo;
-         }
-         else if (axis.AxisType == curve.yAxisType)
-         {
-            if (!curve.YDimension.HasSharedUnitNamesWith(axis.Dimension))
-               errorInfo = Error.DifferentYAxisDimension;
-
-            else if (!curve.YDimension.CanConvertToUnit(axis.UnitName))
-               errorInfo = Error.CannotConvertYAxisUnits;
-
-            curve.ErrorInfos[c => c.yData] = errorInfo;
-            curve.ErrorInfos[c => c.yAxisType] = errorInfo;
-         }
+         if (axis == null)
+            return;
 
          updateDisplayUnitInCurveData(curve, axis);
       }
 
-      private void updateDisplayUnitInCurveData(ICurve curve, IAxis axis)
+      private void updateDisplayUnitInCurveData(Curve curve, Axis axis)
       {
          DataColumn data;
          if (axis.AxisType == AxisTypes.X)

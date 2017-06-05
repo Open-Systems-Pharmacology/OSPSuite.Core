@@ -4,10 +4,10 @@ using OSPSuite.Core.Chart;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
-   public interface IAxisAdapter : IDisposable
+   public interface IAxisBinder : IDisposable
    {
       AxisTypes AxisType { get; }
-      IAxis Axis { get; }
+      Axis Axis { get; }
 
       /// <summary>
       /// When the <see cref="Axis"/> is not hidden, the Visible property can be used to show or hide the axis.
@@ -16,5 +16,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool Visible { get; set; }
       object AxisView { get; }
       void RefreshRange(bool sideMarginsEnabled, Size diagramSize );
+      void Refresh();
    }
 }

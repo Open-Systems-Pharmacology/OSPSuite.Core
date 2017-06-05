@@ -6,20 +6,20 @@ namespace OSPSuite.Core.Chart
 {
    public interface IChartFactory
    {
-      TChartType Create<TChartType>() where TChartType : ICurveChart;
+      TChartType Create<TChartType>() where TChartType : CurveChart;
 
       /// <summary>
       /// Creates a chart for the <paramref name="dataRepository"/> and adds the columns. Also sets the default
       /// scaling to Log or Lin before adding columns.
       /// </summary>
-      ICurveChart CreateChartFor(DataRepository dataRepository, Scalings defaultYScale);
+      CurveChart CreateChartFor(DataRepository dataRepository, Scalings defaultYScale);
 
-      ICurveChart CreateChartFor(TableFormula tableFormula);
+      CurveChart CreateChartFor(TableFormula tableFormula);
 
       /// <summary>
       /// Creates a chart for the <paramref name="dataRepository"/> and adds the columns. 
       /// Sets the default scaling to user preference.
       /// </summary>
-      ICurveChart CreateChartFor(DataRepository dataRepository);
+      CurveChart CreateChartFor(DataRepository dataRepository);
    }
 }
