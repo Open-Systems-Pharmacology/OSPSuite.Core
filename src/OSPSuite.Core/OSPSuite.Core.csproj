@@ -382,7 +382,6 @@
     <Compile Include="Events\SimulationRemovedEvent.cs" />
     <Compile Include="Events\SimulationReplacedInParameterAnalyzableEvent.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
-    <Compile Include="Extensions\AxisTypesExensions.cs" />
     <Compile Include="Chart\ChartExtensions.cs" />
     <Compile Include="Chart\ChartSettings.cs" />
     <Compile Include="Chart\IChartFactory.cs" />
