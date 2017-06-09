@@ -68,7 +68,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void updateUnits()
       {
-         _unitBinder.WithValues(_presenter.GetUnitsForDimension()).Refresh();
+         _unitBinder.WithValues(_presenter.AllUnitsForDimension()).Refresh();
       }
 
       public void AttachPresenter(ISingleAxisSettingsPresenter presenter)
@@ -78,7 +78,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindToSource(Axis axis)
       {
-         _dimensionBinder.WithValues(_presenter.GetDimensionsForEditor(axis.Dimension));
+         _dimensionBinder.WithValues(_presenter.AllDimensionsForEditor(axis.Dimension));
          updateUnits();
          _screenBinder.BindToSource(axis);
       }

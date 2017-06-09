@@ -24,6 +24,7 @@ using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -141,13 +142,6 @@ namespace OSPSuite.UI.Views.Charts
          column.XtraColumn.Tag = curveOptionsColumn.ToString();
          return column;
       }
-
-      public override void Refresh()
-      {
-         base.Refresh();
-         _gridBinderCurves.Rebind();
-      }
-
       private void notifyCurvePropertyChange(CurveDTO curveDTO)
       {
          _presenter.NotifyCurvePropertyChange(curveDTO);
@@ -183,8 +177,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindToSource(IEnumerable<CurveDTO> curves)
       {
-         _gridBinderCurves.BindToSource(curves);
-         Refresh();
+         _gridBinderCurves.BindToSource(curves.ToBindingList());
       }
 
       public void RefreshData()
@@ -324,10 +317,13 @@ namespace OSPSuite.UI.Views.Charts
 
          if (e.TypeBeingDraggedIs<List<DataColumn>>())
             e.Effect = DragDropEffects.Move;
+
          else if (e.TypeBeingDraggedIs<Color>() && hitInColorCell(hitInfo))
             e.Effect = DragDropEffects.Copy;
+
          else if (e.TypeBeingDraggedIs<Curve>() && hitInRowIndicator(hitInfo))
             e.Effect = DragDropEffects.Move;
+
          else
             e.Effect = DragDropEffects.None;
       }

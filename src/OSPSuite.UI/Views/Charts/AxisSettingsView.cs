@@ -7,7 +7,6 @@ using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Extensions;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
@@ -16,6 +15,7 @@ using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -32,6 +32,7 @@ namespace OSPSuite.UI.Views.Charts
       private readonly RepositoryItemButtonEdit _deleteButtonRepository;
       private readonly RepositoryItemButtonEdit _addButtonRepository;
       private GridViewBinder<Axis> _gridBinderAxes;
+      private readonly RepositoryItem _disableRepositoryItem;
 
       public AxisSettingsView()
       {
@@ -51,6 +52,7 @@ namespace OSPSuite.UI.Views.Charts
          _gridLinesRepository = new UxRepositoryItemCheckEdit(gridView);
          _lineStyleRepository = new UxRepositoryItemComboBox(gridView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(gridView);
+         _disableRepositoryItem = new RepositoryItem {ReadOnly = true, Enabled = false};
 
          _deleteButtonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Delete);
          _deleteButtonRepository.ButtonClick += (o, e) => OnEvent(deleteButtonClick);
@@ -91,10 +93,10 @@ namespace OSPSuite.UI.Views.Charts
          createColumn(x => x.GridLines, AxisOptionsColumns.GridLines, _gridLinesRepository);
 
          createColumn(x => x.DefaultColor, AxisOptionsColumns.DefaultColor, _colorRepository, toolTip: ToolTips.DefaultCurveColor)
-            .WithEditorConfiguration(disableForXAxis);
+            .WithRepository(defaultColorRepository);
 
          createColumn(x => x.DefaultLineStyle, AxisOptionsColumns.DefaultLineStyle, _lineStyleRepository, toolTip: ToolTips.DefaultLineStyle)
-            .WithEditorConfiguration(disableForXAxis);
+            .WithRepository(defaultLineStyleRepository);
 
          //Add/Delete-column
          _gridBinderAxes.AddUnboundColumn()
@@ -106,16 +108,32 @@ namespace OSPSuite.UI.Views.Charts
          _gridBinderAxes.Changed += NotifyViewChanged;
       }
 
-      private IGridViewBoundColumn<Axis, T> createColumn<T>(Expression<Func<Axis, T>> propertyToBindTo, AxisOptionsColumns axisOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true,  string toolTip = null, Action<Axis> beforeNotificationAction=null)
+      private RepositoryItem defaultLineStyleRepository(Axis axis)
       {
-         var column = _gridBinderAxes.Bind(propertyToBindTo)
+         if (axis.IsXAxis)
+            return _disableRepositoryItem;
+
+         return _lineStyleRepository;
+      }
+
+      private RepositoryItem defaultColorRepository(Axis axis)
+      {
+         if (axis.IsXAxis)
+            return _disableRepositoryItem;
+
+         return _colorRepository;
+      }
+
+      private IGridViewColumn<Axis> createColumn<T>(Expression<Func<Axis, T>> propertyToBindTo, AxisOptionsColumns axisOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true, string toolTip = null, Action<Axis> beforeNotificationAction = null)
+      {
+         var column = _gridBinderAxes.AutoBind(propertyToBindTo)
             .WithShowInColumnChooser(showInColumnChooser);
 
          if (beforeNotificationAction != null)
             column.WithOnValueSet((axis, value) => beforeNotificationAction(axis));
 
          //Order is important: needs to be done after the beforeNotification if defined.      
-         column.WithOnValueSet((axis,value)=> notifyAxisPropertyChanged(axis));
+         column.WithOnValueSet((axis, value) => notifyAxisPropertyChanged(axis));
 
          if (repositoryItem != null)
             column.WithRepository(axis => repositoryItem);
@@ -131,12 +149,6 @@ namespace OSPSuite.UI.Views.Charts
       private void notifyAxisPropertyChanged(Axis axis)
       {
          _presenter.NotifyAxisPropertyChanged(axis);
-      }
-
-      private static void disableForXAxis(BaseEdit baseEdit, Axis axis)
-      {
-         if (axis.AxisType.IsYAxis()) return;
-         baseEdit.Enabled = false;
       }
 
       private void configureDimensionRepository(BaseEdit baseEdit, Axis axis)
@@ -160,7 +172,7 @@ namespace OSPSuite.UI.Views.Charts
          switch (axis.AxisType)
          {
             case AxisTypes.X:
-               return new RepositoryItem();
+               return _disableRepositoryItem;
             case AxisTypes.Y:
                return _addButtonRepository;
             default:
@@ -168,16 +180,9 @@ namespace OSPSuite.UI.Views.Charts
          }
       }
 
-      public override void Refresh()
-      {
-         base.Refresh();
-         _gridBinderAxes.Rebind();
-      }
-
       public void BindToSource(IEnumerable<Axis> axes)
       {
-         _gridBinderAxes.BindToSource(axes);
-         Refresh();
+         _gridBinderAxes.BindToSource(axes.ToBindingList());
       }
 
       public void DeleteBinding()

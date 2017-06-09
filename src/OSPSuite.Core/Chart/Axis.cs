@@ -72,6 +72,7 @@ namespace OSPSuite.Core.Chart
       }
       
       public bool IsYAxis => AxisType != AxisTypes.X;
+      public bool IsXAxis => AxisType == AxisTypes.X;
 
       public void ResetRange()
       {
