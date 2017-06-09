@@ -14,24 +14,7 @@ namespace OSPSuite.Presentation.Views.Charts
       /// </summary>
       Action<int> HotTracked { set; }
 
-      string Title { get; set; }
-      string Description { get; set; }
-      LegendPositions LegendPosition { set; }
-      Color BackColor { get; set; }
-      Color DiagramBackColor { get; set; }
       Size GetDiagramSize();
-
-      /// <summary>
-      ///    Forces the control to invalidate its client area
-      ///    and immediately redraw itself and any child controls. (Windows.Forms.Control)
-      /// </summary>
-      void Refresh();
-
-      /// <summary>
-      ///    This Method is for internal use only and should not be used by an application directly.
-      ///    Reloads data from the underlying data source and repaints the diagram area.
-      /// </summary>
-      void RefreshData();
 
       void SetDockStyle(DockStyle dockStyle);
       void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings);
@@ -57,6 +40,7 @@ namespace OSPSuite.Presentation.Views.Charts
       void SetNoCurvesSelectedHint(string hint);
 
       void UpdateSettings(CurveChart chart);
+
       void PreviewOriginText();
       void ClearOriginText();
 

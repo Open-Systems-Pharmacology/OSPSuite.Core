@@ -180,11 +180,6 @@ namespace OSPSuite.UI.Views.Charts
          _gridBinderCurves.BindToSource(curves.ToBindingList());
       }
 
-      public void RefreshData()
-      {
-         gridControl.RefreshDataSource();
-      }
-
       private void initializeDragDrop()
       {
          gridControl.AllowDrop = true;
@@ -248,12 +243,12 @@ namespace OSPSuite.UI.Views.Charts
 
       private bool isNotValidMouseMove(MouseEventArgs e, Point cursorLocation)
       {
-         return !cursorHasMoved(cursorLocation) || (e.Button != MouseButtons.Left);
+         return !cursorHasMoved(cursorLocation) || e.Button != MouseButtons.Left;
       }
 
       private void handleAsDraggingCurve(CurveDTO curveDTO)
       {
-         gridControl.DoDragDrop(curveDTO.Curve, DragDropEffects.Move);
+         gridControl.DoDragDrop(curveDTO, DragDropEffects.Move);
 
          _downHitInfo = null;
       }
@@ -321,7 +316,7 @@ namespace OSPSuite.UI.Views.Charts
          else if (e.TypeBeingDraggedIs<Color>() && hitInColorCell(hitInfo))
             e.Effect = DragDropEffects.Copy;
 
-         else if (e.TypeBeingDraggedIs<Curve>() && hitInRowIndicator(hitInfo))
+         else if (e.TypeBeingDraggedIs<CurveDTO>() && hitInRowIndicator(hitInfo))
             e.Effect = DragDropEffects.Move;
 
          else

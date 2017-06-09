@@ -35,7 +35,6 @@ namespace OSPSuite.Core.Chart
          _title = string.Empty;
          _axes = new Cache<AxisTypes, Axis>(axis => axis.AxisType, x => null);
          _curves = new Cache<string, Curve>(curve => curve.Id, x => null);
-
          DefaultYAxisScaling = Scalings.Log;
       }
 
@@ -84,6 +83,10 @@ namespace OSPSuite.Core.Chart
       }
 
       public Axis AxisBy(AxisTypes axisTypes) => _axes[axisTypes];
+
+      public Axis XAxis => AxisBy(AxisTypes.X);
+
+      public Axis YAxisFor(Curve curve) => AxisBy(curve.yAxisType);
 
       public IReadOnlyCollection<Curve> Curves => _curves;
 
@@ -142,7 +145,7 @@ namespace OSPSuite.Core.Chart
 
       public void AddCurve(Curve curve, bool useAxisDefault = true)
       {
-         if (curve?.xData == null || curve?.yData == null)
+         if (curve?.xData == null || curve.yData == null)
             return;
 
          if (_curves.Contains(curve.Id))
@@ -156,12 +159,21 @@ namespace OSPSuite.Core.Chart
          _curves.Add(curve);
 
          if (!curve.LegendIndex.HasValue)
-            curve.LegendIndex = Curves.Count;
+            curve.LegendIndex = nextLegenIndex();
+      }
+
+      private int? nextLegenIndex()
+      {
+         var allCurvesWithValidLegendIndex = Curves.Where(x => x.LegendIndex.HasValue).ToList();
+         if (!allCurvesWithValidLegendIndex.Any())
+            return 1;
+
+         return allCurvesWithValidLegendIndex.Max(x => x.LegendIndex) + 1;
       }
 
       private void copyLineStyleAndColorFromYAxisDefault(Curve curve)
       {
-         var axis = _axes[curve.yAxisType];
+         var axis = YAxisFor(curve);
 
          if (axis.DefaultLineStyle != LineStyles.None && curve.Symbol == Symbols.None)
             curve.LineStyle = axis.DefaultLineStyle;
@@ -185,7 +197,7 @@ namespace OSPSuite.Core.Chart
       {
          updateAxis(AxisTypes.X, curve.XDimension, curve.xData.DisplayUnit);
 
-         var axisTypeY = curve.CurveOptions.yAxisType;
+         var axisTypeY = curve.yAxisType;
          var axisTypeYother = axisTypeY == AxisTypes.Y ? AxisTypes.Y2 : AxisTypes.Y;
 
          var yAxis = updateAxis(axisTypeY, curve.YDimension, curve.yData.DisplayUnit);
@@ -208,7 +220,7 @@ namespace OSPSuite.Core.Chart
          if (axis.Dimension == null)
          {
             axis.Dimension = dimension;
-            setAxisUnitName(axis, unit);
+            axis.UnitName = unit.Name;
          }
 
          return axis;
@@ -223,11 +235,6 @@ namespace OSPSuite.Core.Chart
             newAxis.Scaling = DefaultYAxisScaling;
 
          return newAxis;
-      }
-
-      private void setAxisUnitName(Axis axis, Unit unit)
-      {
-         axis.UnitName = unit.Name;
       }
 
       private void updateAxesForRemovedCurve(AxisTypes yAxisType)
@@ -258,6 +265,25 @@ namespace OSPSuite.Core.Chart
       {
          var curvesToRemove = Curves.Where(shouldRemoveCurveFunc).ToList();
          curvesToRemove.Each(x => RemoveCurve(x.Id));
+      }
+
+      public void SynchronizeDataDisplayUnit()
+      {
+         _curves.Each(synchronizeDataDisplayUnitForCurve);
+      }
+
+      private void synchronizeDataDisplayUnitForCurve(Curve curve)
+      {
+         updateDisplayUnitInCurveData(curve.xData, XAxis);
+         updateDisplayUnitInCurveData(curve.yData, YAxisFor(curve));
+      }
+
+      private void updateDisplayUnitInCurveData(DataColumn data, Axis axis)
+      {
+         if (axis == null || data == null)
+            return;
+
+         data.DisplayUnit = axis.Unit;
       }
 
       public IReadOnlyList<DataColumn> UsedColumns

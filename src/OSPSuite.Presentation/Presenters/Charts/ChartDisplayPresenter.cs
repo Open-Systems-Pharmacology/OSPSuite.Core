@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -18,7 +17,6 @@ using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
-using ItemChangedEventArgs = OSPSuite.Core.Chart.ItemChangedEventArgs;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -168,7 +166,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="seriesId">The id of the series whose unit is being retrieved</param>
       /// <returns>The unit as a string</returns>
-      string GetDisplayUnitsFor(string seriesId);
+      string DisplayUnitsFor(string seriesId);
 
       string CurveDescriptionFromSeriesId(string seriesId);
       bool IsPointBelowLLOQ(double[] values, string curveId);
@@ -181,8 +179,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
    {
-      private readonly ICache<AxisTypes, IAxisBinder> _axisBinders;
-      private readonly IChartDisplayView _chartDisplayView;
       private readonly IDataRepositoryTask _dataRepositoryTask;
       private readonly IDialogCreator _dialogCreator;
       private readonly ICurveBinderFactory _curveBinderFactory;
@@ -191,16 +187,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IAxisContextMenuFactory _axisContextMenuFactory;
       private readonly IAxisBinderFactory _axisBinderFactory;
       private readonly ICurveToDataModeMapper _dataModeMapper;
-
-      // The curveAdapters are stored explicitely in this presenter class to enable releasing the adapters
-      private readonly ICache<string, ICurveBinder> _curveBinders;
-
-      private readonly ICache<string, ICurveBinder> _quickCurveBinderCache;
+      private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
+      private readonly Cache<string, ICurveBinder> _curveBinders;
+      private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
 
       private Func<DataColumn, string> _curveNameDefinition = x => x.Name;
-
-      private readonly string _legendIndexPropertyName;
-
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
@@ -220,7 +211,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ICurveToDataModeMapper dataModeMapper)
          : base(chartDisplayView)
       {
-         _chartDisplayView = chartDisplayView;
          _dataRepositoryTask = dataRepositoryTask;
          _dialogCreator = dialogCreator;
          _curveBinderFactory = curveBinderFactory;
@@ -229,12 +219,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisContextMenuFactory = axisContextMenuFactory;
          _axisBinderFactory = axisBinderFactory;
          _dataModeMapper = dataModeMapper;
-         _chartDisplayView.AttachPresenter(this);
          _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
          ExportToPDF = () => throw new OSPSuiteException(Error.NotImplemented);
-         _legendIndexPropertyName = Helpers.Property<Curve>(x => x.LegendIndex).Name;
       }
 
       public CurveChart Chart { get; private set; }
@@ -251,14 +239,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveBinders.ToList().Each(removeCurveBinder);
          _axisBinders.ToList().Each(removeAxisBinder);
          Chart = null;
-      }
-
-      private void onCurvePropertyChanged(object sender, ItemChangedEventArgs e)
-      {
-         if (string.Equals(e.PropertyName, _legendIndexPropertyName))
-         {
-            _view.ReOrderLegend();
-         }
       }
 
       public void Refresh()
@@ -278,19 +258,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public event DragEventHandler DragOver
       {
-         add => _chartDisplayView.DragOver += value;
-         remove => _chartDisplayView.DragOver -= value;
+         add => View.DragOver += value;
+         remove => View.DragOver -= value;
       }
 
       public event DragEventHandler DragDrop
       {
-         add => _chartDisplayView.DragDrop += value;
-         remove => _chartDisplayView.DragDrop -= value;
+         add => View.DragDrop += value;
+         remove => View.DragDrop -= value;
       }
 
       public void ResetVisibleRange()
       {
-         Chart.Axes.Each(axis => { axis.ResetRange(); });
+         Chart.Axes.Each(axis => axis.ResetRange());
          RefreshAxisBinders();
       }
 
@@ -305,13 +285,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _quickCurveBinderCache[seriesId];
       }
 
-      public string GetDisplayUnitsFor(string seriesId)
+      public string DisplayUnitsFor(string seriesId)
       {
-         var relatedAdapter = curveBinderFromSeriesId(seriesId);
-         if (relatedAdapter == null)
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         if (curveBinder == null)
             return string.Empty;
 
-         return _axisBinders[relatedAdapter.Curve.yAxisType].Axis.UnitName;
+         return Chart.YAxisFor(curveBinder.Curve).UnitName;
       }
 
       public void SetVisibleRange(float? xMin, float? xMax, float? yMin, float? yMax)
@@ -377,7 +357,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public bool IsPointBelowLLOQ(double[] values, string curveId)
       {
          var curveBinder = curveBinderFromSeriesId(curveId);
-         if (curveBinder.LLOQ == null)
+         if (curveBinder?.LLOQ == null)
             return false;
 
          return values.All(value => curveBinder.LLOQ > value);
@@ -386,7 +366,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public int GetSourceIndexFromDataRow(string seriesId, DataRow row)
       {
          var curveBinder = curveBinderFromSeriesId(seriesId);
-         return curveBinder.OriginalCurveIndexForRow(row);
+         return curveBinder?.OriginalCurveIndexForRow(row) ?? 0;
       }
 
       public Curve CurveFromSeriesId(string seriesId)
@@ -414,7 +394,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateChart()
       {
-         using (new BatchUpdate(_chartDisplayView))
+         Chart.SynchronizeDataDisplayUnit();
+
+         using (new BatchUpdate(View))
          {
             updateAxes();
 
@@ -427,7 +409,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             RefreshAxisBinders();
 
             //maybe can be done better
-            _chartDisplayView.ReOrderLegend();
+            View.ReOrderLegend();
          }
          updateViewLayout();
 
@@ -448,6 +430,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.Axes.Each(refreshAxisBinderFor);
 
          _axisBinders.Where(x => !Chart.Axes.Contains(x.Axis)).ToList().Each(removeAxisBinder);
+
+         updateYAxesVisibility();
       }
 
       private void refreshAxisBinderFor(Axis axis) => getOrCreateAxisBinderFor(axis).Refresh();
@@ -472,7 +456,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var axisBinder = _axisBinders[axis.AxisType];
          if (axisBinder == null)
          {
-            axisBinder = _axisBinderFactory.Create(axis, _chartDisplayView.ChartControl, Chart);
+            axisBinder = _axisBinderFactory.Create(axis, View.ChartControl, Chart);
             _axisBinders.Add(axisBinder);
          }
 
@@ -491,7 +475,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             removeCurveBinder(curveBinder);
          }
-         curveBinder = _curveBinderFactory.CreateFor(curve, _chartDisplayView.ChartControl, Chart, yAxisBinder);
+         curveBinder = _curveBinderFactory.CreateFor(curve, View.ChartControl, Chart, yAxisBinder);
          _curveBinders.Add(curveBinder);
 
          return curveBinder;
@@ -502,56 +486,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          curveBinder.Dispose();
          _curveBinders.Remove(curveBinder.Id);
          removeAdapterFromQuickCache(curveBinder);
-      }
-
-      private void addCurves(IEnumerable<Curve> curves)
-      {
-         // temporarily make curves (first would be enough) visible, because only after adding a visible series, 
-         // the diagram is available, but availablility of diagram is assumed after adding the first curve.
-         var curvesList = curves as IList<Curve> ?? curves.OrderBy(x => x.LegendIndex).ToList();
-         var invisibleCurves = curvesList.Where(curve => !curve.Visible).ToList();
-
-//         _chartDisplayView.BeginInit();
-         foreach (var curve in curvesList)
-         {
-            if (curve == null) break;
-
-            curve.Visible = true; // temporarily
-
-//            var curveAdapter = _curveBinderFactory.CreateFor(curve, _chart.AxisBy(AxisTypes.X), _chart.AxisBy(curve.yAxisType));
-
-
-//            _curveBinders.Add(curveAdapter);
-//            addCurvesToQuickCacheAdapter(curveAdapter);
-//            _chartDisplayView.AddCurve(curveAdapter);
-         }
-         _chartDisplayView.ReOrderLegend();
-//         _chartDisplayView.EndInit(); //necessary to generate ChartControl.Axes and .Diagram, but for performance issues this should be called only if necessary (reason for change from addCurve to addCurves)
-
-         // axisAdapters cannot be generated directly, because the ChartControl.Axes and .Diagram are generated after adding the first visible Series
-
-         //update DiagramBackColor, because XY diagram only exists if at least a curve was selected=>hence 1
-         _chartDisplayView.DiagramBackColor = Chart.ChartSettings.DiagramBackColor;
-
-//         // update axisAdapters
-//         foreach (var axis in _chart.Axes)
-//         {
-//            if (!_axisBinders.Contains(axis.AxisType))
-//            {
-//               var axisAdapter = _chartDisplayView.GetAxisAdapter(axis);
-//               if (axisAdapter != null)
-//               {
-//                  _axisBinders.Add(axisAdapter);
-//               }
-//            }
-//         }
-         // DevExpress provides Axes first after at least one curve is added to diagram
-//         _curveBinders.Each(x => x.AttachAxisAdapters(_axisBinders));
-         invisibleCurves.Each(c => c.Visible = false);
-
-         updateYAxisVisibility(AxisTypes.Y);
-         updateYAxisVisibility(AxisTypes.Y2);
-         RefreshAxisBinders();
       }
 
       private void addCurvesToQuickCacheAdapter(ICurveBinder curveBinder)
@@ -566,140 +500,31 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void RefreshAxisBinders()
       {
-         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, _chartDisplayView.GetDiagramSize()));
+         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, View.GetDiagramSize()));
+      }
+
+      private void updateYAxesVisibility()
+      {
+         Chart.AllUsedYAxisTypes.Each(updateYAxisVisibility);
       }
 
       private void updateYAxisVisibility(AxisTypes yAxisType)
       {
-         if (!_axisBinders.Contains(yAxisType)) return;
+         var axisBinder = _axisBinders[yAxisType];
+         if (axisBinder == null) return;
+
          var axisTypeUsed = Chart.AllVisibleCurvesOnYAxis(yAxisType).Any();
-
-         if (_axisBinders[yAxisType].Visible == axisTypeUsed) return;
-
-         _axisBinders[yAxisType].Visible = axisTypeUsed;
-
-         RefreshAxisBinders();
-      }
-
-//      private void onChartCurvesChanged(object sender, NotifyCollectionChangedEventArgs e)
-//      {
-//         try
-//         {
-//            var curves = sender as INotifyCache<string, Curve>;
-//            if (curves == null) return;
-//            switch (e.Action)
-//            {
-//               case NotifyCollectionChangedAction.Add:
-//                  foreach (var item in e.NewItems)
-//                  {
-//                     var curve = item as Curve;
-//                     if (curve == null) continue;
-//                     addCurves(new List<Curve> {curve});
-//                  }
-//                  break;
-//               case NotifyCollectionChangedAction.Remove:
-//                  foreach (var item in e.OldItems)
-//                  {
-//                     var curve = item as Curve;
-//                     if (curve == null) continue;
-//                     removeCurve(curve.Id);
-//                  }
-//                  break;
-//               case NotifyCollectionChangedAction.Replace:
-//                  break;
-//               case NotifyCollectionChangedAction.Move:
-//                  break;
-//               case NotifyCollectionChangedAction.Reset:
-//                  break;
-//               default:
-//                  throw new ArgumentOutOfRangeException();
-//            }
-//         }
-//         catch (Exception)
-//         {
-//         }
-//      }
-
-//      private void onChartAxesChanged(object sender, NotifyCollectionChangedEventArgs e)
-//      {
-//         var axes = sender as INotifyCache<AxisTypes, Axis>;
-//         if (axes == null) return;
-//         try
-//         {
-//            switch (e.Action)
-//            {
-//               case NotifyCollectionChangedAction.Add:
-//                  foreach (var item in e.NewItems)
-//                  {
-//                     var axis = item as Axis;
-//                     if (axis == null) continue;
-//                     if (axis.AxisType >= AxisTypes.Y2)
-//                     {
-////                        IAxisBinder axisBinder = _chartDisplayView.GetAxisAdapter(axis);
-////                        if (axisBinder != null)
-////                        {
-////                           _axisBinders.Add(axisBinder);
-////                        }
-//                     }
-//                  }
-//
-////                  refreshLegendTexts();
-//                  break;
-//               case NotifyCollectionChangedAction.Remove:
-//                  foreach (var item in e.OldItems)
-//                  {
-//                     var axis = item as Axis;
-//                     if (axis == null) continue;
-//                     if (axis.AxisType >= AxisTypes.Y2) removeAxis(axis.AxisType);
-//                  }
-//
-////                  refreshLegendTexts();
-//                  break;
-//               case NotifyCollectionChangedAction.Replace:
-//                  break;
-//               case NotifyCollectionChangedAction.Move:
-//                  break;
-//               case NotifyCollectionChangedAction.Reset:
-//                  removeAllAxes();
-//                  break;
-//               default:
-//                  throw new ArgumentOutOfRangeException();
-//            }
-//         }
-//         catch (Exception)
-//         {
-//         }
-//      }
-
-      private void onCurveChanged(object obj, ItemChangedEventArgs args)
-      {
-         var curve = args.Item as Curve;
-
-         updateYAxisVisibility(AxisTypes.Y);
-         updateYAxisVisibility(AxisTypes.Y2);
-         updateYAxisVisibility(AxisTypes.Y3);
-
-         if (curve != null && _curveBinders.Contains(curve.Id))
-            curveBinderFor(curve).ShowCurveInLegend(curve.VisibleInLegend);
-
-         _chartDisplayView.RefreshData();
-      }
-
-      private void onAxisChanged(object obj, ItemChangedEventArgs args)
-      {
-         _chartDisplayView.RefreshData();
-         _chartDisplayView.Refresh();
-         RefreshAxisBinders();
+         axisBinder.Visible = axisTypeUsed;
       }
 
       private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool previewOriginText)
       {
-         _chartDisplayView.SetDockStyle(dockStyle);
-         _chartDisplayView.SetFontAndSizeSettings(fontAndSizeSettings);
+         View.SetDockStyle(dockStyle);
+         View.SetFontAndSizeSettings(fontAndSizeSettings);
          if (previewOriginText)
-            _chartDisplayView.PreviewOriginText();
+            View.PreviewOriginText();
          else
-            _chartDisplayView.ClearOriginText();
+            View.ClearOriginText();
       }
 
       private bool areChartWidthAndHeightDefined => Chart.FontAndSize.SizeIsDefined;
@@ -748,7 +573,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void bindChartToView()
       {
-         _chartDisplayView.UpdateSettings(Chart);
+         View.UpdateSettings(Chart);
 
          if (Chart.PreviewSettings)
             setDisplay(areChartWidthAndHeightDefined ? DockStyle.None : DockStyle.Fill, Chart.FontAndSize, true);
