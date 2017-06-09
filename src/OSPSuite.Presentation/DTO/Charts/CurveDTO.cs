@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq.Expressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
@@ -93,27 +91,32 @@ namespace OSPSuite.Presentation.DTO.Charts
       public DataColumn yData => Curve.yData;
       public string Id => Curve.Id;
 
-      private bool dataDimensionMatchesXAxis()
+      private bool dataDimensionMatchesXAxis(DataColumn dataColumn)
       {
-         var axisX = _chart.AxisBy(AxisTypes.X);
-         if (axisX == null)
-            return true;
-
-         return Curve.XDimension.HasSharedUnitNamesWith(axisX.Dimension);
+         return dimensionsHaveSharedUnits(_chart.AxisBy(AxisTypes.X), dataColumn.Dimension);
       }
 
-      private bool dataDimensionMatchesYAxis(AxisTypes yAxisType)
+      private bool dataDimensionMatchesYAxis(DataColumn dataColumn)
       {
-         var axisY = _chart.AxisBy(yAxisType);
-         if (axisY == null)
-            return true;
-
-         return Curve.YDimension.HasSharedUnitNamesWith(axisY.Dimension);
+         return dimensionsHaveSharedUnits(_chart.AxisBy(yAxisType), dataColumn.Dimension);
       }
 
-      private bool canConvertYAxisUnits()
+      private bool dataDimensionMatchesYAxis(AxisTypes axisType)
       {
-         var axisY = _chart.AxisBy(Curve.yAxisType);
+         return dimensionsHaveSharedUnits(_chart.AxisBy(axisType), Curve.YDimension);
+      }
+
+      private bool dimensionsHaveSharedUnits(Axis axis, IDimension dimension)
+      {
+         if (axis == null || dimension==null)
+            return false;
+
+         return dimension.HasSharedUnitNamesWith(axis.Dimension);
+      }
+
+      private bool canConvertYAxisUnits(AxisTypes axisType)
+      {
+         var axisY = _chart.AxisBy(axisType);
          if (axisY == null)
             return true;
 
@@ -127,31 +130,31 @@ namespace OSPSuite.Presentation.DTO.Charts
             get
             {
                yield return dataDimensionMatchesXAxis;
-//               yield return dataDimensionMatchesYAxis;
+               yield return dataDimensionMatchesYAxis;
                yield return dataDimensionMatchesYAxisType;
-//               yield return canConvertYDataToYAxisUnits;
                yield return canConvertYAxisTypeToYAxisUnits;
             }
          }
 
          private static IBusinessRule dataDimensionMatchesXAxis { get; } = CreateRule.For<CurveDTO>()
             .Property(x => x.xData)
-            .WithRule((curveDTO, column) => curveDTO.dataDimensionMatchesXAxis())
+            .WithRule((curveDTO, column) => curveDTO.dataDimensionMatchesXAxis(column))
             .WithError(Error.DifferentXAxisDimension);
 
-//         private static IBusinessRule dataDimensionMatchesYAxis { get; } = dataDimensionMatches(x => x.yData);
-         private static IBusinessRule canConvertYDataToYAxisUnits { get; } = canConvertYAxisUnits(x => x.yData);
-         private static IBusinessRule canConvertYAxisTypeToYAxisUnits { get; } = canConvertYAxisUnits(x => x.yAxisType);
-
-         private static IBusinessRule dataDimensionMatchesYAxisType {get;} = CreateRule.For<CurveDTO>()
-            .Property(x=>x.yAxisType)
-            .WithRule((curveDTO, axisType) => curveDTO.dataDimensionMatchesYAxis(axisType))
+         private static IBusinessRule dataDimensionMatchesYAxis { get; } = CreateRule.For<CurveDTO>()
+            .Property(x => x.yData)
+            .WithRule((curveDTO, column) => curveDTO.dataDimensionMatchesYAxis(column))
             .WithError(Error.DifferentYAxisDimension);
 
-         private static IBusinessRule canConvertYAxisUnits<TProperty>(Expression<Func<CurveDTO, TProperty>> dataExpressionResolver) => CreateRule.For<CurveDTO>()
-            .Property(dataExpressionResolver)
-            .WithRule((curveDTO, column) => curveDTO.canConvertYAxisUnits())
+         private static IBusinessRule canConvertYAxisTypeToYAxisUnits { get; } = CreateRule.For<CurveDTO>()
+            .Property(x => x.yAxisType)
+            .WithRule((curveDTO, axisType) => curveDTO.canConvertYAxisUnits(axisType))
             .WithError(Error.CannotConvertYAxisUnits);
+
+         private static IBusinessRule dataDimensionMatchesYAxisType { get; } = CreateRule.For<CurveDTO>()
+            .Property(x => x.yAxisType)
+            .WithRule((curveDTO, axisType) => curveDTO.dataDimensionMatchesYAxis(axisType))
+            .WithError(Error.DifferentYAxisDimension);
       }
    }
 }

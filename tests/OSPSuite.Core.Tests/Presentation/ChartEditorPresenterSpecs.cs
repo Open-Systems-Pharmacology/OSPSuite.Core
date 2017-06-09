@@ -43,6 +43,8 @@ namespace OSPSuite.Presentation
          _dimensionFactory= A.Fake<IDimensionFactory>();
          sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter,_chartUpdater, _eventPublisher, _dimensionFactory);
 
+         sut.SetCurveNameDefinition(x=>x.QuantityInfo.PathAsString);
+
          _chart = new CurveChart().WithAxes();
          sut.Edit(_chart);
 
@@ -51,6 +53,9 @@ namespace OSPSuite.Presentation
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
          };
+
+         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
+         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
       }
    }
 
@@ -118,7 +123,6 @@ namespace OSPSuite.Presentation
    }
 
 
-
    internal class When_adding_a_new_curve_for_column_id_not_in_chart_and_default_settings_are_specified : concern_for_ChartEditorPresenter
    {
       private CurveOptions _defaultCurveOptions;
@@ -150,23 +154,6 @@ namespace OSPSuite.Presentation
          _newCurve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(false);
          _newCurve.CurveOptions.Symbol.ShouldBeEqualTo(Symbols.Diamond);
          _newCurve.CurveOptions.LineStyle.ShouldBeEqualTo(LineStyles.DashDot);
-      }
-   }
-
-   internal class When_adding_a_curve_to_the_chart : concern_for_ChartEditorPresenter
-   {
-      private Curve _newCurve;
-
-      protected override void Because()
-      {
-         _newCurve = sut.AddCurveForColumn(_standardColumn);
-      }
-
-      [Observation]
-      public void should_set_the_display_unit_of_the_underlying_data_to_the_selected_axis_units()
-      {
-         _newCurve.xData.DisplayUnit.ShouldBeEqualTo(_chart.AxisBy(AxisTypes.X).Unit);
-         _newCurve.yData.DisplayUnit.ShouldBeEqualTo(_chart.AxisBy(AxisTypes.Y).Unit);
       }
    }
 
