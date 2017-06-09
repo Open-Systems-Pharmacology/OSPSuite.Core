@@ -394,8 +394,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateChart()
       {
-         Chart.SynchronizeDataDisplayUnit();
-
          using (new BatchUpdate(View))
          {
             updateAxes();
