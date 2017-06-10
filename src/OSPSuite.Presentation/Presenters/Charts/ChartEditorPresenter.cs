@@ -308,7 +308,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          if (!isUsed.HasValue) return;
 
-         _dataBrowserPresenter.SetUsedState(_dataBrowserPresenter.SelectedDescendentDataRepositoryColumns, usedState: isUsed.Value);
+         _dataBrowserPresenter.UpdateUsedForSelection(used: isUsed.Value);
       }
 
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)
@@ -329,7 +329,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          SetCurveNameDefinition(null);
          SetDisplayQuantityPathDefinition(null);
-         _dataBrowserPresenter.ClearDataColumns();
+         _dataBrowserPresenter.Clear();
          _dataColumns.Clear();
          _curveSettingsPresenter.Clear();
          _axisSettingsPresenter.Clear();
@@ -378,8 +378,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
                _dataColumns.Add(dataColumn);
                _dataBrowserPresenter.AddDataColumn(dataColumn);
             }
-            else
-               _dataBrowserPresenter.UpdateDataColumn(dataColumn);
          }
 
          updateUsedColumns();

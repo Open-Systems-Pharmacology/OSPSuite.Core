@@ -100,7 +100,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          // finding GridColumn by FieldName or Name is not possible here, because these properties are defined by BTS.DataBinding.GridViewBinder
          // therefore this workaround via Tag is used
-         return _gridView.Columns.Cast<GridColumn>().FirstOrDefault(col => col.Tag != null && col.Tag.ToString() == columnName);
+         return _gridView.Columns.FirstOrDefault(col => col.Tag != null && col.Tag.ToString() == columnName);
       }
    }
 }
