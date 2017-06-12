@@ -103,10 +103,10 @@ namespace OSPSuite.Starter.Tasks
       }
 
       /// <summary>
-      /// Creates an auxiliary column for the data column. The <paramref name="calculateAuxiliaryFactor"/> is used to transform a random value between 0 and 1 into a factor that is 
-      /// multiplied by the column value to give the auxiliary value.
+      ///    Creates an auxiliary column for the data column. The <paramref name="calculateAuxiliaryValue" /> should provide a related value
+      ///    for the data column value
       /// </summary>
-      private DataColumn createAuxiliaryColumn(DataColumn column, int index, IContainer model, AuxiliaryType columnType, ColumnOrigins columnOrigins, Func<double, float> calculateAuxiliaryFactor)
+      private DataColumn createAuxiliaryColumn(DataColumn column, int index, IContainer model, AuxiliaryType columnType, ColumnOrigins columnOrigins, Func<double, float> calculateAuxiliaryValue)
       {
          var baseGrid = column.BaseGrid;
          var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
@@ -119,12 +119,7 @@ namespace OSPSuite.Starter.Tasks
 
          var values = new List<float>();
 
-         baseGrid.Values.Each(x =>
-         {
-            var columnValue = column.GetValue(x);
-            var error = calculateAuxiliaryFactor(_random.NextDouble());
-            values.Add(columnValue * error);
-         });
+         baseGrid.Values.Each(x => { values.Add(calculateAuxiliaryValue(column.GetValue(x))); });
 
          auxilaiaryColumn.Values = values;
 
@@ -147,7 +142,7 @@ namespace OSPSuite.Starter.Tasks
             .Each(column =>
             {
                column.DataInfo.AuxiliaryType = AuxiliaryType.Undefined;
-               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricMeanPop, ColumnOrigins.Calculation, x => (float) (x * 4.0)));
+               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricMeanPop, ColumnOrigins.Calculation, x => (float) (_random.NextDouble() * x * 4)));
             });
 
          return dataRepository;
@@ -161,7 +156,7 @@ namespace OSPSuite.Starter.Tasks
             .Each(column =>
             {
                column.DataInfo.AuxiliaryType = AuxiliaryType.Undefined;
-               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticMeanPop, ColumnOrigins.Calculation, x => (float) (x * 4.0)));
+               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticMeanPop, ColumnOrigins.Calculation, x => (float) (_random.NextDouble() * x * 4.0)));
             });
 
          return dataRepository;
@@ -171,7 +166,7 @@ namespace OSPSuite.Starter.Tasks
       {
          var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
 
-         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (x * 0.25))); });
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() * x / 4.0))); });
 
          return dataRepository;
       }
@@ -180,7 +175,7 @@ namespace OSPSuite.Starter.Tasks
       {
          var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
 
-         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (x * 0.25))); });
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() / 4.0))); });
 
          return dataRepository;
       }
