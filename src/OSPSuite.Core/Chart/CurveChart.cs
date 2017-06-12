@@ -159,10 +159,10 @@ namespace OSPSuite.Core.Chart
          _curves.Add(curve);
 
          if (!curve.LegendIndex.HasValue)
-            curve.LegendIndex = nextLegenIndex();
+            curve.LegendIndex = nextLegendIndex();
       }
 
-      private int? nextLegenIndex()
+      private int? nextLegendIndex()
       {
          var allCurvesWithValidLegendIndex = Curves.Where(x => x.LegendIndex.HasValue).ToList();
          if (!allCurvesWithValidLegendIndex.Any())
