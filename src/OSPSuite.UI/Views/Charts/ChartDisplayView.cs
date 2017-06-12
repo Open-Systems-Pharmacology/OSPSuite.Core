@@ -294,7 +294,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private XYDiagram xyDiagram => _chartControl.XYDiagram;
 
-      public Color DiagramBackColor
+      private Color diagramBackColor
       {
          get => xyDiagram?.DefaultPane.BackColor ?? Color.Empty;
          set
@@ -312,19 +312,17 @@ namespace OSPSuite.UI.Views.Charts
 
       public Action<int> HotTracked { private get; set; } = i => { };
 
-      public string Title
+      private string title
       {
-         get => _chartControl.Title;
          set => _chartControl.Title = value;
       }
 
-      public string Description
+      private string description
       {
-         get => _chartControl.Description;
          set => _chartControl.Description = value;
       }
 
-      public LegendPositions LegendPosition
+      private LegendPositions legendPosition
       {
          set => _chartControl.Legend.LegendPosition(value);
       }
@@ -347,12 +345,6 @@ namespace OSPSuite.UI.Views.Charts
             // not understood, under which circumstances exception is thrown
             return new Size(0, 0);
          }
-      }
-
-  
-      public void RefreshData()
-      {
-         _chartControl.RefreshData();
       }
 
       public void SetDockStyle(DockStyle dockStyle)
@@ -509,7 +501,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          var legendText = series.LegendText;
          var lowerLimitOfQuantification = _doubleFormatter.Format(findPointInSeries(hitPoint, series).Values[0]);
-         var displayUnit = _presenter.GetDisplayUnitsFor(series.Name);
+         var displayUnit = _presenter.DisplayUnitsFor(series.Name);
 
          return ToolTips.ToolTipForLLOQ(legendText, $"{lowerLimitOfQuantification} {displayUnit}");
       }
@@ -520,8 +512,7 @@ namespace OSPSuite.UI.Views.Charts
          var xAxisTitle = seriesView.AxisX.Title.Text;
          var yAxisTitle = seriesView.AxisY.Title.Text;
          var legendText = series.LegendText;
-
-         var description = _presenter.CurveDescriptionFromSeriesId(series.Name);
+         var curveDescription = _presenter.CurveDescriptionFromSeriesId(series.Name);
 
          var nextPoint = findPointInSeries(hitPoint, series);
          return ToolTips.ToolTipForSeriesPoint(
@@ -531,7 +522,7 @@ namespace OSPSuite.UI.Views.Charts
             _doubleFormatter.Format(nextPoint.NumericalArgument),
             _doubleFormatter.Format(nextPoint.Values[0]), nextPoint.Values.Length > 1
                ? _doubleFormatter.Format(nextPoint.Values[1])
-               : null, editable: _curveEditEnabled, description: description);
+               : null, editable: _curveEditEnabled, description: curveDescription);
       }
 
       private SeriesPoint findPointInSeries(Point hitPoint, Series series)
@@ -552,7 +543,6 @@ namespace OSPSuite.UI.Views.Charts
       {
          e.Cancel = true;
       }
-
 
       public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings)
       {
@@ -583,12 +573,12 @@ namespace OSPSuite.UI.Views.Charts
 
       public void UpdateSettings(CurveChart chart)
       {
-         Title = chart.Title;
-         Description = chart.Description;
+         title = chart.Title;
+         description = chart.Description;
          Name = chart.Name;
-         LegendPosition = chart.ChartSettings.LegendPosition;
+         legendPosition = chart.ChartSettings.LegendPosition;
          BackColor = chart.ChartSettings.BackColor;
-         DiagramBackColor = chart.ChartSettings.DiagramBackColor;
+         diagramBackColor = chart.ChartSettings.DiagramBackColor;
       }
 
       public void PreviewOriginText()

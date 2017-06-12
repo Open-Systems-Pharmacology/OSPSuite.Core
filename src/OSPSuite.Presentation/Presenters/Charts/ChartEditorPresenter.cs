@@ -569,6 +569,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void refresh()
       {
+         Chart.SynchronizeDataDisplayUnit();
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();

@@ -72,6 +72,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void MoveSeriesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve)
       {
          _chart.MoveSeriesInLegend(curveBeingMoved.Curve, targetCurve.Curve);
+         CurvePropertyChanged(targetCurve.Curve);
       }
 
       public string ToolTipFor(CurveDTO curveDTO)
@@ -168,66 +169,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _allCurvesDTOs.Any(x => Equals(x.Curve, curve));
       }
 
-      private void onCurvesItemChanged(object sender, ItemChangedEventArgs e)
-      {
-         var curve = e.Item as Curve;
-         if (curve == null) return;
-
-         if (propertyIsYAxisType(e.PropertyName) || propertyIsYDimension(e.PropertyName))
-            syncUnitsAndCheckDimension(curve, _chart.AxisBy(curve.yAxisType));
-
-         else if (propertyIsXDimension(e.PropertyName))
-            syncUnitsAndCheckDimension(curve, _chart.AxisBy(AxisTypes.X));
-
-         View.RefreshData();
-      }
-
-      private void onAxesItemChanged(object sender, ItemChangedEventArgs e)
-      {
-         var axis = e.Item as Axis;
-         if (axis == null) return;
-
-         if (!propertyIsDimension(e.PropertyName) && !propertyIsUnit(e.PropertyName))
-            return;
-
-         foreach (var curve in _chart.Curves)
-         {
-            syncUnitsAndCheckDimension(curve, axis);
-         }
-
-         View.RefreshData();
-      }
-
-      private bool propertyIsXDimension(string propertyName)
-      {
-         return false;
-      }
-
-      private bool propertyIsYDimension(string propertyName)
-      {
-         return false;
-      }
-
-      private bool propertyIsYAxisType(string propertyName)
-      {
-         return false;
-      }
-
-      private bool propertyIsUnit(string propertyName)
-      {
-         return false;
-      }
-
-      private bool propertyIsDimension(string propertyName)
-      {
-         return false;
-      }
-
-      public void CurveAdded(Curve curve)
-      {
-         syncUnitsAndCheckDimension(curve, _chart.AxisBy(AxisTypes.X));
-         syncUnitsAndCheckDimension(curve, _chart.AxisBy(curve.yAxisType));
-      }
 
       public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
 
@@ -241,25 +182,5 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chart.SetyData(curve.Curve, dataColumn, _dimensionFactory);
       }
 
-      private void syncUnitsAndCheckDimension(Curve curve, Axis axis)
-      {
-         if (axis == null)
-            return;
-
-         updateDisplayUnitInCurveData(curve, axis);
-      }
-
-      private void updateDisplayUnitInCurveData(Curve curve, Axis axis)
-      {
-         DataColumn data;
-         if (axis.AxisType == AxisTypes.X)
-            data = curve.xData;
-         else if (axis.AxisType == curve.yAxisType)
-            data = curve.yData;
-         else
-            return;
-
-         data.DisplayUnit = axis.Unit;
-      }
    }
 }
