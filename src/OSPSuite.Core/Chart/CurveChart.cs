@@ -71,15 +71,9 @@ namespace OSPSuite.Core.Chart
 
       public Axis AddNewAxis()
       {
-         foreach (var axisType in EnumHelper.AllValuesFor<AxisTypes>())
-         {
-            if (_axes.Contains(axisType))
-               continue;
-
-            return addNewAxisFor(axisType);
-         }
-
-         return null;
+         return (from axisType in EnumHelper.AllValuesFor<AxisTypes>()
+            where !_axes.Contains(axisType)
+            select AddNewAxisFor(axisType)).FirstOrDefault();
       }
 
       public Axis AxisBy(AxisTypes axisTypes) => _axes[axisTypes];
@@ -100,15 +94,17 @@ namespace OSPSuite.Core.Chart
 
       public void RemoveCurve(Curve curve)
       {
-         if (curve == null)
-            return;
-
-         RemoveCurve(curve.Id);
+         RemoveCurve(curve?.Id);
       }
 
       public void RemoveCurve(string curveId)
       {
-         if (!_curves.Contains(curveId)) return;
+         if (string.IsNullOrEmpty(curveId))
+            return;
+
+         if (!_curves.Contains(curveId))
+            return;
+
          var yAxisType = _curves[curveId].yAxisType;
          _curves.Remove(curveId);
          updateAxesForRemovedCurve(yAxisType);
@@ -214,7 +210,7 @@ namespace OSPSuite.Core.Chart
       private Axis updateAxis(AxisTypes axisType, IDimension dimension, Unit unit)
       {
          if (!_axes.Contains(axisType))
-            addNewAxisFor(axisType);
+            AddNewAxisFor(axisType);
 
          var axis = _axes[axisType];
          if (axis.Dimension == null)
@@ -226,7 +222,7 @@ namespace OSPSuite.Core.Chart
          return axis;
       }
 
-      private Axis addNewAxisFor(AxisTypes axisType)
+      public Axis AddNewAxisFor(AxisTypes axisType)
       {
          var newAxis = new Axis(axisType);
          _axes.Add(newAxis);
@@ -240,10 +236,10 @@ namespace OSPSuite.Core.Chart
       private void updateAxesForRemovedCurve(AxisTypes yAxisType)
       {
          if (!Curves.Any())
-            _axes[AxisTypes.X].Dimension = null;
+            _axes[AxisTypes.X].Reset();
 
          if (Curves.All(c => c.yAxisType != yAxisType))
-            _axes[yAxisType].Dimension = null;
+            _axes[yAxisType].Reset();
       }
 
       public void RemoveDatalessCurves()

@@ -60,7 +60,7 @@ namespace OSPSuite.Presentation
             var action = x.Arguments.Get<Action<DataColumn, Curve>>(3);
             _observationColumns.Each(observation =>
             {
-               var curve = new Curve(ShortGuid.NewGuid()) {Name = "Best"};
+               var curve = new Curve {Name = "Best"};
 
                action(new DataColumn(ShortGuid.NewGuid(), A.Fake<IDimension>(), _baseGrid), curve);
                _curveList.Add(curve);

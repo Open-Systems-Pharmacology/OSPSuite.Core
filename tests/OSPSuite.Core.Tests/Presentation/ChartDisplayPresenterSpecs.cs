@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(dataRepository.BaseGrid)).Returns(dataRepository.BaseGrid.Dimension);
          A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(firstColumn)).Returns(firstColumn.Dimension);
 
-         _curve = new Curve("curveId");
+         _curve = new Curve();
          _curve.SetxData(dataRepository.BaseGrid, _dimensionFactory);
          _curve.SetyData(firstColumn, _dimensionFactory);
 
@@ -192,7 +192,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_be_able_to_retrieve_the_curve_from_the_related_curve()
       {
-         sut.CurveFromSeriesId("curveId").ShouldBeEqualTo(_curve);
+         sut.CurveFromSeriesId(_curve.Id).ShouldBeEqualTo(_curve);
       }
    }
 
@@ -207,14 +207,14 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         _curveChart.RemoveCurve("curveId");
+         _curveChart.RemoveCurve(_curve.Id);
          sut.Edit(_curveChart);
       }
 
       [Observation]
       public void the_curve_is_not_available_from_the_presenter()
       {
-         sut.CurveFromSeriesId("curveId").ShouldBeNull();
+         sut.CurveFromSeriesId(_curve.Id).ShouldBeNull();
       }
    }
 
@@ -230,7 +230,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_curve_description_should_be_retrieved()
       {
-         sut.CurveDescriptionFromSeriesId("curveId").ShouldBeEqualTo(_curve.Description);
+         sut.CurveDescriptionFromSeriesId(_curve.Id).ShouldBeEqualTo(_curve.Description);
       }
    }
 
@@ -245,7 +245,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_the_curve()
       {
-         sut.CurveFromSeriesId("curveId").ShouldBeEqualTo(_curve);
+         sut.CurveFromSeriesId(_curve.Id).ShouldBeEqualTo(_curve);
       }
    }
 
@@ -261,7 +261,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_the_curve_index()
       {
-         sut.LegendIndexFromSeriesId("curveId").ShouldBeEqualTo(_curve.LegendIndex.Value);
+         sut.LegendIndexFromSeriesId(_curve.Id).ShouldBeEqualTo(_curve.LegendIndex.Value);
       }
    }
 
@@ -277,7 +277,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_zero()
       {
-         sut.LegendIndexFromSeriesId("curveId").ShouldBeEqualTo(0);
+         sut.LegendIndexFromSeriesId(_curve.Id).ShouldBeEqualTo(0);
       }
    }
 
@@ -286,7 +286,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_zero()
       {
-         sut.LegendIndexFromSeriesId("curveId").ShouldBeEqualTo(0);
+         sut.LegendIndexFromSeriesId(_curve.Id).ShouldBeEqualTo(0);
       }
    }
 

@@ -1,14 +1,13 @@
-using System;
 using System.Drawing;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
    public class Curve : MyNotifier, IValidatable
    {
-      private string _id;
       private string _name;
       private IDimension _xDimension;
       private IDimension _yDimension;
@@ -17,14 +16,11 @@ namespace OSPSuite.Core.Chart
       private DataColumn _xData;
       private DataColumn _yData;
       public IBusinessRuleSet Rules { get; }
+      public string Id { get; }
 
-      public Curve() : this(Guid.NewGuid().ToString())
+      public Curve()
       {
-      }
-
-      public Curve(string id)
-      {
-         _id = id;
+         Id = ShortGuid.NewGuid();
          _name = string.Empty;
          _description = string.Empty;
          _xData = null;
@@ -50,11 +46,6 @@ namespace OSPSuite.Core.Chart
             YDimension = dimensionFactory.GetMergedDimensionFor(yData);
       }
 
-      public string Id
-      {
-         get => _id;
-         internal set => SetProperty(ref _id, value, () => Id);
-      }
 
       public string Description
       {
