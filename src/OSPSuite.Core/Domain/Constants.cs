@@ -516,15 +516,9 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static IEnumerable<string> GetFontFamilies()
-         {
-            return new List<string> {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
-         }
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman" };
 
-         public static IEnumerable<int> GetFontSizes()
-         {
-            return new List<int> {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
-         }
+         public static readonly IReadOnlyList<int> AllFontSizes = new [] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
 
          public static string DefaultFontFamilyName = FontFamily.GenericSansSerif.Name;
          public static int DefaultFontSizeLegend = 8;

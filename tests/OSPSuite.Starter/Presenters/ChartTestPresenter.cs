@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters;
@@ -53,11 +54,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly IChartFromTemplateService _chartFromTemplateService;
       private readonly IChartTemplatePersistor _chartTemplatePersistor;
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly IChartUpdater _chartUpdater;
       private ICache<string, DataRepository> _dataRepositories;
 
       public ChartTestPresenter(IChartTestView view, IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, TestEnvironment testEnvironment, IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper,
          IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, DataPersistor dataPersistor, IChartFromTemplateService chartFromTemplateService,
-         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory) : base(view)
+         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater) : base(view)
       {
          _model = testEnvironment.Model.Root;
          _dataRepositories = new Cache<string, DataRepository>(repository => repository.Name);
@@ -68,6 +70,7 @@ namespace OSPSuite.Starter.Presenters
          _chartFromTemplateService = chartFromTemplateService;
          _chartTemplatePersistor = chartTemplatePersistor;
          _dimensionFactory = dimensionFactory;
+         _chartUpdater = chartUpdater;
          _view.AddChartEditorView(chartEditorAndDisplayPresenter.EditorPresenter.View);
          _view.AddChartDisplayView(chartEditorAndDisplayPresenter.DisplayPresenter.View);
 
@@ -82,15 +85,15 @@ namespace OSPSuite.Starter.Presenters
 
       private void configureChartEditorEvents()
       {
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.Origin).Visible = true;
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Origin).Visible = true;
 
          ChartEditorPresenter.SetCurveNameDefinition(TestProgram.NameDefinition);
-         ChartEditorPresenter.GetCurveOptionsColumnSettings(CurveOptionsColumns.InterpolationMode).Visible = false;
+         ChartEditorPresenter.CurveOptionsColumnSettingsFor(CurveOptionsColumns.InterpolationMode).Visible = false;
 
-         ChartEditorPresenter.GetAxisOptionsColumnSettings(AxisOptionsColumns.NumberMode).Caption = "Number Representation";
-         ChartEditorPresenter.GetAxisOptionsColumnSettings(AxisOptionsColumns.NumberMode).VisibleIndex = 1;
+         ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).Caption = "Number Representation";
+         ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).VisibleIndex = 1;
 
-         ChartDisplayPresenter.DataSource = Chart;
+         ChartDisplayPresenter.Edit(Chart);
          Chart.ChartSettings.DiagramBackColor = Color.White;
          ChartDisplayPresenter.DragOver += onChartDisplayDragOver;
          ChartEditorPresenter.DragOver += onChartDisplayDragOver;
@@ -116,12 +119,26 @@ namespace OSPSuite.Starter.Presenters
          ChartEditorPresenter.AddDataRepositories(newRepositories);
          addNewRepositories(newRepositories);
          addNewCurvesToChart(newRepositories);
-         ChartEditorPresenter.SelectDataColumns();
       }
 
       private void addNewCurvesToChart(List<DataRepository> newRepositories)
       {
-         newRepositories.Each(repository => repository.AllButBaseGrid().Each(column => ChartEditorPresenter.AddCurveForColumn(column.Id)));
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            newRepositories.Each(repository => repository.AllButBaseGrid().Each(addColumnToChart));
+         }
+      }
+
+      private void addColumnToChart(DataColumn dataColumn)
+      {
+         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, TestProgram.NameDefinition(dataColumn), _dimensionFactory);
+         // Settings already in chart, make no changes
+         if (Chart.HasCurve(curve.Id))
+            return;
+
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, _dataRepositories.SelectMany(x=>x.AllButBaseGrid()).ToList());
+
+         Chart.AddCurve(curve);
       }
 
       public void AddCalculations(int numberOfCalculations)
@@ -152,25 +169,26 @@ namespace OSPSuite.Starter.Presenters
             OriginText = Captions.ChartFingerprintDataFrom("Test Chart Project", "Test Chart Simulation", DateTime.Now.ToIsoFormat())
          };
 
-         ChartEditorPresenter.DataSource = Chart;
+         ChartEditorPresenter.Edit(Chart);
 
          Chart.Title = "The Chart Title";
          Chart.ChartSettings.BackColor = Color.White;
       }
 
-      public ICurveChart Chart { get; set; }
+      public CurveChart Chart { get; set; }
 
       private void configureChartEditorPresenter(IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper)
       {
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.RepositoryName).GroupIndex = 0;
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.DimensionName).GroupIndex = 1;
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.Simulation).GroupIndex = -1;
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.TopContainer).Caption = "TopC";
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.Container).Caption = "Container";
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.BottomCompartment).VisibleIndex = 2;
-         ChartEditorPresenter.GetDataBrowserColumnSettings(BrowserColumns.Molecule).SortColumnName = BrowserColumns.OrderIndex.ToString();
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.RepositoryName).GroupIndex = 0;
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.DimensionName).GroupIndex = 1;
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Simulation).GroupIndex = -1;
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.TopContainer).Caption = "TopC";
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Container).Caption = "Container";
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.BottomCompartment).VisibleIndex = 2;
+         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Molecule).SortColumnName = BrowserColumns.OrderIndex.ToString();
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(setQuantityPathDefinitions(_model, dataColumnToPathColumnValuesMapper));
          ChartEditorPresenter.SetShowDataColumnInDataBrowserDefinition(showDataColumnInDataBrowserDefinition);
+         ChartEditorPresenter.ApplyColumnSettings();
       }
 
       public IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
@@ -239,30 +257,28 @@ namespace OSPSuite.Starter.Presenters
             return;
 
          var chartTemplate = _chartTemplatePersistor.DeserializeFromFile(fileName);
-         ChartDisplayPresenter.DataSource = null;
-         ChartEditorPresenter.DataSource = null;
+         ChartDisplayPresenter.Clear();
+         ChartEditorPresenter.Clear();
 
          var chart = new CurveChart();
          _chartFromTemplateService.CurveNameDefinition = TestProgram.NameDefinition;
          _chartFromTemplateService.InitializeChartFromTemplate(chart, _dataRepositories["Rep Ex3"], chartTemplate, false);
 
-         ChartEditorPresenter.DataSource = chart;
-         ChartDisplayPresenter.DataSource = chart;
+         ChartEditorPresenter.Clear();
+         ChartDisplayPresenter.Clear();
       }
 
       public void RefreshDisplay()
       {
-         ChartDisplayPresenter.Refresh();
+         _chartUpdater.Update(Chart);  
       }
 
 
       public void ReloadMenus()
       {
          ChartEditorPresenter.ClearButtons();
-         var showSelected = new TestProgramButton("Show Selected DataColumns", ChartEditorPresenter.SelectDataColumns);
          var saveAsTemplate = new TestProgramButton("Save as Chart Template", onChartSave);
 
-         ChartEditorPresenter.AddButton(showSelected);
          ChartEditorPresenter.AddButton(saveAsTemplate);
 
 
@@ -304,15 +320,12 @@ namespace OSPSuite.Starter.Presenters
          var dataPersitor = new DataPersistor(_ospSuiteXmlSerializerRepository);
          _dataRepositories = dataPersitor.Load<ICache<string, DataRepository>>(fileName.Replace(".", "_d."), _dimensionFactory);
 
-         Chart = dataPersitor.Load<ICurveChart>(fileName, _dimensionFactory, _dataRepositories);
+         Chart = dataPersitor.Load<CurveChart>(fileName, _dimensionFactory, _dataRepositories);
 
-         ChartEditorPresenter.DataSource = null;
-         ChartEditorPresenter.ClearDataRepositories();
+         ChartEditorPresenter.Clear();
 
          ChartEditorPresenter.AddDataRepositories(_dataRepositories);
-         ChartEditorPresenter.DataSource = Chart;
-
-         ChartEditorPresenter.DataSource = Chart;
+         ChartEditorPresenter.Edit(Chart);
       }
 
       private string getFileName(FileDialog fileDialog)

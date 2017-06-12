@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return createChartAnalysisFor<ParameterIdentificationResidualVsTimeChart>(parameterIdentification);
       }
 
-      private T createChartAnalysisFor<T>(ParameterIdentification parameterIdentification) where T : ISimulationAnalysis, ICurveChart
+      private T createChartAnalysisFor<T>(ParameterIdentification parameterIdentification) where T : CurveChart, ISimulationAnalysis
       {
          var chart = _chartFactory.Create<T>();
          AddSimulationAnalysisTo(parameterIdentification, chart);

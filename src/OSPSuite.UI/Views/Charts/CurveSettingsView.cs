@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Data;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
@@ -16,6 +11,11 @@ using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
@@ -23,6 +23,8 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -37,7 +39,7 @@ namespace OSPSuite.UI.Views.Charts
       private readonly RepositoryItemComboBox _symbolRepository;
       private readonly RepositoryItemCheckEdit _visibleRepository;
       private readonly RepositoryItemButtonEdit _deleteButtonRepository;
-      private GridViewBinder<ICurve> _gridBinderCurves;
+      private readonly GridViewBinder<CurveDTO> _gridBinderCurves;
       private ICurveSettingsPresenter _presenter;
 
       private GridHitInfo _downHitInfo; //Drag & Drop
@@ -50,6 +52,8 @@ namespace OSPSuite.UI.Views.Charts
       {
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
+
+         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) {BindingMode = BindingMode.TwoWay};
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
          _lineStyleRepository = new UxRepositoryItemComboBox(gridView);
@@ -80,78 +84,42 @@ namespace OSPSuite.UI.Views.Charts
          // initialize RepositoryItems
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-
          _lineStyleRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<LineStyles>());
          _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
          _symbolRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<Symbols>());
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 
-         _gridBinderCurves = new GridViewBinder<ICurve>(gridView) {BindingMode = BindingMode.TwoWay};
+         _colName = createFor(curve => curve.Name, CurveOptionsColumns.Name);
 
-
-         _colName = _gridBinderCurves.AutoBind(curve => curve.Name)
-            .WithShowInColumnChooser(true);
-         _colName.XtraColumn.Tag = CurveOptionsColumns.Name.ToString();
-
-         _xDataColumn = _gridBinderCurves.AutoBind(curve => curve.xData)
-            .WithShowInColumnChooser(true)
+         _xDataColumn = createFor(curve => curve.xData, CurveOptionsColumns.xData)
             .AsReadOnly();
-         _xDataColumn.XtraColumn.Tag = CurveOptionsColumns.xData.ToString();
 
-         _yDataColumn = _gridBinderCurves.AutoBind(curve => curve.yData)
-            .WithShowInColumnChooser(true)
+         _yDataColumn = createFor(curve => curve.yData, CurveOptionsColumns.yData)
             .WithFormat(c => new DataColumnFormatter(_presenter))
             .AsReadOnly();
-         _yDataColumn.XtraColumn.Tag = CurveOptionsColumns.yData.ToString();
 
-         _gridBinderCurves.AutoBind(curve => curve.yAxisType)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _axisTypeRepository)
-            .WithEditorConfiguration(configureAxisTypeEditor)
-            .XtraColumn.Tag = CurveOptionsColumns.yAxisType.ToString();
+         createFor(curve => curve.yAxisType, CurveOptionsColumns.yAxisType, _axisTypeRepository)
+            .WithEditorConfiguration(configureAxisTypeEditor);
 
-         _gridBinderCurves.AutoBind(curve => curve.InterpolationMode)
-            .WithRepository(curve => _interpolationModeRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.InterpolationMode.ToString();
+         createFor(curve => curve.InterpolationMode, CurveOptionsColumns.InterpolationMode, _interpolationModeRepository);
 
-         _gridBinderCurves.AutoBind(curve => curve.Color)
-            .WithShowInColumnChooser(true).WithRepository(curve => _colorRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.Color.ToString();
+         createFor(curve => curve.Color, CurveOptionsColumns.Color, _colorRepository);
 
-         _gridBinderCurves.AutoBind(curve => curve.LineStyle)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _lineStyleRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.LineStyle.ToString();
+         createFor(curve => curve.LineStyle, CurveOptionsColumns.LineStyle, _lineStyleRepository);
 
-         _gridBinderCurves.AutoBind(curve => curve.Symbol)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _symbolRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.Symbol.ToString();
+         createFor(curve => curve.Symbol, CurveOptionsColumns.Symbol, _symbolRepository);
 
-         _gridBinderCurves.AutoBind(curve => curve.LineThickness)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _lineThicknessRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.LineThickness.ToString();
+         createFor(curve => curve.LineThickness, CurveOptionsColumns.LineThickness, _lineThicknessRepository);
 
-         _gridBinderCurves.Bind(curve => curve.Visible)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _visibleRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.Visible.ToString();
+         createFor(curve => curve.Visible, CurveOptionsColumns.Visible, _visibleRepository);
 
-         _gridBinderCurves.Bind(curve => curve.VisibleInLegend)
-            .WithShowInColumnChooser(true)
-            .WithRepository(curve => _visibleRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.VisibleInLegend.ToString();
+         createFor(curve => curve.VisibleInLegend, CurveOptionsColumns.VisibleInLegend, _visibleRepository);
 
-         var lloqColumn = _gridBinderCurves.Bind(curve => curve.ShowLLOQ);
-         lloqColumn.WithShowInColumnChooser(true)
-            .WithRepository(curve => _showLowerLimitOfQuantificationRepository)
-            .XtraColumn.Tag = CurveOptionsColumns.ShowLowerLimitOfQuantification.ToString();
+         createFor(curve => curve.ShowLLOQ, CurveOptionsColumns.ShowLowerLimitOfQuantification, _showLowerLimitOfQuantificationRepository);
 
          var legendIndexColumn = _gridBinderCurves.Bind(curve => curve.LegendIndex);
          legendIndexColumn.Visible = false;
-         lloqColumn.Visible = false;
          gridView.Columns[legendIndexColumn.ColumnName].SortOrder = ColumnSortOrder.Ascending;
 
          //Delete-column
@@ -162,10 +130,21 @@ namespace OSPSuite.UI.Views.Charts
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
       }
 
-      public override void Refresh()
+      private IGridViewAutoBindColumn<CurveDTO, T> createFor<T>(Expression<Func<CurveDTO, T>> propertyToBindTo, CurveOptionsColumns curveOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true)
       {
-         base.Refresh();
-         _gridBinderCurves.Rebind();
+         var column = _gridBinderCurves.AutoBind(propertyToBindTo)
+            .WithShowInColumnChooser(showInColumnChooser)
+            .WithOnValueSet((curveDTO, value) => notifyCurvePropertyChange(curveDTO));
+
+         if (repositoryItem != null)
+            column.WithRepository(curve => repositoryItem);
+
+         column.XtraColumn.Tag = curveOptionsColumn.ToString();
+         return column;
+      }
+      private void notifyCurvePropertyChange(CurveDTO curveDTO)
+      {
+         _presenter.NotifyCurvePropertyChange(curveDTO);
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -178,16 +157,16 @@ namespace OSPSuite.UI.Views.Charts
          if (!Equals(hi.Column, _colName.XtraColumn))
             return;
 
-         var curve = _gridBinderCurves.ElementAt(e);
-         if (curve == null) return;
+         var curveDTO = _gridBinderCurves.ElementAt(e);
+         if (curveDTO == null) return;
 
-         var toolTip = _toolTipCreator.CreateToolTip(_presenter.ToolTipFor(curve));
-         e.Info = _toolTipCreator.ToolTipControlInfoFor(curve, toolTip);
+         var toolTip = _toolTipCreator.CreateToolTip(_presenter.ToolTipFor(curveDTO));
+         e.Info = _toolTipCreator.ToolTipControlInfoFor(curveDTO, toolTip);
       }
 
-      private void configureAxisTypeEditor(BaseEdit baseEdit, ICurve curve)
+      private void configureAxisTypeEditor(BaseEdit baseEdit, CurveDTO curve)
       {
-         baseEdit.FillComboBoxEditorWith(_presenter.GetAxisTypes());
+         baseEdit.FillComboBoxEditorWith(_presenter.AllYAxisTypes);
       }
 
       public void AttachPresenter(ICurveSettingsPresenter presenter)
@@ -196,10 +175,9 @@ namespace OSPSuite.UI.Views.Charts
          base.AttachPresenter(presenter);
       }
 
-      public void BindToSource(IEnumerable<ICurve> curves)
+      public void BindToSource(IEnumerable<CurveDTO> curves)
       {
-         _gridBinderCurves.BindToSource(curves);
-         Refresh();
+         _gridBinderCurves.BindToSource(curves.ToBindingList());
       }
 
       public void RefreshData()
@@ -211,11 +189,11 @@ namespace OSPSuite.UI.Views.Charts
       {
          gridControl.AllowDrop = true;
          // for Drag&Drop of Colors
-         gridView.MouseDown += viewMouseDown; 
-         _colorRepository.MouseDown += viewMouseDown;
+         gridView.MouseDown += (o, e) => OnEvent(viewMouseDown, o, e);
+         _colorRepository.MouseDown += (o, e) => OnEvent(viewMouseDown, e, e);
 
-         gridView.MouseMove += viewMouseMove;
-         _colorRepository.MouseMove += viewMouseMove;
+         gridView.MouseMove += (o, e) => OnEvent(viewMouseMove, o, e);
+         _colorRepository.MouseMove += (o, e) => OnEvent(viewMouseMove, o, e);
 
          // for Drop of Colors and (DataColumns to x/yData)
          gridControl.DragOver += (o, e) => OnEvent(gridDragOver, e);
@@ -227,51 +205,45 @@ namespace OSPSuite.UI.Views.Charts
       {
          var focusedCurve = _gridBinderCurves.FocusedElement;
          if (focusedCurve == null) return;
-         _presenter.RemoveCurve(focusedCurve.Id);
+         _presenter.Remove(focusedCurve);
       }
 
       private void viewMouseDown(object sender, MouseEventArgs e)
       {
-         this.DoWithinExceptionHandler(() =>
+         _downHitInfo = null;
+         if (ModifierKeys != Keys.None) return;
+
+         var cursorLocation = e.Location;
+         var colorEdit = sender as ColorEdit;
+         if (colorEdit != null)
          {
-            _downHitInfo = null;
-            if (ModifierKeys != Keys.None) return;
+            // convert internal coordinates of color edit to gridview coordinates
+            cursorLocation.Offset(colorEdit.Location);
+         }
 
-            var cursorLocation = e.Location;
-            var colorEdit = sender as ColorEdit;
-            if (colorEdit != null)
-            {
-               // convert internal coordinates of color edit to gridview coordinates
-               cursorLocation.Offset(colorEdit.Location);
-            }
-
-            _downHitInfo = gridView.CalcHitInfo(cursorLocation);
-         });
+         _downHitInfo = gridView.CalcHitInfo(cursorLocation);
       }
 
       private void viewMouseMove(object sender, MouseEventArgs e)
       {
          if (_downHitInfo == null) return;
 
-         this.DoWithinExceptionHandler(() =>
+         var cursorLocation = getCursorLocationRelativeToGrid(sender, e);
+
+         if (isNotValidMouseMove(e, cursorLocation)) return;
+
+         var curve = _gridBinderCurves.ElementAt(_downHitInfo.RowHandle);
+         if (hitInColorCell(_downHitInfo))
          {
-            var cursorLocation = getCursorLocationRelativeToGrid(sender, e);
-
-            if (isNotValidMouseMove(e, cursorLocation)) return;
-
-            var curve = _gridBinderCurves.ElementAt(_downHitInfo.RowHandle);
-            if (hitInColorCell(_downHitInfo))
-            {
-               var colorEdit = sender as ColorEdit;
-               handleAsDraggingColor(colorEdit, curve);
-               DXMouseEventArgs.GetMouseArgs(e).Handled = true;
-            }
-            else if (hitInRowIndicator(_downHitInfo))
-            {
-               handleAsDraggingCurve(curve);
-               DXMouseEventArgs.GetMouseArgs(e).Handled = true;
-            }
-         });
+            var colorEdit = sender as ColorEdit;
+            handleAsDraggingColor(colorEdit, curve);
+            DXMouseEventArgs.GetMouseArgs(e).Handled = true;
+         }
+         else if (hitInRowIndicator(_downHitInfo))
+         {
+            handleAsDraggingCurve(curve);
+            DXMouseEventArgs.GetMouseArgs(e).Handled = true;
+         }
       }
 
       private bool isNotValidMouseMove(MouseEventArgs e, Point cursorLocation)
@@ -279,19 +251,18 @@ namespace OSPSuite.UI.Views.Charts
          return !cursorHasMoved(cursorLocation) || (e.Button != MouseButtons.Left);
       }
 
-      private void handleAsDraggingCurve(ICurve curve)
+      private void handleAsDraggingCurve(CurveDTO curveDTO)
       {
-         gridControl.DoDragDrop(curve, DragDropEffects.Move);
+         gridControl.DoDragDrop(curveDTO.Curve, DragDropEffects.Move);
 
          _downHitInfo = null;
       }
 
-      private void handleAsDraggingColor(ColorEdit colorEdit, ICurve curve)
+      private void handleAsDraggingColor(ColorEdit colorEdit, CurveDTO curveDTO)
       {
-         var color = curve.Color;
+         var color = curveDTO.Color;
 
-         if (colorEdit != null)
-            colorEdit.ClosePopup();
+         colorEdit?.ClosePopup();
 
          gridControl.DoDragDrop(color, DragDropEffects.Copy);
 
@@ -344,12 +315,15 @@ namespace OSPSuite.UI.Views.Charts
          var targetPoint = PointToClient(new Point(e.X, e.Y));
          var hitInfo = gridView.CalcHitInfo(targetPoint);
 
-         if (e.TypeBeingDraggedIs<List<string>>())
+         if (e.TypeBeingDraggedIs<List<DataColumn>>())
             e.Effect = DragDropEffects.Move;
+
          else if (e.TypeBeingDraggedIs<Color>() && hitInColorCell(hitInfo))
             e.Effect = DragDropEffects.Copy;
+
          else if (e.TypeBeingDraggedIs<Curve>() && hitInRowIndicator(hitInfo))
             e.Effect = DragDropEffects.Move;
+
          else
             e.Effect = DragDropEffects.None;
       }
@@ -360,7 +334,7 @@ namespace OSPSuite.UI.Views.Charts
          var targetPoint = PointToClient(new Point(e.X, e.Y));
          var hitInfo = gridView.CalcHitInfo(targetPoint);
 
-         var columnIdList = e.Data<List<string>>();
+         var columnIdList = e.Data<List<DataColumn>>();
          if (columnIdList != null)
             dropColumnIdList(hitInfo, columnIdList);
 
@@ -369,34 +343,31 @@ namespace OSPSuite.UI.Views.Charts
             var color = e.Data<Color>();
             dropColor(hitInfo, color);
          }
-         else if (e.TypeBeingDraggedIs<Curve>())
+         else if (e.TypeBeingDraggedIs<CurveDTO>())
          {
-            dropCurve(hitInfo, e.Data<Curve>());
+            dropCurve(hitInfo, e.Data<CurveDTO>());
          }
       }
 
-      private void dropColumnIdList(GridHitInfo hitInfo, IReadOnlyList<string> columnIdList)
+      private void dropColumnIdList(GridHitInfo hitInfo, IReadOnlyList<DataColumn> columns)
       {
-         if (hitInXYDataCell(hitInfo) && columnIdList.Count() == 1)
+         if (hitInXYDataCell(hitInfo) && columns.Count == 1)
          {
             var curve = _gridBinderCurves.ElementAt(hitInfo.RowHandle);
-            var columnId = columnIdList.First();
+            var column = columns[0];
 
             if (hitInXColumn(hitInfo))
             {
-               _presenter.SetCurveXData(curve, columnId);
+               _presenter.SetCurveXData(curve, column);
             }
             else if (hitInYColumn(hitInfo))
             {
-               _presenter.SetCurveYData(curve, columnId);
+               _presenter.SetCurveYData(curve, column);
             }
          }
          else if (hitInfo.HitTest == GridHitTest.EmptyRow)
          {
-            foreach (var columnId in columnIdList)
-            {
-               _presenter.AddCurveForColumn(columnId);
-            }
+            _presenter.AddCurvesForColumns(columns);
          }
       }
 
@@ -410,12 +381,12 @@ namespace OSPSuite.UI.Views.Charts
          return Equals(hitInfo.Column.Tag, _xDataColumn.XtraColumn.Tag);
       }
 
-      private void dropCurve(GridHitInfo hitInfo, ICurve curveBeingMoved)
+      private void dropCurve(GridHitInfo hitInfo, CurveDTO curveBeingMoved)
       {
          if (hitInRowIndicator(hitInfo))
          {
-            var targetCurve = _gridBinderCurves.ElementAt(hitInfo.RowHandle);
-            _presenter.MoveSeriesInLegend(curveBeingMoved, targetCurve);
+            var targetCurveDTO = _gridBinderCurves.ElementAt(hitInfo.RowHandle);
+            _presenter.MoveSeriesInLegend(curveBeingMoved, targetCurveDTO);
          }
       }
 
@@ -433,7 +404,7 @@ namespace OSPSuite.UI.Views.Charts
          var curve = _gridBinderCurves.FocusedElement;
          if (curve != null && gridView.ActiveEditor == null)
          {
-            _presenter.RemoveCurve(curve.Id);
+            _presenter.Remove(curve);
          }
       }
    }

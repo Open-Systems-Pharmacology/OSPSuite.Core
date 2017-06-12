@@ -8,14 +8,14 @@ using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class CurveChartContextMenu : ContextMenu<ICurveChart, IChartDisplayPresenter>
+   public class CurveChartContextMenu : ContextMenu<CurveChart, IChartDisplayPresenter>
    {
-      public CurveChartContextMenu(ICurveChart objectRequestingContextMenu, IChartDisplayPresenter context)
+      public CurveChartContextMenu(CurveChart objectRequestingContextMenu, IChartDisplayPresenter context)
          : base(objectRequestingContextMenu, context)
       {
       }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ICurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter)
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter)
       {
          yield return CreateMenuButton.WithCaption(MenuNames.ResetZoom)
             .WithActionCommand(chartDisplayPresenter.ResetZoom)
@@ -36,13 +36,13 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       }
    }
 
-   public interface ICurveChartContextMenuFactory : IContextMenuFactory<ICurveChart>
+   public interface ICurveChartContextMenuFactory : IContextMenuFactory<CurveChart>
    {
    }
 
    public class CurveChartContextMenuFactory : ICurveChartContextMenuFactory
    {
-      public IContextMenu CreateFor(ICurveChart objectRequestingContextMenu, IPresenterWithContextMenu<ICurveChart> presenter)
+      public IContextMenu CreateFor(CurveChart objectRequestingContextMenu, IPresenterWithContextMenu<CurveChart> presenter)
       {
          return new CurveChartContextMenu(objectRequestingContextMenu, presenter.DowncastTo<IChartDisplayPresenter>());
       }

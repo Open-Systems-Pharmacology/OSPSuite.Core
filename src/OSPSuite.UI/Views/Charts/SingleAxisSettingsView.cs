@@ -14,10 +14,10 @@ namespace OSPSuite.UI.Views.Charts
 {
    public partial class SingleAxisSettingsView : BaseUserControl, ISingleAxisSettingsView
    {
-      private ScreenBinder<IAxis> _screenBinder;
+      private ScreenBinder<Axis> _screenBinder;
       private ISingleAxisSettingsPresenter _presenter;
-      private ComboBoxEditElementBinder<IAxis, IDimension> _dimensionBinder;
-      private ComboBoxEditElementBinder<IAxis, string> _unitBinder;
+      private ComboBoxEditElementBinder<Axis, IDimension> _dimensionBinder;
+      private ComboBoxEditElementBinder<Axis, string> _unitBinder;
       private readonly IToolTipCreator _toolTipCreator;
 
       public SingleAxisSettingsView(IToolTipCreator toolTipCreator)
@@ -29,7 +29,7 @@ namespace OSPSuite.UI.Views.Charts
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _screenBinder = new ScreenBinder<IAxis>();
+         _screenBinder = new ScreenBinder<Axis>();
 
          _screenBinder.Bind(x => x.AxisType).To(axisTypeTextBox);
          _screenBinder.Bind(x => x.NumberMode).To(numberRepresentationComboBox).WithValues(numberRepresentationComboBox.GetValidValues());
@@ -68,7 +68,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void updateUnits()
       {
-         _unitBinder.WithValues(_presenter.GetUnitsForDimension()).Refresh();
+         _unitBinder.WithValues(_presenter.AllUnitsForDimension()).Refresh();
       }
 
       public void AttachPresenter(ISingleAxisSettingsPresenter presenter)
@@ -76,9 +76,9 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void BindToSource(IAxis axis)
+      public void BindToSource(Axis axis)
       {
-         _dimensionBinder.WithValues(_presenter.GetDimensionsForEditor(axis.Dimension));
+         _dimensionBinder.WithValues(_presenter.AllDimensionsForEditor(axis.Dimension));
          updateUnits();
          _screenBinder.BindToSource(axis);
       }

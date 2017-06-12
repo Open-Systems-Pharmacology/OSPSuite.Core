@@ -7,26 +7,26 @@ using OSPSuite.Presentation.UICommands;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class AxisContextMenu : ContextMenu<IAxis>
+   public class AxisContextMenu : ContextMenu<Axis>
    {
-      public AxisContextMenu(IAxis objectRequestingContextMenu) : base(objectRequestingContextMenu)
+      public AxisContextMenu(Axis objectRequestingContextMenu) : base(objectRequestingContextMenu)
       {
       }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(IAxis axis)
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(Axis axis)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditAxisUICommand, IAxis>(axis);
+         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditAxisUICommand, Axis>(axis);
       }
    }
 
-   public interface IAxisContextMenuFactory : IContextMenuFactory<IAxis>
+   public interface IAxisContextMenuFactory : IContextMenuFactory<Axis>
    {
 
    }
 
    public class AxisContextMenuFactory : IAxisContextMenuFactory
    {
-      public IContextMenu CreateFor(IAxis axis, IPresenterWithContextMenu<IAxis> presenter)
+      public IContextMenu CreateFor(Axis axis, IPresenterWithContextMenu<Axis> presenter)
       {
          return new AxisContextMenu(axis);
       }

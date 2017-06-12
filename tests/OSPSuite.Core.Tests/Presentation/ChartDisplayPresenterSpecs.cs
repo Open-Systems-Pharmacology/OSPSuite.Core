@@ -1,14 +1,18 @@
-﻿using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Exceptions;
+﻿using System.Linq;
 using FakeItEasy;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Presentation
 {
@@ -17,65 +21,93 @@ namespace OSPSuite.Presentation
       protected IChartDisplayView _chartDisplayView;
       protected IDataRepositoryTask _dataRepositoryTask;
       protected IDialogCreator _dialogCreator;
-      protected ICurveAdapterFactory _curveAdapterFactory;
+      protected ICurveBinderFactory _curveBinderFactory;
       protected ICurveChartContextMenuFactory _curveChartContextMenuFactory;
       protected ICurveContextMenuFactory _curveContextMenuFactory;
       protected IAxisContextMenuFactory _axisContextMenuFactory;
       protected IExceptionManager _exceptionManager;
 
       protected CurveChart _curveChart;
-      protected ICurveAdapter _curveAdapter;
-      protected ICurve _curve;
+      protected ICurveBinder _curveBinder;
+      protected Curve _curve;
+      private IDimensionFactory _dimensionFactory;
+      private IAxisBinderFactory _axisBinderFactory;
+      private ICurveToDataModeMapper _dataModeMapper;
+      private IAxisBinder _xAxisBinder;
+      private IAxisBinder _yAxisBinder;
 
       protected override void Context()
       {
          _chartDisplayView = A.Fake<IChartDisplayView>();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         _curveAdapterFactory = A.Fake<ICurveAdapterFactory>();
+         _curveBinderFactory = A.Fake<ICurveBinderFactory>();
          _curveChartContextMenuFactory = A.Fake<ICurveChartContextMenuFactory>();
          _curveContextMenuFactory = A.Fake<ICurveContextMenuFactory>();
          _axisContextMenuFactory = A.Fake<IAxisContextMenuFactory>();
          _exceptionManager = A.Fake<IExceptionManager>();
-         _curveAdapter = A.Fake<ICurveAdapter>();
-         _curve = A.Fake<ICurve>();
-         A.CallTo(() => _curve.Id).Returns("curveId");
-         A.CallTo(() => _curveAdapter.SeriesIds).Returns(new [] { _curve.Id });
+         _curveBinder = A.Fake<ICurveBinder>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
+         _axisBinderFactory = A.Fake<IAxisBinderFactory>();
+         _dataModeMapper = A.Fake<ICurveToDataModeMapper>();
 
-         A.CallTo(() => _curveAdapterFactory.CreateFor(A<ICurve>._, A<IAxis>._, A<IAxis>._)).Returns(_curveAdapter);
-         A.CallTo(() => _curveAdapter.ContainsSeries(_curve.Id)).Returns(true);
-         A.CallTo(() => _curveAdapter.Id).Returns(_curve.Id);
-         A.CallTo(() => _curveAdapter.Curve).Returns(_curve);
+         sut = new ChartDisplayPresenter( _chartDisplayView, _dataRepositoryTask, _dialogCreator, _curveBinderFactory, _curveChartContextMenuFactory, 
+            _curveContextMenuFactory,_axisContextMenuFactory, _axisBinderFactory, _dataModeMapper);
 
-         sut = new ChartDisplayPresenter(
-            _chartDisplayView,
-            _dataRepositoryTask,
-            _dialogCreator,
-            _curveAdapterFactory,
-            _curveChartContextMenuFactory,
-            _curveContextMenuFactory,
-            _axisContextMenuFactory,
-            _exceptionManager
-            );
+         var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
+         var firstColumn = dataRepository.AllButBaseGrid().First();
+         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(dataRepository.BaseGrid)).Returns(dataRepository.BaseGrid.Dimension);
+         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(firstColumn)).Returns(firstColumn.Dimension);
+
+         _curve = new Curve("curveId");
+         _curve.SetxData(dataRepository.BaseGrid, _dimensionFactory);
+         _curve.SetyData(firstColumn, _dimensionFactory);
+
+         A.CallTo(() => _curveBinder.SeriesIds).Returns(new[] {_curve.Id});
+         A.CallTo(() => _curveBinder.ContainsSeries(_curve.Id)).Returns(true);
+         A.CallTo(() => _curveBinder.Id).Returns(_curve.Id);
+         A.CallTo(() => _curveBinder.Curve).Returns(_curve);
+
+         A.CallTo(_curveBinderFactory).WithReturnType<ICurveBinder>().Returns(_curveBinder);
 
          _curveChart = new CurveChart();
-         sut.DataSource = _curveChart;
+         _curveChart.AddAxis(new Axis(AxisTypes.X){Dimension = _curve.XDimension});
+         _curveChart.AddAxis(new Axis(AxisTypes.Y){Dimension = _curve.YDimension});
+
+         _xAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.X));
+         _yAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.Y));
+
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.X), _chartDisplayView.ChartControl, _curveChart)).Returns(_xAxisBinder);
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.Y), _chartDisplayView.ChartControl, _curveChart)).Returns(_yAxisBinder);
+
+         SetupChart();
+         sut.Edit(_curveChart);
+      }
+
+      protected virtual void SetupChart()
+      {
+      }
+
+      private IAxisBinder createAxisBinderFor(Axis axis)
+      {
+         var axisBinder = A.Fake<IAxisBinder>();
+         A.CallTo(() => axisBinder.AxisType).Returns(axis.AxisType);
+         A.CallTo(() => axisBinder.Axis).Returns(axis);
+         return axisBinder;
       }
    }
 
    public class When_hiding_a_legend_entry_for_a_curve_whose_series_can_be_found_by_the_view : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curve.VisibleInLegend = true;
          _curveChart.AddCurve(_curve);
       }
 
       protected override void Because()
       {
-         base.Because();
-         _curve.VisibleInLegend = true;
          sut.ShowCurveInLegend(_curve, false);
       }
 
@@ -88,36 +120,36 @@ namespace OSPSuite.Presentation
 
    public class When_resolving_an_axis_from_type_and_the_axis_is_found_by_the_presenter : concern_for_ChartDisplayPresenter
    {
-      private IAxis _resultX;
-      private IAxis _resultY;
+      private Axis _resultX;
+      private Axis _resultY;
 
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curveChart.AddCurve(_curve);
       }
 
       protected override void Because()
       {
-         _resultX = sut.GetAxisFrom(AxisTypes.X);
-         _resultY = sut.GetAxisFrom(AxisTypes.Y);
+         _resultX = sut.AxisBy(AxisTypes.X);
+         _resultY = sut.AxisBy(AxisTypes.Y);
       }
 
       [Observation]
       public void axis_returned_should_be_correct()
       {
-         _resultX.ShouldBeEqualTo(_curveChart.Axes[AxisTypes.X]);
-         _resultY.ShouldBeEqualTo(_curveChart.Axes[AxisTypes.Y]);
+         _resultX.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.X));
+         _resultY.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.Y));
       }
    }
 
    public class When_resolving_an_axis_from_type_and_the_axis_is_not_found_in_the_presenter : concern_for_ChartDisplayPresenter
    {
-      private IAxis _result;
+      private Axis _result;
 
       protected override void Because()
       {
-         _result = sut.GetAxisFrom(AxisTypes.Y2);
+         _result = sut.AxisBy(AxisTypes.Y2);
       }
 
       [Observation]
@@ -129,7 +161,7 @@ namespace OSPSuite.Presentation
 
    public class When_resolving_a_curve_from_Id_and_the_curve_is_not_found_in_the_presenter : concern_for_ChartDisplayPresenter
    {
-      private ICurve _result;
+      private Curve _result;
 
       protected override void Because()
       {
@@ -148,11 +180,12 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _curveAdapter.SeriesIds).Returns(new[] { _curve.Id, "relatedCurve" });      
+         A.CallTo(() => _curveBinder.SeriesIds).Returns(new[] {_curve.Id, "relatedCurve"});
       }
 
-      protected override void Because()
+      protected override void SetupChart()
       {
+         base.SetupChart();
          _curveChart.AddCurve(_curve);
       }
 
@@ -165,9 +198,9 @@ namespace OSPSuite.Presentation
 
    public class When_removing_the_curve_from_the_chart : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curve.Description = "description";
          _curveChart.AddCurve(_curve);
       }
@@ -175,6 +208,7 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          _curveChart.RemoveCurve("curveId");
+         sut.Edit(_curveChart);
       }
 
       [Observation]
@@ -186,9 +220,9 @@ namespace OSPSuite.Presentation
 
    public class When_retrieving_the_curve_description_from_the_curve_id : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curve.Description = "description";
          _curveChart.AddCurve(_curve);
       }
@@ -202,9 +236,9 @@ namespace OSPSuite.Presentation
 
    public class When_resolving_a_curve_from_Id_and_the_curve_is_found_in_the_presenter : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curveChart.AddCurve(_curve);
       }
 
@@ -217,9 +251,9 @@ namespace OSPSuite.Presentation
 
    public class When_resolving_a_legend_index_from_Id_and_the_curve_is_found_in_the_presenter : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curve.LegendIndex = 5;
          _curveChart.AddCurve(_curve);
       }
@@ -233,9 +267,9 @@ namespace OSPSuite.Presentation
 
    public class When_resolving_a_legend_index_from_Id_and_the_curve_is_found_in_the_presenter_but_has_no_legend_index : concern_for_ChartDisplayPresenter
    {
-      protected override void Context()
+      protected override void SetupChart()
       {
-         base.Context();
+         base.SetupChart();
          _curveChart.AddCurve(_curve);
          _curve.LegendIndex = null;
       }
@@ -267,20 +301,6 @@ namespace OSPSuite.Presentation
       public void the_view_method_should_be_invoked_to_copy_the_chart_to_clipboard()
       {
          A.CallTo(() => _chartDisplayView.CopyToClipboardWithExportSettings()).MustHaveHappened();
-      }
-   }
-
-   public class When_calling_reset_zoom_for_chart : concern_for_ChartDisplayPresenter
-   {
-      protected override void Because()
-      {
-         sut.ResetZoom();
-      }
-
-      [Observation]
-      public void the_view_method_should_be_invoked_to_reset_the_zoom()
-      {
-         A.CallTo(() => _chartDisplayView.ResetChartZoom()).MustHaveHappened();
       }
    }
 }

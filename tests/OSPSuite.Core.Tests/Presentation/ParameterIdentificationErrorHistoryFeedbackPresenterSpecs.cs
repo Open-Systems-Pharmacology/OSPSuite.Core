@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
 using OSPSuite.Assets;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -38,7 +38,6 @@ namespace OSPSuite.Presentation
    public class When_updating_the_error_history_feedback_for_a_given_parameter_identification : concern_for_ParameterIdentificationErrorHistoryFeedbackPresenter
    {
       private ParameterIdentification _parameterIdentification;
-      private ICurveChart _chart;
 
       protected override void Context()
       {
@@ -46,7 +45,6 @@ namespace OSPSuite.Presentation
          _parameterIdentification = A.Fake<ParameterIdentification>();
          sut.EditParameterIdentification(_parameterIdentification);
          _errorHistory.AddRange(new[] {10f, 11f, 12f});
-         _chart = _chartDisplayPresenter.DataSource;
       }
 
       protected override void Because()
@@ -57,8 +55,8 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_update_the_error_values_according_to_the_run_status()
       {
-         _chart.Curves.Count.ShouldBeEqualTo(1);
-         var errorCurve = _chart.Curves.ElementAt(0);
+         sut.Chart.Curves.Count.ShouldBeEqualTo(1);
+         var errorCurve = sut.Chart.Curves.ElementAt(0);
          errorCurve.xData.Values.ShouldOnlyContainInOrder(1f, 2f, 3f);
          errorCurve.yData.Values.ShouldBeEqualTo(_errorHistory);
       }
@@ -72,14 +70,14 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_have_set_the_chart_axis_captions_as_expected()
       {
-         _chart.Axes[AxisTypes.X].Caption.ShouldBeEqualTo(Captions.ParameterIdentification.NumberOfEvaluations);
-         _chart.Axes[AxisTypes.Y].Caption.ShouldBeEqualTo(Captions.ParameterIdentification.TotalError);
+         sut.Chart.AxisBy(AxisTypes.X).Caption.ShouldBeEqualTo(Captions.ParameterIdentification.NumberOfEvaluations);
+         sut.Chart.AxisBy(AxisTypes.Y).Caption.ShouldBeEqualTo(Captions.ParameterIdentification.TotalError);
       }
 
       [Observation]
       public void should_have_set_the_y_axis_as_linear_scale()
       {
-         _chart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Linear);
+         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Linear);
       }
    }
 }

@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart
 {
-   public class CurveChartTemplate : Notifier, IChartManagement, IUpdatable, IWithName
+   public class CurveChartTemplate : MyNotifier, IChartManagement, IUpdatable, IWithName, IWithAxes
    {
       private bool _isDefault;
       private string _name;
       private bool _previewSettings;
-
-      public ICache<AxisTypes, IAxis> Axes { get; private set; }
-      public IList<CurveTemplate> Curves { get; private set; }
+      private readonly Cache<AxisTypes, Axis> _axes = new Cache<AxisTypes, Axis>(x => x.AxisType, x => null);
+      public IList<CurveTemplate> Curves { get; }
       public ChartSettings ChartSettings { set; get; }
       public ChartFontAndSizeSettings FontAndSize { get; set; }
       public bool IncludeOriginData { get; set; }
+      public IReadOnlyCollection<Axis> Axes => _axes;
+      public Axis AxisBy(AxisTypes axisTypes) => _axes[axisTypes];
 
       public CurveChartTemplate()
       {
-         Axes = new Cache<AxisTypes, IAxis>(x => x.AxisType);
          Curves = new List<CurveTemplate>();
          FontAndSize = new ChartFontAndSizeSettings();
          ChartSettings = new ChartSettings();
@@ -38,42 +38,46 @@ namespace OSPSuite.Core.Chart
          FontAndSize.UpdatePropertiesFrom(sourceChartTemplate.FontAndSize, cloneManager);
          ChartSettings.UpdatePropertiesFrom(sourceChartTemplate.ChartSettings, cloneManager);
          Name = sourceChartTemplate.Name;
-         Axes.Clear();
+         _axes.Clear();
          Curves.Clear();
-         sourceChartTemplate.Axes.Each(axis => Axes.Add(axis.Clone()));
+         sourceChartTemplate.Axes.Each(axis => AddAxis(axis.Clone()));
          sourceChartTemplate.Curves.Each(curve => Curves.Add(cloneManager.Clone(curve)));
          IsDefault = sourceChartTemplate.IsDefault;
          PreviewSettings = sourceChartTemplate.PreviewSettings;
       }
 
+      public void AddAxis(Axis axis)
+      {
+         _axes.Add(axis);
+      }
+
+      public void RemoveAxis(Axis axis)
+      {
+         _axes.Remove(axis.AxisType);
+      }
+
+      public Axis AddNewAxis()
+      {
+         //TODO
+         throw new NotImplementedException();
+      }
+
       public string Name
       {
-         get { return _name; }
-         set
-         {
-            _name = value;
-            OnPropertyChanged(() => Name);
-         }
+         get => _name;
+         set => SetProperty(ref _name, value, () => Name);
       }
 
       public bool IsDefault
       {
-         get { return _isDefault; }
-         set
-         {
-            _isDefault = value;
-            OnPropertyChanged(() => IsDefault);
-         }
+         get => _isDefault;
+         set => SetProperty(ref _isDefault, value, () => IsDefault);
       }
 
       public bool PreviewSettings
       {
-         get { return _previewSettings; }
-         set
-         {
-            _previewSettings = value;
-            OnPropertyChanged(() => PreviewSettings);
-         }
+         get => _previewSettings;
+         set => SetProperty(ref _previewSettings, value, () => PreviewSettings);
       }
    }
 }

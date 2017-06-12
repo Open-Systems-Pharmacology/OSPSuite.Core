@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Services
          WarningThreshold = Constants.DEFAULT_TEMPLATE_WARNING_THRESHOLD;
       }
 
-      public void InitializeChartFromTemplate(ICurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, bool warnIfNumberOfCurvesAboveThreshold = false)
+      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, bool warnIfNumberOfCurvesAboveThreshold = false)
       {
          try
          {
@@ -63,12 +63,12 @@ namespace OSPSuite.Presentation.Services
          }
       }
 
-      private void updateChartFromTemplateWithMatchingCurves(ICurveChart chart, CurveChartTemplate template, ICache<CurveTemplate, IReadOnlyList<ColumnMap>> bestTemplateForCurves)
+      private void updateChartFromTemplateWithMatchingCurves(CurveChart chart, CurveChartTemplate template, ICache<CurveTemplate, IReadOnlyList<ColumnMap>> bestTemplateForCurves)
       {
          chart.Clear();
          chart.CopyChartSettingsFrom(template);
          chart.FontAndSize.UpdatePropertiesFrom(template.FontAndSize, _cloneManager);
-         template.Axes.Each(axis => chart.Axes.Add(axis.Clone()));
+         template.Axes.Each(axis => chart.AddAxis(axis.Clone()));
          bestTemplateForCurves.KeyValues.Each(kv => addCurvesToChart(kv.Key, kv.Value, chart));
       }
 
@@ -135,7 +135,7 @@ namespace OSPSuite.Presentation.Services
             : new TemplateToColumnsMatch(curveTemplate, retriveAllColumnsPatternMatching(curveTemplate));
       }
 
-      private void addCurvesToChart(CurveTemplate templateCurve, IReadOnlyList<ColumnMap> columnsToAdd, ICurveChart chart)
+      private void addCurvesToChart(CurveTemplate templateCurve, IReadOnlyList<ColumnMap> columnsToAdd, CurveChart chart)
       {
          foreach (var columnMap in columnsToAdd)
          {

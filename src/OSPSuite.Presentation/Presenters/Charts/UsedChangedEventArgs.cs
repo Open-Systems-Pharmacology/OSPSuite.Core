@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
+using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
    public class UsedChangedEventArgs : EventArgs
    {
-      public UsedChangedEventArgs(IEnumerable<string> columnIds, bool used)
+      public bool Used { get; }
+      public IEnumerable<DataColumn> DataColumns { get; }
+
+      public UsedChangedEventArgs(IEnumerable<DataColumn> dataColumns, bool used)
       {
-         ColumnIds = columnIds;
+         DataColumns = dataColumns;
          Used = used;
       }
-
-      public bool Used { get; private set; }
-      public IEnumerable<string> ColumnIds { get; private set; }
    }
 }

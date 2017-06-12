@@ -8,7 +8,6 @@ namespace OSPSuite.Core.Comparison
       {
          CompareValues(x => x.Color, x => x.Color, comparison);
          CompareValues(x => x.InterpolationMode, x => x.InterpolationMode, comparison);
-         CompareValues(x => x.IsLatched, x => x.IsLatched, comparison);
          CompareValues(x => x.LegendIndex, x => x.LegendIndex, comparison);
          CompareValues(x => x.LineStyle, x => x.LineStyle, comparison);
          CompareValues(x => x.LineThickness, x => x.LineThickness, comparison);

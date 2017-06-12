@@ -14,6 +14,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation
 {
@@ -33,7 +34,6 @@ namespace OSPSuite.Presentation
          _chartDisplayPresenter = A.Fake<IChartDisplayPresenter>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory= A.Fake<IDimensionFactory>();
-         A.CallTo(() => _chartDisplayPresenter.Control).Returns(new Control());
          _presentationUserSettings = A.Fake<IPresentationUserSettings>();
          sut = new SimpleChartPresenter(_view, _chartDisplayPresenter, _chartFactory,_eventPublisher, _presentationUserSettings, _dimensionFactory);
 
@@ -50,6 +50,12 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          _dataRepository = A.Fake<DataRepository>();
+         A.CallTo(() => _chartFactory.CreateChartFor(_dataRepository, _presentationUserSettings.DefaultChartYScaling))
+            .Returns(new CurveChart { DefaultYAxisScaling = _presentationUserSettings.DefaultChartYScaling }.WithAxes());
+      }
+
+      protected override void Because()
+      {
          sut.Plot(_dataRepository);
       }
 
@@ -66,9 +72,9 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void chart_scale_should_be_linear()
+      public void chart_scale_should_be_using_the_default_chart_y_scaling()
       {
-         sut.Chart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Linear);
+         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(_presentationUserSettings.DefaultChartYScaling);
       }
    }
 
@@ -116,7 +122,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void chart_axis_set_to_log()
       {
-         sut.Chart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Log);
+         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
       }
    }
 
@@ -138,7 +144,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_should_have_axis_scaling_set_to_log()
       {
-         sut.Chart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Log);
+         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
       }
    }
 
@@ -161,7 +167,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_should_have_axis_scaling_set_to_linear()
       {
-         sut.Chart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Linear);
+         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Linear);
       }
    }
 
@@ -190,8 +196,8 @@ namespace OSPSuite.Presentation
    public class When_the_simple_chart_presenter_is_told_to_plot_the_chart_for_a_table_formula : concern_for_SimpleChartPresenter
    {
       private TableFormula _tableFormula;
-      private ICurveChart _chart;
-      private IItemNotifyCache<AxisTypes, IAxis> _cache;
+      private CurveChart _chart;
+      private Cache<AxisTypes, Axis> _cache;
 
       protected override void Context()
       {
@@ -200,9 +206,8 @@ namespace OSPSuite.Presentation
          _tableFormula.AddPoint(1, 10);
          _tableFormula.AddPoint(2, 20);
          _tableFormula.AddPoint(3, 30);
-         _cache = new ItemNotifyCache<AxisTypes, IAxis>(x => x.AxisType) { new Axis(AxisTypes.X), new Axis(AxisTypes.Y) };
-         _chart = A.Fake<ICurveChart>();
-         A.CallTo(() => _chart.Axes).Returns(_cache);
+         _cache = new Cache<AxisTypes, Axis>(x => x.AxisType) { new Axis(AxisTypes.X), new Axis(AxisTypes.Y) };
+         _chart = new CurveChart().WithAxes();
          A.CallTo(() => _chartFactory.CreateChartFor(_tableFormula)).Returns(_chart);
       }
 
@@ -218,9 +223,9 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_set_the_data_source_of_the_display_presenter_to_the_created_chart()
+      public void should_have_the_chart_display_presenter_to_edit_the_created_chart()
       {
-         _chartDisplayPresenter.DataSource.ShouldBeEqualTo(_chart);
+         A.CallTo(() => _chartDisplayPresenter.Edit(_chart)).MustHaveHappened();
       }
    }
 }

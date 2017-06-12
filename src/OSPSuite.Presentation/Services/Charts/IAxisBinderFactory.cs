@@ -3,8 +3,8 @@ using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Services.Charts
 {
-   public interface ICurveAdapterFactory
+   public interface IAxisBinderFactory
    {
-      ICurveAdapter CreateFor(ICurve curve, IAxis xAxis, IAxis yAxis);
+      IAxisBinder Create(Axis axis, object chartControl, CurveChart chart);
    }
 }

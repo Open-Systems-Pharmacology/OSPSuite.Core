@@ -7,23 +7,23 @@ using OSPSuite.Presentation.UICommands;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class CurveContextMenu : ContextMenu<ICurve>
+   public class CurveContextMenu : ContextMenu<Curve>
    {
-      public CurveContextMenu(ICurve curve): base(curve)
+      public CurveContextMenu(Curve curve): base(curve)
       {}
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ICurve curve)
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(Curve curve)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditCurveUICommand, ICurve>(curve);
+         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditCurveUICommand, Curve>(curve);
       }
    }
 
-   public interface ICurveContextMenuFactory : IContextMenuFactory<ICurve>
+   public interface ICurveContextMenuFactory : IContextMenuFactory<Curve>
    {}
 
    public class CurveContextMenuFactory : ICurveContextMenuFactory
    {
-      public IContextMenu CreateFor(ICurve curve, IPresenterWithContextMenu<ICurve> presenter)
+      public IContextMenu CreateFor(Curve curve, IPresenterWithContextMenu<Curve> presenter)
       {
          return new CurveContextMenu(curve);
       }

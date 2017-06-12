@@ -6,10 +6,11 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface IDataBrowserView : IView<IDataBrowserPresenter>, IViewWithColumnSettings
    {
-      void SetDataSource(DataColumnsDTO dataColumnsDTO);
-      IReadOnlyList<string> SelectedDataColumnIds { get; }
+      void BindTo(IEnumerable<DataColumnDTO> dataColumnDTOs);
+      IReadOnlyList<DataColumnDTO> SelectedDataColumns { get; }
       event DragEventHandler DragOver;
       event DragEventHandler DragDrop;
-      IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds { get; }
+      IReadOnlyList<DataColumnDTO> SelectedDescendentDataRepositoryColumns { get; }
+      void DeleteBinding();
    }
 }

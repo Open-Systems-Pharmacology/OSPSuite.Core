@@ -1,60 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using System.Linq;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraGrid.Menu;
-using DevExpress.XtraGrid.Views.Grid;
+using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
    internal class DataBrowserPopupMenu : GridViewMenu
    {
       private readonly IDataBrowserPresenter _presenter;
-      private readonly DXMenuItem _selectItem;
-      private readonly DXMenuItem _deselectItem;
-      public int GroupRowHandle { set; private get; }
+      private readonly int _groupRowHandle;
+      private readonly GridViewBinder<DataColumnDTO> _gridViewBinder;
 
-      public DataBrowserPopupMenu(GridView view, IDataBrowserPresenter presenter)
-         : base(view)
+      public DataBrowserPopupMenu(GridViewBinder<DataColumnDTO> gridViewBinder, IDataBrowserPresenter presenter, int groupRowHandle)
+         : base(gridViewBinder.GridView)
       {
          _presenter = presenter;
-         _selectItem = new DXMenuItem("Select all", onItemClick);
-         _deselectItem = new DXMenuItem("Deselect all", onItemClick);
-         Items.Add(_selectItem);
-         Items.Add(_deselectItem);
+         _groupRowHandle = groupRowHandle;
+         _gridViewBinder = gridViewBinder;
+         Items.Add(new DXMenuItem("Select all", (o, e) => updateSelection(selected: true), ApplicationIcons.CheckAll));
+         Items.Add(new DXMenuItem("Deselect all", (o, e) => updateSelection(selected: false), ApplicationIcons.UncheckAll));
       }
 
-      private void onItemClick(object sender, EventArgs e)
+      private void updateSelection(bool selected)
       {
-         bool used = (sender == _selectItem);
-         if (View.IsDataRow(GroupRowHandle)) return;
-
-         var ids = new List<string>();
-         getChildRowIds(View, GroupRowHandle, ids);
-         View.GridControl.Cursor = Cursors.WaitCursor;
-         try { _presenter.RaiseUsedChanged(ids, used); }
-         finally { View.GridControl.Cursor = Cursors.Default; }
-      }
-
-      private void getChildRowIds(GridView view, int groupRowHandle, List<string> ids)
-      {
-         if (!view.IsGroupRow(groupRowHandle)) return;
-         //Get the number of immediate children
-         int childCount = view.GetChildRowCount(groupRowHandle);
-         for (int i = 0; i < childCount; i++)
-         {
-            //Get the handle of a child row with the required index
-            int childHandle = view.GetChildRowHandle(groupRowHandle, i);
-            //If the child is a group row, then add its children to the list
-            if (view.IsGroupRow(childHandle))
-               getChildRowIds(view, childHandle, ids);
-            else
-            {
-               string id = view.GetRowCellValue(childHandle, BrowserColumns.ColumnId.ToString()) as string;
-               if (!ids.Contains(id)) ids.Add(id);
-            }
-         }
+         var selectedItems = _gridViewBinder.SelectedItems(_groupRowHandle);
+         _presenter.SetUsedState(selectedItems.ToList(), selected);
       }
    }
 }

@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 using DevExpress.Utils;
-using DevExpress.XtraGrid.Columns;
-using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 
 namespace OSPSuite.UI.Views.Charts
@@ -17,6 +21,8 @@ namespace OSPSuite.UI.Views.Charts
    {
       private GridHitInfo _downHitInfo;
       private IDataBrowserPresenter _presenter;
+      private readonly GridViewBinder<DataColumnDTO> _gridViewBinder;
+      private readonly RepositoryItem _usedRepository;
 
       public DataBrowserView()
       {
@@ -26,121 +32,93 @@ namespace OSPSuite.UI.Views.Charts
          gridView.ShowColumnChooser = true;
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsView.ShowGroupPanel = true;
-         gridView.MultiSelect = true; 
+         gridView.MultiSelect = true;
          gridView.MouseDown += (o, e) => OnEvent(viewMouseDown, e);
          gridView.MouseMove += (o, e) => OnEvent(viewMouseMove, e);
-         gridView.CellValueChanged += (o, e) => OnEvent(viewCellValueChanged, e);
          gridView.PopupMenuShowing += (o, e) => OnEvent(viewPopupMenuShowing, e);
          gridView.SelectionChanged += (o, e) => OnEvent(onGridViewSelectionChanged);
          InitializeWith(gridView);
-         ActivateGridColumnChangedEventHandlers();
+         _gridViewBinder = new GridViewBinder<DataColumnDTO>(gridView);
+         _usedRepository = new UxRepositoryItemCheckEdit(gridView);
       }
 
       private void onGridViewSelectionChanged()
       {
-         _presenter.UpdateDataSelection(SelectedDescendentDataRepositoryColumnIds);
-      }
-
-      public IReadOnlyList<string> SelectedDescendentDataRepositoryColumnIds
-      {
-         get { return selectDescendentDataRows(gridView.GetSelectedRows()).Select(getDataRepositoryColumnIdForRowHandle).ToList(); }
-      }
-
-      private IEnumerable<int> selectDescendentDataRows(IEnumerable<int> selectedRowHandles)
-      {
-         foreach (var rowHandle in selectedRowHandles)
-         {
-            if (gridView.IsGroupRow(rowHandle))
-            {
-               foreach (var descendentDataRow in selectDescendentDataRows(getImmediateChildrenRows(rowHandle)))
-               {
-                  yield return descendentDataRow;
-               }
-            }
-            else if(gridView.IsDataRow(rowHandle))
-            {
-               yield return rowHandle;
-            }
-         }
-      }
-
-      private int[] getImmediateChildrenRows(int row)
-      {
-         var childRows = new int[gridView.GetChildRowCount(row)];
-         for (var i = 0; i < gridView.GetChildRowCount(row); i++)
-         {
-            childRows[i] = (gridView.GetChildRowHandle(row, i));
-         }
-         return childRows;
-      }
-
-      public override GridColumn FindColumnByName(string columnName)
-      {
-         return gridView.Columns[columnName];
+         _presenter.UpdateDataSelection(SelectedDescendentDataRepositoryColumns);
       }
 
       public void AttachPresenter(IDataBrowserPresenter presenter)
       {
-         base.AttachPresenter(presenter);
          _presenter = presenter;
+         base.AttachPresenter(presenter);
       }
 
-      public void SetDataSource(DataColumnsDTO dataColumnsDTO)
+      public void BindTo(IEnumerable<DataColumnDTO> dataColumnDTOs)
       {
-         gridControl.DataSource = dataColumnsDTO;
-         // use special checkEdit to change value without leaving checkbox
-         gridView.Columns.ColumnByFieldName(BrowserColumns.Used.ToString()).ColumnEdit = new UxRepositoryItemCheckEdit(gridView);
-         ApplyAllColumnSettings(); // data columns are available first after DataSource is set.
-         disableColumnEditing();
-         enableColumnFilterCheckBoxes();
+         _gridViewBinder.BindToSource(dataColumnDTOs);
       }
 
-      private void disableColumnEditing()
+      public override void InitializeBinding()
       {
-         foreach (GridColumn gridColumn in gridView.Columns)
-            if (gridColumn.FieldName != BrowserColumns.Used.ToString())
-               gridColumn.OptionsColumn.AllowEdit = false;
+         bind(x => x.RepositoryName, BrowserColumns.RepositoryName);
+         bind(x => x.Simulation, BrowserColumns.Simulation);
+         bind(x => x.TopContainer, BrowserColumns.TopContainer);
+         bind(x => x.Container, BrowserColumns.Container);
+         bind(x => x.BottomCompartment, BrowserColumns.BottomCompartment);
+         bind(x => x.Molecule, BrowserColumns.Molecule);
+         bind(x => x.Name, BrowserColumns.Name);
+         bind(x => x.BaseGridName, BrowserColumns.BaseGridName);
+         bind(x => x.OrderIndex, BrowserColumns.OrderIndex);
+         bind(x => x.DimensionName, BrowserColumns.DimensionName);
+         bind(x => x.QuantityType, BrowserColumns.QuantityType);
+         bind(x => x.QuantityName, BrowserColumns.QuantityName);
+         bind(x => x.Origin, BrowserColumns.Origin);
+         bind(x => x.Date, BrowserColumns.Date);
+         bind(x => x.Category, BrowserColumns.Category);
+         bind(x => x.Source, BrowserColumns.Source);
+
+         var usedColumn = _gridViewBinder.Bind(x => x.Used)
+            .WithRepository(dto => _usedRepository)
+            .WithOnValueSet((dto, e) => _presenter.UsedChangedFor(dto, e.NewValue));
+
+         usedColumn.XtraColumn.Tag = BrowserColumns.Used.ToString();
       }
 
-      private void enableColumnFilterCheckBoxes()
+      private IGridViewColumn bind<T>(Expression<Func<DataColumnDTO, T>> propertyToBindTo, BrowserColumns browserColumn)
       {
-         foreach (GridColumn gridColumn in gridView.Columns)
-            gridColumn.OptionsFilter.FilterPopupMode = FilterPopupMode.CheckedList;
+         var column = _gridViewBinder.Bind(propertyToBindTo)
+            .AsReadOnly();
+
+         column.XtraColumn.Tag = browserColumn.ToString();
+         return column;
       }
 
-      public IReadOnlyList<string> SelectedDataColumnIds
+      public IReadOnlyList<DataColumnDTO> SelectedDataColumns => dtoListFrom(gridView.GetSelectedRows());
+
+      public IReadOnlyList<DataColumnDTO> SelectedDescendentDataRepositoryColumns => selectDescendentDataRows(gridView.GetSelectedRows());
+
+      public void DeleteBinding()
       {
-         get { return gridView.GetSelectedRows().Select(getDataRepositoryColumnIdForRowHandle).ToList(); }
+         _gridViewBinder.DeleteBinding();
       }
 
-      private string getDataRepositoryColumnIdForRowHandle(int rowHandle)
-      {
-         return gridView.GetDataRow(rowHandle)[BrowserColumns.ColumnId.ToString()] as string;
-      }
+      private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
 
-      private void viewCellValueChanged(CellValueChangedEventArgs e)
+      private IReadOnlyList<DataColumnDTO> selectDescendentDataRows(IEnumerable<int> selectedRowHandles)
       {
-         if (e.Column.FieldName == BrowserColumns.Used.ToString())
-         {
-            var columnId = gridView.GetDataRow(e.RowHandle)[BrowserColumns.ColumnId.ToString()] as string;
-            if (columnId == null) return;
-            if (e.Value.GetType() != typeof(bool)) return;
-            _presenter.RaiseUsedChanged(new[] { columnId }, (bool)e.Value);
-            gridView.CloseEditor();
-            _presenter.UpdateDataSelection(SelectedDataColumnIds);
-         }
+         return selectedRowHandles.SelectMany(rowHandle => _gridViewBinder.SelectedItems(rowHandle)).ToList();
       }
 
       private void viewPopupMenuShowing(PopupMenuShowingEventArgs e)
       {
-         if (e.MenuType == GridMenuType.Row && e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle))
-         {
-            var popupMenu = new DataBrowserPopupMenu(gridView, _presenter)
-            {
-               GroupRowHandle = e.HitInfo.RowHandle
-            };
-            popupMenu.Show(e.HitInfo.HitPoint);
-         }
+         if (!shouldShowPopup(e)) return;
+         var popupMenu = new DataBrowserPopupMenu(_gridViewBinder, _presenter, e.HitInfo.RowHandle);
+         popupMenu.Show(e.HitInfo.HitPoint);
+      }
+
+      private bool shouldShowPopup(PopupMenuShowingEventArgs e)
+      {
+         return e.MenuType == GridMenuType.Row && e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
       }
 
       private void viewMouseDown(MouseEventArgs e)
@@ -162,7 +140,7 @@ namespace OSPSuite.UI.Views.Charts
 
             if (!dragRect.Contains(new Point(e.X, e.Y)))
             {
-               var data = _presenter.SelectedDataColumnIds;
+               var data = _presenter.SelectedDataColumns;
                gridControl.DoDragDrop(data, DragDropEffects.Move);
                _downHitInfo = null;
                DXMouseEventArgs.GetMouseArgs(e).Handled = true;

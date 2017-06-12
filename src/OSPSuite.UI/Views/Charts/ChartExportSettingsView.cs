@@ -1,8 +1,8 @@
 using OSPSuite.Assets;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -14,13 +14,16 @@ namespace OSPSuite.UI.Views.Charts
    internal partial class ChartExportSettingsView : BaseUserControl, IChartExportSettingsView
    {
       private IChartExportSettingsPresenter _presenter;
-      private ScreenBinder<IChartManagement> _screenBinderForCurveChart;
-      private ScreenBinder<ChartFontAndSizeSettings> _screenBinderForExportSettings;
-      private ScreenBinder<ChartFonts> _screenBinderForFonts;
+      private readonly ScreenBinder<IChartManagement> _screenBinderForCurveChart;
+      private readonly ScreenBinder<ChartFontAndSizeSettings> _screenBinderForExportSettings;
+      private readonly ScreenBinder<ChartFonts> _screenBinderForFonts;
 
       public ChartExportSettingsView()
       {
          InitializeComponent();
+         _screenBinderForExportSettings = new ScreenBinder<ChartFontAndSizeSettings> {BindingMode = BindingMode.TwoWay};
+         _screenBinderForFonts = new ScreenBinder<ChartFonts> {BindingMode = BindingMode.TwoWay};
+         _screenBinderForCurveChart = new ScreenBinder<IChartManagement> {BindingMode = BindingMode.TwoWay};
       }
 
       public void AttachPresenter(IChartExportSettingsPresenter presenter)
@@ -45,20 +48,16 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _screenBinderForExportSettings = new ScreenBinder<ChartFontAndSizeSettings> {BindingMode = BindingMode.TwoWay};
-         _screenBinderForFonts = new ScreenBinder<ChartFonts> {BindingMode = BindingMode.TwoWay};
-         _screenBinderForCurveChart = new ScreenBinder<IChartManagement> {BindingMode = BindingMode.TwoWay};
-
          _screenBinderForExportSettings.Bind(c => c.ChartWidth).To(tbWidth);
          _screenBinderForExportSettings.Bind(c => c.ChartHeight).To(tbHeight);
          _screenBinderForCurveChart.Bind(c => c.IncludeOriginData).To(includeOriginDataInChartCheckEdit);
 
-         _screenBinderForFonts.Bind(c => c.FontFamilyName).To(cbFontFamily).WithValues(x => _presenter.GetFontFamilyNames());
-         _screenBinderForFonts.Bind(c => c.TitleSize).To(cbFontSizeTitle).WithValues(x => _presenter.GetFontSizes());
-         _screenBinderForFonts.Bind(c => c.DescriptionSize).To(cbFontSizeDescription).WithValues(x => _presenter.GetFontSizes());
-         _screenBinderForFonts.Bind(c => c.OriginSize).To(fontSizeOriginComboBox).WithValues(x => _presenter.GetFontSizes());
-         _screenBinderForFonts.Bind(c => c.AxisSize).To(cbFontSizeAxis).WithValues(x => _presenter.GetFontSizes());
-         _screenBinderForFonts.Bind(c => c.LegendSize).To(cbFontSizeLegend).WithValues(x => _presenter.GetFontSizes());
+         _screenBinderForFonts.Bind(c => c.FontFamilyName).To(cbFontFamily).WithValues(x => _presenter.AllFontFamilyNames);
+         _screenBinderForFonts.Bind(c => c.TitleSize).To(cbFontSizeTitle).WithValues(x => _presenter.AllFontSizes);
+         _screenBinderForFonts.Bind(c => c.DescriptionSize).To(cbFontSizeDescription).WithValues(x => _presenter.AllFontSizes);
+         _screenBinderForFonts.Bind(c => c.OriginSize).To(fontSizeOriginComboBox).WithValues(x => _presenter.AllFontSizes);
+         _screenBinderForFonts.Bind(c => c.AxisSize).To(cbFontSizeAxis).WithValues(x => _presenter.AllFontSizes);
+         _screenBinderForFonts.Bind(c => c.LegendSize).To(cbFontSizeLegend).WithValues(x => _presenter.AllFontSizes);
          _screenBinderForCurveChart.Bind(c => c.PreviewSettings).To(cePreviewSettings);
          btnResetValues.Click += (o, e) => _presenter.ResetValuesToDefault();
 

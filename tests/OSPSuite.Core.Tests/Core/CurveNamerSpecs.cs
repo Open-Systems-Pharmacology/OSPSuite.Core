@@ -16,14 +16,14 @@ namespace OSPSuite.Core
    public abstract class concern_for_CurveNamer : ContextSpecification<CurveNamer>
    {
       private IQuantityPathToQuantityDisplayPathMapper _quantityPathToQuantityDisplayPathMapper;
-      protected List<ICurveChart> _charts;
+      protected List<CurveChart> _charts;
       protected ISimulation _simulation;
       protected DataColumn _dataColumn;
       private DataRepository _dataRepository;
-      private ICurveChart _curveChart;
+      private CurveChart _curveChart;
       private IDimensionFactory _dimensionFactory;
-      protected ICurve _curve;
-      protected ICurve _anotherCurve;
+      protected Curve _curve;
+      protected Curve _anotherCurve;
 
       protected override void Context()
       {
@@ -41,7 +41,7 @@ namespace OSPSuite.Core
          _anotherCurve = _curveChart.CreateCurve(_dataRepository.BaseGrid, _dataColumn, "AnotherColumnName", _dimensionFactory);
          _curveChart.AddCurve(_curve);
          _curveChart.AddCurve(_anotherCurve);
-         _charts = new List<ICurveChart> {_curveChart};
+         _charts = new List<CurveChart> {_curveChart};
       }
    }
 
@@ -89,7 +89,7 @@ namespace OSPSuite.Core
 
    public class When_gathering_curves_that_have_original_name_for_simulation : concern_for_CurveNamer
    {
-      private IEnumerable<ICurve> _originallyNamedCurves;
+      private IEnumerable<Curve> _originallyNamedCurves;
 
       protected override void Because()
       {

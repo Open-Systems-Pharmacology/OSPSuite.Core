@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Extensions
       /// If the <paramref name="curve"/> plots <paramref name="column"/> on the Y axis <returns>true</returns>
       /// otherwise <returns>false</returns>
       /// </summary>
-      public static bool PlotsColumn(this ICurve curve, DataColumn column)
+      public static bool PlotsColumn(this Curve curve, DataColumn column)
       {
          return column == curve.yData;
       }
@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Extensions
       /// Sets the default <see cref="Symbols"/> and <see cref="LineStyles"/> for the <paramref name="curve"/> if it represents an oberved data curve.
       /// </summary>
       /// <param name="curve"></param>
-      public static void UpdateStyleForObservedData(this ICurve curve)
+      public static void UpdateStyleForObservedData(this Curve curve)
       {
          if (curve.yData == null || !curve.yData.IsObservedData())
             return;
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Extensions
          curve.LineStyle = LineStyles.None;
       }
 
-      public static void UpdateMarkerCurve(this ICurve curve, string curveName)
+      public static void UpdateMarkerCurve(this Curve curve, string curveName)
       {
          curve.VisibleInLegend = false;
          curve.LineStyle = LineStyles.Dash;

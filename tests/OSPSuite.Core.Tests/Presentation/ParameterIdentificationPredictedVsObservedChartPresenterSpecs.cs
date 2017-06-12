@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_should_use_the_dimension_of_the_first_output_mapping_to_determine_the_x_axis_dimension()
       {
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_firstObservationDataColumn), _simulationColumn, _predictedVsObservedChart, A<Action<DataColumn, ICurve>>._)).MustHaveHappened();
+         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_firstObservationDataColumn), _simulationColumn, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
       }
    }
 
@@ -135,7 +135,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_call_the_chart_service_to_create_a_curve_for_each_simulation_output()
       {
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._, _simulationColumn, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, ICurve>>._)).MustHaveHappened();
+         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._, _simulationColumn, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
       }
    }
 }

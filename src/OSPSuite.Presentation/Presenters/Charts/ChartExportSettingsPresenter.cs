@@ -8,11 +8,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IChartExportSettingsPresenter : IPresenter<IChartExportSettingsView>
    {
-      void BindTo(IChartManagement chartSettings);
-      IEnumerable<string> GetFontFamilyNames();
-      IEnumerable<int> GetFontSizes();
+      void Edit(IChartManagement chartSettings);
+      IEnumerable<string> AllFontFamilyNames { get; }
+      IEnumerable<int> AllFontSizes { get; }
       void ResetValuesToDefault();
-      void DeleteBinding();
+      void Clear();
    }
 
    public class ChartExportSettingsPresenter : AbstractPresenter<IChartExportSettingsView, IChartExportSettingsPresenter>, IChartExportSettingsPresenter
@@ -26,28 +26,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _fontsTask = fontsTask;
       }
 
-      public void BindTo(IChartManagement chartSettings)
+      public void Edit(IChartManagement chartSettings)
       {
          _chartSettings = chartSettings;
          _view.BindToSource(chartSettings);
       }
 
-      public IEnumerable<string> GetFontFamilyNames()
-      {
-         return _fontsTask.ChartFontFamilyNames;
-      }
+      public IEnumerable<string> AllFontFamilyNames => _fontsTask.ChartFontFamilyNames;
 
-      public IEnumerable<int> GetFontSizes()
-      {
-         return Constants.ChartFontOptions.GetFontSizes();
-      }
+      public IEnumerable<int> AllFontSizes => Constants.ChartFontOptions.AllFontSizes;
 
       public void ResetValuesToDefault()
       {
          _chartSettings.FontAndSize.Reset();
       }
 
-      public void DeleteBinding()
+      public void Clear()
       {
          _view.DeleteBinding();
       }

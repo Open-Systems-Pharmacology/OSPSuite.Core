@@ -23,7 +23,7 @@ namespace OSPSuite.Core
       [Observation]
       public void test_for_type_should_be_true()
       {
-         sut.IsYAxis().ShouldBeTrue();
+         sut.IsYAxis.ShouldBeTrue();
       }
    }
 
@@ -99,7 +99,7 @@ namespace OSPSuite.Core
       [Observation]
       public void test_for_type_should_be_true()
       {
-         sut.IsYAxis().ShouldBeFalse();
+         sut.IsYAxis.ShouldBeFalse();
       }
    }
 

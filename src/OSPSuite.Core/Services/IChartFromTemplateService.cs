@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Services
       ///    We first try to find the exact match using <c>Quantity Path</c> and <c>QuantityType</c>.
       ///    If the match is not successful, with use the KeyMapper implemetnation to match similar curves
       /// </remarks>
-      void InitializeChartFromTemplate(ICurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, bool warnIfNumberOfCurvesAboveThreshold=false);
+      void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, bool warnIfNumberOfCurvesAboveThreshold=false);
 
       /// <summary>
       ///    This methods allows the caller to specify how the default column name should be created. By default, the name of the

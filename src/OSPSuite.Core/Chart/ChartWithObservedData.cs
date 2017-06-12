@@ -1,16 +1,11 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Core.Chart
 {
-   public interface IChartWithObservedData : ICurveChart, IWithObservedData
-   {
-      void UpdateFrom(IChartWithObservedData originalChart);
-   }
-
-   public abstract class ChartWithObservedData : CurveChart, IChartWithObservedData
+   public abstract class ChartWithObservedData : CurveChart, IWithObservedData
    {
       private readonly Cache<string, DataRepository> _allDataRepositories = new Cache<string, DataRepository>(x => x.Id);
 
@@ -42,7 +37,7 @@ namespace OSPSuite.Core.Chart
          RemoveCurvesForDataRepository(dataRepository);
       }
 
-      public virtual void UpdateFrom(IChartWithObservedData originalChart)
+      public virtual void UpdateFrom(ChartWithObservedData originalChart)
       {
          originalChart.AllObservedData().Each(AddObservedData);
       }

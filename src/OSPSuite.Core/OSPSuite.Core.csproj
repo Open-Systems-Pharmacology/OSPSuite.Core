@@ -106,9 +106,15 @@
     <Compile Include="Batch\ParameterValue.cs" />
     <Compile Include="Chart\Axis.cs" />
     <Compile Include="Chart\AxisCountMode.cs" />
+    <Compile Include="Chart\ChartUpdate.cs" />
     <Compile Include="Chart\CurveDataTemplate.cs" />
     <Compile Include="Chart\DistributionData.cs" />
     <Compile Include="Chart\DistributionSettings.cs" />
+    <Compile Include="Chart\Events.cs" />
+    <Compile Include="Chart\ChartUpdater.cs" />
+    <Compile Include="Chart\ItemNotifyCache.cs" />
+    <Compile Include="Chart\IWithAxes.cs" />
+    <Compile Include="Chart\Mappers\CurveToDataModeMapper.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationAnalysisChart.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationCorrelationMatrix.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationCovarianceMatrix.cs" />
@@ -189,6 +195,7 @@
     <Compile Include="Journal\IJournalTask.cs" />
     <Compile Include="Journal\JournalPageData.cs" />
     <Compile Include="Journal\ReloadRelatedItemTask.cs" />
+    <Compile Include="MyNotifier.cs" />
     <Compile Include="RegisterTypeConvention.cs" />
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
@@ -375,7 +382,6 @@
     <Compile Include="Events\SimulationRemovedEvent.cs" />
     <Compile Include="Events\SimulationReplacedInParameterAnalyzableEvent.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
-    <Compile Include="Extensions\AxisTypesExensions.cs" />
     <Compile Include="Chart\ChartExtensions.cs" />
     <Compile Include="Chart\ChartSettings.cs" />
     <Compile Include="Chart\IChartFactory.cs" />
@@ -388,9 +394,6 @@
     <Compile Include="Chart\CurveChartTemplate.cs" />
     <Compile Include="Chart\CurveOptions.cs" />
     <Compile Include="Chart\CurveTemplate.cs" />
-    <Compile Include="Chart\ErrorInfos.cs" />
-    <Compile Include="Chart\Exceptions.cs" />
-    <Compile Include="Chart\ItemNotifyCache.cs" />
     <Compile Include="Chart\IChart.cs" />
     <Compile Include="Chart\Mappers\CurveChartToCurveChartTemplateMapper.cs" />
     <Compile Include="Chart\Mappers\UnitToMinorIntervalMapper.cs" />

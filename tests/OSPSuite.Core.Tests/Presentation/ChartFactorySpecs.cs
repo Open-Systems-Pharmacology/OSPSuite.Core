@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation
    public abstract class When_creating_a_chart : concern_for_ChartFactory
    {
       protected DataRepository _repository;
-      protected ICurveChart _result;
+      protected CurveChart _result;
       protected override void Context()
       {
          base.Context();
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation
       {
          _userSettings.DefaultChartYScaling = scale;
          _result = sut.CreateChartFor(_repository, Scalings.Log);
-         _result.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Log);
+         _result.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
       }
    }
 
@@ -65,17 +65,17 @@ namespace OSPSuite.Presentation
       {
          _userSettings.DefaultChartYScaling = scale;
          _result = sut.CreateChartFor(_repository);
-         _result.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(_userSettings.DefaultChartYScaling);
+         _result.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(_userSettings.DefaultChartYScaling);
       }
    }
 
    public class When_creating_new_chart : concern_for_ChartFactory
    {
-      private IChartWithObservedData _result;
+      private ChartWithObservedData _result;
 
       protected override void Because()
       {
-         _result = sut.Create<IChartWithObservedData>();
+         _result = sut.Create<ChartWithObservedData>();
       }
 
       [Observation]

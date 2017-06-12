@@ -15,13 +15,16 @@ namespace OSPSuite.UI.Views.Charts
    internal partial class ChartSettingsView : BaseUserControl, IChartSettingsView
    {
       private IChartSettingsPresenter _presenter;
-      private ScreenBinder<ChartSettings> _settingsBinder;
-      private ScreenBinder<IWithName> _nameBinder;
-      private ScreenBinder<IChart> _curveChartBinder;
+      private readonly ScreenBinder<ChartSettings> _settingsBinder;
+      private readonly ScreenBinder<IWithName> _nameBinder;
+      private readonly ScreenBinder<IChart> _curveChartBinder;
 
       public ChartSettingsView()
       {
          InitializeComponent();
+         _settingsBinder = new ScreenBinder<ChartSettings> { BindingMode = BindingMode.TwoWay };
+         _nameBinder = new ScreenBinder<IWithName> { BindingMode = BindingMode.TwoWay };
+         _curveChartBinder = new ScreenBinder<IChart> { BindingMode = BindingMode.TwoWay };
       }
 
       public override void InitializeResources()
@@ -59,8 +62,8 @@ namespace OSPSuite.UI.Views.Charts
 
       public bool NameVisible
       {
-         get { return nameControlItem.Visible; }
-         set { nameControlItem.Visibility = LayoutVisibilityConvertor.FromBoolean(value); }
+         get => nameControlItem.Visible;
+         set => nameControlItem.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
       public void BindToSource(CurveChartTemplate chartTemplate)
@@ -88,9 +91,6 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _settingsBinder = new ScreenBinder<ChartSettings> { BindingMode = BindingMode.TwoWay };
-         _nameBinder = new ScreenBinder<IWithName> { BindingMode = BindingMode.TwoWay };
-         _curveChartBinder = new ScreenBinder<IChart> { BindingMode = BindingMode.TwoWay };
 
          _nameBinder.Bind(c => c.Name).To(nameTextBox);
          _curveChartBinder.Bind(c => c.Title).To(titleTextBox);

@@ -9,7 +9,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public abstract class SimulationAnalysisChartPresenter<TChart, TView, TPresenter> : ChartPresenter<TChart, TView, TPresenter>, ISimulationAnalysisPresenter
       where TPresenter : ISimulationAnalysisPresenter
-      where TChart : IChartWithObservedData, ISimulationAnalysis
+      where TChart : ChartWithObservedData, ISimulationAnalysis
       where TView : IView<TPresenter>
    {
       private bool _isInitializing;

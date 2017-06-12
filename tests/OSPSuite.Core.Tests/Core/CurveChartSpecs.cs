@@ -20,18 +20,18 @@ namespace OSPSuite.Core
 
    public class When_moving_series_in_legend : concern_for_CurveChart
    {
-      private ICurve _curveOne;
-      private ICurve _curveFour;
+      private Curve _curveOne;
+      private Curve _curveFour;
 
       protected override void Context()
       {
          base.Context();
-         _curveOne = A.Fake<ICurve>();
-         _curveFour = A.Fake<ICurve>();
+         _curveOne = A.Fake<Curve>();
+         _curveFour = A.Fake<Curve>();
 
          sut.AddCurve(_curveOne);
-         sut.AddCurve(A.Fake<ICurve>());
-         sut.AddCurve(A.Fake<ICurve>());
+         sut.AddCurve(A.Fake<Curve>());
+         sut.AddCurve(A.Fake<Curve>());
          sut.AddCurve(_curveFour);
       }
 
@@ -50,14 +50,14 @@ namespace OSPSuite.Core
 
    public class When_adding_new_Y_axes : concern_for_CurveChart
    {
-      private ICurve _curve;
+      private Curve _curve;
 
       protected override void Context()
       {
          base.Context();
          sut.DefaultYAxisScaling = Scalings.Linear;
 
-         _curve = A.Fake<ICurve>();
+         _curve = A.Fake<Curve>();
 
          sut.AddCurve(_curve);
       }
@@ -85,19 +85,19 @@ namespace OSPSuite.Core
 
    public abstract class When_using_default_lineStyle_and_color : concern_for_CurveChart
    {
-      protected IAxis _yAxis;
-      protected ICurve _curve;
+      protected Axis _yAxis;
+      protected Curve _curve;
 
       protected override void Context()
       {
          base.Context();
-         var xAxis = A.Fake<IAxis>();
-         sut.Axes.Add(AxisTypes.X, xAxis);
+         var xAxis = new Axis(AxisTypes.X);
+         sut.AddAxis(xAxis);
 
          _yAxis = new Axis(AxisTypes.Y);
-         sut.Axes.Add(AxisTypes.Y, _yAxis);
+         sut.AddAxis(_yAxis);
 
-         _curve = A.Fake<ICurve>();
+         _curve = A.Fake<Curve>();
          _curve.LineStyle = LineStyles.Dot;
          _curve.Color = Color.Red;
       }

@@ -11,13 +11,13 @@ namespace OSPSuite.Core.Services
    {
       void UpdateDisplayUnitsIn(IObjectBase objectToUpdate);
       void UpdateDisplayUnitsIn(DataRepository dataRepository);
-      void UpdateDisplayUnitsIn(ICurveChart curveChart);
+      void UpdateDisplayUnitsIn(CurveChart curveChart);
    }
 
    public class DisplayUnitUpdater : IDisplayUnitUpdater,
       IVisitor<IWithDisplayUnit>,
       IVisitor<DataRepository>,
-      IVisitor<ICurveChart>,
+      IVisitor<CurveChart>,
       IVisitor<IParameter>,
       IVisitor<TableFormula>
    {
@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Services
          dataRepository.Each(updateDisplayUnit);
       }
 
-      public void UpdateDisplayUnitsIn(ICurveChart curveChart)
+      public void UpdateDisplayUnitsIn(CurveChart curveChart)
       {
          curveChart?.Axes.Each(updateAxisUnit);
       }
@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Services
          withDisplayUnit.DisplayUnit = _displayUnitRetriever.PreferredUnitFor(withDisplayUnit);
       }
 
-      private void updateAxisUnit(IAxis axis)
+      private void updateAxisUnit(Axis axis)
       {
          var preferredUnit = _displayUnitRetriever.PreferredUnitFor(axis, axis.Unit);
          if (preferredUnit == null) return;
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Services
          updateDisplayUnit(withDisplayUnit);
       }
 
-      public void Visit(ICurveChart curveChart)
+      public void Visit(CurveChart curveChart)
       {
          UpdateDisplayUnitsIn(curveChart);
       }

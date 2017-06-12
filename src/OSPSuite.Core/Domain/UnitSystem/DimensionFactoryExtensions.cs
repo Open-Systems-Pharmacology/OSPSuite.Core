@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 {
    public static class DimensionFactoryExtensions
    {
-      public static IEnumerable<IDimension> GetAllDimensionsForEditors(this IDimensionFactory dimensionFactory, IDimension defaultDimension)
+      public static IEnumerable<IDimension> AllDimensionsForEditors(this IDimensionFactory dimensionFactory, IDimension defaultDimension)
       {
          return getMergedDimensions(dimensionFactory, defaultDimension).OrderBy(dimension => dimension.Name);
       }
