@@ -22,9 +22,6 @@ namespace OSPSuite.Presentation
       protected IDataRepositoryTask _dataRepositoryTask;
       protected IDialogCreator _dialogCreator;
       protected ICurveBinderFactory _curveBinderFactory;
-      protected ICurveChartContextMenuFactory _curveChartContextMenuFactory;
-      protected ICurveContextMenuFactory _curveContextMenuFactory;
-      protected IAxisContextMenuFactory _axisContextMenuFactory;
       protected IExceptionManager _exceptionManager;
 
       protected CurveChart _curveChart;
@@ -35,6 +32,7 @@ namespace OSPSuite.Presentation
       private ICurveToDataModeMapper _dataModeMapper;
       private IAxisBinder _xAxisBinder;
       private IAxisBinder _yAxisBinder;
+      private IViewItemContextMenuFactory _contextMenuFactory;
 
       protected override void Context()
       {
@@ -42,17 +40,14 @@ namespace OSPSuite.Presentation
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _dialogCreator = A.Fake<IDialogCreator>();
          _curveBinderFactory = A.Fake<ICurveBinderFactory>();
-         _curveChartContextMenuFactory = A.Fake<ICurveChartContextMenuFactory>();
-         _curveContextMenuFactory = A.Fake<ICurveContextMenuFactory>();
-         _axisContextMenuFactory = A.Fake<IAxisContextMenuFactory>();
          _exceptionManager = A.Fake<IExceptionManager>();
          _curveBinder = A.Fake<ICurveBinder>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _axisBinderFactory = A.Fake<IAxisBinderFactory>();
          _dataModeMapper = A.Fake<ICurveToDataModeMapper>();
+         _contextMenuFactory= A.Fake<IViewItemContextMenuFactory>();
 
-         sut = new ChartDisplayPresenter( _chartDisplayView, _dataRepositoryTask, _dialogCreator, _curveBinderFactory, _curveChartContextMenuFactory, 
-            _curveContextMenuFactory,_axisContextMenuFactory, _axisBinderFactory, _dataModeMapper);
+         sut = new ChartDisplayPresenter( _chartDisplayView, _dataRepositoryTask, _dialogCreator, _curveBinderFactory,_contextMenuFactory, _axisBinderFactory, _dataModeMapper);
 
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
          var firstColumn = dataRepository.AllButBaseGrid().First();

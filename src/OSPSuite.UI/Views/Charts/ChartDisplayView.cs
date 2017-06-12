@@ -13,6 +13,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -244,9 +245,9 @@ namespace OSPSuite.UI.Views.Charts
       private void showContextMenuFor(ChartHitInfo hitInfo, Point location)
       {
          doContextMenuActionFor(hitInfo,
-            curve => _presenter.ShowContextMenu(curve, location),
-            axis => _presenter.ShowContextMenu(axis, location),
-            () => _presenter.ShowContextMenu(_presenter.Chart, location));
+            curve => _presenter.ShowContextMenu(new CurveViewItem(_presenter.Chart, curve),location),
+            axis => _presenter.ShowContextMenu(new AxisViewItem(_presenter.Chart, axis), location),
+            () => _presenter.ShowContextMenu(new CurveChartViewItem(_presenter.Chart), location));
       }
 
       private Axis getAxisThatIsWithinRange(ChartHitInfo hitInfo)

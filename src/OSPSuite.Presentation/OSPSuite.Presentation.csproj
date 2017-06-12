@@ -236,9 +236,7 @@
     <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisResultsPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisSetValuePresenter.cs" />
     <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
-    <Compile Include="Presenters\Charts\SingleAxisSettingsModalPresenter.cs" />
     <Compile Include="Presenters\Charts\SingleAxisSettingsPresenter.cs" />
-    <Compile Include="Presenters\Charts\SingleCurveSettingsModalPresenter.cs" />
     <Compile Include="Presenters\Charts\SingleCurveSettingsPresenter.cs" />
     <Compile Include="Presenters\Charts\UsedChangedEventArgs.cs" />
     <Compile Include="Presenters\AbstractClonePresenter.cs" />
@@ -554,9 +552,7 @@
     <Compile Include="Views\Charts\IDataBrowserView.cs" />
     <Compile Include="Views\Charts\IModalChartTemplateManagerView.cs" />
     <Compile Include="Views\Charts\ISimpleChartView.cs" />
-    <Compile Include="Views\Charts\ISingleAxisSettingsModalView.cs" />
     <Compile Include="Views\Charts\ISingleAxisSettingsView.cs" />
-    <Compile Include="Views\Charts\ISingleCurveSettingsModalView.cs" />
     <Compile Include="Views\Charts\ISingleCurveSettingsView.cs" />
     <Compile Include="Views\Charts\IViewWithColumnSettings.cs" />
     <Compile Include="Views\Commands\ICommentView.cs" />

@@ -9,6 +9,7 @@ using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
@@ -24,9 +25,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    ///    Presenter of ChartDisplay component, which displays a IChart.
    /// </summary>
    public interface IChartDisplayPresenter : IPresenter<IChartDisplayView>,
-      IPresenterWithContextMenu<Curve>,
-      IPresenterWithContextMenu<Axis>,
-      IPresenterWithContextMenu<CurveChart>,
+      IPresenterWithContextMenu<IViewItem>,
       IListener<ChartUpdatedEvent>,
       IListener<ChartPropertiesChangedEvent>
    {
@@ -182,9 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IDataRepositoryTask _dataRepositoryTask;
       private readonly IDialogCreator _dialogCreator;
       private readonly ICurveBinderFactory _curveBinderFactory;
-      private readonly ICurveChartContextMenuFactory _curveChartContextMenuFactory;
-      private readonly ICurveContextMenuFactory _curveContextMenuFactory;
-      private readonly IAxisContextMenuFactory _axisContextMenuFactory;
+      private readonly IViewItemContextMenuFactory _contextMenuFactory;
       private readonly IAxisBinderFactory _axisBinderFactory;
       private readonly ICurveToDataModeMapper _dataModeMapper;
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
@@ -204,9 +201,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          IDataRepositoryTask dataRepositoryTask,
          IDialogCreator dialogCreator,
          ICurveBinderFactory curveBinderFactory,
-         ICurveChartContextMenuFactory curveChartContextMenuFactory,
-         ICurveContextMenuFactory curveContextMenuFactory,
-         IAxisContextMenuFactory axisContextMenuFactory,
+         IViewItemContextMenuFactory contextMenuFactory,
          IAxisBinderFactory axisBinderFactory,
          ICurveToDataModeMapper dataModeMapper)
          : base(chartDisplayView)
@@ -214,9 +209,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataRepositoryTask = dataRepositoryTask;
          _dialogCreator = dialogCreator;
          _curveBinderFactory = curveBinderFactory;
-         _curveChartContextMenuFactory = curveChartContextMenuFactory;
-         _curveContextMenuFactory = curveContextMenuFactory;
-         _axisContextMenuFactory = axisContextMenuFactory;
+         _contextMenuFactory = contextMenuFactory;
          _axisBinderFactory = axisBinderFactory;
          _dataModeMapper = dataModeMapper;
          _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
@@ -577,30 +570,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return Equals(Chart, chartEvent.Chart);
       }
 
-      public void ShowContextMenu(Curve curve, Point popupLocation)
-      {
-         _curveContextMenuFactory.CreateFor(curve, this).Show(_view, popupLocation);
-      }
-
-      public void ShowContextMenu(Axis axis, Point popupLocation)
-      {
-         _axisContextMenuFactory.CreateFor(axis, this).Show(_view, popupLocation);
-      }
-
-      public void ShowContextMenu(CurveChart curveChart, Point popupLocation)
-      {
-         var contextMenu = _curveChartContextMenuFactory.CreateFor(curveChart, this);
-         contextMenu.Show(_view, popupLocation);
-      }
-
       public void ActivateFirstContextMenuEntryFor(Axis axis)
       {
-         _axisContextMenuFactory.CreateFor(axis, this).ActivateFirstMenu();
+         _contextMenuFactory.CreateFor(viewItemFor(axis), this).ActivateFirstMenu();
       }
 
       public void ActivateFirstContextMenuEntryFor(Curve curve)
       {
-         _curveContextMenuFactory.CreateFor(curve, this).ActivateFirstMenu();
+         _contextMenuFactory.CreateFor(viewItemFor(curve), this).ActivateFirstMenu();
       }
+
+      public void ShowContextMenu(IViewItem viewItem, Point popupLocation)
+      {
+         var contextMenu = _contextMenuFactory.CreateFor(viewItem, this);
+         contextMenu.Show(_view, popupLocation);
+      }
+
+      private IViewItem viewItemFor(Curve curve) => new CurveViewItem(Chart, curve);
+      private IViewItem viewItemFor(Axis axis) => new AxisViewItem(Chart, axis);
    }
 }

@@ -4,28 +4,45 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class CurveContextMenu : ContextMenu<Curve>
+   public class CurveViewItem : IViewItem
    {
-      public CurveContextMenu(Curve curve): base(curve)
-      {}
+      public IChart Chart { get; }
+      public Curve Curve { get; }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(Curve curve)
+      public CurveViewItem(IChart chart, Curve curve)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditCurveUICommand, Curve>(curve);
+         Chart = chart;
+         Curve = curve;
       }
    }
 
-   public interface ICurveContextMenuFactory : IContextMenuFactory<Curve>
-   {}
-
-   public class CurveContextMenuFactory : ICurveContextMenuFactory
+   public class CurveContextMenu : ContextMenu<CurveViewItem>
    {
-      public IContextMenu CreateFor(Curve curve, IPresenterWithContextMenu<Curve> presenter)
+      public CurveContextMenu(CurveViewItem curveViewItem) : base(curveViewItem)
       {
-         return new CurveContextMenu(curve);
+         
+      }
+
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(CurveViewItem curveViewItem)
+      {
+         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditCurveUICommand, CurveViewItem>(curveViewItem);
+      }
+   }
+
+   public class CurveContextMenuFactory : IContextMenuSpecificationFactory<IViewItem>
+   {
+      public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
+      {
+         return new CurveContextMenu(viewItem.DowncastTo<CurveViewItem>());
+      }
+
+      public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
+      {
+         return viewItem.IsAnImplementationOf<CurveViewItem>();
       }
    }
 }
