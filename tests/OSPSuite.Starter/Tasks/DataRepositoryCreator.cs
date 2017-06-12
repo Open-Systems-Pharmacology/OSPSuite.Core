@@ -10,18 +10,30 @@ namespace OSPSuite.Starter.Tasks
    public interface IDataRepositoryCreator
    {
       IEnumerable<DataRepository> CreateOriginalDataRepositories(IContainer model);
-      IEnumerable<DataRepository> CreateCalculationRepositories(int numberOfCalculations, IContainer model, int index);
-      IEnumerable<DataRepository> CreateObservationRepositories(int numberOfObservations, IContainer model, int index);
+      DataRepository CreateCalculationRepository(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
+      DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
+      DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
+      DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
+      DataRepository CreateCalculationsWithGeometricMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
+      DataRepository CreateCalculationsWithArithmeticMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
    }
 
    public class DataRepositoryCreator : IDataRepositoryCreator
    {
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly List<Calculation> _calculations;
+      private readonly Random _random;
 
       public DataRepositoryCreator(IDimensionFactory dimensionFactory)
       {
          _dimensionFactory = dimensionFactory;
+         _calculations = new List<Calculation>
+         {
+            new ExponentialDecay()
+         };
+         _random = new Random();
       }
+
       public IEnumerable<DataRepository> CreateOriginalDataRepositories(IContainer model)
       {
          var dataRepositories = new List<DataRepository>();
@@ -70,36 +82,106 @@ namespace OSPSuite.Starter.Tasks
          return quantity1;
       }
 
-      public IEnumerable<DataRepository> CreateCalculationRepositories(int numberOfCalculations, IContainer model, int index)
+      public DataRepository CreateCalculationRepository(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation)
       {
-         
          var repositoryName = $"Calculation Repository {index}";
-         var dataRepository = createRepository(numberOfCalculations, model, repositoryName, ColumnOrigins.Calculation);
+         var dataRepository = createRepository(numberOfCalculations, model, repositoryName, ColumnOrigins.Calculation, pointsPerCalculation);
 
-         yield return dataRepository;
+         return dataRepository;
       }
 
-      private DataRepository createRepository(int numberOfCalculations, IContainer model, string repositoryName, ColumnOrigins columnOrigins)
+      private DataRepository createRepository(int numberOfCalculations, IContainer model, string repositoryName, ColumnOrigins columnOrigins, int numberOfPointsPerCalculation)
       {
          var dataRepository = new DataRepository().WithName(repositoryName);
-         var baseGrid = createBaseGridWithManyPoints(dataRepository.Name);
+         var baseGrid = createBaseGridWithManyPoints(dataRepository.Name, numberOfPointsPerCalculation);
 
-         for (int i = 0; i < numberOfCalculations; i++)
+         for (var i = 0; i < numberOfCalculations; i++)
          {
-            dataRepository.Add(calculationColumnFor(baseGrid, i, model, columnOrigins));
+            dataRepository.Add(createPrimaryColumnFor(baseGrid, i, model, columnOrigins));
          }
          return dataRepository;
       }
 
-      public IEnumerable<DataRepository> CreateObservationRepositories(int numberOfObservations, IContainer model, int index)
+      private DataColumn createAuxiliaryColumn(DataColumn column, int index, IContainer model, AuxiliaryType columnType, ColumnOrigins columnOrigins, Func<double, float> calculateAuxiliaryFactor)
       {
-         var repositoryName = $"Observation Repository {index}";
-         var dataRepository = createRepository(numberOfObservations, model, repositoryName, ColumnOrigins.Observation);
+         var baseGrid = column.BaseGrid;
+         var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
 
-         yield return dataRepository;
+         var auxilaiaryColumn = new DataColumn($"deviation column {index}", quantity.Dimension, baseGrid)
+         {
+            DataInfo = new DataInfo(columnOrigins, columnType, quantity.Dimension.DefaultUnitName, DateTime.Now, "A Source", "Patient A", 230),
+            QuantityInfo = Helper.CreateQuantityInfo(quantity)
+         };
+
+         var values = new List<float>();
+
+         baseGrid.Values.Each(x =>
+         {
+            var columnValue = column.GetValue(x);
+            var error = calculateAuxiliaryFactor(_random.NextDouble());
+            values.Add(columnValue * error);
+         });
+
+         auxilaiaryColumn.Values = values;
+
+         return auxilaiaryColumn;
       }
 
-      private DataColumn calculationColumnFor(BaseGrid baseGrid, int index, IContainer model, ColumnOrigins columnOrigins)
+      public DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      {
+         var repositoryName = $"Observation Repository {index}";
+         var dataRepository = createRepository(numberOfObservations, model, repositoryName, ColumnOrigins.Observation, pointsPerObservation);
+
+         return dataRepository;
+      }
+
+      public DataRepository CreateCalculationsWithGeometricMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation)
+      {
+         var dataRepository = CreateCalculationRepository(numberOfCalculations, model, index, pointsPerCalculation);
+
+         dataRepository.AllButBaseGrid()
+            .Each(column =>
+            {
+               column.DataInfo.AuxiliaryType = AuxiliaryType.Undefined;
+               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricMeanPop, ColumnOrigins.Calculation, x => (float) (x * 4.0)));
+            });
+
+         return dataRepository;
+      }
+
+      public DataRepository CreateCalculationsWithArithmeticMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation)
+      {
+         var dataRepository = CreateCalculationRepository(numberOfCalculations, model, index, pointsPerCalculation);
+
+         dataRepository.AllButBaseGrid()
+            .Each(column =>
+            {
+               column.DataInfo.AuxiliaryType = AuxiliaryType.Undefined;
+               column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticMeanPop, ColumnOrigins.Calculation, x => (float) (x * 4.0)));
+            });
+
+         return dataRepository;
+      }
+
+      public DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      {
+         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
+
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (x * 0.25))); });
+
+         return dataRepository;
+      }
+
+      public DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      {
+         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
+
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (x * 0.25))); });
+
+         return dataRepository;
+      }
+
+      private DataColumn createPrimaryColumnFor(BaseGrid baseGrid, int index, IContainer model, ColumnOrigins columnOrigins)
       {
          var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
 
@@ -110,10 +192,9 @@ namespace OSPSuite.Starter.Tasks
          };
 
          var values = new List<float>();
-         baseGrid.Values.Each(x =>
-         {
-            values.Add((float)Math.Abs(Math.Sin(x)));
-         });
+         var calculation = _calculations[index % _calculations.Count];
+         calculation.Seed();
+         baseGrid.Values.Each(x => { values.Add(calculation.PointFor(x)); });
 
          column.Values = values;
 
@@ -124,11 +205,11 @@ namespace OSPSuite.Starter.Tasks
       {
          var dc10 = new DataColumn("MidZero", q1.Dimension, longBaseGridWithFewPoints)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "MidZero", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "MidZero", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 2F, 1F, 0F, 1F, 2F }
+            Values = new[] {2F, 1F, 0F, 1F, 2F}
          };
-         return new[] { dc10 };
+         return new[] {dc10};
       }
 
       private static IEnumerable<DataColumn> createRepository4DataColumns(IQuantity q1, BaseGrid baseGrid4, DateTime exDate, string exSource)
@@ -138,9 +219,9 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 0F, 1F, 1F, 1F, 1F }
+            Values = new[] {0F, 1F, 1F, 1F, 1F}
          };
-         return new[] { dc4 };
+         return new[] {dc4};
       }
 
       private IEnumerable<DataColumn> createRepository3DataColumns(IContainer organism, IQuantity q1, BaseGrid baseGrid3, DateTime exDate, string exSource)
@@ -150,9 +231,9 @@ namespace OSPSuite.Starter.Tasks
          var q2 = arterialBlood.GetSingleChildByName<IQuantity>("Q");
          var dc1A = new DataColumn("Spec1", q1.Dimension, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 1.5F, 0.8F, Single.PositiveInfinity }
+            Values = new[] {1.5F, 0.8F, Single.PositiveInfinity}
          };
          columns.Add(dc1A);
 
@@ -160,23 +241,23 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, q2.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 0.6F, 0.2F, 0.8F }
+            Values = new[] {0.6F, 0.2F, 0.8F}
          };
 
          var dc2A = new DataColumn("Spec2", q2.Dimension, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q2.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q2.Dimension.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 2.3F, 0.8F, 0.4F }
+            Values = new[] {2.3F, 0.8F, 0.4F}
          };
          dc2A.AddRelatedColumn(dc2AStdDevA);
          columns.Add(dc2A);
 
          var dc1B = new DataColumn("Spec1", q1.Dimension, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "Patient B", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q1.Dimension.DefaultUnitName, exDate, exSource, "Patient B", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 1.6F, 1.1F, 3.9F }
+            Values = new[] {1.6F, 1.1F, 3.9F}
          };
          columns.Add(dc1B);
 
@@ -185,14 +266,14 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, dimless.DefaultUnitName, exDate, exSource, "Patient B", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 0.1F, 0.1F, 0.15F }
+            Values = new[] {0.1F, 0.1F, 0.15F}
          };
 
          var dc2B = new DataColumn("Spec2", q2.Dimension, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q2.Dimension.DefaultUnitName, exDate, exSource, "Patient B", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, q2.Dimension.DefaultUnitName, exDate, exSource, "Patient B", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 2.1F, 0.4F, 3.3F }
+            Values = new[] {2.1F, 0.4F, 3.3F}
          };
          dc2B.AddRelatedColumn(dc2BStdDevG);
          columns.Add(dc2B);
@@ -200,25 +281,25 @@ namespace OSPSuite.Starter.Tasks
          var length = _dimensionFactory.GetDimension("Length");
          var dc3L1 = new DataColumn("Length1", length, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 1.1F, 1.8F, 1.4F }
+            Values = new[] {1.1F, 1.8F, 1.4F}
          };
          columns.Add(dc3L1);
 
          var dc3L2 = new DataColumn("Length2", length, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 2.1F, 2.8F, 2.4F }
+            Values = new[] {2.1F, 2.8F, 2.4F}
          };
          columns.Add(dc3L2);
 
          var dc0 = new DataColumn("ValuesWith0", length, baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) { LLOQ = 1000 },
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
             QuantityInfo = Helper.CreateQuantityInfo(q1),
-            Values = new[] { 0F, 0F, 1F }
+            Values = new[] {0F, 0F, 1F}
          };
          columns.Add(dc0);
 
@@ -227,7 +308,7 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.ArithmeticMeanPop, length.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 2.3F, 0.8F, 3.4F }
+            Values = new[] {2.3F, 0.8F, 3.4F}
          };
          columns.Add(dcX1ArithMeanPop);
 
@@ -235,7 +316,7 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 0.4F, 0.2F, 0.3F }
+            Values = new[] {0.4F, 0.2F, 0.3F}
          };
          dcX1ArithMeanStdDev.AddRelatedColumn(dcX1ArithMeanPop);
          columns.Add(dcX1ArithMeanStdDev);
@@ -244,7 +325,7 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.GeometricMeanPop, length.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 2.3F, 0.8F, 3.4F }
+            Values = new[] {2.3F, 0.8F, 3.4F}
          };
          columns.Add(dcX1GeomMeanPop);
 
@@ -252,7 +333,7 @@ namespace OSPSuite.Starter.Tasks
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.Undefined, dimless.DefaultUnitName, exDate, exSource, "Patient A", 320),
             QuantityInfo = Helper.CreateQuantityInfo(q2),
-            Values = new[] { 0.4F, 0.2F, 0.3F }
+            Values = new[] {0.4F, 0.2F, 0.3F}
          };
          dcX1GeomMeanStdDev.AddRelatedColumn(dcX1GeomMeanPop);
          columns.Add(dcX1GeomMeanStdDev);
@@ -273,9 +354,9 @@ namespace OSPSuite.Starter.Tasks
       {
          var baseGrid4 = new BaseGrid("LogGrid", _dimensionFactory.GetDimension("Time"));
 
-         var baseGridPath = new List<string> { rep4Name, baseGrid4.Name };
+         var baseGridPath = new List<string> {rep4Name, baseGrid4.Name};
          baseGrid4.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
-         baseGrid4.Values = new[] { 0.0F, 0.00001F, 0.00002F, 2.0F, 4.0F };
+         baseGrid4.Values = new[] {0.0F, 0.00001F, 0.00002F, 2.0F, 4.0F};
          return baseGrid4;
       }
 
@@ -283,9 +364,9 @@ namespace OSPSuite.Starter.Tasks
       {
          var baseGrid3 = new BaseGrid("FewPoints", _dimensionFactory.GetDimension("Time"));
 
-         var baseGridPath = new List<string> { rep3Name, baseGrid3.Name };
+         var baseGridPath = new List<string> {rep3Name, baseGrid3.Name};
          baseGrid3.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
-         baseGrid3.Values = new[] { 0.0F, 2.0F, 4.0F };
+         baseGrid3.Values = new[] {0.0F, 2.0F, 4.0F};
          return baseGrid3;
       }
 
@@ -296,25 +377,25 @@ namespace OSPSuite.Starter.Tasks
             DisplayUnit = displayUnit
          };
 
-         var baseGridPath = new List<string> { rep2Name, baseGrid2.Name };
+         var baseGridPath = new List<string> {rep2Name, baseGrid2.Name};
          baseGrid2.QuantityInfo = new QuantityInfo(baseGrid2.Name, baseGridPath, QuantityType.Time);
-         baseGrid2.Values = new[] { 0.0F * 24 * 3600, 1.0F * 24 * 3600, 2.0F * 24 * 3600, 3.0F * 24 * 3600, 4.0F * 24 * 3600 };
+         baseGrid2.Values = new[] {0.0F * 24 * 3600, 1.0F * 24 * 3600, 2.0F * 24 * 3600, 3.0F * 24 * 3600, 4.0F * 24 * 3600};
          return baseGrid2;
       }
 
-      private BaseGrid createBaseGridWithManyPoints(string repositoryName)
+      private BaseGrid createBaseGridWithManyPoints(string repositoryName, int numberOfPointsPerCalculation = 1000)
       {
          var baseGridWithManyPoints = new BaseGrid("ManyPoints", _dimensionFactory.GetDimension("Time"));
          baseGridWithManyPoints.DisplayUnit = baseGridWithManyPoints.Dimension.Unit(Constants.Dimension.Units.Weeks);
 
-         var basegrid1Values = new float[1000];
-         for (var i = 0; i < 1000; i++)
+         var basegrid1Values = new float[numberOfPointsPerCalculation];
+         for (var i = 0; i < numberOfPointsPerCalculation; i++)
          {
-            basegrid1Values[i] = i / 100F;
+            basegrid1Values[i] = i / (numberOfPointsPerCalculation / 10F);
          }
 
          baseGridWithManyPoints.Values = basegrid1Values;
-         var baseGridPath = new List<string> { repositoryName, baseGridWithManyPoints.Name };
+         var baseGridPath = new List<string> {repositoryName, baseGridWithManyPoints.Name};
          baseGridWithManyPoints.QuantityInfo = new QuantityInfo(baseGridWithManyPoints.Name, baseGridPath, QuantityType.Time);
          return baseGridWithManyPoints;
       }
