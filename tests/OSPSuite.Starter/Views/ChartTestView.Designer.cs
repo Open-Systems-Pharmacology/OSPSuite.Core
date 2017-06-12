@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Starter.Views
+﻿using DevExpress.XtraEditors;
+
+namespace OSPSuite.Starter.Views
 {
    partial class ChartTestView
    {
@@ -29,13 +31,14 @@
       /// </summary>
       private void InitializeComponent()
       {
+         this.components = new System.ComponentModel.Container();
          this.uxLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.numberOfPointsTextEdit = new DevExpress.XtraEditors.TextEdit();
          this.redrawChartButton = new DevExpress.XtraEditors.SimpleButton();
          this.clearChartButton = new DevExpress.XtraEditors.SimpleButton();
          this.numberOfObservationsTextEdit = new DevExpress.XtraEditors.TextEdit();
-         this.addObservationsButton = new DevExpress.XtraEditors.SimpleButton();
          this.numberOfCalculationsTextEdit = new DevExpress.XtraEditors.TextEdit();
-         this.addCalculationsButton = new DevExpress.XtraEditors.SimpleButton();
+         this.addCalculationsButton = new DevExpress.XtraEditors.DropDownButton();
          this.originalConfigurationButton = new DevExpress.XtraEditors.SimpleButton();
          this.removeDatalessCurvesButton = new DevExpress.XtraEditors.SimpleButton();
          this.reloadMenusButton = new DevExpress.XtraEditors.SimpleButton();
@@ -58,15 +61,23 @@
          this.reloadMenusLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.removeDatalessCurvesLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.originalConfigurationLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.addObservationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.addCalculationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.numberOfCalculationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.numberOfObservationsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.clearChartLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.redrawChartLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.numberOfPointsLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.addObservationsButton = new DevExpress.XtraEditors.DropDownButton();
+         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.barManager = new DevExpress.XtraBars.BarManager(this.components);
+         this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
+         this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
+         this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
+         this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.uxLayoutControl)).BeginInit();
          this.uxLayoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.numberOfPointsTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.chartEditorPanel)).BeginInit();
@@ -83,21 +94,24 @@
          ((System.ComponentModel.ISupportInitialize)(this.reloadMenusLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.removeDatalessCurvesLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.originalConfigurationLayoutItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.addObservationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.addCalculationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.clearChartLayoutItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.redrawChartLayoutItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.numberOfPointsLayoutItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.barManager)).BeginInit();
          this.SuspendLayout();
          // 
          // uxLayoutControl
          // 
          this.uxLayoutControl.AllowCustomization = false;
+         this.uxLayoutControl.Controls.Add(this.addObservationsButton);
+         this.uxLayoutControl.Controls.Add(this.numberOfPointsTextEdit);
          this.uxLayoutControl.Controls.Add(this.redrawChartButton);
          this.uxLayoutControl.Controls.Add(this.clearChartButton);
          this.uxLayoutControl.Controls.Add(this.numberOfObservationsTextEdit);
-         this.uxLayoutControl.Controls.Add(this.addObservationsButton);
          this.uxLayoutControl.Controls.Add(this.numberOfCalculationsTextEdit);
          this.uxLayoutControl.Controls.Add(this.addCalculationsButton);
          this.uxLayoutControl.Controls.Add(this.originalConfigurationButton);
@@ -119,9 +133,17 @@
          this.uxLayoutControl.TabIndex = 0;
          this.uxLayoutControl.Text = "uxLayoutControl1";
          // 
+         // numberOfPointsTextEdit
+         // 
+         this.numberOfPointsTextEdit.Location = new System.Drawing.Point(12, 12);
+         this.numberOfPointsTextEdit.Name = "numberOfPointsTextEdit";
+         this.numberOfPointsTextEdit.Size = new System.Drawing.Size(238, 20);
+         this.numberOfPointsTextEdit.StyleController = this.uxLayoutControl;
+         this.numberOfPointsTextEdit.TabIndex = 28;
+         // 
          // redrawChartButton
          // 
-         this.redrawChartButton.Location = new System.Drawing.Point(12, 90);
+         this.redrawChartButton.Location = new System.Drawing.Point(12, 114);
          this.redrawChartButton.Name = "redrawChartButton";
          this.redrawChartButton.Size = new System.Drawing.Size(238, 22);
          this.redrawChartButton.StyleController = this.uxLayoutControl;
@@ -130,7 +152,7 @@
          // 
          // clearChartButton
          // 
-         this.clearChartButton.Location = new System.Drawing.Point(12, 64);
+         this.clearChartButton.Location = new System.Drawing.Point(12, 88);
          this.clearChartButton.Name = "clearChartButton";
          this.clearChartButton.Size = new System.Drawing.Size(238, 22);
          this.clearChartButton.StyleController = this.uxLayoutControl;
@@ -139,24 +161,15 @@
          // 
          // numberOfObservationsTextEdit
          // 
-         this.numberOfObservationsTextEdit.Location = new System.Drawing.Point(12, 38);
+         this.numberOfObservationsTextEdit.Location = new System.Drawing.Point(12, 62);
          this.numberOfObservationsTextEdit.Name = "numberOfObservationsTextEdit";
          this.numberOfObservationsTextEdit.Size = new System.Drawing.Size(58, 20);
          this.numberOfObservationsTextEdit.StyleController = this.uxLayoutControl;
          this.numberOfObservationsTextEdit.TabIndex = 24;
          // 
-         // addObservationsButton
-         // 
-         this.addObservationsButton.Location = new System.Drawing.Point(74, 38);
-         this.addObservationsButton.Name = "addObservationsButton";
-         this.addObservationsButton.Size = new System.Drawing.Size(176, 22);
-         this.addObservationsButton.StyleController = this.uxLayoutControl;
-         this.addObservationsButton.TabIndex = 23;
-         this.addObservationsButton.Text = "Add Observations";
-         // 
          // numberOfCalculationsTextEdit
          // 
-         this.numberOfCalculationsTextEdit.Location = new System.Drawing.Point(12, 12);
+         this.numberOfCalculationsTextEdit.Location = new System.Drawing.Point(12, 36);
          this.numberOfCalculationsTextEdit.Name = "numberOfCalculationsTextEdit";
          this.numberOfCalculationsTextEdit.Size = new System.Drawing.Size(58, 20);
          this.numberOfCalculationsTextEdit.StyleController = this.uxLayoutControl;
@@ -164,7 +177,7 @@
          // 
          // addCalculationsButton
          // 
-         this.addCalculationsButton.Location = new System.Drawing.Point(74, 12);
+         this.addCalculationsButton.Location = new System.Drawing.Point(74, 36);
          this.addCalculationsButton.Name = "addCalculationsButton";
          this.addCalculationsButton.Size = new System.Drawing.Size(176, 22);
          this.addCalculationsButton.StyleController = this.uxLayoutControl;
@@ -173,7 +186,7 @@
          // 
          // originalConfigurationButton
          // 
-         this.originalConfigurationButton.Location = new System.Drawing.Point(12, 116);
+         this.originalConfigurationButton.Location = new System.Drawing.Point(12, 140);
          this.originalConfigurationButton.Name = "originalConfigurationButton";
          this.originalConfigurationButton.Size = new System.Drawing.Size(238, 22);
          this.originalConfigurationButton.StyleController = this.uxLayoutControl;
@@ -182,7 +195,7 @@
          // 
          // removeDatalessCurvesButton
          // 
-         this.removeDatalessCurvesButton.Location = new System.Drawing.Point(12, 298);
+         this.removeDatalessCurvesButton.Location = new System.Drawing.Point(12, 322);
          this.removeDatalessCurvesButton.Name = "removeDatalessCurvesButton";
          this.removeDatalessCurvesButton.Size = new System.Drawing.Size(238, 22);
          this.removeDatalessCurvesButton.StyleController = this.uxLayoutControl;
@@ -191,7 +204,7 @@
          // 
          // reloadMenusButton
          // 
-         this.reloadMenusButton.Location = new System.Drawing.Point(12, 272);
+         this.reloadMenusButton.Location = new System.Drawing.Point(12, 296);
          this.reloadMenusButton.Name = "reloadMenusButton";
          this.reloadMenusButton.Size = new System.Drawing.Size(238, 22);
          this.reloadMenusButton.StyleController = this.uxLayoutControl;
@@ -200,7 +213,7 @@
          // 
          // refreshDisplayButton
          // 
-         this.refreshDisplayButton.Location = new System.Drawing.Point(12, 246);
+         this.refreshDisplayButton.Location = new System.Drawing.Point(12, 270);
          this.refreshDisplayButton.Name = "refreshDisplayButton";
          this.refreshDisplayButton.Size = new System.Drawing.Size(238, 22);
          this.refreshDisplayButton.StyleController = this.uxLayoutControl;
@@ -209,7 +222,7 @@
          // 
          // loadSettingsButton
          // 
-         this.loadSettingsButton.Location = new System.Drawing.Point(12, 220);
+         this.loadSettingsButton.Location = new System.Drawing.Point(12, 244);
          this.loadSettingsButton.Name = "loadSettingsButton";
          this.loadSettingsButton.Size = new System.Drawing.Size(238, 22);
          this.loadSettingsButton.StyleController = this.uxLayoutControl;
@@ -218,7 +231,7 @@
          // 
          // saveSettingsButton
          // 
-         this.saveSettingsButton.Location = new System.Drawing.Point(12, 194);
+         this.saveSettingsButton.Location = new System.Drawing.Point(12, 218);
          this.saveSettingsButton.Name = "saveSettingsButton";
          this.saveSettingsButton.Size = new System.Drawing.Size(238, 22);
          this.saveSettingsButton.StyleController = this.uxLayoutControl;
@@ -227,7 +240,7 @@
          // 
          // loadChartButton
          // 
-         this.loadChartButton.Location = new System.Drawing.Point(12, 168);
+         this.loadChartButton.Location = new System.Drawing.Point(12, 192);
          this.loadChartButton.Name = "loadChartButton";
          this.loadChartButton.Size = new System.Drawing.Size(238, 22);
          this.loadChartButton.StyleController = this.uxLayoutControl;
@@ -236,7 +249,7 @@
          // 
          // saveChartButton
          // 
-         this.saveChartButton.Location = new System.Drawing.Point(12, 142);
+         this.saveChartButton.Location = new System.Drawing.Point(12, 166);
          this.saveChartButton.Name = "saveChartButton";
          this.saveChartButton.Size = new System.Drawing.Size(238, 22);
          this.saveChartButton.StyleController = this.uxLayoutControl;
@@ -273,12 +286,13 @@
             this.reloadMenusLayoutItem,
             this.removeDatalessCurvesLayoutItem,
             this.originalConfigurationLayoutItem,
-            this.addObservationsLayoutItem,
             this.addCalculationsLayoutItem,
             this.numberOfCalculationsLayoutItem,
             this.numberOfObservationsLayoutItem,
             this.clearChartLayoutItem,
-            this.redrawChartLayoutItem});
+            this.redrawChartLayoutItem,
+            this.numberOfPointsLayoutItem,
+            this.layoutControlItem1});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "Root";
          this.layoutControlGroup1.Size = new System.Drawing.Size(1370, 686);
@@ -305,7 +319,7 @@
          // saveChartLayoutItem
          // 
          this.saveChartLayoutItem.Control = this.saveChartButton;
-         this.saveChartLayoutItem.Location = new System.Drawing.Point(0, 130);
+         this.saveChartLayoutItem.Location = new System.Drawing.Point(0, 154);
          this.saveChartLayoutItem.Name = "saveChartLayoutItem";
          this.saveChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.saveChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -314,7 +328,7 @@
          // loadChartLayoutItem
          // 
          this.loadChartLayoutItem.Control = this.loadChartButton;
-         this.loadChartLayoutItem.Location = new System.Drawing.Point(0, 156);
+         this.loadChartLayoutItem.Location = new System.Drawing.Point(0, 180);
          this.loadChartLayoutItem.Name = "loadChartLayoutItem";
          this.loadChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.loadChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -323,7 +337,7 @@
          // saveSettingsLayoutItem
          // 
          this.saveSettingsLayoutItem.Control = this.saveSettingsButton;
-         this.saveSettingsLayoutItem.Location = new System.Drawing.Point(0, 182);
+         this.saveSettingsLayoutItem.Location = new System.Drawing.Point(0, 206);
          this.saveSettingsLayoutItem.Name = "saveSettingsLayoutItem";
          this.saveSettingsLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.saveSettingsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -332,7 +346,7 @@
          // loadSettingsLayoutItem
          // 
          this.loadSettingsLayoutItem.Control = this.loadSettingsButton;
-         this.loadSettingsLayoutItem.Location = new System.Drawing.Point(0, 208);
+         this.loadSettingsLayoutItem.Location = new System.Drawing.Point(0, 232);
          this.loadSettingsLayoutItem.Name = "loadSettingsLayoutItem";
          this.loadSettingsLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.loadSettingsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -341,7 +355,7 @@
          // refreshDisplayLayoutItem
          // 
          this.refreshDisplayLayoutItem.Control = this.refreshDisplayButton;
-         this.refreshDisplayLayoutItem.Location = new System.Drawing.Point(0, 234);
+         this.refreshDisplayLayoutItem.Location = new System.Drawing.Point(0, 258);
          this.refreshDisplayLayoutItem.Name = "refreshDisplayLayoutItem";
          this.refreshDisplayLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.refreshDisplayLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -357,7 +371,7 @@
          // reloadMenusLayoutItem
          // 
          this.reloadMenusLayoutItem.Control = this.reloadMenusButton;
-         this.reloadMenusLayoutItem.Location = new System.Drawing.Point(0, 260);
+         this.reloadMenusLayoutItem.Location = new System.Drawing.Point(0, 284);
          this.reloadMenusLayoutItem.Name = "reloadMenusLayoutItem";
          this.reloadMenusLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.reloadMenusLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -366,34 +380,25 @@
          // removeDatalessCurvesLayoutItem
          // 
          this.removeDatalessCurvesLayoutItem.Control = this.removeDatalessCurvesButton;
-         this.removeDatalessCurvesLayoutItem.Location = new System.Drawing.Point(0, 286);
+         this.removeDatalessCurvesLayoutItem.Location = new System.Drawing.Point(0, 310);
          this.removeDatalessCurvesLayoutItem.Name = "removeDatalessCurvesLayoutItem";
-         this.removeDatalessCurvesLayoutItem.Size = new System.Drawing.Size(242, 380);
+         this.removeDatalessCurvesLayoutItem.Size = new System.Drawing.Size(242, 356);
          this.removeDatalessCurvesLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.removeDatalessCurvesLayoutItem.TextVisible = false;
          // 
          // originalConfigurationLayoutItem
          // 
          this.originalConfigurationLayoutItem.Control = this.originalConfigurationButton;
-         this.originalConfigurationLayoutItem.Location = new System.Drawing.Point(0, 104);
+         this.originalConfigurationLayoutItem.Location = new System.Drawing.Point(0, 128);
          this.originalConfigurationLayoutItem.Name = "originalConfigurationLayoutItem";
          this.originalConfigurationLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.originalConfigurationLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.originalConfigurationLayoutItem.TextVisible = false;
          // 
-         // addObservationsLayoutItem
-         // 
-         this.addObservationsLayoutItem.Control = this.addObservationsButton;
-         this.addObservationsLayoutItem.Location = new System.Drawing.Point(62, 26);
-         this.addObservationsLayoutItem.Name = "addObservationsLayoutItem";
-         this.addObservationsLayoutItem.Size = new System.Drawing.Size(180, 26);
-         this.addObservationsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
-         this.addObservationsLayoutItem.TextVisible = false;
-         // 
          // addCalculationsLayoutItem
          // 
          this.addCalculationsLayoutItem.Control = this.addCalculationsButton;
-         this.addCalculationsLayoutItem.Location = new System.Drawing.Point(62, 0);
+         this.addCalculationsLayoutItem.Location = new System.Drawing.Point(62, 24);
          this.addCalculationsLayoutItem.Name = "addCalculationsLayoutItem";
          this.addCalculationsLayoutItem.Size = new System.Drawing.Size(180, 26);
          this.addCalculationsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -402,7 +407,7 @@
          // numberOfCalculationsLayoutItem
          // 
          this.numberOfCalculationsLayoutItem.Control = this.numberOfCalculationsTextEdit;
-         this.numberOfCalculationsLayoutItem.Location = new System.Drawing.Point(0, 0);
+         this.numberOfCalculationsLayoutItem.Location = new System.Drawing.Point(0, 24);
          this.numberOfCalculationsLayoutItem.Name = "numberOfCalculationsLayoutItem";
          this.numberOfCalculationsLayoutItem.Size = new System.Drawing.Size(62, 26);
          this.numberOfCalculationsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -411,7 +416,7 @@
          // numberOfObservationsLayoutItem
          // 
          this.numberOfObservationsLayoutItem.Control = this.numberOfObservationsTextEdit;
-         this.numberOfObservationsLayoutItem.Location = new System.Drawing.Point(0, 26);
+         this.numberOfObservationsLayoutItem.Location = new System.Drawing.Point(0, 50);
          this.numberOfObservationsLayoutItem.Name = "numberOfObservationsLayoutItem";
          this.numberOfObservationsLayoutItem.Size = new System.Drawing.Size(62, 26);
          this.numberOfObservationsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -420,7 +425,7 @@
          // clearChartLayoutItem
          // 
          this.clearChartLayoutItem.Control = this.clearChartButton;
-         this.clearChartLayoutItem.Location = new System.Drawing.Point(0, 52);
+         this.clearChartLayoutItem.Location = new System.Drawing.Point(0, 76);
          this.clearChartLayoutItem.Name = "clearChartLayoutItem";
          this.clearChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.clearChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
@@ -429,22 +434,95 @@
          // redrawChartLayoutItem
          // 
          this.redrawChartLayoutItem.Control = this.redrawChartButton;
-         this.redrawChartLayoutItem.Location = new System.Drawing.Point(0, 78);
+         this.redrawChartLayoutItem.Location = new System.Drawing.Point(0, 102);
          this.redrawChartLayoutItem.Name = "redrawChartLayoutItem";
          this.redrawChartLayoutItem.Size = new System.Drawing.Size(242, 26);
          this.redrawChartLayoutItem.TextSize = new System.Drawing.Size(0, 0);
          this.redrawChartLayoutItem.TextVisible = false;
+         // 
+         // numberOfPointsLayoutItem
+         // 
+         this.numberOfPointsLayoutItem.Control = this.numberOfPointsTextEdit;
+         this.numberOfPointsLayoutItem.Location = new System.Drawing.Point(0, 0);
+         this.numberOfPointsLayoutItem.Name = "numberOfPointsLayoutItem";
+         this.numberOfPointsLayoutItem.Size = new System.Drawing.Size(242, 24);
+         this.numberOfPointsLayoutItem.TextSize = new System.Drawing.Size(0, 0);
+         this.numberOfPointsLayoutItem.TextVisible = false;
+         // 
+         // addObservationsButton
+         // 
+         this.addObservationsButton.Location = new System.Drawing.Point(74, 62);
+         this.addObservationsButton.Name = "addObservationsButton";
+         this.addObservationsButton.Size = new System.Drawing.Size(176, 22);
+         this.addObservationsButton.StyleController = this.uxLayoutControl;
+         this.addObservationsButton.TabIndex = 29;
+         this.addObservationsButton.Text = "Add Observations";
+         // 
+         // layoutControlItem1
+         // 
+         this.layoutControlItem1.Control = this.addObservationsButton;
+         this.layoutControlItem1.Location = new System.Drawing.Point(62, 50);
+         this.layoutControlItem1.Name = "layoutControlItem1";
+         this.layoutControlItem1.Size = new System.Drawing.Size(180, 26);
+         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem1.TextVisible = false;
+         // 
+         // barManager
+         // 
+         this.barManager.DockControls.Add(this.barDockControlTop);
+         this.barManager.DockControls.Add(this.barDockControlBottom);
+         this.barManager.DockControls.Add(this.barDockControlLeft);
+         this.barManager.DockControls.Add(this.barDockControlRight);
+         this.barManager.Form = this;
+         this.barManager.MaxItemId = 0;
+         // 
+         // barDockControlTop
+         // 
+         this.barDockControlTop.CausesValidation = false;
+         this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
+         this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
+         this.barDockControlTop.Manager = this.barManager;
+         this.barDockControlTop.Size = new System.Drawing.Size(1370, 0);
+         // 
+         // barDockControlBottom
+         // 
+         this.barDockControlBottom.CausesValidation = false;
+         this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+         this.barDockControlBottom.Location = new System.Drawing.Point(0, 686);
+         this.barDockControlBottom.Manager = this.barManager;
+         this.barDockControlBottom.Size = new System.Drawing.Size(1370, 0);
+         // 
+         // barDockControlLeft
+         // 
+         this.barDockControlLeft.CausesValidation = false;
+         this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
+         this.barDockControlLeft.Location = new System.Drawing.Point(0, 0);
+         this.barDockControlLeft.Manager = this.barManager;
+         this.barDockControlLeft.Size = new System.Drawing.Size(0, 686);
+         // 
+         // barDockControlRight
+         // 
+         this.barDockControlRight.CausesValidation = false;
+         this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
+         this.barDockControlRight.Location = new System.Drawing.Point(1370, 0);
+         this.barDockControlRight.Manager = this.barManager;
+         this.barDockControlRight.Size = new System.Drawing.Size(0, 686);
          // 
          // ChartTestView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.uxLayoutControl);
+         this.Controls.Add(this.barDockControlLeft);
+         this.Controls.Add(this.barDockControlRight);
+         this.Controls.Add(this.barDockControlBottom);
+         this.Controls.Add(this.barDockControlTop);
          this.Name = "ChartTestView";
          this.Size = new System.Drawing.Size(1370, 686);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.uxLayoutControl)).EndInit();
          this.uxLayoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.numberOfPointsTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.chartEditorPanel)).EndInit();
@@ -461,13 +539,16 @@
          ((System.ComponentModel.ISupportInitialize)(this.reloadMenusLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.removeDatalessCurvesLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.originalConfigurationLayoutItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.addObservationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.addCalculationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfCalculationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.numberOfObservationsLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.clearChartLayoutItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.redrawChartLayoutItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.numberOfPointsLayoutItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.barManager)).EndInit();
          this.ResumeLayout(false);
+         this.PerformLayout();
 
       }
 
@@ -496,11 +577,9 @@
       private DevExpress.XtraLayout.LayoutControlItem removeDatalessCurvesLayoutItem;
       private DevExpress.XtraEditors.SimpleButton originalConfigurationButton;
       private DevExpress.XtraLayout.LayoutControlItem originalConfigurationLayoutItem;
-      private DevExpress.XtraEditors.SimpleButton addCalculationsButton;
+      private DevExpress.XtraEditors.DropDownButton addCalculationsButton;
       private DevExpress.XtraEditors.TextEdit numberOfCalculationsTextEdit;
       private DevExpress.XtraEditors.TextEdit numberOfObservationsTextEdit;
-      private DevExpress.XtraEditors.SimpleButton addObservationsButton;
-      private DevExpress.XtraLayout.LayoutControlItem addObservationsLayoutItem;
       private DevExpress.XtraLayout.LayoutControlItem addCalculationsLayoutItem;
       private DevExpress.XtraLayout.LayoutControlItem numberOfCalculationsLayoutItem;
       private DevExpress.XtraLayout.LayoutControlItem numberOfObservationsLayoutItem;
@@ -508,5 +587,14 @@
       private DevExpress.XtraLayout.LayoutControlItem clearChartLayoutItem;
       private DevExpress.XtraEditors.SimpleButton redrawChartButton;
       private DevExpress.XtraLayout.LayoutControlItem redrawChartLayoutItem;
+      private TextEdit numberOfPointsTextEdit;
+      private DevExpress.XtraLayout.LayoutControlItem numberOfPointsLayoutItem;
+      private DropDownButton addObservationsButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraBars.BarManager barManager;
+      private DevExpress.XtraBars.BarDockControl barDockControlTop;
+      private DevExpress.XtraBars.BarDockControl barDockControlBottom;
+      private DevExpress.XtraBars.BarDockControl barDockControlLeft;
+      private DevExpress.XtraBars.BarDockControl barDockControlRight;
    }
 }

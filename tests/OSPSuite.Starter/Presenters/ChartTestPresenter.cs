@@ -39,9 +39,13 @@ namespace OSPSuite.Starter.Presenters
       void ReloadMenus();
       void RemoveDatalessCurves();
       void InitializeRepositoriesWithOriginalData();
-      void AddObservations(int numberOfObservations);
-      void AddCalculations(int numberOfCalculations);
+      void AddObservations(int numberOfObservations, int pointsPerCalculation);
+      void AddCalculations(int numberOfCalculations, int pointsPerCalculation);
       void ClearChart();
+      void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation);
+      void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation);
+      void AddCalculationsWithGeometricMean(int numberOfCalculations, int pointsPerCalculation);
+      void AddCalculationsWithArithmeticMean(int numberOfCalculations, int pointsPerCalculation);
    }
 
    public class ChartTestPresenter : AbstractCommandCollectorPresenter<IChartTestView, IChartTestPresenter>, IChartTestPresenter
@@ -113,15 +117,40 @@ namespace OSPSuite.Starter.Presenters
          _dataRepositories.AddRange(newRepositories);
       }
 
-      public void AddObservations(int numberOfObservations)
+      public void AddCalculationsWithGeometricMean(int numberOfCalculations, int pointsPerCalculation)
       {
-         var newRepositories = _dataRepositoryCreator.CreateObservationRepositories(numberOfObservations, _model, _dataRepositories.Count).ToList();
-         ChartEditorPresenter.AddDataRepositories(newRepositories);
-         addNewRepositories(newRepositories);
-         addNewCurvesToChart(newRepositories);
+         addRepositoryToChart(_dataRepositoryCreator.CreateCalculationsWithGeometricMean(numberOfCalculations, _model, _dataRepositories.Count, pointsPerCalculation));
       }
 
-      private void addNewCurvesToChart(List<DataRepository> newRepositories)
+      public void AddCalculationsWithArithmeticMean(int numberOfCalculations, int pointsPerCalculation)
+      {
+         addRepositoryToChart(_dataRepositoryCreator.CreateCalculationsWithArithmeticMean(numberOfCalculations, _model, _dataRepositories.Count, pointsPerCalculation));
+      }
+
+      public void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation)
+      {
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithGeometricDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation));
+      }
+
+      public void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation)
+      {
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithArithmenticDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation));
+      }
+
+      public void AddObservations(int numberOfObservations, int pointsPerCalculation)
+      {
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationRepository(numberOfObservations, _model, _dataRepositories.Count, pointsPerCalculation));
+      }
+
+      private void addRepositoryToChart(DataRepository newRepository)
+      {
+         ChartEditorPresenter.AddDataRepository(newRepository);
+         var dataRepositories = new[] {newRepository};
+         addNewRepositories(dataRepositories);
+         addNewCurvesToChart(dataRepositories);
+      }
+
+      private void addNewCurvesToChart(IEnumerable<DataRepository> newRepositories)
       {
          using (_chartUpdater.UpdateTransaction(Chart))
          {
@@ -141,12 +170,9 @@ namespace OSPSuite.Starter.Presenters
          Chart.AddCurve(curve);
       }
 
-      public void AddCalculations(int numberOfCalculations)
+      public void AddCalculations(int numberOfCalculations, int pointsPerCalculation)
       {
-         var newRepositories = _dataRepositoryCreator.CreateCalculationRepositories(numberOfCalculations, _model, _dataRepositories.Count).ToList();
-         ChartEditorPresenter.AddDataRepositories(newRepositories);
-         addNewCurvesToChart(newRepositories);
-         addNewRepositories(newRepositories);
+         addRepositoryToChart(_dataRepositoryCreator.CreateCalculationRepository(numberOfCalculations, _model, _dataRepositories.Count, pointsPerCalculation));
       }
 
       public void ClearChart()
