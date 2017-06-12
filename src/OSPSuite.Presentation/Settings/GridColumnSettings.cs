@@ -1,10 +1,10 @@
-using OSPSuite.Utility.Reflection;
+using OSPSuite.Core;
 
 namespace OSPSuite.Presentation.Settings
 {
-   public class GridColumnSettings : Notifier
+   public class GridColumnSettings : MyNotifier
    {
-      public string ColumnName { get; private set; }
+      public string ColumnName { get; }
 
       private string _caption;
       private int _groupIndex;
@@ -13,7 +13,6 @@ namespace OSPSuite.Presentation.Settings
       private int _width;
       private string _sortColumnName;
       public const int INDEX_NOT_DEFINED = 100;
-
 
       public GridColumnSettings()
       {
@@ -42,7 +41,9 @@ namespace OSPSuite.Presentation.Settings
       public GridColumnSettings WithVisible(bool visible)
       {
          Visible = visible;
-         if (!Visible && VisibleIndex >= 0) VisibleIndex = -1;
+         if (!Visible && VisibleIndex >= 0)
+            VisibleIndex = -1;
+
          return this;
       }
 
@@ -60,27 +61,34 @@ namespace OSPSuite.Presentation.Settings
 
       public bool Visible
       {
-         get { return _visible; }
+         get => _visible;
          set
          {
             if (_visible != value)
             {
                _visible = value;
-               if (!_visible && VisibleIndex >= 0) VisibleIndex = -1;
+               if (!_visible && VisibleIndex >= 0)
+                  VisibleIndex = -1;
+
                OnPropertyChanged(() => Visible);
             }
          }
       }
+
       public int VisibleIndex
       {
-         get { return _visibleIndex; }
+         get => _visibleIndex;
          set
          {
             if (_visibleIndex != value)
             {
                _visibleIndex = value;
-               if (_visibleIndex >= 0 && !Visible) Visible = true;
-               if (_visibleIndex < 0 && Visible) Visible = false;
+               if (_visibleIndex >= 0 && !Visible)
+                  Visible = true;
+
+               if (_visibleIndex < 0 && Visible)
+                  Visible = false;
+
                OnPropertyChanged(() => VisibleIndex);
             }
          }
@@ -88,53 +96,26 @@ namespace OSPSuite.Presentation.Settings
 
       public int Width
       {
-         get { return _width; }
-         set {
-            if (_width != value)
-            {
-               _width = value;
-               OnPropertyChanged(() => Width);
-            }
-         }
+         get => _width;
+         set => SetProperty(ref _width, value, () => Width);
       }
 
       public string Caption
       {
-         get { return _caption; }
-         set
-         {
-            if (_caption != value)
-            {
-               _caption = value;
-               OnPropertyChanged(() => Caption);
-            }
-         }
+         get => _caption;
+         set => SetProperty(ref _caption, value, () => Caption);
       }
 
       public int GroupIndex
       {
-         get { return _groupIndex; }
-         set
-         {
-            if (_groupIndex != value)
-            {
-               _groupIndex = value;
-               OnPropertyChanged(() => GroupIndex);
-            }
-         }
+         get => _groupIndex;
+         set => SetProperty(ref _groupIndex, value, () => GroupIndex);
       }
 
       public string SortColumnName
       {
-         get { return _sortColumnName; }
-         set
-         {
-            if (_sortColumnName != value)
-            {
-               _sortColumnName = value;
-               OnPropertyChanged(() => SortColumnName);
-            }
-         }
+         get => _sortColumnName;
+         set => SetProperty(ref _sortColumnName, value, () => SortColumnName);
       }
 
       public void CopyFrom(GridColumnSettings settings)

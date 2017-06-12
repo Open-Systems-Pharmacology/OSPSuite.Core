@@ -244,10 +244,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void Refresh()
       {
          updateChart();
-
-         //TODO NOT SURE IF THIS IS REQUIRED
-//         _chartDisplayView.RefreshData();
-//         _chartDisplayView.Refresh();
       }
 
       private void rebuildQuickCurveBinderCache()

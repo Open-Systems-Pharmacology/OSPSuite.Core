@@ -114,7 +114,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void AddDataColumn(DataColumn dataColumn)
       {
-         _dataColumnDTOCache.Add(new DataColumnDTO(dataColumn, _displayQuantityPathDefinition));
+         //Required because adding a column to a bound collection triggers a bunch of devexpress events
+         _view.DoWithoutColumnSettingsUpdateNotification(() =>
+         {
+            _dataColumnDTOCache.Add(new DataColumnDTO(dataColumn, _displayQuantityPathDefinition));
+         });
       }
 
       public bool ContainsDataColumn(DataColumn dataColumn)

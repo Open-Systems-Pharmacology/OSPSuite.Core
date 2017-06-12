@@ -139,7 +139,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Event when ColumnSettings for data browser, curve options or axis options has changed.
       /// </summary>
-      event Action<GridColumnSettings> ColumnSettingsChanged;
+      event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged;
 
       /// <summary>
       ///    Apply all column setting to the editor
@@ -195,7 +195,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private Func<DataColumn, string> _curveNameDefinition;
       public CurveChart Chart { get; private set; }
 
-      public event Action<GridColumnSettings> ColumnSettingsChanged = delegate { };
+      public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,

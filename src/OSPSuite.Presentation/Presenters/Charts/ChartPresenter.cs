@@ -263,7 +263,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddAllButtons();
       }
 
-      private void columnSettingsChanged(GridColumnSettings columnSettings)
+      private void columnSettingsChanged(IReadOnlyCollection<GridColumnSettings> gridColumnSettings)
       {
          NotifyProjectChanged();
       }
