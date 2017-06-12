@@ -54,9 +54,9 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_return_a_valid_state()
+      public void should_return_an_valid_state()
       {
-         sut.IsValid().ShouldBeTrue();
+         sut.IsValid().ShouldBeFalse();
       }
    }
 
@@ -106,7 +106,6 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_an_invalid_state_for_y_axis()
       {
-         sut.Validate(x => x.yData).IsEmpty.ShouldBeFalse();
          sut.Validate(x => x.yAxisType).IsEmpty.ShouldBeFalse();
       }
    }
@@ -130,7 +129,6 @@ namespace OSPSuite.Presentation
       public void should_return_a_valid_state_for_y_axis()
       {
          sut.Validate(x => x.yData).IsEmpty.ShouldBeTrue();
-         sut.Validate(x => x.yAxisType).IsEmpty.ShouldBeTrue();
       }
 
       [Observation]
