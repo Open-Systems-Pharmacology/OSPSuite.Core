@@ -1,4 +1,5 @@
-﻿using OSPSuite.DataBinding;
+﻿using System.Windows.Forms;
+using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
@@ -6,43 +7,67 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.Charts
 {
-   public partial class SingleAxisSettingsView : BaseUserControl, ISingleAxisSettingsView
+   public partial class SingleAxisSettingsView : BaseModalView, ISingleAxisSettingsView
    {
-      private ScreenBinder<Axis> _screenBinder;
+      private readonly ScreenBinder<Axis> _screenBinder;
       private ISingleAxisSettingsPresenter _presenter;
       private ComboBoxEditElementBinder<Axis, IDimension> _dimensionBinder;
       private ComboBoxEditElementBinder<Axis, string> _unitBinder;
       private readonly IToolTipCreator _toolTipCreator;
 
-      public SingleAxisSettingsView(IToolTipCreator toolTipCreator)
+      public SingleAxisSettingsView(IShell shell, IToolTipCreator toolTipCreator) : base(shell)
       {
-         _toolTipCreator = toolTipCreator;
          InitializeComponent();
+         _toolTipCreator = toolTipCreator;
+         _screenBinder = new ScreenBinder<Axis>();
       }
 
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _screenBinder = new ScreenBinder<Axis>();
 
-         _screenBinder.Bind(x => x.AxisType).To(axisTypeTextBox);
-         _screenBinder.Bind(x => x.NumberMode).To(numberRepresentationComboBox).WithValues(numberRepresentationComboBox.GetValidValues());
-         _screenBinder.Bind(x => x.Caption).To(captionTextBox);
-         _dimensionBinder = _screenBinder.Bind(x => x.Dimension).To(dimensionComboBox);
+         _screenBinder.Bind(x => x.AxisType)
+            .To(axisTypeTextBox);
+
+         _screenBinder.Bind(x => x.NumberMode)
+            .To(numberRepresentationComboBox)
+            .WithValues(numberRepresentationComboBox.GetValidValues());
+
+         _screenBinder.Bind(x => x.Caption)
+            .To(captionTextBox);
+
+         _dimensionBinder = _screenBinder.Bind(x => x.Dimension)
+            .To(dimensionComboBox);
          _dimensionBinder.Changed += updateUnits;
-         _unitBinder = _screenBinder.Bind(x => x.UnitName).To(unitComboBox);
-         _screenBinder.Bind(x => x.Scaling).To(scalingComboBox).WithValues(scalingComboBox.GetValidValues());
-         _screenBinder.Bind(x => x.Min).To(minTextBox);
-         _screenBinder.Bind(x => x.Max).To(maxTextBox);
-         _screenBinder.Bind(x => x.GridLines).To(gridLinesCheckEdit);
-         _screenBinder.Bind(x => x.DefaultColor).To(defaultColorColorEdit);
-         _screenBinder.Bind(x => x.DefaultLineStyle).To(defaultLineSytleComboBox).WithValues(defaultLineSytleComboBox.GetValidValues());
+
+         _unitBinder = _screenBinder.Bind(x => x.UnitName)
+            .To(unitComboBox);
+
+         _screenBinder.Bind(x => x.Scaling)
+            .To(scalingComboBox)
+            .WithValues(scalingComboBox.GetValidValues());
+
+         _screenBinder.Bind(x => x.Min)
+            .To(minTextBox);
+
+         _screenBinder.Bind(x => x.Max)
+            .To(maxTextBox);
+
+         _screenBinder.Bind(x => x.GridLines)
+            .To(gridLinesCheckEdit);
+
+         _screenBinder.Bind(x => x.DefaultColor)
+            .To(defaultColorColorEdit);
+
+         _screenBinder.Bind(x => x.DefaultLineStyle)
+            .To(defaultLineSytleComboBox)
+            .WithValues(defaultLineSytleComboBox.GetValidValues());
       }
 
       public override void InitializeResources()
@@ -64,6 +89,8 @@ namespace OSPSuite.UI.Views.Charts
 
          defaultColorColorEdit.SuperTip = _toolTipCreator.CreateToolTip(ToolTips.DefaultCurveColor, ToolTips.DefaultCurveColorTitle);
          defaultLineSytleComboBox.SuperTip = _toolTipCreator.CreateToolTip(ToolTips.DefaultLineStyle, ToolTips.DefaultLineStyleTitle);
+         FormBorderStyle = FormBorderStyle.SizableToolWindow;
+         Caption =  Captions.AxisSettings;
       }
 
       private void updateUnits()

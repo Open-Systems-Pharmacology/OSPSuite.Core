@@ -20,27 +20,36 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <returns>A list of all the valid units</returns>
       IEnumerable<string> AllUnitsForDimension();
 
-      void Edit(Axis axis);
+      void Edit(IChart chart,  Axis axis);
    }
 
    public class SingleAxisSettingsPresenter : AbstractDisposablePresenter<ISingleAxisSettingsView, ISingleAxisSettingsPresenter>, ISingleAxisSettingsPresenter
    {
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly IChartUpdater _chartUpdater;
       private Axis _axis;
 
-      public SingleAxisSettingsPresenter(ISingleAxisSettingsView view, IDimensionFactory dimensionFactory)
+      public SingleAxisSettingsPresenter(ISingleAxisSettingsView view, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater)
          : base(view)
       {
          _dimensionFactory = dimensionFactory;
+         _chartUpdater = chartUpdater;
+         view.CancelVisible = false;
       }
 
-      public void Edit(Axis axis)
+      public void Edit(IChart chart, Axis axis)
       {
          _axis = axis;
          _view.BindToSource(axis);
 
          if (axis.IsXAxis)
             _view.HideDefaultStyles();
+
+         _view.Display();
+         if (_view.Canceled)
+            return;
+
+         _chartUpdater.Update(chart);
       }
 
       public IEnumerable<IDimension> AllDimensionsForEditor(IDimension dimension)

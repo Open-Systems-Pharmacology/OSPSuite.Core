@@ -1,10 +1,11 @@
 ﻿using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ContextMenus;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class EditAxisUICommand : ObjectUICommand<Axis>
+   public class EditAxisUICommand : ObjectUICommand<AxisViewItem>
    {
       private readonly IApplicationController _applicationController;
 
@@ -15,10 +16,9 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         using (var editPresenter = _applicationController.Start<ISingleAxisSettingsModalPresenter>())
+         using (var editPresenter = _applicationController.Start<ISingleAxisSettingsPresenter>())
          {
-            editPresenter.Edit(Subject);
-            editPresenter.ShowView();
+            editPresenter.Edit(Subject.Chart, Subject.Axis);
          }
       }
    }
