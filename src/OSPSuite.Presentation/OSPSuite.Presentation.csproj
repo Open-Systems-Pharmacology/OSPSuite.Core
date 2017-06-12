@@ -190,9 +190,7 @@
     <Compile Include="Presenters\Charts\CurveSettingsPresenter.cs" />
     <Compile Include="Presenters\Charts\CurveTemplatePresenter.cs" />
     <Compile Include="Presenters\Charts\DataBrowserPresenter.cs" />
-    <Compile Include="Presenters\Charts\DataColumnsDTO.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Presenters\Charts\DataColumnDTO.cs" />
     <Compile Include="Presenters\Charts\IAxisBinder.cs" />
     <Compile Include="Presenters\Charts\ICurveBinder.cs" />
     <Compile Include="Presenters\Charts\ModalChartTemplateManagerPresenter.cs" />

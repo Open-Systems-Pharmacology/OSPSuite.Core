@@ -257,11 +257,7 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _dataBrowserPresenter.RemoveDataColumn(_columnThatWillBeInternal)).MustHaveHappened();
       }
 
-      [Observation]
-      public void should_udpate_the_column_that_were_already_existing()
-      {
-         A.CallTo(() => _dataBrowserPresenter.UpdateDataColumn(_standardColumn)).MustHaveHappened();
-      }
+   
 
       [Observation]
       public void should_add_the_new_columns()

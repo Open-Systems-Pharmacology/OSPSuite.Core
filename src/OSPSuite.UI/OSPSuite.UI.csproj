@@ -395,6 +395,7 @@
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\GridColumnSettingsExtensions.cs" />
+    <Compile Include="Extensions\GridViewBinderExtensions.cs" />
     <Compile Include="Extensions\GridViewColumnExtensions.cs" />
     <Compile Include="Extensions\HelpProviderExtensions.cs" />
     <Compile Include="Extensions\HotTrackEventArgsExtensions.cs" />
