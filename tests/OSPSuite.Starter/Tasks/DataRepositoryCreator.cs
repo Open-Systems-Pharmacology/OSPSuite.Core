@@ -102,6 +102,10 @@ namespace OSPSuite.Starter.Tasks
          return dataRepository;
       }
 
+      /// <summary>
+      /// Creates an auxiliary column for the data column. The <paramref name="calculateAuxiliaryFactor"/> is used to transform a random value between 0 and 1 into a factor that is 
+      /// multiplied by the column value to give the auxiliary value.
+      /// </summary>
       private DataColumn createAuxiliaryColumn(DataColumn column, int index, IContainer model, AuxiliaryType columnType, ColumnOrigins columnOrigins, Func<double, float> calculateAuxiliaryFactor)
       {
          var baseGrid = column.BaseGrid;
