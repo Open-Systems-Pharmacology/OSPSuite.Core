@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Chart
                return LineStyles.None;
          }
       }
-      
+
       public bool IsYAxis => AxisType != AxisTypes.X;
       public bool IsXAxis => AxisType == AxisTypes.X;
 
@@ -132,6 +132,13 @@ namespace OSPSuite.Core.Chart
             OnPropertyChanged();
             OnPropertyChanged(() => UnitName);
          }
+      }
+
+      public void Reset()
+      {
+         Dimension = null;
+         UnitName = null;
+         ResetRange();
       }
 
       public string UnitName

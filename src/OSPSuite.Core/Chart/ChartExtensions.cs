@@ -14,8 +14,8 @@ namespace OSPSuite.Core.Chart
 
       public static TChart WithAxes<TChart>(this TChart chart) where TChart : CurveChart
       {
-         chart.AddAxis(new Axis(AxisTypes.X));
-         chart.AddAxis(new Axis(AxisTypes.Y) {Scaling = chart.DefaultYAxisScaling});
+         chart.AddNewAxisFor(AxisTypes.X);
+         chart.AddNewAxisFor(AxisTypes.Y);
          return chart;
       }
    }
