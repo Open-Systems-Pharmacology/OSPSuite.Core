@@ -55,7 +55,10 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindTo(IEnumerable<DataColumnDTO> dataColumnDTOs)
       {
-         _gridViewBinder.BindToSource(dataColumnDTOs);
+         DoWithoutColumnSettingsUpdateNotification(() =>
+         {
+            _gridViewBinder.BindToSource(dataColumnDTOs);
+         });
       }
 
       public override void InitializeBinding()

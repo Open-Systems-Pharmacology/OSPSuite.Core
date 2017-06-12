@@ -182,7 +182,10 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindToSource(IEnumerable<Axis> axes)
       {
-         _gridBinderAxes.BindToSource(axes.ToBindingList());
+         DoWithoutColumnSettingsUpdateNotification(() =>
+         {
+            _gridBinderAxes.BindToSource(axes.ToBindingList());
+         });
       }
 
       public void DeleteBinding()

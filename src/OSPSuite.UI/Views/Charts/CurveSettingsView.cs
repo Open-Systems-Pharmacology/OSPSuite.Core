@@ -177,7 +177,10 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindToSource(IEnumerable<CurveDTO> curves)
       {
-         _gridBinderCurves.BindToSource(curves.ToBindingList());
+         DoWithoutColumnSettingsUpdateNotification(() =>
+         {
+            _gridBinderCurves.BindToSource(curves.ToBindingList());
+         });
       }
 
       private void initializeDragDrop()
