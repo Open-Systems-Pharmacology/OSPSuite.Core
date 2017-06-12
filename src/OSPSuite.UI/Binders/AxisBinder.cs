@@ -174,14 +174,15 @@ namespace OSPSuite.UI.Binders
       private void setAxisRange(bool sideMarginsEnabled, Size diagramSize)
       {
          var axisWidthInPixel = Axis.AxisType == AxisTypes.X ? diagramSize.Width : diagramSize.Height;
+         _axisView.Logarithmic = Axis.Scaling == Scalings.Log;
+         _axisView.WholeRange.AlwaysShowZeroLevel = !_axisView.Logarithmic;
 
          adjustAxisMinMax();
          setRange(isAuto, sideMarginsEnabled);
 
          configureAxisScale(axisWidthInPixel);
 
-         _axisView.Logarithmic = (Axis.Scaling == Scalings.Log);
-         _axisView.WholeRange.AlwaysShowZeroLevel = !_axisView.Logarithmic;
+
 
          // logarithmic scale depending settings
          if (!_axisView.Logarithmic) return;

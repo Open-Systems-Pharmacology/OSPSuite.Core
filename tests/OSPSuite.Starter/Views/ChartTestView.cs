@@ -32,8 +32,8 @@ namespace OSPSuite.Starter.Views
          _observationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Deviation", (o, e) => OnEvent(createObservationsWithArithmenticDeviation)));
          _observationsDropDownControl.Items.Add(new DXMenuItem("With Geometric Deviation", (o, e) => OnEvent(createObservationsWithGeometricDeviation)));
 
-         _calculationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Mean", (o, e) => OnEvent(createCalculationsWithArithmeticMean)));
-         _calculationsDropDownControl.Items.Add(new DXMenuItem("With Geometric Mean", (o, e) => OnEvent(createCalculationsWithGeometricMean)));
+         _calculationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Population Mean", (o, e) => OnEvent(createCalculationsWithArithmeticMean)));
+         _calculationsDropDownControl.Items.Add(new DXMenuItem("With Geometric Population Mean", (o, e) => OnEvent(createCalculationsWithGeometricMean)));
       }
 
       public override void InitializeBinding()

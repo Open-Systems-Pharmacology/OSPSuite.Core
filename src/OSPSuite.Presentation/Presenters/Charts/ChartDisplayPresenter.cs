@@ -400,14 +400,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             bindChartToView();
 
-            RefreshAxisBinders();
-
             //maybe can be done better
             View.ReOrderLegend();
          }
          updateViewLayout();
 
-         //TODO WHY DO WE NEED IT TWICE ? 
          RefreshAxisBinders();
       }
 
