@@ -1418,6 +1418,23 @@ namespace OSPSuite.Assets
          var separator = "\n\t- ";
          return $"A circular reference was found in formula of {entityType.ToLower()} '{entity}' with path '{entityPath}'\nPlease check the direct or indirect references:{separator}{references.ToString(separator)}";
       }
+
+      public static string AxisMaxMustBeGreaterThanOrEqualToAxisMin(float? axisMinimumValue)
+      {
+         var preamble = "The axis maximum value should be greater than or equal to the axis minimum value";
+         return axisMinimumValue.HasValue ? $"{preamble} '{axisMinimumValue}'" : preamble;
+      }
+
+      public static string AxisMinMustBeLessThanOrEqualToAxisMax(float? axisMaximumValue)
+      {
+         var preamble = "The axis minimum value should be less than or equal to the axis maximum value";
+         return axisMaximumValue.HasValue ? $"{preamble} '{axisMaximumValue}'" : preamble;
+      }
+
+      public static string AxisMaxMustBeGreaterThanZero()
+      {
+         return "The axis maximum must be greater than 0";
+      }
    }
 
    public static class Rules

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
@@ -20,7 +23,7 @@ namespace OSPSuite.Core.Chart
       Relative
    }
 
-   public class Axis : MyNotifier, IWithDimension
+   public class Axis : MyNotifier, IWithDimension, IValidatable
    {
       private IDimension _dimension;
       private bool _gridLines;
@@ -34,6 +37,7 @@ namespace OSPSuite.Core.Chart
       private Color _defaultColor;
       private bool _visible;
       public AxisTypes AxisType { get; }
+      public virtual IBusinessRuleSet Rules { get; }
 
       [Obsolete("For serialization")]
       public Axis() : this(AxisTypes.X)
@@ -54,6 +58,45 @@ namespace OSPSuite.Core.Chart
          Visible = true;
          _defaultLineStyle = defaultLineStyleForAxisType();
          _defaultColor = Color.White;
+         Rules = new BusinessRuleSet(ValidationRules.AllRules());
+      }
+
+      private static class ValidationRules
+      {
+         internal static IEnumerable<IBusinessRule> AllRules()
+         {
+            yield return maxGreaterThanOrEqualToMin;
+            yield return minLessThanOrEqualToMax;
+            yield return maxGreaterThanZero;
+         }
+
+         private static IBusinessRule maxGreaterThanOrEqualToMin { get; } = maxGreaterThanOrEqualToMinForAxis();
+         private static IBusinessRule minLessThanOrEqualToMax { get; } = minLessThanOrEqualToMaxForAxis();
+         private static IBusinessRule maxGreaterThanZero { get; } = maxGreaterThanZeroForLogarithmicAxis();
+
+         private static IBusinessRule minLessThanOrEqualToMaxForAxis()
+         {
+            return CreateRule.For<Axis>()
+               .Property(axis => axis.Min)
+               .WithRule((axis, value) => !value.HasValue || !axis.Max.HasValue || axis.Max >= value)
+               .WithError((axis, value) => Validation.AxisMinMustBeLessThanOrEqualToAxisMax(axis.Max));
+         }
+
+         private static IBusinessRule maxGreaterThanZeroForLogarithmicAxis()
+         {
+            return CreateRule.For<Axis>()
+               .Property(axis => axis.Max)
+               .WithRule((axis, value) => !value.HasValue || axis.Scaling != Scalings.Log || value > 0F)
+               .WithError((axis, value) => Validation.AxisMaxMustBeGreaterThanZero());
+         }
+
+         private static IBusinessRule maxGreaterThanOrEqualToMinForAxis()
+         {
+            return CreateRule.For<Axis>()
+               .Property(axis => axis.Max)
+               .WithRule((axis, value) => !value.HasValue || !axis.Min.HasValue || value >= axis.Min)
+               .WithError((axis, value) => Validation.AxisMaxMustBeGreaterThanOrEqualToAxisMin(axis.Min));
+         }
       }
 
       private LineStyles defaultLineStyleForAxisType()
