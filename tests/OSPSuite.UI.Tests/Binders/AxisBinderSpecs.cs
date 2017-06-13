@@ -1,7 +1,5 @@
 ﻿using System.Drawing;
-using System.Windows.Forms.VisualStyles;
 using DevExpress.XtraCharts;
-using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -79,8 +77,6 @@ namespace OSPSuite.UI.Binders
          _axis.Max.ShouldBeEqualTo(RangeMax());
       }
    }
-
-
 
    public class When_refreshing_adapter_and_an_axis_has_min_set_higher_than_max_of_series : concern_for_AxisBinder
    {
