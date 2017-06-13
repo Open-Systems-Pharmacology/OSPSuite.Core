@@ -148,6 +148,7 @@
     <Compile Include="..\..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Binders\AxisBinderSpecs.cs" />
     <Compile Include="ClipboardTaskSpecs.cs" />
     <Compile Include="ColumnMappingControlSpecs.cs" />
     <Compile Include="FormExtensionsSpecs.cs" />

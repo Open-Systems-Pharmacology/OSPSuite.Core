@@ -18,7 +18,7 @@ using OSPAxis = OSPSuite.Core.Chart.Axis;
 
 namespace OSPSuite.UI.Binders
 {
-  internal class AxisBinder : IAxisBinder
+   public class AxisBinder : IAxisBinder
    {
       private const int DEVEXPRESS_DEFAULT_Y_MINOR_TICKS = 4;
       private const int DEVEXPRESS_DEFAULT_X_MINOR_TICKS = 1;
@@ -163,10 +163,14 @@ namespace OSPSuite.UI.Binders
          else // somebody inserted a limit...
          {
             if (!Axis.Min.HasValue)
-               Axis.Min = Convert.ToSingle(_axisView.WholeRange.MinValue);
+            {
+               var rangeMin = Convert.ToSingle(_axisView.WholeRange.MinValue);
+               Axis.Min = Axis.Max.HasValue ? Math.Min(Axis.Max.Value, rangeMin) :  rangeMin;
+            }
 
             if (!Axis.Max.HasValue)
-               Axis.Max = Convert.ToSingle(_axisView.WholeRange.MaxValue);
+               Axis.Max = Math.Max(Axis.Min.Value, Convert.ToSingle(_axisView.WholeRange.MaxValue));
+               
          }
          _explicitRange = !_explicitRange;
       }
