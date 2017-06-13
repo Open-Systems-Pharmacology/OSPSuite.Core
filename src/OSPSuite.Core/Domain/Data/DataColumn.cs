@@ -191,7 +191,7 @@ namespace OSPSuite.Core.Domain.Data
          return _relatedColumnsCache[auxiliaryType];
       }
 
-      public virtual IEnumerable<DataColumn> RelatedColumns => _relatedColumnsCache;
+      public virtual IReadOnlyCollection<DataColumn> RelatedColumns => _relatedColumnsCache;
 
       public virtual float GetValue(float baseValue)
       {

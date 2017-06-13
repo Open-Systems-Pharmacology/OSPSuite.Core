@@ -10,19 +10,22 @@ namespace OSPSuite.UI.Binders
 {
    internal class SingleValueCurveBinder : CurveBinder
    {
-      protected override IReadOnlyList<string> YColumnNames { get; } = new[]{Y};
+      private Series _lineSeries;
+      protected override IReadOnlyList<string> YColumnNames { get; } = new[] {Y};
 
       public SingleValueCurveBinder(Curve curve, ChartControl chartControl, CurveChart chart, AxisYBase yAxis) : base(curve, chartControl, chart, yAxis, DataMode.SingleValue)
       {
       }
+
       protected override void RefreshSeries()
       {
-         SetSeriesOptionsForSingleValue(_series[0]);
+         UpdateLineSeries(_lineSeries);
       }
 
-      protected override void AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
+      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
       {
          //no related values here
+         return true;
       }
 
       protected override DataColumn ActiveYData => Curve.yData;
@@ -32,6 +35,14 @@ namespace OSPSuite.UI.Binders
          //no related values here
       }
 
-     
+      public override void ShowCurveInLegend(bool showInLegend)
+      {
+         _lineSeries.ShowInLegend = showInLegend;
+      }
+
+      protected override void CreateSeries()
+      {
+         _lineSeries= CreateScatterLineSeries(Curve.Id);
+      }
    }
 }

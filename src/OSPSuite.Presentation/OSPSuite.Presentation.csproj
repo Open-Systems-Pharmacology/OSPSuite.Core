@@ -82,7 +82,6 @@
     <Compile Include="Core\IViewItem.cs" />
     <Compile Include="Core\TabbedPresenterSettings.cs" />
     <Compile Include="Core\ToolTipPart.cs" />
-    <Compile Include="DataChartConstants.cs" />
     <Compile Include="Diagram\BaseDiagramManager.cs" />
     <Compile Include="Diagram\Elements\BayerColors.cs" />
     <Compile Include="Diagram\Elements\DiagramColors.cs" />

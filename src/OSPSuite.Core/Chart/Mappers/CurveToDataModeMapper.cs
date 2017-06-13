@@ -8,10 +8,10 @@ namespace OSPSuite.Core.Chart.Mappers
    {
       Invalid,
       SingleValue,
-      StdDevA,
-      StdDevG,
-      StdDevAPop,
-      StdDevGPop
+      ArithmeticStdDev,
+      GeometricStdDev,
+      ArithmeticMeanArea,
+      GeometricMeanArea
    }
 
    public interface ICurveToDataModeMapper : IMapper<Curve, DataMode>
@@ -25,20 +25,20 @@ namespace OSPSuite.Core.Chart.Mappers
          if (!curve.yData.RelatedColumns.Any())
             return DataMode.SingleValue;
 
-         if (curve.yData.RelatedColumns.Count() > 1)
+         if (curve.yData.RelatedColumns.Count > 1)
             return DataMode.Invalid;
 
          if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticStdDev))
-            return DataMode.StdDevA;
+            return DataMode.ArithmeticStdDev;
 
          if (curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricStdDev))
-            return DataMode.StdDevG;
+            return DataMode.GeometricStdDev;
 
          if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
-            return DataMode.StdDevAPop;
+            return DataMode.ArithmeticMeanArea;
 
          if (curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
-            return DataMode.StdDevGPop;
+            return DataMode.GeometricMeanArea;
 
          return DataMode.Invalid;
       }

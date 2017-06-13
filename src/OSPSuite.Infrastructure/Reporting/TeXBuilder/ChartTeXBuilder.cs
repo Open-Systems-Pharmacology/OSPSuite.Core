@@ -306,7 +306,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             case Scalings.Log:
                return AxisOptions.AxisMode.log;
             default:
-               throw new ArgumentOutOfRangeException("scaling");
+               throw new ArgumentOutOfRangeException(nameof(scaling));
          }
       }
 
@@ -365,8 +365,9 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          return 1 + 0.5*(lineThickness - 1);
       }
 
-      private static string getOpacityFor(int transparency)
+      private static string getOpacityFor(byte opacity)
       {
+         var transparency = 255 - opacity;
          return (1 - transparency / 255D).ToString("0.00", CultureInfo.InvariantCulture);
       }
 
@@ -454,7 +455,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.geometric;
                plotOptions.ShadedErrorBars = true;
-               plotOptions.Opacity = getOpacityFor(Constants.Population.STD_DEV_CURVE_TRANSPARENCY);
+               plotOptions.Opacity = getOpacityFor(Constants.RANGE_AREA_OPACITY);
             }
             DataColumn arithmeticMeanPop = null;
             IDimension arithmeticMeanPopDim = null;
@@ -465,7 +466,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.arithmetic;
                plotOptions.ShadedErrorBars = true;
-               plotOptions.Opacity = getOpacityFor(Constants.Population.STD_DEV_CURVE_TRANSPARENCY);
+               plotOptions.Opacity = getOpacityFor(Constants.RANGE_AREA_OPACITY);
             }
 
             plotOptions.Color = curve.Color.Name;

@@ -29,6 +29,18 @@ namespace OSPSuite.UI.Services
             case DataMode.SingleValue:
                return new SingleValueCurveBinder(curve, control, chart, yAxis);
 
+            case DataMode.ArithmeticStdDev:
+               return new ArithmeticStdCurveBinder(curve, control, chart, yAxis);
+            
+            case DataMode.GeometricStdDev:
+               return new GeometricStdCurveBinder(curve, control, chart, yAxis);
+
+            case DataMode.ArithmeticMeanArea:
+               return new ArithmeticMeanAreaCurveBinder(curve, control, chart, yAxis);
+
+            case DataMode.GeometricMeanArea:
+               return new GeometricMeanAreaCurveBinder(curve, control, chart, yAxis);
+
             default:
                throw new ArgumentException($"Don't know how to build curve binder for '{mode}'");
          }

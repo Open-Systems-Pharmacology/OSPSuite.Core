@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -78,7 +79,9 @@ namespace OSPSuite.Core.Domain
       public const string Y = "Y";
       public const double TOO_CLOSE_TO_BOUNDARY_FACTOR = 0.01;
       public const int NUMBER_OF_RUNS_WITH_VISIBLE_LEGEND = 10;
+      public const int MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE = 10;
       public const float LOG_SAFE_EPSILON = 1e-20F;
+      public const byte RANGE_AREA_OPACITY = 55;
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -217,8 +220,8 @@ namespace OSPSuite.Core.Domain
          public static readonly string CHART_LAYOUT_FILTER = XmlFilter("Chart Layout");
          public static readonly string PDF_FILE_FILTER = FileFilter("Report", PDF_EXTENSION);
          public static readonly string XML_FILE_FILTER = XmlFilter("Xml");
-         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
-         public static readonly string EXCEL_OPEN_FILE_FILTER = string.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
+         public static readonly string EXCEL_SAVE_FILE_FILTER = String.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
+         public static readonly string EXCEL_OPEN_FILE_FILTER = String.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
          public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", DOCX_EXTENSION);
          public static readonly string PKML_FILE_FILTER = FileFilter("Shared Modeling", PKML_EXTENSION);
@@ -277,7 +280,7 @@ namespace OSPSuite.Core.Domain
          public const string LOG_UNITS = "Log Units";
          public const string FRACTION = "Fraction";
 
-         public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
+         public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, String.Empty);
 
          public static class Units
          {
@@ -321,7 +324,7 @@ namespace OSPSuite.Core.Domain
 
          internal static string Create(string param, string suffix = null)
          {
-            return $"{param}{suffix ?? string.Empty}";
+            return $"{param}{suffix ?? String.Empty}";
          }
 
          public static readonly string AUC_norm = NormalizedName(AUC);
@@ -363,7 +366,6 @@ namespace OSPSuite.Core.Domain
       public static class Population
       {
          public const string ALL_GENDER = "AllGender";
-         public const byte STD_DEV_CURVE_TRANSPARENCY = 200;
          public const string TIME_COLUMN = "Time";
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
@@ -502,7 +504,7 @@ namespace OSPSuite.Core.Domain
 
       public static string NameWithUnitFor(string name, string unit)
       {
-         if (string.IsNullOrWhiteSpace(unit))
+         if (String.IsNullOrWhiteSpace(unit))
             return name;
 
          return $"{name} [{unit}]";
@@ -528,6 +530,5 @@ namespace OSPSuite.Core.Domain
          public static int DefaultFontSizeOrigin = 8;
          public static int DefaultFontSizeTitleForParameterIdentificationFeedback = 12;
       }
-
-  }
+   }
 }

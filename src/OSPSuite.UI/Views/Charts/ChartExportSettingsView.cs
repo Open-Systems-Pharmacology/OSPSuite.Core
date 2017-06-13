@@ -77,7 +77,7 @@ namespace OSPSuite.UI.Views.Charts
          layoutItemFontSizeTitle.Text = Captions.Chart.FontAndSizeSettings.FontSizeTitle.FormatForLabel();
          layoutItemFontSizeDescription.Text = Captions.Chart.FontAndSizeSettings.FontSizeDescription.FormatForLabel();
          layoutItemFontSizeOrigin.Text = Captions.Chart.FontAndSizeSettings.FontSizeOrigin.FormatForLabel();
-         includeOriginDataInChartCheckEdit.Text = DataChartConstants.IncludeOriginData.FormatForLabel(addColon: false);
+         includeOriginDataInChartCheckEdit.Text = Captions.Chart.FontAndSizeSettings.IncludeOriginData.FormatForLabel(addColon: false);
          btnResetValues.Text = Captions.ResetToDefault;
       }
    }

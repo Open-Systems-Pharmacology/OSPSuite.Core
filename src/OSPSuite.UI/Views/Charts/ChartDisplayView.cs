@@ -71,7 +71,7 @@ namespace OSPSuite.UI.Views.Charts
          s1.Points.Add(new SeriesPoint("A", 1));
          _chartControl.Series.Add(s1);
 
-         _chartControl.Legend.MarkerSize = DataChartConstants.Display.LegendMarkerSize;
+         _chartControl.Legend.MarkerSize = UIConstants.Chart.LEGEND_MARKER_SIZE;
          _chartControl.Legend.Direction = LegendDirection.BottomToTop;
          xyDiagram.EnableAxisXZooming = true;
          xyDiagram.EnableAxisYZooming = true;

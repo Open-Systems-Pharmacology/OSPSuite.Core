@@ -175,7 +175,7 @@ namespace OSPSuite.Presentation.Services.Charts
 
       private void addSimulationOutputs(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> simulations, bool addCurveIfNoSourceDefined)
       {
-         var selectedColumns = simulations.SelectMany(x => x.OutputSelections).Take(DataChartConstants.MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE)
+         var selectedColumns = simulations.SelectMany(x => x.OutputSelections).Take(Constants.MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE)
             .SelectMany(selection => allAvailableColumns.ColumnsForPath(selection.Path));
 
          selectedColumns.Each(column =>
