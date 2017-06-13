@@ -220,8 +220,8 @@ namespace OSPSuite.Core.Domain
          public static readonly string CHART_LAYOUT_FILTER = XmlFilter("Chart Layout");
          public static readonly string PDF_FILE_FILTER = FileFilter("Report", PDF_EXTENSION);
          public static readonly string XML_FILE_FILTER = XmlFilter("Xml");
-         public static readonly string EXCEL_SAVE_FILE_FILTER = String.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
-         public static readonly string EXCEL_OPEN_FILE_FILTER = String.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
+         public static readonly string EXCEL_SAVE_FILE_FILTER = string.Format("Excel file (*{0})|*{0}|Excel file  (*{1})|*{1}", XLSX_EXTENSION, XLS_EXTENSION);
+         public static readonly string EXCEL_OPEN_FILE_FILTER = string.Format("Excel file (*{0};*{1})|*{0};*{1}", XLS_EXTENSION, XLSX_EXTENSION);
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
          public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", DOCX_EXTENSION);
          public static readonly string PKML_FILE_FILTER = FileFilter("Shared Modeling", PKML_EXTENSION);
@@ -280,7 +280,7 @@ namespace OSPSuite.Core.Domain
          public const string LOG_UNITS = "Log Units";
          public const string FRACTION = "Fraction";
 
-         public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, String.Empty);
+         public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
 
          public static class Units
          {
@@ -324,7 +324,7 @@ namespace OSPSuite.Core.Domain
 
          internal static string Create(string param, string suffix = null)
          {
-            return $"{param}{suffix ?? String.Empty}";
+            return $"{param}{suffix ?? string.Empty}";
          }
 
          public static readonly string AUC_norm = NormalizedName(AUC);
@@ -504,7 +504,7 @@ namespace OSPSuite.Core.Domain
 
       public static string NameWithUnitFor(string name, string unit)
       {
-         if (String.IsNullOrWhiteSpace(unit))
+         if (string.IsNullOrWhiteSpace(unit))
             return name;
 
          return $"{name} [{unit}]";
