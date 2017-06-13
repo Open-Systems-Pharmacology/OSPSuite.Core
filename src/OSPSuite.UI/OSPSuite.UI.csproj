@@ -194,12 +194,18 @@
     <Compile Include="..\..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Binders\ArithmeticMeanAreaCurveBinder.cs" />
+    <Compile Include="Binders\ArithmeticStdCurveBinder.cs" />
     <Compile Include="Binders\AxisBinder.cs" />
     <Compile Include="Binders\CurveBinder.cs" />
+    <Compile Include="Binders\GeometricMeanAreaCurveBinder.cs" />
+    <Compile Include="Binders\GeometricStdCurveBinder.cs" />
     <Compile Include="Binders\GridViewColumnUnitsMenuBinder.cs" />
     <Compile Include="Binders\OptimizedParametersBinder.cs" />
     <Compile Include="Binders\PathElementsBinder.cs" />
+    <Compile Include="Binders\RangeAreaCurveBinder.cs" />
     <Compile Include="Binders\SingleValueCurveBinder.cs" />
+    <Compile Include="Binders\StdCurveBinder.cs" />
     <Compile Include="Binders\TokenEditBinder.cs" />
     <Compile Include="Binders\TreeNodeExplorerViewDragDropBinder.cs" />
     <Compile Include="Binders\UnitsMenuBinder.cs" />

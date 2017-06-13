@@ -182,5 +182,7 @@ namespace OSPSuite.Core.Chart
             OnPropertyChanged();
          }
       }
+
+      public bool IsReallyVisible => CurveOptions.IsReallyVisible;
    }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -13,14 +12,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public interface ICurveBinder : IDisposable
    {
       string Id { get; }
-      int? LegendIndex { get; }
       Curve Curve { get; }
       double? LLOQ { get; }
       bool HasLLOQ { get; }
       IEnumerable<string> SeriesIds { get; }
       void Refresh();
       void ShowAllSeries();
-      void ShowCurveInLegend(bool visibleInLegend);
+      void ShowCurveInLegend(bool showInLegend);
       bool ContainsSeries(string id);
 
       /// <summary>

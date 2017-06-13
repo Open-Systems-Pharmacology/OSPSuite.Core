@@ -65,6 +65,12 @@ namespace OSPSuite.UI
          }
       }
 
+      public static class Chart
+      {
+         public const int SERIES_MARKER_SIZE = 5;
+         public static  readonly System.Drawing.Size LEGEND_MARKER_SIZE = new System.Drawing.Size(9, 9);
+      }
+
       internal static class Skins
       {
          public const string METROPOLIS = "Metropolis";

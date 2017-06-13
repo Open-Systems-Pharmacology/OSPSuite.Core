@@ -1017,6 +1017,7 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeTitle = "Font Size Title";
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
+            public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }
    }

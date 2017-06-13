@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -78,7 +79,9 @@ namespace OSPSuite.Core.Domain
       public const string Y = "Y";
       public const double TOO_CLOSE_TO_BOUNDARY_FACTOR = 0.01;
       public const int NUMBER_OF_RUNS_WITH_VISIBLE_LEGEND = 10;
+      public const int MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE = 10;
       public const float LOG_SAFE_EPSILON = 1e-20F;
+      public const byte RANGE_AREA_OPACITY = 55;
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -363,7 +366,6 @@ namespace OSPSuite.Core.Domain
       public static class Population
       {
          public const string ALL_GENDER = "AllGender";
-         public const byte STD_DEV_CURVE_TRANSPARENCY = 200;
          public const string TIME_COLUMN = "Time";
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
@@ -528,6 +530,5 @@ namespace OSPSuite.Core.Domain
          public static int DefaultFontSizeOrigin = 8;
          public static int DefaultFontSizeTitleForParameterIdentificationFeedback = 12;
       }
-
-  }
+   }
 }

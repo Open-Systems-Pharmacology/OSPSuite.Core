@@ -520,7 +520,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void ShowCurveInLegend(Curve curve, bool show)
       {
-         curveBinderFor(curve).ShowCurveInLegend(visibleInLegend: show);
+         curveBinderFor(curve).ShowCurveInLegend(showInLegend: show);
          curve.VisibleInLegend = show;
       }
 
