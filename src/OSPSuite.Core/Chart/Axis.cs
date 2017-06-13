@@ -70,33 +70,24 @@ namespace OSPSuite.Core.Chart
             yield return maxGreaterThanZero;
          }
 
-         private static IBusinessRule maxGreaterThanOrEqualToMin { get; } = maxGreaterThanOrEqualToMinForAxis();
-         private static IBusinessRule minLessThanOrEqualToMax { get; } = minLessThanOrEqualToMaxForAxis();
-         private static IBusinessRule maxGreaterThanZero { get; } = maxGreaterThanZeroForLogarithmicAxis();
+         private static IBusinessRule maxGreaterThanOrEqualToMin { get; } = createMaxGreaterThanOrEqualToMinRuleForAxis();
+         private static IBusinessRule minLessThanOrEqualToMax { get; } = createMinLessThanOrEqualToMaxRuleForAxis();
+         private static IBusinessRule maxGreaterThanZero { get; } = createMaxGreaterThanZeroRuleForLogarithmicAxis();
 
-         private static IBusinessRule minLessThanOrEqualToMaxForAxis()
-         {
-            return CreateRule.For<Axis>()
+         private static IBusinessRule createMinLessThanOrEqualToMaxRuleForAxis() => CreateRule.For<Axis>()
                .Property(axis => axis.Min)
                .WithRule((axis, value) => !value.HasValue || !axis.Max.HasValue || axis.Max >= value)
                .WithError((axis, value) => Validation.AxisMinMustBeLessThanOrEqualToAxisMax(axis.Max));
-         }
-
-         private static IBusinessRule maxGreaterThanZeroForLogarithmicAxis()
-         {
-            return CreateRule.For<Axis>()
+      
+         private static IBusinessRule createMaxGreaterThanZeroRuleForLogarithmicAxis() => CreateRule.For<Axis>()
                .Property(axis => axis.Max)
                .WithRule((axis, value) => !value.HasValue || axis.Scaling != Scalings.Log || value > 0F)
-               .WithError((axis, value) => Validation.AxisMaxMustBeGreaterThanZero());
-         }
-
-         private static IBusinessRule maxGreaterThanOrEqualToMinForAxis()
-         {
-            return CreateRule.For<Axis>()
+               .WithError((axis, value) => Validation.LogAxisMaxMustBeGreaterThanZero);
+      
+         private static IBusinessRule createMaxGreaterThanOrEqualToMinRuleForAxis() => CreateRule.For<Axis>()
                .Property(axis => axis.Max)
                .WithRule((axis, value) => !value.HasValue || !axis.Min.HasValue || value >= axis.Min)
                .WithError((axis, value) => Validation.AxisMaxMustBeGreaterThanOrEqualToAxisMin(axis.Min));
-         }
       }
 
       private LineStyles defaultLineStyleForAxisType()

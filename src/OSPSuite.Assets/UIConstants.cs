@@ -1431,10 +1431,7 @@ namespace OSPSuite.Assets
          return axisMaximumValue.HasValue ? $"{preamble} '{axisMaximumValue}'" : preamble;
       }
 
-      public static string AxisMaxMustBeGreaterThanZero()
-      {
-         return "The axis maximum must be greater than 0";
-      }
+      public static readonly string LogAxisMaxMustBeGreaterThanZero = "Loagarithmic axis maximum must be greater than 0";
    }
 
    public static class Rules

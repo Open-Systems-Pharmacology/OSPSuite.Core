@@ -18,7 +18,7 @@ using OSPAxis = OSPSuite.Core.Chart.Axis;
 
 namespace OSPSuite.UI.Binders
 {
-  internal class AxisBinder : IAxisBinder
+   public class AxisBinder : IAxisBinder
    {
       private const int DEVEXPRESS_DEFAULT_Y_MINOR_TICKS = 4;
       private const int DEVEXPRESS_DEFAULT_X_MINOR_TICKS = 1;

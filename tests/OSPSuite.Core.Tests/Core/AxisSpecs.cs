@@ -22,7 +22,7 @@ namespace OSPSuite.Core
          {
             Min = 0,
             Max = -1
-         }.IsValid().ShouldBeEqualTo(false);
+         }.IsValid().ShouldBeFalse();
       }
 
       [Observation]
@@ -33,7 +33,7 @@ namespace OSPSuite.Core
             Scaling = Scalings.Log,
             Min = 0,
             Max = 0
-         }.IsValid().ShouldBeEqualTo(false);
+         }.IsValid().ShouldBeFalse();
       }
 
    }
