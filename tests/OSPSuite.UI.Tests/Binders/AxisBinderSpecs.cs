@@ -54,7 +54,7 @@ namespace OSPSuite.UI.Binders
       }
 
       [Observation]
-      public void the_min_should_be_set_to_equal_the_max()
+      public void the_min_should_be_the_range_min()
       {
          _axis.Min.ShouldBeEqualTo(RangeMin());
       }
@@ -74,7 +74,7 @@ namespace OSPSuite.UI.Binders
       }
 
       [Observation]
-      public void the_min_should_be_set_to_equal_the_max()
+      public void the_max_should_be_the_range_max()
       {
          _axis.Max.ShouldBeEqualTo(RangeMax());
       }
