@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -59,7 +59,7 @@ namespace OSPSuite.Starter.Tasks
          var exDate = new DateTime(2009, 10, 26);
 
          var organism = getOrganismFromModel(model);
-         var quantity1 = getQuantityFromOrganism(organism);
+         var quantity1 = organism.EntityAt<IQuantity>("Lung", "Q");
 
          createRepository2DataColumns(quantity1, longBaseGridWithFewPoints, exDate, exSource).Each(column => rep2.Add(column));
 
@@ -75,13 +75,6 @@ namespace OSPSuite.Starter.Tasks
          return model.GetSingleChildByName<IContainer>("Organism");
       }
 
-      private static IQuantity getQuantityFromOrganism(IContainer organism)
-      {
-         var lung = organism.GetSingleChildByName<IContainer>("Lung");
-         var quantity1 = lung.GetSingleChildByName<IQuantity>("Q");
-         return quantity1;
-      }
-
       public DataRepository CreateCalculationRepository(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation)
       {
          var repositoryName = $"Calculation Repository {index}";
@@ -93,13 +86,21 @@ namespace OSPSuite.Starter.Tasks
       private DataRepository createRepository(int numberOfCalculations, IContainer model, string repositoryName, ColumnOrigins columnOrigins, int numberOfPointsPerCalculation)
       {
          var dataRepository = new DataRepository().WithName(repositoryName);
-         var baseGrid = createBaseGridWithManyPoints(dataRepository.Name, numberOfPointsPerCalculation);
+         var nextDouble = _random.NextDouble();
+         var baseGrid = createBaseGridWithManyPoints(dataRepository.Name, numberOfPointsPerCalculation, (x, total) => generateBaseGridWithRandomization(x, total, nextDouble));
 
          for (var i = 0; i < numberOfCalculations; i++)
          {
             dataRepository.Add(createPrimaryColumnFor(baseGrid, i, model, columnOrigins));
          }
          return dataRepository;
+      }
+
+      private float generateBaseGridWithRandomization(int x, int total, double nextDouble)
+      {
+         var deltaMax = 0.25 / (nextDouble * 10);
+         var delta = _random.NextDouble() * deltaMax;
+         return (float) ((x + delta) / (total / (nextDouble * 10)));
       }
 
       /// <summary>
@@ -109,7 +110,7 @@ namespace OSPSuite.Starter.Tasks
       private DataColumn createAuxiliaryColumn(DataColumn column, int index, IContainer model, AuxiliaryType columnType, ColumnOrigins columnOrigins, Func<double, float> calculateAuxiliaryValue)
       {
          var baseGrid = column.BaseGrid;
-         var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
+         var quantity = getOrganismFromModel(model).EntityAt<IQuantity>("Lung", "Q");
 
          var auxilaiaryColumn = new DataColumn($"deviation column {index}", quantity.Dimension, baseGrid)
          {
@@ -166,7 +167,7 @@ namespace OSPSuite.Starter.Tasks
       {
          var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
 
-         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() * x / 4.0))); });
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() * x))); });
 
          return dataRepository;
       }
@@ -175,14 +176,14 @@ namespace OSPSuite.Starter.Tasks
       {
          var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
 
-         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() / 4.0))); });
+         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) ((1.0 + _random.NextDouble()) / 4.0))); });
 
          return dataRepository;
       }
 
       private DataColumn createPrimaryColumnFor(BaseGrid baseGrid, int index, IContainer model, ColumnOrigins columnOrigins)
       {
-         var quantity = getQuantityFromOrganism(getOrganismFromModel(model));
+         var quantity = getOrganismFromModel(model).EntityAt<IQuantity>("VenousBlood", "Plasma", "A", "Concentration");
 
          var column = new DataColumn($"CalculationColumn {index}", quantity.Dimension, baseGrid)
          {
@@ -382,15 +383,18 @@ namespace OSPSuite.Starter.Tasks
          return baseGrid2;
       }
 
-      private BaseGrid createBaseGridWithManyPoints(string repositoryName, int numberOfPointsPerCalculation = 1000)
+      private BaseGrid createBaseGridWithManyPoints(string repositoryName, int numberOfPointsPerCalculation = 1000, Func<int, int, float> baseGridValueGenerator = null)
       {
          var baseGridWithManyPoints = new BaseGrid("ManyPoints", _dimensionFactory.GetDimension("Time"));
          baseGridWithManyPoints.DisplayUnit = baseGridWithManyPoints.Dimension.Unit(Constants.Dimension.Units.Weeks);
 
+         if (baseGridValueGenerator == null)
+            baseGridValueGenerator = (x,total) => x / (total / 10F);
+
          var basegrid1Values = new float[numberOfPointsPerCalculation];
          for (var i = 0; i < numberOfPointsPerCalculation; i++)
          {
-            basegrid1Values[i] = i / (numberOfPointsPerCalculation / 10F);
+            basegrid1Values[i] = baseGridValueGenerator(i, numberOfPointsPerCalculation);
          }
 
          baseGridWithManyPoints.Values = basegrid1Values;

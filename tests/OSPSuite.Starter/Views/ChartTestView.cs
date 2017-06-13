@@ -55,11 +55,13 @@ namespace OSPSuite.Starter.Views
 
          NumberOfObservations = 10;
          NumberOfCalculations = 10;
-         PointsPerCalculation = 30;
+         PointsPerCalculation = 200;
+         PointsPerObservation = 15;
 
          _screenBinder.Bind(x => x.NumberOfCalculations).To(numberOfCalculationsTextEdit);
-         _screenBinder.Bind(x => x.PointsPerCalculation).To(numberOfPointsTextEdit);
+         _screenBinder.Bind(x => x.PointsPerCalculation).To(numberOfCalculationPointsTextEdit);
          _screenBinder.Bind(x => x.NumberOfObservations).To(numberOfObservationsTextEdit);
+         _screenBinder.Bind(x => x.PointsPerObservation).To(numberOfObservationPointsTextEdit);
 
          _screenBinder.BindToSource(this);
       }
@@ -80,6 +82,8 @@ namespace OSPSuite.Starter.Views
 
       public int PointsPerCalculation { set; get; }
 
+      public int PointsPerObservation { set; get; }
+
       private void createCalculationsWithGeometricMean()
       {
          _presenter.AddCalculationsWithGeometricMean(NumberOfCalculations, PointsPerCalculation);
@@ -92,17 +96,17 @@ namespace OSPSuite.Starter.Views
 
       private void createObservationsWithArithmenticDeviation()
       {
-         _presenter.AddObservationsWithArithmeticDeviation(NumberOfObservations, PointsPerCalculation);
+         _presenter.AddObservationsWithArithmeticDeviation(NumberOfObservations, PointsPerObservation);
       }
 
       private void createObservationsWithGeometricDeviation()
       {
-         _presenter.AddObservationsWithGeometricDeviation(NumberOfObservations, PointsPerCalculation);
+         _presenter.AddObservationsWithGeometricDeviation(NumberOfObservations, PointsPerObservation);
       }
 
       private void createObservations()
       {
-         _presenter.AddObservations(NumberOfObservations, PointsPerCalculation);
+         _presenter.AddObservations(NumberOfObservations, PointsPerObservation);
       }
 
       private void createCalculations()
