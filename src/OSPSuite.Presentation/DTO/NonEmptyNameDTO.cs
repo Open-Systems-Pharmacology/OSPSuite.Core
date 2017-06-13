@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.DTO
 
       public virtual string Name
       {
-         get { return _name; }
+         get => _name;
          set
          {
             _name = value.TrimmedValue();
@@ -37,32 +37,17 @@ namespace OSPSuite.Presentation.DTO
 
       protected static class AllRules
       {
-         public static IBusinessRule NameNotEmpty
-         {
-            get { return GenericRules.NonEmptyRule<NonEmptyNameDTO>(x => x.Name, Error.NameIsRequired); }
-         }
+         public static IBusinessRule NameNotEmpty { get; } = GenericRules.NonEmptyRule<NonEmptyNameDTO>(x => x.Name, Error.NameIsRequired);
 
-         public static IBusinessRule NameDoesNotContainIllegalCharacters
-         {
-            get
-            {
-               return CreateRule.For<NonEmptyNameDTO>()
-                  .Property(item => item.Name)
-                  .WithRule((dto, name) => nameDoesNotContainerIllegalCharacters(name))
-                  .WithError(Error.NameCannotContainIllegalCharacters(Constants.ILLEGAL_CHARACTERS));
-            }
-         }
+         public static IBusinessRule NameDoesNotContainIllegalCharacters { get; } = CreateRule.For<NonEmptyNameDTO>()
+            .Property(item => item.Name)
+            .WithRule((dto, name) => nameDoesNotContainerIllegalCharacters(name))
+            .WithError(Error.NameCannotContainIllegalCharacters(Constants.ILLEGAL_CHARACTERS));
 
-         public static IBusinessRule NameShouldNotBeTheSame
-         {
-            get
-            {
-               return CreateRule.For<NonEmptyNameDTO>()
-                  .Property(x => x.Name)
-                  .WithRule((dto, name) => (string.IsNullOrEmpty(dto.OriginalName) || !string.Equals(dto.OriginalName, name.Trim())))
-                  .WithError(Error.RenameSameNameError);
-            }
-         }
+         public static IBusinessRule NameShouldNotBeTheSame { get; } = CreateRule.For<NonEmptyNameDTO>()
+            .Property(x => x.Name)
+            .WithRule((dto, name) => (string.IsNullOrEmpty(dto.OriginalName) || !string.Equals(dto.OriginalName, name.Trim())))
+            .WithError(Error.RenameSameNameError);
       }
    }
 }

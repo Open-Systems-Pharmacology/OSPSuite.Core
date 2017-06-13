@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation
 
       protected override void Context()
       {
-         _curve = new Curve();
+         _curve = new Curve { Name = "Curve Name" };
 
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _xDataColumn = new BaseGrid("XData", DomainHelperForSpecs.TimeDimensionForSpecs());

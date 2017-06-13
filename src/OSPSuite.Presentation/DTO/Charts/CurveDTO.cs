@@ -2,6 +2,7 @@
 using System.Drawing;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Validation;
@@ -129,12 +130,15 @@ namespace OSPSuite.Presentation.DTO.Charts
          {
             get
             {
+               yield return nameCannotBeEmpty;
                yield return dataDimensionMatchesXAxis;
                yield return dataDimensionMatchesYAxis;
                yield return dataDimensionMatchesYAxisType;
                yield return canConvertYAxisTypeToYAxisUnits;
             }
          }
+
+         private static IBusinessRule nameCannotBeEmpty { get; } = GenericRules.NonEmptyRule<CurveDTO>(x => x.Name, Error.NameIsRequired);
 
          private static IBusinessRule dataDimensionMatchesXAxis { get; } = CreateRule.For<CurveDTO>()
             .Property(x => x.xData)

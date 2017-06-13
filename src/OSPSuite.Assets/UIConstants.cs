@@ -1475,6 +1475,7 @@ namespace OSPSuite.Assets
       public static readonly string OptimizedValueIsCloseToBoundary = "Identified value is close to boundary";
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transfered.\nPlease set the calculation methods manually.";
+      public static readonly string CurveNameIsMissing = "Curve name is missing";
    }
 
    public static class RibbonCategories

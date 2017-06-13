@@ -57,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddSubPresenters(_chartPresenterContext.ChartEditorAndDisplayPresenter);
          _settings = new DefaultPresentationSettings();
          _nameProperty = ReflectionHelper.PropertyFor<Curve, string>(x => x.Name).Name;
-         _chartPresenterContext.ChartEditorAndDisplayPresenter.SetCurveNameDefinition(NameForColumn);
+         _chartPresenterContext.EditorPresenter.SetCurveNameDefinition(NameForColumn);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
       }
