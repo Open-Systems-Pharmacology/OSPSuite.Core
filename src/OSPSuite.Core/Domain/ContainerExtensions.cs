@@ -119,10 +119,7 @@ namespace OSPSuite.Core.Domain
 
       public static IContainer Container(this IContainer container, string containerName)
       {
-         if (container == null)
-            return null;
-
-         return container.GetSingleChildByName<IContainer>(containerName);
+         return container?.GetSingleChildByName<IContainer>(containerName);
       }
 
       /// <summary>
@@ -146,10 +143,7 @@ namespace OSPSuite.Core.Domain
             current = current.Container(path[i]);
          }
 
-         if (current == null)
-            return null;
-
-         return current.GetSingleChildByName<T>(path.Last());
+         return current?.GetSingleChildByName<T>(path.Last());
       }
 
       /// <summary>

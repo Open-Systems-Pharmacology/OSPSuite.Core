@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -23,7 +24,6 @@ using OSPSuite.Starter.Views;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -165,7 +165,7 @@ namespace OSPSuite.Starter.Presenters
          if (Chart.HasCurve(curve.Id))
             return;
 
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, _dataRepositories.SelectMany(x=>x.AllButBaseGrid()).ToList());
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, _dataRepositories.SelectMany(x => x.AllButBaseGrid()).ToList());
 
          Chart.AddCurve(curve);
       }
@@ -177,19 +177,21 @@ namespace OSPSuite.Starter.Presenters
 
       public void ClearChart()
       {
-         _dataRepositories.Each(repository =>
+         using (_chartUpdater.UpdateTransaction(Chart))
          {
-            Chart.RemoveCurvesForDataRepository(repository);
-            ChartEditorPresenter.RemoveDataRepository(repository);
-         });
-         _dataRepositories.Clear();
+            _dataRepositories.Each(repository =>
+            {
+               Chart.RemoveCurvesForDataRepository(repository);
+               ChartEditorPresenter.RemoveDataRepository(repository);
+            });
+            _dataRepositories.Clear();
+         }
       }
 
       public IChartDisplayPresenter ChartDisplayPresenter => _chartEditorAndDisplayPresenter.DisplayPresenter;
 
       private void bindCurveChartToEditor()
       {
-
          Chart = new CurveChart
          {
             OriginText = Captions.ChartFingerprintDataFrom("Test Chart Project", "Test Chart Simulation", DateTime.Now.ToIsoFormat())
@@ -244,7 +246,6 @@ namespace OSPSuite.Starter.Presenters
          _dataPersistor.Save(_dataRepositories, fileName.Replace(".", "_d."));
 
          _dataPersistor.Save(Chart, fileName);
-
       }
 
       public void SaveSettings()
@@ -296,9 +297,8 @@ namespace OSPSuite.Starter.Presenters
 
       public void RefreshDisplay()
       {
-         _chartUpdater.Update(Chart);  
+         _chartUpdater.Update(Chart);
       }
-
 
       public void ReloadMenus()
       {
@@ -328,12 +328,10 @@ namespace OSPSuite.Starter.Presenters
 
       private void onLayouts()
       {
-         
       }
 
       private void onChartSave()
       {
-         
       }
 
       public void LoadChart()

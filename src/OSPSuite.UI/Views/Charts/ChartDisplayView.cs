@@ -11,7 +11,6 @@ using DevExpress.XtraCharts.Native;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views.Charts;
@@ -36,6 +35,7 @@ namespace OSPSuite.UI.Views.Charts
       private bool _axisHotTrackingEnabled;
       private Series _dummySeries;
       public bool Updating { get; private set; }
+      private XYDiagram xyDiagram => _chartControl.XYDiagram;
 
       public ChartDisplayView(IImageListRetriever imageListRetriever)
       {
@@ -272,17 +272,12 @@ namespace OSPSuite.UI.Views.Charts
 
       private bool isCloseEnoughToYAxis(ChartHitInfo hitInfo, AxisBase axisY)
       {
-         return hitInfo.InAxis && areAxesEqual(hitInfo.Axis, axisY);
-      }
-
-      private bool areAxesEqual(AxisBase axis, AxisBase anotherAxis)
-      {
-         return axis.Equals(anotherAxis);
+         return hitInfo.InAxis && Equals(hitInfo.Axis, axisY);
       }
 
       private bool isInXAxis(ChartHitInfo hitInfo)
       {
-         return hitInfo.InAxis && areAxesEqual(hitInfo.Axis, xyDiagram.AxisX);
+         return hitInfo.InAxis && Equals(hitInfo.Axis, xyDiagram.AxisX);
       }
 
       private void zoomAction(Control control, Rectangle rectangle)
@@ -292,12 +287,8 @@ namespace OSPSuite.UI.Views.Charts
             cc.Chart.PerformZoomIn(rectangle);
       }
 
-
-      private XYDiagram xyDiagram => _chartControl.XYDiagram;
-
       private Color diagramBackColor
       {
-         get => xyDiagram?.DefaultPane.BackColor ?? Color.Empty;
          set
          {
             if (xyDiagram == null) return;
@@ -330,23 +321,31 @@ namespace OSPSuite.UI.Views.Charts
 
       public Size GetDiagramSize()
       {
+         if (xyDiagram?.AxisX == null || xyDiagram?.AxisY == null)
+            return Size.Empty;
+
          try
          {
-            var xAxisRange = xyDiagram.AxisX.VisualRange;
-            var yAxisRange = xyDiagram.AxisX.VisualRange;
+            var (xAxisMin, xAxisMax) = rangeFrom(xyDiagram.AxisX);
+            var (yAxisMin, yAxisMax) = rangeFrom(xyDiagram.AxisY);
 
-            int minX = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MinValue)).Point.X;
-            int maxX = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MaxValue), Convert.ToSingle(yAxisRange.MinValue)).Point.X;
-            int minY = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MinValue)).Point.Y;
-            int maxY = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MaxValue)).Point.Y;
-            return new Size(maxX - minX, maxY - minY);
+            var minPoint = pointAt(xAxisMin, yAxisMin);
+            var maxPoint = pointAt(xAxisMax, yAxisMax);
+
+            return new Size(maxPoint.X - minPoint.X, maxPoint.Y - minPoint.Y);
          }
          catch
          {
             // not understood, under which circumstances exception is thrown
-            return new Size(0, 0);
+            return Size.Empty; ;
          }
       }
+
+      private Point pointAt(float xAxisMin, float yAxisMin) => xyDiagram.DiagramToPoint(xAxisMin, yAxisMin).Point;
+
+      private (float min, float max) rangeFrom(AxisBase axis) => (Convert.ToSingle(axis.VisualRange.MinValue), Convert.ToSingle(axis.VisualRange.MaxValue));
+
+      private (float min, float max) rangeFrom(RangeInfo rangeInfo) => (Convert.ToSingle(rangeInfo.MinValue), Convert.ToSingle(rangeInfo.MaxValue));
 
       public void SetDockStyle(DockStyle dockStyle)
       {
@@ -355,13 +354,10 @@ namespace OSPSuite.UI.Views.Charts
 
       private void onScroll(ChartScrollEventArgs e)
       {
-         var xRange = e.NewXRange;
-         var yRange = e.NewYRange;
-         _presenter.SetVisibleRange(
-            Convert.ToSingle(xRange.MinValue),
-            Convert.ToSingle(xRange.MaxValue),
-            Convert.ToSingle(yRange.MinValue),
-            Convert.ToSingle(yRange.MaxValue));
+         var (xMin, xMax) = rangeFrom(e.NewXRange);
+         var (yMin, yMax) = rangeFrom(e.NewYRange);
+
+         _presenter.SetVisibleRange(xMin, xMax, yMin, yMax);
       }
 
       private void onZoom(ChartZoomEventArgs e)
@@ -376,14 +372,12 @@ namespace OSPSuite.UI.Views.Charts
 
          if (!rangeComplete(xRange, xyDiagram.AxisX))
          {
-            xMin = Convert.ToSingle(xRange.MinValue);
-            xMax = Convert.ToSingle(xRange.MaxValue);
+            (xMin, xMax) = rangeFrom(xRange);
          }
 
          if (!rangeComplete(yRange, xyDiagram.AxisY))
          {
-            yMin = Convert.ToSingle(yRange.MinValue);
-            yMax = Convert.ToSingle(yRange.MaxValue);
+            (yMin, yMax) = rangeFrom(yRange);
          }
 
          _presenter.SetVisibleRange(xMin, xMax, yMin, yMax);
