@@ -39,7 +39,7 @@ namespace OSPSuite.UI.Binders
 
       protected override void RefreshSeries()
       {
-         var financialSeriesView = _financialSeries.DowncastTo<FinancialSeriesViewBase>();
+         var financialSeriesView = _financialSeries.View.DowncastTo<FinancialSeriesViewBase>();
          financialSeriesView.Color = Curve.Color;
 
          UpdateRelatedSeriesOf(_financialSeries);

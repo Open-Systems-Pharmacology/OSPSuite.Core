@@ -4,6 +4,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -112,19 +113,14 @@ namespace OSPSuite.Starter.Tasks
          var baseGrid = column.BaseGrid;
          var quantity = getOrganismFromModel(model).EntityAt<IQuantity>("Lung", "Q");
 
-         var auxilaiaryColumn = new DataColumn($"deviation column {index}", quantity.Dimension, baseGrid)
+         var values = baseGrid.Values.Select(x => calculateAuxiliaryValue(column.GetValue(x))).ToList();
+
+         return new DataColumn($"deviation column {index}", column.Dimension, baseGrid)
          {
-            DataInfo = new DataInfo(columnOrigins, columnType, quantity.Dimension.DefaultUnitName, DateTime.Now, "A Source", "Patient A", 230),
-            QuantityInfo = Helper.CreateQuantityInfo(quantity)
+            DataInfo = new DataInfo(columnOrigins, columnType, column.Dimension.DefaultUnitName, DateTime.Now, "A Source", "Patient A", 230),
+            QuantityInfo = Helper.CreateQuantityInfo(quantity),
+            Values = values
          };
-
-         var values = new List<float>();
-
-         baseGrid.Values.Each(x => { values.Add(calculateAuxiliaryValue(column.GetValue(x))); });
-
-         auxilaiaryColumn.Values = values;
-
-         return auxilaiaryColumn;
       }
 
       public DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
@@ -176,7 +172,12 @@ namespace OSPSuite.Starter.Tasks
       {
          var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
 
-         dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) ((1.0 + _random.NextDouble()) / 4.0))); });
+         dataRepository.AllButBaseGrid().Each(column =>
+         {
+            var relatedColumn = createAuxiliaryColumn(column, index, model, AuxiliaryType.GeometricStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (1.0 + _random.NextDouble() / 4.0));
+            relatedColumn.Dimension= Constants.Dimension.NO_DIMENSION;
+            column.AddRelatedColumn(relatedColumn);
+         });
 
          return dataRepository;
       }

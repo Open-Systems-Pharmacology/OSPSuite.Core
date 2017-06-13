@@ -128,10 +128,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void RemoveDataColumn(DataColumn dataColumn)
       {
-         if (!ContainsDataColumn(dataColumn)) return;
-
          _dataColumnDTOCache.Remove(dataColumn);
-         raiseUsedChanged(dataColumn, false);
       }
 
       public void Clear()
