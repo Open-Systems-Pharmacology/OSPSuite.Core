@@ -126,6 +126,35 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_optimizing_using_MPFit_LM_and_set_the_maxiter_parameter_to_zero : concern_for_OptimizationAlgorithm
+   {
+      protected override IOptimizationAlgorithm CreateOptimizationAlgorithm()
+      {
+         var optimizer = new MPFitLevenbergMarquardtOptimizer();
+
+         optimizer.Properties["ftol"].ValueAsObject = 1e-6;
+         optimizer.Properties["xtol"].ValueAsObject = 1e-6;
+         optimizer.Properties["gtol"].ValueAsObject = 1e-10;
+         optimizer.Properties["stepfactor"].ValueAsObject = 100;
+         optimizer.Properties["maxiter"].ValueAsObject = 0;
+         optimizer.Properties["maxfev"].ValueAsObject = 0;
+
+         optimizer.Properties["epsfcn"].ValueAsObject = 1e-9;
+
+         return optimizer;
+      }
+
+      [Observation]
+      public void should_return_start_values()
+      {
+         var optimizedValues = _optimizationResult.Values.Select(t => t.Value).ToArray();
+
+         optimizedValues[0].ShouldBeEqualTo(1.0, 1e-2);
+         optimizedValues[1].ShouldBeEqualTo(1.0, 1e-2);
+      }
+   }
+
+
    public class When_optimizing_using_MPFit_LM_with_invalid_start_values : concern_for_OptimizationAlgorithm
    {
       private OSPSuiteException _exception;
