@@ -124,6 +124,12 @@ namespace OSPSuite.Presentation
       {
          sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
       }
+
+      [Observation]
+      public void should_refresh_the_chart_display()
+      {
+         A.CallTo(() => _chartDisplayPresenter.Refresh()).MustHaveHappened();
+      }
    }
 
    public class When_plotting_observed_data_that_doesnt_include_fraction_data : concern_for_SimpleChartPresenter
@@ -197,7 +203,6 @@ namespace OSPSuite.Presentation
    {
       private TableFormula _tableFormula;
       private CurveChart _chart;
-      private Cache<AxisTypes, Axis> _cache;
 
       protected override void Context()
       {
@@ -206,7 +211,6 @@ namespace OSPSuite.Presentation
          _tableFormula.AddPoint(1, 10);
          _tableFormula.AddPoint(2, 20);
          _tableFormula.AddPoint(3, 30);
-         _cache = new Cache<AxisTypes, Axis>(x => x.AxisType) { new Axis(AxisTypes.X), new Axis(AxisTypes.Y) };
          _chart = new CurveChart().WithAxes();
          A.CallTo(() => _chartFactory.CreateChartFor(_tableFormula)).Returns(_chart);
       }
@@ -226,6 +230,20 @@ namespace OSPSuite.Presentation
       public void should_have_the_chart_display_presenter_to_edit_the_created_chart()
       {
          A.CallTo(() => _chartDisplayPresenter.Edit(_chart)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_simple_chart_presenter_is_refreshing_the_chart : concern_for_SimpleChartPresenter
+   {
+      protected override void Because()
+      {
+         sut.Refresh();
+      }
+
+      [Observation]
+      public void should_refresh_the_display()
+      {
+         A.CallTo(() => _chartDisplayPresenter.Refresh()).MustHaveHappened();  
       }
    }
 }
