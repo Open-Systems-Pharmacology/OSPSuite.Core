@@ -12,9 +12,9 @@ namespace OSPSuite.Starter.Tasks
    {
       IEnumerable<DataRepository> CreateOriginalDataRepositories(IContainer model);
       DataRepository CreateCalculationRepository(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
-      DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
-      DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
-      DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation);
+      DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq);
+      DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq);
+      DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq);
       DataRepository CreateCalculationsWithGeometricMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
       DataRepository CreateCalculationsWithArithmeticMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
    }
@@ -123,12 +123,19 @@ namespace OSPSuite.Starter.Tasks
          };
       }
 
-      public DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      public DataRepository CreateObservationRepository(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq)
       {
          var repositoryName = $"Observation Repository {index}";
          var dataRepository = createRepository(numberOfObservations, model, repositoryName, ColumnOrigins.Observation, pointsPerObservation);
+         if (lloq.HasValue)
+            addLLOQToDataColumns(dataRepository.AllButBaseGrid(), lloq.Value);
 
          return dataRepository;
+      }
+
+      private void addLLOQToDataColumns(IEnumerable<DataColumn> dataColumns, double lloqValue)
+      {
+         dataColumns.Each(dataColumn => dataColumn.DataInfo.LLOQ = Convert.ToSingle(dataColumn.ConvertToBaseUnit(lloqValue)));
       }
 
       public DataRepository CreateCalculationsWithGeometricMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation)
@@ -159,18 +166,18 @@ namespace OSPSuite.Starter.Tasks
          return dataRepository;
       }
 
-      public DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      public DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq)
       {
-         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
+         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation, lloq);
 
          dataRepository.AllButBaseGrid().Each(column => { column.AddRelatedColumn(createAuxiliaryColumn(column, index, model, AuxiliaryType.ArithmeticStdDev, ColumnOrigins.ObservationAuxiliary, x => (float) (_random.NextDouble() * x))); });
 
          return dataRepository;
       }
 
-      public DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation)
+      public DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq)
       {
-         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation);
+         var dataRepository = CreateObservationRepository(numberOfObservations, model, index, pointsPerObservation, lloq);
 
          dataRepository.AllButBaseGrid().Each(column =>
          {

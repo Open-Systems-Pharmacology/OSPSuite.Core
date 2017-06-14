@@ -62,6 +62,7 @@ namespace OSPSuite.Starter.Views
          _screenBinder.Bind(x => x.PointsPerCalculation).To(numberOfCalculationPointsTextEdit);
          _screenBinder.Bind(x => x.NumberOfObservations).To(numberOfObservationsTextEdit);
          _screenBinder.Bind(x => x.PointsPerObservation).To(numberOfObservationPointsTextEdit);
+         _screenBinder.Bind(x => x.LLOQ).To(lloqForObservationsTextEdit);
 
          _screenBinder.BindToSource(this);
       }
@@ -75,6 +76,8 @@ namespace OSPSuite.Starter.Views
       {
          _presenter.ClearChart();
       }
+
+      public double? LLOQ { get; set; }
 
       public int NumberOfObservations { get; set; }
 
@@ -96,17 +99,17 @@ namespace OSPSuite.Starter.Views
 
       private void createObservationsWithArithmenticDeviation()
       {
-         _presenter.AddObservationsWithArithmeticDeviation(NumberOfObservations, PointsPerObservation);
+         _presenter.AddObservationsWithArithmeticDeviation(NumberOfObservations, PointsPerObservation, LLOQ);
       }
 
       private void createObservationsWithGeometricDeviation()
       {
-         _presenter.AddObservationsWithGeometricDeviation(NumberOfObservations, PointsPerObservation);
+         _presenter.AddObservationsWithGeometricDeviation(NumberOfObservations, PointsPerObservation, LLOQ);
       }
 
       private void createObservations()
       {
-         _presenter.AddObservations(NumberOfObservations, PointsPerObservation);
+         _presenter.AddObservations(NumberOfObservations, PointsPerObservation, LLOQ);
       }
 
       private void createCalculations()
