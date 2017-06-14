@@ -78,11 +78,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ExportToExcel();
 
       /// <summary>
-      ///    Sets Definition of Curve name in CurveOptions.
-      /// </summary>
-      void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition);
-
-      /// <summary>
       ///    Resets the zoom of the chart to 0 (no zoom)
       /// </summary>
       void ResetZoom();
@@ -188,7 +183,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
 
-      private Func<DataColumn, string> _curveNameDefinition = x => x.Name;
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
@@ -317,15 +311,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var visibleCurves = Chart.Curves.Where(x => x.Visible).ToList();
          if (!visibleCurves.Any()) return;
 
-         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
          if (string.IsNullOrEmpty(fileName)) return;
 
-         _dataRepositoryTask.ExportToExcel(visibleCurves.Select(x => x.yData), fileName, _curveNameDefinition);
-      }
-
-      public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
-      {
-         _curveNameDefinition = curveNameDefinition;
+         var dataColumnCache = new Cache<DataColumn, Curve>(onMissingKey: x => null);
+         visibleCurves.Each(curve => dataColumnCache[curve.yData] = curve);
+         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys, fileName, col => dataColumnCache[col]?.Name ?? col.Name);
       }
 
       public void ResetZoom()

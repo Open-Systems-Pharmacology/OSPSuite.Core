@@ -1,7 +1,6 @@
 ﻿using System;
 using OSPSuite.Assets;
 using OSPSuite.Core;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
@@ -27,14 +26,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       ChartEditorAndDisplaySettings CreateSettings();
 
-      void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition);
-
-      /// <summary>
-      ///    If no curves have been added to the chart, then <paramref name="hint" /> text will appear in place of the empty
-      ///    chart
-      /// </summary>
-      void SetNoCurvesSelectedHint(string hint);
-
       IMenuBarItem ChartLayoutButton { get; }
       Action PostEditorLayout { set; }
    }
@@ -46,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IStartOptions _startOptions;
       private readonly IPresentationUserSettings _presentationUserSettings;
       public Action PostEditorLayout { get; set; } = () => { };
-      
+
       public ChartEditorAndDisplayPresenter(IChartEditorAndDisplayView chartEditorAndDisplayView, IChartDisplayPresenter chartDisplayPresenter,
          IChartEditorPresenter chartEditorPresenter, IChartEditorLayoutTask chartEditorLayoutTask, IStartOptions startOptions,
          IPresentationUserSettings presentationUserSettings)
@@ -62,17 +53,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartEditorAndDisplayView.AddEditor(EditorPresenter.View);
 
          AddSubPresenters(EditorPresenter, chartDisplayPresenter);
-      }
-
-      public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
-      {
-         DisplayPresenter.SetCurveNameDefinition(curveNameDefinition);
-         EditorPresenter.SetCurveNameDefinition(curveNameDefinition);
-      }
-
-      public void SetNoCurvesSelectedHint(string hint)
-      {
-         DisplayPresenter.SetNoCurvesSelectedHint(hint);
       }
 
       public IChartDisplayPresenter DisplayPresenter { get; }

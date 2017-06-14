@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
@@ -208,7 +209,11 @@ namespace OSPSuite.UI.Binders
 
       private void updateSeriesCaption()
       {
-         _series.Each(s => s.LegendText = Curve.Name);
+         var legendText = Curve.Name;
+         if (string.IsNullOrEmpty(legendText))
+            legendText = Warning.CurveNameIsMissing;
+
+         _series.Each(s => s.LegendText = legendText);
       }
 
       protected abstract void RefreshSeries();
