@@ -92,7 +92,12 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
             case MPFit.MP_XTOL: //xtol is too small; no further improvement
             case MPFit.MP_GTOL: //gtol is too small; no further improvement
                return;
+            
          }
+
+         //special case when max iteration is set to zero
+         if (status == MPFit.MP_ERR_INPUT && maxiter == 0)
+            return;
 
          // in case of failure: first check if objective function returned an error
          if(!string.IsNullOrEmpty(_objectiveFunctionErrorMessage))
