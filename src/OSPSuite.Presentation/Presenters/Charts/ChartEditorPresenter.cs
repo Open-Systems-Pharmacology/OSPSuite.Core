@@ -58,7 +58,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Get all DataColumns of DataBrowser.
       /// </summary>
-      IEnumerable<DataColumn> GetAllDataColumns();
+      IEnumerable<DataColumn> AllDataColumns();
 
       /// <summary>
       ///    Creates a ChartEditorSettings object from settings of this presenter. Used for serialization.
@@ -422,7 +422,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          dataRepositories.Each(AddDataRepository);
       }
 
-      public IEnumerable<DataColumn> GetAllDataColumns()
+      public IEnumerable<DataColumn> AllDataColumns()
       {
          return _dataColumns;
       }

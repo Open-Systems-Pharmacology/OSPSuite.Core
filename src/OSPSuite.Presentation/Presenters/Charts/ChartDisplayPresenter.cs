@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -402,12 +403,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateAxes()
       {
-         Chart.Axes.Each(refreshAxisBinderFor);
+         pruneAxes();
 
-         _axisBinders.Where(x => !Chart.Axes.Contains(x.Axis)).ToList().Each(removeAxisBinder);
+         Chart.Axes.Each(refreshAxisBinderFor);
 
          updateYAxesVisibility();
       }
+
+      private void pruneAxes() => pruneBinders(_axisBinders, Chart.Axes, x => x.Axis, removeAxisBinder);
 
       private void refreshAxisBinderFor(Axis axis) => getOrCreateAxisBinderFor(axis).Refresh();
 
@@ -419,9 +422,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateCurves()
       {
-         Chart.Curves.Each(refreshCurveBinderFor);
+         pruneCurves();
 
-         _curveBinders.Where(x => !Chart.Curves.Contains(x.Curve)).ToList().Each(removeCurveBinder);
+         Chart.Curves.Each(refreshCurveBinderFor);
+      }
+
+      private void pruneCurves() => pruneBinders(_curveBinders, Chart.Curves, x=>x.Curve, removeCurveBinder);
+
+      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects, Func<TBinder, TBoundObject> retrieveBoundObjectFunc,  Action<TBinder> removeBinderAction)
+      {
+         //Remove using reference to ensure that the bound object in the binder is the same as the one in the chart
+         binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
       }
 
       private void refreshCurveBinderFor(Curve curve) => getOrCreateCurveBinderFor(curve).Refresh();

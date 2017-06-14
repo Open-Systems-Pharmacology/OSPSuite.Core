@@ -138,9 +138,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(
             Chart,
-            ChartEditorPresenter.GetAllDataColumns(),
+            ChartEditorPresenter.AllDataColumns(),
             curveChartTemplate,
-            NameForColumn, warnIfNumberOfCurvesAboveThreshold: warnIfNumberOfCurvesAboveThreshold);
+            NameForColumn, warnIfNumberOfCurvesAboveThreshold);
       }
 
       public void RemoveDataRepositoryFromEditor(DataRepository dataRepository)

@@ -33,6 +33,7 @@ namespace OSPSuite.Presentation
       private ICloneManager _cloneManager;
       protected string[] _drugTemplatePathArray;
       protected string[] _enzymeTemplatePathArray;
+      protected IChartUpdater _chartUpdater;
 
       protected override void Context()
       {
@@ -40,7 +41,8 @@ namespace OSPSuite.Presentation
          _keyPathMapper = new KeyPathMapper(new EntityPathResolverForSpecs(), new ObjectPathFactoryForSpecs());
          _dialogCreator = A.Fake<IDialogCreator>();
          _cloneManager = A.Fake<ICloneManager>();
-         sut = new ChartFromTemplateService(_dimensionFactory, _keyPathMapper, _dialogCreator, _cloneManager);
+         _chartUpdater= A.Fake<IChartUpdater>();
+         sut = new ChartFromTemplateService(_dimensionFactory, _keyPathMapper, _dialogCreator, _cloneManager, _chartUpdater);
          _chart = new CurveChart();
          _dataColumns = new List<DataColumn>();
          _template = new CurveChartTemplate();
@@ -114,6 +116,12 @@ namespace OSPSuite.Presentation
       public void should_not_add_the_curve_with_data_having_another_type()
       {
          _chart.Curves.Any(x => x.yData == _enzymeColumn).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_have_updated_the_chart_using_the_chart_updater()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart)).MustHaveHappened();
       }
    }
 
@@ -333,7 +341,6 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.WarningThreshold = 1;
          _chart.ChartSettings.BackColor = Color.Red;
          _template.ChartSettings.BackColor = Color.Aqua;
 
@@ -356,7 +363,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true);
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true, warningThreshold:1);
       }
 
       [Observation]
@@ -371,7 +378,6 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.WarningThreshold = 1;
          _chart.ChartSettings.BackColor = Color.Red;
          _template.ChartSettings.BackColor = Color.Aqua;
          A.CallTo(_dialogCreator).WithReturnType<ViewResult>().Returns(ViewResult.Yes);
@@ -391,7 +397,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true);
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true, warningThreshold:1);
       }
 
       [Observation]

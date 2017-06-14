@@ -7,7 +7,8 @@ namespace OSPSuite.Core.Chart
       IReadOnlyCollection<Axis> Axes { get; }
       void AddAxis(Axis axis);
       void RemoveAxis(Axis axis);
-      Axis AddNewAxis();
+      Axis AddNewAxisFor(AxisTypes axisType);
       Axis AxisBy(AxisTypes axisTypes);
+      bool HasAxis(AxisTypes axisTypes);
    }
 }

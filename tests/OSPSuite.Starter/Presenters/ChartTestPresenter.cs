@@ -34,7 +34,6 @@ namespace OSPSuite.Starter.Presenters
       void SaveSettings();
       void SaveChartWithDataWithoutValues();
       void LoadSettings();
-      void LoadTemplate();
       void RefreshDisplay();
       void ReloadMenus();
       void RemoveDatalessCurves();
@@ -60,6 +59,7 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IChartUpdater _chartUpdater;
       private ICache<string, DataRepository> _dataRepositories;
+      private readonly IWithChartTemplates _simulationSettings;
 
       public ChartTestPresenter(IChartTestView view, IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, TestEnvironment testEnvironment, IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper,
          IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, DataPersistor dataPersistor, IChartFromTemplateService chartFromTemplateService,
@@ -77,7 +77,7 @@ namespace OSPSuite.Starter.Presenters
          _chartUpdater = chartUpdater;
          _view.AddChartEditorView(chartEditorAndDisplayPresenter.EditorPresenter.View);
          _view.AddChartDisplayView(chartEditorAndDisplayPresenter.DisplayPresenter.View);
-
+         _simulationSettings = new SimulationSettings();
          AddSubPresenters(chartEditorAndDisplayPresenter);
 
          configureChartEditorPresenter(dataColumnToPathColumnValuesMapper);
@@ -98,7 +98,7 @@ namespace OSPSuite.Starter.Presenters
          ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).VisibleIndex = 1;
 
          ChartDisplayPresenter.Edit(Chart);
-         Chart.ChartSettings.DiagramBackColor = Color.White;
+
          ChartDisplayPresenter.DragOver += onChartDisplayDragOver;
          ChartEditorPresenter.DragOver += onChartDisplayDragOver;
 
@@ -194,13 +194,13 @@ namespace OSPSuite.Starter.Presenters
       {
          Chart = new CurveChart
          {
-            OriginText = Captions.ChartFingerprintDataFrom("Test Chart Project", "Test Chart Simulation", DateTime.Now.ToIsoFormat())
+            OriginText = Captions.ChartFingerprintDataFrom("Test Chart Project", "Test Chart Simulation", DateTime.Now.ToIsoFormat()),
+            Title = "The Chart Title"
          };
 
+         Chart.ChartSettings.BackColor = Color.White;
          ChartEditorPresenter.Edit(Chart);
 
-         Chart.Title = "The Chart Title";
-         Chart.ChartSettings.BackColor = Color.White;
       }
 
       public CurveChart Chart { get; set; }
@@ -276,25 +276,6 @@ namespace OSPSuite.Starter.Presenters
          _chartEditorAndDisplayPresenter.CopySettingsFrom(settings);
       }
 
-      public void LoadTemplate()
-      {
-         var fileDialog = new OpenFileDialog();
-         var fileName = getFileName(fileDialog);
-         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
-            return;
-
-         var chartTemplate = _chartTemplatePersistor.DeserializeFromFile(fileName);
-         ChartDisplayPresenter.Clear();
-         ChartEditorPresenter.Clear();
-
-         var chart = new CurveChart();
-         _chartFromTemplateService.CurveNameDefinition = TestProgram.NameDefinition;
-         _chartFromTemplateService.InitializeChartFromTemplate(chart, _dataRepositories["Rep Ex3"], chartTemplate, false);
-
-         ChartEditorPresenter.Clear();
-         ChartDisplayPresenter.Clear();
-      }
-
       public void RefreshDisplay()
       {
          _chartUpdater.Update(Chart);
@@ -318,7 +299,16 @@ namespace OSPSuite.Starter.Presenters
 
          ChartEditorPresenter.AddUsedInMenuItem();
 
-         ChartEditorPresenter.AddChartTemplateMenu(new SimulationSettings(), template => { });
+         ChartEditorPresenter.AddChartTemplateMenu(_simulationSettings, template => loadFromTemplate(template));
+      }
+
+      private void loadFromTemplate(CurveChartTemplate template)
+      {
+         _chartFromTemplateService.InitializeChartFromTemplate(
+            Chart,
+            ChartEditorPresenter.AllDataColumns(),
+            template,
+            TestProgram.NameDefinition, false);
       }
 
       public void RemoveDatalessCurves()
