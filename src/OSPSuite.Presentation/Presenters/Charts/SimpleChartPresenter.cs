@@ -62,6 +62,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Action run when a series point is hot tracked in the chart
       /// </summary>
       Action<int> HotTracked { set; }
+
+      /// <summary>
+      /// Refresh the display after external changes were made to the chart
+      /// </summary>
+      void Refresh();
    }
 
    public class SimpleChartPresenter : AbstractCommandCollectorPresenter<ISimpleChartView, ISimpleChartPresenter>, ISimpleChartPresenter
@@ -94,10 +99,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          set => _chartDisplayPresenter.HotTracked = value;
       }
 
+      public void Refresh() => _chartDisplayPresenter.Refresh();
+
       public void SetChartScale(Scalings scale)
       {
          var yAxis = getYAxis(Chart);
          yAxis.Scaling = scale;
+         Refresh();
       }
 
       public bool LogLinSelectionEnabled
@@ -122,11 +130,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var yAxis = getYAxis(Chart);
          if (yAxis != null)
             yAxis.Caption = tableFormula.Name;
-         updateChart();
+         bindToChart();
          return Chart;
       }
 
-      private void updateChart()
+      private void bindToChart()
       {
          Chart.ChartSettings.LegendPosition = LegendPositions.None;
          _chartDisplayPresenter.Edit(Chart);
@@ -136,7 +144,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          Chart = _chartFactory.CreateChartFor(dataRepository, scale);
          setChartScalingForObservedData(new[] {dataRepository});
-         updateChart();
+         bindToChart();
          return Chart;
       }
 
@@ -151,7 +159,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart = _chartFactory.Create<CurveChart>();
          setChartScalingForObservedData(observedDataList);
          observedDataList.Each(addCurvesToChart);
-         updateChart();
+         bindToChart();
          setScaleInView(Chart);
          return Chart;
       }
