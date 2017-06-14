@@ -39,11 +39,11 @@ namespace OSPSuite.Starter.Presenters
       void ReloadMenus();
       void RemoveDatalessCurves();
       void InitializeRepositoriesWithOriginalData();
-      void AddObservations(int numberOfObservations, int pointsPerCalculation);
+      void AddObservations(int numberOfObservations, int pointsPerCalculation, double? lloq);
       void AddCalculations(int numberOfCalculations, int pointsPerCalculation);
       void ClearChart();
-      void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation);
-      void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation);
+      void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation, double? lloq);
+      void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation, double? lloq);
       void AddCalculationsWithGeometricMean(int numberOfCalculations, int pointsPerCalculation);
       void AddCalculationsWithArithmeticMean(int numberOfCalculations, int pointsPerCalculation);
    }
@@ -127,19 +127,19 @@ namespace OSPSuite.Starter.Presenters
          addRepositoryToChart(_dataRepositoryCreator.CreateCalculationsWithArithmeticMean(numberOfCalculations, _model, _dataRepositories.Count, pointsPerCalculation));
       }
 
-      public void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation)
+      public void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation, double? lloq)
       {
-         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithGeometricDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation));
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithGeometricDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation, lloq));
       }
 
-      public void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation)
+      public void AddObservationsWithArithmeticDeviation(int numberOfObservations, int pointsPerObservation, double? lloq)
       {
-         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithArithmenticDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation));
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationWithArithmenticDeviation(numberOfObservations, _model, _dataRepositories.Count, pointsPerObservation, lloq));
       }
 
-      public void AddObservations(int numberOfObservations, int pointsPerCalculation)
+      public void AddObservations(int numberOfObservations, int pointsPerCalculation, double? lloq)
       {
-         addRepositoryToChart(_dataRepositoryCreator.CreateObservationRepository(numberOfObservations, _model, _dataRepositories.Count, pointsPerCalculation));
+         addRepositoryToChart(_dataRepositoryCreator.CreateObservationRepository(numberOfObservations, _model, _dataRepositories.Count, pointsPerCalculation, lloq));
       }
 
       private void addRepositoryToChart(DataRepository newRepository)
