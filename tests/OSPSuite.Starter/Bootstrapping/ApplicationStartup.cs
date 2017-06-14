@@ -1,10 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Compression;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Events;
+using System.Windows.Forms;
 using Castle.Facilities.TypedFactory;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
@@ -17,6 +14,10 @@ using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.UI;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Compression;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Events;
 using SimModelNET;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -36,6 +37,16 @@ namespace OSPSuite.Starter.Bootstrapping
          var persistor = IoC.Resolve<IDimensionFactoryPersistor>();
          persistor.Load(dimensionFactory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.Dimensions.xml"));
          dimensionFactory.AddDimension(Constants.Dimension.NO_DIMENSION);
+      }
+
+      private static SynchronizationContext getCurrentContext()
+      {
+         var context = SynchronizationContext.Current;
+         if (context != null) return SynchronizationContext.Current;
+
+         context = new WindowsFormsSynchronizationContext();
+         SynchronizationContext.SetSynchronizationContext(context);
+         return SynchronizationContext.Current;
       }
 
       private static void initializeDependency()
@@ -58,7 +69,7 @@ namespace OSPSuite.Starter.Bootstrapping
          container.Register<ICompression, SharpLibCompression>();
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
          container.Register<IStringCompression, StringCompression>(LifeStyle.Singleton);
-         container.RegisterImplementationOf(new SynchronizationContext());
+         container.RegisterImplementationOf(getCurrentContext());
 
          container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
 

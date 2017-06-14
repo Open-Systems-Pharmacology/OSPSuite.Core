@@ -8,10 +8,7 @@ namespace OSPSuite.Starter.Tasks
 {
    internal class ApplicationConfiguration : IApplicationConfiguration
    {
-      public string ChartLayoutTemplateFolderPath
-      {
-         get { throw new NotSupportedException(); }
-      }
+      public string ChartLayoutTemplateFolderPath => "./AFolderThatShouldntExist";
 
       public string TEXTemplateFolderPath
       {
