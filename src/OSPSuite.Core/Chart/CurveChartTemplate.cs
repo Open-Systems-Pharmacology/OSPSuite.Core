@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
@@ -18,7 +17,10 @@ namespace OSPSuite.Core.Chart
       public ChartFontAndSizeSettings FontAndSize { get; set; }
       public bool IncludeOriginData { get; set; }
       public IReadOnlyCollection<Axis> Axes => _axes;
+
       public Axis AxisBy(AxisTypes axisTypes) => _axes[axisTypes];
+
+      public bool HasAxis(AxisTypes axisTypes) => _axes.Contains(axisTypes);
 
       public CurveChartTemplate()
       {
@@ -56,10 +58,11 @@ namespace OSPSuite.Core.Chart
          _axes.Remove(axis.AxisType);
       }
 
-      public Axis AddNewAxis()
+      public Axis AddNewAxisFor(AxisTypes axisType)
       {
-         //TODO
-         throw new NotImplementedException();
+         var axis = new Axis(axisType);
+         AddAxis(axis);
+         return axis;
       }
 
       public string Name

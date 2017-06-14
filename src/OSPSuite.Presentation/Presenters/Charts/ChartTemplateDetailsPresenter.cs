@@ -36,11 +36,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void axisAdded()
       {
          _chartTemplate.AddNewAxis();
+         _axisSettingsPresenter.Refresh();
       }
 
       private void axisRemoved(Axis axis)
       {
          _chartTemplate.RemoveAxis(axis);
+         _axisSettingsPresenter.Refresh();
       }
 
       public void Edit(CurveChartTemplate chartTemplate)
@@ -54,7 +56,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void bindTo(CurveChartTemplate chartTemplate)
       {
-
          _curveTemplatePresenter.Edit(chartTemplate.Curves);
          _chartSettingsPresenter.Edit(chartTemplate);
          _axisSettingsPresenter.Edit(chartTemplate.Axes);

@@ -57,4 +57,18 @@ namespace OSPSuite.Core
          sut.Curves.ShouldContain(_cloneCurve);
       }
    }
+
+   public class When_adding_a_new_axis_by_type_to_a_curve_chart_template : concern_for_CurveChartTemplate
+   {
+      protected override void Because()
+      {
+         sut.AddNewAxisFor(AxisTypes.Y);
+      }
+
+      [Observation]
+      public void should_have_an_axis_with_this_type()
+      {
+         sut.HasAxis(AxisTypes.Y).ShouldBeTrue();
+      }
+   }
 }	

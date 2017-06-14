@@ -120,6 +120,7 @@
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationCovarianceMatrix.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationResidualHistogram.cs" />
     <Compile Include="Chart\SensitivityAnalyses\SensitivityAnalysisPKParameterAnalysis.cs" />
+    <Compile Include="Chart\WithAxesExtensions.cs" />
     <Compile Include="Commands\Core\Command.cs" />
     <Compile Include="Commands\Core\CommandExpressionParser.cs" />
     <Compile Include="Commands\Core\CommandExtensions.cs" />

@@ -244,8 +244,7 @@ namespace OSPSuite.Presentation.Services.Charts
          if (dataColumns == null || template == null)
             return;
 
-         _chartFromTemplateService.CurveNameDefinition = nameDefinition;
-         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, warnIfNumberOfCurvesAboveThreshold);
+         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, nameDefinition, warnIfNumberOfCurvesAboveThreshold);
       }
    }
 }

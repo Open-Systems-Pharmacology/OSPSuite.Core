@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services
 {
@@ -19,25 +19,25 @@ namespace OSPSuite.Presentation.Services
       private readonly IKeyPathMapper _keyPathMapper;
       private readonly IDialogCreator _dialogCreator;
       private readonly ICloneManager _cloneManager;
+      private readonly IChartUpdater _chartUpdater;
       private List<ColumnPath> _allColumnsByPath;
-      public Func<DataColumn, string> CurveNameDefinition { get; set; }
-      public int WarningThreshold { get; set; }
+      private Func<DataColumn, string> _curveNameDefinition;
 
-      public ChartFromTemplateService(IDimensionFactory dimensionFactory, IKeyPathMapper keyPathMapper, IDialogCreator dialogCreator, ICloneManager cloneManager)
+      public ChartFromTemplateService(IDimensionFactory dimensionFactory, IKeyPathMapper keyPathMapper, IDialogCreator dialogCreator, ICloneManager cloneManager, IChartUpdater chartUpdater)
       {
          _dimensionFactory = dimensionFactory;
          _keyPathMapper = keyPathMapper;
          _dialogCreator = dialogCreator;
          _cloneManager = cloneManager;
-         CurveNameDefinition = c => c.Name;
-         WarningThreshold = Constants.DEFAULT_TEMPLATE_WARNING_THRESHOLD;
+         _chartUpdater = chartUpdater;
       }
 
-      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, bool warnIfNumberOfCurvesAboveThreshold = false)
+      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> curveNameDefinition = null,  bool warnIfNumberOfCurvesAboveThreshold = false, int warningThreshold = Constants.DEFAULT_TEMPLATE_WARNING_THRESHOLD)
       {
          try
          {
             _allColumnsByPath = dataColumns.Select(x => new ColumnPath(x)).ToList();
+            _curveNameDefinition = curveNameDefinition ?? (x =>x.Name);
 
             //Retrieve all possible curves for each curve template defined in the given template 
             var curvesForTemplates = new Cache<CurveTemplate, TemplateToColumnsMatch>(x => x.CurveTemplate);
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Services
 
             //Ensure that the user wants to continue if the threshold is exceeded
             var numberOfCreatedColumns = bestTemplateForCurves.Sum(x => x.Count);
-            if (numberOfCreatedColumns > WarningThreshold && warnIfNumberOfCurvesAboveThreshold)
+            if (numberOfCreatedColumns > warningThreshold && warnIfNumberOfCurvesAboveThreshold)
             {
                var shouldContinue = _dialogCreator.MessageBoxYesNo(Captions.NumberOfSelectedCurveWouldGoOverThreshold(numberOfCreatedColumns));
                if (shouldContinue == ViewResult.No)
@@ -59,17 +59,21 @@ namespace OSPSuite.Presentation.Services
          }
          finally
          {
+            _curveNameDefinition = null;
             _allColumnsByPath.Clear();
          }
       }
 
       private void updateChartFromTemplateWithMatchingCurves(CurveChart chart, CurveChartTemplate template, ICache<CurveTemplate, IReadOnlyList<ColumnMap>> bestTemplateForCurves)
       {
-         chart.Clear();
-         chart.CopyChartSettingsFrom(template);
-         chart.FontAndSize.UpdatePropertiesFrom(template.FontAndSize, _cloneManager);
-         template.Axes.Each(axis => chart.AddAxis(axis.Clone()));
-         bestTemplateForCurves.KeyValues.Each(kv => addCurvesToChart(kv.Key, kv.Value, chart));
+         using (_chartUpdater.UpdateTransaction(chart))
+         {
+            chart.Clear();
+            chart.CopyChartSettingsFrom(template);
+            chart.FontAndSize.UpdatePropertiesFrom(template.FontAndSize, _cloneManager);
+            template.Axes.Each(axis => chart.AddAxis(axis.Clone()));
+            bestTemplateForCurves.KeyValues.Each(kv => addCurvesToChart(kv.Key, kv.Value, chart));
+         }
       }
 
       private ICache<CurveTemplate, IReadOnlyList<ColumnMap>> findBestTemplateForCurves(ICache<CurveTemplate, TemplateToColumnsMatch> curvesForTemplates)
@@ -150,7 +154,7 @@ namespace OSPSuite.Presentation.Services
       {
          //more than one column for a given template curve, use default templating name instead of predefined curves
          if (columnsToAdd.Count > 1)
-            return CurveNameDefinition(columnMap.YColumn);
+            return _curveNameDefinition(columnMap.YColumn);
 
          //only one column to add: Don't rename for an exact pattern match of if we could not retrieve the name of the molecule dynamically
          if (columnMap.MatchType == MatchType.Exact || string.IsNullOrEmpty(columnMap.TemplateMoleculeName))
