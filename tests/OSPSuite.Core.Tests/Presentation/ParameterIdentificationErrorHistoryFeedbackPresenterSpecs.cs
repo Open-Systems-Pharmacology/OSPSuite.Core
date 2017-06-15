@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.BDDHelper;
 using FakeItEasy;
 using OSPSuite.Assets;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -78,6 +78,20 @@ namespace OSPSuite.Presentation
       public void should_have_set_the_y_axis_as_linear_scale()
       {
          sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Linear);
+      }
+   }
+
+   public class When_resetting_the_feedback_in_the_parameter_identification_error_feedback_presenter : concern_for_ParameterIdentificationErrorHistoryFeedbackPresenter
+   {
+      protected override void Because()
+      {
+         sut.ResetFeedback();
+      }
+
+      [Observation]
+      public void should_refresh_the_chart_display_presenter()
+      {
+         A.CallTo(() => _chartDisplayPresenter.Refresh()).MustHaveHappened();
       }
    }
 }

@@ -91,7 +91,7 @@ namespace OSPSuite.Starter.Presenters
       {
          ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Origin).Visible = true;
 
-         ChartEditorPresenter.SetCurveNameDefinition(TestProgram.NameDefinition);
+         ChartEditorPresenter.SetCurveNameDefinition(Helper.NameDefinition);
          ChartEditorPresenter.CurveOptionsColumnSettingsFor(CurveOptionsColumns.InterpolationMode).Visible = false;
 
          ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).Caption = "Number Representation";
@@ -160,7 +160,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void addColumnToChart(DataColumn dataColumn)
       {
-         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, TestProgram.NameDefinition(dataColumn), _dimensionFactory);
+         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, Helper.NameDefinition(dataColumn), _dimensionFactory);
          // Settings already in chart, make no changes
          if (Chart.HasCurve(curve.Id))
             return;
@@ -308,7 +308,7 @@ namespace OSPSuite.Starter.Presenters
             Chart,
             ChartEditorPresenter.AllDataColumns(),
             template,
-            TestProgram.NameDefinition, false);
+            Helper.NameDefinition, false);
       }
 
       public void RemoveDatalessCurves()

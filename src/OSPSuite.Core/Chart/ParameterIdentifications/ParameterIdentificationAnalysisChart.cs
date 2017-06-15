@@ -87,7 +87,7 @@ namespace OSPSuite.Core.Chart.ParameterIdentifications
 //
      public void UpdateAxesVisibility()
       {
-         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(AxisBy(AxisTypes.X).Dimension)).ToList();
+         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(XAxis.Dimension)).ToList();
 
          visibleAxes.Each(axis => axis.Visible = true);
          Axes.Except(visibleAxes).Each(axis => axis.Visible = false);

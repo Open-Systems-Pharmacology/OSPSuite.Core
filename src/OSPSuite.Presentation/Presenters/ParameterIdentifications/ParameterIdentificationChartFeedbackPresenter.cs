@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected OutputMapping _selectedOutput;
       protected ParameterIdentification _parameterIdentification;
       protected readonly TChart _chart;
-      protected readonly IChartDisplayPresenter _chartDisplayPresenter;
+      private readonly IChartDisplayPresenter _chartDisplayPresenter;
       protected readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly OutputMappingByFullOutputPathComparer _outputMappingComparer;
 
@@ -45,6 +45,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          AddSubPresenters(_chartDisplayPresenter);
          _dimensionFactory = dimensionFactory;
          _chart = chart;
+         _chartDisplayPresenter.Edit(_chart);
          _outputMappingComparer = new OutputMappingByFullOutputPathComparer();
          _chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
       }
@@ -68,7 +69,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _bestColumn = _bestRepository.FirstDataColumn();
          _currentRepository = CreateRepositoryFor(Captions.ParameterIdentification.Current);
          _currentColumn = _currentRepository.FirstDataColumn();
-         _chartDisplayPresenter.View.SetFontAndSizeSettings(_chart.FontAndSize);
 
          AddBestAndCurrent();
 
@@ -112,10 +112,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected abstract void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action);
 
-      protected virtual void SelectedOutputChanged()
+      protected void SelectedOutputChanged()
       {
-         UpdateChartAxesScalings();
+         UpdateChartForSelectedOutput();
+         _chartDisplayPresenter.Refresh();
       }
+
+      protected abstract void UpdateChartForSelectedOutput();
 
       protected DataRepository CreateRepositoryFor(string curveName)
       {
@@ -137,7 +140,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public virtual void ResetFeedback()
       {
          _chart.Clear();
-         _chartDisplayPresenter.Clear();
+         _chartDisplayPresenter.Refresh();
       }
 
       public void UpdateFeedback(ParameterIdentificationRunState runState)
