@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Refreshs columns of DataRepository in DataBrowser and depending curves in Chart.
       /// </summary>
-      void RemoveUnusedColumndsAndAdd(DataRepository dataRepository);
+      void RemoveUnusedColumnsAndAdd(DataRepository dataRepository);
 
       /// <summary>
       ///    Adds <paramref name="dataRepositories"/> to DataBrowser. This does not trigger a redraw of the chart
@@ -383,7 +383,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateUsedColumns();
       }
 
-      public void RemoveUnusedColumndsAndAdd(DataRepository dataRepository)
+      public void RemoveUnusedColumnsAndAdd(DataRepository dataRepository)
       {
          removeColumns(unusedColumns);
          AddDataRepository(dataRepository);

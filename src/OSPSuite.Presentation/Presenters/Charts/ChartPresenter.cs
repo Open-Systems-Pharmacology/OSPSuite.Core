@@ -58,6 +58,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
          ChartEditorPresenter.ChartChanged += ChartChanged;
+         ConfigureColumns();
       }
 
       public virtual void LoadSettingsForSubject(IWithId subject)
@@ -185,17 +186,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          View.Dispose();
       }
 
-      protected virtual void ResetEditor()
+      protected virtual void ConfigureColumns()
       {
          Column(BrowserColumns.RepositoryName).GroupIndex = -1;
-
          Column(BrowserColumns.Simulation).Visible = false;
          Column(BrowserColumns.TopContainer).Visible = false;
          Column(BrowserColumns.Container).Visible = false;
          Column(BrowserColumns.BottomCompartment).Visible = false;
          Column(BrowserColumns.Molecule).Visible = false;
          Column(BrowserColumns.Name).Visible = false;
-
          Column(BrowserColumns.ColumnId).Visible = false;
          Column(BrowserColumns.BaseGridName).Visible = false;
          Column(BrowserColumns.RepositoryName).Visible = false;
@@ -210,7 +209,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Column(CurveOptionsColumns.xData).Visible = false;
          Column(CurveOptionsColumns.yData).Visible = false;
          Column(CurveOptionsColumns.yAxisType).Visible = true;
-
          Column(CurveOptionsColumns.Name).VisibleIndex = 0;
          Column(CurveOptionsColumns.Color).VisibleIndex = 1;
          Column(CurveOptionsColumns.LineStyle).VisibleIndex = 2;
