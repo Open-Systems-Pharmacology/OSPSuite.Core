@@ -82,9 +82,13 @@ namespace OSPSuite.Presentation.Services.Charts
 
       public void InitEditorLayout(IChartEditorAndDisplayPresenter chartEditorPresenter, ChartEditorLayoutTemplate chartEditorLayoutTemplate, bool loadColumnSettings = false)
       {
-         if (chartEditorLayoutTemplate == null) return;
-         copySettings(chartEditorPresenter, chartEditorLayoutTemplate.Settings, loadColumnSettings);
-         _userSettings.DefaultChartEditorLayout = chartEditorLayoutTemplate.Name;
+         if (chartEditorLayoutTemplate != null)
+         {
+            copySettings(chartEditorPresenter, chartEditorLayoutTemplate.Settings, loadColumnSettings);
+            _userSettings.DefaultChartEditorLayout = chartEditorLayoutTemplate.Name;
+         }
+
+         chartEditorPresenter.EditorPresenter.ApplyColumnSettings();
       }
 
       private static void copySettings(IChartEditorAndDisplayPresenter chartEditorPresenter, ChartEditorAndDisplaySettings chartEditorAndDisplaySettings, bool loadColumnSettings)
