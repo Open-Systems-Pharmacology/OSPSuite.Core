@@ -81,6 +81,7 @@ namespace OSPSuite.Core.Domain
       public const int MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE = 10;
       public const float LOG_SAFE_EPSILON = 1e-20F;
       public const byte RANGE_AREA_OPACITY = 55;
+      public const byte RANGE_AREA_TRANSPARENCY = 255- RANGE_AREA_OPACITY;
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;

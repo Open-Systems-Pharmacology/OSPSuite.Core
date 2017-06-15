@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>, IParameterIdentificationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis where
-         TView : IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
+         TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {
       protected ParameterIdentification _parameterIdentification;
       private readonly Cache<string, Color> _colorCache = new Cache<string, Color>(onMissingKey: x => Color.Black);
@@ -94,7 +94,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.Clear();
          ChartDisplayPresenter.Clear();
          ChartEditorPresenter.Clear();
-         RemoveChartEventHandlers();
       }
 
       protected string CurveDescription(string name, ParameterIdentificationRunResult runResult)

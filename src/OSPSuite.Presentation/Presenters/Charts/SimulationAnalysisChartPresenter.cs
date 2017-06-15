@@ -1,16 +1,16 @@
 ﻿using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
    public abstract class SimulationAnalysisChartPresenter<TChart, TView, TPresenter> : ChartPresenter<TChart, TView, TPresenter>, ISimulationAnalysisPresenter
       where TPresenter : ISimulationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis
-      where TView : IView<TPresenter>
+      where TView : class, IView<TPresenter>
    {
       private bool _isInitializing;
       private bool _chartIsNew;
