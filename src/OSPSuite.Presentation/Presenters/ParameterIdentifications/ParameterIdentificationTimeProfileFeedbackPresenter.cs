@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -12,6 +11,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly List<Curve> _allObservedDataCurves;
 
       public ParameterIdentificationTimeProfileFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory, IDisplayUnitRetriever displayUnitRetriever) :
-         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever, new CurveChart {Title = Captions.ParameterIdentification.TimeProfileAnalysis })
+         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever, new CurveChart {Title = Captions.ParameterIdentification.TimeProfileAnalysis})
       {
          _allObservedDataCurves = new List<Curve>();
       }
@@ -36,7 +36,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          addObservedDataForSelectedOutput();
 
          _view.BindToSelecteOutput();
-         _chartDisplayPresenter.Edit(_chart);
       }
 
       private void addObservedDataForSelectedOutput()
@@ -59,7 +58,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected override void UpdateChartAxesScalings()
       {
-         _chart.Axes.Where(axis => axis.AxisType != AxisTypes.X).Each(axis => axis.Scaling = SelectedOutput.Scaling);
+         _chart.AllUsedYAxis.Each(axis => axis.Scaling = SelectedOutput.Scaling);
       }
 
       protected override void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action)
@@ -67,17 +66,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, action);
       }
 
-      protected override void SelectedOutputChanged()
+      protected override void UpdateChartForSelectedOutput()
       {
-         base.SelectedOutputChanged();
-         //TODO
-//         using (new BatchUpdate(_chartDisplayPresenter))
-//         {
-            ConfigureColumnDimension(_currentColumn);
-            ConfigureColumnDimension(_bestColumn);
-            configureYAxisDimension();
-//         }
-
+         UpdateChartAxesScalings();
+         ConfigureColumnDimension(_currentColumn);
+         ConfigureColumnDimension(_bestColumn);
+         configureYAxisDimension();
          addObservedDataForSelectedOutput();
       }
 

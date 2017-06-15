@@ -10,8 +10,32 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter
 {
-   public static class TestProgram
+
+   internal static class Program
    {
+      /// <summary>
+      ///    The main entry point for the application.
+      /// </summary>
+      [STAThread]
+      private static void Main(string[] args)
+      {
+         Application.EnableVisualStyles();
+         Application.SetCompatibleTextRenderingDefault(false);
+         ApplicationStartup.Initialize();
+
+         Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
+      }
+   }
+
+   internal static class Helper
+   {
+      internal static QuantityInfo CreateQuantityInfo(IQuantity quantity)
+      {
+         var opf = IoC.Resolve<IObjectPathFactory>();
+         var qi = new QuantityInfo(quantity.Name, opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
+         return qi;
+      }
+
       internal static TestEnvironment TestEnvironment { get; private set; }
 
       public static string NameDefinition(DataColumn column)
@@ -62,22 +86,5 @@ namespace OSPSuite.Starter
          return key;
       }
 
-      [STAThread]
-      public static void Main()
-      {
-         ApplicationStartup.Initialize();
-
-         Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
-      }
-   }
-
-   internal static class Helper
-   {
-      internal static QuantityInfo CreateQuantityInfo(IQuantity quantity)
-      {
-         var opf = IoC.Resolve<IObjectPathFactory>();
-         var qi = new QuantityInfo(quantity.Name, opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
-         return qi;
-      }
    }
 }

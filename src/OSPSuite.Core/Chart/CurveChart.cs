@@ -88,6 +88,14 @@ namespace OSPSuite.Core.Chart
 
       public IEnumerable<Curve> AllVisibleCurvesOnYAxis(AxisTypes yAxisType) => AllCurvesOnYAxis(yAxisType).Where(x => x.Visible);
 
+      public IEnumerable<AxisTypes> AllUsedAxisTypes => _axes.Select(x => x.AxisType);
+
+      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] { AxisTypes.X });
+
+      public IEnumerable<Axis> AllUsedYAxis => _axes.Where(x => x.AxisType != AxisTypes.X);
+
+      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] { AxisTypes.Y });
+
       public bool HasCurve(string curveId) => _curves.Contains(curveId);
 
       public Curve CurveBy(string curveId) => _curves[curveId];
@@ -299,13 +307,7 @@ namespace OSPSuite.Core.Chart
          }
       }
 
-      public IEnumerable<AxisTypes> AllUsedAxisTypes => _axes.Select(x => x.AxisType);
-
-      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] {AxisTypes.X});
-
-      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] {AxisTypes.Y});
-
-      public virtual void AcceptVisitor(IVisitor visitor)
+       public virtual void AcceptVisitor(IVisitor visitor)
       {
          visitor.Visit(this);
       }

@@ -35,6 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart = new CurveChart().WithAxes();
          Chart.Title = Captions.ParameterIdentification.ErrorHistory;
          Chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
+         _chartDisplayPresenter.Edit(Chart);
       }
 
       public void EditParameterIdentification(ParameterIdentification parameterIdentification)
@@ -56,9 +57,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.AxisBy(AxisTypes.X).Caption = Captions.ParameterIdentification.NumberOfEvaluations;
          Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.TotalError;
          Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
-
-         _chartDisplayPresenter.Edit(Chart);
-         _chartDisplayPresenter.View.SetFontAndSizeSettings(Chart.FontAndSize);
       }
 
       protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action=null)
@@ -68,12 +66,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void ClearReferences()
       {
+         //nothing to do here. No reference to actual PI is saved
       }
 
       public void ResetFeedback()
       {
          Chart.Clear();
-         _chartDisplayPresenter.Clear();
+         _chartDisplayPresenter.Refresh();
       }
 
       public void UpdateFeedback(ParameterIdentificationRunState runState)
