@@ -71,9 +71,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          LoadTemplate(_chartTemplate, warnIfNumberOfCurvesAboveThreshold: false);
       }
 
-      protected override void InitEditorLayout()
+      protected override void ConfigureColumns()
       {
-         base.InitEditorLayout();
+         base.ConfigureColumns();
          showSimulationColumn();
       }
 
@@ -81,6 +81,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          Column(BrowserColumns.Simulation).Visible = true;
          Column(BrowserColumns.Simulation).VisibleIndex = 0;
+         ChartEditorPresenter.ApplyColumnSettings();
+
       }
 
       private void updateCacheColor()

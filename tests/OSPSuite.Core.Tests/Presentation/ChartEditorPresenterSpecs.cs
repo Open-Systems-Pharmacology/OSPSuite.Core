@@ -242,7 +242,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.RemoveUnusedColumndsAndAdd(_dataRepository);
+         sut.RemoveUnusedColumnsAndAdd(_dataRepository);
       }
 
       [Observation]
