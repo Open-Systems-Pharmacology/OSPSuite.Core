@@ -244,6 +244,7 @@
     <Compile Include="Presenters\SensitivityAnalysisStarterPresenter.cs" />
     <Compile Include="Tasks\Calculations.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
+    <Compile Include="Tasks\SingleStartPresenterTask.cs" />
     <Compile Include="Tasks\Starters\HistogramTestStarter.cs" />
     <Compile Include="Tasks\Starters\SensitivityAnalysisStarter.cs" />
     <Compile Include="Views\ChartTestView.cs">

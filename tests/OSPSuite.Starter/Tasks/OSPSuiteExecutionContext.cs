@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -15,11 +16,13 @@ namespace OSPSuite.Starter.Tasks
    {
       private readonly IOSPSuiteXmlSerializerRepository _modellingXmlSerializerRepository;
       private readonly ICompression _compress;
+      private readonly IEventPublisher _eventPublisher;
 
-      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository, ICompression compress)
+      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository, ICompression compress, IEventPublisher eventPublisher)
       {
          _modellingXmlSerializerRepository = modellingXmlSerializerRepository;
          _compress = compress;
+         _eventPublisher = eventPublisher;
          Project = new TestProject();
       }
 
@@ -44,6 +47,7 @@ namespace OSPSuite.Starter.Tasks
 
       public void PublishEvent<T>(T eventToPublish)
       {
+         _eventPublisher.PublishEvent(eventToPublish);
       }
 
       public T Get<T>(string id) where T : class, IWithId
