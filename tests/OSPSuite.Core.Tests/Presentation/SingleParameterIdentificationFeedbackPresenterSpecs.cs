@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation
 
       protected ParameterIdentificationRunState _runState;
       protected ParameterIdentification _parameterIdentification;
-       private IParameterIdentificationErrorHistoryFeedbackPresenter _errroHistorFeedbackPresenter;
+      protected IParameterIdentificationErrorHistoryFeedbackPresenter _errroHistorFeedbackPresenter;
 
        protected override void Context()
       {
@@ -70,6 +70,22 @@ namespace OSPSuite.Presentation
       public void should_tell_the_paramters_feedback_presenter_to_update_the_parameters()
       {
          A.CallTo(() => _parametersFeedbackPresenter.UpdateFeedback(_runState)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_single_parameter_identification_feedback_presenter_is_resetting_the_feedback : concern_for_SingleParameterIdentificationFeedbackPresenter
+   {
+      protected override void Because()
+      {
+         sut.ResetFeedback();
+      }
+
+      [Observation]
+      public void should_reset_feedback_in_all_sub_presenters()
+      {
+         A.CallTo(() => _parametersFeedbackPresenter.ResetFeedback()).MustHaveHappened();
+         A.CallTo(() => _timeProfileFeedbackPresenter.ResetFeedback()).MustHaveHappened();
+         A.CallTo(() => _errroHistorFeedbackPresenter.ResetFeedback()).MustHaveHappened();
       }
    }
 }
