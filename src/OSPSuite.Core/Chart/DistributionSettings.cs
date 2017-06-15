@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual BarType BarType
       {
-         get { return _barType; }
+         get => _barType;
          set
          {
             _barType = value;
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual AxisCountMode AxisCountMode
       {
-         get { return _axisCountMode; }
+         get => _axisCountMode;
          set
          {
             _axisCountMode = value;

@@ -60,20 +60,20 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          }));
       }
 
-      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, ICurve> action)
+      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
          AddResultRepositoryToEditor(simulationResult);
          plotAllCalculations(simulationResult, action);
       }
 
-      private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, ICurve> action)
+      private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
          var calculationColumns = calculationColumnsToPlot(simulationResult);
 
          calculationColumns.Each(calculationColumn =>
          {
             if (!_parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString).Any())
-               Chart.RemoveCurvesForColumn(calculationColumn.Id);
+               Chart.RemoveCurvesForColumn(calculationColumn);
 
             SelectColorForCalculationColumn(calculationColumn);
 

@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Chart
 
       public int AxisSize
       {
-         get { return _axisSize; }
+         get => _axisSize;
          set
          {
             _axisSize = value;
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Chart
 
       public int LegendSize
       {
-         get { return _legendSize; }
+         get => _legendSize;
          set
          {
             _legendSize = value;
@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Chart
 
       public int TitleSize
       {
-         get { return _titleSize; }
+         get => _titleSize;
          set
          {
             _titleSize = value;
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Chart
 
       public int DescriptionSize
       {
-         get { return _descriptionSize; }
+         get => _descriptionSize;
          set
          {
             _descriptionSize = value;
@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Chart
 
       public int OriginSize
       {
-         get { return _originSize; }
+         get => _originSize;
          set
          {
             _originSize = value;
@@ -74,7 +74,7 @@ namespace OSPSuite.Core.Chart
 
       public string FontFamilyName
       {
-         get { return _fontFamilyName; }
+         get => _fontFamilyName;
          set
          {
             _fontFamilyName = value;

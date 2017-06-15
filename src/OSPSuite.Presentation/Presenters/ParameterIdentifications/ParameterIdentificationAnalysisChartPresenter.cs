@@ -19,7 +19,7 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>, IParameterIdentificationAnalysisPresenter
-      where TChart : IChartWithObservedData, ISimulationAnalysis where
+      where TChart : ChartWithObservedData, ISimulationAnalysis where
          TView : IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {
       protected ParameterIdentification _parameterIdentification;
@@ -92,9 +92,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void clearChartAndEditor()
       {
          Chart.Clear();
-         ChartEditorPresenter.ClearDataRepositories();
-         ChartDisplayPresenter.DataSource = null;
-         ChartEditorPresenter.DataSource = null;
+         ChartDisplayPresenter.Clear();
+         ChartEditorPresenter.Clear();
          RemoveChartEventHandlers();
       }
 
@@ -118,12 +117,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return _parameterIdentification.AllSimulations.FindByName(simulationName);
       }
 
-      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, ICurve> action)
+      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action)
       {
          Chart.AddCurvesFor(dataRepository.AllButBaseGrid(), NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
 
-      protected void AddCurvesFor(IEnumerable<DataColumn> columns, Action<DataColumn, ICurve> action)
+      protected void AddCurvesFor(IEnumerable<DataColumn> columns, Action<DataColumn, Curve> action)
       {
          Chart.AddCurvesFor(columns, NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
@@ -138,12 +137,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          SelectColorForPath(calculationColumn.PathAsString);
       }
 
-      protected void UpdateColorForCalculationColumn(ICurve curve, DataColumn calculationColumn)
+      protected void UpdateColorForCalculationColumn(Curve curve, DataColumn calculationColumn)
       {
          UpdateColorForPath(curve, calculationColumn.PathAsString);
       }
 
-      protected void UpdateColorForPath(ICurve curve, string path)
+      protected void UpdateColorForPath(Curve curve, string path)
       {
          curve.Color = _colorCache[path];
       }

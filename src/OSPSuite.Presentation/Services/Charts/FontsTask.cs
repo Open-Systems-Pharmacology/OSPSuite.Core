@@ -28,19 +28,10 @@ namespace OSPSuite.Presentation.Services.Charts
          _defaultSansSerifFontNameFunc = defaultSansSerifFontNameFunc;
       }
 
-      public IReadOnlyList<string> SystemFontFamilyNames
-      {
-         get { return _systemFontFamilyFunc().ToList(); }
-      }
+      public IReadOnlyList<string> SystemFontFamilyNames => _systemFontFamilyFunc().ToList();
 
-      public string DefaultSansSerifFontName
-      {
-         get { return _defaultSansSerifFontNameFunc(); }
-      }
+      public string DefaultSansSerifFontName => _defaultSansSerifFontNameFunc();
 
-      public IReadOnlyList<string> ChartFontFamilyNames
-      {
-         get { return new HashSet<string>(SystemFontFamilyNames.Intersect(Constants.ChartFontOptions.GetFontFamilies())) {DefaultSansSerifFontName}.ToList(); }
-      }
+      public IReadOnlyList<string> ChartFontFamilyNames => new HashSet<string>(SystemFontFamilyNames.Intersect(Constants.ChartFontOptions.AllFontFamilies)) {DefaultSansSerifFontName}.ToList();
    }
 }

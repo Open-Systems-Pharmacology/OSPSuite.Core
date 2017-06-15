@@ -29,7 +29,7 @@ namespace OSPSuite.Starter.Domain
          get { return OutputSchema.Intervals.Select(x => x.EndTime.Value).Max(); }
       }
 
-      public IEnumerable<ICurveChart> Charts
+      public IEnumerable<CurveChart> Charts
       {
          get
          {

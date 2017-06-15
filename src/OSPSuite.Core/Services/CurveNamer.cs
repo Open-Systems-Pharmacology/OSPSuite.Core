@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Services
       ///    <paramref name="simulation" />
       ///    if the curve was named with this namer, this indicates the name has not changed
       /// </summary>
-      IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts, bool includingSimulationName = true);
+      IEnumerable<Curve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<CurveChart> curveCharts, bool includingSimulationName = true);
 
       /// <summary>
       ///    Renames the curves from <paramref name="simulation"/> charts that have the same name as originally created.
@@ -52,18 +52,18 @@ namespace OSPSuite.Core.Services
          return _quantityPathToQuantityDisplayPathMapper.DisplayPathAsStringFor(simulation, dataColumn, addSimulationName);
       }
 
-      private bool hasOriginalName(ISimulation simulation, DataColumn dataColumn, ICurve curve, bool includingSimulationName)
+      private bool hasOriginalName(ISimulation simulation, DataColumn dataColumn, Curve curve, bool includingSimulationName)
       {
          var originalCurveName = CurveNameForColumn(simulation, dataColumn, includingSimulationName);
          return string.Equals(curve.Name, originalCurveName);
       }
 
-      public IEnumerable<ICurve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<ICurveChart> curveCharts, bool includingSimulationName = true)
+      public IEnumerable<Curve> CurvesWithOriginalName(ISimulation simulation, IEnumerable<CurveChart> curveCharts, bool includingSimulationName = true)
       {
          return curveCharts.SelectMany(chart => curvesFromChartWithOriginalName(simulation, chart, includingSimulationName));
       }
 
-      private IEnumerable<ICurve> curvesFromChartWithOriginalName(ISimulation simulation, ICurveChart chart, bool includingSimulationName)
+      private IEnumerable<Curve> curvesFromChartWithOriginalName(ISimulation simulation, CurveChart chart, bool includingSimulationName)
       {
          return chart.Curves.Where(curve =>
          {

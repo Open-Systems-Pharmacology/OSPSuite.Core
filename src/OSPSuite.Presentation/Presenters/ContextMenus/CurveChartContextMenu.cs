@@ -1,21 +1,31 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class CurveChartContextMenu : ContextMenu<ICurveChart, IChartDisplayPresenter>
+   public class CurveChartViewItem : IViewItem
    {
-      public CurveChartContextMenu(ICurveChart objectRequestingContextMenu, IChartDisplayPresenter context)
-         : base(objectRequestingContextMenu, context)
+      public CurveChart Chart { get; }
+
+      public CurveChartViewItem(CurveChart chart)
+      {
+         Chart = chart;
+      }
+   }
+
+   public class CurveChartContextMenu : ContextMenu<CurveChart, IChartDisplayPresenter>
+   {
+      public CurveChartContextMenu(CurveChart curveChart, IChartDisplayPresenter context)
+         : base(curveChart, context)
       {
       }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ICurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter)
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter)
       {
          yield return CreateMenuButton.WithCaption(MenuNames.ResetZoom)
             .WithActionCommand(chartDisplayPresenter.ResetZoom)
@@ -36,15 +46,17 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       }
    }
 
-   public interface ICurveChartContextMenuFactory : IContextMenuFactory<ICurveChart>
+   public class CurveChartContextMenuFactory : IContextMenuSpecificationFactory<IViewItem>
    {
-   }
-
-   public class CurveChartContextMenuFactory : ICurveChartContextMenuFactory
-   {
-      public IContextMenu CreateFor(ICurveChart objectRequestingContextMenu, IPresenterWithContextMenu<ICurveChart> presenter)
+      public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return new CurveChartContextMenu(objectRequestingContextMenu, presenter.DowncastTo<IChartDisplayPresenter>());
+         return new CurveChartContextMenu(viewItem.DowncastTo<CurveChartViewItem>().Chart, presenter.DowncastTo<IChartDisplayPresenter>());
+      }
+
+      public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
+      {
+         return viewItem.IsAnImplementationOf<CurveChartViewItem>()
+                && presenter.IsAnImplementationOf<IChartDisplayPresenter>();
       }
    }
 }

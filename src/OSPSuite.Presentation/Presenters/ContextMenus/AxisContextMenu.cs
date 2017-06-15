@@ -4,31 +4,44 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   public class AxisContextMenu : ContextMenu<IAxis>
+   public class AxisViewItem : IViewItem
    {
-      public AxisContextMenu(IAxis objectRequestingContextMenu) : base(objectRequestingContextMenu)
-      {
-      }
+      public IChart Chart { get; }
+      public Axis Axis { get; }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(IAxis axis)
+      public AxisViewItem(IChart chart, Axis axis)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditAxisUICommand, IAxis>(axis);
+         Chart = chart;
+         Axis = axis;
       }
    }
 
-   public interface IAxisContextMenuFactory : IContextMenuFactory<IAxis>
+   public class AxisContextMenu : ContextMenu<AxisViewItem>
    {
+      public AxisContextMenu(AxisViewItem axisViewItem) : base(axisViewItem)
+      {
+      }
 
+      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(AxisViewItem axisViewItem)
+      {
+         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditAxisUICommand, AxisViewItem>(axisViewItem);
+      }
    }
 
-   public class AxisContextMenuFactory : IAxisContextMenuFactory
+   public class AxisContextMenuFactory : IContextMenuSpecificationFactory<IViewItem>
    {
-      public IContextMenu CreateFor(IAxis axis, IPresenterWithContextMenu<IAxis> presenter)
+      public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return new AxisContextMenu(axis);
+         return new AxisContextMenu(viewItem.DowncastTo<AxisViewItem>());
+      }
+
+      public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
+      {
+         return viewItem.IsAnImplementationOf<AxisViewItem>();
       }
    }
 }

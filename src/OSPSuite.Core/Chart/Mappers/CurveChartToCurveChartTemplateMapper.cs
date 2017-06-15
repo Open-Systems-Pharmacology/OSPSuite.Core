@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Chart.Mappers
 {
-   public interface ICurveChartToCurveChartTemplateMapper : IMapper<ICurveChart, CurveChartTemplate>
+   public interface ICurveChartToCurveChartTemplateMapper : IMapper<CurveChart, CurveChartTemplate>
    {
    }
 
@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Chart.Mappers
          _cloneManager = cloneManager;
       }
 
-      public CurveChartTemplate MapFrom(ICurveChart curveChart)
+      public CurveChartTemplate MapFrom(CurveChart curveChart)
       {
          var template = new CurveChartTemplate();
          if (curveChart == null)
@@ -28,12 +28,12 @@ namespace OSPSuite.Core.Chart.Mappers
          template.ChartSettings.UpdatePropertiesFrom(curveChart.ChartSettings, _cloneManager);
          template.FontAndSize.UpdatePropertiesFrom(curveChart.FontAndSize, _cloneManager);
          curveChart.Curves.Each(curve => template.Curves.Add(curveFrom(curve)));
-         curveChart.Axes.Each(axis => template.Axes.Add(axis.Clone()));
+         curveChart.Axes.Each(axis => template.AddAxis(axis.Clone()));
 
          return template;
       }
 
-      private CurveTemplate curveFrom(ICurve curve)
+      private CurveTemplate curveFrom(Curve curve)
       {
          var curveTemplate = new CurveTemplate
          {

@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IChartSettingsPresenter : IPresenter<IChartSettingsView>
    {
-      void BindTo(IChart chart);
+      void Edit(IChart chart);
 
       /// <summary>
       ///    specifies whether the <c>Name</c> property of the settings can be edited or not. If not, the name field will be
@@ -14,16 +14,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       bool NameVisible { get; set; }
 
-      void BindTo(CurveChartTemplate chartTemplate);
-      void DeleteBinding();
+      void Edit(CurveChartTemplate chartTemplate);
+      void Clear();
    }
 
    internal class ChartSettingsPresenter : AbstractPresenter<IChartSettingsView, IChartSettingsPresenter>, IChartSettingsPresenter
    {
       public bool NameVisible
       {
-         get { return _view.NameVisible; }
-         set { _view.NameVisible = value; }
+         get => _view.NameVisible;
+         set => _view.NameVisible = value;
       }
 
       public ChartSettingsPresenter(IChartSettingsView view)
@@ -31,17 +31,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
       }
 
-      public void BindTo(CurveChartTemplate chartTemplate)
+      public void Edit(CurveChartTemplate chartTemplate)
       {
          _view.BindToSource(chartTemplate);
       }
 
-      public void DeleteBinding()
+      public void Clear()
       {
          _view.DeleteBinding();
       }
 
-      public void BindTo(IChart chart)
+      public void Edit(IChart chart)
       {
          _view.BindToSource(chart);
       }

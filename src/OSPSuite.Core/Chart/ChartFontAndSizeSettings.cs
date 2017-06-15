@@ -2,51 +2,20 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Reflection;
-using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartFontAndSizeSettings : Notifier, IValidatable, IUpdatable
+   public class ChartFontAndSizeSettings : MyNotifier, IValidatable, IUpdatable
    {
-      public readonly static ChartFontAndSizeSettings Default = new ChartFontAndSizeSettings();
+      public static readonly ChartFontAndSizeSettings Default = new ChartFontAndSizeSettings();
 
       private int? _chartWidth;
       private int? _chartHeight;
-      private readonly IBusinessRuleSet _rules;
       private ChartFonts _fonts;
-
-      public int? ChartWidth
-      {
-         get { return _chartWidth; }
-         set
-         {
-            _chartWidth = value;
-            OnPropertyChanged(() => ChartWidth);
-         }
-      }
-
-      public int? ChartHeight
-      {
-         get { return _chartHeight; }
-         set
-         {
-            _chartHeight = value;
-            OnPropertyChanged(() => ChartHeight);
-         }
-      }
-
-      public ChartFonts Fonts
-      {
-         get { return _fonts; }
-         private set
-         {
-            _fonts = value;
-            Fonts.PropertyChanged += (o, e) => OnPropertyChanged(() => Fonts);
-         }
-      }
+      public virtual IBusinessRuleSet Rules { get; }
 
       public ChartFontAndSizeSettings()
       {
@@ -54,8 +23,28 @@ namespace OSPSuite.Core.Chart
          ChartHeight = null;
 
          Fonts = new ChartFonts();
-         _rules = DefaultRules();
+         Rules = new BusinessRuleSet(ValidationRules.AllRules());
       }
+
+      public int? ChartWidth
+      {
+         get => _chartWidth;
+         set => SetProperty(ref _chartWidth, value, () => ChartWidth);
+      }
+
+      public int? ChartHeight
+      {
+         get => _chartHeight;
+         set => SetProperty(ref _chartHeight, value, () => ChartHeight);
+      }
+
+      public ChartFonts Fonts
+      {
+         get => _fonts;
+         set => SetProperty(ref _fonts, value, () => Fonts);
+      }
+
+      public bool SizeIsDefined =>  ChartWidth.GetValueOrDefault() > 0 && ChartHeight.GetValueOrDefault() > 0;
 
       public void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -72,11 +61,6 @@ namespace OSPSuite.Core.Chart
          Fonts.UpdateSettingsFrom(sourceChartFontAndSizeSettings.Fonts);
       }
 
-      protected virtual IBusinessRuleSet DefaultRules()
-      {
-         return new BusinessRuleSet(ValidationRules.AllRules());
-      }
-
       private static class ValidationRules
       {
          private const int MINIMUM_EXPORT_SIZE = 200;
@@ -84,9 +68,12 @@ namespace OSPSuite.Core.Chart
 
          internal static IEnumerable<IBusinessRule> AllRules()
          {
-            yield return emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartHeight);
-            yield return emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartWidth);
+            yield return chartHeightIsValid;
+            yield return chartWitdhIsValid;
          }
+
+         private static IBusinessRule chartHeightIsValid { get; } = emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartHeight);
+         private static IBusinessRule chartWitdhIsValid { get; } = emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartWidth);
 
          private static IBusinessRule emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<T>(Expression<Func<T, int?>> property)
          {
@@ -95,11 +82,6 @@ namespace OSPSuite.Core.Chart
                .WithRule((o, v) => v == null || (v >= MINIMUM_EXPORT_SIZE && v <= MAXIMUM_EXPORT_SIZE))
                .WithError(Validation.ValueGreaterThanMinSizeInPixelAndLessThanMaxSizeIsRequiredOrEmpty(MINIMUM_EXPORT_SIZE, MAXIMUM_EXPORT_SIZE));
          }
-      }
-
-      public virtual IBusinessRuleSet Rules
-      {
-         get { return _rules; }
       }
 
       public void Reset()

@@ -204,9 +204,11 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Data.SQLite, Version=1.0.104.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.104.0\lib\net451\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
@@ -240,7 +242,9 @@
     <Compile Include="Presenters\ExplorerTestPresenter.cs" />
     <Compile Include="Presenters\HistogramTestPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalysisStarterPresenter.cs" />
+    <Compile Include="Tasks\Calculations.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
+    <Compile Include="Tasks\SingleStartPresenterTask.cs" />
     <Compile Include="Tasks\Starters\HistogramTestStarter.cs" />
     <Compile Include="Tasks\Starters\SensitivityAnalysisStarter.cs" />
     <Compile Include="Views\ChartTestView.cs">

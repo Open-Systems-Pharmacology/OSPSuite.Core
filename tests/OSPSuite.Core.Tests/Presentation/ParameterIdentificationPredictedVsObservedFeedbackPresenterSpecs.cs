@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation
       protected ParameterIdentification _parameterIdentification;
       private OutputMapping _outputMapping;
       protected IList<DataColumn> _observationColumns;
-      protected List<ICurve> _curveList;
+      protected List<Curve> _curveList;
       private BaseGrid _baseGrid;
       private IDisplayUnitRetriever _displayUnitRetriever;
 
@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation
          _displayUnitRetriever= A.Fake<IDisplayUnitRetriever>();
          _parameterIdentification = A.Fake<ParameterIdentification>();
          _observationColumns = new List<DataColumn>();
-         _curveList = new List<ICurve>();
+         _curveList = new List<Curve>();
          _baseGrid = DomainHelperForSpecs.ObservedData().BaseGrid;
          _outputMapping = new OutputMapping();
 
@@ -55,12 +55,12 @@ namespace OSPSuite.Presentation
          _observationColumns.Add(new DataColumn());
          _observationColumns.Add(new DataColumn());
 
-         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, ICurve>>._)).Invokes(x =>
+         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).Invokes(x =>
          {
-            var action = x.Arguments.Get<Action<DataColumn, ICurve>>(3);
+            var action = x.Arguments.Get<Action<DataColumn, Curve>>(3);
             _observationColumns.Each(observation =>
             {
-               var curve = new Curve(ShortGuid.NewGuid()) {Name = "Best"};
+               var curve = new Curve {Name = "Best"};
 
                action(new DataColumn(ShortGuid.NewGuid(), A.Fake<IDimension>(), _baseGrid), curve);
                _curveList.Add(curve);
@@ -173,7 +173,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_service_should_have_been_used_to_replot_the_new_output_feedback()
       {
-         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>.That.Matches(chart => chart.DefaultYAxisScaling==Scalings.Log), A<Action<DataColumn, ICurve>>._)).MustHaveHappened(Repeated.Exactly.Times(4));
+         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>.That.Matches(chart => chart.DefaultYAxisScaling==Scalings.Log), A<Action<DataColumn, Curve>>._)).MustHaveHappened(Repeated.Exactly.Times(4));
       }
    }
 
@@ -193,7 +193,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_plot_the_best_and_current_run_in_the_chart()
       {
-         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, ICurve>>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened(Repeated.Exactly.Twice);
       }
    }
 }

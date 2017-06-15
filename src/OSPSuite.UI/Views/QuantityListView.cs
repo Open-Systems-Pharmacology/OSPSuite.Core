@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Collections;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
@@ -10,12 +7,16 @@ using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.UI.Views
 {
@@ -151,10 +152,7 @@ namespace OSPSuite.UI.Views
          _pathElementsBinder.SetVisibility(pathElement, visible);
       }
 
-      public override bool HasError
-      {
-         get { return _gridViewBinder.HasError; }
-      }
+      public override bool HasError => _gridViewBinder.HasError;
 
       private void showPopupMenu(PopupMenuShowingEventArgs e)
       {
@@ -171,7 +169,7 @@ namespace OSPSuite.UI.Views
 
       public PathElement GroupPathElement
       {
-         get { return _groupPathElement; }
+         get => _groupPathElement;
          set
          {
             _groupPathElement = value;
@@ -181,7 +179,7 @@ namespace OSPSuite.UI.Views
 
       public PathElement SortedPathElement
       {
-         get { return _sortedPathElement; }
+         get => _sortedPathElement;
          set
          {
             _sortedPathElement = value;
@@ -207,35 +205,8 @@ namespace OSPSuite.UI.Views
 
          private void updateSelection(bool selected)
          {
-            if (View.IsDataRow(_groupRowHandle)) return;
-            var selectedItems = selectedObjects(_groupRowHandle);
+            var selectedItems = _gridViewBinder.SelectedItems(_groupRowHandle);
             _presenter.UpdateSelection(selectedItems.ToList(), selected);
-         }
-
-         //from DevExpressDocumentation XtraGrid Adv... Grouping "Process Group Rows"
-         private IEnumerable<QuantitySelectionDTO> selectedObjects(int groupRowHandle)
-         {
-            //Get the number of immediate children
-            if (!View.IsGroupRow(groupRowHandle))
-               yield break;
-
-            for (int i = 0; i < View.GetChildRowCount(groupRowHandle); i++)
-            {
-               //Get the handle of a child row with the required index
-               int childHandle = View.GetChildRowHandle(groupRowHandle, i);
-               //If the child is a group row, then add its children to the list
-               if (View.IsGroupRow(childHandle))
-               {
-                  foreach (var selectedObject in selectedObjects(childHandle))
-                  {
-                     yield return selectedObject;
-                  }
-               }
-               else
-               {
-                  yield return _gridViewBinder.ElementAt(childHandle);
-               }
-            }
          }
       }
    }

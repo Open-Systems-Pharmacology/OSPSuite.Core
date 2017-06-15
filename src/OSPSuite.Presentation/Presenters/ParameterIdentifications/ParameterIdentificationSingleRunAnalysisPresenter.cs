@@ -11,7 +11,7 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public abstract class ParameterIdentificationSingleRunAnalysisPresenter<TChart> : ParameterIdentificationAnalysisChartPresenter<TChart, IParameterIdentificationSingleRunAnalysisView, IParameterIdentificationSingleRunAnalysisPresenter>, IParameterIdentificationSingleRunAnalysisPresenter where TChart : IChartWithObservedData, ISimulationAnalysis
+   public abstract class ParameterIdentificationSingleRunAnalysisPresenter<TChart> : ParameterIdentificationAnalysisChartPresenter<TChart, IParameterIdentificationSingleRunAnalysisView, IParameterIdentificationSingleRunAnalysisPresenter>, IParameterIdentificationSingleRunAnalysisPresenter where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       private ParameterIdentificationRunResult _selectedRunResults;
       public IReadOnlyList<ParameterIdentificationRunResult> AllRunResults { get; private set; }

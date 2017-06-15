@@ -1,10 +1,10 @@
-using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ContextMenus;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class EditCurveUICommand : ObjectUICommand<ICurve>
+   public class EditCurveUICommand : ObjectUICommand<CurveViewItem>
    {
       private readonly IApplicationController _applicationController;
 
@@ -15,10 +15,9 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         using (var editPresenter = _applicationController.Start<ISingleCurveSettingsModalPresenter>())
+         using (var editPresenter = _applicationController.Start<ISingleCurveSettingsPresenter>())
          {
-            editPresenter.Edit(Subject);
-            editPresenter.ShowView();
+            editPresenter.Edit(Subject.Chart, Subject.Curve);
          }
       }
    }

@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual bool SideMarginsEnabled
       {
-         get { return _sideMarginsEnabled; }
+         get => _sideMarginsEnabled;
          set
          {
             _sideMarginsEnabled = value;
@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual LegendPositions LegendPosition
       {
-         get { return _legendPosition; }
+         get => _legendPosition;
          set
          {
             _legendPosition = value;
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual Color BackColor
       {
-         get { return _backColor; }
+         get => _backColor;
          set
          {
             _backColor = value;
@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Chart
 
       public virtual Color DiagramBackColor
       {
-         get { return _diagramBackColor; }
+         get => _diagramBackColor;
          set
          {
             _diagramBackColor = value;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -11,22 +11,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       IEnumerable<GridColumnSettings> AllColumnSettings();
       GridColumnSettings ColumnSettings(string columnName);
-      event Action<GridColumnSettings> ColumnSettingsChanged;
+      event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged;
       void ApplyAllColumnSettings();
+      void NotifyColumnSettingsChanged();
    }
 
    internal abstract class PresenterWithColumnSettings<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IPresenterWithColumnSettings
       where TView : IView<TPresenter>, IViewWithColumnSettings
       where TPresenter : IPresenter
    {
-      protected IItemNotifyCache<string, GridColumnSettings> _columnSettings;
-      public event Action<GridColumnSettings> ColumnSettingsChanged = delegate { };
+      private readonly Cache<string, GridColumnSettings> _columnSettings;
+      public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
 
       protected PresenterWithColumnSettings(TView view) : base(view)
       {
-         _columnSettings = new ItemNotifyCache<string, GridColumnSettings>(x => x.ColumnName);
+         _columnSettings = new Cache<string, GridColumnSettings>(x => x.ColumnName);
          SetDefaultColumnSettings();
-         _columnSettings.ItemChanged += onItemChanged;
       }
 
       public void ApplyAllColumnSettings()
@@ -34,9 +34,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.ApplyAllColumnSettings();
       }
 
-      private void onItemChanged(object sender, ItemChangedEventArgs args)
+      public void NotifyColumnSettingsChanged()
       {
-         ColumnSettingsChanged(args.Item as GridColumnSettings); //sender is the cache
+         ColumnSettingsChanged(_columnSettings);
       }
 
       protected abstract void SetDefaultColumnSettings();

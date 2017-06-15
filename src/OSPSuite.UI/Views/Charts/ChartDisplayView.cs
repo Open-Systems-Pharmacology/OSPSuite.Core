@@ -11,22 +11,20 @@ using DevExpress.XtraCharts.Native;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
-using Axis = DevExpress.XtraCharts.Axis;
+using Axis = OSPSuite.Core.Chart.Axis;
 
 namespace OSPSuite.UI.Views.Charts
 {
    public partial class ChartDisplayView : BaseUserControl, IChartDisplayView, IViewWithPopup
    {
-      private readonly INumericFormatterOptions _numericFormatterOptions;
       private IChartDisplayPresenter _presenter;
       private readonly IFormatter<double> _doubleFormatter;
       private DiagramZoomRectangleService _diagramZoomRectangleService;
@@ -35,11 +33,13 @@ namespace OSPSuite.UI.Views.Charts
       private bool _axisEditEnabled;
       private bool _curveEditEnabled;
       private bool _axisHotTrackingEnabled;
+      private Series _dummySeries;
+      public bool Updating { get; private set; }
+      private XYDiagram xyDiagram => _chartControl.XYDiagram;
 
       public ChartDisplayView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
-         _numericFormatterOptions = NumericFormatterOptions.Instance;
          _doubleFormatter = new FormatterFactory().CreateFor<double>();
          _hintControl = new LabelControl();
          _barManager.Images = imageListRetriever.AllImagesForContextMenu;
@@ -71,7 +71,7 @@ namespace OSPSuite.UI.Views.Charts
          s1.Points.Add(new SeriesPoint("A", 1));
          _chartControl.Series.Add(s1);
 
-         _chartControl.Legend.MarkerSize = DataChartConstants.Display.LegendMarkerSize;
+         _chartControl.Legend.MarkerSize = UIConstants.Chart.LEGEND_MARKER_SIZE;
          _chartControl.Legend.Direction = LegendDirection.BottomToTop;
          xyDiagram.EnableAxisXZooming = true;
          xyDiagram.EnableAxisYZooming = true;
@@ -92,6 +92,7 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.ObjectSelected += (o, e) => OnEvent(() => onObjectSelected(e));
          _chartControl.Zoom += (o, e) => OnEvent(() => onZoom(e));
          _chartControl.Scroll += (o, e) => OnEvent(() => onScroll(e));
+
          _chartControl.CustomDrawSeriesPoint += (o, e) => OnEvent(() => drawSeriesPoint(e));
 
          AllowDrop = true;
@@ -191,7 +192,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          base.OnResize(eventArgs);
          // reset Axis Scaling
-         _presenter?.RefreshAxisAdapters();
+         _presenter?.RefreshAxisBinders();
       }
 
       private void chartDoubleClick(MouseEventArgs mouseEventArgs)
@@ -214,7 +215,7 @@ namespace OSPSuite.UI.Views.Charts
          showContextMenuFor(hitInfo, mouseEventArgs.Location);
       }
 
-      private void doContextMenuActionFor(ChartHitInfo hitInfo, Action<ICurve> doActionForCurve, Action<IAxis> doActionForAxis, Action doDefaultAction)
+      private void doContextMenuActionFor(ChartHitInfo hitInfo, Action<Curve> doActionForCurve, Action<Axis> doActionForAxis, Action doDefaultAction)
       {
          var axis = getAxisThatIsWithinRange(hitInfo);
          if (hitInfo.InSeries)
@@ -230,8 +231,10 @@ namespace OSPSuite.UI.Views.Charts
             if (!_axisEditEnabled) return;
             doActionForAxis(axis);
          }
-         else if (doDefaultAction != null)
-            doDefaultAction();
+         else
+         {
+            doDefaultAction?.Invoke();
+         }
       }
 
       private void activateFirstContextMenuFor(ChartHitInfo hitInfo)
@@ -242,42 +245,39 @@ namespace OSPSuite.UI.Views.Charts
       private void showContextMenuFor(ChartHitInfo hitInfo, Point location)
       {
          doContextMenuActionFor(hitInfo,
-            curve => _presenter.ShowContextMenu(curve, location),
-            axis => _presenter.ShowContextMenu(axis, location),
-            () => _presenter.ShowContextMenu(_presenter.DataSource, location));
+            curve => _presenter.ShowContextMenu(new CurveViewItem(_presenter.Chart, curve),location),
+            axis => _presenter.ShowContextMenu(new AxisViewItem(_presenter.Chart, axis), location),
+            () => _presenter.ShowContextMenu(new CurveChartViewItem(_presenter.Chart), location));
       }
 
-      private IAxis getAxisThatIsWithinRange(ChartHitInfo hitInfo)
+      private Axis getAxisThatIsWithinRange(ChartHitInfo hitInfo)
       {
          if (isInXAxis(hitInfo))
-            return _presenter.GetAxisFrom(AxisTypes.X);
+            return _presenter.AxisBy(AxisTypes.X);
 
          if (xyDiagram == null)
             return null;
 
          if (isCloseEnoughToYAxis(hitInfo, xyDiagram.AxisY))
-            return _presenter.GetAxisFrom(AxisTypes.Y);
+            return _presenter.AxisBy(AxisTypes.Y);
+
          if (isCloseEnoughToYAxis(hitInfo, xyDiagram.SecondaryAxesY.GetAxisByName(AxisTypes.Y2.ToString())))
-            return _presenter.GetAxisFrom(AxisTypes.Y2);
+            return _presenter.AxisBy(AxisTypes.Y2);
+
          if (isCloseEnoughToYAxis(hitInfo, xyDiagram.SecondaryAxesY.GetAxisByName(AxisTypes.Y3.ToString())))
-            return _presenter.GetAxisFrom(AxisTypes.Y3);
+            return _presenter.AxisBy(AxisTypes.Y3);
 
          return null;
       }
 
       private bool isCloseEnoughToYAxis(ChartHitInfo hitInfo, AxisBase axisY)
       {
-         return hitInfo.InAxis && areAxesEqual(hitInfo.Axis, axisY);
-      }
-
-      private bool areAxesEqual(AxisBase axis, AxisBase anotherAxis)
-      {
-         return axis.Equals(anotherAxis);
+         return hitInfo.InAxis && Equals(hitInfo.Axis, axisY);
       }
 
       private bool isInXAxis(ChartHitInfo hitInfo)
       {
-         return hitInfo.InAxis && areAxesEqual(hitInfo.Axis, xyDiagram.AxisX);
+         return hitInfo.InAxis && Equals(hitInfo.Axis, xyDiagram.AxisX);
       }
 
       private void zoomAction(Control control, Rectangle rectangle)
@@ -287,39 +287,8 @@ namespace OSPSuite.UI.Views.Charts
             cc.Chart.PerformZoomIn(rectangle);
       }
 
-      public bool XGridLine
+      private Color diagramBackColor
       {
-         get
-         {
-            if (xyDiagram == null) return false;
-            return xyDiagram.AxisX.GridLines.Visible;
-         }
-         set
-         {
-            if (xyDiagram == null) return;
-            xyDiagram.AxisX.GridLines.Visible = value;
-         }
-      }
-
-      public bool YGridLine
-      {
-         get
-         {
-            if (xyDiagram == null) return false;
-            return xyDiagram.AxisY.GridLines.Visible;
-         }
-         set
-         {
-            if (xyDiagram == null) return;
-            xyDiagram.AxisY.GridLines.Visible = value;
-         }
-      }
-
-      private XYDiagram xyDiagram => _chartControl.XYDiagram;
-
-      public Color DiagramBackColor
-      {
-         get => xyDiagram?.DefaultPane.BackColor ?? Color.Empty;
          set
          {
             if (xyDiagram == null) return;
@@ -335,147 +304,60 @@ namespace OSPSuite.UI.Views.Charts
 
       public Action<int> HotTracked { private get; set; } = i => { };
 
-      public string Title
+      private string title
       {
-         get => _chartControl.Title;
          set => _chartControl.Title = value;
       }
 
-      public string Description
+      private string description
       {
-         get => _chartControl.Description;
          set => _chartControl.Description = value;
       }
 
-      public LegendPositions LegendPosition
+      private LegendPositions legendPosition
       {
          set => _chartControl.Legend.LegendPosition(value);
       }
 
-      public void EndInit()
-      {
-         _chartControl.EndInit();
-      }
-
-      public void AddCurve(ICurveAdapter curveAdapter)
-      {
-         showChart();
-         var adapter = curveAdapter.DowncastTo<CurveAdapter>();
-         if (getSeries(adapter.Id) == null)
-            _chartControl.Series.AddRange(adapter.Series.ToArray());
-      }
-
       public Size GetDiagramSize()
       {
+         if (xyDiagram?.AxisX == null || xyDiagram?.AxisY == null)
+            return Size.Empty;
+
          try
          {
-            var xAxisRange = xyDiagram.AxisX.VisualRange;
-            var yAxisRange = xyDiagram.AxisX.VisualRange;
+            var (xAxisMin, xAxisMax) = rangeFrom(xyDiagram.AxisX);
+            var (yAxisMin, yAxisMax) = rangeFrom(xyDiagram.AxisY);
 
-            int minX = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MinValue)).Point.X;
-            int maxX = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MaxValue), Convert.ToSingle(yAxisRange.MinValue)).Point.X;
-            int minY = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MinValue)).Point.Y;
-            int maxY = xyDiagram.DiagramToPoint(Convert.ToSingle(xAxisRange.MinValue), Convert.ToSingle(yAxisRange.MaxValue)).Point.Y;
-            return new Size(maxX - minX, maxY - minY);
+            var minPoint = pointAt(xAxisMin, yAxisMin);
+            var maxPoint = pointAt(xAxisMax, yAxisMax);
+
+            return new Size(maxPoint.X - minPoint.X, maxPoint.Y - minPoint.Y);
          }
          catch
          {
             // not understood, under which circumstances exception is thrown
-            return new Size(0, 0);
+            return Size.Empty; ;
          }
       }
 
-      public void RemoveCurve(string id)
-      {
-         var seriesToRemove = getSeries(id);
-         while (seriesToRemove != null)
-         {
-            _chartControl.Series.Remove(seriesToRemove);
-            seriesToRemove = getSeries(id);
-         }
-         if (NoCurves())
-            showHint();
-      }
+      private Point pointAt(float xAxisMin, float yAxisMin) => xyDiagram.DiagramToPoint(xAxisMin, yAxisMin).Point;
 
-      public bool NoCurves()
-      {
-         if (IsDisposed) return true;
-         return _chartControl.Series.Count == 0;
-      }
+      private (float min, float max) rangeFrom(AxisBase axis) => (Convert.ToSingle(axis.VisualRange.MinValue), Convert.ToSingle(axis.VisualRange.MaxValue));
 
-      //removes only last yN-Axis
-      public void RefreshData()
-      {
-         _chartControl.RefreshData();
-      }
-
-      public void RemoveAxis(AxisTypes axisType)
-      {
-         if (axisType >= AxisTypes.Y2 && xyDiagram != null)
-         {
-            SecondaryAxisY axis2Y = xyDiagram.SecondaryAxesY.GetAxisByName(axisType.ToString());
-            xyDiagram.SecondaryAxesY.Remove(axis2Y);
-         }
-      }
+      private (float min, float max) rangeFrom(RangeInfo rangeInfo) => (Convert.ToSingle(rangeInfo.MinValue), Convert.ToSingle(rangeInfo.MaxValue));
 
       public void SetDockStyle(DockStyle dockStyle)
       {
          _chartControl.Dock = dockStyle;
       }
 
-      public IAxisAdapter GetAxisAdapter(IAxis axis)
-      {
-         if (xyDiagram == null) return null;
-
-         Axis axisView = null;
-         AxisTypes type = axis.AxisType;
-         if (type == AxisTypes.X)
-            axisView = xyDiagram.AxisX;
-
-         if (type == AxisTypes.Y)
-            axisView = xyDiagram.AxisY;
-
-         if (type >= AxisTypes.Y2)
-         {
-            // create yN-Axis, if necessary, and also the preceding yN-Axes
-            for (int i = xyDiagram.SecondaryAxesY.Count + 2; i <= (int) type; i++)
-            {
-               var typeOfAxisView = (AxisTypes) Enum.GetValues(typeof(AxisTypes)).GetValue(i);
-               var axis2Y = new SecondaryAxisY(typeOfAxisView.ToString());
-               xyDiagram.SecondaryAxesY.Add(axis2Y);
-            }
-            axisView = xyDiagram.SecondaryAxesY[(int) type - 2];
-         }
-         if (axisView == null)
-            return null;
-
-         return new AxisAdapter(axis, axisView, _numericFormatterOptions);
-      }
-
-      public void BeginSeriesUpdate()
-      {
-         _chartControl.Series.BeginUpdate();
-      }
-
-      public void EndSeriesUpdate()
-      {
-         _chartControl.Series.EndUpdate();
-      }
-
-      public void BeginInit()
-      {
-         _chartControl.BeginInit();
-      }
-
       private void onScroll(ChartScrollEventArgs e)
       {
-         var xRange = e.NewXRange;
-         var yRange = e.NewYRange;
-         _presenter.SetVisibleRange(
-            Convert.ToSingle(xRange.MinValue),
-            Convert.ToSingle(xRange.MaxValue),
-            Convert.ToSingle(yRange.MinValue),
-            Convert.ToSingle(yRange.MaxValue));
+         var (xMin, xMax) = rangeFrom(e.NewXRange);
+         var (yMin, yMax) = rangeFrom(e.NewYRange);
+
+         _presenter.SetVisibleRange(xMin, xMax, yMin, yMax);
       }
 
       private void onZoom(ChartZoomEventArgs e)
@@ -490,24 +372,22 @@ namespace OSPSuite.UI.Views.Charts
 
          if (!rangeComplete(xRange, xyDiagram.AxisX))
          {
-            xMin = Convert.ToSingle(xRange.MinValue);
-            xMax = Convert.ToSingle(xRange.MaxValue);
+            (xMin, xMax) = rangeFrom(xRange);
          }
 
          if (!rangeComplete(yRange, xyDiagram.AxisY))
          {
-            yMin = Convert.ToSingle(yRange.MinValue);
-            yMax = Convert.ToSingle(yRange.MaxValue);
+            (yMin, yMax) = rangeFrom(yRange);
          }
 
          _presenter.SetVisibleRange(xMin, xMax, yMin, yMax);
       }
 
-      public PointF GetPointsForSecondaryAxis(float x, float y, AxisTypes axisTypeToConvertTo)
+      public PointF GetPointsForSecondaryAxis(float x, float y, AxisTypes yAxisType)
       {
          var primaryYAxisCoordinate = getPrimaryYAxisCoordinate(x, y);
 
-         var axisToConvertTo = getAxisFromType(axisTypeToConvertTo);
+         var axisToConvertTo = getAxisFromType(yAxisType);
 
          if (axisToConvertTo == null)
             return PointF.Empty;
@@ -525,23 +405,20 @@ namespace OSPSuite.UI.Views.Charts
       {
          if (axisTypeToConvertTo == AxisTypes.Y)
             return xyDiagram.AxisY;
+
          if (axisTypeToConvertTo == AxisTypes.Y2 && xyDiagram.SecondaryAxesY.Count > 0)
             return xyDiagram.SecondaryAxesY[0];
+
          if (axisTypeToConvertTo == AxisTypes.Y3 && xyDiagram.SecondaryAxesY.Count > 1)
             return xyDiagram.SecondaryAxesY[1];
 
          return null;
       }
 
-      private static bool rangeComplete(RangeInfo range, Axis axis)
+      private static bool rangeComplete(RangeInfo range, DevExpress.XtraCharts.Axis axis)
       {
          return range.Min == axis.WholeRange.MinValueInternal
                 && range.Max == axis.WholeRange.MaxValueInternal;
-      }
-
-      private Series getSeries(string curveId)
-      {
-         return IsDisposed ? null : _chartControl.Series.Cast<Series>().FirstOrDefault(series => series.Name.StartsWith(curveId));
       }
 
       private void onObjectHotTracked(HotTrackEventArgs e)
@@ -619,7 +496,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          var legendText = series.LegendText;
          var lowerLimitOfQuantification = _doubleFormatter.Format(findPointInSeries(hitPoint, series).Values[0]);
-         var displayUnit = _presenter.GetDisplayUnitsFor(series.Name);
+         var displayUnit = _presenter.DisplayUnitsFor(series.Name);
 
          return ToolTips.ToolTipForLLOQ(legendText, $"{lowerLimitOfQuantification} {displayUnit}");
       }
@@ -630,8 +507,7 @@ namespace OSPSuite.UI.Views.Charts
          var xAxisTitle = seriesView.AxisX.Title.Text;
          var yAxisTitle = seriesView.AxisY.Title.Text;
          var legendText = series.LegendText;
-
-         var description = _presenter.CurveDescriptionFromSeriesId(series.Name);
+         var curveDescription = _presenter.CurveDescriptionFromSeriesId(series.Name);
 
          var nextPoint = findPointInSeries(hitPoint, series);
          return ToolTips.ToolTipForSeriesPoint(
@@ -641,7 +517,7 @@ namespace OSPSuite.UI.Views.Charts
             _doubleFormatter.Format(nextPoint.NumericalArgument),
             _doubleFormatter.Format(nextPoint.Values[0]), nextPoint.Values.Length > 1
                ? _doubleFormatter.Format(nextPoint.Values[1])
-               : null, editable: _curveEditEnabled, description: description);
+               : null, editable: _curveEditEnabled, description: curveDescription);
       }
 
       private SeriesPoint findPointInSeries(Point hitPoint, Series series)
@@ -663,21 +539,6 @@ namespace OSPSuite.UI.Views.Charts
          e.Cancel = true;
       }
 
-      public void ResetChartZoom()
-      {
-         if (xyDiagram == null) return;
-
-         xyDiagram.AxisX.ResetVisualRange();
-         xyDiagram.AxisY.ResetVisualRange();
-         foreach (var item in xyDiagram.SecondaryAxesY)
-         {
-            var yAxis2 = item as Axis;
-            yAxis2?.ResetVisualRange();
-         }
-
-         _presenter.ResetVisibleRange();
-      }
-
       public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings)
       {
          _chartControl.SetFontAndSizeSettings(fontAndSizeSettings, _chartControl.Size);
@@ -685,17 +546,17 @@ namespace OSPSuite.UI.Views.Charts
 
       public void CopyToClipboardWithExportSettings()
       {
-         _presenter.DataSource.CopyToClipboard(_chartControl);
+         _presenter.Chart.CopyToClipboard(_chartControl);
       }
 
       public void ReOrderLegend()
       {
-         var seriesList = _chartControl.Series.ToList();
+         var seriesList = _chartControl.Series.ToArray();
 
          _chartControl.Series.Clear();
 
          var sortedSeries = seriesList.OrderBy(series =>
-            _presenter.LegendIndexFromSeriesId(series.Name)).Reverse().Cast<Series>().ToArray();
+            _presenter.LegendIndexFromSeriesId(series.Name)).Reverse().ToArray();
 
          _chartControl.Series.AddRange(sortedSeries);
       }
@@ -703,36 +564,29 @@ namespace OSPSuite.UI.Views.Charts
       public void SetNoCurvesSelectedHint(string hint)
       {
          _hintControl.Text = hint;
-         if (NoCurves())
-            showHint();
       }
 
-      public void UpdateSettings(ICurveChart chart)
+      public void UpdateSettings(CurveChart chart)
       {
-         Title = chart.Title;
-         Description = chart.Description;
+         title = chart.Title;
+         description = chart.Description;
          Name = chart.Name;
-         LegendPosition = chart.ChartSettings.LegendPosition;
+         legendPosition = chart.ChartSettings.LegendPosition;
          BackColor = chart.ChartSettings.BackColor;
-         DiagramBackColor = chart.ChartSettings.DiagramBackColor;
+         diagramBackColor = chart.ChartSettings.DiagramBackColor;
       }
 
       public void PreviewOriginText()
       {
          ClearOriginText();
          if (_presenter.ShouldIncludeOriginData())
-            _previewChartOrigin = _presenter.DataSource.AddOriginData(_chartControl);
+            _previewChartOrigin = _presenter.Chart.AddOriginData(_chartControl);
       }
 
       public void ClearOriginText()
       {
-         clearOriginText(_chartControl);
-      }
-
-      private void clearOriginText(ChartControl control)
-      {
-         if (control.Titles.Contains(_previewChartOrigin))
-            control.Titles.Remove(_previewChartOrigin);
+         if (_chartControl.Titles.Contains(_previewChartOrigin))
+            _chartControl.Titles.Remove(_previewChartOrigin);
       }
 
       public void DisableAxisEdit()
@@ -745,22 +599,66 @@ namespace OSPSuite.UI.Views.Charts
          _axisHotTrackingEnabled = false;
       }
 
+      public object ChartControl => _chartControl;
+
+      public void BeginUpdate()
+      {
+         beginChartUpdate();
+         Updating = true;
+      }
+
+      public void EndUpdate()
+      {
+         endChartUpdate();
+         Updating = false;
+      }
+
+      private void beginChartUpdate()
+      {
+         //Required to add at least one series in order to create the Diagram
+         if (xyDiagram == null)
+         {
+            _dummySeries = new Series("dummy", ViewType.ScatterLine);
+            _chartControl.Series.Add(_dummySeries);
+         }
+
+         _chartControl.BeginInit();
+      }
+
+      private void endChartUpdate()
+      {
+         try
+         {
+            if (_dummySeries == null)
+               return;
+
+            _chartControl.Series.Remove(_dummySeries);
+         }
+         finally
+         {
+            _chartControl.EndInit();
+            _dummySeries = null;
+         }
+      }
+
       public void DisableCurveEdit()
       {
          _curveEditEnabled = false;
       }
 
-      private void showChart()
+      public void ShowChart()
       {
          if (Controls.Contains(_chartControl))
             return;
+
          this.FillWith(_chartControl);
       }
 
-      private void showHint()
+      public void ShowHint()
       {
          if (Controls.Contains(_hintControl) || string.IsNullOrEmpty(_hintControl.Text))
             return;
+
          this.FillWith(_hintControl);
       }
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -12,6 +10,8 @@ using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -23,30 +23,30 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    creates a CurveChart for the table formula given as parameter and display it in the view
       /// </summary>
-      ICurveChart Plot(TableFormula tableFormula);
+      CurveChart Plot(TableFormula tableFormula);
 
       /// <summary>
       ///    creates a CurveChart for a <paramref name="dataRepository" /> using the default y scaling <paramref name="scale" />
       /// </summary>
-      ICurveChart Plot(DataRepository dataRepository, Scalings scale);
+      CurveChart Plot(DataRepository dataRepository, Scalings scale);
 
       /// <summary>
       ///    returns a CurveChart for <paramref name="dataRepository" />
       /// </summary>
-      ICurveChart Plot(DataRepository dataRepository);
+      CurveChart Plot(DataRepository dataRepository);
 
       /// <summary>
       ///    creates a CurveChart for a number of data repositories
       /// </summary>
-      ICurveChart PlotObservedData(IEnumerable<DataRepository> observedData);
+      CurveChart PlotObservedData(IEnumerable<DataRepository> observedData);
 
       /// <summary>
       ///    Special plots for observed data: only columns with origin <see cref="ColumnOrigins.Observation" /> will be added to
       ///    the plot
       /// </summary>
-      ICurveChart PlotObservedData(DataRepository dataRepository);
+      CurveChart PlotObservedData(DataRepository dataRepository);
 
-      ICurveChart Chart { get; }
+      CurveChart Chart { get; }
 
       /// <summary>
       ///    Sets the scaling of the chart to logarithmic or linear
@@ -59,9 +59,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool LogLinSelectionEnabled { get; set; }
 
       /// <summary>
-      /// Action run when a series point is hot tracked in the chart
+      ///    Action run when a series point is hot tracked in the chart
       /// </summary>
       Action<int> HotTracked { set; }
+
+      /// <summary>
+      /// Refresh the display after external changes were made to the chart
+      /// </summary>
+      void Refresh();
    }
 
    public class SimpleChartPresenter : AbstractCommandCollectorPresenter<ISimpleChartView, ISimpleChartPresenter>, ISimpleChartPresenter
@@ -70,7 +75,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IEventPublisher _eventPublisher;
       private readonly IPresentationUserSettings _presentationUserSettings;
       private readonly IDimensionFactory _dimensionFactory;
-      public ICurveChart Chart { get; protected set; }
+      public CurveChart Chart { get; protected set; }
       private readonly IChartFactory _chartFactory;
 
       public SimpleChartPresenter(ISimpleChartView view, IChartDisplayPresenter chartDisplayPresenter, IChartFactory chartFactory,
@@ -94,10 +99,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          set => _chartDisplayPresenter.HotTracked = value;
       }
 
+      public void Refresh() => _chartDisplayPresenter.Refresh();
+
       public void SetChartScale(Scalings scale)
       {
          var yAxis = getYAxis(Chart);
          yAxis.Scaling = scale;
+         Refresh();
       }
 
       public bool LogLinSelectionEnabled
@@ -112,7 +120,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _eventPublisher.PublishEvent(new ExportToPDFEvent(Chart));
       }
 
-      public ICurveChart Plot(TableFormula tableFormula)
+      public CurveChart Plot(TableFormula tableFormula)
       {
          Chart = _chartFactory.CreateChartFor(tableFormula);
          var xAxis = getXAxis(Chart);
@@ -122,36 +130,36 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var yAxis = getYAxis(Chart);
          if (yAxis != null)
             yAxis.Caption = tableFormula.Name;
-         updateChart();
+         bindToChart();
          return Chart;
       }
 
-      private void updateChart()
+      private void bindToChart()
       {
          Chart.ChartSettings.LegendPosition = LegendPositions.None;
-         _chartDisplayPresenter.DataSource = Chart;
+         _chartDisplayPresenter.Edit(Chart);
       }
 
-      public ICurveChart Plot(DataRepository dataRepository, Scalings scale)
+      public CurveChart Plot(DataRepository dataRepository, Scalings scale)
       {
          Chart = _chartFactory.CreateChartFor(dataRepository, scale);
-         setChartScalingForObservedData(new[] { dataRepository });
-         updateChart();
+         setChartScalingForObservedData(new[] {dataRepository});
+         bindToChart();
          return Chart;
       }
 
-      public ICurveChart Plot(DataRepository dataRepository)
+      public CurveChart Plot(DataRepository dataRepository)
       {
          return Plot(dataRepository, _presentationUserSettings.DefaultChartYScaling);
       }
 
-      public ICurveChart PlotObservedData(IEnumerable<DataRepository> observedData)
+      public CurveChart PlotObservedData(IEnumerable<DataRepository> observedData)
       {
          var observedDataList = observedData.ToList();
          Chart = _chartFactory.Create<CurveChart>();
          setChartScalingForObservedData(observedDataList);
          observedDataList.Each(addCurvesToChart);
-         updateChart();
+         bindToChart();
          setScaleInView(Chart);
          return Chart;
       }
@@ -174,12 +182,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return dataRepository.AllButBaseGrid().Any(x => x.IsFraction());
       }
 
-      public ICurveChart PlotObservedData(DataRepository observedData)
+      public CurveChart PlotObservedData(DataRepository observedData)
       {
-         return PlotObservedData(new[] { observedData }).WithName(observedData.Name);
+         return PlotObservedData(new[] {observedData}).WithName(observedData.Name);
       }
 
-      private void setScaleInView(ICurveChart chart)
+      private void setScaleInView(CurveChart chart)
       {
          var yAxis = getYAxis(chart);
          if (yAxis == null) return;
@@ -187,19 +195,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetChartScale(yAxis.Scaling);
       }
 
-      private IAxis getXAxis(ICurveChart chart)
+      private Axis getXAxis(CurveChart chart)
       {
-         return getAxis(chart, AxisTypes.X);
+         return chart.AxisBy(AxisTypes.X);
       }
 
-      private static IAxis getAxis(ICurveChart chart, AxisTypes axisType)
+      private Axis getYAxis(CurveChart chart)
       {
-         return chart.Axes.Contains(axisType) ? chart.Axes[axisType] : null;
-      }
-
-      private IAxis getYAxis(ICurveChart chart)
-      {
-         return getAxis(chart, AxisTypes.Y);
+         return chart.AxisBy(AxisTypes.Y);
       }
 
       private void addCurvesToChart(DataRepository observedData)

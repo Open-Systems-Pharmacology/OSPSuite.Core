@@ -76,7 +76,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void adjustAxes(DataColumn calculatedColumn)
       {
-         Chart.Axes[AxisTypes.Y].UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
+         Chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
       }
    }
 }

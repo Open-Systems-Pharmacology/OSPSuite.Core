@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
       ///    <paramref name="calculationColumn" />
       ///    <paramref name="action" /> will be run when the curve is created for the <paramref name="calculationColumn" />
       /// </summary>
-      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, ICurve> action = null);
+      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action = null);
 
       /// <summary>
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
@@ -88,7 +88,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          return values;
       }
 
-      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, ICurve> action = null)
+      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action = null)
       {
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
@@ -98,13 +98,13 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          var dataColumns = observationColumns.ToList();
          var dimensions = dataColumns.Select(dataColumn => _dimensionFactory.GetMergedDimensionFor(dataColumn)).ToList();
          var defaultDimension = mostFrequentDimension(dimensions);
-         var xAxis = chart.Axes[AxisTypes.X];
+         var xAxis = chart.AxisBy(AxisTypes.X);
 
          if (defaultDimension != null)
             xAxis.Dimension = defaultDimension;
 
-         xAxis.Scaling = chart.Axes[AxisTypes.Y].Scaling;
-         xAxis.UnitName = chart.Axes[AxisTypes.Y].UnitName;
+         xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
+         xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
       }
 
       public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
@@ -136,7 +136,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          return firstGrouping?.FirstOrDefault();
       }
 
-      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, ICurve> action)
+      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
       {
          if (chart.FindCurveWithSameData(observationColumn, calculationColumn) == null)
          {
@@ -145,7 +145,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          adjustAxes(calculationColumn, chart);
       }
 
-      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, ICurve> action)
+      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
       {
          var curve = new Curve {Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name, simulationResultColumn.Repository.Name)};
          curve.SetxData(observationColumn, _dimensionFactory);
@@ -155,7 +155,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          chart.AddCurve(curve);
       }
 
-      private void adjustResultCurveDisplay(ICurve curve)
+      private void adjustResultCurveDisplay(Curve curve)
       {
          curve.LineStyle = LineStyles.None;
          curve.Symbol = Symbols.Diamond;
@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
 
       private void adjustAxes(DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart)
       {
-         chart.Axes[AxisTypes.Y].UnitName = _displayUnitRetriever.PreferredUnitFor(calculationColumn).Name;
+         chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculationColumn).Name;
       }
 
       private static float getIdentityMinimum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)

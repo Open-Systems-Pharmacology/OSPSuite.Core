@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using OSPSuite.Core;
 using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
 
@@ -10,7 +11,7 @@ namespace OSPSuite.Presentation.DTO
       void AddNotifiableFor<TValidatable, TResult>(Expression<Func<TValidatable, TResult>> notifier) where TValidatable : IValidatableDTO;
    }
 
-   public abstract class ValidatableDTO : Notifier, IValidatableDTO
+   public abstract class ValidatableDTO : MyNotifier, IValidatableDTO
    {
       public IBusinessRuleSet Rules { get; } = new BusinessRuleSet();
 

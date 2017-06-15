@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using OSPSuite.Utility.Reflection;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
@@ -21,43 +23,8 @@ namespace OSPSuite.Core.Chart
       Relative
    }
 
-   public interface IAxis : INotifier, IWithDimension
+   public class Axis : MyNotifier, IWithDimension, IValidatable
    {
-      AxisTypes AxisType { get; }
-      string Caption { get; set; }
-      Scalings Scaling { get; set; }
-      NumberModes NumberMode { get; set; }
-      string UnitName { get; set; }
-      bool GridLines { get; set; }
-      float? Min { get; set; }
-      float? Max { get; set; }
-      Unit Unit { get; }
-
-      LineStyles DefaultLineStyle { get; set; } // if not None, then default for curve, when assigned to this axis; 
-      Color DefaultColor { get; set; } // if not isWhite, then default for curve, when assigned to this axis; 
-
-      /// <summary>
-      /// When false, this will force the axis to be hidden from view. When true
-      /// the axis can still be invisible based on number of curves that are visible
-      /// </summary>
-      bool Visible { get; set; }
-
-      /// <summary>
-      ///    Sets range without PropertyChanged event.
-      /// </summary>
-      void SetRange(float? min, float? max);
-
-      void ResetRange();
-
-      //for simultaneous setting of values to avoid temporary x > y in EventHandler on PropertyChanged
-      void UpdateFrom(IAxis axis);
-
-      IAxis Clone();
-   }
-
-   public class Axis : Notifier, IAxis
-   {
-      private readonly AxisTypes _axisType;
       private IDimension _dimension;
       private bool _gridLines;
       private float? _max;
@@ -69,6 +36,8 @@ namespace OSPSuite.Core.Chart
       private LineStyles _defaultLineStyle;
       private Color _defaultColor;
       private bool _visible;
+      public AxisTypes AxisType { get; }
+      public virtual IBusinessRuleSet Rules { get; }
 
       [Obsolete("For serialization")]
       public Axis() : this(AxisTypes.X)
@@ -77,7 +46,7 @@ namespace OSPSuite.Core.Chart
 
       public Axis(AxisTypes axisType)
       {
-         _axisType = axisType;
+         AxisType = axisType;
          _caption = string.Empty;
          _scaling = Scalings.Linear;
          _numberMode = NumberModes.Normal;
@@ -87,37 +56,64 @@ namespace OSPSuite.Core.Chart
          _min = null;
          _max = null;
          Visible = true;
+         _defaultLineStyle = defaultLineStyleForAxisType();
+         _defaultColor = Color.White;
+         Rules = new BusinessRuleSet(ValidationRules.AllRules());
+      }
 
-         switch (axisType)
+      private static class ValidationRules
+      {
+         internal static IEnumerable<IBusinessRule> AllRules()
          {
-            case AxisTypes.Y:
-               _defaultLineStyle = LineStyles.Solid;
-               break;
-            case AxisTypes.Y2:
-               _defaultLineStyle = LineStyles.Dash;
-               break;
-            case AxisTypes.Y3:
-               _defaultLineStyle = LineStyles.Dot;
-               break;
-            default:
-               _defaultLineStyle = LineStyles.None;
-               break;
+            yield return maxGreaterThanOrEqualToMin;
+            yield return minLessThanOrEqualToMax;
+            yield return maxGreaterThanZero;
          }
 
-         _defaultColor = Color.White;
+         private static IBusinessRule maxGreaterThanOrEqualToMin { get; } = createMaxGreaterThanOrEqualToMinRuleForAxis();
+         private static IBusinessRule minLessThanOrEqualToMax { get; } = createMinLessThanOrEqualToMaxRuleForAxis();
+         private static IBusinessRule maxGreaterThanZero { get; } = createMaxGreaterThanZeroRuleForLogarithmicAxis();
+
+         private static IBusinessRule createMinLessThanOrEqualToMaxRuleForAxis() => CreateRule.For<Axis>()
+               .Property(axis => axis.Min)
+               .WithRule((axis, value) => !value.HasValue || !axis.Max.HasValue || axis.Max >= value)
+               .WithError((axis, value) => Validation.AxisMinMustBeLessThanOrEqualToAxisMax(axis.Max));
+      
+         private static IBusinessRule createMaxGreaterThanZeroRuleForLogarithmicAxis() => CreateRule.For<Axis>()
+               .Property(axis => axis.Max)
+               .WithRule((axis, value) => !value.HasValue || axis.Scaling != Scalings.Log || value > 0F)
+               .WithError((axis, value) => Validation.LogAxisMaxMustBeGreaterThanZero);
+      
+         private static IBusinessRule createMaxGreaterThanOrEqualToMinRuleForAxis() => CreateRule.For<Axis>()
+               .Property(axis => axis.Max)
+               .WithRule((axis, value) => !value.HasValue || !axis.Min.HasValue || value >= axis.Min)
+               .WithError((axis, value) => Validation.AxisMaxMustBeGreaterThanOrEqualToAxisMin(axis.Min));
       }
 
-      public bool IsYAxis()
+      private LineStyles defaultLineStyleForAxisType()
       {
-         return _axisType.ToString().Contains("Y");
+         switch (AxisType)
+         {
+            case AxisTypes.Y:
+               return LineStyles.Solid;
+            case AxisTypes.Y2:
+               return LineStyles.Dash;
+            case AxisTypes.Y3:
+               return LineStyles.Dot;
+            default:
+               return LineStyles.None;
+         }
       }
+
+      public bool IsYAxis => AxisType != AxisTypes.X;
+      public bool IsXAxis => AxisType == AxisTypes.X;
 
       public void ResetRange()
       {
          SetRange(null, null);
       }
 
-      public void UpdateFrom(IAxis axis)
+      public void UpdateFrom(Axis axis)
       {
          Caption = axis.Caption;
          Scaling = axis.Scaling;
@@ -131,57 +127,34 @@ namespace OSPSuite.Core.Chart
          Visible = axis.Visible;
       }
 
-      public IAxis Clone()
+      public virtual Axis Clone()
       {
          var clone = new Axis(AxisType);
          clone.UpdateFrom(this);
          return clone;
       }
 
-      public AxisTypes AxisType => _axisType;
-
       public string Caption
       {
-         get { return _caption; }
-         set
-         {
-            if (Equals(_caption, value))
-               return;
-
-            _caption = value;
-            OnPropertyChanged();
-         }
+         get => _caption;
+         set => SetProperty(ref _caption, value, () => Caption);
       }
 
       public Scalings Scaling
       {
-         get { return _scaling; }
-         set
-         {
-            if (_scaling == value)
-               return;
-
-            _scaling = value;
-            OnPropertyChanged();
-         }
+         get => _scaling;
+         set => SetProperty(ref _scaling, value, () => Scaling);
       }
 
       public NumberModes NumberMode
       {
-         get { return _numberMode; }
-         set
-         {
-            if (_numberMode == value)
-               return;
-
-            _numberMode = value;
-            OnPropertyChanged();
-         }
+         get => _numberMode;
+         set => SetProperty(ref _numberMode, value, () => NumberMode);
       }
 
       public IDimension Dimension
       {
-         get { return _dimension; }
+         get => _dimension;
          set
          {
             if (_dimension == value)
@@ -195,9 +168,16 @@ namespace OSPSuite.Core.Chart
          }
       }
 
+      public void Reset()
+      {
+         Dimension = null;
+         UnitName = null;
+         ResetRange();
+      }
+
       public string UnitName
       {
-         get { return _unitName; }
+         get => _unitName;
          set
          {
             if (_unitName == value)
@@ -220,84 +200,52 @@ namespace OSPSuite.Core.Chart
          _unitName = _dimension.DefaultUnitName;
       }
 
+      /// <summary>
+      ///    When false, this will force the axis to be hidden from view. When true
+      ///    the axis can still be invisible based on number of curves that are visible
+      /// </summary>
       public bool Visible
       {
-         get { return _visible; }
-         set
-         {
-            if (_visible == value)
-               return;
-
-            _visible = value;
-            OnPropertyChanged();
-         }
+         get => _visible;
+         set => SetProperty(ref _visible, value, () => Visible);
       }
 
       public bool GridLines
       {
-         get { return _gridLines; }
-         set
-         {
-            if (_gridLines == value)
-               return;
-
-            _gridLines = value;
-            OnPropertyChanged();
-         }
+         get => _gridLines;
+         set => SetProperty(ref _gridLines, value, () => GridLines);
       }
 
       public float? Min
       {
-         get { return _min; }
-         set
-         {
-            if (_min == value)
-               return;
-
-            _min = value;
-            OnPropertyChanged();
-         }
+         get => _min;
+         set => SetProperty(ref _min, value, () => Min);
       }
 
       public float? Max
       {
-         get { return _max; }
-         set
-         {
-            if (_max == value)
-               return;
-
-            _max = value;
-            OnPropertyChanged();
-         }
+         get => _max;
+         set => SetProperty(ref _max, value, () => Max);
       }
 
       public Unit Unit => _dimension?.Unit(UnitName);
 
+      /// <summary>
+      ///    if not None, then default for curve, when assigned to this axis;
+      /// </summary>
       public LineStyles DefaultLineStyle
       {
-         get { return _defaultLineStyle; }
-         set
-         {
-            if (_defaultLineStyle == value)
-               return;
-
-            _defaultLineStyle = value;
-            OnPropertyChanged();
-         }
+         get => _defaultLineStyle;
+         set => SetProperty(ref _defaultLineStyle, value, () => DefaultLineStyle);
       }
 
+      /// <summary>
+      ///    if not isWhite, then default for curve, when assigned to this axis
+      /// </summary>
       public Color DefaultColor
       {
-         get { return _defaultColor; }
-         set
-         {
-            if (_defaultColor == value)
-               return;
-
-            _defaultColor = value;
-            OnPropertyChanged();
-         }
+         get => _defaultColor;
+         set => SetProperty(ref _defaultColor, value, () => DefaultColor);
       }
 
       public void SetRange(float? min, float? max)

@@ -16,10 +16,13 @@ namespace OSPSuite.Presentation
       protected ISimpleChartPresenter _simpleChartPresenter = A.Fake<ISimpleChartPresenter>();
       protected IDataRepositoryChartView _view = A.Fake<IDataRepositoryChartView>();
       protected DataRepository _repository = new DataRepository();
+      private CurveChart _chart;
 
       protected override void Context()
       {
          base.Context();
+         _chart = new CurveChart().WithAxes();
+         A.CallTo(() => _simpleChartPresenter.Chart).Returns(_chart);
          sut = new DataRepositoryChartPresenter(_view, _simpleChartPresenter);
          sut.EditObservedData(_repository);
       }
@@ -50,27 +53,6 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          sut.Handle(new ObservedDataValueChangedEvent(_repository));
-      }
-   }
-
-   public class When_plotting_observed_data : concern_for_DataRepositoryChartPresenter
-   {
-      private readonly ICurveChart _pkSimChart = A.Fake<ICurveChart>();
-      protected override void Because()
-      {
-         sut.EditObservedData(_repository);
-      }
-
-      protected override void Context()
-      {
-         base.Context();
-         A.CallTo(() => _simpleChartPresenter.Chart).Returns(_pkSimChart);
-      }
-
-      [Observation]
-      public void default_scaling_is_linear()
-      {
-         _pkSimChart.Axes[AxisTypes.Y].Scaling.ShouldBeEqualTo(Scalings.Linear);
       }
    }
 

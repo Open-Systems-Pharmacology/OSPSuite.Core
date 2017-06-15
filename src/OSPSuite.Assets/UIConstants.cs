@@ -1017,6 +1017,7 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeTitle = "Font Size Title";
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
+            public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }
    }
@@ -1035,7 +1036,6 @@ namespace OSPSuite.Assets
       public static readonly string SessionDisposed = "Session was disposed";
       public static readonly string OutputMappingHasInconsistentDimension = "Output mapping has inconsistent dimension";
       public static readonly string WeightValueCannotBeNegative = "Weights cannot be negative";
-      public static readonly string CurveNameMissing = "Curve Name is missing";
       public static readonly string DifferentXAxisDimension = "Different from X axis dimension";
       public static readonly string DifferentYAxisDimension = "Different from Y axis dimension";
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
@@ -1263,13 +1263,14 @@ namespace OSPSuite.Assets
          return rowOutOfRange(firstDataRow, lastRow, "first data", sheetName);
       }
 
+      public static string RemoveHigherAxisTypeFirst(string type) => $"Please remove Y-Axis {type} first.";
+
       public static string LastDataRowLessThanFirstDataRow(int dataEndRow, int dataStartRow, string sheetName)
       {
          return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
       }
 
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
-
 
 
       public static class SensitivityAnalysis
@@ -1417,6 +1418,20 @@ namespace OSPSuite.Assets
          var separator = "\n\t- ";
          return $"A circular reference was found in formula of {entityType.ToLower()} '{entity}' with path '{entityPath}'\nPlease check the direct or indirect references:{separator}{references.ToString(separator)}";
       }
+
+      public static string AxisMaxMustBeGreaterThanOrEqualToAxisMin(float? axisMinimumValue)
+      {
+         var preamble = "The axis maximum value should be greater than or equal to the axis minimum value";
+         return axisMinimumValue.HasValue ? $"{preamble} '{axisMinimumValue}'" : preamble;
+      }
+
+      public static string AxisMinMustBeLessThanOrEqualToAxisMax(float? axisMaximumValue)
+      {
+         var preamble = "The axis minimum value should be less than or equal to the axis maximum value";
+         return axisMaximumValue.HasValue ? $"{preamble} '{axisMaximumValue}'" : preamble;
+      }
+
+      public static readonly string LogAxisMaxMustBeGreaterThanZero = "Loagarithmic axis maximum must be greater than 0";
    }
 
    public static class Rules
@@ -1460,6 +1475,7 @@ namespace OSPSuite.Assets
       public static readonly string OptimizedValueIsCloseToBoundary = "Identified value is close to boundary";
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transfered.\nPlease set the calculation methods manually.";
+      public static readonly string CurveNameIsMissing = "Curve name is missing";
    }
 
    public static class RibbonCategories

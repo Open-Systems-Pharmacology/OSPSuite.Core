@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain
 {
    public interface ISimulation : IObjectBase, ILazyLoadable, IAnalysable, IWithCreationMetaData, IWithModel, IUsesObservedData
    {
-      IEnumerable<ICurveChart> Charts { get; }
+      IEnumerable<CurveChart> Charts { get; }
 
       OutputSelections OutputSelections { get; }
 

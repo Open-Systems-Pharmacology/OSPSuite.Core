@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Extensions
 {
    public static class CurveChartExtensions
    {
-      public static Color SelectNewColor(this ICurveChart chart)
+      public static Color SelectNewColor(this CurveChart chart)
       {
          var colors = CommonColors.OrderedForCurves().ToList();
 
@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Extensions
          return colors[newIndex];
       }
 
-      public static void UpdateCurveColorAndStyle(this ICurveChart chart, ICurve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns)
+      public static void UpdateCurveColorAndStyle(this CurveChart chart, Curve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns)
       {
          // Finds color from a related column
          if (dataColumnContainsRelatedColumns(dataColumn))
@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Extensions
          return dataColumn.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop) || dataColumn.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop);
       }
 
-      private static Color getColorFromColumnRelatedTo(ICurveChart chart, DataColumn relatedColumn, IReadOnlyCollection<DataColumn> dataColumns)
+      private static Color getColorFromColumnRelatedTo(CurveChart chart, DataColumn relatedColumn, IReadOnlyCollection<DataColumn> dataColumns)
       {
          var column = findColumnsRelatedTo(AuxiliaryType.ArithmeticMeanPop, relatedColumn, dataColumns) ??
                              findColumnsRelatedTo(AuxiliaryType.GeometricMeanPop, relatedColumn, dataColumns);
@@ -68,7 +68,7 @@ namespace OSPSuite.Presentation.Extensions
             .FirstOrDefault(x => x.GetRelatedColumn(auxiliaryType) == relatedColumn);
       }
 
-      private static Color getColorFromRelatedColumn(ICurveChart chart, DataColumn dataColumn)
+      private static Color getColorFromRelatedColumn(CurveChart chart, DataColumn dataColumn)
       {
          DataColumn relatedColumn = null;
          if (dataColumn.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
@@ -80,7 +80,7 @@ namespace OSPSuite.Presentation.Extensions
          return getColorOf(chart, relatedColumn);
       }
 
-      private static Color getColorOf(ICurveChart chart, DataColumn relatedColumn)
+      private static Color getColorOf(CurveChart chart, DataColumn relatedColumn)
       {
          // search curve for relCol
          var relatedCurve = chart.Curves.FirstOrDefault(c => c.yData.Equals(relatedColumn));

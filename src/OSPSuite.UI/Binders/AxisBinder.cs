@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Format;
+using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
@@ -9,45 +8,68 @@ using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using Axis = DevExpress.XtraCharts.Axis;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Format;
+using DevExpressAxis = DevExpress.XtraCharts.Axis;
+using OSPAxis = OSPSuite.Core.Chart.Axis;
 
 namespace OSPSuite.UI.Binders
 {
-   /// <summary>
-   ///    Adapter from Axis (DataChart.Data) to a AxisView (DevExpress.XtraCharts).
-   /// </summary>
-   internal class AxisAdapter : IAxisAdapter
+   public class AxisBinder : IAxisBinder
    {
       private const int DEVEXPRESS_DEFAULT_Y_MINOR_TICKS = 4;
       private const int DEVEXPRESS_DEFAULT_X_MINOR_TICKS = 1;
-      private readonly Axis _axisView;
+      private const int MINOR_COUNT_IN_LOG_MODE = 8;
+      private readonly DevExpressAxis _axisView;
       private readonly INumericFormatterOptions _numericFormatterOptions;
       private readonly int _defaultMinorTickCount;
       private bool _explicitRange;
       private readonly UnitToMinorIntervalMapper _unitToMinorIntervalMapper;
+      private readonly UxChartControl _chartControl;
 
-      public AxisAdapter(IAxis axis, Axis axisView, INumericFormatterOptions numericFormatterOptions)
+      public AxisBinder(OSPAxis axis, UxChartControl chartControl, INumericFormatterOptions numericFormatterOptions)
       {
          Axis = axis;
+         _chartControl = chartControl;
          _unitToMinorIntervalMapper = new UnitToMinorIntervalMapper();
-
-         _defaultMinorTickCount = Axis.AxisType == AxisTypes.X ? DEVEXPRESS_DEFAULT_X_MINOR_TICKS : DEVEXPRESS_DEFAULT_Y_MINOR_TICKS;
-
-         _axisView = axisView;
+         _defaultMinorTickCount = AxisType == AxisTypes.X ? DEVEXPRESS_DEFAULT_X_MINOR_TICKS : DEVEXPRESS_DEFAULT_Y_MINOR_TICKS;
+         _axisView = retrieveAxisView();
          _axisView.VisualRange.Auto = false;
          _numericFormatterOptions = numericFormatterOptions;
-         Axis.Changed += onAxisChanged;
-         refresh();
+      }
+
+      private DevExpressAxis retrieveAxisView()
+      {
+         if (AxisType == AxisTypes.X)
+            return xyDiagram.AxisX;
+
+         if (AxisType == AxisTypes.Y)
+            return xyDiagram.AxisY;
+
+         int axisTypeIndex = (int) AxisType;
+         const int secondaryAxisOffset = (int) AxisTypes.Y2;
+
+         // create yN-Axis, if necessary, and also the preceding yN-Axes
+         for (int i = xyDiagram.SecondaryAxesY.Count; i <= axisTypeIndex - secondaryAxisOffset; i++)
+         {
+            var typeOfAxisView = EnumHelper.AllValuesFor<AxisTypes>().ElementAt(i + secondaryAxisOffset);
+            var secondaryAxisY = new SecondaryAxisY(typeOfAxisView.ToString());
+            xyDiagram.SecondaryAxesY.Add(secondaryAxisY);
+         }
+         return xyDiagram.SecondaryAxesY[axisTypeIndex - secondaryAxisOffset];
       }
 
       public AxisTypes AxisType => Axis.AxisType;
+      private XYDiagram xyDiagram => _chartControl.XYDiagram;
 
-      public IAxis Axis { get; }
+      public OSPAxis Axis { get; }
 
       public bool Visible
       {
-         get { return _axisView.Visibility == DefaultBoolean.True; }
+         get => _axisView.Visibility == DefaultBoolean.True;
          set
          {
             var reallyVisible = value && Axis.Visible;
@@ -58,24 +80,11 @@ namespace OSPSuite.UI.Binders
 
       public void Dispose()
       {
-         Axis.Changed -= onAxisChanged;
-      }
-
-      private void onAxisChanged(object sender)
-      {
-         refresh();
-      }
-
-      private void refresh()
-      {
-         if (_axisView == null || Axis.Dimension == null || Axis.UnitName == null)
+         if (AxisType < AxisTypes.Y2 || xyDiagram == null)
             return;
 
-         _axisView.GridLines.Visible = Axis.GridLines;
-         if(!Axis.Visible)
-            Visible = false;
-         setAxisTitle();
-         setLabels();
+         var secondaryAxisY = _axisView.DowncastTo<SecondaryAxisY>();
+         xyDiagram.SecondaryAxesY.Remove(secondaryAxisY);
       }
 
       public object AxisView => _axisView;
@@ -85,6 +94,20 @@ namespace OSPSuite.UI.Binders
          setAxisRange(sideMarginsEnabled, diagramSize);
       }
 
+      public void Refresh()
+      {
+         if (Axis.Dimension == null || Axis.UnitName == null)
+            return;
+
+         _axisView.GridLines.Visible = Axis.GridLines;
+
+         if (!Axis.Visible)
+            Visible = false;
+
+         setAxisTitle();
+         setLabels();
+      }
+
       /// <summary>
       ///    Cut the min value for logarithmic axis by the smallest positive value possible.
       /// </summary>
@@ -92,32 +115,40 @@ namespace OSPSuite.UI.Binders
       {
          if (range.MinValue == null)
             return;
+
          var doubleValue = Convert.ToDouble(range.MinValue);
 
+         if (!(doubleValue < double.Epsilon))
+            return;
 
-         if (!(doubleValue < double.Epsilon)) return;
          range.Auto = false;
          range.MinValue = double.Epsilon;
       }
 
-      private bool isAuto => (Axis.NumberMode == NumberModes.Relative || noLimitsSet);
+      private bool isAuto => Axis.NumberMode == NumberModes.Relative || noLimitsSet;
 
-      private bool noLimitsSet => (!Axis.Min.HasValue && !Axis.Max.HasValue);
+      private bool noLimitsSet => !Axis.Min.HasValue && !Axis.Max.HasValue;
 
-      private bool allLimitsSet => (Axis.Min.HasValue && Axis.Max.HasValue);
+      private bool allLimitsSet => Axis.Min.HasValue && Axis.Max.HasValue;
 
       private void adjustAxisMinMax()
       {
          //for log scaling adjust the min value if neccessary to minimum positive value
          if (Axis.Scaling == Scalings.Log)
+         {
             if (Axis.Min.HasValue && Axis.Min < float.Epsilon)
+            {
                Axis.Min = float.Epsilon;
+            }
+         }
 
          //both limits are set
          if (allLimitsSet)
          {
             if (Axis.Min >= Axis.Max)
-               Axis.SetRange(null, null);
+            {
+               Axis.ResetRange();
+            }
             return;
          }
 
@@ -127,12 +158,19 @@ namespace OSPSuite.UI.Binders
 
          if (_explicitRange) // do we come from explicit range? Somebody deleted a limit...
          {
-            Axis.SetRange(null, null);
+            Axis.ResetRange();
          }
          else // somebody inserted a limit...
          {
-            if (!Axis.Min.HasValue) Axis.Min = Convert.ToSingle(_axisView.WholeRange.MinValue);
-            if (!Axis.Max.HasValue) Axis.Max = Convert.ToSingle(_axisView.WholeRange.MaxValue);
+            if (!Axis.Min.HasValue)
+            {
+               var rangeMin = Convert.ToSingle(_axisView.WholeRange.MinValue);
+               Axis.Min = Axis.Max.HasValue ? Math.Min(Axis.Max.Value, rangeMin) :  rangeMin;
+            }
+
+            if (!Axis.Max.HasValue)
+               Axis.Max = Math.Max(Axis.Min.Value, Convert.ToSingle(_axisView.WholeRange.MaxValue));
+               
          }
          _explicitRange = !_explicitRange;
       }
@@ -140,20 +178,21 @@ namespace OSPSuite.UI.Binders
       private void setAxisRange(bool sideMarginsEnabled, Size diagramSize)
       {
          var axisWidthInPixel = Axis.AxisType == AxisTypes.X ? diagramSize.Width : diagramSize.Height;
-     
+         _axisView.Logarithmic = Axis.Scaling == Scalings.Log;
+         _axisView.WholeRange.AlwaysShowZeroLevel = !_axisView.Logarithmic;
+
          adjustAxisMinMax();
          setRange(isAuto, sideMarginsEnabled);
 
          configureAxisScale(axisWidthInPixel);
 
-         _axisView.Logarithmic = (Axis.Scaling == Scalings.Log);
-         _axisView.WholeRange.AlwaysShowZeroLevel = !_axisView.Logarithmic;
+
 
          // logarithmic scale depending settings
          if (!_axisView.Logarithmic) return;
 
          //8 minor counts in log mode
-         _axisView.MinorCount = 8;
+         _axisView.MinorCount = MINOR_COUNT_IN_LOG_MODE;
          adjustMinForLogScale();
       }
 
@@ -162,8 +201,8 @@ namespace OSPSuite.UI.Binders
          if (Axis.Dimension == null)
             return false;
 
-          return Axis.Dimension.IsTime() 
-            && _unitToMinorIntervalMapper.HasPreferredMinorIntervalsFor(Axis.Unit);
+         return Axis.Dimension.IsTime()
+                && _unitToMinorIntervalMapper.HasPreferredMinorIntervalsFor(Axis.Unit);
       }
 
       private void automaticallyConfigureAxisScale()
@@ -174,7 +213,7 @@ namespace OSPSuite.UI.Binders
 
       private void configureAxisScale(int axisWidthInPixel)
       {
-         var ticksConfig = new TicksConfig{AutoScale = true};
+         var ticksConfig = new TicksConfig {AutoScale = true};
 
          if (shouldApplyPreferredMinorTicks())
             ticksConfig = calculateMinorIntervalsPerMajorInterval(axisWidthInPixel);
@@ -197,7 +236,7 @@ namespace OSPSuite.UI.Binders
 
       private TicksConfig calculateMinorIntervalsPerMajorInterval(int axisWidthInPixel)
       {
-         var axisWidthInUnit = Convert.ToSingle(_axisView.VisualRange.MaxValue) - Convert.ToSingle(_axisView.VisualRange.MinValue); 
+         var axisWidthInUnit = Convert.ToSingle(_axisView.VisualRange.MaxValue) - Convert.ToSingle(_axisView.VisualRange.MinValue);
          return _unitToMinorIntervalMapper.MapFrom(Axis.Unit, axisWidthInUnit, axisWidthInPixel);
       }
 
@@ -288,7 +327,6 @@ namespace OSPSuite.UI.Binders
       {
          _axisView.Title.Visibility = DefaultBoolean.True;
          _axisView.Title.Alignment = StringAlignment.Center;
-
          _axisView.Title.Text = Constants.NameWithUnitFor(!string.IsNullOrEmpty(Axis.Caption) ? Axis.Caption : Axis.Dimension.DisplayName, Axis.UnitName);
       }
    }
