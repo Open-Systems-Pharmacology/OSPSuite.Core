@@ -183,7 +183,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
-
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
