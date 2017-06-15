@@ -30,8 +30,8 @@ namespace OSPSuite.Starter.Presenters
          _view.AddPageGroupToPage(createParameterIdentificationAnalyses(), "Modeling");
          _view.AddPageGroupToPage(createParameterIdentificationConfidenceIntervals(), "Modeling");
 
-//         _view.AddPageGroupToPage(createSensitivityAnalysis(), "Modeling");
-//         _view.AddPageGroupToPage(createSensitivityAnalysisAnalyses(), "Modeling");
+         _view.AddPageGroupToPage(createSensitivityAnalysis(), "Modeling");
+         _view.AddPageGroupToPage(createSensitivityAnalysisAnalyses(), "Modeling");
       }
 
       private IButtonGroup createSensitivityAnalysisAnalyses()

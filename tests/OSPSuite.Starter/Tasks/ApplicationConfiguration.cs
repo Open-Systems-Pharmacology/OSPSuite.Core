@@ -10,62 +10,32 @@ namespace OSPSuite.Starter.Tasks
    {
       public string ChartLayoutTemplateFolderPath => "./AFolderThatShouldntExist";
 
-      public string TEXTemplateFolderPath
-      {
-         get { throw new NotSupportedException(); }
-      }
+      public string TEXTemplateFolderPath => throw new NotSupportedException();
 
-      public string PKParametersFilePath { get; set; }
+      public string PKParametersFilePath { get; set; } = "OSPSuite.PKParameters.xml";
 
-      public string FullVersion
-      {
-         get { return "10.0.0"; }
-      }
+      public string FullVersion => "10.0.0";
 
-      public string Version
-      {
-         get { return "10.0"; }
-      }
+      public string Version => "10.0";
 
-      public string MajorVersion
-      {
-         get { return "10"; }
-      }
+      public string MajorVersion => "10";
 
-      public string BuildVersion
-      {
-         get { return "0"; }
-      }
+      public string BuildVersion => "0";
 
-      public string ProductName
-      {
-         get { return "OSPSuite.Core"; }
-      }
+      public string ProductName => "OSPSuite.Core";
 
-      public Origin Product
-      {
-         get { return Origins.Other; }
-      }
+      public Origin Product => Origins.Other;
 
-      public string ProductDisplayName
-      {
-         get { return "OSPSuite.Core"; }
-      }
+      public string ProductDisplayName => "OSPSuite.Core";
 
-      public string ProductNameWithTrademark
-      {
-         get { return "OSPSuite.Core"; }
-      }
+      public string ProductNameWithTrademark => "OSPSuite.Core";
 
-      public ApplicationIcon Icon
-      {
-         get { return ApplicationIcons.PKSim; }
-      }
+      public ApplicationIcon Icon => ApplicationIcons.PKSim;
 
       public IEnumerable<string> UserApplicationSettingsFilePaths { get; }
       public string LicenseAgreementFilePath { get; }
 
       public string IssueTrackerUrl => "https://github.com/Open-Systems-Pharmacology/PK-Sim/issues";
-      public string OSPSuiteNameWithVersion  =>  $"OSPSuite - {Version}";
+      public string OSPSuiteNameWithVersion => $"OSPSuite - {Version}";
    }
 }

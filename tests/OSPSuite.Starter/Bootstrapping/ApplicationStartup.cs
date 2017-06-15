@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Castle.Facilities.TypedFactory;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
@@ -30,6 +31,16 @@ namespace OSPSuite.Starter.Bootstrapping
          initializeDependency();
          XMLSchemaCache.InitializeFromFile("./OSPSuite.SimModel.xsd");
          fillDimensions(IoC.Resolve<IDimensionFactory>());
+         loadPKParameterRepository(IoC.Container);
+
+      }
+
+      private static void loadPKParameterRepository(IContainer container)
+      {
+         var pkParameterRepository = container.Resolve<IPKParameterRepository>();
+         var pKParameterLoader = container.Resolve<IPKParameterRepositoryLoader>();
+         var configuration = container.Resolve<IApplicationConfiguration>();
+         pKParameterLoader.Load(pkParameterRepository, configuration.PKParametersFilePath);
       }
 
       private static void fillDimensions(IDimensionFactory dimensionFactory)
