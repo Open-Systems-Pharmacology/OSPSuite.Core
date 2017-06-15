@@ -1,12 +1,13 @@
-﻿using OSPSuite.Utility.Extensions;
+﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Events
 {
    public abstract class AnalysableEvent
    {
-      public IAnalysable Analysable { get; private set; }
+      public IAnalysable Analysable { get; }
 
       protected AnalysableEvent(IAnalysable analysable)
       {
@@ -16,10 +17,14 @@ namespace OSPSuite.Core.Events
 
    public class ObservedDataAddedToAnalysableEvent : AnalysableEvent
    {
-      public DataRepository ObservedData { get; private set; }
-      public bool ShowData { get; private set; }
+      public IReadOnlyList<DataRepository> ObservedData { get; }
+      public bool ShowData { get; }
 
-      public ObservedDataAddedToAnalysableEvent(IAnalysable analysable, DataRepository observedData, bool showData) : base(analysable)
+      public ObservedDataAddedToAnalysableEvent(IAnalysable analysable, DataRepository observedData, bool showData) : this(analysable, new[] {observedData}, showData)
+      {
+      }
+
+      public ObservedDataAddedToAnalysableEvent(IAnalysable analysable, IReadOnlyList<DataRepository> observedData, bool showData) : base(analysable)
       {
          ObservedData = observedData;
          ShowData = showData;
@@ -28,9 +33,13 @@ namespace OSPSuite.Core.Events
 
    public class ObservedDataRemovedFromAnalysableEvent : AnalysableEvent
    {
-      public DataRepository ObservedData { get; private set; }
+      public IReadOnlyList<DataRepository> ObservedData { get; }
 
-      public ObservedDataRemovedFromAnalysableEvent(IAnalysable analysable, DataRepository observedData) : base(analysable)
+      public ObservedDataRemovedFromAnalysableEvent(IAnalysable analysable, DataRepository observedData) : this(analysable, new[] {observedData})
+      {
+      }
+
+      public ObservedDataRemovedFromAnalysableEvent(IAnalysable analysable, IReadOnlyList<DataRepository> observedData) : base(analysable)
       {
          ObservedData = observedData;
       }
@@ -38,7 +47,7 @@ namespace OSPSuite.Core.Events
 
    public class SimulationAnalysisCreatedEvent : AnalysableEvent
    {
-      public ISimulationAnalysis SimulationAnalysis { get; private set; }
+      public ISimulationAnalysis SimulationAnalysis { get; }
 
       public SimulationAnalysisCreatedEvent(IAnalysable analysable, ISimulationAnalysis simulationAnalysis) : base(analysable)
       {

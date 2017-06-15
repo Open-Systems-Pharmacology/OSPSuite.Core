@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Services.Charts
       ChartEditorLayoutTemplate TemplateByName(string templateName);
 
       /// <summary>
-      ///    Initializes the chart editor from <paramref name="chartEditorAndDisplayPresenter"/>according to the user settings
+      ///    Initializes the chart editor from <paramref name="chartEditorAndDisplayPresenter" />according to the user settings
       /// </summary>
       void InitFromUserSettings(IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter);
    }
@@ -66,7 +66,7 @@ namespace OSPSuite.Presentation.Services.Charts
       private readonly IDialogCreator _dialogCreator;
       private readonly DataPersistor _settingsPersistor;
 
-      public ChartEditorLayoutTask(IPresentationUserSettings userSettings, IChartLayoutTemplateRepository chartLayoutTemplateRepository, 
+      public ChartEditorLayoutTask(IPresentationUserSettings userSettings, IChartLayoutTemplateRepository chartLayoutTemplateRepository,
          IOSPSuiteXmlSerializerRepository chartEditorXmlSerializerRepository, IDialogCreator dialogCreator)
       {
          _userSettings = userSettings;
@@ -87,19 +87,27 @@ namespace OSPSuite.Presentation.Services.Charts
             copySettings(chartEditorPresenter, chartEditorLayoutTemplate.Settings, loadColumnSettings);
             _userSettings.DefaultChartEditorLayout = chartEditorLayoutTemplate.Name;
          }
-
-         chartEditorPresenter.EditorPresenter.ApplyColumnSettings();
+         else
+         {
+            applyColumnSettings(chartEditorPresenter);
+         }
       }
 
-      private static void copySettings(IChartEditorAndDisplayPresenter chartEditorPresenter, ChartEditorAndDisplaySettings chartEditorAndDisplaySettings, bool loadColumnSettings)
+      private static void applyColumnSettings(IChartEditorAndDisplayPresenter chartEditorPresenter)
       {
-         chartEditorPresenter.CopySettingsFrom(chartEditorAndDisplaySettings, loadEditorLayout: true, loadColumnSettings: loadColumnSettings);
+         chartEditorPresenter.EditorPresenter.ApplyColumnSettings();
       }
 
       public void InitEditorLayout(IChartEditorAndDisplayPresenter chartEditorPresenter, string serializedChartEditorLayout, bool loadColumnSettings = false)
       {
          var settings = _settingsPersistor.FromString<ChartEditorAndDisplaySettings>(serializedChartEditorLayout);
          copySettings(chartEditorPresenter, settings, loadColumnSettings);
+      }
+
+      private static void copySettings(IChartEditorAndDisplayPresenter chartEditorPresenter, ChartEditorAndDisplaySettings chartEditorAndDisplaySettings, bool loadColumnSettings)
+      {
+         chartEditorPresenter.CopySettingsFrom(chartEditorAndDisplaySettings, loadEditorLayout: true, loadColumnSettings: loadColumnSettings);
+         applyColumnSettings(chartEditorPresenter);
       }
 
       public void SaveEditorLayoutToFile(IChartEditorAndDisplayPresenter chartEditorPresenter)
@@ -117,15 +125,9 @@ namespace OSPSuite.Presentation.Services.Charts
          return _settingsPersistor.ToString(settings);
       }
 
-      public IEnumerable<ChartEditorLayoutTemplate> AllTemplates()
-      {
-         return _chartLayoutTemplateRepository.All();
-      }
+      public IEnumerable<ChartEditorLayoutTemplate> AllTemplates() => _chartLayoutTemplateRepository.All();
 
-      public ChartEditorLayoutTemplate TemplateByName(string templateName)
-      {
-         return AllTemplates().FindByName(templateName);
-      }
+      public ChartEditorLayoutTemplate TemplateByName(string templateName) => AllTemplates().FindByName(templateName);
 
       private void loadEditorLayoutFromDefaultTemplate(IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter)
       {
