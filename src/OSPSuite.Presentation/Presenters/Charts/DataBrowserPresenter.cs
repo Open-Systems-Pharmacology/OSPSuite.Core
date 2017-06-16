@@ -118,7 +118,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             _dataColumnDTOCache.Add(mapFrom(c));
             _allDataColumns.Add(c);
-
          });
          bindToView();
       }
@@ -139,7 +138,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             _dataColumnDTOCache.Remove(c);
             _allDataColumns.Remove(c);
-
          });
          bindToView();
       }
