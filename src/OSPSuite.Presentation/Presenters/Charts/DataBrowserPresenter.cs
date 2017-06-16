@@ -15,11 +15,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition);
 
-      void AddDataColumn(DataColumn dataColumn);
+      void AddDataColumns(IEnumerable<DataColumn> dataColumns);
 
       bool ContainsDataColumn(DataColumn dataColumn);
 
-      void RemoveDataColumn(DataColumn dataColumn);
+      void RemoveDataColumns(IEnumerable<DataColumn> dataColumns);
 
       void Clear();
 
@@ -66,6 +66,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used);
 
       IReadOnlyList<DataColumn> SelectedDataColumns { get; }
+      IReadOnlyList<DataColumn> AllDataColumns { get; }
 
       void UsedChangedFor(DataColumnDTO dto, bool used);
       void UpdateUsedForSelection(bool used);
@@ -73,15 +74,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    internal class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
    {
-      private readonly NotifyCache<DataColumn, DataColumnDTO> _dataColumnDTOCache;
+      private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
+      private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
       public event Action<IReadOnlyList<DataColumn>> SelectedDataChanged = delegate { };
       public event EventHandler<UsedChangedEventArgs> UsedChanged = delegate { };
 
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
-         _dataColumnDTOCache = new NotifyCache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
-         _view.BindTo(_dataColumnDTOCache);
       }
 
       protected override void SetDefaultColumnSettings()
@@ -112,29 +112,43 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _displayQuantityPathDefinition = displayQuantityPathDefinition;
       }
 
-      public void AddDataColumn(DataColumn dataColumn)
+      public void AddDataColumns(IEnumerable<DataColumn> dataColumns)
       {
-         //Required because adding a column to a bound collection triggers a bunch of devexpress events
-         _view.DoWithoutColumnSettingsUpdateNotification(() =>
+         dataColumns.Each(c =>
          {
-            _dataColumnDTOCache.Add(new DataColumnDTO(dataColumn, _displayQuantityPathDefinition));
+            _dataColumnDTOCache.Add(mapFrom(c));
+            _allDataColumns.Add(c);
+
          });
+         bindToView();
       }
 
-      public bool ContainsDataColumn(DataColumn dataColumn)
+      private void bindToView()
       {
-         return _dataColumnDTOCache.Contains(dataColumn);
+         _view.BindTo(_dataColumnDTOCache);
       }
 
-      public void RemoveDataColumn(DataColumn dataColumn)
+      private DataColumnDTO mapFrom(DataColumn dataColumn) => new DataColumnDTO(dataColumn, _displayQuantityPathDefinition);
+
+      public bool ContainsDataColumn(DataColumn dataColumn) => _dataColumnDTOCache.Contains(dataColumn);
+
+      public void RemoveDataColumns(IEnumerable<DataColumn> dataColumns)
       {
-         _dataColumnDTOCache.Remove(dataColumn);
+         var columnsToRemove = dataColumns.ToList();
+         columnsToRemove.Each(c =>
+         {
+            _dataColumnDTOCache.Remove(c);
+            _allDataColumns.Remove(c);
+
+         });
+         bindToView();
       }
 
       public void Clear()
       {
          _view.DeleteBinding();
          _dataColumnDTOCache.Clear();
+         _allDataColumns.Clear();
       }
 
       public bool IsUsed(DataColumn dataColumn)
@@ -143,6 +157,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       public IReadOnlyList<DataColumn> SelectedDataColumns => columnsFrom(_view.SelectedDataColumns);
+      public IReadOnlyList<DataColumn> AllDataColumns => _allDataColumns;
 
       public void UsedChangedFor(DataColumnDTO dto, bool used)
       {

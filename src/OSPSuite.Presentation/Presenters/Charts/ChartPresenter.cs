@@ -129,7 +129,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(
             Chart,
-            ChartEditorPresenter.AllDataColumns(),
+            ChartEditorPresenter.AllDataColumns,
             curveChartTemplate,
             NameForColumn, warnIfNumberOfCurvesAboveThreshold);
       }
@@ -150,7 +150,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.Caption = Chart.Name;
       }
 
-      protected void AddDataRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories) => dataRepositories.Each(AddDataRepositoryToEditor);
+      protected void AddDataRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories) => ChartEditorPresenter.AddDataRepositories(dataRepositories);
 
       protected void AddDataRepositoryToEditor(DataRepository dataRepository) => ChartEditorPresenter.AddDataRepository(dataRepository);
 
