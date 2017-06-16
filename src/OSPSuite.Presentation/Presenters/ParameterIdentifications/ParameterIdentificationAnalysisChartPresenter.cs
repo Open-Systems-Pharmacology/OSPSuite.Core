@@ -82,7 +82,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Column(BrowserColumns.Simulation).Visible = true;
          Column(BrowserColumns.Simulation).VisibleIndex = 0;
          ChartEditorPresenter.ApplyColumnSettings();
-
       }
 
       private void updateCacheColor()
