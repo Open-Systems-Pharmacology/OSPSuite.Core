@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Add obsverved Data to be displayed on the graph. if the showData flag is set to true, the data will be displayed as
       ///    well
       /// </summary>
-      void AddObservedData(DataRepository observedData, bool asResultOfDragAndDrop);
+      void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop);
    }
 
    public abstract class ChartPresenter<TChart, TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IChartPresenter<TChart>
@@ -135,7 +135,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
 
-      public virtual void AddObservedData(DataRepository observedData, bool asResultOfDragAndDrop)
+      public virtual void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop)
       {
       }
 
