@@ -144,8 +144,8 @@ namespace OSPSuite.Starter.Presenters
 
       private void addRepositoryToChart(DataRepository newRepository)
       {
-         ChartEditorPresenter.AddDataRepository(newRepository);
-         var dataRepositories = new[] {newRepository};
+         var dataRepositories = new[] { newRepository };
+         ChartEditorPresenter.AddDataRepositories(dataRepositories);
          addNewRepositories(dataRepositories);
          addNewCurvesToChart(dataRepositories);
       }
@@ -179,10 +179,10 @@ namespace OSPSuite.Starter.Presenters
       {
          using (_chartUpdater.UpdateTransaction(Chart))
          {
+            ChartEditorPresenter.RemoveDataRepositories(_dataRepositories);
             _dataRepositories.Each(repository =>
             {
                Chart.RemoveCurvesForDataRepository(repository);
-               ChartEditorPresenter.RemoveDataRepository(repository);
             });
             _dataRepositories.Clear();
          }

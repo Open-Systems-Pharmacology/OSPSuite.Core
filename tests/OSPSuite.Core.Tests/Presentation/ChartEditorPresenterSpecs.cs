@@ -101,7 +101,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.AddDataRepository(_dataRepository);
+         sut.AddDataRepositories(new []{_dataRepository });
       }
 
       [Observation]
@@ -209,19 +209,13 @@ namespace OSPSuite.Presentation
    {
       private DataRepository _dataRepository;
       private DataColumn _columnThatWillBeInternal;
-      private DataColumn _newColumn;
       private DataColumn _columnThatWillBeRemoved;
       private List<DataColumn> _dataColumnsRemoved;
-      private List<DataColumn> _dataColumnsAdded;
 
       protected override void Context()
       {
          base.Context();
          var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         _newColumn = new DataColumn("New", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation)
-         };
 
          _columnThatWillBeInternal = new DataColumn("Column that wil be internal", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
          {
@@ -242,25 +236,21 @@ namespace OSPSuite.Presentation
          _dataRepository = new DataRepository {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn};
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => true);
-         sut.AddDataRepository(_dataRepository);
+         sut.AddDataRepositories(new []{_dataRepository});
 
          _columnThatWillBeInternal.IsInternal = true;
          _dataRepository.Remove(_columnThatWillBeRemoved);
-         _dataRepository.Add(_newColumn);
 
          A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new []{ _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn });
 
          A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
             .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
 
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
-            .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
-
       }
 
       protected override void Because()
       {
-         sut.RemoveUnusedColumnsAndAdd(_dataRepository);
+         sut.RemoveUnusedColumns();
       }
 
       [Observation]
@@ -276,9 +266,9 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_add_the_new_columns()
+      public void should_not_remove_the_existing_columns()
       {
-         _dataColumnsAdded.ShouldContain(_newColumn);
+         _dataColumnsRemoved.ShouldNotContain(_standardColumn);
       }
    }
 }

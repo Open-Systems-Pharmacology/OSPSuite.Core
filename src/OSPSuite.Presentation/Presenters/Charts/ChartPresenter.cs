@@ -9,7 +9,6 @@ using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -23,17 +22,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       TChart Chart { get; }
 
       void InitializeAnalysis(TChart chart);
-
-      /// <summary>
-      ///    Remove the observed data from the current chart
-      /// </summary>
-      void RemoveDataRepositoryFromEditor(DataRepository dataRepository);
-
-      /// <summary>
-      ///    Add obsverved Data to be displayed on the graph. if the showData flag is set to true, the data will be displayed as
-      ///    well
-      /// </summary>
-      void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop);
    }
 
    public abstract class ChartPresenter<TChart, TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IChartPresenter<TChart>
@@ -70,7 +58,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          Chart = chart;
 
-         Chart.AllObservedData().Each(AddDataRepositoryToEditor);
+         AddDataRepositoriesToEditor(Chart.AllObservedData());
 
          updateViewCaptionFromChart();
 
@@ -134,8 +122,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
             NameForColumn, warnIfNumberOfCurvesAboveThreshold);
       }
 
-
-      public virtual void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop)
+      /// <summary>
+      ///    Add obsverved Data to be displayed on the graph. if the showData flag is set to true, the data will be displayed as
+      ///    well
+      /// </summary>
+      protected virtual void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop)
       {
       }
 
@@ -152,11 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected void AddDataRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories) => ChartEditorPresenter.AddDataRepositories(dataRepositories);
 
-      protected void AddDataRepositoryToEditor(DataRepository dataRepository) => ChartEditorPresenter.AddDataRepository(dataRepository);
-
-      public void RemoveDataRepositoryFromEditor(DataRepository dataRepository) => ChartEditorPresenter.RemoveDataRepository(dataRepository);
-
-      public void RemoveDataRepositoriesFromEditor(IEnumerable<DataRepository> dataRepositories) => dataRepositories?.Each(RemoveDataRepositoryFromEditor);
+      protected void RemoveDataRepositoriesFromEditor(IEnumerable<DataRepository> dataRepositories) => ChartEditorPresenter.RemoveDataRepositories(dataRepositories);
 
       private PathElements displayQuantityPathDefinition(DataColumn dataColumn)
       {

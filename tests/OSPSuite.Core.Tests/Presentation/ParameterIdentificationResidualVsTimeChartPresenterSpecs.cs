@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -131,7 +132,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_create_one_repository_for_each_output_containing_the_value_of_the_residuals_and_for_the_marker()
       {
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(A<DataRepository>._)).MustHaveHappened(Repeated.Exactly.Times(4));
+         A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._)).MustHaveHappened();
       }
 
       [Observation]

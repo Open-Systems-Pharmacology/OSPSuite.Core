@@ -12,7 +12,6 @@ using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -37,20 +36,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Clear();
 
       /// <summary>
-      ///    Adds all columns of <paramref name="dataRepository" /> to DataBrowser. This  does not trigger a redraw of the chart
-      /// </summary>
-      void AddDataRepository(DataRepository dataRepository);
-
-      /// <summary>
-      ///    Removes all columns of <paramref name="dataRepository" /> from DataBrowser. This does not trigger a redraw of the
+      ///    Removes all columns of all <paramref name="dataRepositories" /> from DataBrowser. This does not trigger a redraw of
+      ///    the
       ///    chart
       /// </summary>
-      void RemoveDataRepository(DataRepository dataRepository);
+      void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
-      ///    Remove unused columns (e.g. not attached to a <see cref="DataRepository"/>) and adds columns from <paramref name="dataRepository"/>. This does not trigger a redraw of the chart
+      ///    Remove unused columns (e.g. not attached to a <see cref="DataRepository">.</see>This does not trigger a redraw of
+      ///    the chart
       /// </summary>
-      void RemoveUnusedColumnsAndAdd(DataRepository dataRepository);
+      void RemoveUnusedColumns();
 
       /// <summary>
       ///    Adds <paramref name="dataRepositories" /> to DataBrowser. This does not trigger a redraw of the chart
@@ -375,16 +371,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
 
-      public void AddDataRepository(DataRepository dataRepository)
-      {
-         AddDataRepositories(new[] {dataRepository});
-      }
-
-      public void RemoveUnusedColumnsAndAdd(DataRepository dataRepository)
-      {
-         removeColumns(unusedColumns);
-         AddDataRepository(dataRepository);
-      }
+      public void RemoveUnusedColumns() => removeColumns(unusedColumns);
 
       private IReadOnlyList<DataColumn> unusedColumns
       {
@@ -398,9 +385,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
                 !_showDataColumnInDataBrowserDefinition(dataColumn);
       }
 
-      public void RemoveDataRepository(DataRepository dataRepository)
+      public void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories)
       {
-         removeColumns(dataRepository);
+         if (dataRepositories == null) return;
+         removeColumns(dataRepositories.SelectMany(x => x.Columns));
       }
 
       private void removeColumns(IEnumerable<DataColumn> dataColumns)
@@ -408,7 +396,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.RemoveDataColumns(dataColumns);
       }
 
-      public IReadOnlyList<DataColumn> AllDataColumns =>  _dataBrowserPresenter.AllDataColumns;
+      public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
 
       public void CopySettingsFrom(ChartEditorSettings settings)
       {

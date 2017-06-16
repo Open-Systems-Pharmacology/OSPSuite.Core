@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void addZeroMarkerCurveToChart()
       {
          var markerRepository = createMarkerRepository();
-         AddDataRepositoryToEditor(markerRepository);
+         AddDataRepositoriesToEditor(new []{markerRepository });
          AddCurvesFor(markerRepository, action: (column, curve) =>
          {
             curve.UpdateMarkerCurve(ZERO);
