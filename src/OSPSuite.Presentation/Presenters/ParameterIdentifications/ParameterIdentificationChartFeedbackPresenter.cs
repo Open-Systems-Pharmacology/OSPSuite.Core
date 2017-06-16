@@ -45,9 +45,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          AddSubPresenters(_chartDisplayPresenter);
          _dimensionFactory = dimensionFactory;
          _chart = chart;
+         _chart.PreviewSettings = true;
+         _chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
          _chartDisplayPresenter.Edit(_chart);
          _outputMappingComparer = new OutputMappingByFullOutputPathComparer();
-         _chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
       }
 
       public IEnumerable<OutputMapping> AllOutputs
