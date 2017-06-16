@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -101,6 +102,7 @@ namespace OSPSuite.Presentation
       private DataColumn _firstObservedData1;
       private DataRepository _simulationResult2;
       private DataColumn _firstObservedData2;
+      private List<DataRepository> _allAddedDataRepositories;
 
       protected override void Context()
       {
@@ -120,6 +122,11 @@ namespace OSPSuite.Presentation
          _optimizationRunResult2.AddResult(DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult4"));
 
          _parameterIdentification.Configuration.RunMode = new MultipleParameterIdentificationRunMode();
+
+         _allAddedDataRepositories = new List<DataRepository>();;
+         A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._))
+            .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
+
       }
 
       protected override void Because()
@@ -137,14 +144,14 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_add_the_observed_data_to_the_chart_editor()
       {
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_observedData1)).MustHaveHappened();
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_observedData2)).MustHaveHappened();
+         _allAddedDataRepositories.ShouldContain(_observedData1);
+         _allAddedDataRepositories.ShouldContain(_observedData2);
       }
 
       [Observation]
       public void should_add_the_simulation_results_to_the_chart_editor()
       {
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_simulationResult1)).MustHaveHappened();
+         _allAddedDataRepositories.ShouldContain(_simulationResult1);
       }
 
       [Observation]

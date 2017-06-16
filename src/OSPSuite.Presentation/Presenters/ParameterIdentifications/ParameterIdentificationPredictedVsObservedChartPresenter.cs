@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
@@ -12,6 +11,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -24,8 +24,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
 
-      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext,IPredictedVsObservedChartService predictedVsObservedChartService) :
-            base(view, chartPresenterContext,  ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
+      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
+         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          view.HelpId = HelpId.Tool_PI_Analysis_PredictedVsObserved;
@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
-         _identityRepositories.Each(AddDataRepositoryToEditor);
+         AddDataRepositoriesToEditor(_identityRepositories);
 
          AddDataRepositoriesToEditor(_parameterIdentification.AllObservedData);
          UpdateChartFromTemplate();
@@ -53,17 +53,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected override void AddRunResultToChart(ParameterIdentificationRunResult runResult)
       {
-         runResult.BestResult.SimulationResults.Each(simulationResult => addPredictedVsObservedToChart(simulationResult, (column, curve) =>
+         addPredictedVsObservedToChart(runResult.BestResult.SimulationResults, (column, curve) =>
          {
             curve.Description = CurveDescription(curve.Name, runResult);
             curve.Name = column.PathAsString;
-         }));
+         });
       }
 
-      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, Curve> action)
+      private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
-         AddResultRepositoryToEditor(simulationResult);
-         plotAllCalculations(simulationResult, action);
+         AddResultRepositoriesToEditor(simulationResults);
+         simulationResults.Each(x => plotAllCalculations(x, action));
       }
 
       private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)

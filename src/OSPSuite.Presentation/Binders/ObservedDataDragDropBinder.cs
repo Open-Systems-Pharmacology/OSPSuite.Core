@@ -53,26 +53,23 @@ namespace OSPSuite.Presentation.Binders
          return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject);
       }
 
-      private IEnumerable<ObservedDataNode> getObservedDataNodesFrom(DragEventArgs e)
+      private IReadOnlyList<ObservedDataNode> getObservedDataNodesFrom(DragEventArgs e)
       {
          var dataNodes = e.Data<IEnumerable<ITreeNode>>();
-         if (dataNodes == null) return Enumerable.Empty<ObservedDataNode>();
+         if (dataNodes == null)
+            return new List<ObservedDataNode>();
 
          var treeNodes = dataNodes as IList<ITreeNode> ?? dataNodes.ToList();
          if (areAllObservedDataNodes(treeNodes))
-         {
             return observedDataNodesFromObservedDataNodes(treeNodes);
-         }
 
          if (areAllObservedDataClassificationNodes(treeNodes) || areAllRootNodes(treeNodes))
-         {
             return observedDataNodesFromClassificationNodes(treeNodes);
-         }
 
-         return Enumerable.Empty<ObservedDataNode>();
+         return new List<ObservedDataNode>();
       }
 
-      private IEnumerable<ObservedDataNode> observedDataNodesFromClassificationNodes(IEnumerable<ITreeNode> treeNodes)
+      private IReadOnlyList<ObservedDataNode> observedDataNodesFromClassificationNodes(IEnumerable<ITreeNode> treeNodes)
       {
          var observedDataList = new List<ObservedDataNode>();
          treeNodes.Each(treeNode =>
@@ -84,7 +81,7 @@ namespace OSPSuite.Presentation.Binders
          return observedDataList;
       }
 
-      private static IEnumerable<ObservedDataNode> observedDataNodesFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)
+      private static IReadOnlyList<ObservedDataNode> observedDataNodesFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)
       {
          var observedDataList = new List<ObservedDataNode>();
          treeNodes.Each(node =>

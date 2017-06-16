@@ -158,7 +158,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var outputPath = outputMappingsByOutput.Key;
          SelectColorForPath(outputPath);
 
-         outputMappingsByOutput.Each(outputMapping => AddDataRepositoryToEditor(outputMapping.WeightedObservedData));
+         AddDataRepositoriesToEditor(outputMappingsByOutput.Select(x=>x.WeightedObservedData.ObservedData));
 
          AddCurvesFor(outputMappingsByOutput.SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()),
             (column, curve) =>
