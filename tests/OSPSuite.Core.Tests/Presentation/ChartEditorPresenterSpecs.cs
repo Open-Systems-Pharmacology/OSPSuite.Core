@@ -248,6 +248,8 @@ namespace OSPSuite.Presentation
          _dataRepository.Remove(_columnThatWillBeRemoved);
          _dataRepository.Add(_newColumn);
 
+         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new []{ _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn });
+
          A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
             .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
 
