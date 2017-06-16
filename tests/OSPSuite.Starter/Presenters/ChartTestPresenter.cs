@@ -306,7 +306,7 @@ namespace OSPSuite.Starter.Presenters
       {
          _chartFromTemplateService.InitializeChartFromTemplate(
             Chart,
-            ChartEditorPresenter.AllDataColumns(),
+            ChartEditorPresenter.AllDataColumns,
             template,
             Helper.NameDefinition, false);
       }

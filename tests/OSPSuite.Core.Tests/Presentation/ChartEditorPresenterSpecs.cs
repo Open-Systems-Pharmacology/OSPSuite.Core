@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using FakeItEasy;
 using OSPSuite.BDDHelper.Extensions;
@@ -65,6 +67,7 @@ namespace OSPSuite.Presentation
       private DataColumn _hiddenColumn;
       private DataColumn _internalColumn;
       private DataColumn _auxiliaryObservedDataColumn;
+      private List<DataColumn> _dataColumnsAdded;
 
       protected override void Context()
       {
@@ -90,6 +93,10 @@ namespace OSPSuite.Presentation
          _dataRepository = new DataRepository {_hiddenColumn, _internalColumn, _auxiliaryObservedDataColumn, _standardColumn};
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => x.Name != _hiddenColumn.Name);
+
+         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
+            .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+
       }
 
       protected override void Because()
@@ -100,25 +107,25 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_not_add_columns_that_are_marked_as_internal()
       {
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumn(_internalColumn)).MustNotHaveHappened();
+         _dataColumnsAdded.ShouldNotContain(_internalColumn);
       }
 
       [Observation]
       public void should_not_add_columns_that_should_not_be_shown_in_the_data_browser()
       {
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumn(_hiddenColumn)).MustNotHaveHappened();
+         _dataColumnsAdded.ShouldNotContain(_hiddenColumn);
       }
 
       [Observation]
       public void should_not_add_observed_data_auxiliary_column()
       {
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumn(_auxiliaryObservedDataColumn)).MustNotHaveHappened();
+         _dataColumnsAdded.ShouldNotContain(_auxiliaryObservedDataColumn);
       }
 
       [Observation]
       public void should_add_standard_column()
       {
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumn(_standardColumn)).MustHaveHappened();
+         _dataColumnsAdded.ShouldContain(_standardColumn);
       }
    }
 
@@ -204,6 +211,8 @@ namespace OSPSuite.Presentation
       private DataColumn _columnThatWillBeInternal;
       private DataColumn _newColumn;
       private DataColumn _columnThatWillBeRemoved;
+      private List<DataColumn> _dataColumnsRemoved;
+      private List<DataColumn> _dataColumnsAdded;
 
       protected override void Context()
       {
@@ -238,6 +247,15 @@ namespace OSPSuite.Presentation
          _columnThatWillBeInternal.IsInternal = true;
          _dataRepository.Remove(_columnThatWillBeRemoved);
          _dataRepository.Add(_newColumn);
+
+         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new []{ _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn });
+
+         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
+            .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+
+         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
+            .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+
       }
 
       protected override void Because()
@@ -248,21 +266,19 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_remove_the_column_that_were_removed()
       {
-         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumn(_columnThatWillBeRemoved)).MustHaveHappened();
+         _dataColumnsRemoved.ShouldContain(_columnThatWillBeRemoved);
       }
 
       [Observation]
       public void should_remove_the_column_that_became_internal()
       {
-         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumn(_columnThatWillBeInternal)).MustHaveHappened();
+         _dataColumnsRemoved.ShouldContain(_columnThatWillBeInternal);
       }
-
-   
 
       [Observation]
       public void should_add_the_new_columns()
       {
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumn(_newColumn)).MustHaveHappened();
+         _dataColumnsAdded.ShouldContain(_newColumn);
       }
    }
 }

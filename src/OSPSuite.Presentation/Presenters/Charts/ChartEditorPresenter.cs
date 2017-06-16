@@ -37,29 +37,30 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Clear();
 
       /// <summary>
-      ///    Adds all columns of <paramref name="dataRepository"/> to DataBrowser. This does not trigger a redraw of the chart
+      ///    Adds all columns of <paramref name="dataRepository" /> to DataBrowser. This  does not trigger a redraw of the chart
       /// </summary>
       void AddDataRepository(DataRepository dataRepository);
 
       /// <summary>
-      ///    Removes all columns of <paramref name="dataRepository"/> from DataBrowser. This does not trigger a redraw of the chart
+      ///    Removes all columns of <paramref name="dataRepository" /> from DataBrowser. This does not trigger a redraw of the
+      ///    chart
       /// </summary>
       void RemoveDataRepository(DataRepository dataRepository);
 
       /// <summary>
-      ///    Refreshs columns of DataRepository in DataBrowser and depending curves in Chart.
+      ///    Remove unused columns (e.g. not attached to a <see cref="DataRepository"/>) and adds columns from <paramref name="dataRepository"/>. This does not trigger a redraw of the chart
       /// </summary>
       void RemoveUnusedColumnsAndAdd(DataRepository dataRepository);
 
       /// <summary>
-      ///    Adds <paramref name="dataRepositories"/> to DataBrowser. This does not trigger a redraw of the chart
+      ///    Adds <paramref name="dataRepositories" /> to DataBrowser. This does not trigger a redraw of the chart
       /// </summary>
       void AddDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
       ///    Returns all DataColumns used in the DataBrowser
       /// </summary>
-      IEnumerable<DataColumn> AllDataColumns();
+      IReadOnlyList<DataColumn> AllDataColumns { get; }
 
       /// <summary>
       ///    Creates a ChartEditorSettings object from settings of this presenter. Used for serialization.
@@ -179,7 +180,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
    {
-      private readonly ICache<string, DataColumn> _dataColumns;
       private Func<DataColumn, bool> _showDataColumnInDataBrowserDefinition;
 
       private readonly IAxisSettingsPresenter _axisSettingsPresenter;
@@ -204,7 +204,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          IDimensionFactory dimensionFactory)
          : base(view)
       {
-         _dataColumns = new Cache<string, DataColumn>(x => x.Id);
          _showDataColumnInDataBrowserDefinition = col => col.DataInfo.Origin != ColumnOrigins.BaseGrid;
 
          _axisSettingsPresenter = axisSettingsPresenter;
@@ -294,15 +293,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.ApplyAllColumnSettings();
       }
 
-      public void ShowCustomizationForm()
-      {
-         _view.ShowCustomizationForm();
-      }
+      public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
-      public void AddUsedInMenuItem()
-      {
-         _view.AddUsedInMenuItemCheckBox();
-      }
+      public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
 
       public void UpdateUsedForSelection(bool? isUsed)
       {
@@ -330,7 +323,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          SetCurveNameDefinition(null);
          SetDisplayQuantityPathDefinition(null);
          _dataBrowserPresenter.Clear();
-         _dataColumns.Clear();
          _curveSettingsPresenter.Clear();
          _axisSettingsPresenter.Clear();
          _chartSettingsPresenter.Clear();
@@ -369,18 +361,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.InitializeIsUsedForColumns(Chart.UsedColumns);
       }
 
-      public void AddDataRepository(DataRepository dataRepository)
+      public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
       {
-         foreach (var dataColumn in dataRepository.Where(c => !columnIsForInternalUseOnly(c)))
-         {
-            if (!_dataColumns.Contains(dataColumn.Id))
-            {
-               _dataColumns.Add(dataColumn);
-               _dataBrowserPresenter.AddDataColumn(dataColumn);
-            }
-         }
+         var allColumnsToAdd = dataRepositories.SelectMany(x => x.Columns)
+            .Where(c => !columnIsForInternalUseOnly(c))
+            .Where(c => !hasColumn(c))
+            .ToList();
+
+         _dataBrowserPresenter.AddDataColumns(allColumnsToAdd);
 
          updateUsedColumns();
+      }
+
+      private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
+
+      public void AddDataRepository(DataRepository dataRepository)
+      {
+         AddDataRepositories(new[] {dataRepository});
       }
 
       public void RemoveUnusedColumnsAndAdd(DataRepository dataRepository)
@@ -391,7 +388,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private IReadOnlyList<DataColumn> unusedColumns
       {
-         get { return _dataColumns.Where(x => !x.IsInRepository() || columnIsForInternalUseOnly(x)).ToList(); }
+         get { return AllDataColumns.Where(x => !x.IsInRepository() || columnIsForInternalUseOnly(x)).ToList(); }
       }
 
       private bool columnIsForInternalUseOnly(DataColumn dataColumn)
@@ -408,24 +405,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void removeColumns(IEnumerable<DataColumn> dataColumns)
       {
-         dataColumns.Each(removeColumn);
+         _dataBrowserPresenter.RemoveDataColumns(dataColumns);
       }
 
-      private void removeColumn(DataColumn dataColumn)
-      {
-         _dataBrowserPresenter.RemoveDataColumn(dataColumn);
-         _dataColumns.Remove(dataColumn.Id);
-      }
-
-      public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
-      {
-         dataRepositories.Each(AddDataRepository);
-      }
-
-      public IEnumerable<DataColumn> AllDataColumns()
-      {
-         return _dataColumns;
-      }
+      public IReadOnlyList<DataColumn> AllDataColumns =>  _dataBrowserPresenter.AllDataColumns;
 
       public void CopySettingsFrom(ChartEditorSettings settings)
       {
@@ -495,7 +478,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (Chart.HasCurve(curve.Id))
             return Chart.CurveBy(curve.Id);
 
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, _dataColumns);
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
@@ -567,7 +550,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          refresh();
          ChartChanged();
       }
-
 
       public void Handle(ChartPropertiesChangedEvent chartPropertiesChangedEvent)
       {
