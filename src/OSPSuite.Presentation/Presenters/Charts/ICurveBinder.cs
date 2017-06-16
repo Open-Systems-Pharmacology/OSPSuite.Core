@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Refresh();
       void ShowAllSeries();
       void ShowCurveInLegend(bool showInLegend);
-      bool ContainsSeries(string id);
+      bool ContainsSeries(string seriesId);
 
       /// <summary>
       ///    Tests if the <paramref name="seriesId" /> represents the id of a series representing lower limit of quantification

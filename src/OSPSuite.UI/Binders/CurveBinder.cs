@@ -29,6 +29,7 @@ namespace OSPSuite.UI.Binders
       private readonly DataTable _dataTable;
       protected readonly List<Series> _series;
       private readonly AxisTypes _yAxisType;
+      private string _LLOQSeriesId;
 
       private const string X = "X";
       protected const string Y = "Y";
@@ -47,7 +48,7 @@ namespace OSPSuite.UI.Binders
          _yAxisType = curve.yAxisType;
          _dataTable = new DataTable(Curve.Id);
          _series = new List<Series>();
-
+         _LLOQSeriesId = string.Empty;
          initializeData();
       }
 
@@ -97,6 +98,7 @@ namespace OSPSuite.UI.Binders
          {
             if (!HasLLOQ)
                return null;
+
             return Curve.YDimension.BaseUnitValueToUnitValue(Curve.YDimension.Unit(_yAxis.UnitName), Convert.ToDouble(Curve.yData.DataInfo.LLOQ));
          }
       }
@@ -106,7 +108,7 @@ namespace OSPSuite.UI.Binders
          CreateSeries();
 
          if (HasLLOQ)
-            createLowerLimitOfQuantificationSeries();
+            createLLOQSeries();
 
          attachYAxisToSeries();
 
@@ -128,9 +130,10 @@ namespace OSPSuite.UI.Binders
          return CreateSeries<ScatterLineSeriesView>(id, ViewType.ScatterLine, Y, scatterLineSeriesView => { scatterLineSeriesView.EnableAntialiasing = DefaultBoolean.True; });
       }
 
-      private void createLowerLimitOfQuantificationSeries()
+      private void createLLOQSeries()
       {
-         var series = CreateSeries<LineSeriesView>($"{Curve.Id}_{LLOQ_SUFFIX}", ViewType.Line, LLOQ_SUFFIX, lineSeriesView =>
+         _LLOQSeriesId = $"{Curve.Id}_{LLOQ_SUFFIX}";
+         var series = CreateSeries<LineSeriesView>(_LLOQSeriesId, ViewType.Line, LLOQ_SUFFIX, lineSeriesView =>
          {
             lineSeriesView.LineStyle.DashStyle = DashStyle.Dot;
             lineSeriesView.LineStyle.Thickness = 2;
@@ -203,7 +206,7 @@ namespace OSPSuite.UI.Binders
       {
          RefreshSeries();
          updateSeriesCaption();
-         setLowerLimitOfQuantificationOptions();
+         setLLOQOptions();
          ShowCurveInLegend(Curve.VisibleInLegend);
       }
 
@@ -230,7 +233,7 @@ namespace OSPSuite.UI.Binders
          }
       }
 
-      private void setLowerLimitOfQuantificationOptions()
+      private void setLLOQOptions()
       {
          _series.Where(s => IsSeriesLLOQ(s.Name)).Each(setOptionsForLowerLimitOfQuantification);
       }
@@ -460,14 +463,14 @@ namespace OSPSuite.UI.Binders
 
       public abstract void ShowCurveInLegend(bool showInLegend);
 
-      public bool ContainsSeries(string id)
+      public bool ContainsSeries(string seriesId)
       {
-         return _series.Any(s => string.Equals(s.Name, id));
+         return _series.Any(s => string.Equals(s.Name, seriesId));
       }
 
       public bool IsSeriesLLOQ(string seriesId)
       {
-         return !string.IsNullOrEmpty(seriesId) && seriesId.EndsWith($"_{LLOQ_SUFFIX}");
+         return string.Equals(_LLOQSeriesId, seriesId);
       }
 
       public int OriginalCurveIndexForRow(DataRow row)

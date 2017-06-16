@@ -186,8 +186,6 @@ namespace OSPSuite.UI.Binders
 
          configureAxisScale(axisWidthInPixel);
 
-
-
          // logarithmic scale depending settings
          if (!_axisView.Logarithmic) return;
 
@@ -226,7 +224,6 @@ namespace OSPSuite.UI.Binders
          {
             _axisView.MinorCount = ticksConfig.MinorTicks;
             _axisView.Tickmarks.MinorVisible = true;
-
             _axisView.NumericScaleOptions.AutoGrid = false;
             _axisView.NumericScaleOptions.GridSpacing = ticksConfig.GridSpacing;
             _axisView.NumericScaleOptions.GridAlignment = NumericGridAlignment.Ones;

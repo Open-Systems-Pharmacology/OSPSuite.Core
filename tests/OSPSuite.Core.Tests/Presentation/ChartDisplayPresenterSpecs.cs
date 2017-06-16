@@ -17,6 +17,7 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Presentation
@@ -54,7 +55,7 @@ namespace OSPSuite.Presentation
 
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x=>x.GetArgument<DataColumn>(0).Dimension);
+         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
 
          _curve = new Curve();
          _curve.SetxData(dataRepository.BaseGrid, _dimensionFactory);
@@ -65,6 +66,7 @@ namespace OSPSuite.Presentation
             var curve = x.GetArgument<Curve>(0);
             var curveBinder = A.Fake<ICurveBinder>();
             A.CallTo(() => curveBinder.SeriesIds).Returns(SeriesIdsFor(curve));
+            A.CallTo(() => curveBinder.LLOQ).Returns(LLOQFor(curve));
             A.CallTo(() => curveBinder.ContainsSeries(curve.Id)).Returns(true);
             A.CallTo(() => curveBinder.Id).Returns(curve.Id);
             A.CallTo(() => curveBinder.Curve).Returns(curve);
@@ -83,6 +85,11 @@ namespace OSPSuite.Presentation
 
          SetupChart();
          sut.Edit(_curveChart);
+      }
+
+      protected virtual double? LLOQFor(Curve curve)
+      {
+         return null;
       }
 
       protected virtual string[] SeriesIdsFor(Curve curve)
@@ -267,6 +274,44 @@ namespace OSPSuite.Presentation
       public void should_return_the_curve_index()
       {
          sut.LegendIndexFromSeriesId(_curve.Id).ShouldBeEqualTo(_curve.LegendIndex.Value);
+      }
+   }
+
+   public class When_checking_if_a_point_is_below_lloq_and_there_are_no_lloq_series_being_displayed : concern_for_ChartDisplayPresenter
+   {
+      protected override void SetupChart()
+      {
+         base.SetupChart();
+         _curve.ShowLLOQ = false;
+         _curve.yData.DataInfo.LLOQ = 0.5f;
+         _curveChart.AddCurve(_curve);
+      }
+
+      [Observation]
+      public void should_return_false()
+      {
+         sut.IsPointBelowLLOQ(new[] {0.4, 0.3}, _curve.Id).ShouldBeFalse();
+      }
+   }
+
+   public class When_checking_if_a_point_is_below_lloq_and_there_are_lloq_series_being_displayed : concern_for_ChartDisplayPresenter
+   {
+      protected override void SetupChart()
+      {
+         base.SetupChart();
+         _curve.ShowLLOQ = true;
+         _curveChart.AddCurve(_curve);
+      }
+
+      protected override double? LLOQFor(Curve curve)
+      {
+         return 0.5d;
+      }
+
+      [Observation]
+      public void should_return_false()
+      {
+         sut.IsPointBelowLLOQ(new[] {0.4, 0.3}, _curve.Id).ShouldBeTrue();
       }
    }
 

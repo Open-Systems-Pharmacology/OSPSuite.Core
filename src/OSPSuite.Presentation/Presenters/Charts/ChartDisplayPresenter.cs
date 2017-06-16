@@ -164,7 +164,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       string DisplayUnitsFor(string seriesId);
 
       string CurveDescriptionFromSeriesId(string seriesId);
-      bool IsPointBelowLLOQ(double[] values, string curveId);
+      bool IsPointBelowLLOQ(double[] values, string seriesId);
       int GetSourceIndexFromDataRow(string seriesId, DataRow row);
 
       void Edit(CurveChart chart);
@@ -183,6 +183,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
+      private bool _isLLOQVisible;
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
@@ -257,12 +258,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          RefreshAxisBinders();
       }
 
-      public bool IsSeriesLLOQ(string seriesId)
-      {
-         var relatedAdapter = curveBinderFromSeriesId(seriesId);
-         return relatedAdapter?.IsSeriesLLOQ(seriesId) ?? false;
-      }
-
+    
       private ICurveBinder curveBinderFromSeriesId(string seriesId)
       {
          return _quickCurveBinderCache[seriesId];
@@ -334,9 +330,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return CurveFromSeriesId(seriesId)?.Description;
       }
 
-      public bool IsPointBelowLLOQ(double[] values, string curveId)
+      public bool IsSeriesLLOQ(string seriesId)
       {
-         var curveBinder = curveBinderFromSeriesId(curveId);
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         return curveBinder?.IsSeriesLLOQ(seriesId) ?? false;
+      }
+
+      public bool IsPointBelowLLOQ(double[] values, string seriesId)
+      {
+         if (!_isLLOQVisible)
+            return false;
+
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+
          if (curveBinder?.LLOQ == null)
             return false;
 
@@ -424,11 +430,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          pruneCurves();
 
          Chart.Curves.Each(refreshCurveBinderFor);
+
+         _isLLOQVisible = _curveBinders.Any(x => x.LLOQ.HasValue && x.Curve.ShowLLOQ);
       }
 
-      private void pruneCurves() => pruneBinders(_curveBinders, Chart.Curves, x=>x.Curve, removeCurveBinder);
+      private void pruneCurves() => pruneBinders(_curveBinders, Chart.Curves, x => x.Curve, removeCurveBinder);
 
-      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects, Func<TBinder, TBoundObject> retrieveBoundObjectFunc,  Action<TBinder> removeBinderAction)
+      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects, Func<TBinder, TBoundObject> retrieveBoundObjectFunc, Action<TBinder> removeBinderAction)
       {
          //Remove using reference to ensure that the bound object in the binder is the same as the one in the chart
          binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
@@ -485,7 +493,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void RefreshAxisBinders()
       {
-         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, View.GetDiagramSize()));
+         var diagramSize = View.GetDiagramSize();
+         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
       }
 
       private void updateYAxesVisibility()
