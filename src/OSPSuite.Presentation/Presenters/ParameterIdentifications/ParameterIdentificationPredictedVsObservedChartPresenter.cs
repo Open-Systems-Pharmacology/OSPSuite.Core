@@ -45,10 +45,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories);
-
-         AddDataRepositoriesToEditor(_parameterIdentification.AllObservedData);
+         AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData));
          UpdateChartFromTemplate();
+      }
+
+      protected override void ClearChartAndDataRepositories()
+      {
+         base.ClearChartAndDataRepositories();
+         _identityRepositories.Clear();
       }
 
       protected override void AddRunResultToChart(ParameterIdentificationRunResult runResult)
@@ -69,21 +73,23 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
          var calculationColumns = calculationColumnsToPlot(simulationResult);
+         calculationColumns.Each(x => plotCalculationColumn(x, action));
+      }
 
-         calculationColumns.Each(calculationColumn =>
+      private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
+      {
+         var allObservationsForOutput = _parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString).ToList();
+
+         if (!allObservationsForOutput.Any())
+            Chart.RemoveCurvesForColumn(calculationColumn);
+
+         SelectColorForCalculationColumn(calculationColumn);
+
+         _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, Chart, (column, curve) =>
          {
-            if (!_parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString).Any())
-               Chart.RemoveCurvesForColumn(calculationColumn);
-
-            SelectColorForCalculationColumn(calculationColumn);
-
-            _predictedVsObservedChartService.AddCurvesFor(_parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString),
-               calculationColumn, Chart, (column, curve) =>
-               {
-                  UpdateColorForCalculationColumn(curve, calculationColumn);
-                  curve.VisibleInLegend = !chartAlreadyContainsCurveFor(calculationColumn);
-                  action(calculationColumn, curve);
-               });
+            UpdateColorForCalculationColumn(curve, calculationColumn);
+            curve.VisibleInLegend = !chartAlreadyContainsCurveFor(calculationColumn);
+            action(calculationColumn, curve);
          });
       }
 

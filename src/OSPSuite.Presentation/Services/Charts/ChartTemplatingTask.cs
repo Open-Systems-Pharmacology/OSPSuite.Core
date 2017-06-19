@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Commands;
@@ -15,6 +13,8 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services.Charts
 {
@@ -80,8 +80,9 @@ namespace OSPSuite.Presentation.Services.Charts
       ICommand UpdateChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates, string templateName);
 
       /// <summary>
-      ///    Adds simulation outputs for the <paramref name="simulations" /> to the chart. 
-      /// if <paramref name="customUpdate"/> is not null, this action will be called after all outputs were added to the simulation
+      ///    Adds simulation outputs for the <paramref name="simulations" /> to the chart.
+      ///    if <paramref name="customUpdate" /> is not null, this action will be called after all outputs were added to the
+      ///    simulation
       /// </summary>
       void UpdateDefaultSettings(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> simulations, bool addCurveIfNoSourceDefined = true, Action customUpdate = null);
    }
@@ -222,7 +223,6 @@ namespace OSPSuite.Presentation.Services.Charts
             addSimulationOutputs(chartEditorPresenter, allAvailableColumns, simulations, addCurveIfNoSourceDefined);
             customUpdate?.Invoke();
          }
-
       }
 
       public CurveChartTemplate CreateNewTemplateFromChart(CurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates)
@@ -231,17 +231,12 @@ namespace OSPSuite.Presentation.Services.Charts
       }
 
       public abstract ICommand AddChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates);
+
       public abstract ICommand UpdateChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates, string templateName);
 
-      public string TemplateStringFrom(CurveChart chart)
-      {
-         return _chartTemplatePersistor.SerializeAsStringBasedOn(chart);
-      }
+      public string TemplateStringFrom(CurveChart chart) => _chartTemplatePersistor.SerializeAsStringBasedOn(chart);
 
-      public CurveChartTemplate TemplateFrom(string serializedChart)
-      {
-         return _chartTemplatePersistor.DeserializeFromString(serializedChart);
-      }
+      public CurveChartTemplate TemplateFrom(string serializedChart) => _chartTemplatePersistor.DeserializeFromString(serializedChart);
 
       public CurveChartTemplate TemplateFrom(CurveChart chart, bool validateTemplate = true)
       {

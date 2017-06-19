@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
@@ -85,6 +86,7 @@ namespace OSPSuite.Starter.Presenters
          bindCurveChartToEditor();
 
          configureChartEditorEvents();
+         InitializeWith(new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>());
       }
 
       private void configureChartEditorEvents()

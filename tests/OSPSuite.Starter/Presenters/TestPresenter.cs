@@ -22,117 +22,68 @@ namespace OSPSuite.Starter.Presenters
       void StartCommandBrowserTest();
       void StartSimpleUITest();
       void StartExceptionView();
-
       void StartHistogramTest();
+      void StartMatrixTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
    {
-      private readonly IChartTestStarter _chartTestStarter;
       private readonly IGridTestStarter _girdTestStarter;
-      private readonly IJournalTestStarter _journalTestStarter;
-      private readonly IComparisonTestStarter _comparisonTestStarter;
-      private readonly IExplorerTestStarter _explorerTestStarter;
-      private readonly IImporterStarter _importerStarter;
-      private readonly IShellStarter _shellStarter;
-      private readonly IDataRepositoryStarter _dataRepositoryStarter;
-      private readonly IPivotGridStarter _pivotGridStarter;
-      private readonly IOptimizationStarter _optimzationStarter;
+      private readonly IShellPresenter _shellPresenter;
+      private readonly IOptimizationStarter _optimizationStarter;
+      private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
-      private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
-      private readonly IHistogramTestStarter _histogramTestStarter;
 
-      public TestPresenter(ITestView view, IChartTestStarter chartTestStarter, IGridTestStarter girdTestStarter, 
-         IJournalTestStarter journalTestStarter, IComparisonTestStarter comparisonTestStarter, IExplorerTestStarter explorerTestStarter,
-         IImporterStarter importerStarter, IShellStarter shellStarter, IDataRepositoryStarter dataRepositoryStarter, IPivotGridStarter pivotGridStarter,
-         IOptimizationStarter optimzationStarter,ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter, IHistogramTestStarter histogramTestStarter) : base(view)
+      public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
+         IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
+         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter) : base(view)
       {
-         _chartTestStarter = chartTestStarter;
          _girdTestStarter = girdTestStarter;
-         _journalTestStarter = journalTestStarter;
-         _comparisonTestStarter = comparisonTestStarter;
-         _explorerTestStarter = explorerTestStarter;
-         _importerStarter = importerStarter;
-         _shellStarter = shellStarter;
-         _dataRepositoryStarter = dataRepositoryStarter;
-         _pivotGridStarter = pivotGridStarter;
-         _optimzationStarter = optimzationStarter;
+         _shellPresenter = shellPresenter;
+         _optimizationStarter = optimizationStarter;
+         _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
-         _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
-         _histogramTestStarter = histogramTestStarter;
       }
 
-      public void StartHistogramTest()
+      private void start<T>(int width = 0, int height = 0) where T : IPresenter
       {
-         _histogramTestStarter.Start();
+         var starter = new TestStarter<T>();
+         starter.Start(width, height);
       }
 
-      public void StartChartTest()
-      {
-         _chartTestStarter.Start();
-      }
+      private void startLarge<T>() where T : IPresenter => start<T>(1200, 800);
 
-      public void StartJournalTest()
-      {
-         _journalTestStarter.Start();
-      }
+      public void StartHistogramTest() => startLarge<IHistogramTestPresenter>();
 
-      public void StartGridTest()
-      {
-         _girdTestStarter.Start();
-      }
+      public void StartMatrixTest() => startLarge<IMatrixTestPresenter>();
 
-      public void StartComparisonTest()
-      {
-         _comparisonTestStarter.Start();
-      }
+      public void StartChartTest() => startLarge<IChartTestPresenter>();
 
-      public void StartExplorerTest()
-      {
-         _explorerTestStarter.Start();
-      }
+      public void StartJournalTest() => startLarge<IJournalTestPresenter>();
 
-      public void StartImporterTest()
-      {
-         _importerStarter.Start();
-      }
+      public void StartGridTest() => _girdTestStarter.Start();
 
-      public void StartShellTest()
-      {
-         _shellStarter.Start();
-      }
+      public void StartComparisonTest() => start<IComparisonTestPresenter>();
 
-      public void StartDataRepositoryTest()
-      {
-         _dataRepositoryStarter.Start();
-      }
+      public void StartExplorerTest() => start<IExplorerTestPresenter>();
 
-      public void StartPivotGridTest()
-      {
-         _pivotGridStarter.Start();
-      }
+      public void StartImporterTest() => start<IImporterTestPresenter>();
 
-      public void StartParameterIdentificationTest()
-      {
-         _optimzationStarter.Start();
-      }
+      public void StartShellTest() => _shellPresenter.Start();
 
-      public void StartSentitivityAnalysisTest()
-      {
-         _sensitivityAnalysisStarter.Start();
-      }
+      public void StartDataRepositoryTest() => start<IDataRepositoryTestPresenter>();
 
-      public void StartCommandBrowserTest()
-      {
-         _commandBrowserStarter.Start();
-      }
+      public void StartPivotGridTest() => start<IPivotGridTestPresenter>();
 
-      public void StartSimpleUITest()
-      {
-         _simpleUIStarter.Start();
-      }
+      public void StartParameterIdentificationTest() => _optimizationStarter.Start();
+
+      public void StartSentitivityAnalysisTest() => _sensitivityAnalysisStarter.Start();
+
+      public void StartCommandBrowserTest() => _commandBrowserStarter.Start();
+
+      public void StartSimpleUITest() => _simpleUIStarter.Start();
 
       public void StartExceptionView()
       {

@@ -60,8 +60,8 @@ namespace OSPSuite.Starter.Services
          {
             Values = new[] {10f, 20f, 30f},
             DataInfo = {Origin = ColumnOrigins.Observation},
+            QuantityInfo = new QuantityInfo("OBS", new []{"A", "B", "C"}, QuantityType.Undefined)
          };
-
 
          var obsData = new DataRepository {Name = "ObsData"};
          obsData.Add(values);
