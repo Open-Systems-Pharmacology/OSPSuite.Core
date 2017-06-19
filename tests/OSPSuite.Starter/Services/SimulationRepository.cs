@@ -41,11 +41,15 @@ namespace OSPSuite.Starter.Services
             Name = "Test"
          };
 
-         var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable);
-         var first = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.AMOUNT);
-         simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(first), QuantityType.Molecule));
+         var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable).ToList();
+         var firstAmount = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.AMOUNT);
+         simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(firstAmount), QuantityType.Molecule));
 
-         _projectRetriever.CurrentProject.AddObservedData(observedDataFor(first));
+         var firstFraction = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.FRACTION);
+         simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(firstFraction), QuantityType.Molecule));
+
+         _projectRetriever.CurrentProject.AddObservedData(observedDataFor(firstAmount));
+         _projectRetriever.CurrentProject.AddObservedData(observedDataFor(firstFraction));
          return simulation;
       }
 
@@ -63,7 +67,7 @@ namespace OSPSuite.Starter.Services
             QuantityInfo = new QuantityInfo("OBS", new []{"A", "B", "C"}, QuantityType.Undefined)
          };
 
-         var obsData = new DataRepository {Name = "ObsData"};
+         var obsData = new DataRepository {Name = $"ObsData_{quantity.Name}"};
          obsData.Add(values);
          return obsData;
       }

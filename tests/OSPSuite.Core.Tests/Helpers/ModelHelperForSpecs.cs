@@ -236,6 +236,7 @@ namespace OSPSuite.Helpers
       private IObserverBuildingBlock getObservers()
       {
          var observers = _objectBaseFactory.Create<IObserverBuildingBlock>();
+
          var amountObserver1 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_1");
          amountObserver1.Dimension = _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
          amountObserver1.MoleculeList.ForAll = true;
@@ -269,6 +270,13 @@ namespace OSPSuite.Helpers
          containerObserverBuilder.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Organism));
          observers.Add(containerObserverBuilder);
 
+
+         var fractionObserver = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("FractionObserver_1");
+         fractionObserver.Dimension = _dimensionFactory.GetDimension(Constants.Dimension.FRACTION);
+         fractionObserver.MoleculeList.ForAll = true;
+         fractionObserver.Formula = FractionObs(observers.FormulaCache);
+         fractionObserver.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         observers.Add(fractionObserver);
 
          return observers;
       }
@@ -1021,6 +1029,19 @@ namespace OSPSuite.Helpers
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/2").WithName("AmountObs");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
          formula.Dimension = _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+         formulaCache.Add(formula);
+         return formula;
+      }
+
+      private IFormula FractionObs(IFormulaCache formulaCache)
+      {
+         var formula = formulaCache.FirstOrDefault(x => string.Equals(x.Name, "FractionObs"));
+         if (formula != null)
+            return formula;
+
+         formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/4").WithName("FractionObs");
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
+         formula.Dimension = _dimensionFactory.GetDimension(Constants.Dimension.FRACTION);
          formulaCache.Add(formula);
          return formula;
       }
