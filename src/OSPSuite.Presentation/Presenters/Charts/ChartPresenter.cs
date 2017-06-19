@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public abstract class ChartPresenter<TChart, TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IChartPresenter<TChart>
       where TView : class, IView<TPresenter>
       where TPresenter : IPresenter
-      where TChart : ChartWithObservedData
+      where TChart : CurveChart
    {
       protected readonly ChartPresenterContext _chartPresenterContext;
       protected DefaultPresentationSettings _settings;
@@ -57,8 +57,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public virtual void InitializeAnalysis(TChart chart)
       {
          Chart = chart;
-
-         AddDataRepositoriesToEditor(Chart.AllObservedData());
 
          updateViewCaptionFromChart();
 
@@ -120,14 +118,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             ChartEditorPresenter.AllDataColumns,
             curveChartTemplate,
             NameForColumn, warnIfNumberOfCurvesAboveThreshold);
-      }
-
-      /// <summary>
-      ///    Add obsverved Data to be displayed on the graph. if the showData flag is set to true, the data will be displayed as
-      ///    well
-      /// </summary>
-      protected virtual void AddObservedData(IReadOnlyList<DataRepository> observedData, bool asResultOfDragAndDrop)
-      {
       }
 
       protected virtual void ChartChanged()
