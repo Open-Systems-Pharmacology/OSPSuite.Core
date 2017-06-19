@@ -18,7 +18,7 @@ namespace OSPSuite.Starter.Presenters
    {
       public PivotGridTestPresenter(IPivotGridTestView view) : base(view)
       {
-
+         Edit();
       }
 
       public void Edit()

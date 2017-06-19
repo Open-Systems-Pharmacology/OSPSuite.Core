@@ -37,10 +37,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       /// <summary>
       ///    Removes all columns of all <paramref name="dataRepositories" /> from DataBrowser. This does not trigger a redraw of
-      ///    the
-      ///    chart
+      ///    the chart
       /// </summary>
       void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories);
+
+      /// <summary>
+      ///    Remove all data repositories used from DataBrowser. This does not trigger a redraw of the chart
+      /// </summary>
+      void RemoveAllDataRepositories();
 
       /// <summary>
       ///    Remove unused columns (e.g. not attached to a <see cref="DataRepository">.</see>This does not trigger a redraw of
@@ -172,6 +176,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    curves modification)
       /// </summary>
       event Action ChartChanged;
+
+      /// <summary>
+      ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
+      /// </summary>
+      void Refresh();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -316,13 +325,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Clear()
       {
-         SetCurveNameDefinition(null);
-         SetDisplayQuantityPathDefinition(null);
          _dataBrowserPresenter.Clear();
          _curveSettingsPresenter.Clear();
-         _axisSettingsPresenter.Clear();
          _chartSettingsPresenter.Clear();
          _chartExportSettingsPresenter.Clear();
+         _axisSettingsPresenter.Clear();
       }
 
       private void onSelectedDataChanged(IReadOnlyList<DataColumn> dataColumns)
@@ -370,6 +377,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
+
+      public void RemoveAllDataRepositories()
+      {
+         _dataBrowserPresenter.Clear();
+      }
 
       public void RemoveUnusedColumns() => removeColumns(unusedColumns);
 
@@ -517,7 +529,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          remove => _dataBrowserPresenter.DragDrop -= value;
       }
 
-      private void refresh()
+      public void Refresh()
       {
          Chart.SynchronizeDataDisplayUnit();
          _curveSettingsPresenter.Refresh();
@@ -535,7 +547,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!canHandle(chartUpdatedEvent))
             return;
 
-         refresh();
+         Refresh();
          ChartChanged();
       }
 

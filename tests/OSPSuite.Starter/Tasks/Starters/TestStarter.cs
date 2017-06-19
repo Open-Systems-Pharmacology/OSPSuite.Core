@@ -7,19 +7,14 @@ namespace OSPSuite.Starter.Tasks.Starters
 {
    public interface ITestStarter
    {
-      void Start();
+      void Start(int width = 0, int height = 0);
    }
 
-   public abstract class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
+   public class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
    {
       protected TPresenter _presenter;
 
-      public virtual void Start()
-      {
-         Start(0, 0);
-      }
-
-      public virtual void Start(int width, int height)
+      public void Start(int width=0, int height=0)
       {
          _presenter = IoC.Resolve<TPresenter>();
          XtraForm form;

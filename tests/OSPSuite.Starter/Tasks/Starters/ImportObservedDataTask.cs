@@ -1,34 +1,14 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Importer;
-using OSPSuite.Starter.Presenters;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {
-   public interface IDataRepositoryStarter : ITestStarter
-   {
-   }
-
-   public class DataRepositoryStarter : TestStarter<IDataRepositoryTestPresenter>, IDataRepositoryStarter
-   {
-      private readonly IImportObservedDataTask _importObservedDataTask;
-
-      public DataRepositoryStarter(IImportObservedDataTask importObservedDataTask)
-      {
-         _importObservedDataTask = importObservedDataTask;
-      }
-
-      public override void Start()
-      {
-         base.Start();
-         _presenter.Edit(_importObservedDataTask.ImportObservedData());
-      }
-   }
-
    public interface IImportObservedDataTask
    {
       DataRepository ImportObservedData();
    }
+
 
    public class ImportObservedDataTask : IImportObservedDataTask
    {

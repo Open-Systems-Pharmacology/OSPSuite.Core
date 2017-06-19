@@ -30,10 +30,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext,  ApplicationIcon icon, string presentationKey) :
             base(view, chartPresenterContext)
       {
-         _view.SetAnalysisView(chartPresenterContext.ChartEditorAndDisplayPresenter.BaseView);
+         _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         chartPresenterContext.ChartEditorAndDisplayPresenter.PostEditorLayout = showSimulationColumn;
+         chartPresenterContext.EditorAndDisplayPresenter.PostEditorLayout = showSimulationColumn;
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -43,19 +43,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (ChartIsBeingUpdated)
          {
             UpdateTemplateFromChart();
-            clearChartAndEditor();
+            ClearChartAndDataRepositories();
          }
          else
             updateCacheColor();
 
-         if (!_parameterIdentification.Results.Any())
-            return;
+         if (_parameterIdentification.Results.Any())
+         {
+            _isMultipleRun = _parameterIdentification.Results.Count > 1;
+            UpdateAnalysisBasedOn(_parameterIdentification.Results);
+         }
 
-         _isMultipleRun = _parameterIdentification.Results.Count > 1;
-
-         UpdateAnalysisBasedOn(_parameterIdentification.Results);
-
-         BindChartToEditors();
+         Refresh();
       }
 
       protected virtual void UpdateTemplateFromChart()
@@ -90,11 +89,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.Curves.Each(x => _colorCache[x.yData.PathAsString] = x.Color);
       }
 
-      private void clearChartAndEditor()
+      protected virtual void ClearChartAndDataRepositories()
       {
          Chart.Clear();
-         ChartDisplayPresenter.Clear();
-         ChartEditorPresenter.Clear();
+         ChartEditorPresenter.RemoveAllDataRepositories();
       }
 
       protected string CurveDescription(string name, ParameterIdentificationRunResult runResult)

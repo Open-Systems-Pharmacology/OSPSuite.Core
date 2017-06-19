@@ -34,13 +34,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public TChart Chart { get; private set; }
       private IWithChartTemplates _withChartTemplates;
       public string PresentationKey { get; protected set; }
-      protected IChartEditorPresenter ChartEditorPresenter => _chartPresenterContext.ChartEditorAndDisplayPresenter.EditorPresenter;
-      protected IChartDisplayPresenter ChartDisplayPresenter => _chartPresenterContext.ChartEditorAndDisplayPresenter.DisplayPresenter;
+      protected IChartEditorPresenter ChartEditorPresenter => _chartPresenterContext.EditorAndDisplayPresenter.EditorPresenter;
+      protected IChartDisplayPresenter ChartDisplayPresenter => _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter;
 
       protected ChartPresenter(TView view, ChartPresenterContext chartPresenterContext) : base(view)
       {
          _chartPresenterContext = chartPresenterContext;
-         AddSubPresenters(_chartPresenterContext.ChartEditorAndDisplayPresenter);
+         AddSubPresenters(_chartPresenterContext.EditorAndDisplayPresenter);
          _settings = new DefaultPresentationSettings();
          ChartEditorPresenter.SetCurveNameDefinition(NameForColumn);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
@@ -57,9 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public virtual void InitializeAnalysis(TChart chart)
       {
          Chart = chart;
-
-         updateViewCaptionFromChart();
-
+         BindChartToEditors();
          InitEditorLayout();
       }
 
@@ -67,13 +65,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          ChartDisplayPresenter.Edit(Chart);
          ChartEditorPresenter.Edit(Chart);
+         updateViewCaptionFromChart();
       }
 
-      private void addTemplateButtons()
+      protected void Refresh()
       {
-         var chartLayoutButton = _chartPresenterContext.ChartEditorAndDisplayPresenter.ChartLayoutButton;
-
-         ChartEditorPresenter.AddButton(chartLayoutButton);
+         _chartPresenterContext.Refresh();
+         updateViewCaptionFromChart();
       }
 
       protected CurveChartTemplate DefaultChartTemplate => _withChartTemplates?.DefaultChartTemplate;
@@ -91,6 +89,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
             ChartEditorPresenter.AddChartTemplateMenu(_withChartTemplates, template => LoadTemplate(template));
 
          AddAllButtons();
+      }
+
+      private void addTemplateButtons()
+      {
+         var chartLayoutButton = _chartPresenterContext.EditorAndDisplayPresenter.ChartLayoutButton;
+         ChartEditorPresenter.AddButton(chartLayoutButton);
       }
 
       protected void AddAllButtons()
@@ -150,8 +154,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void Clear()
       {
-         ChartEditorPresenter.Clear();
-         ChartDisplayPresenter.Clear();
+         _chartPresenterContext.Clear();
          ChartEditorPresenter.ColumnSettingsChanged -= columnSettingsChanged;
          ChartEditorPresenter.ChartChanged -= ChartChanged;
          ChartEditorPresenter.SetCurveNameDefinition(null);
@@ -200,7 +203,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected virtual void InitEditorLayout()
       {
-         _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.ChartEditorAndDisplayPresenter);
+         _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.EditorAndDisplayPresenter);
          AddAllButtons();
       }
 
@@ -211,7 +214,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected virtual void NotifyProjectChanged()
       {
-         _chartPresenterContext.ProjectRetriever.CurrentProject.HasChanged = true;
+         _chartPresenterContext.NotifyProjectChanged();
       }
 
       protected GridColumnSettings Column(BrowserColumns browserColumns) => ChartEditorPresenter.DataBrowserColumnSettingsFor(browserColumns);

@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Services.Charts
 {
    public class ChartPresenterContext
    {
-      public virtual IChartEditorAndDisplayPresenter ChartEditorAndDisplayPresenter { get; }
+      public virtual IChartEditorAndDisplayPresenter EditorAndDisplayPresenter { get; }
       public virtual IDataColumnToPathElementsMapper DataColumnToPathElementsMapper { get; }
       public virtual IChartTemplatingTask TemplatingTask { get; }
       public virtual IPresentationSettingsTask PresenterSettingsTask { get; }
@@ -17,14 +17,14 @@ namespace OSPSuite.Presentation.Services.Charts
       public virtual IDimensionFactory DimensionFactory { get; }
       public virtual ICurveNamer CurveNamer { get; }
 
-      public virtual IChartEditorPresenter EditorPresenter => ChartEditorAndDisplayPresenter.EditorPresenter;
-      public virtual IChartDisplayPresenter DisplayPresenter => ChartEditorAndDisplayPresenter.DisplayPresenter;
+      public virtual IChartEditorPresenter EditorPresenter => EditorAndDisplayPresenter.EditorPresenter;
+      public virtual IChartDisplayPresenter DisplayPresenter => EditorAndDisplayPresenter.DisplayPresenter;
 
       public ChartPresenterContext(IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, ICurveNamer curveNamer,
          IDataColumnToPathElementsMapper dataColumnToPathElementsMapper, IChartTemplatingTask chartTemplatingTask, IPresentationSettingsTask presentationSettingsTask,
          IChartEditorLayoutTask chartEditorLayoutTask, IProjectRetriever projectRetriever, IDimensionFactory dimensionFactory)
       {
-         ChartEditorAndDisplayPresenter = chartEditorAndDisplayPresenter;
+         EditorAndDisplayPresenter = chartEditorAndDisplayPresenter;
          DataColumnToPathElementsMapper = dataColumnToPathElementsMapper;
          TemplatingTask = chartTemplatingTask;
          PresenterSettingsTask = presentationSettingsTask;
@@ -32,6 +32,23 @@ namespace OSPSuite.Presentation.Services.Charts
          ProjectRetriever = projectRetriever;
          DimensionFactory = dimensionFactory;
          CurveNamer = curveNamer;
+      }
+
+      public void Refresh()
+      {
+         EditorPresenter.Refresh();
+         DisplayPresenter.Refresh();
+      }
+
+      public void NotifyProjectChanged()
+      {
+         ProjectRetriever.CurrentProject.HasChanged = true;
+      }
+
+      public void Clear()
+      {
+         EditorPresenter.Clear();
+         DisplayPresenter.Clear();
       }
    }
 }
