@@ -2,22 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Binders
 {
    public class ObservedDataDragDropBinder
    {
-      private readonly Type[] _conditionalDraggableTypes = { typeof(IEnumerable<ITreeNode>) };
+      private readonly Type[] _conditionalDraggableTypes = {typeof(IEnumerable<ITreeNode>)};
 
       public void PrepareDrag(DragEventArgs e)
       {
          e.Effect = _conditionalDraggableTypes.Any(e.TypeBeingDraggedIs) ? dragEffectForConditionalType(e) : DragDropEffects.None;
+      }
+
+      public IReadOnlyList<DataRepository> DroppedObservedDataFrom(DragEventArgs e)
+      {
+         return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject).ToList();
       }
 
       private DragDropEffects dragEffectForConditionalType(DragEventArgs e)
@@ -46,11 +51,6 @@ namespace OSPSuite.Presentation.Binders
       private bool areAllObservedDataClassificationNodes(IList<ITreeNode> treeNodes)
       {
          return treeNodes.OfType<ClassificationNode>().Count(classificationNode => (classificationNode).Tag.ClassificationType == ClassificationType.ObservedData) == treeNodes.Count();
-      }
-
-      public IEnumerable<DataRepository> DroppedObservedDataFrom(DragEventArgs e)
-      {
-         return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject);
       }
 
       private IReadOnlyList<ObservedDataNode> getObservedDataNodesFrom(DragEventArgs e)

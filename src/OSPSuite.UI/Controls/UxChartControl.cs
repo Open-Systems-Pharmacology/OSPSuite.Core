@@ -22,6 +22,11 @@ namespace OSPSuite.UI.Controls
       private readonly BarManager _barManager;
       public PopupMenu PopupMenu { get; }
 
+
+      public UxChartControl() : this(true, true)
+      {
+      }
+
       public UxChartControl(bool useDefaultPopupMechanism = true, bool addCopyToClipboardMenu = true)
       {
          Titles.Clear();
@@ -40,23 +45,6 @@ namespace OSPSuite.UI.Controls
             initializePopup(addCopyToClipboardMenu);
       }
 
-      /// <summary>
-      ///    This is to increase performance of the chart control.
-      /// </summary>
-      /// <param name="collection">Objects which gets updated. Could be Series, Panes, Annotations, SecondaryAxesX, etc.</param>
-      /// <param name="actionToPerform">Action that will be performed between <c>BeginUpdate</c> and <c>EndUpdate</c></param>
-      public void DoUpdateOf(ChartCollectionBase collection, Action actionToPerform)
-      {
-         try
-         {
-            collection.BeginUpdate();
-            actionToPerform();
-         }
-         finally
-         {
-            collection.EndUpdate();
-         }
-      }
 
       private ChartTitle createTitle(int fontSize, StringAlignment alignment, ChartTitleDockStyle dockStyle)
       {

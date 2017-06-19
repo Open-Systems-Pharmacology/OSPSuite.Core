@@ -11,6 +11,7 @@ using DevExpress.XtraCharts.Native;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views.Charts;
@@ -27,22 +28,24 @@ namespace OSPSuite.UI.Views.Charts
    {
       private IChartDisplayPresenter _presenter;
       private readonly IFormatter<double> _doubleFormatter;
-      private DiagramZoomRectangleService _diagramZoomRectangleService;
       private readonly LabelControl _hintControl;
       private ChartTitle _previewChartOrigin;
       private bool _axisEditEnabled;
       private bool _curveEditEnabled;
       private bool _axisHotTrackingEnabled;
       private Series _dummySeries;
+      private readonly ToolTipController _toolTipController;
       public bool Updating { get; private set; }
       private XYDiagram xyDiagram => _chartControl.XYDiagram;
+      public BarManager PopupBarManager { get; }
 
       public ChartDisplayView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
-         _doubleFormatter = new FormatterFactory().CreateFor<double>();
+         _doubleFormatter = new DoubleFormatter();
          _hintControl = new LabelControl();
-         _barManager.Images = imageListRetriever.AllImagesForContextMenu;
+         _toolTipController = new ToolTipController();
+         PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
          SetDockStyle(DockStyle.Fill);
       }
 
@@ -62,6 +65,7 @@ namespace OSPSuite.UI.Views.Charts
          _axisEditEnabled = true;
          _curveEditEnabled = true;
          _axisHotTrackingEnabled = true;
+         AllowDrop = true;
 
          _chartControl.SelectionMode = ElementSelectionMode.Multiple;
 
@@ -73,52 +77,40 @@ namespace OSPSuite.UI.Views.Charts
 
          _chartControl.Legend.MarkerSize = UIConstants.Chart.LEGEND_MARKER_SIZE;
          _chartControl.Legend.Direction = LegendDirection.BottomToTop;
-         xyDiagram.EnableAxisXZooming = true;
-         xyDiagram.EnableAxisYZooming = true;
          xyDiagram.ZoomingOptions.UseKeyboard = false;
          xyDiagram.EnableAxisXScrolling = false;
          xyDiagram.EnableAxisYScrolling = false;
 
-         _diagramZoomRectangleService = new DiagramZoomRectangleService(_chartControl, zoomAction);
-         _diagramZoomRectangleService.InitializeZoomFor(xyDiagram);
+         new DiagramZoomRectangleService(_chartControl, zoomAction);
 
          SetFontAndSizeSettings(ChartFontAndSizeSettings.Default);
 
          _chartControl.Series.Remove(s1);
-
          _chartControl.CrosshairEnabled = DefaultBoolean.False;
-
          _chartControl.ObjectHotTracked += (o, e) => OnEvent(() => onObjectHotTracked(e));
          _chartControl.ObjectSelected += (o, e) => OnEvent(() => onObjectSelected(e));
          _chartControl.Zoom += (o, e) => OnEvent(() => onZoom(e));
          _chartControl.Scroll += (o, e) => OnEvent(() => onScroll(e));
-
          _chartControl.CustomDrawSeriesPoint += (o, e) => OnEvent(() => drawSeriesPoint(e));
-
-         AllowDrop = true;
-
          _chartControl.Click += (o, e) => OnEvent(() => chartClick(e as MouseEventArgs));
          _chartControl.DoubleClick += (o, e) => OnEvent(() => chartDoubleClick(e as MouseEventArgs));
-
          _chartControl.MouseMove += (o, e) => OnEvent(() => OnChartMouseMove(e));
          _chartControl.DragOver += (o, e) => OnEvent(() => OnDragOver(e));
          _chartControl.DragDrop += (o, e) => OnEvent(() => OnDragDrop(e));
-         _chartControl.Resize += (o, e) => OnEvent(() => OnResize(e));
+         _chartControl.SizeChanged += (o, e) => OnEvent(onSizeChanged);
 
          initializeHintControl();
       }
 
       private void drawSeriesPoint(CustomDrawSeriesPointEventArgs e)
       {
-         if (_presenter.IsSeriesLLOQ(e.Series.Name))
+         var drawOptions = e.SeriesDrawOptions as PointDrawOptions;
+         if (drawOptions == null)
             return;
 
          if (!_presenter.IsPointBelowLLOQ(e.SeriesPoint.Values, e.Series.Name))
             return;
 
-         var drawOptions = e.SeriesDrawOptions as PointDrawOptions;
-         if (drawOptions == null)
-            return;
          drawOptions.Marker.BorderColor = drawOptions.Color;
          drawOptions.Color = Color.Transparent;
       }
@@ -188,10 +180,8 @@ namespace OSPSuite.UI.Views.Charts
          return _chartControl.PointToClient(new Point(dragOverEventArgs.X, dragOverEventArgs.Y));
       }
 
-      protected override void OnResize(EventArgs eventArgs)
+      private void onSizeChanged()
       {
-         base.OnResize(eventArgs);
-         // reset Axis Scaling
          _presenter?.RefreshAxisBinders();
       }
 
@@ -245,7 +235,7 @@ namespace OSPSuite.UI.Views.Charts
       private void showContextMenuFor(ChartHitInfo hitInfo, Point location)
       {
          doContextMenuActionFor(hitInfo,
-            curve => _presenter.ShowContextMenu(new CurveViewItem(_presenter.Chart, curve),location),
+            curve => _presenter.ShowContextMenu(new CurveViewItem(_presenter.Chart, curve), location),
             axis => _presenter.ShowContextMenu(new AxisViewItem(_presenter.Chart, axis), location),
             () => _presenter.ShowContextMenu(new CurveChartViewItem(_presenter.Chart), location));
       }
@@ -337,7 +327,7 @@ namespace OSPSuite.UI.Views.Charts
          catch
          {
             // not understood, under which circumstances exception is thrown
-            return Size.Empty; ;
+            return Size.Empty;
          }
       }
 
@@ -489,6 +479,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          if (_presenter.IsSeriesLLOQ(series.Name))
             return generateToolTipForLLOQ(series, hitPoint);
+
          return generateToolTipForSeriesDataPoint(series, hitPoint);
       }
 
@@ -661,7 +652,5 @@ namespace OSPSuite.UI.Views.Charts
 
          this.FillWith(_hintControl);
       }
-
-      public BarManager PopupBarManager => _barManager;
    }
 }
