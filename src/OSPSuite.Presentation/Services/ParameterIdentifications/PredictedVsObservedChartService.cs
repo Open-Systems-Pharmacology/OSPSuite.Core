@@ -105,6 +105,8 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
 
          xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
          xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
+
+         chart.UpdateAxesVisibility();
       }
 
       public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
