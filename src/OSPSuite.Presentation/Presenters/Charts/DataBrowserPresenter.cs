@@ -144,9 +144,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Clear()
       {
-         _view.DeleteBinding();
          _dataColumnDTOCache.Clear();
          _allDataColumns.Clear();
+         bindToView();
       }
 
       public bool IsUsed(DataColumn dataColumn)

@@ -100,11 +100,6 @@ namespace OSPSuite.UI.Views.Charts
 
       public IReadOnlyList<DataColumnDTO> SelectedDescendentDataRepositoryColumns => selectDescendentDataRows(gridView.GetSelectedRows());
 
-      public void DeleteBinding()
-      {
-         _gridViewBinder.DeleteBinding();
-      }
-
       private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
 
       private IReadOnlyList<DataColumnDTO> selectDescendentDataRows(IEnumerable<int> selectedRowHandles)
