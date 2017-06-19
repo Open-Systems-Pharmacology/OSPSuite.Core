@@ -204,7 +204,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       protected virtual void InitEditorLayout()
       {
          _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.EditorAndDisplayPresenter);
-         AddAllButtons();
       }
 
       private void columnSettingsChanged(IReadOnlyCollection<GridColumnSettings> gridColumnSettings)
