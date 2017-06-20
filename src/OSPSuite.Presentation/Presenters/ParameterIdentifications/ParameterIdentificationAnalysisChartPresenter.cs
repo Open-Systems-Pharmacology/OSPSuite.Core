@@ -33,7 +33,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         chartPresenterContext.EditorAndDisplayPresenter.PostEditorLayout = showSimulationColumn;
+         PostEditorLayout = showSimulationColumn;
+         AddAllButtons();
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -78,9 +79,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void showSimulationColumn()
       {
-         Column(BrowserColumns.Simulation).Visible = true;
-         Column(BrowserColumns.Simulation).VisibleIndex = 0;
-         ChartEditorPresenter.ApplyColumnSettings();
+         var simulationColumnSettings = Column(BrowserColumns.Simulation);
+         simulationColumnSettings.Visible = true;
+         simulationColumnSettings.VisibleIndex = 0;
+         ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
       }
 
       private void updateCacheColor()
@@ -135,6 +137,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          SelectColorForPath(calculationColumn.PathAsString);
       }
 
+      protected void SelectColorForPath(string path)
+      {
+         if (!_colorCache.Contains(path))
+            _colorCache[path] = Chart.SelectNewColor();
+      }
+
       protected void UpdateColorForCalculationColumn(Curve curve, DataColumn calculationColumn)
       {
          UpdateColorForPath(curve, calculationColumn.PathAsString);
@@ -143,12 +151,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected void UpdateColorForPath(Curve curve, string path)
       {
          curve.Color = _colorCache[path];
-      }
-
-      protected void SelectColorForPath(string path)
-      {
-         if (!_colorCache.Contains(path))
-            _colorCache[path] = Chart.SelectNewColor();
       }
 
       private void addObservedDataForOutput(IGrouping<string, OutputMapping> outputMappingsByOutput)

@@ -91,13 +91,13 @@ namespace OSPSuite.Starter.Presenters
 
       private void configureChartEditorEvents()
       {
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Origin).Visible = true;
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.Origin).Visible = true;
 
          ChartEditorPresenter.SetCurveNameDefinition(Helper.NameDefinition);
-         ChartEditorPresenter.CurveOptionsColumnSettingsFor(CurveOptionsColumns.InterpolationMode).Visible = false;
+         ChartEditorPresenter.ColumnSettingsFor(CurveOptionsColumns.InterpolationMode).Visible = false;
 
-         ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).Caption = "Number Representation";
-         ChartEditorPresenter.AxisOptionsColumnSettingsFor(AxisOptionsColumns.NumberMode).VisibleIndex = 1;
+         ChartEditorPresenter.ColumnSettingsFor(AxisOptionsColumns.NumberMode).Caption = "Number Representation";
+         ChartEditorPresenter.ColumnSettingsFor(AxisOptionsColumns.NumberMode).VisibleIndex = 1;
 
          ChartDisplayPresenter.Edit(Chart);
 
@@ -209,16 +209,16 @@ namespace OSPSuite.Starter.Presenters
 
       private void configureChartEditorPresenter(IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper)
       {
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.RepositoryName).GroupIndex = 0;
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.DimensionName).GroupIndex = 1;
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Simulation).GroupIndex = -1;
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.TopContainer).Caption = "TopC";
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Container).Caption = "Container";
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.BottomCompartment).VisibleIndex = 2;
-         ChartEditorPresenter.DataBrowserColumnSettingsFor(BrowserColumns.Molecule).SortColumnName = BrowserColumns.OrderIndex.ToString();
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.RepositoryName).GroupIndex = 0;
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.DimensionName).GroupIndex = 1;
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.Simulation).GroupIndex = -1;
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.TopContainer).Caption = "TopC";
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.Container).Caption = "Container";
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.BottomCompartment).VisibleIndex = 2;
+         ChartEditorPresenter.ColumnSettingsFor(BrowserColumns.Molecule).SortColumnName = BrowserColumns.OrderIndex.ToString();
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(setQuantityPathDefinitions(_model, dataColumnToPathColumnValuesMapper));
          ChartEditorPresenter.SetShowDataColumnInDataBrowserDefinition(showDataColumnInDataBrowserDefinition);
-         ChartEditorPresenter.ApplyColumnSettings();
+         ChartEditorPresenter.ApplyAllColumnSettings();
       }
 
       public IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;

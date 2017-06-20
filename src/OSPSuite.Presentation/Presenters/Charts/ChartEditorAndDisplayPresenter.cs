@@ -37,6 +37,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IStartOptions _startOptions;
       private readonly IPresentationUserSettings _presentationUserSettings;
       public Action PostEditorLayout { get; set; } = () => { };
+      public IChartDisplayPresenter DisplayPresenter { get; }
+      public IChartEditorPresenter EditorPresenter { get; }
 
       public ChartEditorAndDisplayPresenter(IChartEditorAndDisplayView chartEditorAndDisplayView, IChartDisplayPresenter chartDisplayPresenter,
          IChartEditorPresenter chartEditorPresenter, IChartEditorLayoutTask chartEditorLayoutTask, IStartOptions startOptions,
@@ -54,10 +56,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          AddSubPresenters(EditorPresenter, chartDisplayPresenter);
       }
-
-      public IChartDisplayPresenter DisplayPresenter { get; }
-
-      public IChartEditorPresenter EditorPresenter { get; }
 
       public void CopySettingsFrom(ChartEditorAndDisplaySettings settings)
       {
