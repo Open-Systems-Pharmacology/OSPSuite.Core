@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Services.Charts
 
       private static void applyColumnSettings(IChartEditorAndDisplayPresenter chartEditorPresenter)
       {
-         chartEditorPresenter.EditorPresenter.ApplyColumnSettings();
+         chartEditorPresenter.EditorPresenter.ApplyAllColumnSettings();
       }
 
       public void InitEditorLayout(IChartEditorAndDisplayPresenter chartEditorPresenter, string serializedChartEditorLayout, bool loadColumnSettings = false)

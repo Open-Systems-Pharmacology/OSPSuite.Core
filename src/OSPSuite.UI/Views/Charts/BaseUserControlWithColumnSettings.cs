@@ -4,13 +4,14 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Settings;
+using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
-   internal class BaseUserControlWithColumnSettings : BaseUserControl
+   internal class BaseUserControlWithColumnSettings : BaseUserControl, IViewWithColumnSettings
    {
       private IPresenterWithColumnSettings _presenter;
       private GridView _gridView;
@@ -27,8 +28,17 @@ namespace OSPSuite.UI.Views.Charts
 
       public void ApplyAllColumnSettings()
       {
-         _presenter.AllColumnSettings().OrderBy(x => x.VisibleIndex).Each(applyColumnSettings);
+         _presenter.AllColumnSettings.OrderBy(x => x.VisibleIndex).Each(ApplyColumnSettings);
          _gridView.CollapseAllGroups(); // otherwise an arbitrary group can be open 
+      }
+
+      public void ApplyColumnSettings(GridColumnSettings columnSettings)
+      {
+         var gridColumn = FindColumnByName(columnSettings.ColumnName);
+         if (gridColumn == null)
+            return;
+
+         DoWithoutColumnSettingsUpdateNotification(() => columnSettings.ApplyTo(gridColumn));
       }
 
       /// <summary>
@@ -48,24 +58,8 @@ namespace OSPSuite.UI.Views.Charts
 
       private void onColumnSettingsChanged(object sender, EventArgs e)
       {
-         _presenter.AllColumnSettings().Each(updateColumnSettings);
+         _presenter.AllColumnSettings.Each(updateColumnSettings);
          _presenter.NotifyColumnSettingsChanged();
-      }
-
-      /// <summary>
-      ///    applies Visibility, VisibleIndex, GroupIndex of GridColumnSettings to corresponding GridColumn
-      /// </summary>
-      /// <param name="columnSettings"></param>
-      private void applyColumnSettings(GridColumnSettings columnSettings)
-      {
-         var gridColumn = FindColumnByName(columnSettings.ColumnName);
-         if (gridColumn == null)
-            return;
-
-         DoWithoutColumnSettingsUpdateNotification(() =>
-         {
-            columnSettings.ApplyTo(gridColumn);
-         });
       }
 
       private void activateGridColumnChangedEventHandlers()
@@ -82,7 +76,7 @@ namespace OSPSuite.UI.Views.Charts
          _gridView.EndGrouping -= onColumnSettingsChanged;
       }
 
-      public void DoWithoutColumnSettingsUpdateNotification(Action action)
+      protected void DoWithoutColumnSettingsUpdateNotification(Action action)
       {
          try
          {

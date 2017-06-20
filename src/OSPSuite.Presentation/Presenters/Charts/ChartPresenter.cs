@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -33,6 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       protected DefaultPresentationSettings _settings;
       public TChart Chart { get; private set; }
       private IWithChartTemplates _withChartTemplates;
+      private Action _postEditorLayout;
       public string PresentationKey { get; protected set; }
       protected IChartEditorPresenter ChartEditorPresenter => _chartPresenterContext.EditorAndDisplayPresenter.EditorPresenter;
       protected IChartDisplayPresenter ChartDisplayPresenter => _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter;
@@ -46,6 +48,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
          ChartEditorPresenter.ChartChanged += ChartChanged;
+         PostEditorLayout = () => { };
          ConfigureColumns();
       }
 
@@ -59,6 +62,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart = chart;
          BindChartToEditors();
          InitEditorLayout();
+      }
+
+      protected Action PostEditorLayout
+      {
+         get => _postEditorLayout;
+         set
+         {
+            _postEditorLayout = value;
+            _chartPresenterContext.EditorAndDisplayPresenter.PostEditorLayout = _postEditorLayout;
+         }
       }
 
       protected void BindChartToEditors()
@@ -204,6 +217,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       protected virtual void InitEditorLayout()
       {
          _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.EditorAndDisplayPresenter);
+         PostEditorLayout();
       }
 
       private void columnSettingsChanged(IReadOnlyCollection<GridColumnSettings> gridColumnSettings)
@@ -216,11 +230,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartPresenterContext.NotifyProjectChanged();
       }
 
-      protected GridColumnSettings Column(BrowserColumns browserColumns) => ChartEditorPresenter.DataBrowserColumnSettingsFor(browserColumns);
+      protected GridColumnSettings Column(BrowserColumns browserColumns) => ChartEditorPresenter.ColumnSettingsFor(browserColumns);
 
-      protected GridColumnSettings Column(CurveOptionsColumns curveOptionsColumns) => ChartEditorPresenter.CurveOptionsColumnSettingsFor(curveOptionsColumns);
+      protected GridColumnSettings Column(CurveOptionsColumns curveOptionsColumns) => ChartEditorPresenter.ColumnSettingsFor(curveOptionsColumns);
 
-      protected GridColumnSettings Column(AxisOptionsColumns axisOptionsColumns) => ChartEditorPresenter.AxisOptionsColumnSettingsFor(axisOptionsColumns);
+      protected GridColumnSettings Column(AxisOptionsColumns axisOptionsColumns) => ChartEditorPresenter.ColumnSettingsFor(axisOptionsColumns);
 
       protected void ClearButtons()
       {

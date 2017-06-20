@@ -32,11 +32,6 @@ namespace OSPSuite.Presentation.Mappers
       public PathElements MapFrom(IContainer rootContainer, IReadOnlyList<string> entityPath)
       {
          var containers = getContainers(rootContainer, entityPath);
-
-         // Not the whole Path could be found in container hierarchy
-         if (containers.Count < entityPath.Count - 1)
-            containers = new List<IContainer>();
-
          return CreatePathElementsFrom(containers, entityPath.LastOrDefault());
       }
 

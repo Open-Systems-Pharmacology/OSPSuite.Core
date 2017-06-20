@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
@@ -9,10 +10,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IPresenterWithColumnSettings
    {
-      IEnumerable<GridColumnSettings> AllColumnSettings();
+      IReadOnlyCollection<GridColumnSettings> AllColumnSettings { get; }
       GridColumnSettings ColumnSettings(string columnName);
       event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged;
       void ApplyAllColumnSettings();
+      void ApplyColumnSettings(GridColumnSettings columnSettings);
       void NotifyColumnSettingsChanged();
    }
 
@@ -34,6 +36,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.ApplyAllColumnSettings();
       }
 
+      public void ApplyColumnSettings(GridColumnSettings columnSettings)
+      {
+         if (!AllColumnSettings.Contains(columnSettings))
+            return;
+
+         _view.ApplyColumnSettings(columnSettings);
+      }
+
       public void NotifyColumnSettingsChanged()
       {
          ColumnSettingsChanged(_columnSettings);
@@ -48,10 +58,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return columnSettings;
       }
 
-      public IEnumerable<GridColumnSettings> AllColumnSettings()
-      {
-         return _columnSettings;
-      }
+      public IReadOnlyCollection<GridColumnSettings> AllColumnSettings=> _columnSettings;
 
       public GridColumnSettings ColumnSettings(string columnName)
       {

@@ -19,8 +19,8 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Presentation.Presenters.Charts
 {
    /// <summary>
-   ///    Presenter of ChartDisplay component, which edits a ICurveChart. Consists of subcomponents
-   ///    - DataBrowser for selection of McDataColumns from McDataRepositories for xyData of a curve,
+   ///    Presenter of ChartDisplay component, which edits a CurveChart. Consists of subcomponents
+   ///    - DataBrowser for selection of DataColumns from DataRepositories for xyData of a curve,
    ///    - CurveOptions for editing properties of curves,
    ///    - AxisOptions for editing properties of axes,
    ///    - ChartOptions for editing properties of chartSettings.
@@ -82,17 +82,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Gets Display settings of DataBrowser column.
       /// </summary>
-      GridColumnSettings DataBrowserColumnSettingsFor(BrowserColumns browserColumn);
+      GridColumnSettings ColumnSettingsFor(BrowserColumns browserColumn);
 
       /// <summary>
       ///    Gets Display settings of CurveOptions column.
       /// </summary>
-      GridColumnSettings CurveOptionsColumnSettingsFor(CurveOptionsColumns curveOptionsColumn);
+      GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn);
 
       /// <summary>
       ///    Gets Display settings of AxisOptions column.
       /// </summary>
-      GridColumnSettings AxisOptionsColumnSettingsFor(AxisOptionsColumns axisOptionsColumn);
+      GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn);
 
       /// <summary>
       ///    Sets Definition of displayed QuantityPath in DataBrowser.
@@ -148,7 +148,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Apply all column setting to the editor
       /// </summary>
-      void ApplyColumnSettings();
+      void ApplyAllColumnSettings();
+
+      /// <summary>
+      ///    Apply all column setting to the editor
+      /// </summary>
+      void ApplyColumnSettings(GridColumnSettings columnSettings);
 
       /// <summary>
       ///    Show the customaization form (for internal user only)
@@ -197,9 +202,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
       private Func<DataColumn, string> _curveNameDefinition;
+      private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
       public CurveChart Chart { get; private set; }
       public event Action ChartChanged = delegate { };
-
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
@@ -220,13 +225,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartUpdater = chartUpdater;
          _eventPublisher = eventPublisher;
          _dimensionFactory = dimensionFactory;
-
          _dataBrowserPresenter.UsedChanged += onDataBrowserUsedChanged;
          _dataBrowserPresenter.SelectedDataChanged += onSelectedDataChanged;
-
-         _dataBrowserPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
-         _curveSettingsPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
-         _axisSettingsPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
+         _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
+         initPresentersWithColumnSettings();
 
          _chartExportSettingsPresenter.StatusChanged += (o, e) => onChartPropertiesChanged();
          _chartSettingsPresenter.StatusChanged += (o, e) => onChartPropertiesChanged();
@@ -246,6 +248,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetChartExportSettingsView(chartExportSettingsPresenter.View);
          _view.SetCurveSettingsView(curveSettingsPresenter.View);
          _view.SetDataBrowserView(dataBrowserPresenter.View);
+      }
+
+      private void initPresentersWithColumnSettings()
+      {
+         _presentersWithColumnSettings.Each(x => x.ColumnSettingsChanged += ColumnSettingsChanged);
       }
 
       private void onAxisAdded()
@@ -291,12 +298,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public void ApplyColumnSettings()
-      {
-         _dataBrowserPresenter.ApplyAllColumnSettings();
-         _curveSettingsPresenter.ApplyAllColumnSettings();
-         _axisSettingsPresenter.ApplyAllColumnSettings();
-      }
+      public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
+
+      public void ApplyColumnSettings(GridColumnSettings columnSettings) => _presentersWithColumnSettings.Each(x => x.ApplyColumnSettings(columnSettings));
 
       public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
@@ -449,21 +453,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void addSettingsFrom(IPresenterWithColumnSettings presenterWithColumnSettings, ChartEditorSettings settings, Func<ChartEditorSettings, Action<GridColumnSettings>> addAction)
       {
-         presenterWithColumnSettings.AllColumnSettings().Each(x => addAction(settings)(new GridColumnSettings(x)));
+         presenterWithColumnSettings.AllColumnSettings.Each(x => addAction(settings)(new GridColumnSettings(x)));
       }
 
-      public GridColumnSettings DataBrowserColumnSettingsFor(BrowserColumns browserColumn) => _dataBrowserPresenter.ColumnSettings(browserColumn.ToString());
+      public GridColumnSettings ColumnSettingsFor(BrowserColumns browserColumn) => _dataBrowserPresenter.ColumnSettings(browserColumn.ToString());
 
-      public GridColumnSettings CurveOptionsColumnSettingsFor(CurveOptionsColumns curveOptionsColumn) => _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
+      public GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn) => _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
 
-      public GridColumnSettings AxisOptionsColumnSettingsFor(AxisOptionsColumns axisOptionsColumn) => _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
+      public GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn) => _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
       {
          _dataBrowserPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
       }
 
-      public void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition) => _showDataColumnInDataBrowserDefinition = showDataColumnInDataBrowserDefinition;
+      public void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition)
+      {
+         _showDataColumnInDataBrowserDefinition = showDataColumnInDataBrowserDefinition;
+      }
 
       public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
       {

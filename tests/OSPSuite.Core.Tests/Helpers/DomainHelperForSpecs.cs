@@ -76,7 +76,7 @@ namespace OSPSuite.Helpers
 
       public static DataRepository ObservedData(string id = "TestData")
       {
-         var observedData = new DataRepository(id);
+         var observedData = new DataRepository(id).WithName(id);
          var baseGrid = new BaseGrid("Time", TimeDimensionForSpecs())
          {
             Values = new[] { 1.0f, 2.0f, 3.0f }

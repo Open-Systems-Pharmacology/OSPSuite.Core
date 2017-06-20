@@ -153,6 +153,15 @@ namespace OSPSuite.Presentation
          _residualVsTimeChart.Curves.ElementAt(0).VisibleInLegend.ShouldBeTrue();
          _residualVsTimeChart.Curves.ElementAt(1).VisibleInLegend.ShouldBeFalse();
       }
+
+      [Observation]
+      public void should_have_added_the_name_of_the_observed_data_to_the_output_path_as_one_before_last_item()
+      {
+         var firstCurve = _residualVsTimeChart.Curves.ElementAt(0);
+         var yData = firstCurve.yData;
+         var pathArray = yData.QuantityInfo.Path.ToArray();
+         pathArray[pathArray.Length - 2].ShouldBeEqualTo(_outputResiduals1.ObservedDataName);
+      }
    }
 
    public class When_clearing_the_parameter_identification_residual_vs_time_chart_presenter : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
