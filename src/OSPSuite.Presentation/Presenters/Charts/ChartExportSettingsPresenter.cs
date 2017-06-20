@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Services.Charts;
@@ -8,17 +9,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IChartExportSettingsPresenter : IPresenter<IChartExportSettingsView>
    {
-      void Edit(IChartManagement chartSettings);
+      void Edit(IChartManagement chartManagement);
       IEnumerable<string> AllFontFamilyNames { get; }
       IEnumerable<int> AllFontSizes { get; }
       void ResetValuesToDefault();
       void Clear();
+      event Action ChartExportSettingsChanged;
+      void NotifyChartExportSettingsChanged();
    }
 
    public class ChartExportSettingsPresenter : AbstractPresenter<IChartExportSettingsView, IChartExportSettingsPresenter>, IChartExportSettingsPresenter
    {
       private readonly IFontsTask _fontsTask;
-      private IChartManagement _chartSettings;
+      private IChartManagement _chartManagement;
+      public event Action ChartExportSettingsChanged = delegate { };
+      public void NotifyChartExportSettingsChanged() => ChartExportSettingsChanged();
 
       public ChartExportSettingsPresenter(IChartExportSettingsView view, IFontsTask fontsTask)
          : base(view)
@@ -26,10 +31,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _fontsTask = fontsTask;
       }
 
-      public void Edit(IChartManagement chartSettings)
+      public void Edit(IChartManagement chartManagement)
       {
-         _chartSettings = chartSettings;
-         _view.BindToSource(chartSettings);
+         _chartManagement = chartManagement;
+         _view.BindToSource(chartManagement);
       }
 
       public IEnumerable<string> AllFontFamilyNames => _fontsTask.ChartFontFamilyNames;
@@ -38,7 +43,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void ResetValuesToDefault()
       {
-         _chartSettings.FontAndSize.Reset();
+         _chartManagement.FontAndSize.Reset();
+         NotifyChartExportSettingsChanged();
       }
 
       public void Clear()

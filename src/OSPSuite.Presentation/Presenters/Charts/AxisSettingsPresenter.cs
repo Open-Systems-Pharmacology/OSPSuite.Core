@@ -29,7 +29,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Clear();
       void RemoveAxis(Axis axis);
       void AddYAxis();
-      IEnumerable<IDimension> AllDimensions(IDimension dimension);
+      IEnumerable<IDimension> AllDimensions(IDimension defaultDimension);
       IEnumerable<string> AllUnitNamesFor(IDimension dimension);
       void Refresh();
       event Action AxisAdded;
@@ -108,9 +108,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AxisAdded();
       }
 
-      public IEnumerable<IDimension> AllDimensions(IDimension dimension)
+      public IEnumerable<IDimension> AllDimensions(IDimension defaultDimension)
       {
-         return _dimensionFactory.AllDimensionsForEditors(dimension);
+         return _dimensionFactory.AllDimensionsForEditors(defaultDimension);
       }
 
       public IEnumerable<string> AllUnitNamesFor(IDimension dimension)

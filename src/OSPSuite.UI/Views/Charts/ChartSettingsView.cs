@@ -91,21 +91,43 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
+         _nameBinder.Bind(c => c.Name)
+            .To(nameTextBox)
+            .OnValueSet += notifyChartSettingsChanged;
 
-         _nameBinder.Bind(c => c.Name).To(nameTextBox);
-         _curveChartBinder.Bind(c => c.Title).To(titleTextBox);
-         _curveChartBinder.Bind(c => c.Description).To(descriptionTextBox);
+         _curveChartBinder.Bind(c => c.Title)
+            .To(titleTextBox)
+            .OnValueSet += notifyChartSettingsChanged;
 
-         _settingsBinder.Bind(c => c.SideMarginsEnabled).To(sideMarginsEnabledCheckEdit);
-         _settingsBinder.Bind(c => c.LegendPosition).To(legendPositionComboBoxEdit)
-            .WithValues(EnumHelper.AllValuesFor<LegendPositions>());
+         _curveChartBinder.Bind(c => c.Description)
+            .To(descriptionTextBox)
+            .OnValueSet += notifyChartSettingsChanged;
 
-         _settingsBinder.Bind(c => c.BackColor).To(backgroundColorColorEdit);
-         _settingsBinder.Bind(c => c.DiagramBackColor).To(diagramBackgroundColorColorEdit);
+         _settingsBinder.Bind(c => c.SideMarginsEnabled)
+            .To(sideMarginsEnabledCheckEdit)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.LegendPosition)
+            .To(legendPositionComboBoxEdit)
+            .WithValues(EnumHelper.AllValuesFor<LegendPositions>())
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.BackColor)
+            .To(backgroundColorColorEdit)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.DiagramBackColor)
+            .To(diagramBackgroundColorColorEdit)
+            .OnValueSet += notifyChartSettingsChanged;
 
          RegisterValidationFor(_settingsBinder, statusChangedNotify:NotifyViewChanged);
          RegisterValidationFor(_curveChartBinder, statusChangedNotify: NotifyViewChanged);
          RegisterValidationFor(_nameBinder, statusChangedNotify: NotifyViewChanged);
+      }
+
+      private void notifyChartSettingsChanged<T>(object sender, PropertyValueSetEventArgs<T> e)
+      {
+         _presenter.NotifyChartSettingsChanged();
       }
    }
 }

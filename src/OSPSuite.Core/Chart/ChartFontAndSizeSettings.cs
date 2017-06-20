@@ -44,7 +44,12 @@ namespace OSPSuite.Core.Chart
          set => SetProperty(ref _fonts, value, () => Fonts);
       }
 
-      public bool SizeIsDefined =>  ChartWidth.GetValueOrDefault() > 0 && ChartHeight.GetValueOrDefault() > 0;
+      public void Reset()
+      {
+         UpdatePropertiesFrom(new ChartFontAndSizeSettings());
+      }
+
+      public bool SizeIsDefined => ChartWidth.GetValueOrDefault() > 0 && ChartHeight.GetValueOrDefault() > 0;
 
       public void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -82,11 +87,6 @@ namespace OSPSuite.Core.Chart
                .WithRule((o, v) => v == null || (v >= MINIMUM_EXPORT_SIZE && v <= MAXIMUM_EXPORT_SIZE))
                .WithError(Validation.ValueGreaterThanMinSizeInPixelAndLessThanMaxSizeIsRequiredOrEmpty(MINIMUM_EXPORT_SIZE, MAXIMUM_EXPORT_SIZE));
          }
-      }
-
-      public void Reset()
-      {
-         UpdatePropertiesFrom(new ChartFontAndSizeSettings());
       }
    }
 }

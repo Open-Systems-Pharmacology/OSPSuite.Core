@@ -1,9 +1,8 @@
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartFonts : Notifier
+   public class ChartFonts : MyNotifier
    {
       private int _axisSize;
       private int _legendSize;
@@ -25,61 +24,37 @@ namespace OSPSuite.Core.Chart
       public int AxisSize
       {
          get => _axisSize;
-         set
-         {
-            _axisSize = value;
-            OnPropertyChanged(() => AxisSize);
-         }
+         set => SetProperty(ref _axisSize, value, () => AxisSize);
       }
 
       public int LegendSize
       {
          get => _legendSize;
-         set
-         {
-            _legendSize = value;
-            OnPropertyChanged(() => LegendSize);
-         }
+         set => SetProperty(ref _legendSize, value, () => LegendSize);
       }
 
       public int TitleSize
       {
          get => _titleSize;
-         set
-         {
-            _titleSize = value;
-            OnPropertyChanged(() => TitleSize);
-         }
+         set => SetProperty(ref _titleSize, value, () => TitleSize);
       }
 
       public int DescriptionSize
       {
          get => _descriptionSize;
-         set
-         {
-            _descriptionSize = value;
-            OnPropertyChanged(() => DescriptionSize);
-         }
+         set => SetProperty(ref _descriptionSize, value, () => DescriptionSize);
       }
 
       public int OriginSize
       {
          get => _originSize;
-         set
-         {
-            _originSize = value;
-            OnPropertyChanged(() => OriginSize);
-         }
+         set => SetProperty(ref _originSize, value, () => OriginSize);
       }
 
       public string FontFamilyName
       {
          get => _fontFamilyName;
-         set
-         {
-            _fontFamilyName = value;
-            OnPropertyChanged(() => FontFamilyName);
-         }
+         set => SetProperty(ref _fontFamilyName, value, () => FontFamilyName);
       }
 
       public void UpdateSettingsFrom(ChartFonts newChartFonts)

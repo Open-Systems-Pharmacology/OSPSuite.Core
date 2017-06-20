@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Chart
       BottomInside
    }
 
-   public class ChartSettings : Notifier, IUpdatable
+   public class ChartSettings : MyNotifier, IUpdatable
    {
       private bool _sideMarginsEnabled;
       private LegendPositions _legendPosition;
@@ -23,8 +23,8 @@ namespace OSPSuite.Core.Chart
 
       public ChartSettings()
       {
-         _sideMarginsEnabled = true;
-         _legendPosition = LegendPositions.RightInside;
+         SideMarginsEnabled = true;
+         LegendPosition = LegendPositions.RightInside;
          BackColor = Color.Transparent;
          DiagramBackColor = Color.White;
       }
@@ -47,41 +47,25 @@ namespace OSPSuite.Core.Chart
       public virtual bool SideMarginsEnabled
       {
          get => _sideMarginsEnabled;
-         set
-         {
-            _sideMarginsEnabled = value;
-            OnPropertyChanged(() => SideMarginsEnabled);
-         }
+         set => SetProperty(ref _sideMarginsEnabled, value, () => SideMarginsEnabled);
       }
 
       public virtual LegendPositions LegendPosition
       {
          get => _legendPosition;
-         set
-         {
-            _legendPosition = value;
-            OnPropertyChanged(() => LegendPosition);
-         }
+         set => SetProperty(ref _legendPosition, value, () => LegendPosition);
       }
 
       public virtual Color BackColor
       {
          get => _backColor;
-         set
-         {
-            _backColor = value;
-            OnPropertyChanged(() => BackColor);
-         }
+         set => SetProperty(ref _backColor, value, () => BackColor);
       }
 
       public virtual Color DiagramBackColor
       {
          get => _diagramBackColor;
-         set
-         {
-            _diagramBackColor = value;
-            OnPropertyChanged(() => DiagramBackColor);
-         }
+         set => SetProperty(ref _diagramBackColor, value, () => DiagramBackColor);
       }
    }
 }
