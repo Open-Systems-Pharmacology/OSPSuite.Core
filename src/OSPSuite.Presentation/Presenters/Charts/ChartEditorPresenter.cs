@@ -493,25 +493,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.AddCurve(curve);
 
          if (notifyChartUpdated)
-            _chartUpdater.Update(Chart);
+            updateChart();
 
          return curve;
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
-         {
-            columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
-         }
+         columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
+         updateChart();
       }
 
       private void removeCurve(Curve curve)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
-         {
-            Chart.RemoveCurve(curve);
-         }
+         Chart.RemoveCurve(curve);
+         updateChart();
       }
 
       public void AddButton(IMenuBarItem menuBarItem)
@@ -555,7 +551,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return;
 
          Refresh();
-         ChartChanged();
+
+         if (chartUpdatedEvent.PropogateChartChangeEvent)
+            ChartChanged();
       }
 
       public void Handle(ChartPropertiesChangedEvent chartPropertiesChangedEvent)

@@ -48,7 +48,16 @@ namespace OSPSuite.Presentation.Services.Charts
       /// </summary>
       string TemplateStringFrom(CurveChart chart);
 
-      void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold);
+      /// <summary>
+      /// Initializes the given <paramref name="chart"/> from the <paramref name="template"/>.
+      /// </summary>
+      /// <param name="chart">Chart to initialize</param>
+      /// <param name="dataColumns">Available columns that will be used to pattern match the curve to create automatically</param>
+      /// <param name="template">Template to use</param>
+      /// <param name="nameDefinition">Application specific name definition for columns</param>
+      /// <param name="warnIfNumberOfCurvesAboveThreshold">If <c>true</c> a warning will be shown to the user if too many curves are created</param>
+      /// <param name="propogateChartChangeEvent">If <c>true</c> a change event will be propagated when updating a chart from template</param>
+      void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold, bool propogateChartChangeEvent = true);
 
       /// <summary>
       ///    Returns a template based on the given <paramref name="chart" />. The template name will be set to the name of the
@@ -248,12 +257,12 @@ namespace OSPSuite.Presentation.Services.Charts
          return template;
       }
 
-      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold)
+      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold, bool propogateChartChangeEvent=true)
       {
          if (dataColumns == null || template == null)
             return;
 
-         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, nameDefinition, warnIfNumberOfCurvesAboveThreshold);
+         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, nameDefinition, warnIfNumberOfCurvesAboveThreshold, propogateChartChangeEvent);
       }
    }
 }

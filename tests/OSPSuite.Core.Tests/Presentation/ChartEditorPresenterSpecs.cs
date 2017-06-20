@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OSPSuite.BDDHelper;
 using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -40,12 +39,12 @@ namespace OSPSuite.Presentation
          _curveSettingsPresenter = A.Fake<ICurveSettingsPresenter>();
          _dataBrowserPresenter = A.Fake<IDataBrowserPresenter>();
          _chartTemplateMenuPresenter = A.Fake<IChartTemplateMenuPresenter>();
-         _chartUpdater= A.Fake<IChartUpdater>();
-         _eventPublisher= A.Fake<IEventPublisher>();
-         _dimensionFactory= A.Fake<IDimensionFactory>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter,_chartUpdater, _eventPublisher, _dimensionFactory);
+         _chartUpdater = A.Fake<IChartUpdater>();
+         _eventPublisher = A.Fake<IEventPublisher>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory);
 
-         sut.SetCurveNameDefinition(x=>x.QuantityInfo.PathAsString);
+         sut.SetCurveNameDefinition(x => x.QuantityInfo.PathAsString);
 
          _chart = new CurveChart().WithAxes();
          sut.Edit(_chart);
@@ -88,7 +87,6 @@ namespace OSPSuite.Presentation
             DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary),
          };
 
-    
 
          _dataRepository = new DataRepository {_hiddenColumn, _internalColumn, _auxiliaryObservedDataColumn, _standardColumn};
 
@@ -96,12 +94,11 @@ namespace OSPSuite.Presentation
 
          A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
             .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
-
       }
 
       protected override void Because()
       {
-         sut.AddDataRepositories(new []{_dataRepository });
+         sut.AddDataRepositories(new[] {_dataRepository});
       }
 
       [Observation]
@@ -128,7 +125,6 @@ namespace OSPSuite.Presentation
          _dataColumnsAdded.ShouldContain(_standardColumn);
       }
    }
-
 
    internal class When_adding_a_new_curve_for_column_id_not_in_chart_and_default_settings_are_specified : concern_for_ChartEditorPresenter
    {
@@ -204,7 +200,6 @@ namespace OSPSuite.Presentation
       }
    }
 
-
    public class When_refreshing_a_data_repository_used_in_the_chart_editor_presenter : concern_for_ChartEditorPresenter
    {
       private DataRepository _dataRepository;
@@ -236,16 +231,15 @@ namespace OSPSuite.Presentation
          _dataRepository = new DataRepository {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn};
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => true);
-         sut.AddDataRepositories(new []{_dataRepository});
+         sut.AddDataRepositories(new[] {_dataRepository});
 
          _columnThatWillBeInternal.IsInternal = true;
          _dataRepository.Remove(_columnThatWillBeRemoved);
 
-         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new []{ _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn });
+         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new[] {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn});
 
          A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
             .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
-
       }
 
       protected override void Because()
@@ -269,6 +263,93 @@ namespace OSPSuite.Presentation
       public void should_not_remove_the_existing_columns()
       {
          _dataColumnsRemoved.ShouldNotContain(_standardColumn);
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_not_edited : concern_for_ChartEditorPresenter
+   {
+      private IChart _anotherCurveChart;
+      private CurveChart _curveChart;
+
+      protected override void Context()
+      {
+         base.Context();
+         _curveChart = new CurveChart {Id = "TOTO"};
+         _anotherCurveChart = new CurveChart {Id = "HELLO"};
+         sut.Edit(_curveChart);
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartUpdatedEvent(_anotherCurveChart, true));
+      }
+
+      [Observation]
+      public void should_not_refresh_the_chart()
+      {
+         A.CallTo(() => _axisSettingsPresenter.Refresh()).MustNotHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_being_edited : concern_for_ChartEditorPresenter
+   {
+      private CurveChart _curveChart;
+      private bool _notified;
+
+      protected override void Context()
+      {
+         base.Context();
+         _curveChart = new CurveChart {Id = "TOTO"};
+         sut.Edit(_curveChart);
+         sut.ChartChanged += () => _notified = true;
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartUpdatedEvent(_curveChart, propogateChartChangeEvent: true));
+      }
+
+      [Observation]
+      public void should_refresh_the_chart()
+      {
+         A.CallTo(() => _axisSettingsPresenter.Refresh()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_notify_the_chart_changed_event()
+      {
+         _notified.ShouldBeTrue();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_being_edited_and_no_chart_changed_event_should_be_propagated : concern_for_ChartEditorPresenter
+   {
+      private CurveChart _curveChart;
+      private bool _notified;
+
+      protected override void Context()
+      {
+         base.Context();
+         _curveChart = new CurveChart {Id = "TOTO"};
+         sut.Edit(_curveChart);
+         sut.ChartChanged += () => _notified = true;
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartUpdatedEvent(_curveChart, propogateChartChangeEvent: false));
+      }
+
+      [Observation]
+      public void should_refresh_the_chart()
+      {
+         A.CallTo(() => _axisSettingsPresenter.Refresh()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_not_notify_the_chart_changed_event()
+      {
+         _notified.ShouldBeFalse();
       }
    }
 }

@@ -32,12 +32,16 @@ namespace OSPSuite.Presentation.Services
          _chartUpdater = chartUpdater;
       }
 
-      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> curveNameDefinition = null,  bool warnIfNumberOfCurvesAboveThreshold = false, int warningThreshold = Constants.DEFAULT_TEMPLATE_WARNING_THRESHOLD)
+      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, 
+         Func<DataColumn, string> curveNameDefinition = null, 
+         bool warnIfNumberOfCurvesAboveThreshold = false,
+         bool propogateChartChangeEvent = true,
+         int warningThreshold = Constants.DEFAULT_TEMPLATE_WARNING_THRESHOLD)
       {
          try
          {
             _allColumnsByPath = dataColumns.Select(x => new ColumnPath(x)).ToList();
-            _curveNameDefinition = curveNameDefinition ?? (x =>x.Name);
+            _curveNameDefinition = curveNameDefinition ?? (x => x.Name);
 
             //Retrieve all possible curves for each curve template defined in the given template 
             var curvesForTemplates = new Cache<CurveTemplate, TemplateToColumnsMatch>(x => x.CurveTemplate);
@@ -55,7 +59,7 @@ namespace OSPSuite.Presentation.Services
             }
 
             //Last but not least, update the chart
-            updateChartFromTemplateWithMatchingCurves(chart, template, bestTemplateForCurves);
+            updateChartFromTemplateWithMatchingCurves(chart, template, bestTemplateForCurves, propogateChartChangeEvent);
          }
          finally
          {
@@ -64,9 +68,9 @@ namespace OSPSuite.Presentation.Services
          }
       }
 
-      private void updateChartFromTemplateWithMatchingCurves(CurveChart chart, CurveChartTemplate template, ICache<CurveTemplate, IReadOnlyList<ColumnMap>> bestTemplateForCurves)
+      private void updateChartFromTemplateWithMatchingCurves(CurveChart chart, CurveChartTemplate template, ICache<CurveTemplate, IReadOnlyList<ColumnMap>> bestTemplateForCurves, bool propogateChartChangeEvent)
       {
-         using (_chartUpdater.UpdateTransaction(chart))
+         using (_chartUpdater.UpdateTransaction(chart, propogateChartChangeEvent))
          {
             chart.Clear();
             chart.CopyChartSettingsFrom(template);
@@ -105,7 +109,7 @@ namespace OSPSuite.Presentation.Services
 
          //find the one with exact matching
          var allTemplateExactMatching = allTemplates.Where(x => x.ColumnMap.MatchType == MatchType.Exact).Select(x => x.CurveTemplate).ToList();
-         
+
          //Only one exact match or none at all. return
          if (allTemplateExactMatching.Count <= 1)
             return allTemplateExactMatching.FirstOrDefault() ?? firstTemplate;
@@ -288,7 +292,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       /// <summary>
-      /// Possible match for a given column and a template
+      ///    Possible match for a given column and a template
       /// </summary>
       private class TemplateColumnMatch
       {
@@ -303,7 +307,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       /// <summary>
-      /// All columns potentially matching a given template
+      ///    All columns potentially matching a given template
       /// </summary>
       private class TemplateToColumnsMatch
       {
