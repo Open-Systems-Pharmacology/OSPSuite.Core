@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Chart;
+﻿using System;
+using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Views.Charts;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -15,20 +16,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool NameVisible { get; set; }
 
       void Edit(CurveChartTemplate chartTemplate);
+
       void Clear();
+
+      event Action ChartSettingsChanged;
+
+      void NotifyChartSettingsChanged();
    }
 
    internal class ChartSettingsPresenter : AbstractPresenter<IChartSettingsView, IChartSettingsPresenter>, IChartSettingsPresenter
    {
+      public event Action ChartSettingsChanged = delegate { };
+
+      public void NotifyChartSettingsChanged() => ChartSettingsChanged();
+
+      public ChartSettingsPresenter(IChartSettingsView view) : base(view)
+      {
+      }
+
       public bool NameVisible
       {
          get => _view.NameVisible;
          set => _view.NameVisible = value;
-      }
-
-      public ChartSettingsPresenter(IChartSettingsView view)
-         : base(view)
-      {
       }
 
       public void Edit(CurveChartTemplate chartTemplate)

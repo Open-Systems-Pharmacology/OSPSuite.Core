@@ -230,8 +230,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
          initPresentersWithColumnSettings();
 
-         _chartExportSettingsPresenter.StatusChanged += (o, e) => onChartPropertiesChanged();
-         _chartSettingsPresenter.StatusChanged += (o, e) => onChartPropertiesChanged();
+         _chartExportSettingsPresenter.ChartExportSettingsChanged += onChartPropertiesChanged;
+         _chartSettingsPresenter.ChartSettingsChanged += onChartPropertiesChanged;
 
          _curveSettingsPresenter.AddCurves += columns => addCurvesForColumns(columns);
          _curveSettingsPresenter.RemoveCurve += removeCurve;

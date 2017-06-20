@@ -561,6 +561,7 @@
     <Compile Include="Presentation\ActiveSubjectRetrieverSpecs.cs" />
     <Compile Include="Presentation\ApplicationControllerSpecs.cs" />
     <Compile Include="Presentation\ApplicationIconSpecs.cs" />
+    <Compile Include="Presentation\AxisSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\BatchUpdateSpecs.cs" />
     <Compile Include="Presentation\ButtonGroupSpecs.cs" />
     <Compile Include="Presentation\CategorialParameterIdentificationRunModePresenterSpecs.cs" />
@@ -570,6 +571,7 @@
     <Compile Include="Presentation\ChartExportSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\ChartFactorySpecs.cs" />
     <Compile Include="Presentation\ChartFromTemplateServiceSpecs.cs" />
+    <Compile Include="Presentation\ChartSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\ChartTemplateManagerPresenterSpecs.cs" />
     <Compile Include="Presentation\ClassificationPresenterSpecs.cs" />
     <Compile Include="Presentation\ClassificationTypeToRootNodeTypeMapperSpecs.cs" />

@@ -3,7 +3,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
@@ -48,17 +47,52 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _screenBinderForExportSettings.Bind(c => c.ChartWidth).To(tbWidth);
-         _screenBinderForExportSettings.Bind(c => c.ChartHeight).To(tbHeight);
-         _screenBinderForCurveChart.Bind(c => c.IncludeOriginData).To(includeOriginDataInChartCheckEdit);
+         _screenBinderForExportSettings.Bind(c => c.ChartWidth)
+            .To(tbWidth)
+            .OnValueSet += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.FontFamilyName).To(cbFontFamily).WithValues(x => _presenter.AllFontFamilyNames);
-         _screenBinderForFonts.Bind(c => c.TitleSize).To(cbFontSizeTitle).WithValues(x => _presenter.AllFontSizes);
-         _screenBinderForFonts.Bind(c => c.DescriptionSize).To(cbFontSizeDescription).WithValues(x => _presenter.AllFontSizes);
-         _screenBinderForFonts.Bind(c => c.OriginSize).To(fontSizeOriginComboBox).WithValues(x => _presenter.AllFontSizes);
-         _screenBinderForFonts.Bind(c => c.AxisSize).To(cbFontSizeAxis).WithValues(x => _presenter.AllFontSizes);
-         _screenBinderForFonts.Bind(c => c.LegendSize).To(cbFontSizeLegend).WithValues(x => _presenter.AllFontSizes);
-         _screenBinderForCurveChart.Bind(c => c.PreviewSettings).To(cePreviewSettings);
+         _screenBinderForExportSettings.Bind(c => c.ChartHeight)
+            .To(tbHeight)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForCurveChart.Bind(c => c.IncludeOriginData)
+            .To(includeOriginDataInChartCheckEdit)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.FontFamilyName)
+            .To(cbFontFamily)
+            .WithValues(x => _presenter.AllFontFamilyNames)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.TitleSize)
+            .To(cbFontSizeTitle)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.DescriptionSize)
+            .To(cbFontSizeDescription)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.OriginSize)
+            .To(fontSizeOriginComboBox)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.AxisSize)
+            .To(cbFontSizeAxis)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(c => c.LegendSize)
+            .To(cbFontSizeLegend)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueSet += notifyChartSettingsChanged;
+
+         _screenBinderForCurveChart.Bind(c => c.PreviewSettings)
+            .To(cePreviewSettings)
+            .OnValueSet += notifyChartSettingsChanged;
+
          btnResetValues.Click += (o, e) => _presenter.ResetValuesToDefault();
 
          RegisterValidationFor(_screenBinderForExportSettings, statusChangedNotify: NotifyViewChanged);
@@ -66,12 +100,16 @@ namespace OSPSuite.UI.Views.Charts
          RegisterValidationFor(_screenBinderForFonts, statusChangedNotify: NotifyViewChanged);
       }
 
+      private void notifyChartSettingsChanged<T>(object sender, PropertyValueSetEventArgs<T> e)
+      {
+         _presenter.NotifyChartExportSettingsChanged();
+      }
+
       public override void InitializeResources()
       {
          cePreviewSettings.Text = Captions.Chart.FontAndSizeSettings.PreviewSettings;
          layoutItemWidth.Text = Constants.NameWithUnitFor(Captions.Chart.FontAndSizeSettings.Width, Captions.Chart.FontAndSizeSettings.Pixels).FormatForLabel();
          layoutItemHeight.Text = Constants.NameWithUnitFor(Captions.Chart.FontAndSizeSettings.Height, Captions.Chart.FontAndSizeSettings.Pixels).FormatForLabel();
-
          layoutItemFontSizeAxis.Text = Captions.Chart.FontAndSizeSettings.FontSizeAxis.FormatForLabel();
          layoutItemFontSizeLegend.Text = Captions.Chart.FontAndSizeSettings.FontSizeLegend.FormatForLabel();
          layoutItemFontSizeTitle.Text = Captions.Chart.FontAndSizeSettings.FontSizeTitle.FormatForLabel();
