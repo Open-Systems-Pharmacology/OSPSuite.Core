@@ -11,6 +11,5 @@ namespace OSPSuite.Presentation.Views.Charts
       event DragEventHandler DragOver;
       event DragEventHandler DragDrop;
       IReadOnlyList<DataColumnDTO> SelectedDescendentDataRepositoryColumns { get; }
-      void DeleteBinding();
    }
 }

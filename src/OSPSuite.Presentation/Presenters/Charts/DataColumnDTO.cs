@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private bool _used;
       public DataColumn DataColumn { get; }
 
-      public string RepositoryName => DataColumn.Repository.Name;
+      public string RepositoryName => DataColumn.Repository?.Name;
       public string Simulation => displayNameFor(PathElement.Simulation);
       public string TopContainer => displayNameFor(PathElement.TopContainer);
       public string Container => displayNameFor(PathElement.Container);

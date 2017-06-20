@@ -28,7 +28,7 @@ private
 
 def copy_to_app(app_target_relative_path)
   app_target_path = File.join(solution_dir, app_target_relative_path)
-  source_dir = File.join(src_dir, 'OSPSuite.UI', 'bin', 'Debug')
+  source_dir = File.join(tests_dir, 'OSPSuite.Starter', 'bin', 'Debug')
 
   copy_depdencies source_dir,  app_target_path do
     copy_file 'OSPSuite.*.dll'
@@ -41,7 +41,7 @@ def solution_dir
 	File.dirname(__FILE__)
 end
 
-def src_dir
-	File.join(solution_dir, 'src')
+def tests_dir
+	File.join(solution_dir, 'tests')
 end
 	
