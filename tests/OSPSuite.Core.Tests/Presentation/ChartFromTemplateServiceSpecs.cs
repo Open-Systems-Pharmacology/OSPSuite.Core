@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -92,6 +91,8 @@ namespace OSPSuite.Presentation
 
    public class When_initializing_a_chart_from_a_template_containing_curves_with_base_grid_and_with_the_exact_same_path_as_the_data_columns : concern_for_ChartFromTemplateService
    {
+      private bool _propagateChartChangedEvent;
+
       protected override void Context()
       {
          base.Context();
@@ -102,7 +103,14 @@ namespace OSPSuite.Presentation
             xData = {QuantityType = QuantityType.BaseGrid},
             yData = {QuantityType = _drugColumn.QuantityInfo.Type, Path = _drugTemplatePathArray.ToPathString()}
          });
+         _propagateChartChangedEvent = false;
       }
+
+      protected override void Because()
+      {
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, propogateChartChangeEvent:_propagateChartChangedEvent);
+      }
+
 
       [Observation]
       public void should_return_a_chart_with_the_curves_for_the_exact_data()
@@ -121,7 +129,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_have_updated_the_chart_using_the_chart_updater()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, _propagateChartChangedEvent)).MustHaveHappened();
       }
    }
 
