@@ -65,7 +65,7 @@ namespace OSPSuite.UI.Views.Charts
 
          _gridViewBinder.AutoBind(x => x.IsDefault)
             .WithCaption(Captions.Default).WithRepository(template => _checkEditRepository)
-            .WithOnValueSet((template,propertyValueSetEventArgs) => OnEvent(() => setDefaultForTemplate(template, propertyValueSetEventArgs.NewValue)));
+            .WithOnValueUpdating((template,propertyValueSetEventArgs) => OnEvent(() => setDefaultForTemplate(template, propertyValueSetEventArgs.NewValue)));
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)

@@ -3,10 +3,11 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
-   public class CurveChartTemplate : MyNotifier, IChartManagement, IUpdatable, IWithName, IWithAxes
+   public class CurveChartTemplate : Notifier, IChartManagement, IUpdatable, IWithName, IWithAxes
    {
       private bool _isDefault;
       private string _name;
@@ -68,19 +69,19 @@ namespace OSPSuite.Core.Chart
       public string Name
       {
          get => _name;
-         set => SetProperty(ref _name, value, () => Name);
+         set => SetProperty(ref _name, value);
       }
 
       public bool IsDefault
       {
          get => _isDefault;
-         set => SetProperty(ref _isDefault, value, () => IsDefault);
+         set => SetProperty(ref _isDefault, value);
       }
 
       public bool PreviewSettings
       {
          get => _previewSettings;
-         set => SetProperty(ref _previewSettings, value, () => PreviewSettings);
+         set => SetProperty(ref _previewSettings, value);
       }
    }
 }

@@ -46,21 +46,16 @@ namespace OSPSuite.Helpers
 
       public IBuildConfiguration CreateBuildConfiguration()
       {
-         var buildConfiguration = new BuildConfigurationForSpecs();
-         buildConfiguration.Molecules = getMolecules();
-
-         buildConfiguration.Reactions = getReactions();
-
-         buildConfiguration.PassiveTransports = getPassiveTransports();
-
-         buildConfiguration.SpatialStructure = getSpatialStructure();
-
-         buildConfiguration.Observers = getObservers();
-
-         buildConfiguration.EventGroups = getEventGroups();
-
-         buildConfiguration.SimulationSettings = createSimulationConfiguration();
-
+         var buildConfiguration = new BuildConfigurationForSpecs
+         {
+            Molecules = getMolecules(),
+            Reactions = getReactions(),
+            PassiveTransports = getPassiveTransports(),
+            SpatialStructure = getSpatialStructure(),
+            Observers = getObservers(),
+            EventGroups = getEventGroups(),
+            SimulationSettings = createSimulationConfiguration()
+         };
 
          allCalculationMethods().Each(buildConfiguration.AddCalculationMethod);
          buildConfiguration.MoleculeStartValues = _moleculeStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);

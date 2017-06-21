@@ -51,7 +51,7 @@ namespace OSPSuite.UI.Views
             .To(cbReportTemplates)
             .WithValues(dto => _presenter.AllTemplates())
             .AndDisplays(dto => dto.DisplayName)
-            .OnValueSet += (o, e) => updateTemplateDescription(e.NewValue);
+            .OnValueUpdating += (o, e) => updateTemplateDescription(e.NewValue);
 
          _screenBinder.Bind(x => x.Verbose)
             .To(chkVerbose)

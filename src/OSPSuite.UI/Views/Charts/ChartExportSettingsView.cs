@@ -49,49 +49,49 @@ namespace OSPSuite.UI.Views.Charts
       {
          _screenBinderForExportSettings.Bind(c => c.ChartWidth)
             .To(tbWidth)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForExportSettings.Bind(c => c.ChartHeight)
             .To(tbHeight)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForCurveChart.Bind(c => c.IncludeOriginData)
             .To(includeOriginDataInChartCheckEdit)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.FontFamilyName)
             .To(cbFontFamily)
             .WithValues(x => _presenter.AllFontFamilyNames)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.TitleSize)
             .To(cbFontSizeTitle)
             .WithValues(x => _presenter.AllFontSizes)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.DescriptionSize)
             .To(cbFontSizeDescription)
             .WithValues(x => _presenter.AllFontSizes)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.OriginSize)
             .To(fontSizeOriginComboBox)
             .WithValues(x => _presenter.AllFontSizes)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.AxisSize)
             .To(cbFontSizeAxis)
             .WithValues(x => _presenter.AllFontSizes)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForFonts.Bind(c => c.LegendSize)
             .To(cbFontSizeLegend)
             .WithValues(x => _presenter.AllFontSizes)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _screenBinderForCurveChart.Bind(c => c.PreviewSettings)
             .To(cePreviewSettings)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          btnResetValues.Click += (o, e) => _presenter.ResetValuesToDefault();
 
@@ -100,7 +100,7 @@ namespace OSPSuite.UI.Views.Charts
          RegisterValidationFor(_screenBinderForFonts, statusChangedNotify: NotifyViewChanged);
       }
 
-      private void notifyChartSettingsChanged<T>(object sender, PropertyValueSetEventArgs<T> e)
+      private void notifyChartSettingsChanged<T>(object sender, T e)
       {
          _presenter.NotifyChartExportSettingsChanged();
       }

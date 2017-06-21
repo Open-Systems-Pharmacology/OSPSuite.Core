@@ -4,6 +4,7 @@ using System.Drawing;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
@@ -23,7 +24,7 @@ namespace OSPSuite.Core.Chart
       Relative
    }
 
-   public class Axis : MyNotifier, IWithDimension, IValidatable
+   public class Axis : Notifier, IWithDimension, IValidatable
    {
       private IDimension _dimension;
       private bool _gridLines;
@@ -137,19 +138,19 @@ namespace OSPSuite.Core.Chart
       public string Caption
       {
          get => _caption;
-         set => SetProperty(ref _caption, value, () => Caption);
+         set => SetProperty(ref _caption, value);
       }
 
       public Scalings Scaling
       {
          get => _scaling;
-         set => SetProperty(ref _scaling, value, () => Scaling);
+         set => SetProperty(ref _scaling, value);
       }
 
       public NumberModes NumberMode
       {
          get => _numberMode;
-         set => SetProperty(ref _numberMode, value, () => NumberMode);
+         set => SetProperty(ref _numberMode, value);
       }
 
       public IDimension Dimension
@@ -207,25 +208,25 @@ namespace OSPSuite.Core.Chart
       public bool Visible
       {
          get => _visible;
-         set => SetProperty(ref _visible, value, () => Visible);
+         set => SetProperty(ref _visible, value);
       }
 
       public bool GridLines
       {
          get => _gridLines;
-         set => SetProperty(ref _gridLines, value, () => GridLines);
+         set => SetProperty(ref _gridLines, value);
       }
 
       public float? Min
       {
          get => _min;
-         set => SetProperty(ref _min, value, () => Min);
+         set => SetProperty(ref _min, value);
       }
 
       public float? Max
       {
          get => _max;
-         set => SetProperty(ref _max, value, () => Max);
+         set => SetProperty(ref _max, value);
       }
 
       public Unit Unit => _dimension?.Unit(UnitName);
@@ -236,7 +237,7 @@ namespace OSPSuite.Core.Chart
       public LineStyles DefaultLineStyle
       {
          get => _defaultLineStyle;
-         set => SetProperty(ref _defaultLineStyle, value, () => DefaultLineStyle);
+         set => SetProperty(ref _defaultLineStyle, value);
       }
 
       /// <summary>
@@ -245,7 +246,7 @@ namespace OSPSuite.Core.Chart
       public Color DefaultColor
       {
          get => _defaultColor;
-         set => SetProperty(ref _defaultColor, value, () => DefaultColor);
+         set => SetProperty(ref _defaultColor, value);
       }
 
       public void SetRange(float? min, float? max)

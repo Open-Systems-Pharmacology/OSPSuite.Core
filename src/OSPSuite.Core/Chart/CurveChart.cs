@@ -8,11 +8,12 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Chart
 {
-   public class CurveChart : MyNotifier, IWithId, IChart, IVisitable<IVisitor>, IWithAxes
+   public class CurveChart : Notifier, IWithId, IChart, IVisitable<IVisitor>, IWithAxes
    {
       public ChartFontAndSizeSettings FontAndSize { get; } = new ChartFontAndSizeSettings();
       public ChartSettings ChartSettings { get; } = new ChartSettings();
@@ -315,37 +316,37 @@ namespace OSPSuite.Core.Chart
       public virtual string Name
       {
          get => _name;
-         set => SetProperty(ref _name, value, () => Name);
+         set => SetProperty(ref _name, value);
       }
 
       public virtual string Description
       {
          get => _description;
-         set => SetProperty(ref _description, value, () => Description);
+         set => SetProperty(ref _description, value);
       }
 
       public string Title
       {
          get => _title;
-         set => SetProperty(ref _title, value, () => Title);
+         set => SetProperty(ref _title, value);
       }
 
       public string OriginText
       {
          get => _originText;
-         set => SetProperty(ref _originText, value, () => OriginText);
+         set => SetProperty(ref _originText, value);
       }
 
       public bool IncludeOriginData
       {
          get => _includeOriginData;
-         set => SetProperty(ref _includeOriginData, value, () => IncludeOriginData);
+         set => SetProperty(ref _includeOriginData, value);
       }
 
       public bool PreviewSettings
       {
          get => _previewSettings;
-         set => SetProperty(ref _previewSettings, value, () => PreviewSettings);
+         set => SetProperty(ref _previewSettings, value);
       }
    }
 }

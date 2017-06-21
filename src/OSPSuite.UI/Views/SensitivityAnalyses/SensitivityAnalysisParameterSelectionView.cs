@@ -50,7 +50,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          _screenBinder.Bind(x => x.Simulation).To(cbSimulationSelector)
             .WithImages(x => _presenter.IconFor(x))
             .WithValues(x => x.AllSimulations)
-            .OnValueSet += (o, e) => OnEvent(changeSimulation);
+            .OnValueUpdating += (o, e) => OnEvent(changeSimulation);
       }
 
       private void changeSimulation()

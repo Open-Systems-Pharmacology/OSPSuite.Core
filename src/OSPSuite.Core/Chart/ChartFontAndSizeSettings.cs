@@ -4,11 +4,12 @@ using System.Linq.Expressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartFontAndSizeSettings : MyNotifier, IValidatable, IUpdatable
+   public class ChartFontAndSizeSettings : Notifier, IValidatable, IUpdatable
    {
       public static readonly ChartFontAndSizeSettings Default = new ChartFontAndSizeSettings();
 
@@ -29,19 +30,19 @@ namespace OSPSuite.Core.Chart
       public int? ChartWidth
       {
          get => _chartWidth;
-         set => SetProperty(ref _chartWidth, value, () => ChartWidth);
+         set => SetProperty(ref _chartWidth, value);
       }
 
       public int? ChartHeight
       {
          get => _chartHeight;
-         set => SetProperty(ref _chartHeight, value, () => ChartHeight);
+         set => SetProperty(ref _chartHeight, value);
       }
 
       public ChartFonts Fonts
       {
          get => _fonts;
-         set => SetProperty(ref _fonts, value, () => Fonts);
+         set => SetProperty(ref _fonts, value);
       }
 
       public void Reset()

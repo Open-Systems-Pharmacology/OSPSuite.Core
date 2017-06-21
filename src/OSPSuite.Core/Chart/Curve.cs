@@ -2,11 +2,12 @@ using System.Drawing;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
-   public class Curve : MyNotifier, IValidatable
+   public class Curve : Notifier, IValidatable
    {
       private string _name;
       private IDimension _xDimension;
@@ -50,37 +51,37 @@ namespace OSPSuite.Core.Chart
       public string Description
       {
          get => _description;
-         set => SetProperty(ref _description, value, () => Description);
+         set => SetProperty(ref _description, value);
       }
 
       public string Name
       {
          get => _name;
-         set => SetProperty(ref _name, value, () => Name);
+         set => SetProperty(ref _name, value);
       }
 
       public virtual DataColumn xData
       {
          get => _xData;
-         set => SetProperty(ref _xData, value, () => xData);
+         set => SetProperty(ref _xData, value);
       }
 
       public virtual DataColumn yData
       {
          get => _yData;
-         set => SetProperty(ref _yData, value, () => yData);
+         set => SetProperty(ref _yData, value);
       }
 
       public virtual IDimension XDimension
       {
          get => _xDimension;
-         set => SetProperty(ref _xDimension, value, () => XDimension);
+         set => SetProperty(ref _xDimension, value);
       }
 
       public virtual IDimension YDimension
       {
          get => _yDimension;
-         set => SetProperty(ref _yDimension, value, () => YDimension);
+         set => SetProperty(ref _yDimension, value);
       }
 
       public InterpolationModes InterpolationMode

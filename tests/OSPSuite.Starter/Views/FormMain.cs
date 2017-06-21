@@ -29,10 +29,12 @@ namespace OSPSuite.Starter.Views
       private void InitializeBinding()
       {
          _screenBinder.BindingMode = BindingMode.OneWay;
-         _screenBinder.Bind(param => param.Value).To(tbValue).OnValueSet += ParameterValueSet;
+         _screenBinder.Bind(param => param.Value)
+            .To(tbValue)
+            .OnValueUpdating += ParameterValueUpdating;
       }
 
-      private void ParameterValueSet(Parameter parameter, PropertyValueSetEventArgs<double> e)
+      private void ParameterValueUpdating(Parameter parameter, PropertyValueSetEventArgs<double> e)
       {
          ICommand<MyContext> command = new ParameterValueSetCommand(parameter, e.NewValue);
          command.Execute(new MyContext());

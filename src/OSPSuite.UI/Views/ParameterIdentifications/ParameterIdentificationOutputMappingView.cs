@@ -51,13 +51,13 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithRepository(allOutputsRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithCaption(Captions.ParameterIdentification.Outputs)
-            .WithOnValueSet((dto, e) => OnEvent(() => _presenter.OutputSelectionChanged(dto, e.NewValue, e.OldValue)));
+            .WithOnValueUpdating((dto, e) => OnEvent(() => _presenter.OutputSelectionChanged(dto, e.NewValue, e.OldValue)));
 
          _gridViewBinder.AutoBind(x => x.ObservedData)
             .WithRepository(allObservedDataRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithCaption(Captions.ParameterIdentification.ObservedData)
-            .WithOnValueSet((dto, e) => OnEvent(() => _presenter.ObservedDataSelectionChanged(dto, e.NewValue, e.OldValue)));
+            .WithOnValueUpdating((dto, e) => OnEvent(() => _presenter.ObservedDataSelectionChanged(dto, e.NewValue, e.OldValue)));
 
          _gridViewBinder.Bind(x => x.Scaling)
             .WithCaption(Captions.Scaling)

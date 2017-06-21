@@ -6,4 +6,4 @@ namespace OSPSuite.Presentation.Presenters
    {
       ISimulationAnalysisPresenter PresenterFor(ISimulationAnalysis simulationAnalysis);
    }
-}
+}  

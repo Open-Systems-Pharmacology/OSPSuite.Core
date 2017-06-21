@@ -109,7 +109,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          base.InitializeBinding();
          _colName = _gridViewBinder.Bind(x => x.Name)
             .WithCaption(Captions.Name)
-            .WithOnValueSet((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
+            .WithOnValueUpdating((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
             
          _colName.XtraColumn.SortMode = ColumnSortMode.Value;
          _colName.XtraColumn.SortOrder = ColumnSortOrder.Ascending;
@@ -119,14 +119,14 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
             .WithToolTip(Captions.SensitivityAnalysis.NumberOfStepsDescription)
             .WithFormat(x => x.NumberOfStepsParameter.IntParameterFormatter())
             .WithEditorConfiguration((activeEditor, dto) => _comboBoxUnit.UpdateUnitsFor(activeEditor, dto.NumberOfStepsParameter))
-            .OnValueSet += (dto, valueInGuiUnit) => setParameterValue(dto.NumberOfStepsParameter, valueInGuiUnit.NewValue);
+            .OnValueUpdating += (dto, valueInGuiUnit) => setParameterValue(dto.NumberOfStepsParameter, valueInGuiUnit.NewValue);
 
          _gridViewBinder.Bind(x => x.VariationRange)
             .WithCaption(Captions.SensitivityAnalysis.VariationRange)
             .WithToolTip(Captions.SensitivityAnalysis.VariationRangeDescription)
             .WithFormat(x => x.NumberOfStepsParameter.ParameterFormatter())
             .WithEditorConfiguration((activeEditor, dto) => _comboBoxUnit.UpdateUnitsFor(activeEditor, dto.VariationRangeParameter))
-            .OnValueSet += (dto, valueInGuiUnit) => setParameterValue(dto.VariationRangeParameter, valueInGuiUnit.NewValue);
+            .OnValueUpdating += (dto, valueInGuiUnit) => setParameterValue(dto.VariationRangeParameter, valueInGuiUnit.NewValue);
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
