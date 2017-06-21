@@ -6,7 +6,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
@@ -47,6 +46,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData));
          UpdateChartFromTemplate();
+      }
+
+      protected override void ChartChanged()
+      {
+         base.ChartChanged();
+         _predictedVsObservedChartService.UpdateAxesVisibility(Chart);
+         _chartPresenterContext.DisplayPresenter.Refresh();
       }
 
       protected override void ClearChartAndDataRepositories()
@@ -95,12 +101,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private IEnumerable<DataColumn> calculationColumnsToPlot(DataRepository dataRepository)
       {
-         var calculationColumns = dataRepository.Where(isPlottableCalculation).ToList();
-
-         if (calculationColumns.Any())
-            return calculationColumns;
-
-         return dataRepository.Where(x => columnIsCalculationWithDimension(x, _parameterIdentification.AllOutputMappings.First().Dimension)).ToList();
+         return dataRepository.Where(isPlottableCalculation).ToList();
       }
 
       private bool chartAlreadyContainsCurveFor(DataColumn calculationColumn)
@@ -108,14 +109,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return Chart.Curves.Any(x => Equals(x.yData, calculationColumn));
       }
 
-      private static bool columnIsCalculationWithDimension(DataColumn column, IDimension dimension)
-      {
-         return isCalculationOrCalculationAuxiliaryColumn(column) && column.Dimension.IsEquivalentTo(dimension);
-      }
-
       private static bool isPlottableCalculation(DataColumn column)
       {
-         return isCalculationOrCalculationAuxiliaryColumn(column) && (column.IsConcentration() || column.IsFraction());
+         return isCalculationOrCalculationAuxiliaryColumn(column);
       }
 
       public override void Clear()

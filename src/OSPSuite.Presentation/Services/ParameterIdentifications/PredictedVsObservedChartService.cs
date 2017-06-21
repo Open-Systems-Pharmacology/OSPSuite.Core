@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services.ParameterIdentifications
 {
@@ -38,6 +38,11 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
       ///    <paramref name="observationColumns" />
       /// </summary>
       void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart);
+
+      /// <summary>
+      ///    Modifies the Y axes visibility based on X axis dimension. Y axes which do not share a unit with X axis are not shown
+      /// </summary>
+      void UpdateAxesVisibility(ParameterIdentificationPredictedVsObservedChart chart);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -96,8 +101,8 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
       public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
       {
          var dataColumns = observationColumns.ToList();
-         var dimensions = dataColumns.Select(dataColumn => _dimensionFactory.GetMergedDimensionFor(dataColumn)).ToList();
-         var defaultDimension = mostFrequentDimension(dimensions);
+
+         var defaultDimension = mostFrequentDimension(dataColumns);
          var xAxis = chart.AxisBy(AxisTypes.X);
 
          if (defaultDimension != null)
@@ -106,14 +111,22 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
          xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
 
-         chart.UpdateAxesVisibility();
+         UpdateAxesVisibility(chart);
       }
 
       public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
       {
          var identityCurves = addIdentityCurves(observationColumns, chart).ToList();
-         chart.UpdateAxesVisibility();
+         UpdateAxesVisibility(chart);
          return identityCurves;
+      }
+
+      public void UpdateAxesVisibility(ParameterIdentificationPredictedVsObservedChart chart)
+      {
+         var visibleAxes = chart.Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(chart.XAxis.Dimension)).ToList();
+
+         visibleAxes.Each(axis => axis.Visible = true);
+         chart.Axes.Except(visibleAxes).Each(axis => axis.Visible = false);
       }
 
       private IEnumerable<DataRepository> addIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
@@ -132,10 +145,32 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          }
       }
 
-      private static IDimension mostFrequentDimension(IEnumerable<IDimension> dimensions)
+      private IDimension mostFrequentDimension(IReadOnlyList<DataColumn> columns)
       {
-         var firstGrouping = dimensions.GroupBy(x => x.DisplayName).OrderByDescending(x => x.Count()).FirstOrDefault();
-         return firstGrouping?.FirstOrDefault();
+         var preferredDimension = mostFrequentDimensionFrom(columns.Where(isPreferredDimension).Select(mergedDimensionsFor));
+
+         if (preferredDimension != null)
+            return preferredDimension;
+
+         var dimensions = columns.Select(mergedDimensionsFor).ToList();
+
+         var firstGrouping = mostFrequentDimensionFrom(dimensions);
+         return firstGrouping;
+      }
+
+      private static bool isPreferredDimension(DataColumn column)
+      {
+         return column.IsConcentration() || column.IsFraction();
+      }
+
+      private static IDimension mostFrequentDimensionFrom(IEnumerable<IDimension> dimensions)
+      {
+         return dimensions.GroupBy(x => x.DisplayName).OrderByDescending(x => x.Count()).FirstOrDefault()?.FirstOrDefault();
+      }
+
+      private IDimension mergedDimensionsFor(DataColumn dataColumn)
+      {
+         return _dimensionFactory.GetMergedDimensionFor(dataColumn);
       }
 
       private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)

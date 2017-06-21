@@ -83,14 +83,20 @@ namespace OSPSuite.Helpers
          };
          observedData.Add(baseGrid);
 
-         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            Values = new[] { 10f, 20f, 30f },
-            DataInfo = { Origin = ColumnOrigins.Observation }
-         };
+         var data = ConcentrationColumnForObservedData(baseGrid);
          observedData.Add(data);
 
          return observedData;
+      }
+
+      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid)
+      {
+         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            Values = new[] {10f, 20f, 30f},
+            DataInfo = {Origin = ColumnOrigins.Observation}
+         };
+         return data;
       }
 
       public static DataRepository ObservedDataWithLLOQ(string id = "TestDataWithLLOQ")
@@ -153,16 +159,22 @@ namespace OSPSuite.Helpers
          };
          simulationResults.Add(baseGrid);
 
-         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            Values = new[] { 10f, 20f, 30f },
-            DataInfo = { Origin = ColumnOrigins.Calculation },
-            QuantityInfo = new QuantityInfo("Concentration", new[] { simulationName, "Comp", "Liver", "Cell", "Concentration" }, QuantityType.Drug)
-         };
+         var data = ConcentrationColumnForSimulation(simulationName, baseGrid);
 
          simulationResults.Add(data);
 
          return simulationResults;
+      }
+
+      public static DataColumn ConcentrationColumnForSimulation(string simulationName, BaseGrid baseGrid)
+      {
+         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            Values = new[] {10f, 20f, 30f},
+            DataInfo = {Origin = ColumnOrigins.Calculation},
+            QuantityInfo = new QuantityInfo("Concentration", new[] {simulationName, "Comp", "Liver", "Cell", "Concentration"}, QuantityType.Drug)
+         };
+         return data;
       }
 
       public static IDimension NoDimension()
