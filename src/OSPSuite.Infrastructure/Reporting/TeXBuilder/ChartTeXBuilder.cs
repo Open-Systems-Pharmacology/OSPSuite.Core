@@ -409,7 +409,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 
       private bool isCurveCompatibleToYAxis(Curve curve, Axis yaxis)
       {
-         return (curve.YDimension.Name == _dimensionFactory.GetMergedDimensionFor(yaxis).Name);
+         return (curve.yDimension.Name == _dimensionFactory.GetMergedDimensionFor(yaxis).Name);
       }
 
       private List<Plot> getPlots(CurveChart chart, AxisTypes yAxisType)

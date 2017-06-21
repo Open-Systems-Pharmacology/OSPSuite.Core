@@ -167,8 +167,9 @@
     <Compile Include="Core\AddObservedDataMetaDataCommandSpecs.cs" />
     <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
     <Compile Include="Core\AliasCreatorSpecs.cs" />
-    <Compile Include="Core\Chart\ChartFontAndSizeSettingsSpecs.cs" />
-    <Compile Include="Core\Chart\UnitToMinorIntervalMapperSpecs.cs" />
+    <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
+    <Compile Include="Core\CurveSpecs.cs" />
+    <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />
     <Compile Include="Core\ConstantsSpecs.cs" />
     <Compile Include="Core\CurveNamerSpecs.cs" />
     <Compile Include="Core\DataInfoSpecs.cs" />

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Extensions;
-using NUnit.Framework;
 using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Chart
+namespace OSPSuite.Core
 {
    public abstract class concern_for_UnitToMinorIntervalMapper : ContextSpecification<UnitToMinorIntervalMapper>
    {

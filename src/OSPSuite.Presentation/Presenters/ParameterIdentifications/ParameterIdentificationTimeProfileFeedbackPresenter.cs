@@ -75,12 +75,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          addObservedDataForSelectedOutput();
       }
 
-      private void configureCurveForColumn(DataColumn column, IDimension dimension)
-      {
-         var curve = _chart.FindCurveWithSameData(column.BaseGrid, column);
-         curve.YDimension = dimension;
-      }
-
       private void configureYAxisDimension()
       {
          var yAxis = _chart.Axes.FirstOrDefault(x => x.AxisType == AxisTypes.Y);
@@ -88,8 +82,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          yAxis.Dimension = _dimensionFactory.GetMergedDimensionFor(_bestColumn);
          yAxis.UnitName = _displayUnitRetriever.PreferredUnitFor(_bestColumn).Name;
 
-         configureCurveForColumn(_bestColumn, yAxis.Dimension);
-         configureCurveForColumn(_currentColumn, yAxis.Dimension);
+         updateCurveDimensions(_bestColumn);
+         updateCurveDimensions(_currentColumn);
+      }
+
+      private void updateCurveDimensions(DataColumn column)
+      {
+         var curve = _chart.FindCurveWithSameData(column.BaseGrid, column);
+         curve.SetyData(column, _dimensionFactory);
       }
 
       protected void AddCurvesForCalculationColumns(IEnumerable<DataColumn> columns, Action<DataColumn, Curve> action)

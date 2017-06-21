@@ -104,7 +104,7 @@ namespace OSPSuite.Presentation.DTO.Charts
 
       private bool dataDimensionMatchesYAxis(AxisTypes axisType)
       {
-         return dimensionsHaveSharedUnits(_chart.AxisBy(axisType), Curve.YDimension);
+         return dimensionsHaveSharedUnits(_chart.AxisBy(axisType), Curve.yDimension);
       }
 
       private bool dimensionsHaveSharedUnits(Axis axis, IDimension dimension)
@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.DTO.Charts
          if (axisY == null)
             return true;
 
-         return Curve.YDimension.CanConvertToUnit(axisY.UnitName);
+         return Curve.yDimension.CanConvertToUnit(axisY.UnitName);
       }
 
       private static class AllRules

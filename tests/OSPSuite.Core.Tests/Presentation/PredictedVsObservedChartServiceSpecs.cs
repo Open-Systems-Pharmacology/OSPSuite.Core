@@ -169,8 +169,8 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_should_contain_identity_lines_for_each_dimension()
       {
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.XDimension.DisplayName, _fractionDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.XDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _fractionDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
       }
    }
 
@@ -223,7 +223,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_curves_should_have_the_same_x_and_y_dimension()
       {
-         _predictedVsObservedChart.Curves.All(curve => Equals(curve.XDimension, curve.YDimension)).ShouldBeTrue();
+         _predictedVsObservedChart.Curves.All(curve => Equals(curve.xDimension, curve.yDimension)).ShouldBeTrue();
       }
 
       [Observation]

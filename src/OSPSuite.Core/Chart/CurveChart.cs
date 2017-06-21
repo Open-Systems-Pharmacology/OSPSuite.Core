@@ -200,19 +200,19 @@ namespace OSPSuite.Core.Chart
 
       private void updateAxesForAddedCurve(Curve curve)
       {
-         updateAxis(AxisTypes.X, curve.XDimension, curve.xData.DisplayUnit);
+         updateAxis(AxisTypes.X, curve.xDimension, curve.xData.DisplayUnit);
 
          var axisTypeY = curve.yAxisType;
          var axisTypeYother = axisTypeY == AxisTypes.Y ? AxisTypes.Y2 : AxisTypes.Y;
 
-         var yAxis = updateAxis(axisTypeY, curve.YDimension, curve.yData.DisplayUnit);
+         var yAxis = updateAxis(axisTypeY, curve.yDimension, curve.yData.DisplayUnit);
 
-         if (curve.YDimension.HasSharedUnitNamesWith(yAxis.Dimension))
+         if (curve.yDimension.HasSharedUnitNamesWith(yAxis.Dimension))
             return;
 
-         var y2Axis = updateAxis(axisTypeYother, curve.YDimension, curve.yData.DisplayUnit);
+         var y2Axis = updateAxis(axisTypeYother, curve.yDimension, curve.yData.DisplayUnit);
 
-         if (curve.YDimension.HasSharedUnitNamesWith(y2Axis.Dimension))
+         if (curve.yDimension.HasSharedUnitNamesWith(y2Axis.Dimension))
             curve.yAxisType = axisTypeYother;
       }
 

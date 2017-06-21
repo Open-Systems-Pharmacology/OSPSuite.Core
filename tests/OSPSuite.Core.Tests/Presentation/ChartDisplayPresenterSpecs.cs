@@ -74,8 +74,8 @@ namespace OSPSuite.Presentation
          });
 
          _curveChart = new CurveChart();
-         _curveChart.AddAxis(new Axis(AxisTypes.X) {Dimension = _curve.XDimension});
-         _curveChart.AddAxis(new Axis(AxisTypes.Y) {Dimension = _curve.YDimension});
+         _curveChart.AddAxis(new Axis(AxisTypes.X) {Dimension = _curve.xDimension});
+         _curveChart.AddAxis(new Axis(AxisTypes.Y) {Dimension = _curve.yDimension});
 
          _xAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.X));
          _yAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.Y));
