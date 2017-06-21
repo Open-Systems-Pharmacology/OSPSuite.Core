@@ -134,7 +134,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          var column = _gridBinderCurves.AutoBind(propertyToBindTo)
             .WithShowInColumnChooser(showInColumnChooser)
-            .WithOnValueSet((curveDTO, value) => notifyCurvePropertyChange(curveDTO));
+            .WithOnValueUpdated((curveDTO, value) => notifyCurvePropertyChange(curveDTO));
 
          if (repositoryItem != null)
             column.WithRepository(curve => repositoryItem);

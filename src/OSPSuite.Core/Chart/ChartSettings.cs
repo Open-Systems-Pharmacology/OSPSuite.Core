@@ -1,7 +1,7 @@
 using System.Drawing;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Chart
       BottomInside
    }
 
-   public class ChartSettings : MyNotifier, IUpdatable
+   public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;
       private LegendPositions _legendPosition;
@@ -47,25 +47,25 @@ namespace OSPSuite.Core.Chart
       public virtual bool SideMarginsEnabled
       {
          get => _sideMarginsEnabled;
-         set => SetProperty(ref _sideMarginsEnabled, value, () => SideMarginsEnabled);
+         set => SetProperty(ref _sideMarginsEnabled, value);
       }
 
       public virtual LegendPositions LegendPosition
       {
          get => _legendPosition;
-         set => SetProperty(ref _legendPosition, value, () => LegendPosition);
+         set => SetProperty(ref _legendPosition, value);
       }
 
       public virtual Color BackColor
       {
          get => _backColor;
-         set => SetProperty(ref _backColor, value, () => BackColor);
+         set => SetProperty(ref _backColor, value);
       }
 
       public virtual Color DiagramBackColor
       {
          get => _diagramBackColor;
-         set => SetProperty(ref _diagramBackColor, value, () => DiagramBackColor);
+         set => SetProperty(ref _diagramBackColor, value);
       }
    }
 }

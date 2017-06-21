@@ -82,7 +82,7 @@ namespace OSPSuite.UI.Views.Charts
 
          var usedColumn = _gridViewBinder.Bind(x => x.Used)
             .WithRepository(dto => _usedRepository)
-            .WithOnValueSet((dto, e) => _presenter.UsedChangedFor(dto, e.NewValue));
+            .WithOnValueUpdating((dto, e) => _presenter.UsedChangedFor(dto, e.NewValue));
 
          usedColumn.XtraColumn.Tag = BrowserColumns.Used.ToString();
       }

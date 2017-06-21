@@ -73,14 +73,14 @@ namespace OSPSuite.UI.Views.ObservedData
          _colName = _gridViewBinder.AutoBind(x => x.Name)
             .WithCaption(Captions.Name)
             .WithRepository(nameRepository)
-            .WithOnValueSet(onNameChanged);
+            .WithOnValueUpdating(onNameChanged);
 
          _colValue = _gridViewBinder.AutoBind(x => x.Value)
             .WithCaption(Captions.Value)
             .WithRepository(valueRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithEditorConfiguration(configureValueRepository)
-            .WithOnValueSet(onValueChanged);
+            .WithOnValueUpdating(onValueChanged);
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
@@ -91,7 +91,7 @@ namespace OSPSuite.UI.Views.ObservedData
          _molWeightBinder.Bind(x => x.ValueInDisplayUnit)
             .To(tbMolWeight)
             .WithFormat(dto => new UnitFormatter(dto.DisplayUnit))
-            .OnValueSet += (o, e) => OnEvent(() => _presenter.SetMolWeight(e.OldValue, e.NewValue));
+            .OnValueUpdating += (o, e) => OnEvent(() => _presenter.SetMolWeight(e.OldValue, e.NewValue));
 
          _lowerLimitOfQuantificationBinder.Bind(x => x.ValueInDisplayUnit)
             .To(tbLowerLimitOfQuantification)

@@ -477,11 +477,13 @@ namespace OSPSuite.Presentation
 
          _repository1.Add(_drugColumn);
 
-         _drugColumn2 = new DataColumn("Drug", _concentrationDimension, new BaseGrid("BaseGrid", _timeDimension));
-         _drugColumn2.QuantityInfo = _drugColumn.QuantityInfo;
-         _drugColumn2.DataInfo = _drugColumn.DataInfo;
-         _repository2.Add(_drugColumn2);
+         _drugColumn2 = new DataColumn("Drug", _concentrationDimension, new BaseGrid("BaseGrid", _timeDimension))
+         {
+            QuantityInfo = _drugColumn.QuantityInfo,
+            DataInfo = _drugColumn.DataInfo
+         };
 
+         _repository2.Add(_drugColumn2);
          _dataColumns.Add(_drugColumn2);
       }
 

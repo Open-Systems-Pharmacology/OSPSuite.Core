@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -32,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Used
    }
 
-   public class DataColumnDTO : MyNotifier
+   public class DataColumnDTO : Notifier
    {
       private readonly PathElements _pathElements;
       private bool _used;
@@ -59,7 +60,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public bool Used
       {
          get => _used;
-         set => SetProperty(ref _used, value, () => Used);
+         set => SetProperty(ref _used, value);
       }
 
       public DataColumnDTO(DataColumn dataColumn, Func<DataColumn, PathElements> displayQuantityPathFunc)

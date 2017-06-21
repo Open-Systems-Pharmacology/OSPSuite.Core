@@ -1,8 +1,9 @@
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartFonts : MyNotifier
+   public class ChartFonts : Notifier
    {
       private int _axisSize;
       private int _legendSize;
@@ -24,37 +25,37 @@ namespace OSPSuite.Core.Chart
       public int AxisSize
       {
          get => _axisSize;
-         set => SetProperty(ref _axisSize, value, () => AxisSize);
+         set => SetProperty(ref _axisSize, value);
       }
 
       public int LegendSize
       {
          get => _legendSize;
-         set => SetProperty(ref _legendSize, value, () => LegendSize);
+         set => SetProperty(ref _legendSize, value);
       }
 
       public int TitleSize
       {
          get => _titleSize;
-         set => SetProperty(ref _titleSize, value, () => TitleSize);
+         set => SetProperty(ref _titleSize, value);
       }
 
       public int DescriptionSize
       {
          get => _descriptionSize;
-         set => SetProperty(ref _descriptionSize, value, () => DescriptionSize);
+         set => SetProperty(ref _descriptionSize, value);
       }
 
       public int OriginSize
       {
          get => _originSize;
-         set => SetProperty(ref _originSize, value, () => OriginSize);
+         set => SetProperty(ref _originSize, value);
       }
 
       public string FontFamilyName
       {
          get => _fontFamilyName;
-         set => SetProperty(ref _fontFamilyName, value, () => FontFamilyName);
+         set => SetProperty(ref _fontFamilyName, value);
       }
 
       public void UpdateSettingsFrom(ChartFonts newChartFonts)

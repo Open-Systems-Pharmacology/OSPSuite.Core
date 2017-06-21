@@ -1,5 +1,6 @@
 using System.Drawing;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
@@ -27,7 +28,7 @@ namespace OSPSuite.Core.Chart
       yLinear
    }
 
-   public class CurveOptions : MyNotifier
+   public class CurveOptions : Notifier
    {
       private Color _color;
       private InterpolationModes _interpolationMode;
@@ -56,19 +57,19 @@ namespace OSPSuite.Core.Chart
       public InterpolationModes InterpolationMode
       {
          get => _interpolationMode;
-         set => SetProperty(ref _interpolationMode, value, () => InterpolationMode);
+         set => SetProperty(ref _interpolationMode, value);
       }
 
       public AxisTypes yAxisType
       {
          get => _yAxisType;
-         set => SetProperty(ref _yAxisType, value, () => yAxisType);
+         set => SetProperty(ref _yAxisType, value);
       }
 
       public bool Visible
       {
          get => _visible;
-         set => SetProperty(ref _visible, value, () => Visible);
+         set => SetProperty(ref _visible, value);
       }
 
       /// <summary>
@@ -79,25 +80,25 @@ namespace OSPSuite.Core.Chart
       public Color Color
       {
          get => _color;
-         set => SetProperty(ref _color, value, () => Color);
+         set => SetProperty(ref _color, value);
       }
 
       public LineStyles LineStyle
       {
          get => _lineStyle;
-         set => SetProperty(ref _lineStyle, value, () => LineStyle);
+         set => SetProperty(ref _lineStyle, value);
       }
 
       public Symbols Symbol
       {
          get => _symbol;
-         set => SetProperty(ref _symbol, value, () => Symbol);
+         set => SetProperty(ref _symbol, value);
       }
 
       public int LineThickness
       {
          get => _lineThickness;
-         set => SetProperty(ref _lineThickness, value, () => LineThickness);
+         set => SetProperty(ref _lineThickness, value);
       }
 
       /// <summary>
@@ -106,19 +107,19 @@ namespace OSPSuite.Core.Chart
       public int? LegendIndex
       {
          get => _legendIndex;
-         set => SetProperty(ref _legendIndex, value, () => LegendIndex);
+         set => SetProperty(ref _legendIndex, value);
       }
 
       public bool ShouldShowLLOQ
       {
          get => _shouldShowLLOQ;
-         set => SetProperty(ref _shouldShowLLOQ, value, () => ShouldShowLLOQ);
+         set => SetProperty(ref _shouldShowLLOQ, value);
       }
 
       public bool VisibleInLegend
       {
          get => _visibleInLegend;
-         set => SetProperty(ref _visibleInLegend, value, () => VisibleInLegend);
+         set => SetProperty(ref _visibleInLegend, value);
       }
 
       /// <summary>

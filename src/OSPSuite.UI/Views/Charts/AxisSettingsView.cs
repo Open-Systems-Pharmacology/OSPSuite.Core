@@ -130,10 +130,10 @@ namespace OSPSuite.UI.Views.Charts
             .WithShowInColumnChooser(showInColumnChooser);
 
          if (beforeNotificationAction != null)
-            column.WithOnValueSet((axis, value) => beforeNotificationAction(axis));
+            column.WithOnValueUpdated((axis, value) => beforeNotificationAction(axis));
 
          //Order is important: needs to be done after the beforeNotification if defined.      
-         column.WithOnValueSet((axis, value) => notifyAxisPropertyChanged(axis));
+         column.WithOnValueUpdated((axis, value) => notifyAxisPropertyChanged(axis));
 
          if (repositoryItem != null)
             column.WithRepository(axis => repositoryItem);

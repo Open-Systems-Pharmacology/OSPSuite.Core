@@ -93,39 +93,39 @@ namespace OSPSuite.UI.Views.Charts
       {
          _nameBinder.Bind(c => c.Name)
             .To(nameTextBox)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _curveChartBinder.Bind(c => c.Title)
             .To(titleTextBox)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _curveChartBinder.Bind(c => c.Description)
             .To(descriptionTextBox)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _settingsBinder.Bind(c => c.SideMarginsEnabled)
             .To(sideMarginsEnabledCheckEdit)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _settingsBinder.Bind(c => c.LegendPosition)
             .To(legendPositionComboBoxEdit)
             .WithValues(EnumHelper.AllValuesFor<LegendPositions>())
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _settingsBinder.Bind(c => c.BackColor)
             .To(backgroundColorColorEdit)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          _settingsBinder.Bind(c => c.DiagramBackColor)
             .To(diagramBackgroundColorColorEdit)
-            .OnValueSet += notifyChartSettingsChanged;
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          RegisterValidationFor(_settingsBinder, statusChangedNotify:NotifyViewChanged);
          RegisterValidationFor(_curveChartBinder, statusChangedNotify: NotifyViewChanged);
          RegisterValidationFor(_nameBinder, statusChangedNotify: NotifyViewChanged);
       }
 
-      private void notifyChartSettingsChanged<T>(object sender, PropertyValueSetEventArgs<T> e)
+      private void notifyChartSettingsChanged<T>(object sender, T e)
       {
          _presenter.NotifyChartSettingsChanged();
       }
