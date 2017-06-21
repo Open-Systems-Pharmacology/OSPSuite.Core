@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services.ParameterIdentifications
 {
@@ -96,8 +96,8 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
       public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
       {
          var dataColumns = observationColumns.ToList();
-         var dimensions = dataColumns.Select(dataColumn => _dimensionFactory.GetMergedDimensionFor(dataColumn)).ToList();
-         var defaultDimension = mostFrequentDimension(dimensions);
+
+         var defaultDimension = mostFrequentDimension(dataColumns);
          var xAxis = chart.AxisBy(AxisTypes.X);
 
          if (defaultDimension != null)
@@ -132,10 +132,31 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          }
       }
 
-      private static IDimension mostFrequentDimension(IEnumerable<IDimension> dimensions)
+      private IDimension mostFrequentDimension(IReadOnlyList<DataColumn> columns)
       {
-         var firstGrouping = dimensions.GroupBy(x => x.DisplayName).OrderByDescending(x => x.Count()).FirstOrDefault();
-         return firstGrouping?.FirstOrDefault();
+         var preferredDimension = mostFrequentDimensionFrom(columns.Where(isPreferredDimension).Select(mergedDimensionsFor));
+
+         if (preferredDimension != null)
+            return preferredDimension;
+
+         var dimensions = columns.Select(mergedDimensionsFor).ToList();
+
+         return mostFrequentDimensionFrom(dimensions);
+      }
+
+      private static bool isPreferredDimension(DataColumn column)
+      {
+         return column.IsConcentration() || column.IsFraction();
+      }
+
+      private static IDimension mostFrequentDimensionFrom(IEnumerable<IDimension> dimensions)
+      {
+         return dimensions.GroupBy(x => x.DisplayName).OrderByDescending(x => x.Count()).FirstOrDefault()?.FirstOrDefault();
+      }
+
+      private IDimension mergedDimensionsFor(DataColumn dataColumn)
+      {
+         return _dimensionFactory.GetMergedDimensionFor(dataColumn);
       }
 
       private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
