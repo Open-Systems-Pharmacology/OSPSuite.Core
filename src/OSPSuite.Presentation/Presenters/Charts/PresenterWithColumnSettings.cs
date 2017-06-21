@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void NotifyColumnSettingsChanged();
    }
 
-   internal abstract class PresenterWithColumnSettings<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IPresenterWithColumnSettings
+   public abstract class PresenterWithColumnSettings<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IPresenterWithColumnSettings
       where TView : IView<TPresenter>, IViewWithColumnSettings
       where TPresenter : IPresenter
    {

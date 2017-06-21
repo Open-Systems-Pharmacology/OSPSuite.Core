@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -40,28 +41,32 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns);
       event Action<IReadOnlyList<DataColumn>> AddCurves;
 
-      void SetCurveXData(CurveDTO curve, DataColumn dataColumn);
-      void SetCurveYData(CurveDTO curve, DataColumn dataColumn);
+      void SetCurveXData(CurveDTO curveDTO, DataColumn dataColumn);
+      void SetCurveYData(CurveDTO curveDTO, DataColumn dataColumn);
 
       IEnumerable<AxisTypes> AllYAxisTypes { get; }
       string ToolTipFor(CurveDTO curveDTO);
-      void MoveSeriesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve);
+      void MoveCurvesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve);
       void Refresh();
 
       void NotifyCurvePropertyChange(CurveDTO curveDTO);
-      event Action<Curve> CurvePropertyChanged;         
+      event Action<Curve> CurvePropertyChanged;
+      void UpdateCurveColor(CurveDTO curveDTO, Color color);
    }
 
-   internal class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter
+   public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter
    {
-      private readonly IDimensionFactory _dimensionFactory;
-
       public event Action<Curve> RemoveCurve = delegate { };
       public event Action<IReadOnlyList<DataColumn>> AddCurves = delegate { };
+      public event Action<Curve> CurvePropertyChanged = delegate { };
+
+      private readonly IDimensionFactory _dimensionFactory;
 
       public Func<DataColumn, string> CurveNameDefinition { get; set; }
       private CurveChart _chart;
       private readonly List<CurveDTO> _allCurvesDTOs = new List<CurveDTO>();
+
+      public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
 
       public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory) : base(view)
       {
@@ -69,9 +74,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          CurveNameDefinition = column => column.Name;
       }
 
-      public void MoveSeriesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve)
+      public void MoveCurvesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve)
       {
-         _chart.MoveSeriesInLegend(curveBeingMoved.Curve, targetCurve.Curve);
+         _chart.MoveCurvesInLegend(curveBeingMoved.Curve, targetCurve.Curve);
          CurvePropertyChanged(targetCurve.Curve);
       }
 
@@ -113,20 +118,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Edit(null);
       }
 
-      public void Remove(CurveDTO curveDTO)
-      {
-         RemoveCurve(curveDTO.Curve);
-      }
+      public void Remove(CurveDTO curveDTO) => RemoveCurve(curveDTO.Curve);
 
-      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns)
-      {
-         AddCurves(dataColumns);
-      }
+      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns) => AddCurves(dataColumns);
 
-      private CurveDTO mapFrom(Curve curve)
-      {
-         return new CurveDTO(curve, _chart);
-      }
+      private CurveDTO mapFrom(Curve curve) => new CurveDTO(curve, _chart);
 
       public void Refresh()
       {
@@ -152,35 +148,34 @@ namespace OSPSuite.Presentation.Presenters.Charts
          CurvePropertyChanged(curveDTO.Curve);
       }
 
-      public event Action<Curve> CurvePropertyChanged = delegate { };
-
       private void rebind()
       {
          View.BindTo(_allCurvesDTOs);
       }
 
-      private void addCurve(Curve curve)
-      {
-         _allCurvesDTOs.Add(mapFrom(curve));
-      }
+      private void addCurve(Curve curve) => _allCurvesDTOs.Add(mapFrom(curve));
 
       private bool hasCurveDTOFor(Curve curve)
       {
          return _allCurvesDTOs.Any(x => Equals(x.Curve, curve));
       }
 
-
-      public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
-
-      public void SetCurveXData(CurveDTO curve, DataColumn dataColumn)
+      public void SetCurveXData(CurveDTO curveDTO, DataColumn dataColumn)
       {
-         _chart.SetxData(curve.Curve, dataColumn, _dimensionFactory);
+         _chart.SetxData(curveDTO.Curve, dataColumn, _dimensionFactory);
+         NotifyCurvePropertyChange(curveDTO);
       }
 
-      public void SetCurveYData(CurveDTO curve, DataColumn dataColumn)
+      public void SetCurveYData(CurveDTO curveDTO, DataColumn dataColumn)
       {
-         _chart.SetyData(curve.Curve, dataColumn, _dimensionFactory);
+         _chart.SetyData(curveDTO.Curve, dataColumn, _dimensionFactory);
+         NotifyCurvePropertyChange(curveDTO);
       }
 
+      public void UpdateCurveColor(CurveDTO curveDTO, Color color)
+      {
+         curveDTO.Color = color;
+         NotifyCurvePropertyChange(curveDTO);
+      }
    }
 }

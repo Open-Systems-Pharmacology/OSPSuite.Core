@@ -359,7 +359,7 @@ namespace OSPSuite.UI.Views.Charts
             return;
 
          var targetCurveDTO = _gridBinderCurves.ElementAt(hitInfo.RowHandle);
-         _presenter.MoveSeriesInLegend(curveBeingMoved, targetCurveDTO);
+         _presenter.MoveCurvesInLegend(curveBeingMoved, targetCurveDTO);
       }
 
       private void dropColor(GridHitInfo hitInfo, Color color)
@@ -367,7 +367,7 @@ namespace OSPSuite.UI.Views.Charts
          if (!hitInColorCell(hitInfo))
             return;
 
-         _gridBinderCurves.ElementAt(hitInfo.RowHandle).Color = color;
+         _presenter.UpdateCurveColor(_gridBinderCurves.ElementAt(hitInfo.RowHandle), color);
       }
 
       private void gridProcessGridKey(KeyEventArgs e)

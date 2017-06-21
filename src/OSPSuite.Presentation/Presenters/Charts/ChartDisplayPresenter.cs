@@ -536,7 +536,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve)
       {
-         Chart.MoveSeriesInLegend(movingCurve, targetCurve);
+         Chart.MoveCurvesInLegend(movingCurve, targetCurve);
       }
 
       public void SetNoCurvesSelectedHint(string hint)
