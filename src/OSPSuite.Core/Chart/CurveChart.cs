@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Chart
          _curves.Clear();
       }
 
-      public void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve)
+      public void MoveCurvesInLegend(Curve movingCurve, Curve targetCurve)
       {
          var index = targetCurve.LegendIndex;
          Curves.Where(curve => curve.LegendIndex >= index).Each(curve => curve.LegendIndex++);

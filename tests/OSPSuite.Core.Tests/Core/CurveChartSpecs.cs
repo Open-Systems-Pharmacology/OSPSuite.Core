@@ -61,7 +61,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         sut.MoveSeriesInLegend(_curveFour, _curveOne);
+         sut.MoveCurvesInLegend(_curveFour, _curveOne);
       }
 
       [Observation]

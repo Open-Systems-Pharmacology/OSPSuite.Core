@@ -1,4 +1,5 @@
 using System.Drawing;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility;
@@ -7,7 +8,7 @@ using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Chart
 {
-   public class Curve : Notifier, IValidatable
+   public class Curve : Notifier, IValidatable, IWithName
    {
       private string _name;
       private IDimension _xDimension;
