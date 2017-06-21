@@ -103,7 +103,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void BindToSource(Axis axis)
+      public void BindTo(Axis axis)
       {
          _dimensionBinder.WithValues(_presenter.AllDimensionsForEditor(axis.Dimension));
          updateUnits();

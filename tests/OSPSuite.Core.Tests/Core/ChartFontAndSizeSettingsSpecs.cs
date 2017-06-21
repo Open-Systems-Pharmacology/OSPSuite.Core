@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Chart;
 using OSPSuite.Utility.Validation;
 
-namespace OSPSuite.Core.Chart
+namespace OSPSuite.Core
 {
    public abstract class concern_for_ChartFontAndSizeSettings : ContextSpecification<ChartFontAndSizeSettings>
    {

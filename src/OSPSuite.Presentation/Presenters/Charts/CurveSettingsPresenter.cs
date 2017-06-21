@@ -156,7 +156,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void rebind()
       {
-         View.BindToSource(_allCurvesDTOs);
+         View.BindTo(_allCurvesDTOs);
       }
 
       private void addCurve(Curve curve)

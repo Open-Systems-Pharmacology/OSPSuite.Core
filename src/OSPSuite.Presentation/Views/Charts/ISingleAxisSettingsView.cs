@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface ISingleAxisSettingsView : IModalView<ISingleAxisSettingsPresenter>
    {
-      void BindToSource(Axis axis);
+      void BindTo(Axis axis);
 
       /// <summary>
       /// Hides default color and default line style editors.

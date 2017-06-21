@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -7,6 +6,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
@@ -19,9 +19,11 @@ namespace OSPSuite.Core
       protected DataRepository _obsData2;
       protected Axis _xAxis;
       protected Axis _yAxis;
+      private IDimensionFactory _dimensionFactory;
 
       protected override void Context()
       {
+         _dimensionFactory = A.Fake<IDimensionFactory>();
          sut = new CurveChart().WithAxes();
 
          _xAxis = sut.AxisBy(AxisTypes.X);
@@ -30,8 +32,13 @@ namespace OSPSuite.Core
          _obsData1 = DomainHelperForSpecs.ObservedData();
          _obsData2 = DomainHelperForSpecs.ObservedData();
 
-         _curveOnYAxis = new Curve {yAxisType = AxisTypes.Y, xData = _obsData1.BaseGrid, yData = _obsData1.AllButBaseGrid().First()};
-         _curveOnY2Axis = new Curve {yAxisType = AxisTypes.Y2, xData = _obsData2.BaseGrid, yData = _obsData2.AllButBaseGrid().First()};
+         _curveOnYAxis = new Curve {yAxisType = AxisTypes.Y};
+         _curveOnYAxis.SetxData(_obsData1.BaseGrid, _dimensionFactory);
+         _curveOnYAxis.SetyData(_obsData1.FirstDataColumn(), _dimensionFactory);
+
+         _curveOnY2Axis = new Curve {yAxisType = AxisTypes.Y2};
+         _curveOnY2Axis.SetxData(_obsData2.BaseGrid, _dimensionFactory);
+         _curveOnY2Axis.SetyData(_obsData2.FirstDataColumn(), _dimensionFactory);
       }
    }
 

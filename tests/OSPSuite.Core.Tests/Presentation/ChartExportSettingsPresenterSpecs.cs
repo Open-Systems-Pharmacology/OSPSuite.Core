@@ -62,7 +62,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_bind_the_objec_tto_the_view()
       {
-         A.CallTo(() => _view.BindToSource(_chartManagement)).MustHaveHappened();   
+         A.CallTo(() => _view.BindTo(_chartManagement)).MustHaveHappened();   
       }
    }
 

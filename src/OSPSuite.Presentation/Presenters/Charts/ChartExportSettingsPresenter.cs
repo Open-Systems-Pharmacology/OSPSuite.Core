@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void Edit(IChartManagement chartManagement)
       {
          _chartManagement = chartManagement;
-         _view.BindToSource(chartManagement);
+         _view.BindTo(chartManagement);
       }
 
       public IEnumerable<string> AllFontFamilyNames => _fontsTask.ChartFontFamilyNames;

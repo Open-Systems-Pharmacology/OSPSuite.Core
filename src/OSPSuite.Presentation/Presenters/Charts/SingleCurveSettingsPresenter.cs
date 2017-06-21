@@ -11,21 +11,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class SingleCurveSettingsPresenter : AbstractDisposablePresenter<ISingleCurveSettingsView, ISingleCurveSettingsPresenter>, ISingleCurveSettingsPresenter
    {
       private readonly IChartUpdater _chartUpdater;
+      private Curve _cloneCurve;
 
       public SingleCurveSettingsPresenter(ISingleCurveSettingsView view, IChartUpdater chartUpdater) : base(view)
       {
          _chartUpdater = chartUpdater;
-         view.CancelVisible = false;
       }
 
       public void Edit(IChart chart, Curve curve)
       {
-         _view.BindTo(curve);
+         _cloneCurve = curve.Clone();
+         _view.BindTo(_cloneCurve);
 
          _view.Display();
          if(_view.Canceled)
             return;
 
+         curve.UpdateFrom(_cloneCurve);
          _chartUpdater.Update(chart);
       }
    }

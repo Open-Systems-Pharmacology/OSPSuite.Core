@@ -180,7 +180,7 @@ namespace OSPSuite.UI.Views.Charts
          }
       }
 
-      public void BindToSource(IEnumerable<Axis> axes)
+      public void BindTo(IEnumerable<Axis> axes)
       {
          DoWithoutColumnSettingsUpdateNotification(() =>
          {

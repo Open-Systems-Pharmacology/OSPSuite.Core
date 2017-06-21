@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Views.Commands
          layoutItemComments.Text = Captions.Comments;
       }
 
-      public void BindToSource(LabelDTO labelDTO)
+      public void BindTo(LabelDTO labelDTO)
       {
          _screenBinder.BindToSource(labelDTO);
          SetButtonOKEnable();

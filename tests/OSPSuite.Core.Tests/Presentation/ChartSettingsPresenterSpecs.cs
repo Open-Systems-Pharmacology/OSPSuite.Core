@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_bind_those_settings_to_the_view()
       {
-         A.CallTo(() => _view.BindToSource(_chart)).MustHaveHappened();
+         A.CallTo(() => _view.BindTo(_chart)).MustHaveHappened();
       }
    }
 
@@ -58,7 +58,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_bind_those_settings_to_the_view()
       {
-         A.CallTo(() => _view.BindToSource(_chartTemplate)).MustHaveHappened();
+         A.CallTo(() => _view.BindTo(_chartTemplate)).MustHaveHappened();
       }
    }
 

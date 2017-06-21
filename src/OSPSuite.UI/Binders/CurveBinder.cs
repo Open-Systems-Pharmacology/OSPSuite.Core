@@ -99,7 +99,7 @@ namespace OSPSuite.UI.Binders
             if (!HasLLOQ)
                return null;
 
-            return Curve.YDimension.BaseUnitValueToUnitValue(Curve.YDimension.Unit(_yAxis.UnitName), Convert.ToDouble(Curve.yData.DataInfo.LLOQ));
+            return Curve.yDimension.BaseUnitValueToUnitValue(Curve.yDimension.Unit(_yAxis.UnitName), Convert.ToDouble(Curve.yData.DataInfo.LLOQ));
          }
       }
 
@@ -310,8 +310,8 @@ namespace OSPSuite.UI.Binders
          if (!dimensionsConsistentToAxisUnits())
             return;
 
-         var xDimension = Curve.XDimension;
-         var yDimension = Curve.YDimension;
+         var xDimension = Curve.xDimension;
+         var yDimension = Curve.yDimension;
          var xUnit = xDimension.Unit(_xAxis.UnitName);
          var yUnit = yDimension.Unit(_yAxis.UnitName);
          var xData = Curve.xData;
@@ -447,8 +447,8 @@ namespace OSPSuite.UI.Binders
 
       private bool dimensionsConsistentToAxisUnits()
       {
-         return Curve.XDimension.CanConvertToUnit(_xAxis.UnitName) &&
-                Curve.YDimension.CanConvertToUnit(_yAxis.UnitName);
+         return Curve.xDimension.CanConvertToUnit(_xAxis.UnitName) &&
+                Curve.yDimension.CanConvertToUnit(_yAxis.UnitName);
       }
 
       public void ShowAllSeries()

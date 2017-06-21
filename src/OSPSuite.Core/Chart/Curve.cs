@@ -33,20 +33,43 @@ namespace OSPSuite.Core.Chart
       public void SetxData(DataColumn column, IDimensionFactory dimensionFactory)
       {
          xData = column;
-         XDimension = dimensionFactory.GetMergedDimensionFor(xData);
+         xDimension = dimensionFactory.GetMergedDimensionFor(xData);
       }
 
       public void SetyData(DataColumn column, IDimensionFactory dimensionFactory)
       {
          yData = column;
-         if (yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
-            YDimension = dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop));
-         else if (yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
-            YDimension = dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop));
-         else
-            YDimension = dimensionFactory.GetMergedDimensionFor(yData);
+         yDimension = yDimensionFor(dimensionFactory);
       }
 
+      private IDimension yDimensionFor(IDimensionFactory dimensionFactory)
+      {
+         if (yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
+            return dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop));
+
+         if (yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
+           return dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop));
+
+         return dimensionFactory.GetMergedDimensionFor(yData);
+      }
+
+      public Curve Clone()
+      {
+         var clone = new Curve();
+         clone.UpdateFrom(this);
+         return clone;
+      }
+
+      public void UpdateFrom(Curve curve)
+      {
+         Name = curve.Name;
+         xData = curve.xData;
+         yData = curve.yData;
+         xDimension = curve.xDimension;
+         yDimension = curve.yDimension;
+         Description = curve.Description;
+         CurveOptions.UpdateFrom(curve.CurveOptions);
+      }
 
       public string Description
       {
@@ -63,25 +86,25 @@ namespace OSPSuite.Core.Chart
       public virtual DataColumn xData
       {
          get => _xData;
-         set => SetProperty(ref _xData, value);
+         private set => SetProperty(ref _xData, value);
       }
 
       public virtual DataColumn yData
       {
          get => _yData;
-         set => SetProperty(ref _yData, value);
+         private set => SetProperty(ref _yData, value);
       }
 
-      public virtual IDimension XDimension
+      public virtual IDimension xDimension
       {
          get => _xDimension;
-         set => SetProperty(ref _xDimension, value);
+         private set => SetProperty(ref _xDimension, value);
       }
 
-      public virtual IDimension YDimension
+      public virtual IDimension yDimension
       {
          get => _yDimension;
-         set => SetProperty(ref _yDimension, value);
+         private set => SetProperty(ref _yDimension, value);
       }
 
       public InterpolationModes InterpolationMode

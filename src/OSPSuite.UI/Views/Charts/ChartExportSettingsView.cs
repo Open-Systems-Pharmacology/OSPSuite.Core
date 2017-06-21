@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void BindToSource(IChartManagement chart)
+      public void BindTo(IChartManagement chart)
       {
          _screenBinderForCurveChart.BindToSource(chart);
          _screenBinderForExportSettings.BindToSource(chart.FontAndSize);

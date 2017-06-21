@@ -44,7 +44,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void BindToSource(IChart chart)
+      public void BindTo(IChart chart)
       {
          bindCommonProperties(chart);
          bindName(chart);
@@ -66,7 +66,7 @@ namespace OSPSuite.UI.Views.Charts
          set => nameControlItem.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
-      public void BindToSource(CurveChartTemplate chartTemplate)
+      public void BindTo(CurveChartTemplate chartTemplate)
       {
          bindCommonProperties(chartTemplate);
          bindName(chartTemplate);

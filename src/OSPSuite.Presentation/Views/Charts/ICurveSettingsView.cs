@@ -6,6 +6,6 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface ICurveSettingsView : IView<ICurveSettingsPresenter>, IViewWithColumnSettings
    {
-      void BindToSource(IEnumerable<CurveDTO> curves);
+      void BindTo(IEnumerable<CurveDTO> curves);
    }
 }
