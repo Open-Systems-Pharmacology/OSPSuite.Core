@@ -51,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected override void ChartChanged()
       {
          base.ChartChanged();
-         _predictedVsObservedChartService.UpdateAxesVisibility(Chart);
+         Chart.UpdateAxesVisibility();
          _chartPresenterContext.DisplayPresenter.Refresh();
       }
 

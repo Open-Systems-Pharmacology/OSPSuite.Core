@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart.ParameterIdentifications
@@ -61,6 +63,16 @@ namespace OSPSuite.Core.Chart.ParameterIdentifications
       public ParameterIdentificationPredictedVsObservedChart()
       {
          ChartSettings.LegendPosition = LegendPositions.BottomInside;
+      }
+
+      /// <summary>
+      ///    Modifies the Y axes visibility based on X axis dimension. Y axes which do not share a unit with X axis are not shown
+      /// </summary>
+      public void UpdateAxesVisibility()
+      {
+         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(XAxis.Dimension)).ToList();
+         visibleAxes.Each(axis => axis.Visible = true);
+         Axes.Except(visibleAxes).Each(axis => axis.Visible = false);
       }
    }
 }
