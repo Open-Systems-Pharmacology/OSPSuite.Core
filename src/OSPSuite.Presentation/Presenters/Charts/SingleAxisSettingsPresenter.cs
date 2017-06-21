@@ -20,27 +20,26 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <returns>A list of all the valid units</returns>
       IEnumerable<string> AllUnitsForDimension();
 
-      void Edit(IChart chart,  Axis axis);
+      void Edit(IChart chart, Axis axis);
    }
 
    public class SingleAxisSettingsPresenter : AbstractDisposablePresenter<ISingleAxisSettingsView, ISingleAxisSettingsPresenter>, ISingleAxisSettingsPresenter
    {
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IChartUpdater _chartUpdater;
-      private Axis _axis;
+      private Axis _axisClone;
 
       public SingleAxisSettingsPresenter(ISingleAxisSettingsView view, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater)
          : base(view)
       {
          _dimensionFactory = dimensionFactory;
          _chartUpdater = chartUpdater;
-         view.CancelVisible = false;
       }
 
       public void Edit(IChart chart, Axis axis)
       {
-         _axis = axis;
-         _view.BindToSource(axis);
+         _axisClone = axis.Clone();
+         _view.BindTo(_axisClone);
 
          if (axis.IsXAxis)
             _view.HideDefaultStyles();
@@ -49,6 +48,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (_view.Canceled)
             return;
 
+         axis.UpdateFrom(_axisClone);
          _chartUpdater.Update(chart);
       }
 
@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IEnumerable<string> AllUnitsForDimension()
       {
-         return _axis.Dimension?.GetUnitNames() ?? Enumerable.Empty<string>();
+         return _axisClone.Dimension?.GetUnitNames() ?? Enumerable.Empty<string>();
       }
    }
 }

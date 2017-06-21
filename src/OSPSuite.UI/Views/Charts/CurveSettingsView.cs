@@ -176,7 +176,7 @@ namespace OSPSuite.UI.Views.Charts
          base.AttachPresenter(presenter);
       }
 
-      public void BindToSource(IEnumerable<CurveDTO> curves)
+      public void BindTo(IEnumerable<CurveDTO> curves)
       {
          DoWithoutColumnSettingsUpdateNotification(() => { _gridBinderCurves.BindToSource(curves.ToBindingList()); });
       }

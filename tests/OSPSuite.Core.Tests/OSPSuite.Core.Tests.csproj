@@ -701,6 +701,8 @@
     <Compile Include="Presentation\SimpleChartPresenterSpecs.cs" />
     <Compile Include="Presentation\SimulationParametersPresenterSpecs.cs" />
     <Compile Include="Presentation\SimulationQuantitySelectionToLinkedParameterDTOMapperSpecs.cs" />
+    <Compile Include="Presentation\SingleAxisSettingsPresenterSpecs.cs" />
+    <Compile Include="Presentation\SingleCurveSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\SingleParameterIdentificationFeedbackPresenterSpecs.cs" />
     <Compile Include="Presentation\SingleParameterIdentificationResultsPresenterSpecs.cs" />
     <Compile Include="Presentation\StandardParameterIdentificationRunModePresenterSpecs.cs" />

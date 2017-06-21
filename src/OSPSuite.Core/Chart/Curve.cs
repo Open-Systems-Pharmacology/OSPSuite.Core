@@ -47,6 +47,23 @@ namespace OSPSuite.Core.Chart
             YDimension = dimensionFactory.GetMergedDimensionFor(yData);
       }
 
+      public Curve Clone()
+      {
+         var clone = new Curve();
+         clone.UpdateFrom(this);
+         return clone;
+      }
+
+      public void UpdateFrom(Curve curve)
+      {
+         Name = curve.Name;
+         xData = curve.xData;
+         yData = curve.yData;
+         XDimension = curve.XDimension;
+         YDimension = curve.YDimension;
+         Description = curve.Description;
+         CurveOptions.UpdateFrom(curve.CurveOptions);
+      }
 
       public string Description
       {

@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Edit(CurveChartTemplate chartTemplate)
       {
-         _view.BindToSource(chartTemplate);
+         _view.BindTo(chartTemplate);
       }
 
       public void Clear()
@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Edit(IChart chart)
       {
-         _view.BindToSource(chart);
+         _view.BindTo(chart);
       }
    }
 }

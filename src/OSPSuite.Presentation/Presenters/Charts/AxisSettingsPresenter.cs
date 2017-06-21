@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (_axes == null)
             _view.DeleteBinding();
          else
-            _view.BindToSource(_axes);
+            _view.BindTo(_axes);
       }
 
       public void Clear()
