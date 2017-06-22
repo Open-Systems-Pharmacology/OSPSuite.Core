@@ -39,9 +39,9 @@ namespace OSPSuite.Helpers
          _parameterStartValuesCreator = parameterStartValuesCreator;
          _moleculeStartValuesCreator = moleculeStartValuesCreator;
          _objectPathFactory = objectPathFactory;
-         _concentrationDimension = dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION);
-         _concentrationPerTimeDimension = dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME);
-         _volumeDimension = dimensionFactory.GetDimension(Constants.Dimension.VOLUME);
+         _concentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         _concentrationPerTimeDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME);
+         _volumeDimension = dimensionFactory.Dimension(Constants.Dimension.VOLUME);
       }
 
       public IModelCoreSimulation CreateSimulation()

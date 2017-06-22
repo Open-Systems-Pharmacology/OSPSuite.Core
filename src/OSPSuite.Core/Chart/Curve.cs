@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Chart
       public void SetxData(DataColumn column, IDimensionFactory dimensionFactory)
       {
          xData = column;
-         xDimension = dimensionFactory.GetMergedDimensionFor(xData);
+         xDimension = dimensionFactory.MergedDimensionFor(xData);
       }
 
       public void SetyData(DataColumn column, IDimensionFactory dimensionFactory)
@@ -46,12 +46,12 @@ namespace OSPSuite.Core.Chart
       private IDimension yDimensionFor(IDimensionFactory dimensionFactory)
       {
          if (yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
-            return dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop));
+            return dimensionFactory.MergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop));
 
          if (yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
-           return dimensionFactory.GetMergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop));
+           return dimensionFactory.MergedDimensionFor(yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop));
 
-         return dimensionFactory.GetMergedDimensionFor(yData);
+         return dimensionFactory.MergedDimensionFor(yData);
       }
 
       public Curve Clone()

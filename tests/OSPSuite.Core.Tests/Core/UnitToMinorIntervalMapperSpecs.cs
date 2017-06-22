@@ -22,7 +22,7 @@ namespace OSPSuite.Core
 
       protected Unit GetUnitForName(string unitName)
       {
-         return _dimensionFactory.GetDimension(Constants.Dimension.TIME).Unit(unitName);
+         return _dimensionFactory.Dimension(Constants.Dimension.TIME).Unit(unitName);
       }
    }
 

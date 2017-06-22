@@ -44,7 +44,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void onGridViewSelectionChanged()
       {
-         _presenter.UpdateDataSelection(SelectedDescendentDataRepositoryColumns);
+         _presenter.SelectedDataColumnsChanged();
       }
 
       public void AttachPresenter(IDataBrowserPresenter presenter)
@@ -96,9 +96,9 @@ namespace OSPSuite.UI.Views.Charts
          return column;
       }
 
-      public IReadOnlyList<DataColumnDTO> SelectedDataColumns => dtoListFrom(gridView.GetSelectedRows());
+      public IReadOnlyList<DataColumnDTO> SelectedColumns => dtoListFrom(gridView.GetSelectedRows());
 
-      public IReadOnlyList<DataColumnDTO> SelectedDescendentDataRepositoryColumns => selectDescendentDataRows(gridView.GetSelectedRows());
+      public IReadOnlyList<DataColumnDTO> SelectedDescendantColumns => selectDescendentDataRows(gridView.GetSelectedRows());
 
       private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
 

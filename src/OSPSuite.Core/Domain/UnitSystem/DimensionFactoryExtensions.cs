@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
             return null;
 
          var templateColumn = new DataColumn {Dimension = defaultDimension};
-         return dimensionFactory.GetMergedDimensionFor(templateColumn);
+         return dimensionFactory.MergedDimensionFor(templateColumn);
       }
 
       private static Cache<string, IDimension> getMergedDimensions(IDimensionFactory dimensionFactory, IDimension defaultDimension)

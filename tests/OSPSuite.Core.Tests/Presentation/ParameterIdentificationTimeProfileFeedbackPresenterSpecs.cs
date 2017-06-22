@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          sut.EditParameterIdentification(_parameterIdentification);
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<DataColumn>.That.Matches(x => Equals(x.Dimension, _outputMapping3.Dimension)))).Returns(_outputMapping3.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>.That.Matches(x => Equals(x.Dimension, _outputMapping3.Dimension)))).Returns(_outputMapping3.Dimension);
       }
 
       protected override void Because()

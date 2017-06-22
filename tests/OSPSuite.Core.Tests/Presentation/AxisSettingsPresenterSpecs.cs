@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.AxisPropertyChanged += (axis) => _axisChanged = axis;
+         sut.AxisPropertyChanged += (o, e) => _axisChanged = e.Axis;
       }
 
       protected override void Because()
@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.AxisRemoved += axis => _axisRemoved = axis;
+         sut.AxisRemoved += (o, e) => _axisRemoved = e.Axis;
       }
 
       protected override void Because()
@@ -117,7 +117,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.AxisAdded += () => _axisAddedNotified = true;
+         sut.AxisAdded += (o,e) => _axisAddedNotified = true;
       }
 
       protected override void Because()

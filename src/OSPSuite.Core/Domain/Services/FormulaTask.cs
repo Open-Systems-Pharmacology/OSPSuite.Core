@@ -146,7 +146,7 @@ namespace OSPSuite.Core.Domain.Services
          //possible reference
          var volumeReferencePath = _objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME)
             .WithAlias(volumeAlias)
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.VOLUME));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.VOLUME));
 
          //do we have one already?
          var volumeReference = formula.ObjectPaths.FirstOrDefault(x => Equals(x.PathAsString, volumeReferencePath.PathAsString));

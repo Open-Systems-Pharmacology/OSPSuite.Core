@@ -87,7 +87,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public IDimension DimensionByName(string dimensionName)
       {
-         return DimensionFactory.GetDimension(dimensionName);
+         return DimensionFactory.Dimension(dimensionName);
       }
 
       /// <summary>

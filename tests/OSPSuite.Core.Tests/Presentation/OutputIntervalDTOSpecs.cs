@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation
       {
 
          _dimensionFactory = DimensionFactoryForSpecs.Factory;
-         var timeDimension = _dimensionFactory.GetDimension(Constants.Dimension.TIME);
+         var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          sut = new OutputIntervalDTO {StartTimeParameter = A.Fake<IParameterDTO>(), EndTimeParameter = A.Fake<IParameterDTO>()};
          sut.StartTimeParameter.Parameter.Dimension = timeDimension;
          sut.EndTimeParameter.Parameter.Dimension = timeDimension;

@@ -111,7 +111,7 @@ namespace OSPSuite.Core.Domain.Mappers
          var volume = _objectBaseFactory.Create<IParameter>()
             .WithName(Constants.Parameters.VOLUME)
             .WithFormula(_objectBaseFactory.Create<ConstantFormula>().WithValue(1.0))
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.VOLUME));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.VOLUME));
 
          volume.Editable = false;
          volume.Visible = false;

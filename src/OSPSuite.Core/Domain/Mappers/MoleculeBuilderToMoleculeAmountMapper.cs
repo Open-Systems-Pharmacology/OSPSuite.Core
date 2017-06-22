@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _keywordReplacerTask = keywordReplacerTask;
          _formulaFactory = formulaFactory;
          _parameterFactory = parameterFactory;
-         _amountDimension = dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+         _amountDimension = dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
       }
 
       public IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IBuildConfiguration buildConfiguration)

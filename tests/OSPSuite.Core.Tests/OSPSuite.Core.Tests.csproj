@@ -167,6 +167,7 @@
     <Compile Include="Core\AddObservedDataMetaDataCommandSpecs.cs" />
     <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
     <Compile Include="Core\AliasCreatorSpecs.cs" />
+    <Compile Include="Core\AxisXmlSerializerSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\CurveSpecs.cs" />
     <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="Core\RegistrationSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
+    <Compile Include="Helpers\DimensionFactoryForIntegrationTests.cs" />
     <Compile Include="Helpers\SimulationNode.cs" />
     <Compile Include="Helpers\TestObjectBaseFactory.cs" />
     <Compile Include="Helpers\ARootContainer.cs" />
@@ -591,6 +593,7 @@
     <Compile Include="Presentation\CurveDTOSpecs.cs" />
     <Compile Include="Presentation\CurveSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\CurveTemplatePresenterSpecs.cs" />
+    <Compile Include="Presentation\DataBrowserPresenterSpecs.cs" />
     <Compile Include="Presentation\DataRepositoryChartPresenterSpecs.cs" />
     <Compile Include="Presentation\DataRepositoryDataPresenterSpecs.cs" />
     <Compile Include="Presentation\DataRepositoryMetaDataPresenterSpecs.cs" />

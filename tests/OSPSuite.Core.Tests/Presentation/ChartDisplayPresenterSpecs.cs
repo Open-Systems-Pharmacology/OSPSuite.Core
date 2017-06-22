@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation
 
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
 
          _curve = new Curve();
          _curve.SetxData(dataRepository.BaseGrid, _dimensionFactory);

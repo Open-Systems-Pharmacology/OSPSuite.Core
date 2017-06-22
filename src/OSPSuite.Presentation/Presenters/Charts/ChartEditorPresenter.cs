@@ -112,13 +112,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Adds a new curve to a the chart for the <paramref name="dataColumn" /> if one does not already exist.
       ///    Curve options will be applied if they are specified and a new curve is created.
-      ///    if <paramref name="notifyChartUpdated" /> is set to <c>true</c>, the chart updater will trigger a chart update.
-      ///    Default is <c>false</c>
       /// </summary>
       /// <returns>
       ///    The new curve or existing if chart already contains a curve for the specified <paramref name="dataColumn" />
       /// </returns>
-      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool notifyChartUpdated = false);
+      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null);
 
       /// <summary>
       ///    Add Button to ChartEditor.
@@ -225,21 +223,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartUpdater = chartUpdater;
          _eventPublisher = eventPublisher;
          _dimensionFactory = dimensionFactory;
-         _dataBrowserPresenter.UsedChanged += onDataBrowserUsedChanged;
-         _dataBrowserPresenter.SelectedDataChanged += onSelectedDataChanged;
          _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
          initPresentersWithColumnSettings();
 
-         _chartExportSettingsPresenter.ChartExportSettingsChanged += onChartPropertiesChanged;
-         _chartSettingsPresenter.ChartSettingsChanged += onChartPropertiesChanged;
+         _dataBrowserPresenter.UsedChanged += (o, e) => onDataBrowserUsedChanged(e);
+         _dataBrowserPresenter.SelectionChanged += (o, e) => onSelectionChanged(e.Columns);
 
-         _curveSettingsPresenter.AddCurves += columns => addCurvesForColumns(columns);
-         _curveSettingsPresenter.RemoveCurve += removeCurve;
-         _curveSettingsPresenter.CurvePropertyChanged += curve => updateChart();
+         _chartExportSettingsPresenter.ChartExportSettingsChanged += (o,e)=> onChartPropertiesChanged();
+         _chartSettingsPresenter.ChartSettingsChanged += (o, e) => onChartPropertiesChanged();
 
-         _axisSettingsPresenter.AxisRemoved += onAxisRemoved;
-         _axisSettingsPresenter.AxisAdded += onAxisAdded;
-         _axisSettingsPresenter.AxisPropertyChanged += axis => updateChart();
+         _curveSettingsPresenter.AddCurves += (o,e) => addCurvesForColumns(e.Columns);
+         _curveSettingsPresenter.RemoveCurve += (o,e)=> removeCurve(e.Curve);
+         _curveSettingsPresenter.CurvePropertyChanged += (o,e) => updateChart();
+
+         _axisSettingsPresenter.AxisRemoved += (o, e) => onAxisRemoved(e.Axis);
+         _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
+         _axisSettingsPresenter.AxisPropertyChanged += (o, e) => updateChart();
 
          AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter);
 
@@ -284,11 +283,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _eventPublisher.PublishEvent(new ChartPropertiesChangedEvent(Chart));
       }
 
-      private void onDataBrowserUsedChanged(object sender, UsedChangedEventArgs e)
+      private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
          using (_chartUpdater.UpdateTransaction(Chart))
          {
-            e.DataColumns.Each(column =>
+            e.Columns.Each(column =>
             {
                if (e.Used)
                   AddCurveForColumn(column);
@@ -310,7 +309,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          if (!isUsed.HasValue) return;
 
-         _dataBrowserPresenter.UpdateUsedForSelection(used: isUsed.Value);
+         _dataBrowserPresenter.UpdateUsedStateForSelection(used: isUsed.Value);
       }
 
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)
@@ -336,7 +335,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.Clear();
       }
 
-      private void onSelectedDataChanged(IReadOnlyList<DataColumn> dataColumns)
+      private void onSelectionChanged(IReadOnlyList<DataColumn> dataColumns)
       {
          if (allColumnsAreUsed(dataColumns))
          {
@@ -365,7 +364,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void updateUsedColumns()
       {
          if (Chart == null) return;
-         _dataBrowserPresenter.InitializeIsUsedForColumns(Chart.UsedColumns);
+         _dataBrowserPresenter.InitializeIsUsedForDataColumns(Chart.UsedColumns);
       }
 
       public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
@@ -478,7 +477,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.CurveNameDefinition = curveNameDefinition;
       }
 
-      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool notifyChartUpdated = false)
+      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
          var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
 
@@ -492,22 +491,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          Chart.AddCurve(curve);
 
-         if (notifyChartUpdated)
-            updateChart();
-
          return curve;
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
-         updateChart();
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
+         }
       }
 
       private void removeCurve(Curve curve)
       {
-         Chart.RemoveCurve(curve);
-         updateChart();
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            Chart.RemoveCurve(curve);
+         }
       }
 
       public void AddButton(IMenuBarItem menuBarItem)

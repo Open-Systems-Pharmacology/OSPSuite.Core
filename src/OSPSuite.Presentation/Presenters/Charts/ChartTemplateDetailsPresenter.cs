@@ -23,8 +23,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter = chartSettingsPresenter;
          _curveTemplatePresenter = curveTemplatePresenter;
          _axisSettingsPresenter = axisSettingsPresenter;
-         _axisSettingsPresenter.AxisRemoved += axisRemoved;
-         _axisSettingsPresenter.AxisAdded += axisAdded;
+         _axisSettingsPresenter.AxisRemoved += (o,e)=> axisRemoved(e.Axis);
+         _axisSettingsPresenter.AxisAdded += (o, e) => axisAdded();
          _chartExportSettingsPresenter = chartExportSettingsPresenter;
          _view.SetChartSettingsView(_chartSettingsPresenter.View);
          _view.SetCurveTemplateView(_curveTemplatePresenter.View);

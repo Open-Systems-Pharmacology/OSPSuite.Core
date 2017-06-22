@@ -88,7 +88,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _mergedXDimension = A.Fake<IDimension>();
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_timeColumn)).Returns(_mergedXDimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_timeColumn)).Returns(_mergedXDimension);
       }
 
       protected override void Because()
@@ -117,7 +117,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _mergedYDimension = A.Fake<IDimension>();
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_dataColumn)).Returns(_mergedYDimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_dataColumn)).Returns(_mergedYDimension);
       }
 
       protected override void Because()
@@ -152,7 +152,7 @@ namespace OSPSuite.Core
             DataInfo = {AuxiliaryType = AuxiliaryType.GeometricMeanPop}
          };
          _dataColumn.AddRelatedColumn(_geomMeanPop);
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_geomMeanPop)).Returns(_mergedYDimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_geomMeanPop)).Returns(_mergedYDimension);
       }
 
       protected override void Because()
@@ -187,7 +187,7 @@ namespace OSPSuite.Core
             DataInfo = { AuxiliaryType = AuxiliaryType.ArithmeticMeanPop }
          };
          _dataColumn.AddRelatedColumn(_geomMeanPop);
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_geomMeanPop)).Returns(_mergedYDimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_geomMeanPop)).Returns(_mergedYDimension);
       }
 
       protected override void Because()

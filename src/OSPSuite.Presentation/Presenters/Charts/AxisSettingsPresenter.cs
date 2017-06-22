@@ -23,6 +23,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       DefaultColor
    }
 
+   public class AxisEventArgs : EventArgs
+   {
+      public Axis Axis { get; }
+      public AxisEventArgs(Axis axis) => Axis = axis;
+   }
+
    public interface IAxisSettingsPresenter : IPresenterWithColumnSettings, IPresenter<IAxisSettingsView>
    {
       void Edit(IEnumerable<Axis> axes);
@@ -32,10 +38,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IEnumerable<IDimension> AllDimensions(IDimension defaultDimension);
       IEnumerable<string> AllUnitNamesFor(IDimension dimension);
       void Refresh();
-      event Action AxisAdded;
-      event Action<Axis> AxisRemoved;
+      event EventHandler AxisAdded;
+      event EventHandler<AxisEventArgs> AxisRemoved;
       void NotifyAxisPropertyChanged(Axis axis);
-      event Action<Axis> AxisPropertyChanged;
+      event EventHandler<AxisEventArgs> AxisPropertyChanged;
       void UnitChanged(Axis axis);
    }
 
@@ -47,9 +53,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       private readonly IDimensionFactory _dimensionFactory;
       private IEnumerable<Axis> _axes;
-      public event Action AxisAdded = delegate { };
-      public event Action<Axis> AxisRemoved = delegate { };
-      public event Action<Axis> AxisPropertyChanged = delegate { };
+      public event EventHandler AxisAdded = delegate { };
+      public event EventHandler<AxisEventArgs> AxisRemoved = delegate { };
+      public event EventHandler<AxisEventArgs> AxisPropertyChanged = delegate { };
 
       public AxisSettingsPresenter(IAxisSettingsView view, IDimensionFactory dimensionFactory)
          : base(view)
@@ -77,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          axis.ResetRange();
       }
 
-      public void NotifyAxisPropertyChanged(Axis axis) => AxisPropertyChanged(axis);
+      public void NotifyAxisPropertyChanged(Axis axis) => AxisPropertyChanged(this, new AxisEventArgs(axis));
 
       public void Refresh()
       {
@@ -100,12 +106,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void RemoveAxis(Axis axis)
       {
-         AxisRemoved(axis);
+         AxisRemoved(this, new AxisEventArgs(axis));
       }
 
       public void AddYAxis()
       {
-         AxisAdded();
+         AxisAdded(this, EventArgs.Empty);
       }
 
       public IEnumerable<IDimension> AllDimensions(IDimension defaultDimension)

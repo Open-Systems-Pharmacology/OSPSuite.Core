@@ -124,7 +124,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected DataRepository CreateRepositoryFor(string curveName)
       {
          var dataRepository = new DataRepository {Name = curveName};
-         var baseGrid = new BaseGrid("Time", _dimensionFactory.GetDimension(Constants.Dimension.TIME));
+         var baseGrid = new BaseGrid("Time", _dimensionFactory.Dimension(Constants.Dimension.TIME));
          var column = new DataColumn(curveName, SelectedOutput.Dimension, baseGrid);
          column.DisplayUnit = _displayUnitRetriever.PreferredUnitFor(column);
          dataRepository.Add(column);

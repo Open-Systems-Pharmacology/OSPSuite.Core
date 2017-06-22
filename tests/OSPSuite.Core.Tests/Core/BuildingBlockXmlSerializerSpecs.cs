@@ -32,9 +32,11 @@ namespace OSPSuite.Core
          builder.MoleculeList.ForAll = false;
          builder.AddMoleculeName("H2O");
          builder.AddMoleculeName("CO2");
-         builder.ContainerCriteria = new DescriptorCriteria();
-         builder.ContainerCriteria.Add(new MatchTagCondition("Organ"));
-         builder.ContainerCriteria.Add(new NotMatchTagCondition("Organ"));
+         builder.ContainerCriteria = new DescriptorCriteria
+         {
+            new MatchTagCondition("Organ"),
+            new NotMatchTagCondition("Organ")
+         };
          builder.Formula = f3;
 
          var builder2 = CreateObject<ContainerObserverBuilder>();

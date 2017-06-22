@@ -50,7 +50,7 @@ namespace OSPSuite.Core
 
          _mergedDimension = A.Fake<IDimension>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_simulationDataColumn)).Returns(_mergedDimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_simulationDataColumn)).Returns(_mergedDimension);
 
 
          _outputMappings = new List<OutputMapping>();

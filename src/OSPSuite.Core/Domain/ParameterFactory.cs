@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain
       public IParameter CreateConcentrationParameter(IFormulaCache formulaCache)
       {
          var concentrationFormula = _formulaFactory.ConcentrationFormulaFor(formulaCache);
-         var molarConcentrationDimension = _dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         var molarConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var concentrationParameter = CreateParameter(Constants.Parameters.CONCENTRATION, dimension: molarConcentrationDimension, formula: concentrationFormula)
             .WithMode(ParameterBuildMode.Local);
 
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain
 
       public IParameter CreateVolumeParameter()
       {
-         var volumeDimension = _dimensionFactory.GetDimension(Constants.Dimension.VOLUME);
+         var volumeDimension = _dimensionFactory.Dimension(Constants.Dimension.VOLUME);
          return CreateParameter(Constants.Parameters.VOLUME, value: 1, dimension: volumeDimension, groupName: Constants.Groups.ORGAN_VOLUMES);
       }
 

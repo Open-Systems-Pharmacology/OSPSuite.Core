@@ -40,7 +40,7 @@ namespace OSPSuite.Helpers
 
          container.WindsorContainer.AddFacility<TypedFactoryFacility>();
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
-         container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
+         container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
@@ -109,6 +109,12 @@ namespace OSPSuite.Helpers
          dimensionFactory.AddDimension(Constants.Dimension.NO_DIMENSION);
          var dimensionMapper = IoC.Resolve<IDimensionMapper>();
          dimensionMapper.DummyDimensionsForConversion.Each(dimensionFactory.AddDimension);
+
+         var molarConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         var massConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
+
+         var concentrationDimensionsMergingInformation = new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension);
+         dimensionFactory.AddMergingInformation(concentrationDimensionsMergingInformation);
       }
 
       public override void GlobalCleanup()

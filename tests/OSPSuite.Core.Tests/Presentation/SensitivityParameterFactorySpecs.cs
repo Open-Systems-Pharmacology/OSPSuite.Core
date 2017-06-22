@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _objectBaseFactory.Create<ConstantFormula>()).ReturnsLazily(x=>new ConstantFormula());
          A.CallTo(() => _objectBaseFactory.Create<SensitivityParameter>()).Returns(new SensitivityParameter());
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).ReturnsLazily(x=>new Parameter());
-         A.CallTo(() => _dimensionFactory.GetDimension(Constants.Dimension.FRACTION)).Returns(_fractionDimension);
+         A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.FRACTION)).Returns(_fractionDimension);
       }
 
       protected override void Because()

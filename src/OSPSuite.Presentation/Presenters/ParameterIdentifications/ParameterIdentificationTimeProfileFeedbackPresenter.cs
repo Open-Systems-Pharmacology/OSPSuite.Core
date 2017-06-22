@@ -79,7 +79,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var yAxis = _chart.Axes.FirstOrDefault(x => x.AxisType == AxisTypes.Y);
          if (yAxis == null) return;
-         yAxis.Dimension = _dimensionFactory.GetMergedDimensionFor(_bestColumn);
+         yAxis.Dimension = _dimensionFactory.MergedDimensionFor(_bestColumn);
          yAxis.UnitName = _displayUnitRetriever.PreferredUnitFor(_bestColumn).Name;
 
          updateCurveDimensions(_bestColumn);

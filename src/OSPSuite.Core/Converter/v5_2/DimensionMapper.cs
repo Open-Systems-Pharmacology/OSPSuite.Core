@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Converter.v5_2
 
       private void addDummyDimension(KeyValuePair<string, string> dimensions)
       {
-         var newDimension = _dimensionFactory.GetDimension(dimensions.Value);
+         var newDimension = _dimensionFactory.Dimension(dimensions.Value);
          var dummyDimension = new Dimension(new BaseDimensionRepresentation(), dimensions.Key,newDimension.BaseUnit.Name);
          foreach (var unit in newDimension.Units)
          {

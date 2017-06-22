@@ -11,6 +11,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Presentation
 {
@@ -19,12 +20,12 @@ namespace OSPSuite.Presentation
       protected IChartEditorView _view;
       protected IAxisSettingsPresenter _axisSettingsPresenter;
       protected IChartSettingsPresenter _chartSettingsPresenter;
-      protected IChartExportSettingsPresenter _chartExportSettingsPresneter;
+      protected IChartExportSettingsPresenter _chartExportSettingsPresenter;
       protected ICurveSettingsPresenter _curveSettingsPresenter;
       protected IDataBrowserPresenter _dataBrowserPresenter;
       protected IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
-      private IChartUpdater _chartUpdater;
-      private IEventPublisher _eventPublisher;
+      protected IChartUpdater _chartUpdater;
+      protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
@@ -35,14 +36,14 @@ namespace OSPSuite.Presentation
          _view = A.Fake<IChartEditorView>();
          _axisSettingsPresenter = A.Fake<IAxisSettingsPresenter>();
          _chartSettingsPresenter = A.Fake<IChartSettingsPresenter>();
-         _chartExportSettingsPresneter = A.Fake<IChartExportSettingsPresenter>();
+         _chartExportSettingsPresenter = A.Fake<IChartExportSettingsPresenter>();
          _curveSettingsPresenter = A.Fake<ICurveSettingsPresenter>();
          _dataBrowserPresenter = A.Fake<IDataBrowserPresenter>();
          _chartTemplateMenuPresenter = A.Fake<IChartTemplateMenuPresenter>();
          _chartUpdater = A.Fake<IChartUpdater>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresneter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory);
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory);
 
          sut.SetCurveNameDefinition(x => x.QuantityInfo.PathAsString);
 
@@ -55,8 +56,8 @@ namespace OSPSuite.Presentation
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
          };
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
       }
    }
 
@@ -350,6 +351,323 @@ namespace OSPSuite.Presentation
       public void should_not_notify_the_chart_changed_event()
       {
          _notified.ShouldBeFalse();
+      }
+   }
+
+   public class When_chart_editor_presenter_is_clearing_its_content : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         sut.Clear();
+      }
+
+      [Observation]
+      public void should_clear_all_sub_presenters()
+      {
+         A.CallTo(() => _dataBrowserPresenter.Clear()).MustHaveHappened();
+         A.CallTo(() => _curveSettingsPresenter.Clear()).MustHaveHappened();
+         A.CallTo(() => _chartSettingsPresenter.Clear()).MustHaveHappened();
+         A.CallTo(() => _chartExportSettingsPresenter.Clear()).MustHaveHappened();
+         A.CallTo(() => _axisSettingsPresenter.Clear()).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_used_state_of_some_columns_was_changed_to_used : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] {_standardColumn,}, true));
+      }
+
+      [Observation]
+      public void should_add_columns_as_curve_to_the_chart()
+      {
+         _chart.FindCurveWithSameData(_standardColumn.BaseGrid, _standardColumn).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_selected_columns_have_changed_in_the_data_browser_and_all_selected_columns_are_used : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_standardColumn)).Returns(true);
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_baseGrid)).Returns(true);
+      }
+
+      protected override void Because()
+      {
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn,_baseGrid,  }));
+      }
+
+      [Observation]
+      public void should_update_the_state_of_the_used_check_box_in_the_view_to_selected()
+      {
+         A.CallTo(() => _view.SetSelectAllCheckBox(true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_selected_columns_have_changed_in_the_data_browser_and_all_selected_columns_are_unused : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_standardColumn)).Returns(false);
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_baseGrid)).Returns(false);
+      }
+
+      protected override void Because()
+      {
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
+      }
+
+      [Observation]
+      public void should_update_the_state_of_the_used_check_box_in_the_view_to_unselected()
+      {
+         A.CallTo(() => _view.SetSelectAllCheckBox(false)).MustHaveHappened();
+      }
+   }
+
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_selected_columns_have_changed_in_the_data_browser_and_some__columns_are_used_and_other_unused : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_standardColumn)).Returns(false);
+         A.CallTo(() => _dataBrowserPresenter.IsUsed(_baseGrid)).Returns(true);
+      }
+
+      protected override void Because()
+      {
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
+      }
+
+      [Observation]
+      public void should_update_the_state_of_the_used_check_box_in_the_view_to_undefined()
+      {
+         A.CallTo(() => _view.SetSelectAllCheckBox(null)).MustHaveHappened();
+      }
+   }
+
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_used_state_of_some_columns_was_changed_to_unused : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddCurveForColumn(_standardColumn);
+      }
+
+      protected override void Because()
+      {
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] {_standardColumn,}, false));
+      }
+
+      [Observation]
+      public void should_add_columns_as_curve_to_the_chart()
+      {
+         _chart.FindCurveWithSameData(_standardColumn.BaseGrid, _standardColumn).ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_an_axis_should_be_removed : concern_for_ChartEditorPresenter
+   {
+      private Axis _axisY2;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddCurveForColumn(_standardColumn);
+         _axisY2 = new Axis(AxisTypes.Y2);
+         _chart.AddAxis(_axisY2);
+      }
+
+      protected override void Because()
+      {
+         _axisSettingsPresenter.AxisRemoved += Raise.With(new AxisEventArgs(_axisY2));
+      }
+
+      [Observation]
+      public void should_remove_the_axis()
+      {
+         _chart.HasAxis(AxisTypes.Y2).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_an_axis_should_be_removed_that_is_not_the_higher_ranked_axis : concern_for_ChartEditorPresenter
+   {
+      private Axis _axisY2;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddCurveForColumn(_standardColumn);
+         _axisY2 = new Axis(AxisTypes.Y2);
+         _chart.AddAxis(_axisY2);
+         _chart.AddAxis(new Axis(AxisTypes.Y3));
+      }
+
+      [Observation]
+      public void should_thrown_an_exception_explaining_that_the_axis_cannot_be_removed()
+      {
+         The.Action(() => { _axisSettingsPresenter.AxisRemoved += Raise.With(new AxisEventArgs(_axisY2)); }).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_some_properties_of_an_axis_were_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _axisSettingsPresenter.AxisPropertyChanged += Raise.With(new AxisEventArgs(_chart.XAxis));
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_an_axis_should_be_added : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _chart.HasAxis(AxisTypes.Y2).ShouldBeFalse();
+      }
+
+      protected override void Because()
+      {
+         _axisSettingsPresenter.AxisAdded += Raise.WithEmpty();
+      }
+
+      [Observation]
+      public void should_let_the_chart_add_a_new_axis()
+      {
+         _chart.HasAxis(AxisTypes.Y2).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_being_notified_that_the_chart_settings_were_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _chartSettingsPresenter.ChartSettingsChanged += Raise.WithEmpty();
+      }
+
+      [Observation]
+      public void should_notify_a_chart_property_changed_event()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartPropertiesChangedEvent>.That.Matches(x => x.Chart == _chart))).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_being_notified_that_the_chart_export_settings_were_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _chartExportSettingsPresenter.ChartExportSettingsChanged += Raise.WithEmpty();
+      }
+
+      [Observation]
+      public void should_notify_a_chart_property_changed_event()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartPropertiesChangedEvent>.That.Matches(x => x.Chart == _chart))).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_a_curve_should_be_removed_from_the_chart : concern_for_ChartEditorPresenter
+   {
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _curve = sut.AddCurveForColumn(_standardColumn);
+      }
+
+      protected override void Because()
+      {
+         _curveSettingsPresenter.RemoveCurve += Raise.With(new CurveEventArgs(_curve));
+      }
+
+      [Observation]
+      public void should_remove_the_curve_from_the_chart()
+      {
+         _chart.HasCurve(_curve.Id).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_a_curve_should_be_added_for_some_columns : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _curveSettingsPresenter.AddCurves += Raise.With(new ColumnsEventArgs(new []{_standardColumn, }));
+      }
+
+      [Observation]
+      public void should_have_added_a_curve_for_the_column_to_the_chart()
+      {
+         _chart.FindCurveWithSameData(_standardColumn.BaseGrid, _standardColumn).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_properties_of_a_curve_were_changed : concern_for_ChartEditorPresenter
+   {
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         _curve = sut.AddCurveForColumn(_standardColumn);
+      }
+
+      protected override void Because()
+      {
+         _curveSettingsPresenter.CurvePropertyChanged += Raise.With(new CurveEventArgs(_curve));
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
       }
    }
 }

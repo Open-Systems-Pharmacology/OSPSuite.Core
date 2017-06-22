@@ -236,7 +236,7 @@
     <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
     <Compile Include="Presenters\Charts\SingleAxisSettingsPresenter.cs" />
     <Compile Include="Presenters\Charts\SingleCurveSettingsPresenter.cs" />
-    <Compile Include="Presenters\Charts\UsedChangedEventArgs.cs" />
+    <Compile Include="Presenters\Charts\UsedColumnsEventArgs.cs" />
     <Compile Include="Presenters\AbstractClonePresenter.cs" />
     <Compile Include="Presenters\ContextMenus\AxisContextMenu.cs" />
     <Compile Include="Presenters\ContextMenus\CurveChartContextMenu.cs" />

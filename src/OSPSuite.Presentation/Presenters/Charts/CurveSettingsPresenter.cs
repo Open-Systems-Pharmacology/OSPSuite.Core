@@ -29,6 +29,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ShowLowerLimitOfQuantification
    }
 
+   public class CurveEventArgs : EventArgs
+   {
+      public Curve Curve { get; }
+      public CurveEventArgs(Curve curve) => Curve=curve;
+   }
+
    public interface ICurveSettingsPresenter : IPresenter<ICurveSettingsView>, IPresenterWithColumnSettings
    {
       void Edit(CurveChart chart);
@@ -36,10 +42,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Func<DataColumn, string> CurveNameDefinition { set; get; }
 
       void Remove(CurveDTO curve);
-      event Action<Curve> RemoveCurve;
+      event EventHandler<CurveEventArgs> RemoveCurve;
 
       void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns);
-      event Action<IReadOnlyList<DataColumn>> AddCurves;
+      event EventHandler<ColumnsEventArgs> AddCurves;
 
       void SetCurveXData(CurveDTO curveDTO, DataColumn dataColumn);
       void SetCurveYData(CurveDTO curveDTO, DataColumn dataColumn);
@@ -50,15 +56,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Refresh();
 
       void NotifyCurvePropertyChange(CurveDTO curveDTO);
-      event Action<Curve> CurvePropertyChanged;
+      event EventHandler<CurveEventArgs> CurvePropertyChanged;
       void UpdateCurveColor(CurveDTO curveDTO, Color color);
    }
 
    public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter
    {
-      public event Action<Curve> RemoveCurve = delegate { };
-      public event Action<IReadOnlyList<DataColumn>> AddCurves = delegate { };
-      public event Action<Curve> CurvePropertyChanged = delegate { };
+      public event EventHandler<CurveEventArgs> RemoveCurve = delegate { };
+      public event EventHandler<ColumnsEventArgs> AddCurves = delegate { };
+      public event EventHandler<CurveEventArgs> CurvePropertyChanged = delegate { };
 
       private readonly IDimensionFactory _dimensionFactory;
 
@@ -77,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void MoveCurvesInLegend(CurveDTO curveBeingMoved, CurveDTO targetCurve)
       {
          _chart.MoveCurvesInLegend(curveBeingMoved.Curve, targetCurve.Curve);
-         CurvePropertyChanged(targetCurve.Curve);
+         NotifyCurvePropertyChange(targetCurve);
       }
 
       public string ToolTipFor(CurveDTO curveDTO)
@@ -118,9 +124,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Edit(null);
       }
 
-      public void Remove(CurveDTO curveDTO) => RemoveCurve(curveDTO.Curve);
+      public void Remove(CurveDTO curveDTO) => RemoveCurve(this, new CurveEventArgs(curveDTO.Curve));
 
-      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns) => AddCurves(dataColumns);
+      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns) => AddCurves(this ,new ColumnsEventArgs(dataColumns));
 
       private CurveDTO mapFrom(Curve curve) => new CurveDTO(curve, _chart);
 
@@ -145,7 +151,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void NotifyCurvePropertyChange(CurveDTO curveDTO)
       {
-         CurvePropertyChanged(curveDTO.Curve);
+         CurvePropertyChanged(this, new CurveEventArgs(curveDTO.Curve));
       }
 
       private void rebind()

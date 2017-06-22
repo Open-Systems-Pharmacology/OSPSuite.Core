@@ -54,7 +54,7 @@ namespace OSPSuite.Core
          _buildConfiguration = A.Fake<IBuildConfiguration>();
          _para1 = A.Fake<IParameter>();
          _para2 = A.Fake<IParameter>();
-         A.CallTo(() => _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT)).Returns(_amountDimension);
+         A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT)).Returns(_amountDimension);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _buildConfiguration)).Returns(_mappedFormula);
          A.CallTo(() => _parameterMapper.MapLocalFrom(_moleculeBuilder, _buildConfiguration)).Returns(new[] {_para1, _para2});
       }

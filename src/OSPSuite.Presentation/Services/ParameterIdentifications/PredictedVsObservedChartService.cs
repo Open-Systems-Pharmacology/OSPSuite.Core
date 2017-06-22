@@ -120,7 +120,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
       {
          var dataColumns = observationColumns.ToList();
          //We are using display name here as it is the only way to identify unique merge dimensions
-         var uniqueDimensions = dataColumns.Select(dataColumn => _dimensionFactory.GetMergedDimensionFor(dataColumn)).DistinctBy(dimension => dimension.DisplayName);
+         var uniqueDimensions = dataColumns.Select(dataColumn => _dimensionFactory.MergedDimensionFor(dataColumn)).DistinctBy(dimension => dimension.DisplayName);
 
          foreach (var mergedDimension in uniqueDimensions)
          {
@@ -156,7 +156,7 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
 
       private IDimension mergedDimensionsFor(DataColumn dataColumn)
       {
-         return _dimensionFactory.GetMergedDimensionFor(dataColumn);
+         return _dimensionFactory.MergedDimensionFor(dataColumn);
       }
 
       private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)

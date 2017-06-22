@@ -472,6 +472,7 @@ namespace OSPSuite.Core.Domain
             public const string BUILDING_BLOCK_ID = "bb";
             public const string LLOQ = "lloq";
             public const string DEFAULT_VALUE = "default";
+            public const string UNIT_NAME = "unitName";
          }
 
       }

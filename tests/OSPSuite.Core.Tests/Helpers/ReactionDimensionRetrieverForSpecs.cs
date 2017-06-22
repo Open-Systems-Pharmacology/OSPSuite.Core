@@ -19,9 +19,9 @@ namespace OSPSuite.Helpers
          get
          {
             if (SelectedDimensionMode==ReactionDimensionMode.AmountBased)
-               return _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT_PER_TIME);
+               return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
 
-            return _dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME);
+            return _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME);
          }
       }
 
@@ -30,9 +30,9 @@ namespace OSPSuite.Helpers
          get
          {
             if (SelectedDimensionMode == ReactionDimensionMode.AmountBased)
-               return _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+               return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
 
-            return _dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION);
+            return _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          }
       }
 

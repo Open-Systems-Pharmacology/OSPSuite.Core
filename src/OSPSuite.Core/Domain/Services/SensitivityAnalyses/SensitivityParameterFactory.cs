@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       private void addParametersTo(SensitivityParameter sensitivityParameter)
       {
-         sensitivityParameter.Add(createParameter(Constants.Parameters.VARIATION_RANGE, _dimensionFactory.GetDimension(Constants.Dimension.FRACTION), defaultValue: 0.1, min: 0, minAllowed: false));
+         sensitivityParameter.Add(createParameter(Constants.Parameters.VARIATION_RANGE, _dimensionFactory.Dimension(Constants.Dimension.FRACTION), defaultValue: 0.1, min: 0, minAllowed: false));
          sensitivityParameter.Add(createParameter(Constants.Parameters.NUMBER_OF_STEPS, Constants.Dimension.NO_DIMENSION, defaultValue: 2, min: 1, max: 10));
       }
 
