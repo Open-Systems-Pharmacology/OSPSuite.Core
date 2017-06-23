@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Serialization.Chart
       protected override void TypedDeserialize(Axis axis, XElement element, SerializationContext serializationContext)
       {
          base.TypedDeserialize(axis, element, serializationContext);
-         axis.Dimension = serializationContext.DimensionFactory.MergedDimensionFor(axis);
+         axis.Dimension = serializationContext.DimensionFactory.OptimalDimension(axis.Dimension);
 
          //deserialized unit might not have been kept if the axis was using a merged dimension. We need to reset the Unit Name after the dimension was updated
          axis.UnitName = element.GetAttribute(Constants.Serialization.Attribute.UNIT_NAME);
