@@ -27,9 +27,9 @@ namespace OSPSuite.Core.Converter.v5_2
          _allDimensions.AddRange(dimensionMapper.DummyDimensionsForConversion);
       }
 
-      public IDimension GetMergedDimensionFor<T>(T hasDimension) where T : IWithDimension
+      public IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension
       {
-         return _dimensionFactory.GetMergedDimensionFor(hasDimension);
+         return _dimensionFactory.MergedDimensionFor(hasDimension);
       }
 
       public IDimension AddDimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName)
@@ -47,12 +47,9 @@ namespace OSPSuite.Core.Converter.v5_2
          throw new InvalidOperationException("Should never be called");
       }
 
-      public IEnumerable<string> GetDimensionNames()
-      {
-         return _allDimensions.Keys.Union(_dimensionFactory.GetDimensionNames());
-      }
+      public IEnumerable<string> DimensionNames => _allDimensions.Keys.Union(_dimensionFactory.DimensionNames);
 
-      public IDimension GetDimension(string name)
+      public IDimension Dimension(string name)
       {
          if (string.IsNullOrEmpty(name))
             return NoDimension;
@@ -60,7 +57,7 @@ namespace OSPSuite.Core.Converter.v5_2
          if (_allDimensions.Contains(name))
             return _allDimensions[name];
 
-         return _dimensionFactory.GetDimension(name);
+         return _dimensionFactory.Dimension(name);
       }
 
       public void Clear()

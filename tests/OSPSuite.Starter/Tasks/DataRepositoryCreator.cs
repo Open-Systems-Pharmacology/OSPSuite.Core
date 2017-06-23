@@ -269,7 +269,7 @@ namespace OSPSuite.Starter.Tasks
          };
          columns.Add(dc1B);
 
-         var dimless = _dimensionFactory.GetDimension("Dimensionless");
+         var dimless = _dimensionFactory.Dimension("Dimensionless");
          var dc2BStdDevG = new DataColumn("Spec2DevG", dimless, baseGrid3)
          {
             DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, dimless.DefaultUnitName, exDate, exSource, "Patient B", 320),
@@ -286,7 +286,7 @@ namespace OSPSuite.Starter.Tasks
          dc2B.AddRelatedColumn(dc2BStdDevG);
          columns.Add(dc2B);
 
-         var length = _dimensionFactory.GetDimension("Length");
+         var length = _dimensionFactory.Dimension("Length");
          var dc3L1 = new DataColumn("Length1", length, baseGrid3)
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, length.DefaultUnitName, exDate, exSource, "Patient A", 320) {LLOQ = 1000},
@@ -360,7 +360,7 @@ namespace OSPSuite.Starter.Tasks
 
       private BaseGrid createLogarithmicBaseGrid(string rep4Name, BaseGrid baseGrid3)
       {
-         var baseGrid4 = new BaseGrid("LogGrid", _dimensionFactory.GetDimension("Time"));
+         var baseGrid4 = new BaseGrid("LogGrid", _dimensionFactory.Dimension("Time"));
 
          var baseGridPath = new List<string> {rep4Name, baseGrid4.Name};
          baseGrid4.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
@@ -370,7 +370,7 @@ namespace OSPSuite.Starter.Tasks
 
       private BaseGrid createBaseGridWithFewPoints(string rep3Name)
       {
-         var baseGrid3 = new BaseGrid("FewPoints", _dimensionFactory.GetDimension("Time"));
+         var baseGrid3 = new BaseGrid("FewPoints", _dimensionFactory.Dimension("Time"));
 
          var baseGridPath = new List<string> {rep3Name, baseGrid3.Name};
          baseGrid3.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
@@ -380,7 +380,7 @@ namespace OSPSuite.Starter.Tasks
 
       private BaseGrid createLongBaseGridWithFewPoints(Unit displayUnit, string rep2Name)
       {
-         var baseGrid2 = new BaseGrid("LongWithFewPoints", _dimensionFactory.GetDimension("Time"))
+         var baseGrid2 = new BaseGrid("LongWithFewPoints", _dimensionFactory.Dimension("Time"))
          {
             DisplayUnit = displayUnit
          };
@@ -393,7 +393,7 @@ namespace OSPSuite.Starter.Tasks
 
       private BaseGrid createBaseGridWithManyPoints(string repositoryName, int numberOfPointsPerCalculation = 1000, Func<int, int, float> baseGridValueGenerator = null)
       {
-         var baseGridWithManyPoints = new BaseGrid("ManyPoints", _dimensionFactory.GetDimension("Time"));
+         var baseGridWithManyPoints = new BaseGrid("ManyPoints", _dimensionFactory.Dimension("Time"));
          baseGridWithManyPoints.DisplayUnit = baseGridWithManyPoints.Dimension.Unit(Constants.Dimension.Units.Weeks);
 
          if (baseGridValueGenerator == null)

@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Converter.v5_5
 
       public Converter541To551(IDimensionFactory dimensionFactory)
       {
-         _amountDimension = dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+         _amountDimension = dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
       }
 
       public bool IsSatisfiedBy(int version)

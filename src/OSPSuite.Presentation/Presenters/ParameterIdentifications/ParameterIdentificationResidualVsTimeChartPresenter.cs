@@ -132,7 +132,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private DataRepository createEmptyRepository(string id, string name, string valueName)
       {
          var dataRepository = new DataRepository(id) {Name = name};
-         var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.GetDimension(Constants.Dimension.TIME));
+         var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.Dimension(Constants.Dimension.TIME));
          var values = new DataColumn($"{id}-{valueName}", valueName, _chartPresenterContext.DimensionFactory.NoDimension, baseGrid) {DataInfo = {Origin = ColumnOrigins.CalculationAuxiliary}};
          dataRepository.Add(values);
          return dataRepository;

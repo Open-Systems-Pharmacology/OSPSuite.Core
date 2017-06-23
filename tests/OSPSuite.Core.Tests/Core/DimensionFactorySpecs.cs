@@ -16,7 +16,7 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _timeUnits = IoC.Resolve<IDimensionFactory>().GetDimension(Constants.Dimension.TIME).Units.Select(x => x.Name);
+         _timeUnits = IoC.Resolve<IDimensionFactory>().Dimension(Constants.Dimension.TIME).Units.Select(x => x.Name);
 
       }
    }

@@ -69,7 +69,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.ChartSettingsChanged += () => _settingsChanged = true;
+         sut.ChartSettingsChanged += (o,e) => _settingsChanged = true;
       }
 
       protected override void Because()

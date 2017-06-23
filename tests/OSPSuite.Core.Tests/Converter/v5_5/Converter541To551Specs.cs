@@ -55,7 +55,7 @@ namespace OSPSuite.Converter.v5_5
       {
          foreach (var molecule in _simulationConfiguration.Molecules)
          {
-            var amountDimension = _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+            var amountDimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
             molecule.Dimension.ShouldBeEqualTo(amountDimension);
             molecule.DisplayUnit.ShouldBeEqualTo(amountDimension.DefaultUnit);
          }

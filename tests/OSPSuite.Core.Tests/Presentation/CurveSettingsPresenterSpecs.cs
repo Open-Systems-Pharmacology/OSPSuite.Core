@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation
          _view = A.Fake<ICurveSettingsView>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _chart = new CurveChart();
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<IWithDimension>._)).ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<IWithDimension>._)).ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
 
          var dataRepo1 = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim1");
          _datColumn1 = dataRepo1.FirstDataColumn();
@@ -84,7 +84,7 @@ namespace OSPSuite.Presentation
          base.Context();
          var obsData = DomainHelperForSpecs.ObservedData();
          _newDataColum = obsData.FirstDataColumn();
-         sut.CurvePropertyChanged += o => _curvePropertyChanged = true;
+         sut.CurvePropertyChanged += (o, e) => _curvePropertyChanged = true;
       }
 
       protected override void Because()
@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation
          base.Context();
          var obsData = DomainHelperForSpecs.ObservedData();
          _newDataColum = obsData.FirstDataColumn();
-         sut.CurvePropertyChanged += o => _curvePropertyChanged = true;
+         sut.CurvePropertyChanged += (o, e) => _curvePropertyChanged = true;
       }
 
       protected override void Because()
@@ -143,7 +143,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.RemoveCurve += x => { _curveRemoved = x; };
+         sut.RemoveCurve += (o, e) => { _curveRemoved = e.Curve; };
       }
 
       protected override void Because()
@@ -166,8 +166,8 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         _columnsToAdd= A.Fake<IReadOnlyList<DataColumn>>();
-         sut.AddCurves += x => _columnsEvent = x;
+         _columnsToAdd = A.Fake<IReadOnlyList<DataColumn>>();
+         sut.AddCurves += (o, e) => _columnsEvent = e.Columns;
       }
 
       protected override void Because()
@@ -184,24 +184,23 @@ namespace OSPSuite.Presentation
 
    public class When_the_curve_settings_presenter_is_retrieving_the_tool_tip_for_a_curve : concern_for_CurveSettingsPresenter
    {
-      private string _curveName = "TOTO";
+      private readonly string _curveName = "TOTO";
 
       protected override void Context()
       {
          base.Context();
-         sut.CurveNameDefinition = x=>_curveName;
+         sut.CurveNameDefinition = x => _curveName;
       }
 
       [Observation]
       public void should_use_the_curve_name_defintion_method_to_retrieve_the_name_for_the_y_data()
       {
-         sut.ToolTipFor(_curveDTO1).ShouldBeEqualTo(_curveName);   
+         sut.ToolTipFor(_curveDTO1).ShouldBeEqualTo(_curveName);
       }
    }
 
    public class When_the_curve_settings_presenter_is_retrieving_the_tool_tip_for_a_curve_but_the_curve_name_definition_method_was_not_set : concern_for_CurveSettingsPresenter
    {
-
       [Observation]
       public void should_return_the_column_name()
       {
@@ -234,6 +233,7 @@ namespace OSPSuite.Presentation
          _curve3 = _curve2.Clone().WithName("Curve3");
          _chart.AddCurve(_curve3);
       }
+
       protected override void Because()
       {
          sut.Refresh();
@@ -242,7 +242,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_remove_all_curves_that_were_removed_since_previous_refresh()
       {
-         _allCurveDTOs.Find(x=>x.Curve == _curve2).ShouldBeNull();
+         _allCurveDTOs.Find(x => x.Curve == _curve2).ShouldBeNull();
       }
 
       [Observation]
@@ -252,7 +252,6 @@ namespace OSPSuite.Presentation
       }
    }
 
-
    public class When_the_curve_settings_presenter_is_moving_a_curve_legend_position_after_another_curve : concern_for_CurveSettingsPresenter
    {
       private bool _curvePropertyChanged;
@@ -260,7 +259,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.CurvePropertyChanged += c => _curvePropertyChanged = true; ;
+         sut.CurvePropertyChanged += (o, e) => _curvePropertyChanged = true;
          _curve1.LegendIndex = 2;
          _curve2.LegendIndex = 3;
       }
@@ -291,8 +290,9 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         _curveDTO1.Color =Color.Red;
-         sut.CurvePropertyChanged += c => _curvePropertyChanged = true; ;
+         _curveDTO1.Color = Color.Red;
+         sut.CurvePropertyChanged += (o,e) => _curvePropertyChanged = true;
+         ;
       }
 
       protected override void Because()
@@ -303,7 +303,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_update_the_color()
       {
-         _curve1.Color.ShouldBeEqualTo(Color.Blue);         
+         _curve1.Color.ShouldBeEqualTo(Color.Blue);
       }
 
       [Observation]
@@ -312,5 +312,4 @@ namespace OSPSuite.Presentation
          _curvePropertyChanged.ShouldBeTrue();
       }
    }
-
 }

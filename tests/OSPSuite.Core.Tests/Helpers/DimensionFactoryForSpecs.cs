@@ -41,9 +41,9 @@ namespace OSPSuite.Helpers
 
       public static IDimensionFactory Factory => _factory;
 
-      public static IDimension ConcentrationDimension => Factory.GetDimension(DimensionNames.Concentration);
+      public static IDimension ConcentrationDimension => Factory.Dimension(DimensionNames.Concentration);
 
-      public static IDimension TimeDimension => Factory.GetDimension(Constants.Dimension.TIME);
+      public static IDimension TimeDimension => Factory.Dimension(Constants.Dimension.TIME);
 
       public static class DimensionNames
       {

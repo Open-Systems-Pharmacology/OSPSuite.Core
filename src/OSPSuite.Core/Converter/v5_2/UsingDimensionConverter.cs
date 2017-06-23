@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Converter.v5_2
          if (formulaUsable != null)
             displayUnit = formulaUsable.DisplayUnit;
 
-         withDimension.Dimension = _dimensionFactory.GetDimension(ConverterConstants.DummyDimensions[withDimension.Dimension.Name]);
+         withDimension.Dimension = _dimensionFactory.Dimension(ConverterConstants.DummyDimensions[withDimension.Dimension.Name]);
 
          if (formulaUsable == null) return;
          formulaUsable.DisplayUnit = withDimension.Dimension.UnitOrDefault(displayUnit.Name);

@@ -409,7 +409,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 
       private bool isCurveCompatibleToYAxis(Curve curve, Axis yaxis)
       {
-         return (curve.yDimension.Name == _dimensionFactory.GetMergedDimensionFor(yaxis).Name);
+         return (curve.yDimension.Name == _dimensionFactory.MergedDimensionFor(yaxis).Name);
       }
 
       private List<Plot> getPlots(CurveChart chart, AxisTypes yAxisType)
@@ -442,7 +442,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticStdDev))
             {
                arithmeticErr = curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
-               arithmeticErrDim = _dimensionFactory.GetMergedDimensionFor(arithmeticErr);
+               arithmeticErrDim = _dimensionFactory.MergedDimensionFor(arithmeticErr);
                plotOptions.ErrorBars = true;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.arithmetic;
             }
@@ -451,7 +451,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
             {
                geometricMeanPop = curve.yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop);
-               geometricMeanPopDim = _dimensionFactory.GetMergedDimensionFor(geometricMeanPop);
+               geometricMeanPopDim = _dimensionFactory.MergedDimensionFor(geometricMeanPop);
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.geometric;
                plotOptions.ShadedErrorBars = true;
@@ -462,7 +462,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
             {
                arithmeticMeanPop = curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop);
-               arithmeticMeanPopDim = _dimensionFactory.GetMergedDimensionFor(arithmeticMeanPop);
+               arithmeticMeanPopDim = _dimensionFactory.MergedDimensionFor(arithmeticMeanPop);
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.arithmetic;
                plotOptions.ShadedErrorBars = true;
@@ -476,8 +476,8 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             plotOptions.Marker = getMarker(curve.Symbol);
             plotOptions.LineStyle = getLineStyle(curve.LineStyle);
 
-            IDimension xDimension = _dimensionFactory.GetMergedDimensionFor(curve.xData);
-            IDimension yDimension = _dimensionFactory.GetMergedDimensionFor(curve.yData);
+            IDimension xDimension = _dimensionFactory.MergedDimensionFor(curve.xData);
+            IDimension yDimension = _dimensionFactory.MergedDimensionFor(curve.yData);
             for (var i = 0; i < curve.xData.Values.Count; i++)
             {
                var xValue = convertToUnit(xUnit, xDimension, curve.xData.Values[i]);

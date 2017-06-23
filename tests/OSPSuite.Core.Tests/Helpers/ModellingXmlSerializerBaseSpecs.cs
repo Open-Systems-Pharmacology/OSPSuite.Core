@@ -11,7 +11,8 @@ namespace OSPSuite.Helpers
    {
       protected IDimension DimensionLength { get; private set; }
       protected IDimension DimensionTime { get; private set; }
-      protected IDimension DimensionConcentration { get; private set; }
+      protected IDimension DimensionMolarConcentration { get; private set; }
+      protected IDimension DimensionMassConcentration { get; private set; }
       protected IDimension DimensionLess { get; private set; }
 
       private IObjectBaseFactory _objectBaseFactory;
@@ -25,9 +26,11 @@ namespace OSPSuite.Helpers
       {
          base.GlobalContext();
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         DimensionLength = dimensionFactory.GetDimension("Length");
-         DimensionTime = dimensionFactory.GetDimension(Constants.Dimension.TIME);
-         DimensionConcentration = dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         DimensionLength = dimensionFactory.Dimension("Length");
+         DimensionTime = dimensionFactory.Dimension(Constants.Dimension.TIME);
+         DimensionMolarConcentration = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         DimensionMassConcentration = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
+
          DimensionLess = Constants.Dimension.NO_DIMENSION;
          _objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
       }

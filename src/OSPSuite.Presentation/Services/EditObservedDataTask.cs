@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Services
          _executionContext = executionContext;
          _applicationController = applicationController;
          _parameterIdentificationTask = parameterIdentificationTask;
-         _molWeightDimension = dimensionFactory.GetDimension(Constants.Dimension.MOLECULAR_WEIGHT);
+         _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
       public ICommand SetValue(DataRepository observedData, CellValueChanged cellValueChanged)

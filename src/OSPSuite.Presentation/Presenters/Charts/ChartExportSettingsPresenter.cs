@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IEnumerable<int> AllFontSizes { get; }
       void ResetValuesToDefault();
       void Clear();
-      event Action ChartExportSettingsChanged;
+      event EventHandler ChartExportSettingsChanged;
       void NotifyChartExportSettingsChanged();
    }
 
@@ -22,8 +22,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       private readonly IFontsTask _fontsTask;
       private IChartManagement _chartManagement;
-      public event Action ChartExportSettingsChanged = delegate { };
-      public void NotifyChartExportSettingsChanged() => ChartExportSettingsChanged();
+      public event EventHandler ChartExportSettingsChanged = delegate { };
+      public void NotifyChartExportSettingsChanged() => ChartExportSettingsChanged(this, EventArgs.Empty);
 
       public ChartExportSettingsPresenter(IChartExportSettingsView view, IFontsTask fontsTask)
          : base(view)

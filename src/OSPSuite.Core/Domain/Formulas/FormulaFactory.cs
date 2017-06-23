@@ -60,12 +60,12 @@ namespace OSPSuite.Core.Domain.Formulas
 
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER)
             .WithAlias("M")
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.AMOUNT)));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.AMOUNT)));
 
          formula.AddObjectPath(createVolumeReferencePath(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME));
 
          formulaCache.Add(formula);
-         formula.Dimension = _dimensionFactory.GetDimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          return formula;
       }
 
@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Formulas
          return _objectBaseFactory.Create<ExplicitFormula>()
             .WithName(formulaName)
             .WithOriginId(formulaName)
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.AMOUNT))
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.AMOUNT))
             .WithFormulaString(formulaString);
       }
 
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain.Formulas
       {
          return _objectPathFactory.CreateFormulaUsablePathFrom(pathToVolumeParameter)
             .WithAlias(Constants.VOLUME_ALIAS)
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.VOLUME));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.VOLUME));
       }
    }
 }

@@ -14,7 +14,7 @@ namespace OSPSuite.Converter.v5_2
       protected override void Context()
       {
          _dimensionFactory= A.Fake<IDimensionFactory>();
-         A.CallTo(() => _dimensionFactory.GetDimension(A<string>._)).Returns(A.Fake<IDimension>());
+         A.CallTo(() => _dimensionFactory.Dimension(A<string>._)).Returns(A.Fake<IDimension>());
          sut = new DimensionMapper(_dimensionFactory);
       }
    }

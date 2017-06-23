@@ -28,8 +28,8 @@ namespace OSPSuite.Presentation
          _xDataColumn = new BaseGrid("XData", DomainHelperForSpecs.TimeDimensionForSpecs());
          _yDataColumn = new DataColumn("YData", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _xDataColumn);
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor((DataColumn) _xDataColumn)).Returns(_xDataColumn.Dimension);
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(_yDataColumn)).Returns(_yDataColumn.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor((DataColumn) _xDataColumn)).Returns(_xDataColumn.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(_yDataColumn)).Returns(_yDataColumn.Dimension);
 
          _curve.SetxData(_xDataColumn, _dimensionFactory);
          _curve.SetyData(_yDataColumn, _dimensionFactory);

@@ -24,20 +24,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _dimensions.Add(dimension.Name, dimension);
       }
 
-      public IEnumerable<IDimension> Dimensions
-      {
-         get { return _dimensions; }
-      }
+      public IEnumerable<IDimension> Dimensions => _dimensions;
 
-      public IEnumerable<string> GetDimensionNames()
-      {
-         return _dimensions.Keys;
-      }
+      public IEnumerable<string> DimensionNames => _dimensions.Keys;
 
-      public IDimension GetDimension(string name)
+      public IDimension Dimension(string name)
       {
          if (!_dimensions.Keys.Contains(name))
             throw new KeyNotFoundException("Dimension " + name + " not available in DimensionFactory.");
+
          return _dimensions[name];
       }
 
@@ -56,15 +51,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _dimensions.Clear();
       }
 
-      public IDimension NoDimension
-      {
-         get { return _dimensions[Constants.Dimension.DIMENSIONLESS]; }
-      }
+      public IDimension NoDimension => _dimensions[Constants.Dimension.DIMENSIONLESS];
 
       public void RemoveDimension(string dimensionName)
       {
          if (!_dimensions.Contains(dimensionName))
             return;
+
          _dimensions.Remove(dimensionName);
       }
 
@@ -74,14 +67,14 @@ namespace OSPSuite.Core.Domain.UnitSystem
       }
 
       /// <exception cref="OSPSuiteException">Thrown when no well-defined merging Informations for the dimensions found</exception>
-      public IDimension GetMergedDimensionFor<T>(T hasDimension) where T : IWithDimension
+      public IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension
       {
          if (hasDimension.Dimension == null)
             return null;
 
          var dimensionsToMerge = (from dimension in _allMergingInformation
-                                  where dimension.SourceDimension.Equals(hasDimension.Dimension)
-                                  select dimension.TargetDimension).Distinct().ToList();
+            where dimension.SourceDimension.Equals(hasDimension.Dimension)
+            select dimension.TargetDimension).Distinct().ToList();
 
          if (!dimensionsToMerge.Any())
             return hasDimension.Dimension;
@@ -113,10 +106,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _allMergingInformation.Add(mergingInformation);
       }
 
-      public IEnumerable<IDimensionMergingInformation> AllMergingInformation
-      {
-         get { return _allMergingInformation; }
-      }
+      public IEnumerable<IDimensionMergingInformation> AllMergingInformation => _allMergingInformation;
 
       protected virtual IDimensionConverterFor CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension) where T : IWithDimension
       {

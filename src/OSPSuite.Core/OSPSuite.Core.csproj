@@ -110,7 +110,6 @@
     <Compile Include="Chart\DistributionSettings.cs" />
     <Compile Include="Chart\Events.cs" />
     <Compile Include="Chart\ChartUpdater.cs" />
-    <Compile Include="Chart\ItemNotifyCache.cs" />
     <Compile Include="Chart\IWithAxes.cs" />
     <Compile Include="Chart\Mappers\CurveToDataModeMapper.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationAnalysisChart.cs" />

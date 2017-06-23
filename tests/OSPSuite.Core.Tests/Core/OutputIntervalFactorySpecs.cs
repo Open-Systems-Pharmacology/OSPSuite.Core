@@ -17,7 +17,7 @@ namespace OSPSuite.Core
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).ReturnsLazily(x=>new Parameter());
-         A.CallTo(() => _dimensionFactory.GetDimension(A<string>._)).Returns(new Dimension());
+         A.CallTo(() => _dimensionFactory.Dimension(A<string>._)).Returns(new Dimension());
          sut = new OutputIntervalFactory(_objectBaseFactory, _dimensionFactory);
       }
    }

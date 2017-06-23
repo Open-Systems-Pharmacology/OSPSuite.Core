@@ -37,7 +37,7 @@ namespace OSPSuite.Core
          _oldDimension = A.Fake<IDimension>();
          _withDimension.Dimension = _oldDimension;
          A.CallTo(() => _oldDimension.Name).Returns("DosePerBodyWeight");
-         A.CallTo(() => _dimensionFactory.GetDimension(ConverterConstants.DummyDimensions[_oldDimension.Name])).Returns(_newDimension);
+         A.CallTo(() => _dimensionFactory.Dimension(ConverterConstants.DummyDimensions[_oldDimension.Name])).Returns(_newDimension);
       }
 
       [Observation]

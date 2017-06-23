@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.ChartExportSettingsChanged += () => _exportSettingsChanged = true;
+         sut.ChartExportSettingsChanged += (o,e) => _exportSettingsChanged = true;
       }
       protected override void Because()
       {
@@ -112,7 +112,7 @@ namespace OSPSuite.Presentation
          _chartManagement= A.Fake<IChartManagement>();
          A.CallTo(() => _chartManagement.FontAndSize).Returns(new ChartFontAndSizeSettings());
          _chartManagement.FontAndSize.ChartHeight = 500;
-         sut.ChartExportSettingsChanged += () => _chartExportSettingsChanged = true;
+         sut.ChartExportSettingsChanged += (o,e) => _chartExportSettingsChanged = true;
          sut.Edit(_chartManagement);
       }
 

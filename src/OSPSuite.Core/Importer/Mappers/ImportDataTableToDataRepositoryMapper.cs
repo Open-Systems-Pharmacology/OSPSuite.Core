@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Importer.Mappers
          if (importDataColumn.Dimensions == null)
             throw new OSPSuiteException(string.Format("Column {0} has no dimension.", importDataColumn.ColumnName));
 
-         var dimension = _dimensionFactory.GetDimension(importDataColumn.ActiveDimension.Name);
+         var dimension = _dimensionFactory.Dimension(importDataColumn.ActiveDimension.Name);
 
          DataColumn dataColumn;
          if (string.IsNullOrEmpty(colInfo.BaseGridName) || (colInfo.BaseGridName == colInfo.Name))

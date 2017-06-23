@@ -19,16 +19,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       void Clear();
 
-      event Action ChartSettingsChanged;
+      event EventHandler ChartSettingsChanged;
 
       void NotifyChartSettingsChanged();
    }
 
    internal class ChartSettingsPresenter : AbstractPresenter<IChartSettingsView, IChartSettingsPresenter>, IChartSettingsPresenter
    {
-      public event Action ChartSettingsChanged = delegate { };
+      public event EventHandler ChartSettingsChanged = delegate { };
 
-      public void NotifyChartSettingsChanged() => ChartSettingsChanged();
+      public void NotifyChartSettingsChanged() => ChartSettingsChanged(this, EventArgs.Empty);
 
       public ChartSettingsPresenter(IChartSettingsView view) : base(view)
       {

@@ -55,7 +55,7 @@ namespace OSPSuite.Starter.Services
 
       private DataRepository observedDataFor(IQuantity quantity)
       {
-         var time = new BaseGrid("Time", _dimensionFactory.GetDimension(Constants.Dimension.TIME))
+         var time = new BaseGrid("Time", _dimensionFactory.Dimension(Constants.Dimension.TIME))
          {
             Values = new[] {1f, 2f, 3f}
          };

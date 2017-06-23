@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation
          _enzymeColumn.QuantityInfo.Type = QuantityType.Enzyme;
          _enzymeColumn.DataInfo.Origin = ColumnOrigins.Calculation;
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<IWithDimension>._))
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<IWithDimension>._))
             .ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
 
          //always available
