@@ -1,5 +1,7 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Threading;
+using OSPSuite.BDDHelper;
 using FakeItEasy;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -64,6 +66,7 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          sut.UpdateFeedback(_runState);
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME);
       }
 
       [Observation]
