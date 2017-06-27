@@ -14,36 +14,43 @@ namespace OSPSuite.Infrastructure.Configuration
    {
       protected abstract string[] LatestVersionWithOtherMajor { get; }
 
-      public abstract string ChartLayoutTemplateFolderPath { get; }
-      public abstract string TEXTemplateFolderPath { get; }
-      public string PKParametersFilePath { get; set; }
+      public string ChartLayoutTemplateFolderPath { get; }
+      public string TEXTemplateFolderPath { get; }
+      public string PKParametersFilePath { get;  }
+      public string SimModelSchemaPath { get;  }
       public abstract string ProductName { get; }
       public abstract Origin Product { get; }
       public abstract string ProductNameWithTrademark { get; }
       public abstract ApplicationIcon Icon { get; }
       public abstract string UserSettingsFileName { get; }
       public abstract string IssueTrackerUrl { get; }
+      public string AllUsersFolderPath { get; }
+      public string CurrentUserFolderPath { get; }
+      public string BuildVersion { get; }
+      public string MajorVersion { get; }
+      public string FullVersion { get; }
+      public string Version { get; }
+      public string OSPSuiteNameWithVersion { get; }
+      public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
 
-      public string FullVersion => $"{Version} - Build {AssemblyVersion.Revision}";
 
-      public string Version
+      protected OSPSuiteConfiguration()
       {
-         get
-         {
-            var version = AssemblyVersion;
-            return $"{MajorVersion}.{version.Build}";
-         }
+         var assemblyVersion = AssemblyVersion;
+         MajorVersion = version(assemblyVersion.Minor);
+         Version = $"{MajorVersion}.{assemblyVersion.Build}";
+         FullVersion = $"{Version} - Build {assemblyVersion.Revision}";
+         OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
+         CurrentUserFolderPath = dataFolderFor(EnvironmentHelper.UserApplicationDataFolder());
+         AllUsersFolderPath = dataFolderFor(EnvironmentHelper.ApplicationDataFolder());
+         BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
+         PKParametersFilePath = AllUsersOrLocalPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
+         SimModelSchemaPath = LocalPath(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
+         TEXTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.APP_DATA_TEX_TEMPLATE_FOLDER_NAME, Constants.Files.LOCAL_TEX_TEMPLATE_FOLDER_NAME);
+         ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME, Constants.Files.CHART_LAYOUT_FOLDER_NAME);
+
       }
-
-      public string MajorVersion => version(AssemblyVersion.Minor);
-
-      private string version(int minor)
-      {
-         var version = AssemblyVersion;
-         return $"{version.Major}.{minor}";
-      }
-
-      public string BuildVersion => AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
+      private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
 
       public IEnumerable<string> UserApplicationSettingsFilePaths => SettingsFilePaths(UserApplicationSettingsFilePath, userApplicationSettingsFilePath);
 
@@ -74,7 +81,35 @@ namespace OSPSuite.Infrastructure.Configuration
       }
 
       protected abstract string ApplicationFolderPathWithRevision(string revision);
-      public virtual string LicenseAgreementFilePath { get; } = Constants.LICENSE_AGREEMENT_FILE_NAME;
-      public string OSPSuiteNameWithVersion => $"{Constants.SUITE_NAME} - {Version}";
+
+      protected string AllUsersFile(string fileName) => Path.Combine(AllUsersFolderPath, fileName);
+
+      /// <summary>
+      /// Returns a local full path for the file with name <paramref name="fileName"/>
+      /// </summary>
+      protected string LocalPath(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+      private string dataFolderFor(string rootPath) => Path.Combine(rootPath, ApplicationFolderPathWithRevision(MajorVersion));
+
+      private string createApplicationDataOrLocalPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
+      {
+         var applicationDataOrLocal = AllUsersFile(appDataName);
+         if (existsFunc(applicationDataOrLocal))
+            return applicationDataOrLocal;
+
+         //try local if id does not exist
+         var localPath = LocalPath(localName);
+         if (existsFunc(localPath))
+            return localPath;
+
+         //neither app data nor local exist, return app data
+         return applicationDataOrLocal;
+      }
+
+      protected string AllUsersOrLocalPathForFile(string fileName) => createApplicationDataOrLocalPathFor(fileName, fileName, FileHelper.FileExists);
+
+      protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
+
+
    }
 }

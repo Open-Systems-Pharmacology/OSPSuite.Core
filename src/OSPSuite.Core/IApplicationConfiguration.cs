@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the pk analyses file
       /// </summary>
-      string PKParametersFilePath { get; set; }
+      string PKParametersFilePath { get;  }
 
       /// <summary>
       ///    Path of the license agreement file
@@ -81,5 +81,20 @@ namespace OSPSuite.Core
       ///    Returns the name of the suite with the Version in format X.Y.Z
       /// </summary>
       string OSPSuiteNameWithVersion { get; }
+
+      /// <summary>
+      /// Returns the application settings folder path (valid for all users)
+      /// </summary>
+      string AllUsersFolderPath { get; }
+
+      /// <summary>
+      /// Returns the current user settings folder path 
+      /// </summary>
+      string CurrentUserFolderPath { get; }
+
+      /// <summary>
+      ///    Path of the schema used to validate our models
+      /// </summary>
+      string SimModelSchemaPath { get; }
    }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
@@ -66,9 +67,9 @@ namespace OSPSuite.Core.Domain
       public static readonly string PRODUCT_SITE = "www.open-systems-pharmacology.org";
       public static readonly string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
       public static readonly string HELP_NAMESPACE = "Open Systems Pharmacology Suite.chm";
-      public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
       public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
       public static readonly string SUITE_NAME = "Open Systems Pharmacology Suite";
+
 
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
@@ -93,6 +94,18 @@ namespace OSPSuite.Core.Domain
       public const string FILE = "File";
       public const string SHEET = "Sheet";
 
+      public static class Files
+      {
+         public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
+         public static readonly string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
+         public static readonly string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
+         public static readonly string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
+         public static readonly string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
+         public static readonly string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
+         public static readonly string APP_DATA_TEX_TEMPLATE_FOLDER_NAME = "TEXTemplates";
+         public static readonly string LOCAL_TEX_TEMPLATE_FOLDER_NAME = "Templates";
+         public static readonly string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
+      }
 
       public static class Parameters
       {
