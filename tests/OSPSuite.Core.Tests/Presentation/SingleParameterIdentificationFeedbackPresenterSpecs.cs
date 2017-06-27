@@ -1,5 +1,7 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Threading;
+using OSPSuite.BDDHelper;
 using FakeItEasy;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -64,12 +66,36 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          sut.UpdateFeedback(_runState);
+         //a little more than the default refresh time to ensure that the call is being triggered
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 100);
       }
 
       [Observation]
       public void should_tell_the_paramters_feedback_presenter_to_update_the_parameters()
       {
          A.CallTo(() => _parametersFeedbackPresenter.UpdateFeedback(_runState)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_single_parameter_identification_parameter_feedback_presenter_is_told_to_update_the_feedback_twice : concern_for_SingleParameterIdentificationFeedbackPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.EditParameterIdentification(_parameterIdentification);
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateFeedback(_runState);
+         sut.UpdateFeedback(_runState);
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 100);
+      }
+
+      [Observation]
+      public void should_tell_the_paramters_feedback_presenter_to_update_the_parameters_only_once()
+      {
+         A.CallTo(() => _parametersFeedbackPresenter.UpdateFeedback(_runState)).MustHaveHappened(Repeated.Exactly.Once);
       }
    }
 
