@@ -37,5 +37,8 @@ namespace OSPSuite.Starter.Tasks
 
       public string IssueTrackerUrl => "https://github.com/Open-Systems-Pharmacology/PK-Sim/issues";
       public string OSPSuiteNameWithVersion => $"OSPSuite - {Version}";
+      public string AllUsersFolderPath { get; }
+      public string CurrentUserFolderPath { get; }
+      public string SimModelSchemaPath { get; }
    }
 }
