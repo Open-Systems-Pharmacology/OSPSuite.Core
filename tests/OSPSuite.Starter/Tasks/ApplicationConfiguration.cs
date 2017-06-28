@@ -1,46 +1,19 @@
-using System;
-using System.Collections.Generic;
+using System.IO;
 using OSPSuite.Assets;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Infrastructure.Configuration;
 
 namespace OSPSuite.Starter.Tasks
 {
-   internal class ApplicationConfiguration : IApplicationConfiguration
+   internal class ApplicationConfiguration : OSPSuiteConfiguration
    {
-      public string ChartLayoutTemplateFolderPath => "./AFolderThatShouldntExist";
-
-      public string TeXTemplateFolderPath => throw new NotSupportedException();
-
-      public string PKParametersFilePath { get; set; } = "OSPSuite.PKParameters.xml";
-
-      public string FullVersion => "10.0.0";
-
-      public string Version => "10.0";
-
-      public string MajorVersion => "10";
-
-      public string BuildVersion => "0";
-
-      public string ProductName => "OSPSuite.Core";
-
-      public Origin Product => Origins.Other;
-
-      public string ProductDisplayName => "OSPSuite.Core";
-
-      public string ProductNameWithTrademark => "OSPSuite.Core";
-
-      public ApplicationIcon Icon => ApplicationIcons.PKSim;
-
-      public IEnumerable<string> UserSettingsFilePaths { get; }
-      public string LicenseAgreementFilePath { get; }
-
-      public string IssueTrackerUrl => "https://github.com/Open-Systems-Pharmacology/PK-Sim/issues";
-      public string OSPSuiteNameWithVersion => $"OSPSuite - {Version}";
-      public string AllUsersFolderPath { get; }
-      public string CurrentUserFolderPath { get; }
-      public string SimModelSchemaFilePath { get; }
-      public string DimensionFilePath { get; }
-      public string LogConfigurationFile { get; }
+      public override string ApplicationFolderPathName { get; } = Path.Combine("Open Systems Pharmacology", "OSPSuite.Starter");
+      protected override string[] LatestVersionWithOtherMajor { get; } = { };
+      public override string ProductName { get; } = "OSPSuite";
+      public override Origin Product { get; } = Origins.PKSim;
+      public override string ProductNameWithTrademark { get; } = "OSPSuite";
+      public override ApplicationIcon Icon { get; } = ApplicationIcons.PKSim;
+      public override string UserSettingsFileName { get; } = "UserSettings.xml";
+      public override string IssueTrackerUrl { get; } = "url";
    }
 }

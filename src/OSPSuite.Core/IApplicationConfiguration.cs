@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the pk analyses file
       /// </summary>
-      string PKParametersFilePath { get;  }
+      string PKParametersFilePath { get; }
 
       /// <summary>
       ///    Path of the license agreement file
@@ -73,6 +73,11 @@ namespace OSPSuite.Core
       IEnumerable<string> UserSettingsFilePaths { get; }
 
       /// <summary>
+      ///    Paths of the current user specific settings file (current user only)
+      /// </summary>
+      string UserSettingsFilePath { get; }
+
+      /// <summary>
       ///    Returns the url of the issue tracker
       /// </summary>
       string IssueTrackerUrl { get; }
@@ -83,12 +88,12 @@ namespace OSPSuite.Core
       string OSPSuiteNameWithVersion { get; }
 
       /// <summary>
-      /// Returns the application settings folder path (valid for all users)
+      ///    Returns the application settings folder path (valid for all users)
       /// </summary>
       string AllUsersFolderPath { get; }
 
       /// <summary>
-      /// Returns the current user settings folder path 
+      ///    Returns the current user settings folder path
       /// </summary>
       string CurrentUserFolderPath { get; }
 
