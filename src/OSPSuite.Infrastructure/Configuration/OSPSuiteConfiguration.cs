@@ -4,9 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Infrastructure.Configuration
 {
@@ -15,9 +15,10 @@ namespace OSPSuite.Infrastructure.Configuration
       protected abstract string[] LatestVersionWithOtherMajor { get; }
 
       public string ChartLayoutTemplateFolderPath { get; }
-      public string TEXTemplateFolderPath { get; }
-      public string PKParametersFilePath { get;  }
-      public string SimModelSchemaPath { get;  }
+      public string TeXTemplateFolderPath { get; }
+      public string PKParametersFilePath { get; }
+      public string SimModelSchemaFilePath { get; }
+      public string DimensionFilePath { get; }
       public abstract string ProductName { get; }
       public abstract Origin Product { get; }
       public abstract string ProductNameWithTrademark { get; }
@@ -31,8 +32,8 @@ namespace OSPSuite.Infrastructure.Configuration
       public string FullVersion { get; }
       public string Version { get; }
       public string OSPSuiteNameWithVersion { get; }
+      public string LogConfigurationFile { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
-
 
       protected OSPSuiteConfiguration()
       {
@@ -41,18 +42,20 @@ namespace OSPSuite.Infrastructure.Configuration
          Version = $"{MajorVersion}.{assemblyVersion.Build}";
          FullVersion = $"{Version} - Build {assemblyVersion.Revision}";
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
-         CurrentUserFolderPath = dataFolderFor(EnvironmentHelper.UserApplicationDataFolder());
-         AllUsersFolderPath = dataFolderFor(EnvironmentHelper.ApplicationDataFolder());
+         CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
+         AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
          BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
          PKParametersFilePath = AllUsersOrLocalPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
-         SimModelSchemaPath = LocalPath(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
-         TEXTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.APP_DATA_TEX_TEMPLATE_FOLDER_NAME, Constants.Files.LOCAL_TEX_TEMPLATE_FOLDER_NAME);
-         ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME, Constants.Files.CHART_LAYOUT_FOLDER_NAME);
-
+         SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
+         TeXTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
+         ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
+         DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
+         LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
       }
+
       private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
 
-      public IEnumerable<string> UserApplicationSettingsFilePaths => SettingsFilePaths(UserApplicationSettingsFilePath, userApplicationSettingsFilePath);
+      public IEnumerable<string> UserSettingsFilePaths => SettingsFilePaths(UserSettingsFilePath, userSettingsFilePathFor);
 
       protected IEnumerable<string> SettingsFilePaths(string newerSettingFile, Func<string, string> olderSettingFileFunc)
       {
@@ -73,23 +76,24 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public Version AssemblyVersion => Assembly.GetAssembly(GetType()).GetName().Version;
 
-      public string UserApplicationSettingsFilePath => userApplicationSettingsFilePath(MajorVersion);
+      public string UserSettingsFilePath => userSettingsFilePathFor(MajorVersion);
 
-      private string userApplicationSettingsFilePath(string revision)
-      {
-         return Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithRevision(revision), UserSettingsFileName);
-      }
+      private string userSettingsFilePathFor(string version) => Path.Combine(CurrentUserFolderPathFor(version), UserSettingsFileName);
 
       protected abstract string ApplicationFolderPathWithRevision(string revision);
 
       protected string AllUsersFile(string fileName) => Path.Combine(AllUsersFolderPath, fileName);
 
+      protected string CurrentUserFile(string fileName) => Path.Combine(CurrentUserFolderPath, fileName);
+      
       /// <summary>
-      /// Returns a local full path for the file with name <paramref name="fileName"/>
+      ///    Returns a local full path for the file with name <paramref name="fileName" />
       /// </summary>
-      protected string LocalPath(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+      protected string LocalPathFor(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-      private string dataFolderFor(string rootPath) => Path.Combine(rootPath, ApplicationFolderPathWithRevision(MajorVersion));
+      protected string AllUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+
+      protected string CurrentUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
 
       private string createApplicationDataOrLocalPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
       {
@@ -98,7 +102,7 @@ namespace OSPSuite.Infrastructure.Configuration
             return applicationDataOrLocal;
 
          //try local if id does not exist
-         var localPath = LocalPath(localName);
+         var localPath = LocalPathFor(localName);
          if (existsFunc(localPath))
             return localPath;
 
@@ -108,8 +112,8 @@ namespace OSPSuite.Infrastructure.Configuration
 
       protected string AllUsersOrLocalPathForFile(string fileName) => createApplicationDataOrLocalPathFor(fileName, fileName, FileHelper.FileExists);
 
+      protected string AllUsersOrLocalPathForFolder(string folderName) => AllUsersOrLocalPathForFolder(folderName, folderName);
+
       protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
-
-
    }
 }

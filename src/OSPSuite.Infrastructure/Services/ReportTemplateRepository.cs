@@ -21,13 +21,13 @@ namespace OSPSuite.Infrastructure.Services
 
       protected override void DoStart()
       {
-         var directory = new DirectoryInfo(_configuration.TEXTemplateFolderPath);
+         var directory = new DirectoryInfo(_configuration.TeXTemplateFolderPath);
          if (!directory.Exists) return;
          foreach (var fileInfo in directory.GetFiles("*.json", SearchOption.AllDirectories))
          {
             var template = templateFrom(fileInfo.FullName);
             if (template == null) continue;
-            template.Path = Path.Combine(_configuration.TEXTemplateFolderPath, FileHelper.FileNameFromFileFullPath(fileInfo.FullName));
+            template.Path = Path.Combine(_configuration.TeXTemplateFolderPath, FileHelper.FileNameFromFileFullPath(fileInfo.FullName));
             _allReportTemplates.Add(template);
          }
       }

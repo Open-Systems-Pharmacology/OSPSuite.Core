@@ -17,7 +17,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Folder path where report templates are being saved (for all users, installed by setup)
       /// </summary>
-      string TEXTemplateFolderPath { get; }
+      string TeXTemplateFolderPath { get; }
 
       /// <summary>
       ///    Path of the pk analyses file
@@ -70,7 +70,7 @@ namespace OSPSuite.Core
       ///    Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent
       ///    one down to the first available one)
       /// </summary>
-      IEnumerable<string> UserApplicationSettingsFilePaths { get; }
+      IEnumerable<string> UserSettingsFilePaths { get; }
 
       /// <summary>
       ///    Returns the url of the issue tracker
@@ -95,6 +95,16 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the schema used to validate our models
       /// </summary>
-      string SimModelSchemaPath { get; }
+      string SimModelSchemaFilePath { get; }
+
+      /// <summary>
+      ///    Path of the dimension file
+      /// </summary>
+      string DimensionFilePath { get; }
+
+      /// <summary>
+      ///    Returns the path where the configuration file for the logger resides
+      /// </summary>
+      string LogConfigurationFile { get; }
    }
 }

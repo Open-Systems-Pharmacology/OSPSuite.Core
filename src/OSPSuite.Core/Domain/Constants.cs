@@ -102,8 +102,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
          public static readonly string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
          public static readonly string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
-         public static readonly string APP_DATA_TEX_TEMPLATE_FOLDER_NAME = "TEXTemplates";
-         public static readonly string LOCAL_TEX_TEMPLATE_FOLDER_NAME = "Templates";
+         public static readonly string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
          public static readonly string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
       }
 
