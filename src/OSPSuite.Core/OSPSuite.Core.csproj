@@ -197,6 +197,7 @@
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
+    <Compile Include="Services\CurveChartExportTask.cs" />
     <Compile Include="Services\CurveNamer.cs" />
     <Compile Include="Services\DataRepositoryNamer.cs" />
     <Compile Include="Services\IDialogCreator.cs" />
@@ -1029,7 +1030,7 @@
     <Compile Include="Services\IChartFromTemplateService.cs" />
     <Compile Include="Domain\Services\IEditObservedDataTask.cs" />
     <Compile Include="Domain\Services\IObservedDataConfiguration.cs" />
-    <Compile Include="Services\IExportToExcelTask.cs" />
+    <Compile Include="Services\IExportDataTableToExcelTask.cs" />
     <Compile Include="Services\KeyPathMapper.cs" />
     <Compile Include="Services\StartableProcess.cs" />
   </ItemGroup>

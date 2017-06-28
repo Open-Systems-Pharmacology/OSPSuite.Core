@@ -174,12 +174,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
    {
-      private readonly IDataRepositoryTask _dataRepositoryTask;
-      private readonly IDialogCreator _dialogCreator;
       private readonly ICurveBinderFactory _curveBinderFactory;
       private readonly IViewItemContextMenuFactory _contextMenuFactory;
       private readonly IAxisBinderFactory _axisBinderFactory;
       private readonly ICurveToDataModeMapper _dataModeMapper;
+      private readonly ICurveChartExportTask _chartExportTask;
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
@@ -191,22 +190,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
          set => View.HotTracked = value;
       }
 
-      public ChartDisplayPresenter(
-         IChartDisplayView chartDisplayView,
-         IDataRepositoryTask dataRepositoryTask,
-         IDialogCreator dialogCreator,
+      public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
          ICurveBinderFactory curveBinderFactory,
          IViewItemContextMenuFactory contextMenuFactory,
          IAxisBinderFactory axisBinderFactory,
-         ICurveToDataModeMapper dataModeMapper)
+         ICurveToDataModeMapper dataModeMapper, ICurveChartExportTask chartExportTask)
          : base(chartDisplayView)
       {
-         _dataRepositoryTask = dataRepositoryTask;
-         _dialogCreator = dialogCreator;
          _curveBinderFactory = curveBinderFactory;
          _contextMenuFactory = contextMenuFactory;
          _axisBinderFactory = axisBinderFactory;
          _dataModeMapper = dataModeMapper;
+         _chartExportTask = chartExportTask;
          _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
@@ -303,16 +298,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void ExportToExcel()
       {
-         if (Chart == null) return;
-         var visibleCurves = Chart.Curves.Where(x => x.Visible).ToList();
-         if (!visibleCurves.Any()) return;
-
-         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
-         if (string.IsNullOrEmpty(fileName)) return;
-
-         var dataColumnCache = new Cache<DataColumn, Curve>(onMissingKey: x => null);
-         visibleCurves.Each(curve => dataColumnCache[curve.yData] = curve);
-         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys, fileName, col => dataColumnCache[col]?.Name ?? col.Name);
+         _chartExportTask.ExportToExcel(Chart);
       }
 
       public void ResetZoom()

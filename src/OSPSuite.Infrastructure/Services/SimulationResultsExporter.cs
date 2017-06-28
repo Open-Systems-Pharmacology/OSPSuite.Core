@@ -27,7 +27,7 @@ namespace OSPSuite.Infrastructure.Services
 
       public Task ExportToCsvAsync(ISimulation simulation, DataRepository results, string fileName)
       {
-         var dataTable = _dataRepositoryTask.ToDataTable(results, x => _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, x)).First();
+         var dataTable = _dataRepositoryTask.ToDataTable(results, x => _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, x), x => x.Dimension, useDisplayUnit: false).First();
          return Task.Run(() => dataTable.ExportToCSV(fileName));
       }
 
@@ -45,4 +45,4 @@ namespace OSPSuite.Infrastructure.Services
          });
       }
    }
-   }
+}
