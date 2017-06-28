@@ -10,7 +10,7 @@ namespace OSPSuite.Starter.Tasks
    {
       public string ChartLayoutTemplateFolderPath => "./AFolderThatShouldntExist";
 
-      public string TEXTemplateFolderPath => throw new NotSupportedException();
+      public string TeXTemplateFolderPath => throw new NotSupportedException();
 
       public string PKParametersFilePath { get; set; } = "OSPSuite.PKParameters.xml";
 
@@ -32,13 +32,15 @@ namespace OSPSuite.Starter.Tasks
 
       public ApplicationIcon Icon => ApplicationIcons.PKSim;
 
-      public IEnumerable<string> UserApplicationSettingsFilePaths { get; }
+      public IEnumerable<string> UserSettingsFilePaths { get; }
       public string LicenseAgreementFilePath { get; }
 
       public string IssueTrackerUrl => "https://github.com/Open-Systems-Pharmacology/PK-Sim/issues";
       public string OSPSuiteNameWithVersion => $"OSPSuite - {Version}";
       public string AllUsersFolderPath { get; }
       public string CurrentUserFolderPath { get; }
-      public string SimModelSchemaPath { get; }
+      public string SimModelSchemaFilePath { get; }
+      public string DimensionFilePath { get; }
+      public string LogConfigurationFile { get; }
    }
 }
