@@ -31,8 +31,10 @@ namespace OSPSuite.Infrastructure.Configuration
       public string MajorVersion { get; }
       public string FullVersion { get; }
       public string Version { get; }
+      public string UserSettingsFilePath { get; }
       public string OSPSuiteNameWithVersion { get; }
       public string LogConfigurationFile { get; }
+      public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
 
       protected OSPSuiteConfiguration()
@@ -51,6 +53,7 @@ namespace OSPSuite.Infrastructure.Configuration
          ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
          DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
          LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
+         UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
       }
 
       private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
@@ -76,16 +79,14 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public Version AssemblyVersion => Assembly.GetAssembly(GetType()).GetName().Version;
 
-      public string UserSettingsFilePath => userSettingsFilePathFor(MajorVersion);
-
       private string userSettingsFilePathFor(string version) => Path.Combine(CurrentUserFolderPathFor(version), UserSettingsFileName);
 
-      protected abstract string ApplicationFolderPathWithRevision(string revision);
+      protected string ApplicationFolderPathWithRevision(string revision) => Path.Combine(ApplicationFolderPathName, revision);
 
       protected string AllUsersFile(string fileName) => Path.Combine(AllUsersFolderPath, fileName);
 
       protected string CurrentUserFile(string fileName) => Path.Combine(CurrentUserFolderPath, fileName);
-      
+
       /// <summary>
       ///    Returns a local full path for the file with name <paramref name="fileName" />
       /// </summary>
