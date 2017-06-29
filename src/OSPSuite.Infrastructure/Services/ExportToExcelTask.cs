@@ -42,8 +42,7 @@ namespace OSPSuite.Infrastructure.Services
                var dataTable = tables.ElementAt(i);
                exportDataTableToWorkBook(workBook, dataTable, i);
 
-               if (workbookConfiguration != null)
-                  workbookConfiguration(workBook, dataTable);
+               workbookConfiguration?.Invoke(workBook, dataTable);
             }
 
             SaveWorkbook(fileName, workBook);
@@ -76,8 +75,7 @@ namespace OSPSuite.Infrastructure.Services
       {
          ExportDataTablesToExcel(dataTables, fileName, openExcel, (wb, dt) =>
          {
-            if (workbookConfiguration != null)
-               workbookConfiguration(wb);
+            workbookConfiguration?.Invoke(wb);
          });
       }
 

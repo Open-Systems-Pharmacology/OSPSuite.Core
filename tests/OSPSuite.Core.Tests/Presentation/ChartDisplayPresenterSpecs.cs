@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
@@ -17,7 +12,6 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Presentation
@@ -25,8 +19,6 @@ namespace OSPSuite.Presentation
    public abstract class concern_for_ChartDisplayPresenter : ContextSpecification<ChartDisplayPresenter>
    {
       protected IChartDisplayView _chartDisplayView;
-      protected IDataRepositoryTask _dataRepositoryTask;
-      protected IDialogCreator _dialogCreator;
       protected ICurveBinderFactory _curveBinderFactory;
       protected IExceptionManager _exceptionManager;
 
@@ -38,21 +30,19 @@ namespace OSPSuite.Presentation
       private IAxisBinder _xAxisBinder;
       private IAxisBinder _yAxisBinder;
       private IViewItemContextMenuFactory _contextMenuFactory;
+      protected ICurveChartExportTask _chartExportTask;
 
       protected override void Context()
       {
          _chartDisplayView = A.Fake<IChartDisplayView>();
-         _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
-         _dialogCreator = A.Fake<IDialogCreator>();
          _curveBinderFactory = A.Fake<ICurveBinderFactory>();
          _exceptionManager = A.Fake<IExceptionManager>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _axisBinderFactory = A.Fake<IAxisBinderFactory>();
          _dataModeMapper = A.Fake<ICurveToDataModeMapper>();
          _contextMenuFactory = A.Fake<IViewItemContextMenuFactory>();
-
-         sut = new ChartDisplayPresenter(_chartDisplayView, _dataRepositoryTask, _dialogCreator, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper);
-
+         _chartExportTask = A.Fake<ICurveChartExportTask>();
+         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask);
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
@@ -354,67 +344,17 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_exporting_the_displayed_chart_to_excel : concern_for_ChartDisplayPresenter
+   public class When_the_chart_display_presenter_is_exporting_the_displayed_chart_to_excel : concern_for_ChartDisplayPresenter
    {
-      private readonly string _fileName = "AAA";
-      private List<DataColumn> _dataColumns;
-      private Func<DataColumn, string> _namingFunc;
-      private Curve _invisibleCurve;
-
-      protected override void Context()
-      {
-         base.Context();
-         A.CallTo(_dialogCreator).WithReturnType<string>().Returns(_fileName);
-         A.CallTo(() => _dataRepositoryTask.ExportToExcel(A<IEnumerable<DataColumn>>._, _fileName, A<Func<DataColumn, string>>._, true))
-            .Invokes(x =>
-            {
-               _dataColumns = x.GetArgument<IEnumerable<DataColumn>>(0).ToList();
-               _namingFunc = x.GetArgument<Func<DataColumn, string>>(2);
-            });
-      }
-
-      protected override void SetupChart()
-      {
-         base.SetupChart();
-         _curveChart.Name = "Chart";
-         _curve.Visible = true;
-         _curve.Name = "CurveName";
-         _curveChart.AddCurve(_curve);
-
-         var anotherRepo = DomainHelperForSpecs.ObservedData("AnotherRepo");
-         _invisibleCurve = new Curve {Visible = false};
-         _invisibleCurve.SetxData(anotherRepo.BaseGrid, _dimensionFactory);
-         _invisibleCurve.SetyData(anotherRepo.AllButBaseGrid().First(), _dimensionFactory);
-         _curveChart.AddCurve(_invisibleCurve);
-      }
-
       protected override void Because()
       {
          sut.ExportToExcel();
       }
 
       [Observation]
-      public void should_only_export_data_of_visible_curves()
+      public void should_use_the_chart_export_task_to_expor_the_char_to_excel()
       {
-         _dataColumns.ShouldOnlyContain(_curve.yData);
-      }
-
-      [Observation]
-      public void should_use_the_name_of_the_curve_as_column_name_for_the_excel_table()
-      {
-         _namingFunc(_curve.yData).ShouldBeEqualTo(_curve.Name);
-      }
-
-      [Observation]
-      public void should_use_the_column_name_for_base_grid()
-      {
-         _namingFunc(_curve.xData).ShouldBeEqualTo(_curve.xData.Name);
-      }
-
-      [Observation]
-      public void should_ask_the_user_for_the_location_of_the_file_to_export()
-      {
-         A.CallTo(() => _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _curveChart.Name, null)).MustHaveHappened();
+         A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart)).MustHaveHappened();
       }
    }
 }

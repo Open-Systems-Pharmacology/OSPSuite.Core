@@ -590,6 +590,7 @@
     <Compile Include="Presentation\ComparisonPresenterSpecs.cs" />
     <Compile Include="Presentation\ContextMenuFactorySpecs.cs" />
     <Compile Include="Presentation\ContextMenuSpecs.cs" />
+    <Compile Include="Presentation\CurveChartExportTaskSpecs.cs" />
     <Compile Include="Presentation\CurveDTOSpecs.cs" />
     <Compile Include="Presentation\CurveSettingsPresenterSpecs.cs" />
     <Compile Include="Presentation\CurveTemplatePresenterSpecs.cs" />
