@@ -42,7 +42,7 @@ namespace OSPSuite.Core
 
 
          _journal = new Journal.Journal();
-         A.CallTo(() => _journalRetriever.Current).Returns(_journal);
+         _journalRetriever.Current  = _journal;
 
          _journalPage = new JournalPage();
       }
@@ -110,7 +110,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _previousJournal = A.Fake<Journal.Journal>();
+         _previousJournal = new Journal.Journal();
          _journalRetriever.Current = _previousJournal;
          A.CallTo(() => _journalRetriever.JournalFullPath).Returns(string.Empty);
          A.CallTo(() => _journalSessionConnector.IsConnected).Returns(false);
@@ -143,8 +143,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _previousJournal = A.Fake<Journal.Journal>();
-         _newJournal = A.Fake<Journal.Journal>();
+         _previousJournal = new Journal.Journal();
+         _newJournal = new Journal.Journal();
          _journalRetriever.Current = _previousJournal;
          A.CallTo(() => _journalSessionConnector.SelectJournal()).Returns(_newJournal);
       }
@@ -181,7 +181,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          A.CallTo(() => _journalSessionConnector.IsConnected).Returns(true);
-         _newJournal = A.Fake<Journal.Journal>();
+         _newJournal = new Journal.Journal();
          A.CallTo(() => _journalRetriever.JournalFullPath).Returns("XXX");
          A.CallTo(() => _journalSessionConnector.ConnectToJournal(_journalRetriever.JournalFullPath)).Returns(_newJournal);
       }
