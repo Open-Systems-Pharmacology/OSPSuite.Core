@@ -31,6 +31,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string CurrentUserFolderPath { get; }
       public string BuildVersion { get; }
       public string MajorVersion { get; }
+      public string ProductDisplayName { get; }
       public string FullVersion { get; }
       public string Version { get; }
       public string UserSettingsFilePath { get; }
@@ -47,6 +48,7 @@ namespace OSPSuite.Infrastructure.Configuration
          ReleaseDescription = retrieveReleaseDescription();
          FullVersion = fullVersionFrom(assemblyVersion.Revision);
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
+         ProductDisplayName = retrieveProductDisplayName();
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
          BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
@@ -58,6 +60,8 @@ namespace OSPSuite.Infrastructure.Configuration
          LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
       }
+
+      private string retrieveProductDisplayName() => $"{ProductNameWithTrademark} {MajorVersion} - {ReleaseDescription}";
 
       private string fullVersionFrom(int revision)
       {
@@ -71,7 +75,8 @@ namespace OSPSuite.Infrastructure.Configuration
       {
          var informationalVersionAttribute = Assembly
             .GetEntryAssembly()
-            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), inherit: false).OfType<AssemblyInformationalVersionAttribute>()
+            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), inherit: false)
+            .OfType<AssemblyInformationalVersionAttribute>()
             .FirstOrDefault();
 
          return informationalVersionAttribute?.InformationalVersion ?? string.Empty;
