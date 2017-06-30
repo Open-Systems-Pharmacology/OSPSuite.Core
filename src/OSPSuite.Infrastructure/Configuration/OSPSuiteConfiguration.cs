@@ -80,9 +80,8 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string retrieveReleaseDescription()
       {
-         var informationalVersionAttribute = Assembly
-            .GetEntryAssembly()
-            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), inherit: false)
+         var informationalVersionAttribute = Assembly.GetEntryAssembly()
+            ?.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), inherit: false)
             .OfType<AssemblyInformationalVersionAttribute>()
             .FirstOrDefault();
 
