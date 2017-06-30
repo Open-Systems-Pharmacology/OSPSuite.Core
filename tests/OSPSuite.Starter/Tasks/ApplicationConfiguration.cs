@@ -15,6 +15,5 @@ namespace OSPSuite.Starter.Tasks
       public override ApplicationIcon Icon { get; } = ApplicationIcons.PKSim;
       public override string UserSettingsFileName { get; } = "UserSettings.xml";
       public override string IssueTrackerUrl { get; } = "url";
-      protected override string ReleaseDescription { get; } = "EAP";
    }
 }

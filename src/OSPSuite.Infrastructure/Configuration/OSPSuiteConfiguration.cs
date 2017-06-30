@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using OSPSuite.Assets;
 using OSPSuite.Core;
@@ -25,10 +26,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract ApplicationIcon Icon { get; }
       public abstract string UserSettingsFileName { get; }
       public abstract string IssueTrackerUrl { get; }
-      /// <summary>
-      /// Release description. Typically empty for a release product. Could be alpha, beta, EAP during dvelopment
-      /// </summary>
-      protected abstract string ReleaseDescription { get; }
+      public string ReleaseDescription { get; }
       public string AllUsersFolderPath { get; }
       public string CurrentUserFolderPath { get; }
       public string BuildVersion { get; }
@@ -46,6 +44,7 @@ namespace OSPSuite.Infrastructure.Configuration
          var assemblyVersion = AssemblyVersion;
          MajorVersion = version(assemblyVersion.Minor);
          Version = $"{MajorVersion}.{assemblyVersion.Build}";
+         ReleaseDescription = retrieveReleaseDescription();
          FullVersion = fullVersionFrom(assemblyVersion.Revision);
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
@@ -62,10 +61,20 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string fullVersionFrom(int revision)
       {
-         if(string.IsNullOrEmpty(ReleaseDescription))
+         if (string.IsNullOrEmpty(ReleaseDescription))
             return $"{Version} - Build {revision}";
 
          return $"{Version}.{revision} - {ReleaseDescription}";
+      }
+
+      private string retrieveReleaseDescription()
+      {
+         var informationalVersionAttribute = Assembly
+            .GetEntryAssembly()
+            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), inherit: false).OfType<AssemblyInformationalVersionAttribute>()
+            .FirstOrDefault();
+
+         return informationalVersionAttribute?.InformationalVersion ?? string.Empty;
       }
 
       private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
