@@ -25,6 +25,10 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract ApplicationIcon Icon { get; }
       public abstract string UserSettingsFileName { get; }
       public abstract string IssueTrackerUrl { get; }
+      /// <summary>
+      /// Release description. Typically empty for a release product. Could be alpha, beta, EAP during dvelopment
+      /// </summary>
+      protected abstract string ReleaseDescription { get; }
       public string AllUsersFolderPath { get; }
       public string CurrentUserFolderPath { get; }
       public string BuildVersion { get; }
@@ -42,7 +46,7 @@ namespace OSPSuite.Infrastructure.Configuration
          var assemblyVersion = AssemblyVersion;
          MajorVersion = version(assemblyVersion.Minor);
          Version = $"{MajorVersion}.{assemblyVersion.Build}";
-         FullVersion = $"{Version} - Build {assemblyVersion.Revision}";
+         FullVersion = fullVersionFrom(assemblyVersion.Revision);
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
@@ -54,6 +58,14 @@ namespace OSPSuite.Infrastructure.Configuration
          DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
          LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
+      }
+
+      private string fullVersionFrom(int revision)
+      {
+         if(string.IsNullOrEmpty(ReleaseDescription))
+            return $"{Version} - Build {revision}";
+
+         return $"{Version}.{revision} - {ReleaseDescription}";
       }
 
       private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
