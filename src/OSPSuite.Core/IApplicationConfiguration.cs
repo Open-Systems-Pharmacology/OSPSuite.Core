@@ -69,6 +69,11 @@ namespace OSPSuite.Core
       /// </summary>
       string ProductNameWithTrademark { get; }
 
+      /// <summary>
+      /// Returns the name of the application with Major Version and release description. Typically used for application title
+      /// </summary>
+      string ProductDisplayName { get; }
+
       ApplicationIcon Icon { get; }
 
       /// <summary>
