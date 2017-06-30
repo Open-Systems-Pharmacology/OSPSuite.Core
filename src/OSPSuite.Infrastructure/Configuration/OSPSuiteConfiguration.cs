@@ -61,7 +61,14 @@ namespace OSPSuite.Infrastructure.Configuration
          UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
       }
 
-      private string retrieveProductDisplayName() => $"{ProductNameWithTrademark} {MajorVersion} - {ReleaseDescription}";
+      private string retrieveProductDisplayName()
+      {
+         var productDisplayName = $"{ProductNameWithTrademark} {MajorVersion}";
+         if (string.IsNullOrEmpty(ReleaseDescription))
+            return productDisplayName;
+
+         return $"{productDisplayName} - {ReleaseDescription}";
+      }
 
       private string fullVersionFrom(int revision)
       {
