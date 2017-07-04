@@ -31,7 +31,6 @@ namespace OSPSuite.UI.Views
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.htmlLabel = new OSPSuite.UI.Controls.UxHtmlLabel();
          this.issueTrackerLink = new DevExpress.XtraEditors.HyperLinkEdit();
          this.btnCopyToClipboard = new DevExpress.XtraEditors.SimpleButton();
          this.tbException = new DevExpress.XtraEditors.MemoEdit();
@@ -47,6 +46,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemCopyToClipbord = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemIssueTracker = new DevExpress.XtraLayout.LayoutControlItem();
+         this.labelDescription = new DevExpress.XtraEditors.LabelControl();
          this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -68,7 +68,7 @@ namespace OSPSuite.UI.Views
          // 
          // layoutControl
          // 
-         this.layoutControl.Controls.Add(this.htmlLabel);
+         this.layoutControl.Controls.Add(this.labelDescription);
          this.layoutControl.Controls.Add(this.issueTrackerLink);
          this.layoutControl.Controls.Add(this.btnCopyToClipboard);
          this.layoutControl.Controls.Add(this.tbException);
@@ -83,25 +83,10 @@ namespace OSPSuite.UI.Views
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
-         // htmlLabel
-         // 
-         this.htmlLabel.ActiveViewType = DevExpress.XtraRichEdit.RichEditViewType.Simple;
-         this.htmlLabel.AutoSizeMode = DevExpress.XtraRichEdit.AutoSizeMode.Vertical;
-         this.htmlLabel.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
-         this.htmlLabel.Enabled = false;
-         this.htmlLabel.FontFamily = "Tahoma";
-         this.htmlLabel.FontSize = 8.25D;
-         this.htmlLabel.Location = new System.Drawing.Point(12, 12);
-         this.htmlLabel.Name = "htmlLabel";
-         this.htmlLabel.Options.Export.Rtf.ExportTheme = true;
-         this.htmlLabel.Size = new System.Drawing.Size(639, 22);
-         this.htmlLabel.TabIndex = 10;
-         this.htmlLabel.Text = "richEditControl1";
-         // 
          // issueTrackerLink
          // 
          this.issueTrackerLink.EditValue = "issueTrackerLink";
-         this.issueTrackerLink.Location = new System.Drawing.Point(12, 38);
+         this.issueTrackerLink.Location = new System.Drawing.Point(12, 29);
          this.issueTrackerLink.Name = "issueTrackerLink";
          this.issueTrackerLink.Properties.Appearance.BackColor = System.Drawing.Color.Transparent;
          this.issueTrackerLink.Properties.Appearance.Options.UseBackColor = true;
@@ -112,7 +97,7 @@ namespace OSPSuite.UI.Views
          // 
          // btnCopyToClipboard
          // 
-         this.btnCopyToClipboard.Location = new System.Drawing.Point(382, 38);
+         this.btnCopyToClipboard.Location = new System.Drawing.Point(382, 29);
          this.btnCopyToClipboard.Name = "btnCopyToClipboard";
          this.btnCopyToClipboard.Size = new System.Drawing.Size(269, 22);
          this.btnCopyToClipboard.StyleController = this.layoutControl;
@@ -121,17 +106,17 @@ namespace OSPSuite.UI.Views
          // 
          // tbException
          // 
-         this.tbException.Location = new System.Drawing.Point(142, 96);
+         this.tbException.Location = new System.Drawing.Point(142, 85);
          this.tbException.Name = "tbException";
-         this.tbException.Size = new System.Drawing.Size(497, 159);
+         this.tbException.Size = new System.Drawing.Size(497, 165);
          this.tbException.StyleController = this.layoutControl;
          this.tbException.TabIndex = 6;
          // 
          // tbFullException
          // 
-         this.tbFullException.Location = new System.Drawing.Point(142, 305);
+         this.tbFullException.Location = new System.Drawing.Point(142, 296);
          this.tbFullException.Name = "tbFullException";
-         this.tbFullException.Size = new System.Drawing.Size(497, 167);
+         this.tbFullException.Size = new System.Drawing.Size(497, 176);
          this.tbFullException.StyleController = this.layoutControl;
          this.tbFullException.TabIndex = 5;
          // 
@@ -189,9 +174,9 @@ namespace OSPSuite.UI.Views
          this.layoutGroupStackTraceException.ExpandButtonVisible = true;
          this.layoutGroupStackTraceException.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemFullException});
-         this.layoutGroupStackTraceException.Location = new System.Drawing.Point(0, 259);
+         this.layoutGroupStackTraceException.Location = new System.Drawing.Point(0, 254);
          this.layoutGroupStackTraceException.Name = "layoutGroupFullException";
-         this.layoutGroupStackTraceException.Size = new System.Drawing.Size(643, 217);
+         this.layoutGroupStackTraceException.Size = new System.Drawing.Size(643, 222);
          // 
          // layoutItemFullException
          // 
@@ -199,7 +184,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemFullException.CustomizationFormText = "layoutItemFullException";
          this.layoutItemFullException.Location = new System.Drawing.Point(0, 0);
          this.layoutItemFullException.Name = "layoutItemFullException";
-         this.layoutItemFullException.Size = new System.Drawing.Size(619, 171);
+         this.layoutItemFullException.Size = new System.Drawing.Size(619, 180);
          this.layoutItemFullException.TextSize = new System.Drawing.Size(115, 13);
          // 
          // layoutGroupException
@@ -207,9 +192,9 @@ namespace OSPSuite.UI.Views
          this.layoutGroupException.CustomizationFormText = "layoutControlGroup2";
          this.layoutGroupException.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemException});
-         this.layoutGroupException.Location = new System.Drawing.Point(0, 52);
+         this.layoutGroupException.Location = new System.Drawing.Point(0, 43);
          this.layoutGroupException.Name = "layoutGroupException";
-         this.layoutGroupException.Size = new System.Drawing.Size(643, 207);
+         this.layoutGroupException.Size = new System.Drawing.Size(643, 211);
          // 
          // layoutItemException
          // 
@@ -217,14 +202,14 @@ namespace OSPSuite.UI.Views
          this.layoutItemException.CustomizationFormText = "layoutItemException";
          this.layoutItemException.Location = new System.Drawing.Point(0, 0);
          this.layoutItemException.Name = "layoutItemException";
-         this.layoutItemException.Size = new System.Drawing.Size(619, 163);
+         this.layoutItemException.Size = new System.Drawing.Size(619, 169);
          this.layoutItemException.TextSize = new System.Drawing.Size(115, 13);
          // 
          // layoutItemCopyToClipbord
          // 
          this.layoutItemCopyToClipbord.Control = this.btnCopyToClipboard;
          this.layoutItemCopyToClipbord.CustomizationFormText = "layoutItemCopyToClipbord";
-         this.layoutItemCopyToClipbord.Location = new System.Drawing.Point(370, 26);
+         this.layoutItemCopyToClipbord.Location = new System.Drawing.Point(370, 17);
          this.layoutItemCopyToClipbord.Name = "layoutItemCopyToClipbord";
          this.layoutItemCopyToClipbord.Size = new System.Drawing.Size(273, 26);
          this.layoutItemCopyToClipbord.TextSize = new System.Drawing.Size(0, 0);
@@ -234,7 +219,7 @@ namespace OSPSuite.UI.Views
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
          this.emptySpaceItem2.CustomizationFormText = "emptySpaceItem2";
-         this.emptySpaceItem2.Location = new System.Drawing.Point(276, 26);
+         this.emptySpaceItem2.Location = new System.Drawing.Point(276, 17);
          this.emptySpaceItem2.Name = "emptySpaceItem2";
          this.emptySpaceItem2.Size = new System.Drawing.Size(94, 26);
          this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
@@ -242,18 +227,27 @@ namespace OSPSuite.UI.Views
          // layoutItemIssueTracker
          // 
          this.layoutItemIssueTracker.Control = this.issueTrackerLink;
-         this.layoutItemIssueTracker.Location = new System.Drawing.Point(0, 26);
+         this.layoutItemIssueTracker.Location = new System.Drawing.Point(0, 17);
          this.layoutItemIssueTracker.Name = "layoutItemIssueTracker";
          this.layoutItemIssueTracker.Size = new System.Drawing.Size(276, 26);
          this.layoutItemIssueTracker.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemIssueTracker.TextVisible = false;
          // 
+         // labelDescription
+         // 
+         this.labelDescription.Location = new System.Drawing.Point(12, 12);
+         this.labelDescription.Name = "labelDescription";
+         this.labelDescription.Size = new System.Drawing.Size(75, 13);
+         this.labelDescription.StyleController = this.layoutControl;
+         this.labelDescription.TabIndex = 11;
+         this.labelDescription.Text = "labelDescription";
+         // 
          // layoutItemDescription
          // 
-         this.layoutItemDescription.Control = this.htmlLabel;
+         this.layoutItemDescription.Control = this.labelDescription;
          this.layoutItemDescription.Location = new System.Drawing.Point(0, 0);
          this.layoutItemDescription.Name = "layoutItemDescription";
-         this.layoutItemDescription.Size = new System.Drawing.Size(643, 26);
+         this.layoutItemDescription.Size = new System.Drawing.Size(643, 17);
          this.layoutItemDescription.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemDescription.TextVisible = false;
          // 
@@ -307,7 +301,7 @@ namespace OSPSuite.UI.Views
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
       private DevExpress.XtraEditors.HyperLinkEdit issueTrackerLink;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemIssueTracker;
-      private UxHtmlLabel htmlLabel;
+      private DevExpress.XtraEditors.LabelControl labelDescription;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
    }
 }
