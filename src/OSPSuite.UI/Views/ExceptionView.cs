@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views
          layoutItemFullException.TextVisible = false;
          tbException.Properties.ReadOnly = true;
          tbFullException.Properties.ReadOnly = true;
-         
+
          MinimizeBox = false;
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
@@ -41,8 +41,7 @@ namespace OSPSuite.UI.Views
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);
          ActiveControl = btnClose;
-         layoutItemDescription.TextVisible = false;
-         htmlLabel.ActiveView.BackColor = BackColor;
+         labelDescription.AsDescription();
       }
 
       private void goToIssueTracker(OpenLinkEventArgs e)
@@ -55,16 +54,16 @@ namespace OSPSuite.UI.Views
          set
          {
             layoutItemDescription.Visibility = LayoutVisibilityConvertor.FromBoolean(!string.IsNullOrEmpty(value));
-            htmlLabel.Caption = value;
+            labelDescription.Text = value;
          }
       }
 
-      public void Initialize(string caption, ApplicationIcon icon,  string issueTrackerUrl, string productName)
+      public void Initialize(string caption, ApplicationIcon icon, string issueTrackerUrl, string productName)
       {
          Text = caption;
          Icon = icon;
          _issueTrackerUrl = issueTrackerUrl;
-         Description = Captions.ExceptionViewDescription(issueTrackerUrl);
+         Description = Captions.ExceptionViewDescription(issueTrackerUrl, html:false);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);
       }
 
@@ -99,7 +98,6 @@ namespace OSPSuite.UI.Views
          Clipboard.SetText(_cliboardContent);
       }
 
-
       private void showException(string message)
       {
          XtraMessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -107,14 +105,12 @@ namespace OSPSuite.UI.Views
 
       public string ExceptionMessage
       {
-         set { tbException.Text = value; }
-         private get { return tbException.Text; }
+         set => tbException.Text = value;
       }
 
       public string FullStackTrace
       {
-         set { tbFullException.Text = value; }
-         private get { return tbFullException.Text; }
+         set => tbFullException.Text = value;
       }
 
       public void Display()
@@ -132,7 +128,7 @@ namespace OSPSuite.UI.Views
       {
          try
          {
-            ShowDialog((Form)MainView);
+            ShowDialog((Form) MainView);
          }
          catch (Exception)
          {
