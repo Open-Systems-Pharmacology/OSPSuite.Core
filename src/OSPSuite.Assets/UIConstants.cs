@@ -1255,6 +1255,8 @@ namespace OSPSuite.Assets
          return $"Could not load chart template. Make sure that the file '{templateFilePath}' is a template file.";
       }
 
+      public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
+
       public static string IndividualIdDoesNotMatchTheValueLength(int indiviudalId, int count)
       {
          return $"Individual Id '{indiviudalId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
@@ -1325,6 +1327,8 @@ namespace OSPSuite.Assets
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
       }
+
+     
    }
 
    public static class Validation

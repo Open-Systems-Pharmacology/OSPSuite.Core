@@ -82,7 +82,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns(string.Empty);
+         A.CallTo(_dialogCreator).WithReturnType<string>().Returns(string.Empty);
       }
 
       protected override void Because()
