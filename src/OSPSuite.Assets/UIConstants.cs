@@ -1327,8 +1327,6 @@ namespace OSPSuite.Assets
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
       }
-
-     
    }
 
    public static class Validation
