@@ -28,8 +28,8 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
 
    public class ParameterIdentificationExportTask : IParameterIdentificationExportTask
    {
-      private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_R = "OSPSuite.Presentation.Services.ParameterIdentifications.ParameterIdentificationExportTemplate.r";
-      private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_MATLAB = "OSPSuite.Presentation.Services.ParameterIdentifications.ParameterIdentificationExportTemplate.m";
+      private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_R = "ParameterIdentificationExportTemplate.r";
+      private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_MATLAB = "ParameterIdentificationExportTemplate.m";
 
       private const string PI_FILE_NAME = "@PI_FILE_NAME";
       private const string SIM_FILE_NAMES = "@SIM_FILE_NAMES";
@@ -143,14 +143,16 @@ namespace OSPSuite.Presentation.Services.ParameterIdentifications
          return template.Replace(SIM_FILE_NAMES, simulationNames.ToString(", ", "'"));
       }
 
-      private static string getTemplateText(string resourceName)
+      private string getTemplateText(string resourceName)
       {
          var assembly = Assembly.GetExecutingAssembly();
-
-         using (var stream = assembly.GetManifestResourceStream(resourceName))
+         //it is assumed that the ressource are located in the same namespace as this service
+         var currentNamespace = GetType().Namespace;
+         var resourceFullPath =  $"{currentNamespace}.{resourceName}";
+         using (var stream = assembly.GetManifestResourceStream(resourceFullPath))
          {
             if (stream == null)
-               return string.Empty;
+               throw new ArgumentException(Error.CannotFindResource(resourceFullPath));
 
             using (var reader = new StreamReader(stream))
             {
