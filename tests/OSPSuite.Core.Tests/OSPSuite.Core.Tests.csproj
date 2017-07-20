@@ -168,6 +168,7 @@
     <Compile Include="Core\AxisXmlSerializerSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\CurveSpecs.cs" />
+    <Compile Include="Core\ObservedDataTaskSpecs.cs" />
     <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />
     <Compile Include="Core\ConstantsSpecs.cs" />
     <Compile Include="Core\CurveNamerSpecs.cs" />
