@@ -188,7 +188,7 @@ namespace OSPSuite.Assets
          if (notDeleted.Count == 0)
             return prompt;
 
-         return $"{prompt}\n\nWarning: Following observed data are still in used and will not be deleted: \n\n{notDeleted.ToString("\n\n")}";
+         return $"{prompt}\n\nWarning: Following observed data are still in use and will not be deleted: \n\n{notDeleted.ToString("\n\n")}";
       }
 
       public static string CloneObjectBase(string entityType, string name)
