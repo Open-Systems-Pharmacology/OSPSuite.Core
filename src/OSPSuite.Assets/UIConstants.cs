@@ -188,7 +188,7 @@ namespace OSPSuite.Assets
          if (notDeleted.Count == 0)
             return prompt;
 
-         return $"{prompt}\n\nWarning:\n\n{notDeleted.ToString("\n\n")}\n\nand will not be removed.";
+         return $"{prompt}\n\nWarning: Following observed data are still in use and will not be deleted: \n\n{notDeleted.ToString("\n\n")}";
       }
 
       public static string CloneObjectBase(string entityType, string name)
@@ -969,10 +969,6 @@ namespace OSPSuite.Assets
          return $"Really delete observed data '{observedDataName}' from project";
       }
 
-      public static string IsUsedBy(string name, string typeNamesUsingObservedData)
-      {
-         return $"'{name}' is used by \n{typeNamesUsingObservedData}";
-      }
 
       public static class Chart
       {
@@ -1064,9 +1060,18 @@ namespace OSPSuite.Assets
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
-      public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> typesNamed)
+      public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
-         return $"{buildingBlockType} '{buildingBlockName}' is used by\n\n{typesNamed.ToString("\n")}\n\nand cannot be deleted.";
+         var content = usersOfBuildingBlock.Count > 1 ? 
+            $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : 
+            $"{usersOfBuildingBlock.ToString(""," ")}"; 
+
+         return $"{buildingBlockType} '{buildingBlockName}' is used by{content}and cannot be deleted.";
+      }
+
+      public static string CannotDeleteObservedData(string observedDataName, IReadOnlyList<string> usersOfObservedData)
+      {
+         return CannotDeleteBuildingBlockUsedBy(ObjectTypes.ObservedData, observedDataName, usersOfObservedData);
       }
 
       public static string OutputsDoNotAllHaveTheSameScaling(string outputName)

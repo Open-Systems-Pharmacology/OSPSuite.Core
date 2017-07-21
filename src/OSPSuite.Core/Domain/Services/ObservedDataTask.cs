@@ -57,20 +57,25 @@ namespace OSPSuite.Core.Domain.Services
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved)
       {
-         var toBeRemovedList = observedDataToBeRemoved.ToList();
+         var observedDataToRemoveList = observedDataToBeRemoved.ToList();
 
          var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
 
-         toBeRemovedList.Each(x =>
+         observedDataToRemoveList.Each(x =>
          {
             usedInAnalyzablesCache[x] = allUsersOfObservedData(x);
          });
 
-         var observedDataThatCanBeRemoved = toBeRemovedList.Where(observedData => !usedInAnalyzablesCache[observedData].Any()).ToList();
+         var observedDataThatCanBeRemoved = observedDataToRemoveList.Where(x => !usedInAnalyzablesCache[x].Any()).ToList();
+         var observedDataNotDeleted = observedDataToRemoveList.Except(observedDataThatCanBeRemoved);
+         var observedDataNotDeletedMessage = observedDataNotDeleted.Select(x => messageForObservedDataUsedByAnalysable(x, usedInAnalyzablesCache));
 
-         var observedDataNotDeleted = toBeRemovedList.Except(observedDataThatCanBeRemoved);
+         //not one observed data can be deleted because all of them are used
+         if (!observedDataThatCanBeRemoved.Any())
+            throw new CannotDeleteObservedDataException(observedDataNotDeletedMessage);
 
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeleted.Select(observedData => messageForObservedDataUsedByAnalysable(observedData, usedInAnalyzablesCache))));
+
+         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeletedMessage));
 
          if (viewResult == ViewResult.No)
             return false;
@@ -80,8 +85,8 @@ namespace OSPSuite.Core.Domain.Services
 
       private string messageForObservedDataUsedByAnalysable(DataRepository observedData, Cache<DataRepository, IEnumerable<IUsesObservedData>> usersOfObservedDataCache)
       {
-         var typeNamesUsingObservedData = usersOfObservedDataCache[observedData].Select(typeNamed).ToString("\n");
-         return Captions.IsUsedBy(observedData.Name, typeNamesUsingObservedData);
+         var typeNamesUsingObservedData = usersOfObservedDataCache[observedData].Select(typeNamed).ToList();
+         return Error.CannotDeleteObservedData(observedData.Name, typeNamesUsingObservedData);
       }
 
       private bool deleteAll(IEnumerable<DataRepository> observedDataToDelete)
