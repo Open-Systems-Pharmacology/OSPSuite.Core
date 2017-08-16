@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serialization.Exchange
          sourceElement.SetAttributeValue(Constants.Serialization.Attribute.VERSION, Constants.PKML_VERSION);
       }
 
-      private void convert<T>(T objectToConvert, int objectVersion, Func<IObjectConverter, Func<T, int>> converterAction)
+      private void convert<T>(T objectToConvert, int objectVersion, Func<IObjectConverter, Func<T, (int, bool)>> converterAction)
       {
          int version = objectVersion;
          if (version <= PKMLVersion.NON_CONVERTABLE_VERSION)
@@ -57,7 +57,8 @@ namespace OSPSuite.Core.Serialization.Exchange
          while (version != Constants.PKML_VERSION)
          {
             var converter = _objectConverterFinder.FindConverterFor(version);
-            version = converterAction(converter).Invoke(objectToConvert);
+            var (convertedVersion, _)= converterAction(converter).Invoke(objectToConvert);
+            version = convertedVersion;
          }
       }
 

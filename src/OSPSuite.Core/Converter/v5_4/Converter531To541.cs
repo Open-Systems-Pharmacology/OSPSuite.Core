@@ -13,26 +13,27 @@ namespace OSPSuite.Core.Converter.v5_4
       IVisitor<SimulationTransfer>, 
       IVisitor<IEventGroupBuildingBlock>
    {
-      public bool IsSatisfiedBy(int version)
-      {
-         return PKMLVersion.V5_3_1.Equals(version);
-      }
+      private bool _converted;
 
-      public int Convert(object objectToUpdate)
+      public bool IsSatisfiedBy(int version) => version == PKMLVersion.V5_3_1;
+
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
+         _converted = false;
          this.Visit(objectToUpdate);
-         return PKMLVersion.V5_4_1;
+         return (PKMLVersion.V5_4_1, _converted);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return PKMLVersion.V5_4_1;
+         return (PKMLVersion.V5_4_1, false);
       }
 
       public void Visit(SimulationTransfer simulationTransfer)
       {
          var simulation = simulationTransfer.Simulation;
          convertSimulation(simulation);
+         _converted = true;
       }
 
       private void convertSimulation(IModelCoreSimulation simulation)
@@ -54,6 +55,7 @@ namespace OSPSuite.Core.Converter.v5_4
       public void Visit(IEventGroupBuildingBlock objToVisit)
       {
          convertEventGroupBuildingBlock(objToVisit);
+         _converted = true;
       }
    }
 }
