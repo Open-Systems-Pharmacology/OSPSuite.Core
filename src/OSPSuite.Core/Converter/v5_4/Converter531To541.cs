@@ -1,16 +1,16 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Converter.v5_4
 {
-   public class Converter531To541 : IObjectConverter, 
-      IVisitor<SimulationTransfer>, 
+   public class Converter531To541 : IObjectConverter,
+      IVisitor<SimulationTransfer>,
       IVisitor<IEventGroupBuildingBlock>
    {
       private bool _converted;
@@ -36,6 +36,12 @@ namespace OSPSuite.Core.Converter.v5_4
          _converted = true;
       }
 
+      public void Visit(IEventGroupBuildingBlock eventGroupBuildingBlock)
+      {
+         convertEventGroupBuildingBlock(eventGroupBuildingBlock);
+         _converted = true;
+      }
+
       private void convertSimulation(IModelCoreSimulation simulation)
       {
          var eventGroupBuildingBlock = simulation.BuildConfiguration.EventGroups;
@@ -50,12 +56,6 @@ namespace OSPSuite.Core.Converter.v5_4
       {
          var allApplications = eventGroups.SelectMany(eg => eg.GetAllContainersAndSelf<IApplicationBuilder>());
          allApplications.Each(app => app.ContainerType = ContainerType.Application);
-      }
-
-      public void Visit(IEventGroupBuildingBlock objToVisit)
-      {
-         convertEventGroupBuildingBlock(objToVisit);
-         _converted = true;
       }
    }
 }
