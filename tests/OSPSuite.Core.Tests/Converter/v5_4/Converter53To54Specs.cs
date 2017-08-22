@@ -9,23 +9,16 @@ namespace OSPSuite.Converter.v5_4
 {
    public abstract class concern_for_Converter53To54 : ContextSpecification<Converter531To541>
    {
+      protected IEventGroupBuildingBlock _eventGroubBuildingBlock;
+      protected IEventGroupBuilder _eventGroup;
+      protected IApplicationBuilder _rootApplication;
+      protected IApplicationBuilder _application;
+      protected IContainer _container;
+      protected bool _converted;
+
       protected override void Context()
       {
          sut = new Converter531To541();
-      }
-   }
-
-   class When_converting_an_event_grouop_building_block : concern_for_Converter53To54
-   {
-      protected IEventGroupBuildingBlock _eventGroubBuildingBlock;
-      private IEventGroupBuilder _eventGroup;
-      private IApplicationBuilder _rootApplication;
-      private IApplicationBuilder _application;
-      private IContainer _container;
-
-      protected override void Context()
-      {
-         base.Context();
          _eventGroubBuildingBlock = new EventGroupBuildingBlock();
          _eventGroup = new EventGroupBuilder().WithName("EG");
          _rootApplication = new ApplicationBuilder().WithName("App").WithContainerType(ContainerType.Other);
@@ -34,10 +27,13 @@ namespace OSPSuite.Converter.v5_4
          _container = new Container().WithName("PSI").WithParentContainer(_eventGroup);
          _application = new ApplicationBuilder().WithName("App").WithContainerType(ContainerType.Other).WithParentContainer(_eventGroup);
       }
+   }
 
+   public class When_converting_an_event_group_building_block : concern_for_Converter53To54
+   {
       protected override void Because()
       {
-         sut.Convert(_eventGroubBuildingBlock);
+         (_, _converted) = sut.Convert(_eventGroubBuildingBlock);
       }
 
       [Observation]
@@ -53,9 +49,15 @@ namespace OSPSuite.Converter.v5_4
          _eventGroup.ContainerType.ShouldBeEqualTo(ContainerType.EventGroup);
          _container.ContainerType.ShouldBeEqualTo(ContainerType.Other);
       }
+
+      [Observation]
+      public void should_notify_that_a_conversion_happened()
+      {
+         _converted.ShouldBeTrue();
+      }
    }
 
-   class When_converting_a_SimulationTransfer : When_converting_an_event_grouop_building_block
+   public class When_converting_a_SimulationTransfer : concern_for_Converter53To54
    {
       private IModelCoreSimulation _simulation;
       private IModel _model;
@@ -71,19 +73,19 @@ namespace OSPSuite.Converter.v5_4
          _model.Root = new Container().WithName("root");
          _applications = new Container().WithName("EG");
          _organism = new Container().WithName("Org");
-         _model.Root.AddChildren(_applications,_organism);
+         _model.Root.AddChildren(_applications, _organism);
          _simApp = new EventGroup().WithName("App");
          _applications.Add(_simApp);
          _globalApp = new EventGroup().WithName("App").WithParentContainer(_model.Root);
 
-         _simulation = new ModelCoreSimulation { BuildConfiguration = new BuildConfiguration(), Model = _model };
+         _simulation = new ModelCoreSimulation {BuildConfiguration = new BuildConfiguration(), Model = _model};
 
          _simulation.BuildConfiguration.EventGroups = _eventGroubBuildingBlock;
       }
 
       protected override void Because()
       {
-         sut.Convert(new SimulationTransfer(){Simulation = _simulation});
+         sut.Convert(new SimulationTransfer {Simulation = _simulation});
       }
 
       [Observation]
@@ -93,4 +95,14 @@ namespace OSPSuite.Converter.v5_4
          _globalApp.ContainerType.ShouldBeEqualTo(ContainerType.Application);
       }
    }
-}	
+
+   public class When_converting_an_object_that_does_not_require_conversion : concern_for_Converter53To54
+   {
+      [Observation]
+      public void should_not_return_that_a_conversion_happened()
+      {
+         var (_, converted) = sut.Convert(new Parameter());
+         converted.ShouldBeFalse();
+      }
+   }
+}

@@ -1,8 +1,5 @@
 ﻿using System.Xml.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Serializer.Xml.Extensions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -10,6 +7,9 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml.Extensions;
+using OSPSuite.Serializer.Xml.Extensions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Converter.v6_0
 {
@@ -22,6 +22,7 @@ namespace OSPSuite.Core.Converter.v6_0
    {
       private readonly IIdGenerator _idGenerator;
       private readonly IGroupRepository _groupRepository;
+      private bool _converted;
 
       public Converter56To601(IIdGenerator idGenerator, IGroupRepository groupRepository)
       {
@@ -29,22 +30,52 @@ namespace OSPSuite.Core.Converter.v6_0
          _groupRepository = groupRepository;
       }
 
-      public bool IsSatisfiedBy(int version)
-      {
-         return version == PKMLVersion.V5_6_1;
-      }
+      public bool IsSatisfiedBy(int version) => version == PKMLVersion.V5_6_1;
 
-      public int Convert(object objectToUpdate)
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
+         _converted = false;
          this.Visit(objectToUpdate);
-         return PKMLVersion.V6_0_1;
+         return (PKMLVersion.V6_0_1, _converted);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
+         _converted = false;
          element.DescendantsAndSelfNamed("Solver").Each(convertSolver);
          element.DescendantsAndSelfNamed("CurveChart").Each(convertCurveChart);
-         return PKMLVersion.V6_0_1;
+         return (PKMLVersion.V6_0_1, _converted);
+      }
+
+      public void Visit(IMoleculeBuildingBlock moleculeBuildingBlock)
+      {
+         moleculeBuildingBlock.Each(Visit);
+         _converted = true;
+      }
+
+      public void Visit(IBuildConfiguration buildConfiguration)
+      {
+         Visit(buildConfiguration.Molecules);
+         _converted = true;
+      }
+
+      public void Visit(IModelCoreSimulation simulation)
+      {
+         Visit(simulation.BuildConfiguration);
+         _converted = true;
+      }
+
+      public void Visit(SimulationTransfer simulationTransfer)
+      {
+         Visit(simulationTransfer.Simulation);
+         _converted = true;
+      }
+
+      public void Visit(IMoleculeBuilder moleculeBuilder)
+      {
+         updateDefaultStartFormulaDimension(moleculeBuilder);
+         updateIconIfNotSet(moleculeBuilder);
+         _converted = true;
       }
 
       private void convertCurveChart(XElement curveChartElement)
@@ -52,6 +83,7 @@ namespace OSPSuite.Core.Converter.v6_0
          var chartSettingsNode = new XElement("ChartSettings");
          curveChartElement.Add(chartSettingsNode);
          moveAttributes(curveChartElement, chartSettingsNode, "sideMarginsEnabled", "legendPosition", "backColor", "diagramBackColor");
+         _converted = true;
       }
 
       private void moveAttributes(XElement curveChartElement, XElement chartSettingsNode, params string[] attributeNamesToMove)
@@ -86,6 +118,7 @@ namespace OSPSuite.Core.Converter.v6_0
          children.Add(createSolverParameterElement(Constants.Parameters.H_MIN, hMin));
          children.Add(createSolverParameterElement(Constants.Parameters.MX_STEP, mxStep));
          children.Add(createSolverParameterElement(Constants.Parameters.USE_JACOBIAN, useJacobian));
+         _converted = true;
       }
 
       private XElement createSolverParameterElement(string parameterName, string parameterValue)
@@ -114,32 +147,6 @@ namespace OSPSuite.Core.Converter.v6_0
       {
          var dimension = moleculeBuilder.DefaultStartFormula.Dimension;
          return dimension != null && dimension.Name.IsOneOf(Constants.Dimension.AMOUNT, Constants.Dimension.MOLAR_CONCENTRATION);
-      }
-
-      public void Visit(IMoleculeBuildingBlock moleculeBuildingBlock)
-      {
-         moleculeBuildingBlock.Each(Visit);
-      }
-
-      public void Visit(IBuildConfiguration buildConfiguration)
-      {
-         Visit(buildConfiguration.Molecules);
-      }
-
-      public void Visit(IModelCoreSimulation simulation)
-      {
-         Visit(simulation.BuildConfiguration);
-      }
-
-      public void Visit(SimulationTransfer simulationTransfer)
-      {
-         Visit(simulationTransfer.Simulation);
-      }
-
-      public void Visit(IMoleculeBuilder moleculeBuilder)
-      {
-         updateDefaultStartFormulaDimension(moleculeBuilder);
-         updateIconIfNotSet(moleculeBuilder);
       }
 
       private void updateIconIfNotSet(IMoleculeBuilder moleculeBuilder)

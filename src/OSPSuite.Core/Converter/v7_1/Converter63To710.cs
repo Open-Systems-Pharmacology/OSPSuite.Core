@@ -8,20 +8,23 @@ namespace OSPSuite.Core.Converter.v7_1
 {
    public class Converter63To710 : IObjectConverter
    {
+      private bool _converted;
+
       public bool IsSatisfiedBy(int version)
       {
          return version == PKMLVersion.V6_3_1;
       }
 
-      public int Convert(object objectToUpdate)
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
-         return PKMLVersion.V7_1_0;
+         return (PKMLVersion.V7_1_0, false);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
+         _converted = true;
          element.DescendantsAndSelfNamed("CurveChartTemplate").Each(convertCurveChartTemplate);
-         return PKMLVersion.V7_1_0;
+         return (PKMLVersion.V7_1_0, _converted);
       }
 
       private void convertCurveChartTemplate(XElement chartTemplateElement)
@@ -38,6 +41,7 @@ namespace OSPSuite.Core.Converter.v7_1
 
          element.Add(dataTemplateFor("xData", xDataPath, xQuantityType));
          element.Add(dataTemplateFor("yData", yDataPath, yQuantityType));
+         _converted = true;
       }
 
       private XElement dataTemplateFor(string name, string dataPath, string quantityType)

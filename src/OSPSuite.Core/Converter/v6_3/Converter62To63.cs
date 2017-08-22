@@ -12,22 +12,26 @@ namespace OSPSuite.Core.Converter.v6_3
       IVisitor<ParameterIdentification>
 
    {
+      private bool _converted;
+
       public bool IsSatisfiedBy(int version)
       {
          //no converter from 6.1 to 6.2
          return version == PKMLVersion.V6_1_1 || version == PKMLVersion.V6_2_1;
       }
 
-      public int Convert(object objectToUpdate)
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
+         _converted = false;
          this.Visit(objectToUpdate);
-         return PKMLVersion.V6_3_1;
+         return (PKMLVersion.V6_3_1, _converted);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
+         _converted = false;
          element.DescendantsAndSelfNamed("JacobianMatrix").Each(convertJacobianElement);
-         return PKMLVersion.V6_3_1;
+         return (PKMLVersion.V6_3_1, _converted);
       }
 
       private void convertJacobianElement(XElement jacobianXElement)
@@ -35,11 +39,13 @@ namespace OSPSuite.Core.Converter.v6_3
          var parameterPaths = jacobianXElement.Element("ParameterPaths");
          if (parameterPaths == null) return;
          parameterPaths.Name = "ParameterNames";
+         _converted = true;
       }
 
       public void Visit(ParameterIdentification parameterIdentification)
       {
          parameterIdentification.Results.Select(x => x.BestResult).Each(convertOptimizationRunResults);
+         _converted = true;
       }
 
       private void convertOptimizationRunResults(OptimizationRunResult optimizationRunResult)
