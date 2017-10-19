@@ -240,6 +240,7 @@
     <Compile Include="Presenters\HistogramTestPresenter.cs" />
     <Compile Include="Presenters\MatrixTestPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalysisStarter.cs" />
+    <Compile Include="Services\ApplicationSettings.cs" />
     <Compile Include="Tasks\Calculations.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
     <Compile Include="Tasks\SingleStartPresenterTask.cs" />

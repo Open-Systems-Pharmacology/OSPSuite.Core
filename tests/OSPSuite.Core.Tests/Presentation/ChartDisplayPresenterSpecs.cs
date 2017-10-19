@@ -2,6 +2,7 @@
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain.Data;
@@ -31,6 +32,7 @@ namespace OSPSuite.Presentation
       private IAxisBinder _yAxisBinder;
       private IViewItemContextMenuFactory _contextMenuFactory;
       protected ICurveChartExportTask _chartExportTask;
+      protected IApplicationSettings _applicationSettings;
 
       protected override void Context()
       {
@@ -42,7 +44,9 @@ namespace OSPSuite.Presentation
          _dataModeMapper = A.Fake<ICurveToDataModeMapper>();
          _contextMenuFactory = A.Fake<IViewItemContextMenuFactory>();
          _chartExportTask = A.Fake<ICurveChartExportTask>();
-         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask);
+         _applicationSettings = A.Fake<IApplicationSettings>();
+
+         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings);
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
@@ -332,15 +336,21 @@ namespace OSPSuite.Presentation
 
    public class When_copying_chart_to_clipboard : concern_for_ChartDisplayPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _applicationSettings.WaternarkTextToUse).Returns("Hello");
+      }
+
       protected override void Because()
       {
          sut.CopyToClipboard();
       }
 
       [Observation]
-      public void the_view_method_should_be_invoked_to_copy_the_chart_to_clipboard()
+      public void the_view_method_should_be_invoked_to_copy_the_chart_to_clipboard_with_the_watermark_defined_in_application_settings()
       {
-         A.CallTo(() => _chartDisplayView.CopyToClipboardWithExportSettings()).MustHaveHappened();
+         A.CallTo(() => _chartDisplayView.CopyToClipboard(_applicationSettings.WaternarkTextToUse)).MustHaveHappened();
       }
    }
 

@@ -5,10 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
@@ -18,7 +17,6 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -141,8 +139,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       int LegendIndexFromSeriesId(string id);
 
-      bool ShouldIncludeOriginData();
-
       /// <summary>
       ///    Disables editing the curve and axis through the chart view
       /// </summary>
@@ -179,6 +175,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IAxisBinderFactory _axisBinderFactory;
       private readonly ICurveToDataModeMapper _dataModeMapper;
       private readonly ICurveChartExportTask _chartExportTask;
+      private readonly IApplicationSettings _applicationSettings;
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
@@ -194,7 +191,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ICurveBinderFactory curveBinderFactory,
          IViewItemContextMenuFactory contextMenuFactory,
          IAxisBinderFactory axisBinderFactory,
-         ICurveToDataModeMapper dataModeMapper, ICurveChartExportTask chartExportTask)
+         ICurveToDataModeMapper dataModeMapper,
+         ICurveChartExportTask chartExportTask,
+         IApplicationSettings applicationSettings)
          : base(chartDisplayView)
       {
          _curveBinderFactory = curveBinderFactory;
@@ -202,6 +201,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisBinderFactory = axisBinderFactory;
          _dataModeMapper = dataModeMapper;
          _chartExportTask = chartExportTask;
+         _applicationSettings = applicationSettings;
          _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
@@ -253,7 +253,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          RefreshAxisBinders();
       }
 
-    
       private ICurveBinder curveBinderFromSeriesId(string seriesId)
       {
          return _quickCurveBinderCache[seriesId];
@@ -308,7 +307,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void CopyToClipboard()
       {
-         _view.CopyToClipboardWithExportSettings();
+         _view.CopyToClipboard(_applicationSettings.WaternarkTextToUse);
       }
 
       public string CurveDescriptionFromSeriesId(string seriesId)
@@ -350,11 +349,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var curve = CurveFromSeriesId(id);
          return curve == null ? 0 : curve.LegendIndex.GetValueOrDefault(0);
-      }
-
-      public bool ShouldIncludeOriginData()
-      {
-         return Chart != null && Chart.IncludeOriginData;
       }
 
       public void DisableCurveAndAxisEdits()
@@ -497,22 +491,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          axisBinder.Visible = axisTypeUsed;
       }
 
-      private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool previewOriginText)
-      {
-         View.SetDockStyle(dockStyle);
-         View.SetFontAndSizeSettings(fontAndSizeSettings);
-         if (previewOriginText)
-            View.PreviewOriginText();
-         else
-            View.ClearOriginText();
-      }
-
-      private bool areChartWidthAndHeightDefined => Chart.FontAndSize.SizeIsDefined;
-
-      public Axis AxisBy(AxisTypes axisType)
-      {
-         return Chart.AxisBy(axisType);
-      }
+      public Axis AxisBy(AxisTypes axisType) => Chart.AxisBy(axisType);
 
       public void ShowCurveInLegend(Curve curve, bool show)
       {
@@ -555,10 +534,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          View.UpdateSettings(Chart);
 
+         var areChartWidthAndHeightDefined = Chart.FontAndSize.SizeIsDefined;
+     
          if (Chart.PreviewSettings)
-            setDisplay(areChartWidthAndHeightDefined ? DockStyle.None : DockStyle.Fill, Chart.FontAndSize, true);
+            setDisplay(areChartWidthAndHeightDefined ? DockStyle.None : DockStyle.Fill, Chart.FontAndSize, showingPreview: true);
          else
-            setDisplay(DockStyle.Fill, ChartFontAndSizeSettings.Default, previewOriginText: false);
+            setDisplay(DockStyle.Fill, ChartFontAndSizeSettings.Default, showingPreview: false);
+      }
+
+      private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool showingPreview)
+      {
+         View.SetDockStyle(dockStyle);
+         View.SetFontAndSizeSettings(fontAndSizeSettings);
+         var showOriginText = showingPreview && Chart.IncludeOriginData;
+         View.ShowOriginText = showOriginText;
+         var watermark = showingPreview ? _applicationSettings.WaternarkTextToUse : null;
+         View.ShowWatermark(watermark);
       }
 
       private bool canHandle(ChartEvent chartEvent)

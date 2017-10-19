@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart = new CurveChart().WithAxes();
          Chart.Title = Captions.ParameterIdentification.ErrorHistory;
          Chart.PreviewSettings = true;
-         Chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
+         Chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK;
          _chartDisplayPresenter.Edit(Chart);
       }
 

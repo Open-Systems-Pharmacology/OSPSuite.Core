@@ -43,6 +43,7 @@ namespace OSPSuite.Core.Chart
       {
          get => _fonts;
          set => SetProperty(ref _fonts, value);
+         
       }
 
       public void Reset()

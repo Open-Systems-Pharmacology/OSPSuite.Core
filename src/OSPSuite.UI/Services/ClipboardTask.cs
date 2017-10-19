@@ -5,30 +5,29 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Mappers;
-using OSPSuite.UI.Mappers;
 
 namespace OSPSuite.UI.Services
 {
    public interface IClipboardTask
    {
       /// <summary>
-      /// Creates a DataObject suitable for inserting into the clipboard
-      /// The data object contains all of the data types supported by the suite including
-      /// a "DataTable" type which is used when pasting into other places of the suite.
+      ///    Creates a DataObject suitable for inserting into the clipboard
+      ///    The data object contains all of the data types supported by the suite including
+      ///    a "DataTable" type which is used when pasting into other places of the suite.
       /// </summary>
       /// <param name="dataTable">The data table to be copied to clipboard</param>
       /// <param name="includeHeaders">if true, headers are added to the data output from the datatable column caption</param>
       /// <returns>A dataobject containing all the clipboard types supported by SPBSuite</returns>
       DataObject CreateDataObject(DataTable dataTable, bool includeHeaders = true);
-      
+
       /// <summary>
-      /// Gets an enhanced metafile from the clipboard if one exists. 
+      ///    Gets an enhanced metafile from the clipboard if one exists.
       /// </summary>
       /// <returns>The metafile from the clipboard, or null if the clipboard cannot be accessed or does not contain metafile</returns>
       Metafile GetEnhMetafileFromClipboard();
 
       /// <summary>
-      /// Puts the metafile on the clipboard
+      ///    Puts the metafile on the clipboard
       /// </summary>
       /// <param name="control">The control containing the metafile</param>
       /// <param name="metaFile">The metafile</param>
@@ -52,7 +51,6 @@ namespace OSPSuite.UI.Services
       public ClipboardTask()
          : this(new DataTableToHtmlClipboardFormatMapper(new DataTableToHtmlMapper()), new DataTableToTextMapper())
       {
-
       }
 
       public DataObject CreateDataObject(DataTable dataTable, bool includeHeaders = true)
@@ -125,7 +123,7 @@ namespace OSPSuite.UI.Services
          var hWnd = control.Handle;
          var bResult = false;
          var handleForEnhancedMetaFile = metaFile.GetHenhmetafile();
-         if (handleForEnhancedMetaFile.Equals(new IntPtr(0))) 
+         if (handleForEnhancedMetaFile.Equals(new IntPtr(0)))
             return false;
 
          var copyHandle = CopyEnhMetaFile(handleForEnhancedMetaFile, new IntPtr(0));
