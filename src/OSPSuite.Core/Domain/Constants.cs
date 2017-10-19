@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
@@ -56,6 +55,7 @@ namespace OSPSuite.Core.Domain
 
       //tolerated precision to relativtely compare to double values 
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
+
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
 
@@ -70,7 +70,6 @@ namespace OSPSuite.Core.Domain
       public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
       public static readonly string SUITE_NAME = "Open Systems Pharmacology Suite";
 
-
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
       public const double DEFAULT_PARAMETER_RANGE_FACTOR = 10;
@@ -82,7 +81,7 @@ namespace OSPSuite.Core.Domain
       public const int MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE = 10;
       public const float LOG_SAFE_EPSILON = 1e-20F;
       public const byte RANGE_AREA_OPACITY = 55;
-      public const byte RANGE_AREA_TRANSPARENCY = 255- RANGE_AREA_OPACITY;
+      public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
       public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
 
       //sensitivity values below this value will be set to zero
@@ -93,6 +92,8 @@ namespace OSPSuite.Core.Domain
       public const string AUXILIARY_TYPE = "AuxiliaryType";
       public const string FILE = "File";
       public const string SHEET = "Sheet";
+
+      public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
       public static class Files
       {
@@ -131,9 +132,9 @@ namespace OSPSuite.Core.Domain
          public const string WEIGHT = "Weight";
          public const string DRUG_MASS = "DrugMass";
 
-
          //todo delete when flag is categorial is defined in core for parameter
          public const string HAS_HALOGENS = "Has halogens";
+
          public const string EHC_ENABLED = "Gallbladder emptying enabled";
          public const string USE_PENALTY_FACTOR = "Use pH- and pKa-dependent penalty factor for charged molecule fraction";
          public const string IS_SMALL_MOLECULE = "Is small molecule";
@@ -161,8 +162,7 @@ namespace OSPSuite.Core.Domain
          public const string CL = "Cl";
          public const string F = "F";
          public const string I = "I";
-         public static readonly IReadOnlyCollection<string> Halogens = new List<string> { CL, BR, F, I };
-
+         public static readonly IReadOnlyCollection<string> Halogens = new List<string> {CL, BR, F, I};
 
          public static readonly IReadOnlyCollection<string> AllBooleanParameters = new List<string>
          {
@@ -385,7 +385,6 @@ namespace OSPSuite.Core.Domain
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
       }
 
-
       public static class OptimizationAlgorithm
       {
          public const string NELDER_MEAD_PKSIM = "Nelder Mead (PK-Sim)";
@@ -487,7 +486,6 @@ namespace OSPSuite.Core.Domain
             public const string DEFAULT_VALUE = "default";
             public const string UNIT_NAME = "unitName";
          }
-
       }
 
       public static class ParameterExport
@@ -497,7 +495,6 @@ namespace OSPSuite.Core.Domain
          public const string FORMULA = "Formula";
          public const string RHS_FORMULA = "RHSFormula";
       }
-
 
       public static readonly string NOT = "Not";
       public static readonly string AND = "and";
@@ -532,17 +529,18 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman" };
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static readonly IReadOnlyList<int> AllFontSizes = new [] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
 
-         public static string DefaultFontFamilyName = FontFamily.GenericSansSerif.Name;
-         public static int DefaultFontSizeLegend = 8;
-         public static int DefaultFontSizeAxis = 10;
-         public static int DefaultFontSizeTitle = 16;
-         public static int DefaultFontSizeDescription = 12;
-         public static int DefaultFontSizeOrigin = 8;
-         public static int DefaultFontSizeTitleForParameterIdentificationFeedback = 12;
+         public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
+         public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
+         public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;
+         public static readonly int DEFAULT_FONT_SIZE_TITLE = 16;
+         public static readonly int DEFAULT_FONT_SIZE_DESCRIPTION = 12;
+         public static readonly int DEFAULT_FONT_SIZE_ORIGIN = 8;
+         public static readonly int DEFAULT_FONT_SIZE_WATERMARK= 30;
+         public static readonly int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
       }
    }
 }

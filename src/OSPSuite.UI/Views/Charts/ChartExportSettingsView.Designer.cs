@@ -21,7 +21,7 @@ namespace OSPSuite.UI.Views.Charts
       }
        _screenBinderForExportSettings.Dispose();
        _screenBinderForFonts.Dispose();
-       _screenBinderForCurveChart.Dispose();
+       _screenBinderForChartManagement.Dispose();
       base.Dispose(disposing);
     }
 

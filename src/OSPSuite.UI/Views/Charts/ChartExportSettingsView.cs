@@ -13,7 +13,7 @@ namespace OSPSuite.UI.Views.Charts
    internal partial class ChartExportSettingsView : BaseUserControl, IChartExportSettingsView
    {
       private IChartExportSettingsPresenter _presenter;
-      private readonly ScreenBinder<IChartManagement> _screenBinderForCurveChart;
+      private readonly ScreenBinder<IChartManagement> _screenBinderForChartManagement;
       private readonly ScreenBinder<ChartFontAndSizeSettings> _screenBinderForExportSettings;
       private readonly ScreenBinder<ChartFonts> _screenBinderForFonts;
 
@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views.Charts
          InitializeComponent();
          _screenBinderForExportSettings = new ScreenBinder<ChartFontAndSizeSettings> {BindingMode = BindingMode.TwoWay};
          _screenBinderForFonts = new ScreenBinder<ChartFonts> {BindingMode = BindingMode.TwoWay};
-         _screenBinderForCurveChart = new ScreenBinder<IChartManagement> {BindingMode = BindingMode.TwoWay};
+         _screenBinderForChartManagement = new ScreenBinder<IChartManagement> {BindingMode = BindingMode.TwoWay};
       }
 
       public void AttachPresenter(IChartExportSettingsPresenter presenter)
@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindTo(IChartManagement chart)
       {
-         _screenBinderForCurveChart.BindToSource(chart);
+         _screenBinderForChartManagement.BindToSource(chart);
          _screenBinderForExportSettings.BindToSource(chart.FontAndSize);
          _screenBinderForFonts.BindToSource(chart.FontAndSize.Fonts);
          Refresh();
@@ -40,7 +40,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void DeleteBinding()
       {
-         _screenBinderForCurveChart.DeleteBinding();
+         _screenBinderForChartManagement.DeleteBinding();
          _screenBinderForExportSettings.DeleteBinding();
          _screenBinderForFonts.DeleteBinding();
       }
@@ -55,7 +55,7 @@ namespace OSPSuite.UI.Views.Charts
             .To(tbHeight)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForCurveChart.Bind(c => c.IncludeOriginData)
+         _screenBinderForChartManagement.Bind(c => c.IncludeOriginData)
             .To(includeOriginDataInChartCheckEdit)
             .OnValueUpdated += notifyChartSettingsChanged;
 
@@ -89,14 +89,14 @@ namespace OSPSuite.UI.Views.Charts
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForCurveChart.Bind(c => c.PreviewSettings)
+         _screenBinderForChartManagement.Bind(c => c.PreviewSettings)
             .To(cePreviewSettings)
             .OnValueUpdated += notifyChartSettingsChanged;
 
          btnResetValues.Click += (o, e) => _presenter.ResetValuesToDefault();
 
          RegisterValidationFor(_screenBinderForExportSettings, statusChangedNotify: NotifyViewChanged);
-         RegisterValidationFor(_screenBinderForCurveChart, statusChangedNotify: NotifyViewChanged);
+         RegisterValidationFor(_screenBinderForChartManagement, statusChangedNotify: NotifyViewChanged);
          RegisterValidationFor(_screenBinderForFonts, statusChangedNotify: NotifyViewChanged);
       }
 

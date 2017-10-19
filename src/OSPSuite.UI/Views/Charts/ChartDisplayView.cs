@@ -535,9 +535,9 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.SetFontAndSizeSettings(fontAndSizeSettings, _chartControl.Size);
       }
 
-      public void CopyToClipboardWithExportSettings()
+      public void CopyToClipboard(string watermark)
       {
-         _presenter.Chart.CopyToClipboard(_chartControl);
+         _chartControl.CopyToClipboard(_presenter.Chart, watermark);
       }
 
       public void ReOrderLegend()
@@ -567,14 +567,23 @@ namespace OSPSuite.UI.Views.Charts
          diagramBackColor = chart.ChartSettings.DiagramBackColor;
       }
 
-      public void PreviewOriginText()
+
+      public void ShowWatermark(string watermark)
       {
-         ClearOriginText();
-         if (_presenter.ShouldIncludeOriginData())
-            _previewChartOrigin = _presenter.Chart.AddOriginData(_chartControl);
+         _chartControl.AddWatermark(_presenter.Chart, watermark);
       }
 
-      public void ClearOriginText()
+      public bool ShowOriginText
+      {
+         set
+         {
+            clearOriginText();
+            if(value)
+               _previewChartOrigin = _chartControl.AddOriginData(_presenter.Chart);
+         }
+      }
+   
+      private void clearOriginText()
       {
          if (_chartControl.Titles.Contains(_previewChartOrigin))
             _chartControl.Titles.Remove(_previewChartOrigin);
@@ -644,6 +653,7 @@ namespace OSPSuite.UI.Views.Charts
 
          this.FillWith(_chartControl);
       }
+
 
       public void ShowHint()
       {

@@ -14,12 +14,12 @@ namespace OSPSuite.Core.Chart
 
       public ChartFonts()
       {
-         AxisSize = Constants.ChartFontOptions.DefaultFontSizeAxis;
-         LegendSize = Constants.ChartFontOptions.DefaultFontSizeLegend;
-         TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitle;
-         DescriptionSize = Constants.ChartFontOptions.DefaultFontSizeDescription;
-         OriginSize = Constants.ChartFontOptions.DefaultFontSizeOrigin;
-         FontFamilyName = Constants.ChartFontOptions.DefaultFontFamilyName;
+         AxisSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_AXIS;
+         LegendSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_LEGEND;
+         TitleSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_TITLE;
+         DescriptionSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_DESCRIPTION;
+         OriginSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_ORIGIN;
+         FontFamilyName = Constants.ChartFontOptions.DEFAULT_FONT_FAMILY_NAME;
       }
 
       public int AxisSize

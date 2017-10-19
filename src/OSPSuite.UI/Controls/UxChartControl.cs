@@ -18,16 +18,16 @@ namespace OSPSuite.UI.Controls
 
       private readonly ChartTitle _title;
       private readonly ChartTitle _description;
-      private readonly ClipboardTask _clipboardTask;
+      private readonly ClipboardTask _clipboardTask = new ClipboardTask();
       private readonly BarManager _barManager;
       public PopupMenu PopupMenu { get; }
 
 
-      public UxChartControl() : this(true, true)
+      public UxChartControl() : this(true)
       {
       }
 
-      public UxChartControl(bool useDefaultPopupMechanism = true, bool addCopyToClipboardMenu = true)
+      public UxChartControl(bool useDefaultPopupMechanism = true)
       {
          Titles.Clear();
 
@@ -37,12 +37,11 @@ namespace OSPSuite.UI.Controls
          Titles.Add(_title);
          Titles.Add(_description);
 
-         _clipboardTask = new ClipboardTask();
          _barManager = new BarManager {Form = this};
          PopupMenu = new PopupMenu(_barManager);
 
          if (useDefaultPopupMechanism)
-            initializePopup(addCopyToClipboardMenu);
+            initializePopup();
       }
 
 
@@ -77,13 +76,7 @@ namespace OSPSuite.UI.Controls
          set => _description.Text = value;
       }
 
-      /// <summary>
-      ///    Copy the chart as emf into the clipboard
-      /// </summary>
-      public virtual void CopyToClipboard()
-      {
-         CopyChartToClipboard(this);
-      }
+     
 
       public virtual void CopyChartToClipboard(ChartControl chartControl)
       {
@@ -96,18 +89,11 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      private void initializePopup(bool addCopyToClipboardMenu)
+      private void initializePopup()
       {
          _barManager.SetPopupContextMenu(this, PopupMenu);
-
-         if (addCopyToClipboardMenu)
-            AddCopyToCliboardMenu();
       }
 
-      public void AddCopyToCliboardMenu()
-      {
-         AddPopupMenu(MenuNames.CopyToClipboard, CopyToClipboard, ApplicationIcons.Copy);
-      }
 
       public DiagramCoordinates DiagramCoordinatesAt(HotTrackEventArgs e)
       {

@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Presentation.Extensions
+﻿using System.Drawing;
+
+namespace OSPSuite.Presentation.Extensions
 {
    public static class StringExtensions
    {
@@ -22,7 +24,7 @@
          if (!addColon)
             terminatingCharacter = string.Empty;
 
-         return string.Format("{0}{1}", removeMnemonic(stringToCheck), terminatingCharacter);
+         return $"{removeMnemonic(stringToCheck)}{terminatingCharacter}";
       }
 
       private static string updateCase(string stringToFormat)
@@ -39,9 +41,27 @@
       /// <summary>
       ///    Surrounds the given string with the italic marker
       /// </summary>
-      public static string FormatForDescription(this string stringToFormat)
+      public static string FormatForDescription(this string stringToFormat) => InItalic(stringToFormat);
+
+      public static string InBold(this string stringToFormat) => InHtml(stringToFormat, "b");
+
+      public static string InItalic(this string stringToFormat) => InHtml(stringToFormat, "i");
+
+      public static string InGreen(this string stringToFormat) => InColor(stringToFormat, Color.Green);
+
+      public static string InRed(this string stringToFormat) => InColor(stringToFormat, Color.Red);
+
+      public static string InOrange(this string stringToFormat) => InColor(stringToFormat, Color.Orange);
+
+      public static string InColor(this string stringToFormat, Color color)
       {
-         return string.Format("<I>{0}</I>", removeMnemonic(stringToFormat));
+         return InHtml(stringToFormat, "span", $"color:rgb({color.R},{color.G},{color.B})");
+      }
+
+      public static string InHtml(this string stringToFormat, string marker, string style = null)
+      {
+         var htmlStyle = string.IsNullOrEmpty(style) ? "" : $" style='{style}'";
+         return $"<{marker}{htmlStyle}>{removeMnemonic(stringToFormat)}</{marker}>";
       }
 
       private static string removeMnemonic(string stringToFormat)
@@ -56,7 +76,7 @@
       /// </summary>
       public static string AsFullLine(this string stringToFormat)
       {
-         return string.Format("{0}\n", stringToFormat);
+         return $"{stringToFormat}\n";
       }
 
       /// <summary>
@@ -76,12 +96,12 @@
       {
          foreach (var tag in tags)
          {
-            s = s.Replace(string.Format("<{0}>", tag), "");
-            s = s.Replace(string.Format("</{0}>", tag), "");
-            s = s.Replace(string.Format("<{0}>", tag.ToUpper()), "");
-            s = s.Replace(string.Format("</{0}>", tag.ToUpper()), "");
-            s = s.Replace(string.Format("<{0}>", tag.ToLower()), "");
-            s = s.Replace(string.Format("</{0}>", tag.ToLower()), "");
+            s = s.Replace($"<{tag}>", "");
+            s = s.Replace($"</{tag}>", "");
+            s = s.Replace($"<{tag.ToUpper()}>", "");
+            s = s.Replace($"</{tag.ToUpper()}>", "");
+            s = s.Replace($"<{tag.ToLower()}>", "");
+            s = s.Replace($"</{tag.ToLower()}>", "");
          }
          return s;
       }

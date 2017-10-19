@@ -23,10 +23,9 @@ namespace OSPSuite.Presentation.Views.Charts
       event DragEventHandler DragDrop;
 
       /// <summary>
-      ///    Copies the chart to clipboard as an image using export settings if defined
-      ///    Otherwise uses current visual settings
+      /// Copies the chart to clipboard using the provided watermark
       /// </summary>
-      void CopyToClipboardWithExportSettings();
+      void CopyToClipboard(string watermark);
 
       /// <summary>
       ///    Re orders the legend according to given index
@@ -41,8 +40,10 @@ namespace OSPSuite.Presentation.Views.Charts
 
       void UpdateSettings(CurveChart chart);
 
-      void PreviewOriginText();
-      void ClearOriginText();
+      /// <summary>
+      /// Specifies wheter origin text should be displayed
+      /// </summary>
+      bool ShowOriginText { set; }
 
       /// <summary>
       ///    Disable the control from showing the axis editor
@@ -70,5 +71,10 @@ namespace OSPSuite.Presentation.Views.Charts
       void ShowHint();
 
       void ShowChart();
+
+      /// <summary>
+      ///  Shows the watermark if defined
+      /// </summary>
+      void ShowWatermark(string watermark);
    }
 }
