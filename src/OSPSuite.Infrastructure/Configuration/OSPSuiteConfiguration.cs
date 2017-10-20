@@ -61,7 +61,7 @@ namespace OSPSuite.Infrastructure.Configuration
          ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
          DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
          LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
-         UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
+         UserSettingsFilePath = CurrentUserFile(UserSettingsFileName);
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
 
@@ -96,6 +96,8 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public IEnumerable<string> UserSettingsFilePaths => SettingsFilePaths(UserSettingsFilePath, userSettingsFilePathFor);
 
+      public IEnumerable<string> ApplicationSettingsFilePaths => SettingsFilePaths(ApplicationSettingsFilePath, applicationSettingsFilePathFor);
+
       protected IEnumerable<string> SettingsFilePaths(string newerSettingFile, Func<string, string> olderSettingFileFunc)
       {
          //starts with the latest one 
@@ -115,22 +117,24 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public Version AssemblyVersion => Assembly.GetAssembly(GetType()).GetName().Version;
 
+      protected string ApplicationFolderPathWithRevision(string revision) => Path.Combine(ApplicationFolderPathName, revision);
+
       private string userSettingsFilePathFor(string version) => Path.Combine(CurrentUserFolderPathFor(version), UserSettingsFileName);
 
-      protected string ApplicationFolderPathWithRevision(string revision) => Path.Combine(ApplicationFolderPathName, revision);
+      private string applicationSettingsFilePathFor(string version) => Path.Combine(AllUserFolderPathFor(version), ApplicationSettingsFileName);
 
       protected string AllUsersFile(string fileName) => Path.Combine(AllUsersFolderPath, fileName);
 
       protected string CurrentUserFile(string fileName) => Path.Combine(CurrentUserFolderPath, fileName);
 
+      protected string AllUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+
+      protected string CurrentUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+
       /// <summary>
       ///    Returns a local full path for the file with name <paramref name="fileName" />
       /// </summary>
       protected string LocalPathFor(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-      protected string AllUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
-
-      protected string CurrentUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
 
       private string createApplicationDataOrLocalPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
       {
@@ -152,9 +156,5 @@ namespace OSPSuite.Infrastructure.Configuration
       protected string AllUsersOrLocalPathForFolder(string folderName) => AllUsersOrLocalPathForFolder(folderName, folderName);
 
       protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
-
-      private string applicationSettingsFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
-
-      public IEnumerable<string> ApplicationSettingsFilePaths => SettingsFilePaths(ApplicationSettingsFilePath, applicationSettingsFolderPathFor);
    }
 }
