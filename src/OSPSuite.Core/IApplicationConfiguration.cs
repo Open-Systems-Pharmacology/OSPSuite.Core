@@ -121,5 +121,10 @@ namespace OSPSuite.Core
       ///    Returns the path where the configuration file for the logger resides
       /// </summary>
       string LogConfigurationFile { get; }
+
+      /// <summary>
+      /// Where can the user change the watermark option in the user interface. Location is application specific
+      /// </summary>
+      string WatermarkOptionLocation { get; }
    }
 }

@@ -7,6 +7,7 @@ namespace OSPSuite.Starter.Tasks
 {
    internal class ApplicationConfiguration : OSPSuiteConfiguration
    {
+      public override string WatermarkOptionLocation { get; } = "Utilities -> Options -> Application";
       public override string ApplicationFolderPathName { get; } = Path.Combine("Open Systems Pharmacology", "OSPSuite.Starter");
       protected override string[] LatestVersionWithOtherMajor { get; } = { };
       public override string ProductName { get; } = "OSPSuite";

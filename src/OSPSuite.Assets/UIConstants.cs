@@ -179,6 +179,16 @@ namespace OSPSuite.Assets
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
 
+      public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine("The watermark feature was introduced to prevent accidental usage of plots in e.g. official reports or submissions.");
+         sb.AppendLine();
+         sb.AppendLine($"Do you want this installation of {applicationName} to use this feature? If yes, a watermark will be used when copying charts to clipboard.");
+         sb.AppendLine($"This setting, as well as the watermark text, can be changed anytime under '{optionLocation}'.");
+         return sb.ToString();
+      }
+
       public static string IssueTrackerLinkFor(string application) => $"Go to {application} Issue Tracker";
 
       public static string ReallyDeleteAllObservedData(IEnumerable<string> anythingNotDeleted)
