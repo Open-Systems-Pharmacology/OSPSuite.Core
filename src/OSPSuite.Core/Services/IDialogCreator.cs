@@ -16,6 +16,8 @@ namespace OSPSuite.Core.Services
 
       ViewResult MessageBoxYesNoCancel(string message);
 
+      ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton);
+
       /// <summary>
       ///    Customize a yes no cancel message box by allowing to change caption for yes, no, and cancel
       /// </summary>
@@ -24,7 +26,11 @@ namespace OSPSuite.Core.Services
       /// </remarks>
       ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel);
 
+      ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton);
+
       ViewResult MessageBoxYesNo(string message);
+
+      ViewResult MessageBoxYesNo(string message, ViewResult defaultButton);
 
       /// <summary>
       ///    Customize a yes no cancel message box by allowing to change caption for yes, no
@@ -33,6 +39,8 @@ namespace OSPSuite.Core.Services
       ///    Leaving caption empty will use the default for the button
       /// </remarks>
       ViewResult MessageBoxYesNo(string message, string yes, string no);
+
+      ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton);
 
       void MessageBoxInfo(string message);
 

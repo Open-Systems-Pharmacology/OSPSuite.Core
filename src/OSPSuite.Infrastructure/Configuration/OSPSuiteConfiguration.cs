@@ -37,6 +37,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string UserSettingsFilePath { get; }
       public string OSPSuiteNameWithVersion { get; }
       public string LogConfigurationFile { get; }
+      public abstract string WatermarkOptionLocation { get; }
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
 

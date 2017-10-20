@@ -22,6 +22,7 @@ using OSPSuite.Starter.Services;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
 using OSPSuite.UI.Services;
+using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Starter
@@ -46,6 +47,7 @@ namespace OSPSuite.Starter
             scan.ExcludeType<SimulationRepository>();
             scan.ExcludeType<DimensionRetriever>();
             scan.ExcludeType<ProjectRetriever>();
+            scan.ExcludeType<ApplicationSettings>();
          });
 
          container.Register<IToolTipCreator, ToolTipCreator>(LifeStyle.Singleton);
@@ -59,6 +61,7 @@ namespace OSPSuite.Starter
          container.Register<ISimulationRepository, SimulationRepository>(LifeStyle.Singleton);
          container.Register<IShellPresenter, IMainViewPresenter, ShellPresenter>(LifeStyle.Singleton);
          container.Register<IShell, IShellView, ShellView>(LifeStyle.Singleton);
+         container.Register<IApplicationSettings, ApplicationSettings>(LifeStyle.Singleton); ;
 
          container.Register<IObjectIdResetter, ObjectIdResetter>();
          container.Register<ITreeNodeFactory, TreeNodeFactory>();
