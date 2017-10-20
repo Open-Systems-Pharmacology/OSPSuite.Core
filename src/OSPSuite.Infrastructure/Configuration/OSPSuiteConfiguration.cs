@@ -25,6 +25,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract string ProductNameWithTrademark { get; }
       public abstract ApplicationIcon Icon { get; }
       public abstract string UserSettingsFileName { get; }
+      public abstract string ApplicationSettingsFileName { get; }
       public abstract string IssueTrackerUrl { get; }
       public string ReleaseDescription { get; }
       public string AllUsersFolderPath { get; }
@@ -35,6 +36,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string FullVersion { get; }
       public string Version { get; }
       public string UserSettingsFilePath { get; }
+      public string ApplicationSettingsFilePath { get; }
       public string OSPSuiteNameWithVersion { get; }
       public string LogConfigurationFile { get; }
       public abstract string WatermarkOptionLocation { get; }
@@ -60,6 +62,7 @@ namespace OSPSuite.Infrastructure.Configuration
          DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
          LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = userSettingsFilePathFor(MajorVersion);
+         ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
 
       private string retrieveProductDisplayName()
@@ -149,5 +152,9 @@ namespace OSPSuite.Infrastructure.Configuration
       protected string AllUsersOrLocalPathForFolder(string folderName) => AllUsersOrLocalPathForFolder(folderName, folderName);
 
       protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
+
+      private string applicationSettingsFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+
+      public IEnumerable<string> ApplicationSettingsFilePaths => SettingsFilePaths(ApplicationSettingsFilePath, applicationSettingsFolderPathFor);
    }
 }

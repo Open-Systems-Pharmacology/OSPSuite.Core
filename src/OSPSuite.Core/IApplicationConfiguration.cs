@@ -75,18 +75,28 @@ namespace OSPSuite.Core
       string ProductDisplayName { get; }
 
       ApplicationIcon Icon { get; }
+      
+      /// <summary>
+      ///    Paths of the current user specific settings file (current user only)
+      /// </summary>
+      string UserSettingsFilePath { get; }
 
       /// <summary>
       ///    Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent
       ///    one down to the first available one)
       /// </summary>
       IEnumerable<string> UserSettingsFilePaths { get; }
+      
+      /// <summary>
+      ///    Path of the application specific settings file (for all users)
+      /// </summary>
+      string ApplicationSettingsFilePath { get; }
 
       /// <summary>
-      ///    Paths of the current user specific settings file (current user only)
+      /// Returns a possible enumeration containg the path of application settings that can be loaded. (Starting from the most recent one down to the first available one)
       /// </summary>
-      string UserSettingsFilePath { get; }
-
+      IEnumerable<string> ApplicationSettingsFilePaths { get; }
+      
       /// <summary>
       ///    Returns the url of the issue tracker
       /// </summary>

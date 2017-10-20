@@ -15,6 +15,7 @@ namespace OSPSuite.Starter.Tasks
       public override string ProductNameWithTrademark { get; } = "OSPSuite";
       public override ApplicationIcon Icon { get; } = ApplicationIcons.PKSim;
       public override string UserSettingsFileName { get; } = "UserSettings.xml";
+      public override string ApplicationSettingsFileName { get; } = "ApplicationSettings.xml";
       public override string IssueTrackerUrl { get; } = "url";
    }
 }
