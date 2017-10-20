@@ -6,7 +6,7 @@ using OSPSuite.Core.Services;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_WatermakStatusChecker : ContextSpecification<IWatermakStatusChecker>
+   public abstract class concern_for_WatermakStatusChecker : ContextSpecification<IWatermarkStatusChecker>
    {
       protected IApplicationSettings _applicationSettings;
       protected IDialogCreator _dialogCreator;
@@ -21,7 +21,7 @@ namespace OSPSuite.Core
          _applicationConfiguration= A.Fake<IApplicationConfiguration>();
          A.CallTo(() => _applicationConfiguration.ProductName).Returns(_productName);
          A.CallTo(() => _applicationConfiguration.WatermarkOptionLocation).Returns(_location);
-         sut = new WatermakStatusChecker(_applicationSettings,_dialogCreator,_applicationConfiguration);
+         sut = new WatermarkStatusChecker(_applicationSettings,_dialogCreator,_applicationConfiguration);
       }
    }
 
@@ -62,7 +62,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_not_use_watermark()
       {
-         _applicationSettings.UseWatermark.Value.ShouldBeFalse();
+         _applicationSettings.UseWatermark.Value.ShouldBeFalse(); 
       }
    }
 

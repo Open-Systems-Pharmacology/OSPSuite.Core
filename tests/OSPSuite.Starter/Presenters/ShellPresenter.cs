@@ -17,15 +17,15 @@ namespace OSPSuite.Starter.Presenters
    public class ShellPresenter : AbstractMainViewPresenter<IShellView, IShellPresenter>, IShellPresenter
    {
       private readonly IMenuAndToolBarPresenter _menuAndToolBarPresenter;
-      private readonly IWatermakStatusChecker _watermakStatusChecker;
+      private readonly IWatermarkStatusChecker _watermarkStatusChecker;
       private readonly IApplicationSettings _applicationSettings;
 
       public ShellPresenter(IShellView view, IEventPublisher eventPublisher, ITabbedMdiChildViewContextMenuFactory contextMenuFactory, 
          IMenuAndToolBarPresenter menuAndToolBarPresenter, 
-         IWatermakStatusChecker watermakStatusChecker, IApplicationSettings applicationSettings) : base(view,eventPublisher, contextMenuFactory)
+         IWatermarkStatusChecker watermarkStatusChecker, IApplicationSettings applicationSettings) : base(view,eventPublisher, contextMenuFactory)
       {
          _menuAndToolBarPresenter = menuAndToolBarPresenter;
-         _watermakStatusChecker = watermakStatusChecker;
+         _watermarkStatusChecker = watermarkStatusChecker;
          _applicationSettings = applicationSettings;
       }
 
@@ -33,7 +33,7 @@ namespace OSPSuite.Starter.Presenters
       {
          _menuAndToolBarPresenter.Initialize();
          _applicationSettings.UseWatermark = null;
-         _watermakStatusChecker.CheckWatermarkStatus();
+         _watermarkStatusChecker.CheckWatermarkStatus();
          View.Show();
       }
 

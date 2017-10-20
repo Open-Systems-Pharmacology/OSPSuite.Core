@@ -1035,7 +1035,7 @@
     <Compile Include="Services\IExportDataTableToExcelTask.cs" />
     <Compile Include="Services\KeyPathMapper.cs" />
     <Compile Include="Services\StartableProcess.cs" />
-    <Compile Include="Services\WatermakStatusChecker.cs" />
+    <Compile Include="Services\WatermarkStatusChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
