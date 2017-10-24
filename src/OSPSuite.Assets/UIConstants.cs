@@ -182,7 +182,7 @@ namespace OSPSuite.Assets
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
          var sb = new StringBuilder();
-         sb.AppendLine("The watermark feature was introduced to identify draft versions of plots.");
+         sb.AppendLine("The watermark feature was introduced to clearly identify draft versions of plots.");
          sb.AppendLine();
          sb.AppendLine($"Do you want this installation of {applicationName} to use this feature? If yes, a watermark will be used when copying charts to clipboard.");
          sb.AppendLine($"This setting, as well as the watermark text, can be changed anytime under '{optionLocation}'.");
