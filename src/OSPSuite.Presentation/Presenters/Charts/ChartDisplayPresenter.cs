@@ -307,7 +307,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void CopyToClipboard()
       {
-         _view.CopyToClipboard(_applicationSettings.WaternarkTextToUse);
+         _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
       }
 
       public string CurveDescriptionFromSeriesId(string seriesId)
@@ -548,7 +548,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          View.SetFontAndSizeSettings(fontAndSizeSettings);
          var showOriginText = showingPreview && Chart.IncludeOriginData;
          View.ShowOriginText = showOriginText;
-         var watermark = showingPreview ? _applicationSettings.WaternarkTextToUse : null;
+         var watermark = showingPreview ? _applicationSettings.WatermarkTextToUse : null;
          View.ShowWatermark(watermark);
       }
 

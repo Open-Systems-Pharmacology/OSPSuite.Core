@@ -13,6 +13,7 @@ namespace OSPSuite.Core.Serialization.Chart
          Map(x => x.DescriptionSize);
          Map(x => x.FontFamilyName);
          Map(x => x.OriginSize);
+         Map(x => x.WatermarkSize);
       }
    }
 }

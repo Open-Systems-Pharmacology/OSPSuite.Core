@@ -182,7 +182,7 @@ namespace OSPSuite.Assets
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
          var sb = new StringBuilder();
-         sb.AppendLine("The watermark feature was introduced to prevent accidental usage of plots in e.g. official reports or submissions.");
+         sb.AppendLine("The watermark feature was introduced to clearly identify draft versions of plots.");
          sb.AppendLine();
          sb.AppendLine($"Do you want this installation of {applicationName} to use this feature? If yes, a watermark will be used when copying charts to clipboard.");
          sb.AppendLine($"This setting, as well as the watermark text, can be changed anytime under '{optionLocation}'.");
@@ -1045,6 +1045,7 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeTitle = "Font Size Title";
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
+            public static readonly string FontSizeWatermark = "Font Size Watermark";
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }

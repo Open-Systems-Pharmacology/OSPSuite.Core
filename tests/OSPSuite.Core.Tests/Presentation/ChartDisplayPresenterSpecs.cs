@@ -339,7 +339,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _applicationSettings.WaternarkTextToUse).Returns("Hello");
+         A.CallTo(() => _applicationSettings.WatermarkTextToUse).Returns("Hello");
       }
 
       protected override void Because()
@@ -350,7 +350,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_view_method_should_be_invoked_to_copy_the_chart_to_clipboard_with_the_watermark_defined_in_application_settings()
       {
-         A.CallTo(() => _chartDisplayView.CopyToClipboard(_applicationSettings.WaternarkTextToUse)).MustHaveHappened();
+         A.CallTo(() => _chartDisplayView.CopyToClipboard(_applicationSettings.WatermarkTextToUse)).MustHaveHappened();
       }
    }
 
