@@ -531,16 +531,21 @@ namespace OSPSuite.Core.Domain
       {
          public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
-
          public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
+
+
          public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
          public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;
          public static readonly int DEFAULT_FONT_SIZE_TITLE = 16;
          public static readonly int DEFAULT_FONT_SIZE_DESCRIPTION = 12;
          public static readonly int DEFAULT_FONT_SIZE_ORIGIN = 8;
-         public static readonly int DEFAULT_FONT_SIZE_WATERMARK= 30;
+         public static readonly int DEFAULT_FONT_SIZE_WATERMARK = 32;
          public static readonly int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
+
+         //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+
+         public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
    }
 }

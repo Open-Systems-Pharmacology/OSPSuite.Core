@@ -47,49 +47,54 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _screenBinderForExportSettings.Bind(c => c.ChartWidth)
+         _screenBinderForExportSettings.Bind(x => x.ChartWidth)
             .To(tbWidth)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForExportSettings.Bind(c => c.ChartHeight)
+         _screenBinderForExportSettings.Bind(x => x.ChartHeight)
             .To(tbHeight)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForChartManagement.Bind(c => c.IncludeOriginData)
+         _screenBinderForChartManagement.Bind(x => x.IncludeOriginData)
             .To(includeOriginDataInChartCheckEdit)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.FontFamilyName)
+         _screenBinderForFonts.Bind(x => x.FontFamilyName)
             .To(cbFontFamily)
             .WithValues(x => _presenter.AllFontFamilyNames)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.TitleSize)
+         _screenBinderForFonts.Bind(x => x.TitleSize)
             .To(cbFontSizeTitle)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.DescriptionSize)
+         _screenBinderForFonts.Bind(x => x.DescriptionSize)
             .To(cbFontSizeDescription)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.OriginSize)
-            .To(fontSizeOriginComboBox)
+         _screenBinderForFonts.Bind(x => x.OriginSize)
+            .To(cbFontSizeOrigin)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.AxisSize)
+         _screenBinderForFonts.Bind(x => x.AxisSize)
             .To(cbFontSizeAxis)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(c => c.LegendSize)
+         _screenBinderForFonts.Bind(x => x.WatermkarkSize)
+            .To(cbFontSizeWatermark)
+            .WithValues(x => _presenter.AllFontSizes)
+            .OnValueUpdated += notifyChartSettingsChanged;
+
+         _screenBinderForFonts.Bind(x => x.LegendSize)
             .To(cbFontSizeLegend)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForChartManagement.Bind(c => c.PreviewSettings)
+         _screenBinderForChartManagement.Bind(x => x.PreviewSettings)
             .To(cePreviewSettings)
             .OnValueUpdated += notifyChartSettingsChanged;
 
@@ -115,6 +120,7 @@ namespace OSPSuite.UI.Views.Charts
          layoutItemFontSizeTitle.Text = Captions.Chart.FontAndSizeSettings.FontSizeTitle.FormatForLabel();
          layoutItemFontSizeDescription.Text = Captions.Chart.FontAndSizeSettings.FontSizeDescription.FormatForLabel();
          layoutItemFontSizeOrigin.Text = Captions.Chart.FontAndSizeSettings.FontSizeOrigin.FormatForLabel();
+         layoutItemFontSizeWatermark.Text = Captions.Chart.FontAndSizeSettings.FontSizeWatermark.FormatForLabel();
          includeOriginDataInChartCheckEdit.Text = Captions.Chart.FontAndSizeSettings.IncludeOriginData.FormatForLabel(addColon: false);
          btnResetValues.Text = Captions.ResetToDefault;
       }

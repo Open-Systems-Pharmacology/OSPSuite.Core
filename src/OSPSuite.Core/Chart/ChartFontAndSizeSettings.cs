@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -65,6 +66,16 @@ namespace OSPSuite.Core.Chart
          ChartWidth = sourceChartFontAndSizeSettings.ChartWidth;
          ChartHeight = sourceChartFontAndSizeSettings.ChartHeight;
          Fonts.UpdateSettingsFrom(sourceChartFontAndSizeSettings.Fonts);
+      }
+
+      public Font FontFor(Func<ChartFonts, int> fontSizeFunc)
+      {
+         return FontFor(fontSizeFunc(Fonts));
+      }
+
+      public Font FontFor(int fontSize)
+      {
+         return new Font(Fonts.FontFamilyName, fontSize);
       }
 
       private static class ValidationRules

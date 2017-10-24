@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Returns null if the flag UseWatermark is <c>false</c> or if the WatermarkText is empty
       /// </summary>
-      string WaternarkTextToUse { get; }
+      string WatermarkTextToUse { get; }
    }
 
    /// <summary>
@@ -50,6 +50,6 @@ namespace OSPSuite.Core
          set => SetProperty(ref _watermarkText, value);
       }
 
-      public string WaternarkTextToUse => UseWatermark.GetValueOrDefault(false) ? WatermarkText : null;
+      public string WatermarkTextToUse => UseWatermark.GetValueOrDefault(false) ? WatermarkText : null;
    }
 }

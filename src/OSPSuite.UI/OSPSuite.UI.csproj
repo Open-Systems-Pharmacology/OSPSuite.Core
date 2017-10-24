@@ -430,7 +430,6 @@
     <Compile Include="Extensions\ToolTipControllerExtensions.cs" />
     <Compile Include="Extensions\TreeListMultiSelectionExtensions.cs" />
     <Compile Include="Extensions\WinFormExtensions.cs" />
-    <Compile Include="Extensions\UxChartControlExtensions.cs" />
     <Compile Include="Extensions\XtraTabControlExtensions.cs" />
     <Compile Include="Extensions\XtraTabExtensions.cs" />
     <Compile Include="Mappers\ApplicationIconsToImageCollectionMapper.cs" />
