@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Chart
       private int _descriptionSize;
       private string _fontFamilyName;
       private int _originSize;
-      private int _watermkarkSize;
+      private int _watermarkSize;
 
       public ChartFonts()
       {
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Chart
          DescriptionSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_DESCRIPTION;
          OriginSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_ORIGIN;
          FontFamilyName = Constants.ChartFontOptions.DEFAULT_FONT_FAMILY_NAME;
-         WatermkarkSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK;
+         WatermarkSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK;
       }
 
       public int AxisSize
@@ -61,10 +61,10 @@ namespace OSPSuite.Core.Chart
          set => SetProperty(ref _fontFamilyName, value);
       }
 
-      public virtual int WatermkarkSize
+      public virtual int WatermarkSize
       {
-         get => _watermkarkSize;
-         set => SetProperty(ref _watermkarkSize, value);
+         get => _watermarkSize;
+         set => SetProperty(ref _watermarkSize, value);
       }
 
       public void UpdateSettingsFrom(ChartFonts newChartFonts)
@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Chart
          DescriptionSize = newChartFonts.DescriptionSize;
          OriginSize = newChartFonts.OriginSize;
          FontFamilyName = newChartFonts.FontFamilyName;
-         WatermkarkSize = newChartFonts.WatermkarkSize;
+         WatermarkSize = newChartFonts.WatermarkSize;
       }
    }
 }

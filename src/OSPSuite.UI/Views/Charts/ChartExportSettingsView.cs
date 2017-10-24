@@ -84,7 +84,7 @@ namespace OSPSuite.UI.Views.Charts
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;
 
-         _screenBinderForFonts.Bind(x => x.WatermkarkSize)
+         _screenBinderForFonts.Bind(x => x.WatermarkSize)
             .To(cbFontSizeWatermark)
             .WithValues(x => _presenter.AllFontSizes)
             .OnValueUpdated += notifyChartSettingsChanged;

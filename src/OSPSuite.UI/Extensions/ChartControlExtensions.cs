@@ -72,7 +72,7 @@ namespace OSPSuite.UI.Extensions
          if (watermarkAnnotation == null)
             watermarkAnnotation = createWatermarkAnnotation(chartControl);
 
-         watermarkAnnotation.Font = chart.FontAndSize.FontFor(x => x.WatermkarkSize);
+         watermarkAnnotation.Font = chart.FontAndSize.FontFor(x => x.WatermarkSize);
          watermarkAnnotation.Text = watermark.InBold();
          updateAnnotationPosition(watermarkAnnotation, chartControl);
       }
