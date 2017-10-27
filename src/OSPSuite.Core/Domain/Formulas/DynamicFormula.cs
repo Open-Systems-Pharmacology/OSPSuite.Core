@@ -48,10 +48,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///   Returns the pattern representing the variable in the formula string. (e.g P_#i)
       /// </summary>
-      public string VariablePattern
-      {
-         get { return $"{Variable}_{_iterationPattern}"; }
-      }
+      public string VariablePattern => $"{Variable}_{_iterationPattern}";
 
       /// <summary>
       ///   Expands the dynamic formula using the list of available object that can be used in the formula
