@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
@@ -97,7 +96,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _runPropertiesBinder.Bind(x => x.FormattedValue)
             .WithRepository(propertyRepositoryFor)
             .AsReadOnly();
-         
+
          btnExportParametersHistory.Click += (o, e) => OnEvent(_presenter.ExportParametersHistory);
       }
 
@@ -112,7 +111,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private RepositoryItem nameRepositoryFor(ParameterFeedbackDTO parameterFeedbackDTO)
       {
-         var nameRepository = new UxRepositoryItemImageComboBox(gridViewProperties, _imageListRetriever);
+         var nameRepository = new UxRepositoryItemImageComboBox(gridViewParameters, _imageListRetriever);
          return nameRepository.AddItem(parameterFeedbackDTO.Name, parameterFeedbackDTO.BoundaryCheckIcon);
       }
 
