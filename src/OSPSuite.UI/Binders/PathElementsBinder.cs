@@ -20,7 +20,7 @@ namespace OSPSuite.UI.Binders
    {
       private readonly IImageListRetriever _imageListRetriever;
       private GridViewBinder<T> _gridViewBinder;
-      private readonly Cache<PathElement, IGridViewColumn> columnPathElementCache = new Cache<PathElement, IGridViewColumn>();
+      private readonly Cache<PathElement, IGridViewColumn> _columnPathElementCache = new Cache<PathElement, IGridViewColumn>();
 
       public PathElementsBinder(IImageListRetriever imageListRetriever)
       {
@@ -44,7 +44,7 @@ namespace OSPSuite.UI.Binders
             .WithRepository(dto => configureContainerRepository(dto, parameterPathExpression.Compile()));
       }
 
-      public ICache<PathElement, IGridViewColumn> ColumnCache => columnPathElementCache;
+      public ICache<PathElement, IGridViewColumn> ColumnCache => _columnPathElementCache;
 
       private IGridViewAutoBindColumn<T, PathElementDTO> configurePathElement(Expression<Func<T, PathElementDTO>> parameterPathExpression, PathElement pathElement, string caption)
       {
@@ -52,7 +52,7 @@ namespace OSPSuite.UI.Binders
             .WithCaption(caption)
             .AsReadOnly();
 
-         columnPathElementCache.Add(pathElement, column);
+         _columnPathElementCache.Add(pathElement, column);
          return column;
       }
 
@@ -70,24 +70,24 @@ namespace OSPSuite.UI.Binders
 
       public void SetVisibility(PathElement pathElement, bool visible)
       {
-         var colIndex = columnPathElementCache.Keys.ToList().IndexOf(pathElement);
+         var colIndex = _columnPathElementCache.Keys.ToList().IndexOf(pathElement);
          if (colIndex < 0) return;
          ColumnAt(pathElement).UpdateVisibleIndex(colIndex + 1, visible);
       }
 
       public IGridViewColumn ColumnAt(PathElement pathElement)
       {
-         return columnPathElementCache[pathElement];
+         return _columnPathElementCache[pathElement];
       }
 
       public bool PathVisible
       {
-         set { columnPathElementCache.Keys.Each(pathColumn => SetVisibility(pathColumn, value)); }
+         set { _columnPathElementCache.Keys.Each(pathColumn => SetVisibility(pathColumn, value)); }
       }
 
       protected virtual void Cleanup()
       {
-         columnPathElementCache.Clear();
+         _columnPathElementCache.Clear();
       }
 
       #region Disposable properties
