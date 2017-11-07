@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Binders
 {
    public class PathElementsBinder<T> : IDisposable where T : IPathRepresentableDTO
    {
       private readonly IImageListRetriever _imageListRetriever;
-      private readonly ICache<PathElement, IGridViewColumn> _columnPathElementCache;
       private GridViewBinder<T> _gridViewBinder;
-      private RepositoryItemImageComboBox _pathElementRepository;
+      public ICache<PathElement, IGridViewColumn> ColumnCache { get; }
 
       public PathElementsBinder(IImageListRetriever imageListRetriever)
       {
          _imageListRetriever = imageListRetriever;
-         _columnPathElementCache = new Cache<PathElement, IGridViewColumn>();
+         ColumnCache = new Cache<PathElement, IGridViewColumn>();
       }
 
       public void InitializeBinding(GridViewBinder<T> gridViewBinder)
       {
          _gridViewBinder = gridViewBinder;
-         _pathElementRepository = new UxRepositoryItemImageComboBox(gridViewBinder.GridView, _imageListRetriever);
          configureImagePathElement(p => p.SimulationPathElement, PathElement.Simulation, Captions.SimulationPath);
          configureImagePathElement(p => p.TopContainerPathElement, PathElement.TopContainer, Captions.TopContainerPath);
          configureImagePathElement(p => p.ContainerPathElement, PathElement.Container, Captions.ContainerPath);
@@ -53,16 +51,15 @@ namespace OSPSuite.UI.Binders
             .WithCaption(caption)
             .AsReadOnly();
 
-         _columnPathElementCache.Add(pathElement, column);
+         ColumnCache.Add(pathElement, column);
          return column;
       }
 
       private RepositoryItem configureContainerRepository(T dto, Func<T, PathElementDTO> pathElementExpression)
       {
-         _pathElementRepository.Items.Clear();
          var parameterPathDTO = pathElementExpression(dto);
-         _pathElementRepository.Items.Add(new ImageComboBoxItem(parameterPathDTO, _imageListRetriever.ImageIndex(parameterPathDTO.IconName)));
-         return _pathElementRepository;
+         var pathElementRepository = new UxRepositoryItemImageComboBox(_gridViewBinder.GridView, _imageListRetriever);
+         return pathElementRepository.AddItem(parameterPathDTO, parameterPathDTO.IconName);
       }
 
       public void SetCaption(PathElement pathElement, string caption)
@@ -72,26 +69,24 @@ namespace OSPSuite.UI.Binders
 
       public void SetVisibility(PathElement pathElement, bool visible)
       {
-         var colIndex = _columnPathElementCache.Keys.ToList().IndexOf(pathElement);
+         var colIndex = ColumnCache.Keys.ToList().IndexOf(pathElement);
          if (colIndex < 0) return;
          ColumnAt(pathElement).UpdateVisibleIndex(colIndex + 1, visible);
       }
 
       public IGridViewColumn ColumnAt(PathElement pathElement)
       {
-         return _columnPathElementCache[pathElement];
+         return ColumnCache[pathElement];
       }
 
       public bool PathVisible
       {
-         set { _columnPathElementCache.Keys.Each(pathColumn => SetVisibility(pathColumn, value)); }
+         set { ColumnCache.Keys.Each(pathColumn => SetVisibility(pathColumn, value)); }
       }
-
-      public ICache<PathElement, IGridViewColumn> ColumnCache => _columnPathElementCache;
 
       protected virtual void Cleanup()
       {
-         _columnPathElementCache.Clear();
+         ColumnCache.Clear();
       }
 
       #region Disposable properties

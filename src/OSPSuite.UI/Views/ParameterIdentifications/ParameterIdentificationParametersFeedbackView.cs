@@ -22,9 +22,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private readonly GridViewBinder<ParameterFeedbackDTO> _parametersBinder;
       private readonly GridViewBinder<IRunPropertyDTO> _runPropertiesBinder;
       private readonly ValueDTOFormatter _valueDTOFormatter;
-      private readonly RepositoryItemImageComboBox _nameRepository;
       private readonly RepositoryItemTextEdit _textRepositoryItem;
-      private readonly UxRepositoryItemImageComboBox _textIconRepositoryItem;
 
       public ParameterIdentificationParametersFeedbackView(IImageListRetriever imageListRetriever)
       {
@@ -37,9 +35,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridViewProperties.ShowRowIndicator = false;
          gridViewProperties.ShowColumnHeaders = false;
          _valueDTOFormatter = new ValueDTOFormatter();
-         _nameRepository = new UxRepositoryItemImageComboBox(gridViewParameters, _imageListRetriever);
          _textRepositoryItem = new RepositoryItemTextEdit();
-         _textIconRepositoryItem = new UxRepositoryItemImageComboBox(gridViewProperties, imageListRetriever);
       }
 
       private void initGridView(UxGridView gridView)
@@ -73,7 +69,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             btnExportParametersHistory.Enabled = value;
             layoutItemExportParametersHistory.Enabled = value;
          }
-         get { return layoutItemExportParametersHistory.Enabled; }
+         get => layoutItemExportParametersHistory.Enabled;
       }
 
       public override void InitializeBinding()
@@ -101,8 +97,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _runPropertiesBinder.Bind(x => x.FormattedValue)
             .WithRepository(propertyRepositoryFor)
             .AsReadOnly();
-
-
+         
          btnExportParametersHistory.Click += (o, e) => OnEvent(_presenter.ExportParametersHistory);
       }
 
@@ -111,16 +106,14 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (propertyDTO.Icon == null)
             return _textRepositoryItem;
 
-         _textIconRepositoryItem.Items.Clear();
-         _textIconRepositoryItem.Items.Add(new ImageComboBoxItem(propertyDTO.FormattedValue, _imageListRetriever.ImageIndex(propertyDTO.Icon.IconName)));
-         return _textIconRepositoryItem;
+         var textIconRepositoryItem = new UxRepositoryItemImageComboBox(gridViewProperties, _imageListRetriever);
+         return textIconRepositoryItem.AddItem(propertyDTO.FormattedValue, propertyDTO.Icon);
       }
 
       private RepositoryItem nameRepositoryFor(ParameterFeedbackDTO parameterFeedbackDTO)
       {
-         _nameRepository.Items.Clear();
-         _nameRepository.Items.Add(new ImageComboBoxItem(parameterFeedbackDTO.Name, _imageListRetriever.ImageIndex(parameterFeedbackDTO.BoundaryCheckIcon.IconName)));
-         return _nameRepository;
+         var nameRepository = new UxRepositoryItemImageComboBox(gridViewProperties, _imageListRetriever);
+         return nameRepository.AddItem(parameterFeedbackDTO.Name, parameterFeedbackDTO.BoundaryCheckIcon);
       }
 
       public override void InitializeResources()

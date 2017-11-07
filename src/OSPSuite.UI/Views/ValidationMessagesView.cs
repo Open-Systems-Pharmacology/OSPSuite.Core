@@ -19,7 +19,6 @@ namespace OSPSuite.UI.Views
       private readonly IToolTipCreator _toolTipCreator;
       private GridViewBinder<ValidationMessageDTO> _gridViewBinder;
       private readonly RepositoryItemMemoEdit _messageRepositoryItem;
-      private readonly UxRepositoryItemImageComboBox _statusRepositoryItem;
 
       public ValidationMessagesView(IShell shell, IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator) : base(shell)
       {
@@ -29,7 +28,6 @@ namespace OSPSuite.UI.Views
          gridView.ShouldUseColorForDisabledCell = false;
          _messageRepositoryItem = new RepositoryItemMemoEdit {AutoHeight = true};
          gridView.OptionsView.RowAutoHeight = true;
-         _statusRepositoryItem = new UxRepositoryItemImageComboBox(gridView, imageListRetriever);
          var toolTipController = new ToolTipController {ImageList = imageListRetriever.AllImages16x16};
          toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
          gridControl.ToolTipController = toolTipController;
@@ -80,9 +78,8 @@ namespace OSPSuite.UI.Views
 
       private RepositoryItem statusRepositoryFor(ValidationMessageDTO runResultDTO)
       {
-         _statusRepositoryItem.Items.Clear();
-         _statusRepositoryItem.Items.Add(new ImageComboBoxItem(runResultDTO.Status, _imageListRetriever.ImageIndex(runResultDTO.Icon.IconName)));
-         return _statusRepositoryItem;
+         var statusRepositoryItem = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
+         return statusRepositoryItem.AddItem(runResultDTO.Status, runResultDTO.Icon);
       }
    }
 }

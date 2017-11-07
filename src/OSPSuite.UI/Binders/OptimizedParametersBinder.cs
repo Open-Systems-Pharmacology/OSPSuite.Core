@@ -23,7 +23,6 @@ namespace OSPSuite.UI.Binders
       private GridViewBinder<OptimizedParameterDTO> _gridViewBinder;
       private readonly ValueDTOFormatter _valueFormatter = new ValueDTOFormatter();
       private readonly RepositoryItemPictureEdit _rangeRepository = new RepositoryItemPictureEdit();
-      private UxRepositoryItemImageComboBox _nameRepository;
       private IGridViewBoundColumn<OptimizedParameterDTO, Image> _imageColumn;
 
       public OptimizedParametersBinder(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
@@ -38,8 +37,6 @@ namespace OSPSuite.UI.Binders
       public void InitializeBinding(GridViewBinder<OptimizedParameterDTO> gridViewBinder)
       {
          _gridViewBinder = gridViewBinder;
-
-         _nameRepository = new UxRepositoryItemImageComboBox(_gridViewBinder.GridView,_imageListRetriever);
 
          var col = _gridViewBinder.AutoBind(x => x.Name)
             .WithCaption(Captions.Name)
@@ -73,9 +70,8 @@ namespace OSPSuite.UI.Binders
 
       private RepositoryItem nameRepositoryFor(OptimizedParameterDTO optimizedParameterDTO)
       {
-         _nameRepository.Items.Clear();
-         _nameRepository.Items.Add(new ImageComboBoxItem(optimizedParameterDTO.Name, _imageListRetriever.ImageIndex(optimizedParameterDTO.BoundaryCheckIcon.IconName)));
-         return _nameRepository;
+         var nameRepository = new UxRepositoryItemImageComboBox(_gridViewBinder.GridView, _imageListRetriever);
+         return nameRepository.AddItem(optimizedParameterDTO.Name, optimizedParameterDTO.BoundaryCheckIcon);
       }
 
       private IGridViewAutoBindColumn<OptimizedParameterDTO, T> bind<T>(Expression<Func<OptimizedParameterDTO, T>> expression, string caption)

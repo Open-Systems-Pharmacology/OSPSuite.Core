@@ -25,31 +25,31 @@ namespace OSPSuite.UI.Views
 
       public override void InitializeBinding()
       {
-         btnDeselectAll.Click += (o, e) => this.DoWithinExceptionHandler(() => _presenter.DeselectAll());
+         btnDeselectAll.Click += (o, e) => OnEvent(_presenter.DeselectAll);
       }
 
       public string Info
       {
-         set { txtInfo.Text = value; }
-         get { return txtInfo.Text; }
+         set => txtInfo.Text = value;
+         get => txtInfo.Text;
       }
 
       public string InfoError
       {
-         set { errorProvider.SetError(txtInfo, value); }
-         get { return errorProvider.GetError(txtInfo); }
+         set => errorProvider.SetError(txtInfo, value);
+         get => errorProvider.GetError(txtInfo);
       }
 
       public bool DeselectAllEnabled
       {
-         get { return btnDeselectAll.Enabled; }
-         set { btnDeselectAll.Enabled = value; }
+         get => btnDeselectAll.Enabled;
+         set => btnDeselectAll.Enabled = value;
       }
 
       public string Description
       {
-         get { return lblDescription.Text; }
-         set { lblDescription.Text = value; }
+         get => lblDescription.Text;
+         set => lblDescription.Text = value;
       }
 
       public void SetQuantityListView(IView view)
