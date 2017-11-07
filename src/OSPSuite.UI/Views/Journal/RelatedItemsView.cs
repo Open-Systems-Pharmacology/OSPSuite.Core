@@ -30,7 +30,6 @@ namespace OSPSuite.UI.Views.Journal
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private readonly RepositoryItemPopupContainerEdit _repositoryCompareRelatedItem = new RepositoryItemPopupContainerEdit();
       private readonly GridViewBinder<RelatedItem> _gridViewBinder;
-      private readonly RepositoryItemImageComboBox _itemTypeRepository;
       private IGridViewColumn _compareColumn;
       private IGridViewColumn _reloadColumn;
       private IGridViewColumn _deleteColumn;
@@ -40,7 +39,6 @@ namespace OSPSuite.UI.Views.Journal
          _imageListRetriever = imageListRetriever;
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
-         _itemTypeRepository = new UxRepositoryItemImageComboBox(gridView, imageListRetriever);
          _repositoryCompareRelatedItem.PopupControl = _popupControl;
          _repositoryCompareRelatedItem.EditValueChanged += (o, e) => gridView.PostEditor();
          _gridViewBinder = new GridViewBinder<RelatedItem>(gridView);
@@ -124,9 +122,8 @@ namespace OSPSuite.UI.Views.Journal
 
       private RepositoryItem configureItemTypeRepository(RelatedItem relatedItem)
       {
-         _itemTypeRepository.Items.Clear();
-         _itemTypeRepository.Items.Add(new ImageComboBoxItem(relatedItem.ItemType, _imageListRetriever.ImageIndex(relatedItem.IconName)));
-         return _itemTypeRepository;
+         var itemTypeRepository = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
+         return itemTypeRepository.AddItem(relatedItem.ItemType, relatedItem.IconName);
       }
 
       public override void InitializeResources()

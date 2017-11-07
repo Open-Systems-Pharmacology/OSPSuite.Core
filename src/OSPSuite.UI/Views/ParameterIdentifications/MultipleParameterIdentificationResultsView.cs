@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
@@ -24,6 +21,8 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
@@ -36,8 +35,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private readonly Cache<DevExpress.XtraGrid.Views.Base.BaseView, OptimizedParametersBinder> _optimizedParametersBinderCache = new Cache<DevExpress.XtraGrid.Views.Base.BaseView, OptimizedParametersBinder>();
       private readonly UxRepositoryItemButtonEdit _repositoryItemTransferToSimulations;
       private readonly RepositoryItemMemoEdit _repositoryItemDescription;
-      private readonly UxRepositoryItemImageComboBox _statusRepositoryItem;
-      private readonly UxRepositoryItemImageComboBox _indexRepositoryItem;
       private IGridViewColumn _colTranfer;
       private readonly TimeSpanFormatter _timeSpanFormatter;
 
@@ -49,10 +46,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _gridViewBinder = new GridViewBinder<ParameterIdentificationRunResultDTO>(mainView);
 
          _repositoryItemTransferToSimulations = new UxRepositoryItemButtonImage(ApplicationIcons.Commit, Captions.ParameterIdentification.TransferToSimulation);
-         _statusRepositoryItem = new UxRepositoryItemImageComboBox(mainView, imageListRetriever);
-         _indexRepositoryItem = new UxRepositoryItemImageComboBox(mainView, imageListRetriever);
          _timeSpanFormatter = new TimeSpanFormatter();
-         
+
          _repositoryItemDescription = new RepositoryItemMemoEdit
          {
             AutoHeight = true
@@ -217,7 +212,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithCaption(Captions.ParameterIdentification.NumberOfEvaluations);
 
          bind(x => x.Duration)
-            .WithFormat(x=>_timeSpanFormatter)
+            .WithFormat(x => _timeSpanFormatter)
             .WithCaption(Captions.ParameterIdentification.Duration);
 
          bind(x => x.Status)
@@ -225,27 +220,25 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithRepository(statusRepositoryFor)
             .AsReadOnly();
 
-         _colTranfer=_gridViewBinder.AddUnboundColumn()
+         _colTranfer = _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH)
             .WithRepository(x => _repositoryItemTransferToSimulations)
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
-          _repositoryItemTransferToSimulations.ButtonClick += (o, e) => OnEvent(transferToSimulation);
+         _repositoryItemTransferToSimulations.ButtonClick += (o, e) => OnEvent(transferToSimulation);
       }
 
       private RepositoryItem indexRepositoryFor(ParameterIdentificationRunResultDTO runResultDTO)
       {
-         _indexRepositoryItem.Items.Clear();
-         _indexRepositoryItem.Items.Add(new ImageComboBoxItem(runResultDTO.Index, _imageListRetriever.ImageIndex(runResultDTO.BoundaryCheckIcon.IconName)));
-         return _indexRepositoryItem;
+         var indexRepositoryItem = new UxRepositoryItemImageComboBox(mainView, _imageListRetriever);
+         return indexRepositoryItem.AddItem(runResultDTO.Index, runResultDTO.BoundaryCheckIcon);
       }
 
       private RepositoryItem statusRepositoryFor(ParameterIdentificationRunResultDTO runResultDTO)
       {
-         _statusRepositoryItem.Items.Clear();
-         _statusRepositoryItem.Items.Add(new ImageComboBoxItem(runResultDTO.Status, _imageListRetriever.ImageIndex(runResultDTO.StatusIcon.IconName)));
-         return _statusRepositoryItem;
+         var statusRepositoryItem = new UxRepositoryItemImageComboBox(mainView, _imageListRetriever);
+         return statusRepositoryItem.AddItem(runResultDTO.Status, runResultDTO.StatusIcon);
       }
 
       private void transferToSimulation()

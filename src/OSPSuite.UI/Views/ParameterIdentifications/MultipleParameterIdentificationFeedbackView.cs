@@ -20,7 +20,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private IMultipleParameterIdentificationFeedbackPresenter _presenter;
       private readonly GridViewBinder<MultiOptimizationRunResultDTO> _gridViewBinder;
       private readonly RepositoryItemMemoEdit _repositoryItemDescription;
-      private readonly UxRepositoryItemImageComboBox _statusRepositoryItem;
 
       public MultipleParameterIdentificationFeedbackView(IImageListRetriever imageListRetriever)
       {
@@ -28,7 +27,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<MultiOptimizationRunResultDTO>(gridView);
          _repositoryItemDescription = new RepositoryItemMemoEdit();
-         _statusRepositoryItem = new UxRepositoryItemImageComboBox(gridView, imageListRetriever);
          gridView.AllowsFiltering = false;
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.MultiSelect = true;
@@ -86,9 +84,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private RepositoryItem statusRepositoryFor(MultiOptimizationRunResultDTO runResultDTO)
       {
-         _statusRepositoryItem.Items.Clear();
-         _statusRepositoryItem.Items.Add(new ImageComboBoxItem(runResultDTO.Status, _imageListRetriever.ImageIndex(runResultDTO.StatusIcon.IconName)));
-         return _statusRepositoryItem;
+         var statusRepositoryItem = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
+         return statusRepositoryItem.AddItem(runResultDTO.Status, runResultDTO.StatusIcon);
       }
 
       private void addMessageInEmptyArea(CustomDrawEventArgs e)

@@ -1,23 +1,44 @@
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
+using OSPSuite.Assets;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.RepositoryItems
 {
    /// <summary>
-   ///   Simple wrapper over repository item image combo box that ensure that 
-   ///   1-the change event is fired as soon as the combo box selection is changed, and not only after the row loses the focus
-   ///   2-The editor is read only (default for PKSim Combo Boxes)
+   ///    Simple wrapper over repository item image combo box that ensure that
+   ///    1-the change event is fired as soon as the combo box selection is changed, and not only after the row loses the
+   ///    focus
+   ///    2-The editor is read only (default for PKSim Combo Boxes)
    /// </summary>
    public class UxRepositoryItemImageComboBox : RepositoryItemImageComboBox
    {
+      private readonly IImageListRetriever _imageListRetriever;
+
       public UxRepositoryItemImageComboBox(BaseView view, IImageListRetriever imageListRetriever)
       {
+         _imageListRetriever = imageListRetriever;
          TextEditStyle = TextEditStyles.DisableTextEditor;
          EditValueChanged += (o, e) => view.PostEditor();
-         SmallImages = imageListRetriever.AllImages16x16;
-         LargeImages = imageListRetriever.AllImages32x32;
+         SmallImages = _imageListRetriever.AllImages16x16;
+         LargeImages = _imageListRetriever.AllImages32x32;
+      }
+
+      public UxRepositoryItemImageComboBox AddItem(object value, ApplicationIcon icon)
+      {
+         return AddItem(value, _imageListRetriever.ImageIndex(icon));
+      }
+
+      public UxRepositoryItemImageComboBox AddItem(object value, string iconName)
+      {
+         return AddItem(value, _imageListRetriever.ImageIndex(iconName));
+      }
+
+      public UxRepositoryItemImageComboBox AddItem(object value, int iconIndex)
+      {
+         Items.Add(new ImageComboBoxItem(value, iconIndex));
+         return this;
       }
    }
 }
