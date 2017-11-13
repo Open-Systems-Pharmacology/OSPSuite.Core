@@ -109,6 +109,40 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_updating_the_feedback_and_the_selected_output_is_not_set : concern_for_ParameterIdentificationPredictedVsObservedFeedbackPresenter
+   {
+      private ParameterIdentificationRunState _runState;
+      private OptimizationRunResult _bestResult;
+      private OptimizationRunResult _currentResult;
+      private DataColumn _bestColumn;
+      private DataColumn _currentColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _bestColumn = DomainHelperForSpecs.ObservedData().FirstDataColumn();
+         _currentColumn = DomainHelperForSpecs.ObservedData().FirstDataColumn();
+
+         _bestResult = A.Fake<OptimizationRunResult>();
+         _currentResult = A.Fake<OptimizationRunResult>();
+         sut.EditParameterIdentification(_parameterIdentification);
+         sut.SelectedOutput = null;
+
+         A.CallTo(() => _bestResult.SimulationResultFor(A<string>._)).Returns(_bestColumn);
+         A.CallTo(() => _currentResult.SimulationResultFor(A<string>._)).Returns(_currentColumn);
+
+         _runState = A.Fake<ParameterIdentificationRunState>();
+         A.CallTo(() => _runState.BestResult).Returns(_bestResult);
+         A.CallTo(() => _runState.CurrentResult).Returns(_currentResult);
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.UpdateFeedback(_runState);
+      }
+   }
+
    public class When_updating_the_feedback_for_a_run_state_entering_sensitivity_calculation : concern_for_ParameterIdentificationPredictedVsObservedFeedbackPresenter
    {
       private ParameterIdentificationRunState _runState;

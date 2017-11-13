@@ -47,6 +47,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void ClearReferences()
       {
          _timer.Stop();
+         updateFeedback();
          allRunFeedbackPresenters.Each(x => x.ClearReferences());
       }
 
