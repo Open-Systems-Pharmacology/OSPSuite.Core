@@ -34,8 +34,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void UpdateFeedback(ParameterIdentificationRunState runState)
       {
          var runResult = runState.RunResult;
-         MultiOptimizationRunResultDTO runStatusDTO;
-         if (_allRunResultDTO.TryGetValue(runResult.Index, out runStatusDTO))
+         if (_allRunResultDTO.TryGetValue(runResult.Index, out var runStatusDTO))
          {
             updateErrorsAndStatus(runState, runStatusDTO);
             _view.RefreshData();

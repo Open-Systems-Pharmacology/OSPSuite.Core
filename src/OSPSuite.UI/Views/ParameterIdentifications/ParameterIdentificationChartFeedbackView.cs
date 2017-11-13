@@ -43,8 +43,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       public bool OutputSelectionEnabled
       {
-         get { return cbOutputSelection.Enabled; }
-         set { cbOutputSelection.Enabled = value; }
+         get => cbOutputSelection.Enabled;
+         set => cbOutputSelection.Enabled = value;
       }
 
       public override void InitializeBinding()

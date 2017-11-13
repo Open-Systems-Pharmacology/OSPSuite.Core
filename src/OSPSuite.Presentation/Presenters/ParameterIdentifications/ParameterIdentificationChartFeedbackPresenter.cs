@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly OutputMappingByFullOutputPathComparer _outputMappingComparer;
 
-      public CurveChart Chart =>_chart;
+      public CurveChart Chart => _chart;
 
       protected ParameterIdentificationChartFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory, IDisplayUnitRetriever displayUnitRetriever, TChart chart) : base(view)
       {
@@ -115,7 +115,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected void SelectedOutputChanged()
       {
-         UpdateChartForSelectedOutput();
+         if(SelectedOutput!=null)
+            UpdateChartForSelectedOutput();
+
          _chartDisplayPresenter.Refresh();
       }
 
@@ -158,7 +160,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected virtual void UpdateColumn(DataColumn valueColumn, OptimizationRunResult runResult)
       {
-         var simulationValues = runResult.SimulationResultFor(SelectedOutput.FullOutputPath);
+         var simulationValues = runResult.SimulationResultFor(SelectedOutput?.FullOutputPath);
          if (simulationValues == null)
             return;
 
