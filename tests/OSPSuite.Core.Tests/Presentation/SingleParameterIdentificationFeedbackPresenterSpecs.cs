@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation
       {
          sut.UpdateFeedback(_runState);
          //a little more than the default refresh time to ensure that the call is being triggered
-         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 100);
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 1000);
       }
 
       [Observation]
@@ -89,7 +89,7 @@ namespace OSPSuite.Presentation
       {
          sut.UpdateFeedback(_runState);
          sut.UpdateFeedback(_runState);
-         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 100);
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 1000);
       }
 
       [Observation]
