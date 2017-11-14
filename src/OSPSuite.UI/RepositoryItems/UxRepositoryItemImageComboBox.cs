@@ -37,7 +37,12 @@ namespace OSPSuite.UI.RepositoryItems
 
       public UxRepositoryItemImageComboBox AddItem(object value, int iconIndex)
       {
-         Items.Add(new ImageComboBoxItem(value, iconIndex));
+         return AddItem(new ImageComboBoxItem(value, iconIndex));
+      }
+
+      public UxRepositoryItemImageComboBox AddItem(ImageComboBoxItem imageComboBoxItem)
+      {
+         Items.Add(imageComboBoxItem);
          return this;
       }
    }
