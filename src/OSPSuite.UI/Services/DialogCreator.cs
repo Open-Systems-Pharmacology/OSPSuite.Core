@@ -44,7 +44,7 @@ namespace OSPSuite.UI.Services
 
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel)
       {
-         return MessageBoxYesNoCancel(message, string.Empty, string.Empty, string.Empty, _defaultButton);
+         return MessageBoxYesNoCancel(message, yes, no, cancel, _defaultButton);
       }
 
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton)

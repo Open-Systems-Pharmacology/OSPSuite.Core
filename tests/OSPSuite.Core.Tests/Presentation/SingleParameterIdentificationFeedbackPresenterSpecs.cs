@@ -89,7 +89,7 @@ namespace OSPSuite.Presentation
       {
          sut.UpdateFeedback(_runState);
          sut.UpdateFeedback(_runState);
-         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 1000);
+         Thread.Sleep(Constants.FEEDBACK_REFRESH_TIME + 500);
       }
 
       [Observation]
