@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Reflection;
@@ -10,13 +11,17 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
 
 namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 {
-   public interface ISensitivityAnalysisPKParameterAnalysisPresenter : IPresenter<ISensitivityAnalysisPKParameterAnalysisView>, ISimulationAnalysisPresenter,
+   public interface ISensitivityAnalysisPKParameterAnalysisPresenter : 
+      ICanCopyToClipboard,
+      IPresenter<ISensitivityAnalysisPKParameterAnalysisView>, 
+      ISimulationAnalysisPresenter,
       IListener<SensitivityAnalysisResultsUpdatedEvent>
    {
       IReadOnlyList<string> AllPKParameters { get; }
@@ -34,11 +39,17 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       private SensitivityAnalysis _sensitivityAnalysis;
       private readonly string _nameProperty;
       private readonly IPKParameterRepository _pkParameterRepository;
+      private readonly IApplicationSettings _applicationSettings;
 
-      public SensitivityAnalysisPKParameterAnalysisPresenter(ISensitivityAnalysisPKParameterAnalysisView view, IPresentationSettingsTask presentationSettingsTask, IPKParameterRepository pkParameterRepository) : base(view)
+      public SensitivityAnalysisPKParameterAnalysisPresenter(
+         ISensitivityAnalysisPKParameterAnalysisView view, 
+         IPresentationSettingsTask presentationSettingsTask, 
+         IPKParameterRepository pkParameterRepository,
+         IApplicationSettings applicationSettings) : base(view)
       {
          _presentationSettingsTask = presentationSettingsTask;
          _pkParameterRepository = pkParameterRepository;
+         _applicationSettings = applicationSettings;
          _nameProperty = ReflectionHelper.PropertyFor<SensitivityAnalysisPKParameterAnalysis, string>(x => x.Name).Name;
       }
 
@@ -106,7 +117,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public string ActivePKParameter
       {
-         get { return Chart.PKParameterName; }
+         get => Chart.PKParameterName;
          set
          {
             Chart.PKParameterName = value;
@@ -122,7 +133,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public string ActiveOutput
       {
-         get { return Chart.OutputPath; }
+         get => Chart.OutputPath;
          set
          {
             Chart.OutputPath = value;
@@ -146,6 +157,11 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       private bool canHandle(SensitivityAnalysisEvent eventToHandle)
       {
          return Equals(_sensitivityAnalysis, eventToHandle.SensitivityAnalysis);
+      }
+
+      public void CopyToClipboard()
+      {
+         _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
       }
    }
 }

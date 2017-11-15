@@ -2,12 +2,16 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Views.Charts
 {
-   public interface IChartDisplayView : IView<IChartDisplayPresenter>, IBatchUpdatable
+   public interface IChartDisplayView : 
+      IView<IChartDisplayPresenter>, 
+      IBatchUpdatable,
+      ICanCopyToClipboardWithWatermark
    {
       /// <summary>
       ///    When a series point is hot tracked in the chart, this action is invoked
@@ -21,11 +25,6 @@ namespace OSPSuite.Presentation.Views.Charts
 
       event DragEventHandler DragOver;
       event DragEventHandler DragDrop;
-
-      /// <summary>
-      /// Copies the chart to clipboard using the provided watermark
-      /// </summary>
-      void CopyToClipboard(string watermark);
 
       /// <summary>
       ///    Re orders the legend according to given index

@@ -5,15 +5,19 @@ using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
    public partial class ParameterIdentificationResidualHistogramView : BaseUserControl, IParameterIdentificationResidualHistogramView
    {
+      private ICanCopyToClipboard _clipboardManager;
+
       public ParameterIdentificationResidualHistogramView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
          InitializeComponent();
@@ -35,6 +39,16 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
          //need to add it once a again to actually see it
          chart.Series.Add(gaussSeries);
+      }
+
+      public ICanCopyToClipboard CopyToClipboardManager
+      {
+         get => _clipboardManager;
+         set
+         {
+            _clipboardManager = value;
+            chart.AddCopyToClipboardPopupMenu(value);
+         }
       }
 
       private static Series createGaussSeriesFor(DataTable gaussData)
@@ -65,6 +79,12 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          lineSeriesView.AxisY = secondaryAxis;
       }
 
+      public void CopyToClipboard(string watermark)
+      {
+         chart.CopyToClipboard(watermark);
+      }
+
       protected override int TopicId => HelpId.Tool_PI_Analysis_HistogramResiduals;
+
    }
 }

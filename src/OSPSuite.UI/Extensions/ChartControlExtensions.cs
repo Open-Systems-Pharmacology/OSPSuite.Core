@@ -13,31 +13,19 @@ namespace OSPSuite.UI.Extensions
 {
    public static class ChartControlExtensions
    {
+      private const string WATERMARK_ANNOTATION = "WATERMARK_ANNOTATION";
+
       public static void SetFontAndSizeSettings(this ChartControl chartControl, ChartFontAndSizeSettings fontAndSizeSettings, Size alternativeSize)
       {
-         chartControl.Width = fontAndSizeSettings.ChartWidth.GetValueOrDefault(alternativeSize.Width);
-         chartControl.Height = fontAndSizeSettings.ChartHeight.GetValueOrDefault(alternativeSize.Height);
-
+         var width = fontAndSizeSettings.ChartWidth.GetValueOrDefault(alternativeSize.Width);
+         var height = fontAndSizeSettings.ChartHeight.GetValueOrDefault(alternativeSize.Height);
          var fontTitle = fontAndSizeSettings.FontFor(x => x.TitleSize);
          var fontDescription = fontAndSizeSettings.FontFor(x => x.DescriptionSize);
          var fontAxis = fontAndSizeSettings.FontFor(x => x.AxisSize);
          var fontLegend = fontAndSizeSettings.FontFor(x => x.LegendSize);
 
-         chartControl.Titles[0].Font = fontTitle;
-         chartControl.Titles[1].Font = fontDescription;
-         chartControl.Legend.Font = fontLegend;
-
-         var xyDiagram = chartControl.Diagram as XYDiagram;
-         if (xyDiagram != null)
-         {
-            xyDiagram.AxisX.Label.Font = fontAxis;
-            xyDiagram.AxisX.Title.Font = fontAxis;
-            xyDiagram.GetAllAxesY().Each(axis => axis.Label.Font = fontAxis);
-            xyDiagram.GetAllAxesY().Each(axis => axis.Title.Font = fontAxis);
-         }
+         setFontAndSizeSettings(chartControl, width, height, fontTitle, fontDescription, fontAxis, fontLegend);
       }
-
-      private const string WATERMARK_ANNOTATION = "WATERMARK_ANNOTATION";
 
       /// <summary>
       ///    Copies the chart to clipboard as an image using export settings if defined
@@ -45,20 +33,71 @@ namespace OSPSuite.UI.Extensions
       /// </summary>
       public static void CopyToClipboard(this UxChartControl chartControl, IChart chart, string watermark)
       {
-         using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
+         using (var cloneOfChartControl = (ChartControl) chartControl.Clone())
          {
             cloneOfChartControl.SetFontAndSizeSettings(chart.FontAndSize, chartControl.Size);
+
             if (chart.IncludeOriginData)
                AddOriginData(cloneOfChartControl, chart);
 
-            if (!string.IsNullOrEmpty(watermark))
-               AddWatermark(cloneOfChartControl, chart, watermark);
+            AddWatermark(cloneOfChartControl, watermark, chart);
 
             chartControl.CopyChartToClipboard(cloneOfChartControl);
          }
       }
 
-      public static void AddWatermark(this ChartControl chartControl, IChart chart, string watermark)
+      private static void copyFontAndSizeSettings(ChartControl sourceChartControl, ChartControl targetChartControl)
+      {
+         var width = sourceChartControl.Width;
+         var height = sourceChartControl.Height;
+         var fontTitle = sourceChartControl.Titles.Count > 0 ? sourceChartControl.Titles[0].Font : null;
+         var fontDescription = sourceChartControl.Titles.Count > 1 ? sourceChartControl.Titles[1].Font : null;
+         var fontLegend = sourceChartControl.Legend?.Font;
+         var xyDiagram = sourceChartControl.Diagram as XYDiagram;
+         var fontAxis = xyDiagram?.AxisX.Label.Font;
+
+         setFontAndSizeSettings(targetChartControl, width, height, fontTitle, fontDescription, fontAxis, fontLegend);
+      }
+
+      private static void setFontAndSizeSettings(ChartControl chartControl, int width, int height, Font fontTitle, Font fontDescription, Font fontAxis, Font fontLegend)
+      {
+         chartControl.Width = width;
+         chartControl.Height = height;
+
+         if (chartControl.Titles.Count > 0 && fontTitle != null)
+            chartControl.Titles[0].Font = fontTitle;
+
+         if (chartControl.Titles.Count > 1 && fontDescription != null)
+            chartControl.Titles[1].Font = fontDescription;
+
+         if (fontLegend != null)
+            chartControl.Legend.Font = fontLegend;
+
+         var xyDiagram = chartControl.Diagram as XYDiagram;
+         if (xyDiagram == null || fontAxis == null) return;
+
+         xyDiagram.AxisX.Label.Font = fontAxis;
+         xyDiagram.AxisX.Title.Font = fontAxis;
+         xyDiagram.GetAllAxesY().Each(axis => axis.Label.Font = fontAxis);
+         xyDiagram.GetAllAxesY().Each(axis => axis.Title.Font = fontAxis);
+      }
+
+      public static void CopyToClipboard(this UxChartControl chartControl, string watermark)
+      {
+         using (var cloneOfChartControl = (ChartControl) chartControl.Clone())
+         {
+            copyFontAndSizeSettings(chartControl, cloneOfChartControl);
+            AddWatermark(cloneOfChartControl, watermark);
+            chartControl.CopyChartToClipboard(cloneOfChartControl);
+         }
+      }
+
+      public static void AddWatermark(this ChartControl chartControl, string watermark, IChart chart)
+      {
+         AddWatermark(chartControl, watermark, chart.FontAndSize.FontFor(x => x.WatermarkSize));
+      }
+
+      public static void AddWatermark(this ChartControl chartControl, string watermark, Font watermarkFont = null)
       {
          var shouldHideWatermark = string.IsNullOrEmpty(watermark);
          var watermarkAnnotation = chartControl.Annotations.OfType<TextAnnotation>().FirstOrDefault(x => Equals(x.Name, WATERMARK_ANNOTATION));
@@ -72,7 +111,7 @@ namespace OSPSuite.UI.Extensions
          if (watermarkAnnotation == null)
             watermarkAnnotation = createWatermarkAnnotation(chartControl);
 
-         watermarkAnnotation.Font = chart.FontAndSize.FontFor(x => x.WatermarkSize);
+         watermarkAnnotation.Font = watermarkFont ?? new Font(watermarkAnnotation.Font.FontFamily, Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK);
          watermarkAnnotation.Text = watermark.InBold();
          updateAnnotationPosition(watermarkAnnotation, chartControl);
       }
@@ -109,7 +148,7 @@ namespace OSPSuite.UI.Extensions
          var originTitle = new ChartTitle
          {
             Text = chart.OriginText,
-            Font = chart.FontAndSize.FontFor(x=>x.OriginSize),
+            Font = chart.FontAndSize.FontFor(x => x.OriginSize),
             Alignment = StringAlignment.Near,
             Dock = ChartTitleDockStyle.Bottom,
             WordWrap = true
