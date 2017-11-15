@@ -105,6 +105,7 @@
     <Compile Include="Batch\ParameterValue.cs" />
     <Compile Include="Chart\Axis.cs" />
     <Compile Include="Chart\AxisCountMode.cs" />
+    <Compile Include="Chart\ChartFontAndSizeSettingsExtensions.cs" />
     <Compile Include="Chart\ChartUpdate.cs" />
     <Compile Include="Chart\CurveDataTemplate.cs" />
     <Compile Include="Chart\DistributionData.cs" />

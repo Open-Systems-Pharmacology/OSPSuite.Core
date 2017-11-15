@@ -83,7 +83,7 @@ namespace OSPSuite.UI.Views.Charts
 
          new DiagramZoomRectangleService(_chartControl, zoomAction);
 
-         SetFontAndSizeSettings(ChartFontAndSizeSettings.Default);
+      //   SetFontAndSizeSettings(ChartFontAndSizeSettings.Default);
 
          _chartControl.Series.Remove(s1);
          _chartControl.CrosshairEnabled = DefaultBoolean.False;

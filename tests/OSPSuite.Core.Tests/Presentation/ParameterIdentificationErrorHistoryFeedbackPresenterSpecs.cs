@@ -35,6 +35,15 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_creating_a_parameter_identifcation_history_feedback_presenter: concern_for_ParameterIdentificationErrorHistoryFeedbackPresenter
+   {
+      [Observation]
+      public void should_initialize_the_chart_presenter_to_use_specific_display_settings_for_feedback()
+      {
+         A.CallTo(() => _chartDisplayPresenter.Edit(A<CurveChart>._, A<ChartFontAndSizeSettings>.That.Matches(x=>x.Fonts.TitleSize == Constants.ChartFontOptions.DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK))).MustHaveHappened();
+      }
+   }
+
    public class When_updating_the_error_history_feedback_for_a_given_parameter_identification : concern_for_ParameterIdentificationErrorHistoryFeedbackPresenter
    {
       private ParameterIdentification _parameterIdentification;
