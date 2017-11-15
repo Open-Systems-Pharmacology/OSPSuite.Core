@@ -12,8 +12,6 @@ namespace OSPSuite.Core.Chart
 {
    public class ChartFontAndSizeSettings : Notifier, IValidatable, IUpdatable
    {
-      public static readonly ChartFontAndSizeSettings Default = new ChartFontAndSizeSettings();
-
       private int? _chartWidth;
       private int? _chartHeight;
       private ChartFonts _fonts;

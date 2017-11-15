@@ -34,9 +34,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          AddSubPresenters(_chartDisplayPresenter);
          Chart = new CurveChart().WithAxes();
          Chart.Title = Captions.ParameterIdentification.ErrorHistory;
-         Chart.PreviewSettings = true;
-         Chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK;
-         _chartDisplayPresenter.Edit(Chart);
+         _chartDisplayPresenter.Edit(Chart, new ChartFontAndSizeSettings().ForParameterIdentificationFeedback());
       }
 
       public void EditParameterIdentification(ParameterIdentification parameterIdentification)
@@ -47,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void initializeChart()
       {
-         AddCurvesFor(_errorRepository,  (col, curve) =>
+         AddCurvesFor(_errorRepository, (col, curve) =>
          {
             _errorColumn = col;
             curve.Color = Colors.ErrorColor;
@@ -60,9 +58,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
       }
 
-      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action=null)
+      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action = null)
       {
-         Chart.AddCurvesFor(dataRepository, x => x.Name, _dimensionFactory,  action);
+         Chart.AddCurvesFor(dataRepository, x => x.Name, _dimensionFactory, action);
       }
 
       public void ClearReferences()

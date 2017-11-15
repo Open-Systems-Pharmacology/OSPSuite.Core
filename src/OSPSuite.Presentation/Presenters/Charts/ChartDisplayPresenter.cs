@@ -165,6 +165,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       void Edit(CurveChart chart);
 
+      /// <summary>
+      /// Edit the <paramref name="chart"/>using the <paramref name="displayChartFontAndSizeSettings"/>to display the chart in the view
+      /// </summary>
+      /// <param name="chart">Chart to edit</param>
+      /// <param name="displayChartFontAndSizeSettings">Default font and size use to display the chart. This is not what will be used to export the chart</param>
+      void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings);
+
       void Clear();
    }
 
@@ -180,6 +187,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
       private bool _isLLOQVisible;
+      private ChartFontAndSizeSettings _displayChartFontAndSizeSettings;
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
@@ -205,6 +213,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
+         _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
          ExportToPDF = () => throw new OSPSuiteException(Error.NotImplemented);
       }
 
@@ -212,7 +221,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void Edit(CurveChart chart)
       {
+         Edit(chart, _displayChartFontAndSizeSettings);
+      }
+
+      public virtual void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings)
+      {
          Clear();
+         _displayChartFontAndSizeSettings = displayChartFontAndSizeSettings;
          Chart = chart;
          updateChart();
       }
@@ -539,7 +554,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (Chart.PreviewSettings)
             setDisplay(areChartWidthAndHeightDefined ? DockStyle.None : DockStyle.Fill, Chart.FontAndSize, showingPreview: true);
          else
-            setDisplay(DockStyle.Fill, ChartFontAndSizeSettings.Default, showingPreview: false);
+            setDisplay(DockStyle.Fill, _displayChartFontAndSizeSettings, showingPreview: false);
       }
 
       private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool showingPreview)
