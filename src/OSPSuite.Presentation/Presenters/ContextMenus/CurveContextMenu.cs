@@ -29,7 +29,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(CurveViewItem curveViewItem)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditCurveUICommand, CurveViewItem>(curveViewItem);
+         yield return CreateMenuButton.WithCaption(Captions.Edit)
+            .WithIcon(ApplicationIcons.Edit)
+            .WithCommandFor<EditCurveUICommand, CurveViewItem>(curveViewItem);
       }
    }
 

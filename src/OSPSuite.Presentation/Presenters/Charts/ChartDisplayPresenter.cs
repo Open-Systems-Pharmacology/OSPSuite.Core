@@ -23,7 +23,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
    /// <summary>
    ///    Presenter of ChartDisplay component, which displays a IChart.
    /// </summary>
-   public interface IChartDisplayPresenter : IPresenter<IChartDisplayView>,
+   public interface IChartDisplayPresenter : 
+      IPresenter<IChartDisplayView>,
+      ICanCopyToClipboard,
       IPresenterWithContextMenu<IViewItem>,
       IListener<ChartUpdatedEvent>,
       IListener<ChartPropertiesChangedEvent>
@@ -80,11 +82,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Resets the zoom of the chart to 0 (no zoom)
       /// </summary>
       void ResetZoom();
-
-      /// <summary>
-      ///    Copies the chart to the clipboard as an image
-      /// </summary>
-      void CopyToClipboard();
 
       /// <summary>
       ///    Returns the curve with the same id as <paramref name="seriesId" />

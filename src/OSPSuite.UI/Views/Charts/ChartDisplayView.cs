@@ -83,8 +83,6 @@ namespace OSPSuite.UI.Views.Charts
 
          new DiagramZoomRectangleService(_chartControl, zoomAction);
 
-      //   SetFontAndSizeSettings(ChartFontAndSizeSettings.Default);
-
          _chartControl.Series.Remove(s1);
          _chartControl.CrosshairEnabled = DefaultBoolean.False;
          _chartControl.ObjectHotTracked += (o, e) => OnEvent(() => onObjectHotTracked(e));
@@ -570,7 +568,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void ShowWatermark(string watermark)
       {
-         _chartControl.AddWatermark(_presenter.Chart, watermark);
+         _chartControl.AddWatermark( watermark, _presenter.Chart);
       }
 
       public bool ShowOriginText

@@ -6,6 +6,7 @@ using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using OSPSuite.Assets;
+using OSPSuite.Core.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 
@@ -21,7 +22,6 @@ namespace OSPSuite.UI.Controls
       private readonly ClipboardTask _clipboardTask = new ClipboardTask();
       private readonly BarManager _barManager;
       public PopupMenu PopupMenu { get; }
-
 
       public UxChartControl() : this(true)
       {
@@ -44,7 +44,6 @@ namespace OSPSuite.UI.Controls
             initializePopup();
       }
 
-
       private ChartTitle createTitle(int fontSize, StringAlignment alignment, ChartTitleDockStyle dockStyle)
       {
          return new ChartTitle {Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true};
@@ -64,6 +63,11 @@ namespace OSPSuite.UI.Controls
          return link;
       }
 
+      public BarItemLink AddCopyToClipboardPopupMenu(ICanCopyToClipboard canCopyToClipboard, bool beginGroup = false)
+      {
+         return AddPopupMenu(Captions.CopyToClipboard, canCopyToClipboard.CopyToClipboard, ApplicationIcons.Copy, beginGroup);
+      }
+
       public virtual string Title
       {
          get => _title.Text;
@@ -75,8 +79,6 @@ namespace OSPSuite.UI.Controls
          get => _description.Text;
          set => _description.Text = value;
       }
-
-     
 
       public virtual void CopyChartToClipboard(ChartControl chartControl)
       {
@@ -93,7 +95,6 @@ namespace OSPSuite.UI.Controls
       {
          _barManager.SetPopupContextMenu(this, PopupMenu);
       }
-
 
       public DiagramCoordinates DiagramCoordinatesAt(HotTrackEventArgs e)
       {

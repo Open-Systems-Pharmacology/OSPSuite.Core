@@ -28,7 +28,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(AxisViewItem axisViewItem)
       {
-         yield return CreateMenuButton.WithCaption(Captions.Edit).WithCommandFor<EditAxisUICommand, AxisViewItem>(axisViewItem);
+         yield return CreateMenuButton.WithCaption(Captions.Edit)
+            .WithIcon(ApplicationIcons.Edit)
+            .WithCommandFor<EditAxisUICommand, AxisViewItem>(axisViewItem);
       }
    }
 

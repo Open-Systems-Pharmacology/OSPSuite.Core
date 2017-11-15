@@ -3,6 +3,7 @@ using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart.SensitivityAnalyses;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
@@ -21,9 +22,11 @@ namespace OSPSuite.Presentation
       protected PKParameterSensitivity _pkParameterSensitivity;
       protected PKParameterSensitivity _pkParameterSensitivity2;
       protected PKParameterSensitivity _pkParameterSensitivity3;
+      protected IApplicationSettings _applicationSettings;
 
       protected override void Context()
       {
+         _applicationSettings= A.Fake<IApplicationSettings>();
          _sensitivityAnalysis = new SensitivityAnalysis();
          _sensitivityAnalysisPKParameterAnalysis = new SensitivityAnalysisPKParameterAnalysis();
          _sensitivityAnalysis.Results = new SensitivityAnalysisRunResult();
@@ -57,7 +60,7 @@ namespace OSPSuite.Presentation
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
 
          var pkParameterRepository = A.Fake<IPKParameterRepository>();
-         sut = new SensitivityAnalysisPKParameterAnalysisPresenter(_view, _presentationSettingsTask, pkParameterRepository);
+         sut = new SensitivityAnalysisPKParameterAnalysisPresenter(_view, _presentationSettingsTask, pkParameterRepository, _applicationSettings);
       }
    }
 
@@ -96,6 +99,26 @@ namespace OSPSuite.Presentation
       public void should_bind_the_view_with_the_presenter()
       {
          A.CallTo(() => _view.BindTo(sut)).MustHaveHappened();
+      }
+   }
+
+   public class When_copying_the_pk_parameter_sensitivity_analaysis_chart_to_clipboard : concern_for_SensitivityAnalysisPKParameterAnalysisPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _applicationSettings.WatermarkTextToUse).Returns("HELLO");
+      }
+
+      protected override void Because()
+      {
+         sut.CopyToClipboard();
+      }
+
+      [Observation]
+      public void should_use_the_watermark_defined_in_the_application_settings()
+      {
+         A.CallTo(() => _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse)).MustHaveHappened();   
       }
    }
 }

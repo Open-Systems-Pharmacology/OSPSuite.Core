@@ -203,6 +203,7 @@
     <Compile Include="Services\CurveChartExportTask.cs" />
     <Compile Include="Services\CurveNamer.cs" />
     <Compile Include="Services\DataRepositoryNamer.cs" />
+    <Compile Include="Services\ICanCopyToClipboard.cs" />
     <Compile Include="Services\IDialogCreator.cs" />
     <Compile Include="Services\IReportingTask.cs" />
     <Compile Include="Services\IReportTask.cs" />
