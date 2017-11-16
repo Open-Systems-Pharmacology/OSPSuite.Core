@@ -40,6 +40,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          {
             UpdateTemplateFromChart();
             updateSelectedRunResults(value);
+            UpdateChartFromTemplate();
          }
       }
 

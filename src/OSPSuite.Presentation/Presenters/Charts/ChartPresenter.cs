@@ -134,7 +134,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
             Chart,
             ChartEditorPresenter.AllDataColumns,
             curveChartTemplate,
-            NameForColumn, warnIfNumberOfCurvesAboveThreshold);
+            NameForColumn, 
+            warnIfNumberOfCurvesAboveThreshold);
       }
 
       protected virtual void ChartChanged()
