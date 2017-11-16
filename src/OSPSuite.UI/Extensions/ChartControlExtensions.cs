@@ -84,6 +84,14 @@ namespace OSPSuite.UI.Extensions
 
       public static void CopyToClipboard(this UxChartControl chartControl, string watermark)
       {
+         if (string.IsNullOrEmpty(watermark))
+         {
+            //Bug in devexpress that does not keep the color in bar charts
+            chartControl.CopyChartToClipboard(chartControl);
+            return;
+         }
+
+         //We need to use watermak in the chart. Create a clone
          using (var cloneOfChartControl = (ChartControl) chartControl.Clone())
          {
             copyFontAndSizeSettings(chartControl, cloneOfChartControl);

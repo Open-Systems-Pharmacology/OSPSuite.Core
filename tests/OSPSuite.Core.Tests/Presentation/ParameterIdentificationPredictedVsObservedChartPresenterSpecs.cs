@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
@@ -41,7 +43,7 @@ namespace OSPSuite.Presentation
       protected DataRepository _observationData;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetreiver;
-      private ChartPresenterContext _chartPresenterContext;
+      protected ChartPresenterContext _chartPresenterContext;
       protected DataRepository _simulationData;
 
       protected override void Context()
@@ -166,6 +168,40 @@ namespace OSPSuite.Presentation
       public void should_call_the_chart_service_to_create_a_curve_for_each_simulation_output()
       {
          A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._, _noDimensionColumnForSimulation, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_updating_the_selected_output_used_to_display_predicted_vs_observed_data: concern_for_ParameterIdentificationPredictedVsObservedChartPresenter
+   {
+      private CurveChartTemplate _template;
+
+      protected override void Context()
+      {
+         base.Context();
+         _template = new CurveChartTemplate();
+         sut.InitializeAnalysis(_predictedVsObservedChart, _parameterIdentification);
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.TemplateFrom(sut.Chart, false)).Returns(_template);
+      }
+
+      protected override void Because()
+      {
+         sut.SelectedRunResults = _parameterIdentification.Results.First();
+      }
+
+      [Observation]
+      public void should_save_the_current_chart_to_template()
+      {
+         _template.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_reload_the_chart_from_template()
+      {
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(sut.Chart, A<IEnumerable<DataColumn>>._, 
+            _template, 
+            A<Func<DataColumn, string>>._,
+            false,
+            true)).MustHaveHappened();
       }
    }
 }
