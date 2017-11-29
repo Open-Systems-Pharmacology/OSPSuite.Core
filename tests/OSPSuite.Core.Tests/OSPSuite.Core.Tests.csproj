@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite</RootNamespace>
     <AssemblyName>OSPSuite.Core.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -109,8 +109,8 @@
     <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.1\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="SX, Version=2.6.5.7, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.5.7\lib\net45\SX.dll</HintPath>
@@ -554,8 +554,6 @@
     <Compile Include="Infrastructure\HistoryItemMetaDataRepositorySpecs.cs" />
     <Compile Include="Infrastructure\HistoryManagerPersistorSpecs.cs" />
     <Compile Include="Infrastructure\JournalPageIdsFromSearchQuerySpecs.cs" />
-    <Compile Include="Infrastructure\Log4NetLogFactorySpecs.cs" />
-    <Compile Include="Infrastructure\Log4NetLoggerSpecs.cs" />
     <Compile Include="Infrastructure\NextAvailableWorkingJournalIndexQuerySpecs.cs" />
     <Compile Include="Infrastructure\SessionManagerSpecs.cs" />
     <Compile Include="Infrastructure\SharpLibCompressionSpecs.cs" />

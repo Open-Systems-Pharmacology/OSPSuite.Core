@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite.UI</RootNamespace>
     <AssemblyName>OSPSuite.UI.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,8 +129,8 @@
     <Reference Include="OSPSuite.BDDHelper">
       <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.0.1\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.1\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
