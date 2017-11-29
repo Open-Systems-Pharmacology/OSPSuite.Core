@@ -33,11 +33,11 @@ namespace OSPSuite.UI.Views.Journal
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.tbSearch = new UxMRUEdit();
-         this.chkCaseSensitive = new DevExpress.XtraEditors.CheckEdit();
+         this.chkCaseSensitive = new OSPSuite.UI.Controls.UxCheckEdit();
          this.btnClear = new DevExpress.XtraEditors.SimpleButton();
          this.btnFind = new DevExpress.XtraEditors.SimpleButton();
-         this.chkMatchWholeWord = new DevExpress.XtraEditors.CheckEdit();
-         this.chkMatchAny = new DevExpress.XtraEditors.CheckEdit();
+         this.chkMatchWholeWord = new OSPSuite.UI.Controls.UxCheckEdit();
+         this.chkMatchAny = new OSPSuite.UI.Controls.UxCheckEdit();
          this.layoutGroupSearch = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutGroupOptions = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemMatchAny = new DevExpress.XtraLayout.LayoutControlItem();

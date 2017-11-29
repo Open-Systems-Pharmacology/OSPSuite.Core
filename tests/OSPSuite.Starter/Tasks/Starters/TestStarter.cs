@@ -1,29 +1,34 @@
 using DevExpress.XtraEditors;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {
    public interface ITestStarter
    {
-      void Start();
+      void Start(int width = 0, int height = 0);
    }
 
-   public abstract class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
+   public class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
    {
-      protected readonly TPresenter _presenter;
+      protected TPresenter _presenter;
 
-      protected TestStarter(TPresenter presenter)
+      public void Start(int width=0, int height=0)
       {
-         _presenter = presenter;
-      }
-
-      public virtual void Start()
-      {
-         var form = new XtraForm();
-
+         _presenter = IoC.Resolve<TPresenter>();
+         XtraForm form;
+         if (height == 0 || width == 0)
+            form = new XtraForm();
+         else
+         {
+            form = new XtraForm
+            {
+               Height = height,
+               Width = width
+            };
+         }
          form.FillWith(_presenter.BaseView);
-
          form.Show();
       }
    }

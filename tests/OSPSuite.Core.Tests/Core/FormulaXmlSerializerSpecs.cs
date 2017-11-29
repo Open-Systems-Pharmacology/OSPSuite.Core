@@ -89,8 +89,8 @@ namespace OSPSuite.Core
          TableFormula x1 = CreateObject<TableFormula>().WithName("Fortunato").WithDimension(DimensionLength);
          x1.XName = "Great X name";
          x1.YName = "Great Y name";
-         x1.XDimension = DimensionConcentration;
-         x1.XDisplayUnit = DimensionConcentration.DefaultUnit;
+         x1.XDimension = DimensionMolarConcentration;
+         x1.XDisplayUnit = DimensionMolarConcentration.DefaultUnit;
          x1.AddPoint(1, 10);
          x1.AddPoint(2, 20);
          x1.AddPoint(new ValuePoint(3, 30) {RestartSolver = true});

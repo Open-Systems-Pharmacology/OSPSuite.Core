@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Chart;
@@ -11,13 +12,16 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public interface IParameterIdentificationResidualHistogramPresenter : IParameterIdentificationSingleRunAnalysisPresenter
+   public interface IParameterIdentificationResidualHistogramPresenter : 
+      IParameterIdentificationSingleRunAnalysisPresenter,
+      ICanCopyToClipboard
    {
    }
 
@@ -26,6 +30,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IPresentationSettingsTask _presentationSettingsTask;
       private readonly IResidualDistibutionDataCreator _residualDistibutionDataCreator;
       private readonly INormalDistributionDataCreator _normalDistributionDataCreator;
+      private readonly IApplicationSettings _applicationSettings;
       private ParameterIdentification _parameterIdentification;
       public ParameterIdentificationResidualHistogram Chart { get; private set; }
       private DefaultPresentationSettings _settings = new DefaultPresentationSettings();
@@ -38,13 +43,19 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public string PresentationKey => PresenterConstants.PresenterKeys.ParameterIdentificationResidualHistogramPresenter;
       public ISimulationAnalysis Analysis => Chart;
 
-      public ParameterIdentificationResidualHistogramPresenter(IParameterIdentificationSingleRunAnalysisView view, IParameterIdentificationResidualHistogramView histogramView, IPresentationSettingsTask presentationSettingsTask,
-         IResidualDistibutionDataCreator residualDistibutionDataCreator, INormalDistributionDataCreator normalDistributionDataCreator) : base(view)
+      public ParameterIdentificationResidualHistogramPresenter(
+         IParameterIdentificationSingleRunAnalysisView view, 
+         IParameterIdentificationResidualHistogramView histogramView, 
+         IPresentationSettingsTask presentationSettingsTask,
+         IResidualDistibutionDataCreator residualDistibutionDataCreator, 
+         INormalDistributionDataCreator normalDistributionDataCreator, 
+         IApplicationSettings applicationSettings) : base(view)
       {
          _presentationSettingsTask = presentationSettingsTask;
          _histogramView = histogramView;
          _residualDistibutionDataCreator = residualDistibutionDataCreator;
          _normalDistributionDataCreator = normalDistributionDataCreator;
+         _applicationSettings = applicationSettings;
          _nameProperty = ReflectionHelper.PropertyFor<ParameterIdentificationResidualHistogram, string>(x => x.Name).Name;
          view.ApplicationIcon = ApplicationIcons.ResidualHistogramAnalysis;
          _distributionSettings = new DistributionSettings
@@ -55,6 +66,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             YAxisTitle = Captions.ParameterIdentification.ResidualCount
          };
          _view.SetAnalysisView(histogramView);
+         _histogramView.CopyToClipboardManager = this;
          view.HelpId = HelpId.Tool_PI_Analysis_HistogramResiduals;
       }
 
@@ -88,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public ParameterIdentificationRunResult SelectedRunResults
       {
-         get { return _selectedRunResults; }
+         get => _selectedRunResults;
          set
          {
             _selectedRunResults = value;
@@ -133,6 +145,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void Clear()
       {
          RemoveChartEventHandlers();
-      }    
+      }
+
+      public void CopyToClipboard()
+      {
+         _histogramView.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
+      }
    }
 }

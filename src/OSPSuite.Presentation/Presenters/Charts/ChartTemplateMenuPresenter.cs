@@ -22,13 +22,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <param name="retrieveActiveCurveChartFunc">retrieves the current CurveChart</param>
       /// <param name="applyTemplateAction">How to apply the template to the active curve chart</param>
       /// <returns>The menu button that should be added to the chart presenter</returns>
-      IMenuBarSubMenu CreateChartTemplateButton(IWithChartTemplates withChartTemplates, Func<ICurveChart> retrieveActiveCurveChartFunc, Action<CurveChartTemplate> applyTemplateAction);
+      IMenuBarSubMenu CreateChartTemplateButton(IWithChartTemplates withChartTemplates, Func<CurveChart> retrieveActiveCurveChartFunc, Action<CurveChartTemplate> applyTemplateAction);
    }
 
    public class ChartTemplateMenuPresenter : IChartTemplateMenuPresenter
    {
       private readonly IChartTemplatingTask _chartTemplatingTask;
-      private Func<ICurveChart> _curveChart;
+      private Func<CurveChart> _curveChart;
       private Action<CurveChartTemplate> _loadMenuAction;
       private readonly List<ICommand> _commands;
       private IWithChartTemplates _withChartTemplates;
@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             .WithActionCommand(() => _loadMenuAction(chartTemplate));
       }
 
-      public IMenuBarSubMenu CreateChartTemplateButton(IWithChartTemplates withChartTemplates, Func<ICurveChart> retrieveActiveCurveChartFunc,
+      public IMenuBarSubMenu CreateChartTemplateButton(IWithChartTemplates withChartTemplates, Func<CurveChart> retrieveActiveCurveChartFunc,
          Action<CurveChartTemplate> applyTemplateAction)
       {
          _curveChart = retrieveActiveCurveChartFunc;

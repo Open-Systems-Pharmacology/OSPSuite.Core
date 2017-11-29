@@ -25,21 +25,20 @@ namespace OSPSuite.Core.Converter.v5_5
 
       public Converter541To551(IDimensionFactory dimensionFactory)
       {
-         _amountDimension = dimensionFactory.GetDimension(Constants.Dimension.AMOUNT);
+         _amountDimension = dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
       }
 
-      public bool IsSatisfiedBy(int version)
-      {
-         return PKMLVersion.V5_4_1.Equals(version);
-      }
+      public bool IsSatisfiedBy(int version) => version == PKMLVersion.V5_4_1;
 
-      public int Convert(object objectToUpdate)
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
          this.Visit(objectToUpdate);
-         return PKMLVersion.V5_5_1;
+
+         //too many conversions going on in this converted. Assume conversion
+         return (PKMLVersion.V5_5_1, true);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
          element.DescendantsAndSelfNamed("ParameterStartValues", "ParameterStartValuesBuildingBlock").Each(ConvertParameterStartValuesElement);
          element.DescendantsAndSelfNamed("MoleculeStartValues", "MoleculeStartValuesBuildingBlock").Each(ConvertMoleculeStartValueElement);
@@ -47,7 +46,8 @@ namespace OSPSuite.Core.Converter.v5_5
          //"ModelCoreSimulation" required for older project
          element.DescendantsAndSelfNamed("Simulation", "ModelCoreSimulation").Each(ConvertSimuationElement);
 
-         return PKMLVersion.V5_5_1;
+         //too many conversions going on in this converted. Assume conversion
+         return (PKMLVersion.V5_5_1, true);
       }
 
       public void ConvertSimuationElement(XElement element)

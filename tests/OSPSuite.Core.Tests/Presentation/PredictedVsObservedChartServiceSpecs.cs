@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
@@ -14,6 +13,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation
 {
@@ -60,8 +60,8 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          _concentrationObservationColumn.Values = Enumerable.Repeat(0f, _concentrationObservationColumn.Values.Count).ToArray();
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
-         _predictedVsObservedChart.Axes[AxisTypes.Y].Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         _predictedVsObservedChart.AxisBy(AxisTypes.Y).Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
       }
 
       [Observation]
@@ -69,7 +69,6 @@ namespace OSPSuite.Presentation
       {
          sut.AddIdentityCurves(_observedConcentrationData.ObservationColumns(), _predictedVsObservedChart).ShouldBeEmpty();
       }
-
    }
 
    public class When_observed_data_has_multiple_dimensions : concern_for_PredictedVsObservedChartService
@@ -78,19 +77,19 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          _simulationColumn.Dimension = _fractionObservationColumn.Dimension;
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _fractionObservationColumn });
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_fractionObservationColumn});
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
       }
 
       protected override void Because()
       {
-         sut.AddIdentityCurves(new[] { _concentrationObservationColumn, _fractionObservationColumn }, _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] {_concentrationObservationColumn, _fractionObservationColumn}, _predictedVsObservedChart);
       }
 
       [Observation]
       public void the_dimension_selected_to_plot_identity_curve_should_be_fraction()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(DomainHelperForSpecs.NoDimension());
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(DomainHelperForSpecs.NoDimension());
       }
    }
 
@@ -102,10 +101,10 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _concentrationObservationColumn });
-         _baseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
-         _allObservations = new List<DataColumn> { new DataColumn("name", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) };
-         _allObservations.First().Values = new[] { 1f };
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
+         _baseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
+         _allObservations = new List<DataColumn> {new DataColumn("name", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)};
+         _allObservations.First().Values = new[] {1f};
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
       }
 
@@ -136,9 +135,9 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         _concentrationBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
-         _fractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
-         _secondFractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
+         _concentrationBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
+         _fractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
+         _secondFractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
 
          var concentrationColumn = new DataColumn("name", _concentrationDimensionForSpecs, _concentrationBaseGrid) {Values = new[] {1f}};
          _concentrationRepository = new DataRepository {concentrationColumn};
@@ -149,8 +148,8 @@ namespace OSPSuite.Presentation
          var secondFractionColumn = new DataColumn("name", _fractionDimensionForSpecs, _secondFractionBaseGrid) {Values = new[] {1f}};
          _secondFractionRepository = new DataRepository {secondFractionColumn};
 
-         _allObservations = new List<DataColumn> { concentrationColumn, fractionColumn, secondFractionColumn };
-         
+         _allObservations = new List<DataColumn> {concentrationColumn, fractionColumn, secondFractionColumn};
+
          sut.AddCurvesFor(_allObservations, concentrationColumn, _predictedVsObservedChart);
       }
 
@@ -163,38 +162,111 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_x_axis_should_be_set_to_the_correct_dimension()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.DisplayName.ShouldBeEqualTo(_fractionDimensionForSpecs.DisplayName);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.DisplayName.ShouldBeEqualTo(_fractionDimensionForSpecs.DisplayName);
       }
 
       [Observation]
       public void the_chart_should_contain_identity_lines_for_each_dimension()
       {
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.XDimension.DisplayName, _fractionDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.XDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _fractionDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
       }
    }
 
-   public class When_setting_the_x_dimension_of_the_chart : concern_for_PredictedVsObservedChartService
+   public abstract class updating_x_axis_dimension : concern_for_PredictedVsObservedChartService
+   {
+      protected DataColumn _secondColumnForSimulation;
+      protected DataColumn _secondColumnForObservations;
+
+      protected override void Context()
+      {
+         base.Context();
+         _secondColumnForObservations = DomainHelperForSpecs.ConcentrationColumnForObservedData(_observedConcentrationData.BaseGrid);
+         _secondColumnForObservations.Dimension = SecondColumnDimension();
+         _observedConcentrationData.Add(_secondColumnForObservations);
+         _secondColumnForSimulation = DomainHelperForSpecs.ConcentrationColumnForSimulation("Simulation", _simulationColumn.BaseGrid);
+         _secondColumnForSimulation.Dimension = SecondColumnDimension();
+         _simulationData.Add(_secondColumnForSimulation);
+
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
+      }
+
+      protected abstract IDimension SecondColumnDimension();
+
+      protected override void Because()
+      {
+         sut.SetXAxisDimension(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
+      }
+   }
+
+   public class When_setting_the_x_dimension_of_the_chart_with_preferred_and_non_preferred_dimensions : updating_x_axis_dimension
+   {
+      protected override IDimension SecondColumnDimension()
+      {
+         return DomainHelperForSpecs.LengthDimensionForSpecs();
+      }
+
+      [Observation]
+      public void only_preferred_axes_are_visible()
+      {
+         _predictedVsObservedChart.Axes.Count.ShouldBeEqualTo(3);
+         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.ConcentrationDimensionForSpecs()).ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.ConcentrationDimensionForSpecs()).ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_setting_the_x_dimension_of_the_chart_with_no_preferred_dimensions : updating_x_axis_dimension
    {
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _concentrationObservationColumn });
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
-         sut.AddIdentityCurves(new[] { _concentrationObservationColumn }, _predictedVsObservedChart);
+         _observedConcentrationData.FirstDataColumn().Dimension = SecondColumnDimension();
+         _simulationData.FirstDataColumn().Dimension = SecondColumnDimension();
       }
 
-      protected override void Because()
+      protected override IDimension SecondColumnDimension()
       {
-         sut.SetXAxisDimension(new[] { _concentrationObservationColumn }, _predictedVsObservedChart);
+         return DomainHelperForSpecs.LengthDimensionForSpecs();
+      }
+
+      [Observation]
+      public void only_non_preferred_are_visible()
+      {
+         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.LengthDimensionForSpecs()).ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.LengthDimensionForSpecs()).ShouldBeEqualTo(1);
       }
 
       [Observation]
       public void the_x_axis_of_the_chart_should_be_updated()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].Dimension);
-         _predictedVsObservedChart.Axes[AxisTypes.X].Scaling.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].Scaling);
-         _predictedVsObservedChart.Axes[AxisTypes.X].UnitName.ShouldBeEqualTo(_predictedVsObservedChart.Axes[AxisTypes.Y].UnitName);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y2).Dimension);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Scaling.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y2).Scaling);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).UnitName.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y2).UnitName);
+      }
+   }
+
+   public class When_setting_the_x_dimension_of_the_chart_with_only_preferred_dimensions : updating_x_axis_dimension
+   {
+      protected override IDimension SecondColumnDimension()
+      {
+         return DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+      }
+
+      [Observation]
+      public void all_axes_are_visible()
+      {
+         _predictedVsObservedChart.Axes.Count.ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Axes.Each(axis => axis.Visible.ShouldBeTrue());
+      }
+
+      [Observation]
+      public void the_x_axis_of_the_chart_should_be_updated()
+      {
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).Dimension);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Scaling.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).Scaling);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).UnitName.ShouldBeEqualTo(_predictedVsObservedChart.AxisBy(AxisTypes.Y).UnitName);
       }
    }
 
@@ -203,13 +275,13 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _concentrationObservationColumn });
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
       }
 
       protected override void Because()
       {
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
-         sut.AddIdentityCurves(new[] { _concentrationObservationColumn }, _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] {_concentrationObservationColumn}, _predictedVsObservedChart);
       }
 
       [Observation]
@@ -223,13 +295,13 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_curves_should_have_the_same_x_and_y_dimension()
       {
-         _predictedVsObservedChart.Curves.All(curve => Equals(curve.XDimension, curve.YDimension)).ShouldBeTrue();
+         _predictedVsObservedChart.Curves.All(curve => Equals(curve.xDimension, curve.yDimension)).ShouldBeTrue();
       }
 
       [Observation]
       public void the_curve_x_axis_should_have_the_merged_dimension()
       {
-         _predictedVsObservedChart.Axes[AxisTypes.X].Dimension.ShouldBeEqualTo(_concentrationObservationColumn.Dimension);
+         _predictedVsObservedChart.AxisBy(AxisTypes.X).Dimension.ShouldBeEqualTo(_concentrationObservationColumn.Dimension);
       }
 
       [Observation]

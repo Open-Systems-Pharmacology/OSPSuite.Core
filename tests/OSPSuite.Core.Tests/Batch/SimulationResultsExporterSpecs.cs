@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -9,9 +10,11 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Utility;
+using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Batch
 {
@@ -56,11 +59,21 @@ namespace OSPSuite.Batch
          A.CallTo(_dataRepositoryTask).WithReturnType<IEnumerable<DataTable>>().Returns(_dataTables);
       }
 
+      protected override void Because()
+      {
+         sut.ExportToCsvAsync(_simulation, _results, _fileName).Wait();
+      }
+
       [Observation]
       public void should_create_a_data_table_with_all_results_from_the_simulation_and_export_it_to_the_file()
       {
-         sut.ExportToCsvAsync(_simulation, _results, _fileName).Wait();
          FileHelper.FileExists(_fileName).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_export_the_value_unformatted_and_in_core_unit()
+      {
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<Func<DataColumn, string>>._, A<Func<DataColumn, IDimension>>._, false, false)).MustHaveHappened();
       }
    }
 

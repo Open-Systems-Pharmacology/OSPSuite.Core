@@ -3,7 +3,7 @@ using OSPSuite.Starter.Presenters;
 
 namespace OSPSuite.Starter.Views
 {
-   public interface IShellView : IShell, IView<IShellPresenter>
+   public interface IShellView : IView<IShellPresenter>, IMainView
    {
       void Show();
    }

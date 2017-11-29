@@ -1,7 +1,7 @@
 using System.Drawing;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
@@ -23,8 +23,8 @@ namespace OSPSuite.Core.Chart
 
       public ChartSettings()
       {
-         _sideMarginsEnabled = true;
-         _legendPosition = LegendPositions.RightInside;
+         SideMarginsEnabled = true;
+         LegendPosition = LegendPositions.RightInside;
          BackColor = Color.Transparent;
          DiagramBackColor = Color.White;
       }
@@ -46,42 +46,26 @@ namespace OSPSuite.Core.Chart
 
       public virtual bool SideMarginsEnabled
       {
-         get { return _sideMarginsEnabled; }
-         set
-         {
-            _sideMarginsEnabled = value;
-            OnPropertyChanged(() => SideMarginsEnabled);
-         }
+         get => _sideMarginsEnabled;
+         set => SetProperty(ref _sideMarginsEnabled, value);
       }
 
       public virtual LegendPositions LegendPosition
       {
-         get { return _legendPosition; }
-         set
-         {
-            _legendPosition = value;
-            OnPropertyChanged(() => LegendPosition);
-         }
+         get => _legendPosition;
+         set => SetProperty(ref _legendPosition, value);
       }
 
       public virtual Color BackColor
       {
-         get { return _backColor; }
-         set
-         {
-            _backColor = value;
-            OnPropertyChanged(() => BackColor);
-         }
+         get => _backColor;
+         set => SetProperty(ref _backColor, value);
       }
 
       public virtual Color DiagramBackColor
       {
-         get { return _diagramBackColor; }
-         set
-         {
-            _diagramBackColor = value;
-            OnPropertyChanged(() => DiagramBackColor);
-         }
+         get => _diagramBackColor;
+         set => SetProperty(ref _diagramBackColor, value);
       }
    }
 }

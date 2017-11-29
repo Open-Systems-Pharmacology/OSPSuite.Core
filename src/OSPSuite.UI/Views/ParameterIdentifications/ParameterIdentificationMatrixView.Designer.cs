@@ -31,10 +31,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.matrixGridControl = new DevExpress.XtraGrid.GridControl();
+         this.matrixGridControl = new UxGridControl();
          this.matrixGridView = new UxGridView();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.legendGridControl = new DevExpress.XtraGrid.GridControl();
+         this.legendGridControl = new UxGridControl();
          this.legendGridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemMatrixGrid = new DevExpress.XtraLayout.LayoutControlItem();
@@ -159,11 +159,11 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       #endregion
 
-      private GridControl matrixGridControl;
+      private UxGridControl matrixGridControl;
       private UxGridView matrixGridView;
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private GridControl legendGridControl;
+      private UxGridControl legendGridControl;
       private UxGridView legendGridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemMatrixGrid;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemLegendGrid;

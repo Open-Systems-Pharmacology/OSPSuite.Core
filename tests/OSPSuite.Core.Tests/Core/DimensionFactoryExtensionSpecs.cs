@@ -25,7 +25,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _result = _factory.GetAllDimensionsForEditors(_dimension);
+         _result = _factory.AllDimensionsForEditors(_dimension);
       }
 
       [Observation]

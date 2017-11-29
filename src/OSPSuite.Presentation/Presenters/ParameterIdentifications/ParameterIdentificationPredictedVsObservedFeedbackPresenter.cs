@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
@@ -11,12 +10,12 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public interface IParameterIdentificationPredictedVsObservedFeedbackPresenter : IParameterIdentificationChartFeedbackPresenter
    {
-
    }
 
    public class ParameterIdentificationPredictedVsObservedFeedbackPresenter : ParameterIdentificationChartFeedbackPresenter<ParameterIdentificationPredictedVsObservedChart>, IParameterIdentificationPredictedVsObservedFeedbackPresenter
@@ -25,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public ParameterIdentificationPredictedVsObservedFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory,
          IDisplayUnitRetriever displayUnitRetriever, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever, new ParameterIdentificationPredictedVsObservedChart { Title = Captions.ParameterIdentification.PredictedVsObservedAnalysis })
+         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever, new ParameterIdentificationPredictedVsObservedChart {Title = Captions.ParameterIdentification.PredictedVsObservedAnalysis})
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
       }
@@ -37,11 +36,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          addIdentityCurve();
 
          _view.BindToSelecteOutput();
-
-         _chartDisplayPresenter.DataSource = _chart;
       }
 
-      protected override void AddCurvesFor(DataRepository repository, Action<DataColumn, ICurve> action)
+      protected override void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action)
       {
          plotAllCalculations(repository, (column, curve) =>
          {
@@ -50,25 +47,24 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          });
       }
 
-      private void plotAllCalculations(DataRepository dataRepository, Action<DataColumn, ICurve> action)
+      private void plotAllCalculations(DataRepository dataRepository, Action<DataColumn, Curve> action)
       {
          var calculationColumns = dataRepository.AllButBaseGrid();
+         var allObservationsForOutput = _parameterIdentification.AllObservationColumnsFor(SelectedOutput.FullOutputPath);
          calculationColumns.Each(calculationColumn =>
          {
-            _predictedVsObservedChartService.AddCurvesFor(_parameterIdentification.AllObservationColumnsFor(SelectedOutput.FullOutputPath),
-               calculationColumn, _chart, action);
+            _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, _chart, action);
          });
       }
 
-      protected override void SelectedOutputChanged()
+      protected override void UpdateChartForSelectedOutput()
       {
          _chart.Clear();
          ConfigureColumnDimension(_bestColumn);
          ConfigureColumnDimension(_currentColumn);
          AddBestAndCurrent();
          addIdentityCurve();
-
-         base.SelectedOutputChanged();
+         UpdateChartAxesScalings();
       }
 
       protected override void UpdateChartAxesScalings()

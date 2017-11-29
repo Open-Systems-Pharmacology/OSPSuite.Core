@@ -64,12 +64,12 @@ namespace OSPSuite.Core.Domain.Services
 
       public ExplicitFormula CreateAmountBaseFormulaFor(IProcess process)
       {
-         return updateFormulaToAmountBase(process.Formula, _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT_PER_TIME));
+         return updateFormulaToAmountBase(process.Formula, _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME));
       }
 
       public ExplicitFormula CreateAmountBaseFormulaFor(IFormula concentrationFormula)
       {
-         return updateFormulaToAmountBase(concentrationFormula, _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT));
+         return updateFormulaToAmountBase(concentrationFormula, _dimensionFactory.Dimension(Constants.Dimension.AMOUNT));
       }
 
       public void UpdateRelativePathForStartValueMolecule(IMoleculeAmount molecule, IFormula moleculeFormulaToUse)

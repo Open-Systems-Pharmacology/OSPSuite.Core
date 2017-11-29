@@ -19,6 +19,7 @@ namespace OSPSuite.UI.Views.Charts
          {
             components.Dispose();
          }
+         _gridViewBinder.Dispose();
          base.Dispose(disposing);
       }
 

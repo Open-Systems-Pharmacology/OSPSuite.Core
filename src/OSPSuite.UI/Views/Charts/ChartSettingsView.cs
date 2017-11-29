@@ -15,13 +15,16 @@ namespace OSPSuite.UI.Views.Charts
    internal partial class ChartSettingsView : BaseUserControl, IChartSettingsView
    {
       private IChartSettingsPresenter _presenter;
-      private ScreenBinder<ChartSettings> _settingsBinder;
-      private ScreenBinder<IWithName> _nameBinder;
-      private ScreenBinder<IChart> _curveChartBinder;
+      private readonly ScreenBinder<ChartSettings> _settingsBinder;
+      private readonly ScreenBinder<IWithName> _nameBinder;
+      private readonly ScreenBinder<IChart> _curveChartBinder;
 
       public ChartSettingsView()
       {
          InitializeComponent();
+         _settingsBinder = new ScreenBinder<ChartSettings> { BindingMode = BindingMode.TwoWay };
+         _nameBinder = new ScreenBinder<IWithName> { BindingMode = BindingMode.TwoWay };
+         _curveChartBinder = new ScreenBinder<IChart> { BindingMode = BindingMode.TwoWay };
       }
 
       public override void InitializeResources()
@@ -41,7 +44,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void BindToSource(IChart chart)
+      public void BindTo(IChart chart)
       {
          bindCommonProperties(chart);
          bindName(chart);
@@ -59,11 +62,11 @@ namespace OSPSuite.UI.Views.Charts
 
       public bool NameVisible
       {
-         get { return nameControlItem.Visible; }
-         set { nameControlItem.Visibility = LayoutVisibilityConvertor.FromBoolean(value); }
+         get => nameControlItem.Visible;
+         set => nameControlItem.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
-      public void BindToSource(CurveChartTemplate chartTemplate)
+      public void BindTo(CurveChartTemplate chartTemplate)
       {
          bindCommonProperties(chartTemplate);
          bindName(chartTemplate);
@@ -88,24 +91,43 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _settingsBinder = new ScreenBinder<ChartSettings> { BindingMode = BindingMode.TwoWay };
-         _nameBinder = new ScreenBinder<IWithName> { BindingMode = BindingMode.TwoWay };
-         _curveChartBinder = new ScreenBinder<IChart> { BindingMode = BindingMode.TwoWay };
+         _nameBinder.Bind(c => c.Name)
+            .To(nameTextBox)
+            .OnValueUpdated += notifyChartSettingsChanged;
 
-         _nameBinder.Bind(c => c.Name).To(nameTextBox);
-         _curveChartBinder.Bind(c => c.Title).To(titleTextBox);
-         _curveChartBinder.Bind(c => c.Description).To(descriptionTextBox);
+         _curveChartBinder.Bind(c => c.Title)
+            .To(titleTextBox)
+            .OnValueUpdated += notifyChartSettingsChanged;
 
-         _settingsBinder.Bind(c => c.SideMarginsEnabled).To(sideMarginsEnabledCheckEdit);
-         _settingsBinder.Bind(c => c.LegendPosition).To(legendPositionComboBoxEdit)
-            .WithValues(EnumHelper.AllValuesFor<LegendPositions>());
+         _curveChartBinder.Bind(c => c.Description)
+            .To(descriptionTextBox)
+            .OnValueUpdated += notifyChartSettingsChanged;
 
-         _settingsBinder.Bind(c => c.BackColor).To(backgroundColorColorEdit);
-         _settingsBinder.Bind(c => c.DiagramBackColor).To(diagramBackgroundColorColorEdit);
+         _settingsBinder.Bind(c => c.SideMarginsEnabled)
+            .To(sideMarginsEnabledCheckEdit)
+            .OnValueUpdated += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.LegendPosition)
+            .To(legendPositionComboBoxEdit)
+            .WithValues(EnumHelper.AllValuesFor<LegendPositions>())
+            .OnValueUpdated += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.BackColor)
+            .To(backgroundColorColorEdit)
+            .OnValueUpdated += notifyChartSettingsChanged;
+
+         _settingsBinder.Bind(c => c.DiagramBackColor)
+            .To(diagramBackgroundColorColorEdit)
+            .OnValueUpdated += notifyChartSettingsChanged;
 
          RegisterValidationFor(_settingsBinder, statusChangedNotify:NotifyViewChanged);
          RegisterValidationFor(_curveChartBinder, statusChangedNotify: NotifyViewChanged);
          RegisterValidationFor(_nameBinder, statusChangedNotify: NotifyViewChanged);
+      }
+
+      private void notifyChartSettingsChanged<T>(object sender, T e)
+      {
+         _presenter.NotifyChartSettingsChanged();
       }
    }
 }

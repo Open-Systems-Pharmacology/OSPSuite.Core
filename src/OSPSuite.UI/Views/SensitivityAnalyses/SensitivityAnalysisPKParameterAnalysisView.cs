@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
@@ -13,12 +10,16 @@ using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.SensitivityAnalyses
 {
@@ -29,10 +30,11 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       private Series _series;
       private XYDiagram xyDiagram => chartControl.Diagram as XYDiagram;
 
-      public SensitivityAnalysisPKParameterAnalysisView()
+      public SensitivityAnalysisPKParameterAnalysisView(IImageListRetriever imageListRetriever)
       {
-         _screenBinder = new ScreenBinder<ISensitivityAnalysisPKParameterAnalysisPresenter>();
          InitializeComponent();
+         _screenBinder = new ScreenBinder<ISensitivityAnalysisPKParameterAnalysisPresenter>();
+         chartControl.Images = imageListRetriever.AllImages16x16;
       }
 
       public override void InitializeBinding()
@@ -128,6 +130,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       public void AttachPresenter(ISensitivityAnalysisPKParameterAnalysisPresenter presenter)
       {
          _presenter = presenter;
+         chartControl.AddCopyToClipboardPopupMenu(presenter);
       }
 
       public void BindTo(SensitivityAnalysisPKParameterAnalysisPresenter sensitivityAnalysisPKParameterAnalysisPresenter)
@@ -199,18 +202,20 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          {
             // -1 so that the lowest sensitivity is yValue = 0
             var yValue = allPKParameterSensitivities.Count - i - 1;
-            var seriesPoint = new SeriesPoint(x.Value, yValue) { ToolTipHint = createPointLabel(x.Value, x.ParameterName) };
+            var seriesPoint = new SeriesPoint(x.Value, yValue) {ToolTipHint = createPointLabel(x.Value, x.ParameterName)};
             points.Add(seriesPoint);
-            xyDiagram.AxisY.CustomLabels.Add(new CustomAxisLabel(x.ParameterName) { AxisValue = yValue });
+            xyDiagram.AxisY.CustomLabels.Add(new CustomAxisLabel(x.ParameterName) {AxisValue = yValue});
          });
 
          return points.ToArray();
       }
 
-      private string createPointLabel(double value, string parameterName)
+      public void CopyToClipboard(string watermark)
       {
-         return $"{parameterName}: {value}";
+         chartControl.CopyToClipboard(watermark);
       }
+
+      private string createPointLabel(double value, string parameterName) => $"{parameterName}: {value}";
 
       protected override int TopicId => HelpId.Tool_SensitivityAnalysis_Ranking;
    }

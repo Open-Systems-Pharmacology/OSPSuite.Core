@@ -33,7 +33,7 @@
          this.lblFormulaComparisonModeDescription = new DevExpress.XtraEditors.LabelControl();
          this.lblRelativeToleranceDescription = new DevExpress.XtraEditors.LabelControl();
          this.cbFormulaComparisonMode = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.chkOnlyComputeModelRelevantProperties = new DevExpress.XtraEditors.CheckEdit();
+         this.chkOnlyComputeModelRelevantProperties = new OSPSuite.UI.Controls.UxCheckEdit();
          this.tbRelativeTolerance = new DevExpress.XtraEditors.TextEdit();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemOnlyComputeModelRelevantProperties = new DevExpress.XtraLayout.LayoutControlItem();
@@ -44,6 +44,8 @@
          this.layoutGroupRelativeTolerance = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemRelativeTolerance = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.chkCompareHiddenEntities = new OSPSuite.UI.Controls.UxCheckEdit();
+         this.layoutItemCompareHiddenEntities = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -59,10 +61,13 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutGroupRelativeTolerance)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemRelativeTolerance)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.chkCompareHiddenEntities.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCompareHiddenEntities)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.chkCompareHiddenEntities);
          this.layoutControl.Controls.Add(this.lblFormulaComparisonModeDescription);
          this.layoutControl.Controls.Add(this.lblRelativeToleranceDescription);
          this.layoutControl.Controls.Add(this.cbFormulaComparisonMode);
@@ -130,7 +135,8 @@
             this.layoutItemOnlyComputeModelRelevantProperties,
             this.emptySpaceItem1,
             this.layoutGroupFormulaComparisonMode,
-            this.layoutGroupRelativeTolerance});
+            this.layoutGroupRelativeTolerance,
+            this.layoutItemCompareHiddenEntities});
          this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "layoutControlGroup";
          this.layoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
@@ -151,9 +157,9 @@
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
          this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 153);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 176);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(285, 39);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(285, 16);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutGroupFormulaComparisonMode
@@ -212,6 +218,24 @@
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
+         // chkCompareHiddenEntities
+         // 
+         this.chkCompareHiddenEntities.Location = new System.Drawing.Point(2, 155);
+         this.chkCompareHiddenEntities.Name = "chkCompareHiddenEntities";
+         this.chkCompareHiddenEntities.Properties.Caption = "chkCompareHiddenEntities";
+         this.chkCompareHiddenEntities.Size = new System.Drawing.Size(281, 19);
+         this.chkCompareHiddenEntities.StyleController = this.layoutControl;
+         this.chkCompareHiddenEntities.TabIndex = 9;
+         // 
+         // layoutItemCompareHiddenEntities
+         // 
+         this.layoutItemCompareHiddenEntities.Control = this.chkCompareHiddenEntities;
+         this.layoutItemCompareHiddenEntities.Location = new System.Drawing.Point(0, 153);
+         this.layoutItemCompareHiddenEntities.Name = "layoutItemCompareHiddenEntities";
+         this.layoutItemCompareHiddenEntities.Size = new System.Drawing.Size(285, 23);
+         this.layoutItemCompareHiddenEntities.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemCompareHiddenEntities.TextVisible = false;
+         // 
          // ComparerSettingsView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,6 +258,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutGroupRelativeTolerance)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemRelativeTolerance)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.chkCompareHiddenEntities.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCompareHiddenEntities)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -255,5 +281,7 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupFormulaComparisonMode;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupRelativeTolerance;
+      private DevExpress.XtraEditors.CheckEdit chkCompareHiddenEntities;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemCompareHiddenEntities;
    }
 }

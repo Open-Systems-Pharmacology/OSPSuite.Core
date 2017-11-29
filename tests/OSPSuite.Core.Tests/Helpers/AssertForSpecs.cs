@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Chart;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
@@ -269,6 +270,13 @@ namespace OSPSuite.Helpers
             AreEqualObjectPath((IObjectPath) x1, (IObjectPath) x2);
             return;
          }
+
+         if (x1.IsAnImplementationOf<Axis>())
+         {
+            AreEqualAxis(x1 as Axis, x2 as Axis);
+            return;
+         }
+
          Assert.Fail("No McAssert.Equal available for Type " + x1.GetType().Name);
       }
 
@@ -311,17 +319,18 @@ namespace OSPSuite.Helpers
 
       public static void AssertAreEqualNullableDouble(double? x1, double? x2)
       {
-         if (AssertBothNotNull(x2, x1))
-         {
-            if (double.IsNaN(x1.Value)) Assert.IsNaN(x2.Value);
-            Assert.AreEqual(x1.Value, x2.Value, 1e-10);
-         }
+         if (!AssertBothNotNull(x1, x2)) return;
+         if (double.IsNaN(x1.Value))
+            Assert.IsNaN(x2.Value);
+
+         Assert.AreEqual(x1.Value, x2.Value, 1e-10);
       }
 
       // checks whether both are null or else both have the same ID
-      public static void AssertAreEqualID(IWithId x2, IWithId x1)
+      public static void AssertAreEqualId(IWithId x2, IWithId x1)
       {
-         if (AssertBothNotNull(x2, x1)) Assert.AreEqual(x2.Id, x1.Id);
+         if (!AssertBothNotNull(x1, x2)) return;
+         Assert.AreEqual(x2.Id, x1.Id);
       }
 
       // checks whether both are null or else both are equal
@@ -367,7 +376,7 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqual(x1.Alias, x2.Alias);
-         AssertAreEqualID(x1.Object, x2.Object);
+         AssertAreEqualId(x1.Object, x2.Object);
       }
 
       public static void AreEqualObjectBase(IObjectBase x2, IObjectBase x1)
@@ -386,11 +395,27 @@ namespace OSPSuite.Helpers
          AssertAreEqual(x1.Dimension, x2.Dimension);
       }
 
+      public static void AreEqualAxis(Axis x1, Axis x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AssertAreEqual(x1.AxisType, x2.AxisType);
+         AssertAreEqual(x1.UnitName, x2.UnitName);
+         AssertAreEqual(x1.Caption, x2.Caption);
+         AssertAreEqual(x1.DefaultColor, x2.DefaultColor);
+         AssertAreEqual(x1.DefaultLineStyle, x2.DefaultLineStyle);
+         AssertAreEqual(x1.GridLines, x2.GridLines);
+         AssertAreEqual(x1.Min, x2.Min);
+         AssertAreEqual(x1.Max, x2.Max);
+         AssertAreEqual(x1.NumberMode, x2.NumberMode);
+         AssertAreEqual(x1.Scaling, x2.Scaling);
+         AssertAreEqual(x1.Visible, x2.Visible);
+      }
+
       public static void AreEqualEntity(IEntity x1, IEntity x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectBase(x1, x2);
-         AssertAreEqualID(x2.ParentContainer, x1.ParentContainer);
+         AssertAreEqualId(x2.ParentContainer, x1.ParentContainer);
 
          Assert.AreEqual(x1.Tags.Count(), x2.Tags.Count());
          foreach (var tag in x2.Tags)
@@ -411,8 +436,8 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualContainer(x1, x2);
-         AssertAreEqualID(x1.FirstNeighbor, x2.FirstNeighbor);
-         AssertAreEqualID(x1.SecondNeighbor, x2.SecondNeighbor);
+         AssertAreEqualId(x1.FirstNeighbor, x2.FirstNeighbor);
+         AssertAreEqualId(x1.SecondNeighbor, x2.SecondNeighbor);
       }
 
       public static void AreEqualModel(IModel x1, IModel x2)
@@ -501,7 +526,7 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.StoichiometricCoefficient, x2.StoichiometricCoefficient);
-         AssertAreEqualID(x1.Partner, x2.Partner);
+         AssertAreEqualId(x1.Partner, x2.Partner);
       }
 
       public static void AreEqualReaction(IReaction x1, IReaction x2)
@@ -517,8 +542,8 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualProcess(x1, x2);
-         AssertAreEqualID(x1.SourceAmount, x2.SourceAmount);
-         AssertAreEqualID(x1.TargetAmount, x2.TargetAmount);
+         AssertAreEqualId(x1.SourceAmount, x2.SourceAmount);
+         AssertAreEqualId(x1.TargetAmount, x2.TargetAmount);
       }
 
       public static void AreEqualDimension(IDimension x1, IDimension x2)
@@ -566,7 +591,7 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.Dimensions.Count(), x2.Dimensions.Count());
          foreach (var dimension1 in x2.Dimensions)
          {
-            IDimension dimension2 = x1.GetDimension(dimension1.Name);
+            IDimension dimension2 = x1.Dimension(dimension1.Name);
             AreEqualDimension(dimension2, dimension1);
          }
       }
@@ -644,7 +669,7 @@ namespace OSPSuite.Helpers
          AreEqualFormula(x1.Formula, x2.Formula);
          Assert.AreEqual(x1.UseAsValue, x2.UseAsValue);
          
-         AssertAreEqualID(x1.ChangedEntity, x2.ChangedEntity);
+         AssertAreEqualId(x1.ChangedEntity, x2.ChangedEntity);
       }
 
       public static void AreEqualEvent(IEvent x1, IEvent x2)
@@ -1111,12 +1136,12 @@ namespace OSPSuite.Helpers
       public static void AreEqualMcDataColumn(DataColumn x1, DataColumn x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AssertAreEqualID(x1, x2);
+         AssertAreEqualId(x1, x2);
          AreEqualStrings(x1.Name, x2.Name);
          Assert.AreEqual(x2.IsInternal, x1.IsInternal); 
          AreEqualDimension(x1.Dimension, x2.Dimension);
-         AssertAreEqualID(x1.Repository, x2.Repository);
-         AssertAreEqualID(x1.BaseGrid, x2.BaseGrid);
+         AssertAreEqualId(x1.Repository, x2.Repository);
+         AssertAreEqualId(x1.BaseGrid, x2.BaseGrid);
          AreEqualFloatArray(x1.Values, x2.Values);
          AreEqualMcQuantityInfo(x1.QuantityInfo, x2.QuantityInfo);
          AreEqualMcDataInfo(x1.DataInfo, x2.DataInfo);
@@ -1135,7 +1160,7 @@ namespace OSPSuite.Helpers
       public static void AreEqualMcDataRepository(DataRepository x1, DataRepository x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AssertAreEqualID(x1, x2);
+         AssertAreEqualId(x1, x2);
          AreEqualStrings(x1.Name, x2.Name);
          AreEqualStrings(x1.Description, x2.Description);
          AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Id);

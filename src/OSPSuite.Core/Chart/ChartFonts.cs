@@ -1,5 +1,6 @@
-using OSPSuite.Utility.Reflection;
+using System.Drawing;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart
 {
@@ -11,75 +12,59 @@ namespace OSPSuite.Core.Chart
       private int _descriptionSize;
       private string _fontFamilyName;
       private int _originSize;
+      private int _watermarkSize;
 
       public ChartFonts()
       {
-         AxisSize = Constants.ChartFontOptions.DefaultFontSizeAxis;
-         LegendSize = Constants.ChartFontOptions.DefaultFontSizeLegend;
-         TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitle;
-         DescriptionSize = Constants.ChartFontOptions.DefaultFontSizeDescription;
-         OriginSize = Constants.ChartFontOptions.DefaultFontSizeOrigin;
-         FontFamilyName = Constants.ChartFontOptions.DefaultFontFamilyName;
+         AxisSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_AXIS;
+         LegendSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_LEGEND;
+         TitleSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_TITLE;
+         DescriptionSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_DESCRIPTION;
+         OriginSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_ORIGIN;
+         FontFamilyName = Constants.ChartFontOptions.DEFAULT_FONT_FAMILY_NAME;
+         WatermarkSize = Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK;
       }
 
       public int AxisSize
       {
-         get { return _axisSize; }
-         set
-         {
-            _axisSize = value;
-            OnPropertyChanged(() => AxisSize);
-         }
+         get => _axisSize;
+         set => SetProperty(ref _axisSize, value);
       }
 
       public int LegendSize
       {
-         get { return _legendSize; }
-         set
-         {
-            _legendSize = value;
-            OnPropertyChanged(() => LegendSize);
-         }
+         get => _legendSize;
+         set => SetProperty(ref _legendSize, value);
       }
 
       public int TitleSize
       {
-         get { return _titleSize; }
-         set
-         {
-            _titleSize = value;
-            OnPropertyChanged(() => TitleSize);
-         }
+         get => _titleSize;
+         set => SetProperty(ref _titleSize, value);
       }
 
       public int DescriptionSize
       {
-         get { return _descriptionSize; }
-         set
-         {
-            _descriptionSize = value;
-            OnPropertyChanged(() => DescriptionSize);
-         }
+         get => _descriptionSize;
+         set => SetProperty(ref _descriptionSize, value);
       }
 
       public int OriginSize
       {
-         get { return _originSize; }
-         set
-         {
-            _originSize = value;
-            OnPropertyChanged(() => OriginSize);
-         }
+         get => _originSize;
+         set => SetProperty(ref _originSize, value);
       }
 
       public string FontFamilyName
       {
-         get { return _fontFamilyName; }
-         set
-         {
-            _fontFamilyName = value;
-            OnPropertyChanged(() => FontFamilyName);
-         }
+         get => _fontFamilyName;
+         set => SetProperty(ref _fontFamilyName, value);
+      }
+
+      public virtual int WatermarkSize
+      {
+         get => _watermarkSize;
+         set => SetProperty(ref _watermarkSize, value);
       }
 
       public void UpdateSettingsFrom(ChartFonts newChartFonts)
@@ -90,6 +75,7 @@ namespace OSPSuite.Core.Chart
          DescriptionSize = newChartFonts.DescriptionSize;
          OriginSize = newChartFonts.OriginSize;
          FontFamilyName = newChartFonts.FontFamilyName;
+         WatermarkSize = newChartFonts.WatermarkSize;
       }
    }
 }

@@ -33,13 +33,13 @@
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.tbLog = new DevExpress.XtraEditors.MemoEdit();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.chkInfo = new DevExpress.XtraEditors.CheckEdit();
+         this.chkInfo = new OSPSuite.UI.Controls.UxCheckEdit();
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.chkWarning = new DevExpress.XtraEditors.CheckEdit();
+         this.chkWarning = new OSPSuite.UI.Controls.UxCheckEdit();
          this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.chkError = new DevExpress.XtraEditors.CheckEdit();
+         this.chkError = new OSPSuite.UI.Controls.UxCheckEdit();
          this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.chkDebug = new DevExpress.XtraEditors.CheckEdit();
+         this.chkDebug = new OSPSuite.UI.Controls.UxCheckEdit();
          this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();

@@ -48,7 +48,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          _gridViewBinder.Bind(x => x.Selected)
           .WithRepository(selectRepository)
-          .WithOnValueSet(onValueSet)
+          .WithOnValueUpdating(onValueSet)
           .WithFixedWidth(UIConstants.Size.EMBEDDED_CHECK_BOX_WIDTH);
 
          _gridViewBinder.Bind(x => x.Name)

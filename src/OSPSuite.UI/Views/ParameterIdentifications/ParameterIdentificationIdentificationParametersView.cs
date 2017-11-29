@@ -80,7 +80,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _colName= _gridViewBinder.Bind(x => x.Name)
             .WithFormat(x => new IdentificationParameterNameFormatter(x))
             .WithCaption(Captions.Name)
-            .WithOnValueSet((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
+            .WithOnValueUpdating((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
 
          // Using AutoBind in these cases to force dto validation to occur when binding takes place. 
          // In some cases, the first value can be invalid and requires user attention.
@@ -88,19 +88,19 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithCaption(Captions.ParameterIdentification.StartValue)
             .WithFormat(x => x.StartValueParameter.ParameterFormatter())
             .WithEditorConfiguration((activeEditor, dto) => _comboBoxUnit.UpdateUnitsFor(activeEditor, dto.StartValueParameter))
-            .OnValueSet += (dto, valueInGuiUnit) => setParameterValue(dto.StartValueParameter, valueInGuiUnit.NewValue);
+            .OnValueUpdating += (dto, valueInGuiUnit) => setParameterValue(dto.StartValueParameter, valueInGuiUnit.NewValue);
 
          _gridViewBinder.AutoBind(x => x.MinValue)
             .WithCaption(Captions.ParameterIdentification.MinValue)
             .WithFormat(x => x.MinValueParameter.ParameterFormatter())
             .WithEditorConfiguration((activeEditor, dto) => _comboBoxUnit.UpdateUnitsFor(activeEditor, dto.MinValueParameter))
-            .OnValueSet += (dto, valueInGuiUnit) => setParameterValue(dto.MinValueParameter, valueInGuiUnit.NewValue);
+            .OnValueUpdating += (dto, valueInGuiUnit) => setParameterValue(dto.MinValueParameter, valueInGuiUnit.NewValue);
 
          _gridViewBinder.AutoBind(x => x.MaxValue)
             .WithCaption(Captions.ParameterIdentification.MaxValue)
             .WithFormat(x => x.MaxValueParameter.ParameterFormatter())
             .WithEditorConfiguration((activeEditor, dto) => _comboBoxUnit.UpdateUnitsFor(activeEditor, dto.MaxValueParameter))
-            .OnValueSet += (dto, valueInGuiUnit) => setParameterValue(dto.MaxValueParameter, valueInGuiUnit.NewValue);
+            .OnValueUpdating += (dto, valueInGuiUnit) => setParameterValue(dto.MaxValueParameter, valueInGuiUnit.NewValue);
 
          _gridViewBinder.Bind(x => x.Scaling)
             .WithCaption(Captions.Scaling)
@@ -111,6 +111,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithCaption(Captions.ParameterIdentification.UseAsFactor)
             .WithRepository(x => _booleanRepository)
             .OnChanged += dto => OnEvent(() => _presenter.UseAsFactorChanged(dto));
+
+         _gridViewBinder.Bind(x => x.IsFixed)
+            .WithCaption(Captions.ParameterIdentification.IsFixed)
+            .WithRepository(x => _booleanRepository);
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)

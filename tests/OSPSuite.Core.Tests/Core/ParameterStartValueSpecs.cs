@@ -141,7 +141,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         sut.Dimension = DimensionFactoryForSpecs.Factory.GetDimension(DimensionFactoryForSpecs.DimensionNames.Concentration);
+         sut.Dimension = DimensionFactoryForSpecs.Factory.Dimension(DimensionFactoryForSpecs.DimensionNames.Concentration);
       }
    }
 
@@ -181,7 +181,7 @@ namespace OSPSuite.Core
          sut.Formula = new ExplicitFormula("MV");
          _comparable.Formula = new ExplicitFormula("MV");
 
-         sut.Dimension = DimensionFactoryForSpecs.Factory.GetDimension(DimensionFactoryForSpecs.DimensionNames.Mass);
+         sut.Dimension = DimensionFactoryForSpecs.Factory.Dimension(DimensionFactoryForSpecs.DimensionNames.Mass);
          _comparable.Dimension = sut.Dimension;
 
          sut.DisplayUnit = sut.Dimension.DefaultUnit;

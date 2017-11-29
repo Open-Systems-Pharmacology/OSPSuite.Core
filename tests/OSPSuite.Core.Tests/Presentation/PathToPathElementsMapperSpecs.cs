@@ -2,13 +2,12 @@
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation
 {
@@ -72,7 +71,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_the_expected_path()
       {
-         ShouldReturnPathElementValues("Sim", "Organism", new[] { "Liver", "Pericentral" }.ToString(Constants.DISPLAY_PATH_SEPARATOR), "Plasma", "ABC", "Concentration");
+         ShouldReturnPathElementValues("Sim", "Organism", new[] {"Liver", "Pericentral"}.ToString(Constants.DISPLAY_PATH_SEPARATOR), "Plasma", "ABC", "Concentration");
       }
    }
 
@@ -82,13 +81,13 @@ namespace OSPSuite.Presentation
       {
          base.Context();
 
-            _rootContainer = CreateContainer(null, "Sim", ContainerType.Simulation);
-            var organism = CreateContainer(_rootContainer, "Organism");
-            var liver = CreateContainer(organism, "Liver");
-            var pericentral = CreateContainer(liver, "Pericentral");
-            var plasma = CreateContainer(pericentral, "Plasma", ContainerType.Compartment);
-            var molecule = CreateContainer(plasma, "ABC", ContainerType.Molecule);
-            var observer = new Observer().WithName("Concentration").WithParentContainer(molecule);
+         _rootContainer = CreateContainer(null, "Sim", ContainerType.Simulation);
+         var organism = CreateContainer(_rootContainer, "Organism");
+         var liver = CreateContainer(organism, "Liver");
+         var pericentral = CreateContainer(liver, "Pericentral");
+         var plasma = CreateContainer(pericentral, "Plasma", ContainerType.Compartment);
+         var molecule = CreateContainer(plasma, "ABC", ContainerType.Molecule);
+         var observer = new Observer().WithName("Concentration").WithParentContainer(molecule);
 
          _path = new List<string> {"Organism", "Liver", "Pericentral", "Plasma", "ABC", "Concentration"};
       }
@@ -96,7 +95,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_return_the_expected_path()
       {
-         ShouldReturnPathElementValues("", "Organism", new[] { "Liver", "Pericentral" }.ToString(Constants.DISPLAY_PATH_SEPARATOR), "Plasma", "ABC", "Concentration");
+         ShouldReturnPathElementValues("", "Organism", new[] {"Liver", "Pericentral"}.ToString(Constants.DISPLAY_PATH_SEPARATOR), "Plasma", "ABC", "Concentration");
       }
    }
 
@@ -112,7 +111,7 @@ namespace OSPSuite.Presentation
          var molecule = CreateContainer(bc_bc, "ABC", ContainerType.Molecule);
          var observer = new Observer().WithName("Observe").WithParentContainer(molecule);
 
-         _path = new List<string> { "Sim", "Neighborhoods", "ArterialBlood_bc_Bone_bc", "ABC", "Observe" };
+         _path = new List<string> {"Sim", "Neighborhoods", "ArterialBlood_bc_Bone_bc", "ABC", "Observe"};
       }
 
       [Observation]
@@ -134,7 +133,7 @@ namespace OSPSuite.Presentation
          var molecule = CreateContainer(application, "ABC", ContainerType.Molecule);
          var observer = new Observer().WithName("Observe").WithParentContainer(molecule);
 
-         _path = new List<string> { "Sim", "Applications", "Application_1", "ABC", "Observe" };
+         _path = new List<string> {"Sim", "Applications", "Application_1", "ABC", "Observe"};
       }
 
       [Observation]
@@ -155,7 +154,7 @@ namespace OSPSuite.Presentation
          var bc_bc = CreateContainer(neighborhoods, "ArterialBlood_bc_Bone_bc");
          var observer = new Observer().WithName("Observe").WithParentContainer(bc_bc);
 
-         _path = new List<string> { "Sim", "Neighborhoods", "ArterialBlood_bc_Bone_bc", "Observe" };
+         _path = new List<string> {"Sim", "Neighborhoods", "ArterialBlood_bc_Bone_bc", "Observe"};
       }
 
       [Observation]
@@ -164,7 +163,6 @@ namespace OSPSuite.Presentation
          ShouldReturnPathElementValues("Sim", "Neighborhoods", "ArterialBlood_bc_Bone_bc", "", "", "Observe");
       }
    }
-
 
    public class When_mapping_the_path_of_an_organ_volume_parameter_in_individual : concern_for_PathToPathElementsMapper
    {
@@ -289,20 +287,38 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_mapping_a_path_that_has_more_entries_that_the_actual_container_structure : concern_for_PathToPathElementsMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         _rootContainer = CreateContainer(null, "Organism", ContainerType.Organism);
+         var liver = CreateContainer(_rootContainer, "Liver");
+         var plasma = CreateContainer(liver, "Plasma", ContainerType.Compartment);
+         _path = new List<string> {"Organism", "Liver", "DOES_NOT_EXIST", "HELLO", "Plasma"};
+      }
+
+      [Observation]
+      public void should_return_the_expected_path()
+      {
+         ShouldReturnPathElementValues(string.Empty, "Organism", "Liver", string.Empty, string.Empty, "Plasma");
+      }
+   }
+
    public class When_mapping_the_path_of_an_element_without_root_container : concern_for_PathToPathElementsMapper
    {
       protected override void Context()
       {
          base.Context();
          _rootContainer = null;
-         _path = new List<string> {"P" };
+         _path = new List<string> {"P"};
       }
 
       [Observation]
       public void should_simply_return_the_name_of_the_element()
       {
          ShouldReturnPathElementValues(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, "P");
-     
       }
    }
 

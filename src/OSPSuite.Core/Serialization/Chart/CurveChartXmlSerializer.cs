@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Serialization.Chart
          Map(x => x.Name);
          Map(x => x.Title);
          Map(x => x.Description);
-         MapEnumerable(x => x.Axes, x => x.Axes.Add);
+         MapEnumerable(x => x.Axes, x => x.AddAxis);
          MapEnumerable(x => x.Curves, x => x.AddCurveIfConsistent);
       }
    }

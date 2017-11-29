@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutItemGridSimulations = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
@@ -175,7 +175,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       #endregion
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemGridSimulations;

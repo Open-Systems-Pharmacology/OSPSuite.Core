@@ -66,7 +66,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          btnApplySelection.ToolTip = Captions.SensitivityAnalysis.ApplyValueToSelectedSensitivityParameters;
 
          _textEditElementBinder = _screenBinder.Bind(x => x.Value).To(textEdit);
-         _textEditElementBinder.OnValueSet += (parameterDTO, value) => OnEvent(() => setParameterValue(parameterDTO, value));
+         _textEditElementBinder.OnValueUpdating += (parameterDTO, value) => OnEvent(() => setParameterValue(parameterDTO, value));
 
          RegisterValidationFor(_screenBinder, NotifyViewChanged);
       }

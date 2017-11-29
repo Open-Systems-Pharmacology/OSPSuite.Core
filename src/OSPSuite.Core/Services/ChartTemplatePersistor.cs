@@ -43,13 +43,13 @@ namespace OSPSuite.Core.Services
       ///    <see cref="XElement" />
       ///    corresponding to its serialization
       /// </summary>
-      XElement SerializeBasedOn(ICurveChart chart);
+      XElement SerializeBasedOn(CurveChart chart);
 
       /// <summary>
       ///    Creates a <see cref="CurveChartTemplate" /> based on the given <paramref name="chart" /> and returns an
       ///    xml string corresponding to its serialization
       /// </summary>
-      string SerializeAsStringBasedOn(ICurveChart chart);
+      string SerializeAsStringBasedOn(CurveChart chart);
 
       /// <summary>
       ///    Serializes the <paramref name="chartTemplate" /> to the file with the path <paramref name="fileFullPath" />
@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Services
       ///    Creates a <see cref="CurveChartTemplate" /> based on the given <paramref name="chart" /> and serializes it to the
       ///    file with path <paramref name="fileFullPath" />
       /// </summary>
-      void SerializeToFileBasedOn(ICurveChart chart, string fileFullPath);
+      void SerializeToFileBasedOn(CurveChart chart, string fileFullPath);
    }
 
    public class ChartTemplatePersistor : IChartTemplatePersistor
@@ -131,12 +131,12 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      public XElement SerializeBasedOn(ICurveChart chart)
+      public XElement SerializeBasedOn(CurveChart chart)
       {
          return Serialize(_curveChartTemplateMapper.MapFrom(chart));
       }
 
-      public string SerializeAsStringBasedOn(ICurveChart chart)
+      public string SerializeAsStringBasedOn(CurveChart chart)
       {
          return XmlHelper.XmlContentToString(SerializeBasedOn(chart));
       }
@@ -147,7 +147,7 @@ namespace OSPSuite.Core.Services
          saveTemplateToFile(xel, fileFullPath);
       }
 
-      public void SerializeToFileBasedOn(ICurveChart chart, string fileFullPath)
+      public void SerializeToFileBasedOn(CurveChart chart, string fileFullPath)
       {
          var xel = SerializeBasedOn(chart);
          saveTemplateToFile(xel, fileFullPath);

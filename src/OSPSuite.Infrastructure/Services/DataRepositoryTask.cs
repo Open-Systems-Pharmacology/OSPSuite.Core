@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Format;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Format;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Infrastructure.Services
@@ -61,8 +61,8 @@ namespace OSPSuite.Infrastructure.Services
 
       private void updateColumnProperties(DataColumn sourceColumn, DataColumn targetColumn)
       {
-         targetColumn.QuantityInfo = sourceColumn.QuantityInfo != null ? sourceColumn.QuantityInfo.Clone() : null;
-         targetColumn.DataInfo = sourceColumn.DataInfo != null ? sourceColumn.DataInfo.Clone() : null;
+         targetColumn.QuantityInfo = sourceColumn.QuantityInfo?.Clone();
+         targetColumn.DataInfo = sourceColumn.DataInfo?.Clone();
          targetColumn.Values = sourceColumn.Values;
          targetColumn.IsInternal = sourceColumn.IsInternal;
       }
@@ -99,16 +99,16 @@ namespace OSPSuite.Infrastructure.Services
          return _idMap[column.Id];
       }
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false)
+      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true)
       {
-         return ToDataTable(dataColumns, c => c.Name, formatOutput);
+         return ToDataTable(dataColumns, c => c.Name, c => c.Dimension, formatOutput, useDisplayUnit);
       }
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, Func<DataColumn, string> columnNameRetriever, bool formatOutput = false)
+      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetrieverFunc, bool formatOutput = false, bool useDisplayUnit = true)
       {
          var allColumns = allColumnsWithRelatedColumnsFrom(dataColumns);
          var cacheName = retrieveUniqueNamesForTables(allColumns);
-         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, formatOutput));
+         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, dimensionRetrieverFunc, formatOutput, useDisplayUnit));
       }
 
       private HashSet<DataColumn> allColumnsWithRelatedColumnsFrom(IEnumerable<DataColumn> dataColumns)
@@ -117,7 +117,7 @@ namespace OSPSuite.Infrastructure.Services
          dataColumns.Each(column =>
          {
             allColumns.Add(column);
-            column.RelatedColumns.Each(x=>allColumns.Add(x));
+            column.RelatedColumns.Each(x => allColumns.Add(x));
          });
 
          return allColumns;
@@ -154,12 +154,12 @@ namespace OSPSuite.Infrastructure.Services
 
       public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel)
       {
-         ExportToExcel(dataColumns, fileName, x => x.Name, launchExcel);
+         ExportToExcel(dataColumns, fileName, x => x.Name, x => x.Dimension, launchExcel);
       }
 
-      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever, bool launchExcel = true)
+      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool launchExcel = true)
       {
-         ExportToExcel(ToDataTable(dataColumns, columnNameRetriever), fileName, launchExcel);
+         ExportToExcel(ToDataTable(dataColumns, columnNameRetriever, dimensionRetriever), fileName, launchExcel);
       }
 
       public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel)
@@ -167,7 +167,7 @@ namespace OSPSuite.Infrastructure.Services
          ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
       }
 
-      private DataTable createTableFor(string tableName, DataColumn baseGridColumn, IEnumerable<DataColumn> columnsToExport, Func<DataColumn, string> columnNameRetriever, bool formatOutput)
+      private DataTable createTableFor(string tableName, DataColumn baseGridColumn, IEnumerable<DataColumn> columnsToExport, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool formatOutput, bool useDisplayUnit)
       {
          var dataTable = new DataTable(tableName);
 
@@ -179,27 +179,36 @@ namespace OSPSuite.Infrastructure.Services
 
          allColumns.Insert(0, baseGridColumn);
          var cacheName = retrieveUniqueNameForColumns(allColumns, columnNameRetriever);
+         var cacheDimensions = retrieveDimensionsFor(allColumns, dimensionRetriever);
 
-         allColumns.Each(c => dataTable.Columns.Add(cacheName[c], formatOutput ? typeof (string) : typeof (float)).ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, c.Id));
+         allColumns.Each(x =>
+         {
+            var column = dataTable.Columns.Add(cacheName[x], formatOutput ? typeof(string) : typeof(float));
+            column.ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, x.Id);
+         });
 
          //add units information
          for (int i = 0; i < dataTable.Columns.Count; i++)
          {
             var col = dataTable.Columns[i];
-            var unit = unitFor(allColumns[i]);
+            var dataColumn = allColumns[i];
+            var dimension = cacheDimensions[dataColumn];
+            var unit = unitFor(dimension, dataColumn, useDisplayUnit);
 
             if (!string.IsNullOrWhiteSpace(unit.Name))
-               col.ColumnName = string.Format("{0} [{1}]", col.ColumnName, unit.Name);
+               col.ColumnName = $"{col.ColumnName} [{unit.Name}]";
          }
 
          for (int i = 0; i < baseGridColumn.Values.Count; i++)
          {
-            DataRow row = dataTable.NewRow();
+            var row = dataTable.NewRow();
             for (int j = 0; j < allColumns.Count; j++)
             {
                var columnToExport = allColumns[j];
-               var unit = unitFor(columnToExport);
-               double value = columnToExport.Dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
+               var dimension = cacheDimensions[columnToExport];
+               var unit = unitFor(dimension, columnToExport, useDisplayUnit);
+               double value = dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
+
                if (formatOutput)
                   row[j] = _numericFormatter.Format(value);
                else
@@ -211,6 +220,13 @@ namespace OSPSuite.Infrastructure.Services
          return dataTable;
       }
 
+      private Cache<DataColumn, IDimension> retrieveDimensionsFor(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, IDimension> dimensionRetriever)
+      {
+         var cacheDimensionsForColumns = new Cache<DataColumn, IDimension>();
+         allColumns.Each(x => cacheDimensionsForColumns.Add(x, dimensionRetriever(x)));
+         return cacheDimensionsForColumns;
+      }
+
       private void moveDrugColumnsFirst(List<DataColumn> allColumns)
       {
          var allColumnsNotDrug = allColumns.Where(x => !x.QuantityInfo.Type.Is(QuantityType.Drug)).ToList();
@@ -220,17 +236,17 @@ namespace OSPSuite.Infrastructure.Services
          allColumnsNotDrug.Each(allColumns.Add);
       }
 
-      private ICache<DataColumn, string> retrieveUniqueNameForColumns(IEnumerable<DataColumn> allRelatedColumns, Func<DataColumn, string> columnNameRetriever)
+      private Cache<DataColumn, string> retrieveUniqueNameForColumns(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, string> columnNameRetriever)
       {
          var cacheNameForColumns = new Cache<DataColumn, string>();
-         foreach (var column in allRelatedColumns)
+         foreach (var column in allColumns)
          {
             int index = 1;
             string defaultName = columnNameRetriever(column);
             string currentName = defaultName;
             while (cacheNameForColumns.Contains(currentName))
             {
-               currentName = string.Format("{0}_{1}", defaultName, index++);
+               currentName = $"{defaultName}_{index++}";
             }
             cacheNameForColumns.Add(column, currentName);
          }
@@ -238,9 +254,12 @@ namespace OSPSuite.Infrastructure.Services
          return cacheNameForColumns;
       }
 
-      private Unit unitFor(DataColumn column)
+      private Unit unitFor(IDimension dimension, DataColumn column, bool useDisplayUnit)
       {
-         return column.Dimension.UnitOrDefault(column.DataInfo.DisplayUnitName);
+         if (useDisplayUnit)
+            return dimension.UnitOrDefault(column.DataInfo.DisplayUnitName);
+
+         return dimension.BaseUnit;
       }
    }
 }

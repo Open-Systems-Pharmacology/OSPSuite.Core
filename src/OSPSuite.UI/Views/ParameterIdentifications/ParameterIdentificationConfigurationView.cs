@@ -59,7 +59,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .To(cbAlgorithm)
             .WithValues(x => _presenter.Algorithms)
             .AndDisplays(x => x.DisplayName)
-            .OnValueSet += (o, e) => OnEvent(() => updateAlgorithm(e.NewValue));
+            .OnValueUpdating += (o, e) => OnEvent(() => updateAlgorithm(e.NewValue));
 
          _presenterBinder.Bind(x => x.RunModePresenter)
             .To(cbOptionSelection)

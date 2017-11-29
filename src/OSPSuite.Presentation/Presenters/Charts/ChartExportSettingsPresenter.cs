@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Services.Charts;
@@ -8,17 +9,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IChartExportSettingsPresenter : IPresenter<IChartExportSettingsView>
    {
-      void BindTo(IChartManagement chartSettings);
-      IEnumerable<string> GetFontFamilyNames();
-      IEnumerable<int> GetFontSizes();
+      void Edit(IChartManagement chartManagement);
+      IEnumerable<string> AllFontFamilyNames { get; }
+      IEnumerable<int> AllFontSizes { get; }
       void ResetValuesToDefault();
-      void DeleteBinding();
+      void Clear();
+      event EventHandler ChartExportSettingsChanged;
+      void NotifyChartExportSettingsChanged();
    }
 
    public class ChartExportSettingsPresenter : AbstractPresenter<IChartExportSettingsView, IChartExportSettingsPresenter>, IChartExportSettingsPresenter
    {
       private readonly IFontsTask _fontsTask;
-      private IChartManagement _chartSettings;
+      private IChartManagement _chartManagement;
+      public event EventHandler ChartExportSettingsChanged = delegate { };
+      public void NotifyChartExportSettingsChanged() => ChartExportSettingsChanged(this, EventArgs.Empty);
 
       public ChartExportSettingsPresenter(IChartExportSettingsView view, IFontsTask fontsTask)
          : base(view)
@@ -26,28 +31,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _fontsTask = fontsTask;
       }
 
-      public void BindTo(IChartManagement chartSettings)
+      public void Edit(IChartManagement chartManagement)
       {
-         _chartSettings = chartSettings;
-         _view.BindToSource(chartSettings);
+         _chartManagement = chartManagement;
+         _view.BindTo(chartManagement);
       }
 
-      public IEnumerable<string> GetFontFamilyNames()
-      {
-         return _fontsTask.ChartFontFamilyNames;
-      }
+      public IEnumerable<string> AllFontFamilyNames => _fontsTask.ChartFontFamilyNames;
 
-      public IEnumerable<int> GetFontSizes()
-      {
-         return Constants.ChartFontOptions.GetFontSizes();
-      }
+      public IEnumerable<int> AllFontSizes => Constants.ChartFontOptions.AllFontSizes;
 
       public void ResetValuesToDefault()
       {
-         _chartSettings.FontAndSize.Reset();
+         _chartManagement.FontAndSize.Reset();
+         NotifyChartExportSettingsChanged();
       }
 
-      public void DeleteBinding()
+      public void Clear()
       {
          _view.DeleteBinding();
       }

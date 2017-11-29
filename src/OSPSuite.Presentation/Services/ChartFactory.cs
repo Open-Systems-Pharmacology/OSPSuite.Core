@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Services
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public TChartType Create<TChartType>() where TChartType : ICurveChart
+      public TChartType Create<TChartType>() where TChartType : CurveChart
       {
          var chart = _container.Resolve<TChartType>();
          chart.Id = _idGenerator.NewId();
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Services
          return chart;
       }
 
-      public ICurveChart CreateChartFor(DataRepository dataRepository, Scalings defaultYScale)
+      public CurveChart CreateChartFor(DataRepository dataRepository, Scalings defaultYScale)
       {
          var chart = Create<CurveChart>().WithName(dataRepository.Name);
          chart.DefaultYAxisScaling = defaultYScale;
@@ -50,12 +50,12 @@ namespace OSPSuite.Presentation.Services
          return chart;
       }
 
-      public ICurveChart CreateChartFor(TableFormula tableFormula)
+      public CurveChart CreateChartFor(TableFormula tableFormula)
       {
          return CreateChartFor(_dataRepositoryMapper.MapFrom(tableFormula));
       }
 
-      public ICurveChart CreateChartFor(DataRepository dataRepository)
+      public CurveChart CreateChartFor(DataRepository dataRepository)
       {
          return CreateChartFor(dataRepository, _presentationUserSettings.DefaultChartYScaling);
       }

@@ -6,6 +6,7 @@ using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using OSPSuite.Assets;
+using OSPSuite.Core.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 
@@ -13,80 +14,70 @@ namespace OSPSuite.UI.Controls
 {
    public class UxChartControl : ChartControl
    {
+      private const int TITLE_DEFAULT_FONT_SIZE = 16;
+      private const int DESCRIPTION_DEFAULT_FONT_SIZE = 12;
+
       private readonly ChartTitle _title;
       private readonly ChartTitle _description;
-      private readonly ClipboardTask _clipboardTask;
+      private readonly ClipboardTask _clipboardTask = new ClipboardTask();
       private readonly BarManager _barManager;
-      private readonly PopupMenu _popupMenu;
+      public PopupMenu PopupMenu { get; }
 
-      public UxChartControl(bool useDefaultPopupMechanism = true, bool addCopyToClipboardMenu = true)
+      public UxChartControl() : this(true)
+      {
+      }
+
+      public UxChartControl(bool useDefaultPopupMechanism = true)
       {
          Titles.Clear();
 
-         _title = new ChartTitle {Text = string.Empty, Font = new Font("Arial", 16), Alignment = StringAlignment.Center, Dock = ChartTitleDockStyle.Top, WordWrap = true};
-         _description = new ChartTitle {Text = string.Empty, Font = new Font("Arial", 12), Alignment = StringAlignment.Near, Dock = ChartTitleDockStyle.Bottom, WordWrap = true};
+         _title = createTitle(TITLE_DEFAULT_FONT_SIZE, StringAlignment.Center, ChartTitleDockStyle.Top);
+         _description = createTitle(DESCRIPTION_DEFAULT_FONT_SIZE, StringAlignment.Near, ChartTitleDockStyle.Bottom);
 
          Titles.Add(_title);
          Titles.Add(_description);
 
-         _clipboardTask = new ClipboardTask();
          _barManager = new BarManager {Form = this};
-         _popupMenu = new PopupMenu(_barManager);
+         PopupMenu = new PopupMenu(_barManager);
 
          if (useDefaultPopupMechanism)
-            initializePopup(addCopyToClipboardMenu);
+            initializePopup();
       }
 
-      /// <summary>
-      ///    This is to increase performance of the chart control.
-      /// </summary>
-      /// <param name="collection">Objects which gets updated. Could be Series, Panes, Annotations, SecondaryAxesX, etc.</param>
-      /// <param name="actionToPerform">Action that will be performed between <c>BeginUpdate</c> and <c>EndUpdate</c></param>
-      public void DoUpdateOf(ChartCollectionBase collection, Action actionToPerform)
+      private ChartTitle createTitle(int fontSize, StringAlignment alignment, ChartTitleDockStyle dockStyle)
       {
-         try
-         {
-            collection.BeginUpdate();
-            actionToPerform();
-         }
-         finally
-         {
-            collection.EndUpdate();
-         }
+         return new ChartTitle {Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true};
       }
 
       public ImageCollection Images
       {
-         set { _barManager.Images = value; }
+         set => _barManager.Images = value;
       }
 
       public BarItemLink AddPopupMenu(string caption, Action action, ApplicationIcon icon, bool beginGroup = false)
       {
          var button = new BarButtonItem(_barManager, caption, ApplicationIcons.IconIndex(icon));
          button.ItemClick += (o, e) => this.DoWithinExceptionHandler(action);
-         var link = _popupMenu.AddItem(button);
+         var link = PopupMenu.AddItem(button);
          link.BeginGroup = beginGroup;
          return link;
       }
 
+      public BarItemLink AddCopyToClipboardPopupMenu(ICanCopyToClipboard canCopyToClipboard, bool beginGroup = false)
+      {
+         return AddPopupMenu(Captions.CopyToClipboard, canCopyToClipboard.CopyToClipboard, ApplicationIcons.Copy, beginGroup);
+      }
+
       public virtual string Title
       {
-         get { return _title.Text; }
-         set { _title.Text = value; }
+         get => _title.Text;
+         set => _title.Text = value;
       }
 
       public virtual string Description
       {
-         get { return _description.Text; }
-         set { _description.Text = value; }
-      }
-
-      /// <summary>
-      ///    Copy the chart as emf into the clipboard
-      /// </summary>
-      public virtual void CopyToClipboard()
-      {
-         CopyChartToClipboard(this);
+         get => _description.Text;
+         set => _description.Text = value;
       }
 
       public virtual void CopyChartToClipboard(ChartControl chartControl)
@@ -100,17 +91,9 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      private void initializePopup(bool addCopyToClipboardMenu)
+      private void initializePopup()
       {
-         _barManager.SetPopupContextMenu(this, _popupMenu);
-
-         if (addCopyToClipboardMenu)
-            AddCopyToCliboardMenu();
-      }
-
-      public void AddCopyToCliboardMenu()
-      {
-         AddPopupMenu(MenuNames.CopyToClipboard, CopyToClipboard, ApplicationIcons.Copy);
+         _barManager.SetPopupContextMenu(this, PopupMenu);
       }
 
       public DiagramCoordinates DiagramCoordinatesAt(HotTrackEventArgs e)

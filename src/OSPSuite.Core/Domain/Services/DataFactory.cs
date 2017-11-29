@@ -117,7 +117,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </returns>
       private BaseGrid createTimeGrid(double[] xValues)
       {
-         return new BaseGrid(_dataNamingService.GetTimeName(), _dimensionFactory.GetDimension(Constants.Dimension.TIME))
+         return new BaseGrid(_dataNamingService.GetTimeName(), _dimensionFactory.Dimension(Constants.Dimension.TIME))
          {
             QuantityInfo = new QuantityInfo(Constants.TIME, new List<string> {Constants.TIME}, QuantityType.BaseGrid),
             Values = new List<float>(xValues.ToFloatArray())

@@ -1,38 +1,45 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Converter.v5_4
 {
-   public class Converter531To541 : IObjectConverter, 
-      IVisitor<SimulationTransfer>, 
+   public class Converter531To541 : IObjectConverter,
+      IVisitor<SimulationTransfer>,
       IVisitor<IEventGroupBuildingBlock>
    {
-      public bool IsSatisfiedBy(int version)
-      {
-         return PKMLVersion.V5_3_1.Equals(version);
-      }
+      private bool _converted;
 
-      public int Convert(object objectToUpdate)
+      public bool IsSatisfiedBy(int version) => version == PKMLVersion.V5_3_1;
+
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
+         _converted = false;
          this.Visit(objectToUpdate);
-         return PKMLVersion.V5_4_1;
+         return (PKMLVersion.V5_4_1, _converted);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return PKMLVersion.V5_4_1;
+         return (PKMLVersion.V5_4_1, false);
       }
 
       public void Visit(SimulationTransfer simulationTransfer)
       {
          var simulation = simulationTransfer.Simulation;
          convertSimulation(simulation);
+         _converted = true;
+      }
+
+      public void Visit(IEventGroupBuildingBlock eventGroupBuildingBlock)
+      {
+         convertEventGroupBuildingBlock(eventGroupBuildingBlock);
+         _converted = true;
       }
 
       private void convertSimulation(IModelCoreSimulation simulation)
@@ -49,11 +56,6 @@ namespace OSPSuite.Core.Converter.v5_4
       {
          var allApplications = eventGroups.SelectMany(eg => eg.GetAllContainersAndSelf<IApplicationBuilder>());
          allApplications.Each(app => app.ContainerType = ContainerType.Application);
-      }
-
-      public void Visit(IEventGroupBuildingBlock objToVisit)
-      {
-         convertEventGroupBuildingBlock(objToVisit);
       }
    }
 }

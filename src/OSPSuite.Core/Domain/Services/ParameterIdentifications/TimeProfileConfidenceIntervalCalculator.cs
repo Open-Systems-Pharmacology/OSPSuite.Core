@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var residualsResult = runResult.BestResult.ResidualsResult;
          var allResiduals = residualsResult.AllResidualsWithWeightsStrictBiggerZero;
          var nr = allResiduals.Count;
-         var np = parameterIdentification.AllIdentificationParameters.Count;
+         var np = parameterIdentification.AllVariableIdentificationParameters.Count();
          var df = nr - np;
          if (df <= 0)
             return dataRepositories;

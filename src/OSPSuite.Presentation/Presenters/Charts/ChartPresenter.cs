@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -12,6 +9,7 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -25,43 +23,35 @@ namespace OSPSuite.Presentation.Presenters.Charts
       TChart Chart { get; }
 
       void InitializeAnalysis(TChart chart);
-
-      /// <summary>
-      ///    Remove the observed data from the current chart
-      /// </summary>
-      void RemoveDataRepositoryFromEditor(DataRepository dataRepository);
-
-      /// <summary>
-      ///    Add obsverved Data to be displayed on the graph. if the showData flag is set to true, the data will be displayed as
-      ///    well
-      /// </summary>
-      void AddObservedData(DataRepository observedData, bool asResultOfDragAndDrop);
    }
 
    public abstract class ChartPresenter<TChart, TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IChartPresenter<TChart>
-      where TView : IView<TPresenter>
+      where TView : class, IView<TPresenter>
       where TPresenter : IPresenter
-      where TChart : IChartWithObservedData
+      where TChart : CurveChart
    {
       protected readonly ChartPresenterContext _chartPresenterContext;
       protected DefaultPresentationSettings _settings;
       public TChart Chart { get; private set; }
-
-      protected readonly string _nameProperty;
       private IWithChartTemplates _withChartTemplates;
+      private Action _postEditorLayout;
       public string PresentationKey { get; protected set; }
+      protected IChartEditorPresenter ChartEditorPresenter => _chartPresenterContext.EditorAndDisplayPresenter.EditorPresenter;
+      protected IChartDisplayPresenter ChartDisplayPresenter => _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter;
 
       protected ChartPresenter(TView view, ChartPresenterContext chartPresenterContext) : base(view)
       {
          _chartPresenterContext = chartPresenterContext;
-         AddSubPresenters(_chartPresenterContext.ChartEditorAndDisplayPresenter);
+         AddSubPresenters(_chartPresenterContext.EditorAndDisplayPresenter);
          _settings = new DefaultPresentationSettings();
-         _nameProperty = ReflectionHelper.PropertyFor<ICurve, string>(x => x.Name).Name;
-         _chartPresenterContext.ChartEditorAndDisplayPresenter.SetCurveNameDefinition(NameForColumn);
+         ChartEditorPresenter.SetCurveNameDefinition(NameForColumn);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
          ChartEditorPresenter.ColumnSettingsChanged += columnSettingsChanged;
+         ChartEditorPresenter.ChartChanged += ChartChanged;
+         PostEditorLayout = () => { };
+         ConfigureColumns();
       }
-      
+
       public virtual void LoadSettingsForSubject(IWithId subject)
       {
          _settings = _chartPresenterContext.PresenterSettingsTask.PresentationSettingsFor<DefaultPresentationSettings>(this, subject);
@@ -69,34 +59,32 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void InitializeAnalysis(TChart chart)
       {
-         if (Chart != null)
-            RemoveChartEventHandlers();
-
          Chart = chart;
-
-         Chart.AllObservedData().Each(AddDataRepositoryToEditor);
-
-         _view.Caption = Chart.Name;
-
+         BindChartToEditors();
          InitEditorLayout();
+      }
+
+      protected Action PostEditorLayout
+      {
+         get => _postEditorLayout;
+         set
+         {
+            _postEditorLayout = value;
+            _chartPresenterContext.EditorAndDisplayPresenter.PostEditorLayout = _postEditorLayout;
+         }
       }
 
       protected void BindChartToEditors()
       {
-         if (Equals(ChartDisplayPresenter.DataSource, Chart))
-            return;
-
-         ChartDisplayPresenter.DataSource = Chart;
-         ChartEditorPresenter.DataSource = Chart;
-
-         AddChartEventHandlers();
+         ChartDisplayPresenter.Edit(Chart);
+         ChartEditorPresenter.Edit(Chart);
+         updateViewCaptionFromChart();
       }
 
-      private void addTemplateButtons()
+      protected void Refresh()
       {
-         var chartLayoutButton = _chartPresenterContext.ChartEditorAndDisplayPresenter.ChartLayoutButton;
-
-         ChartEditorPresenter.AddButton(chartLayoutButton);
+         _chartPresenterContext.Refresh();
+         updateViewCaptionFromChart();
       }
 
       protected CurveChartTemplate DefaultChartTemplate => _withChartTemplates?.DefaultChartTemplate;
@@ -114,6 +102,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
             ChartEditorPresenter.AddChartTemplateMenu(_withChartTemplates, template => LoadTemplate(template));
 
          AddAllButtons();
+      }
+
+      private void addTemplateButtons()
+      {
+         var chartLayoutButton = _chartPresenterContext.EditorAndDisplayPresenter.ChartLayoutButton;
+         ChartEditorPresenter.AddButton(chartLayoutButton);
       }
 
       protected void AddAllButtons()
@@ -134,62 +128,30 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return Equals(eventToHandle.WithChartTemplates, _withChartTemplates);
       }
 
-      protected void LoadTemplate(CurveChartTemplate curveChartTemplate, bool warnIfNumberOfCurvesAboveThreshold= true)
+      protected void LoadTemplate(CurveChartTemplate curveChartTemplate, bool warnIfNumberOfCurvesAboveThreshold = true)
       {
          _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(
             Chart,
-            ChartEditorPresenter.GetAllDataColumns(),
+            ChartEditorPresenter.AllDataColumns,
             curveChartTemplate,
-            NameForColumn, warnIfNumberOfCurvesAboveThreshold: warnIfNumberOfCurvesAboveThreshold);
+            NameForColumn, 
+            warnIfNumberOfCurvesAboveThreshold);
       }
 
-  
-      public void RemoveDataRepositoryFromEditor(DataRepository dataRepository)
+      protected virtual void ChartChanged()
       {
-         ChartEditorPresenter.RemoveDataRepository(dataRepository);
-      }
-
-      public void RemoveDataRepositoriesFromEditor(IEnumerable<DataRepository> dataRepositories)
-      {
-         dataRepositories?.Each(RemoveDataRepositoryFromEditor);
-      }
-
-      public virtual void AddObservedData(DataRepository observedData, bool asResultOfDragAndDrop)
-      {
-      }
-
-      protected IChartEditorPresenter ChartEditorPresenter => _chartPresenterContext.ChartEditorAndDisplayPresenter.EditorPresenter;
-      protected IChartDisplayPresenter ChartDisplayPresenter => _chartPresenterContext.ChartEditorAndDisplayPresenter.DisplayPresenter;
-
-      protected virtual void AddChartEventHandlers()
-      {
-         if (Chart == null) return;
-         Chart.PropertyChanged += chartPropertyChanged;
-      }
-
-      protected virtual void RemoveChartEventHandlers()
-      {
-         if (Chart == null) return;
-         Chart.PropertyChanged -= chartPropertyChanged;
-      }
-
-      private void chartPropertyChanged(object sender, PropertyChangedEventArgs e)
-      {
-         if (e.PropertyName == _nameProperty)
-            _view.Caption = Chart.Name;
-
+         updateViewCaptionFromChart();
          NotifyProjectChanged();
       }
 
-      protected void AddDataRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories)
+      private void updateViewCaptionFromChart()
       {
-         dataRepositories.Each(AddDataRepositoryToEditor);
+         _view.Caption = Chart.Name;
       }
 
-      protected void AddDataRepositoryToEditor(DataRepository dataRepository)
-      {
-         ChartEditorPresenter.AddDataRepository(dataRepository);
-      }
+      protected void AddDataRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories) => ChartEditorPresenter.AddDataRepositories(dataRepositories);
+
+      protected void RemoveDataRepositoriesFromEditor(IEnumerable<DataRepository> dataRepositories) => ChartEditorPresenter.RemoveDataRepositories(dataRepositories);
 
       private PathElements displayQuantityPathDefinition(DataColumn dataColumn)
       {
@@ -201,14 +163,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected virtual string NameForColumn(DataColumn dataColumn)
       {
-         return _chartPresenterContext.QuantityDisplayPathMapper.DisplayPathAsStringFor(SimulationFor(dataColumn), dataColumn, addSimulationName: true);
+         return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn);
       }
 
       public virtual void Clear()
       {
-         ChartEditorPresenter.DataSource = null;
-         ChartDisplayPresenter.DataSource = null;
+         _chartPresenterContext.Clear();
          ChartEditorPresenter.ColumnSettingsChanged -= columnSettingsChanged;
+         ChartEditorPresenter.ChartChanged -= ChartChanged;
          ChartEditorPresenter.SetCurveNameDefinition(null);
          ChartEditorPresenter.SetDisplayQuantityPathDefinition(null);
          ChartEditorPresenter.ClearButtons();
@@ -216,21 +178,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          //necessary to dispose view here that was added dynamically to the container view and might not be disposed
          View.Dispose();
-
-         RemoveChartEventHandlers();
       }
 
-      protected virtual void ResetEditor()
+      protected virtual void ConfigureColumns()
       {
          Column(BrowserColumns.RepositoryName).GroupIndex = -1;
-
          Column(BrowserColumns.Simulation).Visible = false;
          Column(BrowserColumns.TopContainer).Visible = false;
          Column(BrowserColumns.Container).Visible = false;
          Column(BrowserColumns.BottomCompartment).Visible = false;
          Column(BrowserColumns.Molecule).Visible = false;
          Column(BrowserColumns.Name).Visible = false;
-
          Column(BrowserColumns.ColumnId).Visible = false;
          Column(BrowserColumns.BaseGridName).Visible = false;
          Column(BrowserColumns.RepositoryName).Visible = false;
@@ -245,7 +203,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Column(CurveOptionsColumns.xData).Visible = false;
          Column(CurveOptionsColumns.yData).Visible = false;
          Column(CurveOptionsColumns.yAxisType).Visible = true;
-
          Column(CurveOptionsColumns.Name).VisibleIndex = 0;
          Column(CurveOptionsColumns.Color).VisibleIndex = 1;
          Column(CurveOptionsColumns.LineStyle).VisibleIndex = 2;
@@ -260,34 +217,25 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected virtual void InitEditorLayout()
       {
-         _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.ChartEditorAndDisplayPresenter);
-         AddAllButtons();
+         _chartPresenterContext.EditorLayoutTask.InitFromUserSettings(_chartPresenterContext.EditorAndDisplayPresenter);
+         PostEditorLayout();
       }
 
-      private void columnSettingsChanged(GridColumnSettings columnSettings)
+      private void columnSettingsChanged(IReadOnlyCollection<GridColumnSettings> gridColumnSettings)
       {
          NotifyProjectChanged();
       }
 
       protected virtual void NotifyProjectChanged()
       {
-         _chartPresenterContext.ProjectRetriever.CurrentProject.HasChanged = true;
+         _chartPresenterContext.NotifyProjectChanged();
       }
 
-      protected GridColumnSettings Column(BrowserColumns browserColumns)
-      {
-         return ChartEditorPresenter.GetDataBrowserColumnSettings(browserColumns);
-      }
+      protected GridColumnSettings Column(BrowserColumns browserColumns) => ChartEditorPresenter.ColumnSettingsFor(browserColumns);
 
-      protected GridColumnSettings Column(CurveOptionsColumns curveOptionsColumns)
-      {
-         return ChartEditorPresenter.GetCurveOptionsColumnSettings(curveOptionsColumns);
-      }
+      protected GridColumnSettings Column(CurveOptionsColumns curveOptionsColumns) => ChartEditorPresenter.ColumnSettingsFor(curveOptionsColumns);
 
-      protected GridColumnSettings Column(AxisOptionsColumns axisOptionsColumns)
-      {
-         return ChartEditorPresenter.GetAxisOptionsColumnSettings(axisOptionsColumns);
-      }
+      protected GridColumnSettings Column(AxisOptionsColumns axisOptionsColumns) => ChartEditorPresenter.ColumnSettingsFor(axisOptionsColumns);
 
       protected void ClearButtons()
       {

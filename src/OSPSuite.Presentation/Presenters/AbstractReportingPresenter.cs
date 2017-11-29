@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core;
-using OSPSuite.TeXReporting;
-using OSPSuite.Utility;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Reporting;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
+using OSPSuite.TeXReporting;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -23,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    Start the report use case to report the <paramref name="objectToReport" />
       /// </summary>
-      void CreateReport(object objectToReport);
+      void CreateReport(object objectToReport, bool isDraft = false);
 
       /// <summary>
       ///    Returns all available fonts
@@ -50,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters
          _startOptions = startOptions;
       }
 
-      public void CreateReport(object objectToReport)
+      public void CreateReport(object objectToReport, bool isDraft = false)
       {
          _objectToReport = objectToReport;
          _reportConfiguration = new ReportConfiguration
@@ -58,6 +57,7 @@ namespace OSPSuite.Presentation.Presenters
             Template = _reportTemplateRepository.All().FirstOrDefault(),
             Title = titleFor(objectToReport),
             SubTitle = subTitleFor(objectToReport),
+            Draft = isDraft
          };
 
          _view.BindTo(_reportConfiguration);

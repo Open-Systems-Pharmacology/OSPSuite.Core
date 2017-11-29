@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views.Charts
     {
          this.titleTextBox = new DevExpress.XtraEditors.TextEdit();
          this.layoutControl = new UxLayoutControl();
-         this.sideMarginsEnabledCheckEdit = new DevExpress.XtraEditors.CheckEdit();
+         this.sideMarginsEnabledCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.legendPositionComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
          this.diagramBackgroundColorColorEdit = new UxColorPickEditWithHistory();
          this.backgroundColorColorEdit = new UxColorPickEditWithHistory();

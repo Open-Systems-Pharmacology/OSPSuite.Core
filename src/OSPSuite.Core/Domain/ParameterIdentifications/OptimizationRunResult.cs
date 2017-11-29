@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual IReadOnlyList<OptimizedParameterValue> Values
       {
-         get { return _values; }
+         get => _values;
          set
          {
             _values.Clear();
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual IReadOnlyList<DataRepository> SimulationResults
       {
-         get { return _simulationResults; }
+         get => _simulationResults;
          set
          {
             _simulationResults.Clear();
@@ -57,7 +57,9 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       }
 
       public virtual double TotalError => ResidualsResult?.TotalError ?? double.PositiveInfinity;
+
       public virtual IReadOnlyCollection<OutputResiduals> AllOutputResiduals => ResidualsResult?.AllOutputResiduals ?? new List<OutputResiduals>();
+
       public virtual IReadOnlyList<Residual> AllResiduals => ResidualsResult?.AllResiduals ?? new List<Residual>();
 
       public virtual IReadOnlyList<double> AllResidualValues
@@ -70,10 +72,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return SimulationResults.SelectMany(x => x.Columns).FirstOrDefault(x => string.Equals(x.PathAsString, fullOutputPath));
       }
 
-      public virtual void RemoveResidual(OutputResiduals residual)
-      {
-         ResidualsResult?.RemoveResidual(residual);
-      }
+      public virtual void RemoveResidual(OutputResiduals residual) => ResidualsResult?.RemoveResidual(residual);
 
       public virtual IEnumerable<Residual> AllResidualsFor(string fullOutputPath)
       {

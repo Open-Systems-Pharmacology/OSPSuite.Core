@@ -3,9 +3,9 @@ using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Views.Charts
 {
-   public interface ISingleAxisSettingsView : IView<ISingleAxisSettingsPresenter>
+   public interface ISingleAxisSettingsView : IModalView<ISingleAxisSettingsPresenter>
    {
-      void BindToSource(IAxis axis);
+      void BindTo(Axis axis);
 
       /// <summary>
       /// Hides default color and default line style editors.

@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation
         [Observation]
         public void should_tell_the_view_to_bind_to_the_label_dto()
         {
-           A.CallTo(()=>_view.BindToSource(A<LabelDTO>.Ignored)).MustHaveHappened();
+           A.CallTo(()=>_view.BindTo(A<LabelDTO>.Ignored)).MustHaveHappened();
         }
     }
 }

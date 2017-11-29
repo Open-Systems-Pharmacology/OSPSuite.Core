@@ -11,14 +11,14 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       public string Name { get; set; }
       public ValueDTO MinValue { get; set; }
       public ValueDTO MaxValue { get; set; }
-      public bool NeedBoundaryCheck { get; set; } = true;
+      public bool NeedsBoundaryCheck { get; set; } = true;
 
       public bool ValueIsCloseToBoundary => valueIsCloseToBoundary(ValueForBoundaryCheck, MinValue.Value, MaxValue.Value);
       public abstract double ValueForBoundaryCheck { get; }
 
       private bool valueIsCloseToBoundary(double value, double min, double max)
       {
-         if (!NeedBoundaryCheck)
+         if (!NeedsBoundaryCheck)
             return false;
 
          return valueIsOutOfBounds(value, min, max) || valueIsCloseTo(value, min) || valueIsCloseTo(value, max);
@@ -46,7 +46,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       {
          get
          {
-            if (!NeedBoundaryCheck)
+            if (!NeedsBoundaryCheck)
                return ApplicationIcons.EmptyIcon;
 
             return ValueIsCloseToBoundary ? ApplicationIcons.Warning : ApplicationIcons.OK;

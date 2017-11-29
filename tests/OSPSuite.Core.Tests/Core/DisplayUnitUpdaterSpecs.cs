@@ -152,8 +152,10 @@ namespace OSPSuite.Core
 
    public class When_updating_the_display_unit_for_a_curve_chart : concern_for_DisplayUnitUpdater
    {
-      private ICurveChart _curveChart;
+      private CurveChart _curveChart;
       private Unit _unit1;
+      private Axis _axisX;
+      private Axis _axisY;
 
       protected override void Context()
       {
@@ -162,11 +164,13 @@ namespace OSPSuite.Core
          _curveChart = new CurveChart().WithAxes();
          _unit1 = new Unit("XX", 1, 0);
 
-         _curveChart.Axes[AxisTypes.X].UnitName = "OldX";
-         _curveChart.Axes[AxisTypes.Y].UnitName = "OldY";
+         _axisX = _curveChart.AxisBy(AxisTypes.X);
+         _axisX.UnitName = "OldX";
+         _axisY = _curveChart.AxisBy(AxisTypes.Y);
+         _axisY.UnitName = "OldY";
 
-         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_curveChart.Axes[AxisTypes.X], _curveChart.Axes[AxisTypes.X].Unit)).Returns(_unit1);
-         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_curveChart.Axes[AxisTypes.Y], _curveChart.Axes[AxisTypes.Y].Unit)).Returns(null);
+         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_axisX, _axisX.Unit)).Returns(_unit1);
+         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_axisY, _axisY.Unit)).Returns(null);
       }
 
       protected override void Because()
@@ -177,13 +181,13 @@ namespace OSPSuite.Core
       [Observation]
       public void should_update_the_unit_name_of_all_axis_for_which_a_display_unit_could_be_found()
       {
-         _curveChart.Axes[AxisTypes.X].UnitName.ShouldBeEqualTo(_unit1.Name);
+         _axisX.UnitName.ShouldBeEqualTo(_unit1.Name);
       }
 
       [Observation]
       public void should_not_update_the_unit_name_of_all_axis_for_which_a_display_unit_could_not_be_found()
       {
-         _curveChart.Axes[AxisTypes.Y].UnitName.ShouldBeEqualTo("OldY");
+         _axisY.UnitName.ShouldBeEqualTo("OldY");
       }
    }
 }

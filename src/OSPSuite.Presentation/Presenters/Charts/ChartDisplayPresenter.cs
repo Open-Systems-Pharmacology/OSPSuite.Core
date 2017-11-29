@@ -1,42 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
-using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
-using ItemChangedEventArgs = OSPSuite.Core.Chart.ItemChangedEventArgs;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
    /// <summary>
    ///    Presenter of ChartDisplay component, which displays a IChart.
    /// </summary>
-   public interface IChartDisplayPresenter : IPresenter<IChartDisplayView>, IPresenterWithContextMenu<ICurve>, IPresenterWithContextMenu<IAxis>, IPresenterWithContextMenu<ICurveChart>, IBatchUpdatable
+   public interface IChartDisplayPresenter : 
+      IPresenter<IChartDisplayView>,
+      ICanCopyToClipboard,
+      IPresenterWithContextMenu<IViewItem>,
+      IListener<ChartUpdatedEvent>,
+      IListener<ChartPropertiesChangedEvent>
    {
       /// <summary>
-      ///    Displayed IChart.
+      ///    Displayed Chart.
       /// </summary>
-      ICurveChart DataSource { get; set; }
-
-      /// <summary>
-      ///    Associated ChartDisplayControl as Control.
-      /// </summary>
-      Control Control { get; }
+      CurveChart Chart { get; }
 
       /// <summary>
       ///    Reloads xyData of Chart and refreshs display of Chart.
@@ -64,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Refreshes AxisAdapters with Axes scaling
       /// </summary>
-      void RefreshAxisAdapters();
+      void RefreshAxisBinders();
 
       /// <summary>
       ///    Action to call when exporting to PDF
@@ -82,52 +79,42 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ExportToExcel();
 
       /// <summary>
-      ///    Sets Definition of Curve name in CurveOptions.
-      /// </summary>
-      void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition);
-
-      /// <summary>
       ///    Resets the zoom of the chart to 0 (no zoom)
       /// </summary>
       void ResetZoom();
-
-      /// <summary>
-      ///    Copies the chart to the clipboard as an image
-      /// </summary>
-      void CopyToClipboard();
 
       /// <summary>
       ///    Returns the curve with the same id as <paramref name="seriesId" />
       /// </summary>
       /// <param name="seriesId">The id of the curve being found</param>
       /// <returns>the curve if found, otherwise null</returns>
-      ICurve CurveFromSeriesId(string seriesId);
+      Curve CurveFromSeriesId(string seriesId);
 
       /// <summary>
       ///    Activates the context menu first entry for the <paramref name="axis" />
       /// </summary>
       /// <param name="axis">The axis which is the subject of the context menu</param>
-      void ActivateFirstContextMenuEntryFor(IAxis axis);
+      void ActivateFirstContextMenuEntryFor(Axis axis);
 
       /// <summary>
       ///    Activates the context menu first entry for the <paramref name="curve" />
       /// </summary>
       /// <param name="curve">The curve which is the subject of the context menu</param>
-      void ActivateFirstContextMenuEntryFor(ICurve curve);
+      void ActivateFirstContextMenuEntryFor(Curve curve);
 
       /// <summary>
       ///    Returns the axis that matches the <paramref name="axisType" /> type
       /// </summary>
       /// <param name="axisType">The axis type to return</param>
       /// <returns>The matching axis for type otherwise null</returns>
-      IAxis GetAxisFrom(AxisTypes axisType);
+      Axis AxisBy(AxisTypes axisType);
 
       /// <summary>
       ///    Shows or hides the curve in the legend
       /// </summary>
       /// <param name="curve">The curve which should be added or removed from the legend</param>
       /// <param name="show">if true, the legend entry should be shown, otherwise the legend entry is hidden</param>
-      void ShowCurveInLegend(ICurve curve, bool show);
+      void ShowCurveInLegend(Curve curve, bool show);
 
       /// <summary>
       ///    Moves the curve from it's current place to a target place in the legend
@@ -135,7 +122,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="movingCurve">The curve being moved</param>
       /// <param name="targetCurve">The place the curve should occupy after move</param>
-      void MoveSeriesInLegend(ICurve movingCurve, ICurve targetCurve);
+      void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve);
 
       /// <summary>
       ///    If no curves have been added to the chart, then <paramref name="hint" /> text will appear in place of the empty
@@ -148,14 +135,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    exist with the given <paramref name="id" />
       /// </summary>
       int LegendIndexFromSeriesId(string id);
-
-      bool ShouldIncludeOriginData();
-
-      /// <summary>
-      ///    Returns true if the chart being displayed has a curve containing a series with <paramref name="seriesId" />
-      ///    otherwise false
-      /// </summary>
-      bool HasCurveWithId(string seriesId);
 
       /// <summary>
       ///    Disables editing the curve and axis through the chart view
@@ -175,300 +154,172 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="seriesId">The id of the series whose unit is being retrieved</param>
       /// <returns>The unit as a string</returns>
-      string GetDisplayUnitsFor(string seriesId);
+      string DisplayUnitsFor(string seriesId);
 
       string CurveDescriptionFromSeriesId(string seriesId);
-      bool IsPointBelowLLOQ(double[] values, string curveId);
+      bool IsPointBelowLLOQ(double[] values, string seriesId);
       int GetSourceIndexFromDataRow(string seriesId, DataRow row);
+
+      void Edit(CurveChart chart);
+
+      /// <summary>
+      /// Edit the <paramref name="chart"/>using the <paramref name="displayChartFontAndSizeSettings"/>to display the chart in the view
+      /// </summary>
+      /// <param name="chart">Chart to edit</param>
+      /// <param name="displayChartFontAndSizeSettings">Default font and size use to display the chart. This is not what will be used to export the chart</param>
+      void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings);
+
+      void Clear();
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
    {
-      private readonly ICache<AxisTypes, IAxisAdapter> _axisAdapters;
-      private readonly IChartDisplayView _chartDisplayView;
-      private readonly IDataRepositoryTask _dataRepositoryTask;
-      private readonly IDialogCreator _dialogCreator;
-      private readonly ICurveAdapterFactory _curveAdapterFactory;
-      private readonly ICurveChartContextMenuFactory _curveChartContextMenuFactory;
-      private readonly ICurveContextMenuFactory _curveContextMenuFactory;
-      private readonly IAxisContextMenuFactory _axisContextMenuFactory;
-      private readonly IExceptionManager _exceptionManager;
-      private readonly ICache<string, ICurveAdapter> _curveAdapters;
-      private readonly ICache<string, ICurveAdapter> _quickCurveAdapterCache;
-      // The curveAdapters are stored explicitely in this presenter class to enable releasing the adapters
-      private ICurveChart _chart;
-      private Func<DataColumn, string> _curveNameDefinition = x => x.Name;
-      public bool Updating { get; private set; }
-
-      private readonly string _legendIndexPropertyName;
-
+      private readonly ICurveBinderFactory _curveBinderFactory;
+      private readonly IViewItemContextMenuFactory _contextMenuFactory;
+      private readonly IAxisBinderFactory _axisBinderFactory;
+      private readonly ICurveToDataModeMapper _dataModeMapper;
+      private readonly ICurveChartExportTask _chartExportTask;
+      private readonly IApplicationSettings _applicationSettings;
+      private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
+      private readonly Cache<string, ICurveBinder> _curveBinders;
+      private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
+      private bool _isLLOQVisible;
+      private ChartFontAndSizeSettings _displayChartFontAndSizeSettings;
       public Action ExportToPDF { get; set; }
 
       public Action<int> HotTracked
       {
-         set { View.HotTracked = value; }
+         set => View.HotTracked = value;
       }
 
-      public ChartDisplayPresenter(
-         IChartDisplayView chartDisplayView,
-         IDataRepositoryTask dataRepositoryTask,
-         IDialogCreator dialogCreator,
-         ICurveAdapterFactory curveAdapterFactory,
-         ICurveChartContextMenuFactory curveChartContextMenuFactory,
-         ICurveContextMenuFactory curveContextMenuFactory,
-         IAxisContextMenuFactory axisContextMenuFactory,
-         IExceptionManager exceptionManager)
+      public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
+         ICurveBinderFactory curveBinderFactory,
+         IViewItemContextMenuFactory contextMenuFactory,
+         IAxisBinderFactory axisBinderFactory,
+         ICurveToDataModeMapper dataModeMapper,
+         ICurveChartExportTask chartExportTask,
+         IApplicationSettings applicationSettings)
          : base(chartDisplayView)
       {
-         _chartDisplayView = chartDisplayView;
-         _dataRepositoryTask = dataRepositoryTask;
-         _dialogCreator = dialogCreator;
-         _curveAdapterFactory = curveAdapterFactory;
-         _curveChartContextMenuFactory = curveChartContextMenuFactory;
-         _curveContextMenuFactory = curveContextMenuFactory;
-         _axisContextMenuFactory = axisContextMenuFactory;
-         _exceptionManager = exceptionManager;
-         _chartDisplayView.AttachPresenter(this);
-         _axisAdapters = new Cache<AxisTypes, IAxisAdapter>(a => a.AxisType);
-         _curveAdapters = new Cache<string, ICurveAdapter>(c => c.Id);
-         _quickCurveAdapterCache = new Cache<string, ICurveAdapter>(onMissingKey: key => null);
-         ExportToPDF = () => { throw new OSPSuiteException(Error.NotImplemented); };
-         _legendIndexPropertyName = Helpers.Property<ICurve>(x => x.LegendIndex).Name;
+         _curveBinderFactory = curveBinderFactory;
+         _contextMenuFactory = contextMenuFactory;
+         _axisBinderFactory = axisBinderFactory;
+         _dataModeMapper = dataModeMapper;
+         _chartExportTask = chartExportTask;
+         _applicationSettings = applicationSettings;
+         _axisBinders = new Cache<AxisTypes, IAxisBinder>(a => a.AxisType, onMissingKey: key => null);
+         _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
+         _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
+         _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
+         ExportToPDF = () => throw new OSPSuiteException(Error.NotImplemented);
       }
 
-      public ICurveChart DataSource
+      public CurveChart Chart { get; private set; }
+
+      public virtual void Edit(CurveChart chart)
       {
-         get { return _chart; }
-         set
-         {
-            if (_chart != null)
-            {
-               removeAllCurves();
-               removeAllAxes();
-               BeginUpdate();
-               _chart.StartUpdateEvent -= onChartUpdating;
-               _chart.EndUpdateEvent -= onChartDoneUpdating;
-            }
-
-            _chart = value;
-
-            if (_chart == null) return;
-            
-            EndUpdate();
-
-            _chartDisplayView.UpdateSettings(_chart);
-
-            //On curve changed activation kills performance
-            _chart.Curves.ItemChanged -= onCurveChanged;
-            _chart.PropertyChanged -= onChartPropertyChanged;
-            addCurves(_chart.Curves);
-            _chart.Curves.ItemChanged += onCurveChanged;
-            _chart.PropertyChanged += onChartPropertyChanged;
-
-            _chart.StartUpdateEvent += onChartUpdating;
-            _chart.EndUpdateEvent += onChartDoneUpdating;
-         }
+         Edit(chart, _displayChartFontAndSizeSettings);
       }
 
-      public Control Control
+      public virtual void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings)
       {
-         get { return _chartDisplayView as Control; }
+         Clear();
+         _displayChartFontAndSizeSettings = displayChartFontAndSizeSettings;
+         Chart = chart;
+         updateChart();
       }
 
-      public void BeginUpdate()
+      public virtual void Clear()
       {
-         if (_chart == null) return;
-
-         Updating = true;
-         _chart.PropertyChanged -= onChartPropertyChanged;
-         _chart.Axes.CollectionChanged -= onChartAxesChanged;
-         _chart.Curves.CollectionChanged -= onChartCurvesChanged;
-         _chart.Curves.ItemChanged -= onCurveChanged;
-         _chart.Curves.ItemPropertyChanged -= onCurvePropertyChanged;
-         _chart.Axes.ItemChanged -= onAxisChanged;
-      }
-
-      public void EndUpdate()
-      {
-         if (_chart == null) return;
-         Updating = false;
-
-         _chart.PropertyChanged += onChartPropertyChanged;
-         _chart.Axes.CollectionChanged += onChartAxesChanged;
-         _chart.Curves.CollectionChanged += onChartCurvesChanged;
-         _chart.Curves.ItemChanged += onCurveChanged;
-         _chart.Curves.ItemPropertyChanged += onCurvePropertyChanged;
-         _chart.Axes.ItemChanged += onAxisChanged;
-      }
-
-      private void onChartDoneUpdating(object sender, EventArgs e)
-      {
-         EndUpdate();
-      }
-
-      private void onChartUpdating(object sender, EventArgs e)
-      {
-         BeginUpdate();
-      }
-
-      private void onCurvePropertyChanged(object sender, ItemChangedEventArgs e)
-      {
-         if (string.Equals(e.PropertyName, _legendIndexPropertyName))
-         {
-            _view.ReOrderLegend();
-         }
+         _curveBinders.ToList().Each(removeCurveBinder);
+         _axisBinders.ToList().Each(removeAxisBinder);
+         Chart = null;
       }
 
       public void Refresh()
       {
-         try
-         {
-            _chartDisplayView.BeginSeriesUpdate();
-            _curveAdapters.Each(x => x.Refresh());
-            RefreshAxisAdapters();
-            RefreshCurvesVisibiltyInLegendAdapters();
-            rebuildQuickCurveAdapterCache();
-         }
-         finally
-         {
-            _chartDisplayView.EndSeriesUpdate();
-         }
-
-         _chartDisplayView.RefreshData();
-         _chartDisplayView.Refresh();
+         updateChart();
       }
 
-      private void rebuildQuickCurveAdapterCache()
+      private void rebuildQuickCurveBinderCache()
       {
-         _quickCurveAdapterCache.Clear();
-         _curveAdapters.Each(addCurvesToQuickCacheAdapter);
+         _quickCurveBinderCache.Clear();
+         _curveBinders.Each(addCurvesToQuickCacheAdapter);
       }
 
       public event DragEventHandler DragOver
       {
-         add { _chartDisplayView.DragOver += value; }
-         remove { _chartDisplayView.DragOver -= value; }
+         add => View.DragOver += value;
+         remove => View.DragOver -= value;
       }
 
       public event DragEventHandler DragDrop
       {
-         add { _chartDisplayView.DragDrop += value; }
-         remove { _chartDisplayView.DragDrop -= value; }
+         add => View.DragDrop += value;
+         remove => View.DragDrop -= value;
       }
 
       public void ResetVisibleRange()
       {
-         startAxisUpdate();
-         _chart.Axes.Each(axis => { axis.SetRange(null, null); });
-         RefreshAxisAdapters();
-         endAxisUpdate();
+         Chart.Axes.Each(axis => axis.ResetRange());
+         RefreshAxisBinders();
       }
 
-      public bool IsSeriesLLOQ(string seriesId)
+      private ICurveBinder curveBinderFromSeriesId(string seriesId)
       {
-         var relatedAdapter = getRelatedCurveAdapter(seriesId);
-         if (relatedAdapter == null)
-            return false;
-
-         return relatedAdapter.IsSeriesLLOQ(seriesId);
+         return _quickCurveBinderCache[seriesId];
       }
 
-      private ICurveAdapter getRelatedCurveAdapter(string seriesId)
+      public string DisplayUnitsFor(string seriesId)
       {
-         return curveAdapterFromSeriesId(seriesId);
-      }
-
-      private ICurveAdapter curveAdapterFromSeriesId(string seriesId)
-      {
-         return _quickCurveAdapterCache[seriesId];
-      }
-
-      public string GetDisplayUnitsFor(string seriesId)
-      {
-         var relatedAdapter = getRelatedCurveAdapter(seriesId);
-         if (relatedAdapter == null)
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         if (curveBinder == null)
             return string.Empty;
 
-         return _axisAdapters[relatedAdapter.Curve.yAxisType].Axis.UnitName;
-      }
-
-      private void endAxisUpdate()
-      {
-         _chart.Axes.ItemChanged += onAxisChanged;
-      }
-
-      private void startAxisUpdate()
-      {
-         _chart.Axes.ItemChanged -= onAxisChanged; //avoid repeated refresh during this action called from Control
-      }
-
-      private void onAxisUpdate(Action actionToRun)
-      {
-         startAxisUpdate();
-         actionToRun();
-         endAxisUpdate();
+         return Chart.YAxisFor(curveBinder.Curve).UnitName;
       }
 
       public void SetVisibleRange(float? xMin, float? xMax, float? yMin, float? yMax)
       {
-         onAxisUpdate(() =>
+         Chart.AllUsedSecondaryAxisTypes.Each(axisType =>
          {
-            allAxesExceptPrimary().Each(axisType =>
+            var rangeIsDefined = xMax.HasValue && xMin.HasValue && yMin.HasValue && yMax.HasValue;
+            if (rangeIsDefined)
             {
-               if (xMax.HasValue && xMin.HasValue && yMin.HasValue && yMax.HasValue)
-               {
-                  setSecondaryAxisRange(xMin.Value, xMax.Value, yMin.Value, yMax.Value, axisType);
-               }
-               else
-               {
-                  _chart.Axes[axisType].SetRange(null, null);
-               }
-            });
-
-            _chart.Axes[AxisTypes.X].SetRange(xMin, xMax);
-            _chart.Axes[AxisTypes.Y].SetRange(yMin, yMax);
-
-            RefreshAxisAdapters();
+               setSecondaryAxisRange(xMin.Value, xMax.Value, yMin.Value, yMax.Value, axisType);
+            }
+            else
+            {
+               Chart.AxisBy(axisType).ResetRange();
+            }
          });
+
+         Chart.AxisBy(AxisTypes.X).SetRange(xMin, xMax);
+         Chart.AxisBy(AxisTypes.Y).SetRange(yMin, yMax);
+
+         RefreshAxisBinders();
       }
 
       private void setSecondaryAxisRange(float xMin, float xMax, float yMin, float yMax, AxisTypes axisType)
       {
          var secondaryMin = _view.GetPointsForSecondaryAxis(xMin, yMin, axisType);
          var secondaryMax = _view.GetPointsForSecondaryAxis(xMax, yMax, axisType);
-         _chart.Axes[axisType].SetRange(secondaryMin.Y, secondaryMax.Y);
-      }
-
-      private IEnumerable<AxisTypes> allAxesExceptPrimary()
-      {
-         return _chart.Axes.Keys.Except(new[] {AxisTypes.X, AxisTypes.Y});
+         Chart.AxisBy(axisType).SetRange(secondaryMin.Y, secondaryMax.Y);
       }
 
       public virtual void ExportToExcel()
       {
-         if (_chart == null) return;
-         var visibleCurves = _chart.Curves.Where(x => x.Visible).ToList();
-         if (!visibleCurves.Any()) return;
-
-         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT);
-         if (string.IsNullOrEmpty(fileName)) return;
-
-         _dataRepositoryTask.ExportToExcel(visibleCurves.Select(x => x.yData), fileName, _curveNameDefinition);
-      }
-
-      public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
-      {
-         _curveNameDefinition = curveNameDefinition;
+         _chartExportTask.ExportToExcel(Chart);
       }
 
       public void ResetZoom()
       {
-         _view.ResetChartZoom();
+         ResetVisibleRange();
       }
 
       public void CopyToClipboard()
       {
-         _view.CopyToClipboardWithExportSettings();
+         _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
       }
 
       public string CurveDescriptionFromSeriesId(string seriesId)
@@ -476,38 +327,40 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return CurveFromSeriesId(seriesId)?.Description;
       }
 
-      public bool IsPointBelowLLOQ(double[] values, string curveId)
+      public bool IsSeriesLLOQ(string seriesId)
       {
-         var adapter = curveAdapterFromSeriesId(curveId);
-         return values.All(value => adapter.LLOQ != null && adapter.LLOQ.Value > value);
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         return curveBinder?.IsSeriesLLOQ(seriesId) ?? false;
+      }
+
+      public bool IsPointBelowLLOQ(double[] values, string seriesId)
+      {
+         if (!_isLLOQVisible)
+            return false;
+
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+
+         if (curveBinder?.LLOQ == null)
+            return false;
+
+         return values.All(value => curveBinder.LLOQ > value);
       }
 
       public int GetSourceIndexFromDataRow(string seriesId, DataRow row)
       {
-         var curveAdapter = curveAdapterFromSeriesId(seriesId);
-         return curveAdapter.OriginalCurveIndexForRow(row);
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         return curveBinder?.OriginalCurveIndexForRow(row) ?? 0;
       }
 
-      public ICurve CurveFromSeriesId(string seriesId)
+      public Curve CurveFromSeriesId(string seriesId)
       {
-         var adapterFromSeriesId = curveAdapterFromSeriesId(seriesId);
-         return adapterFromSeriesId?.Curve;
+         return curveBinderFromSeriesId(seriesId)?.Curve;
       }
 
       public int LegendIndexFromSeriesId(string id)
       {
          var curve = CurveFromSeriesId(id);
          return curve == null ? 0 : curve.LegendIndex.GetValueOrDefault(0);
-      }
-
-      public bool ShouldIncludeOriginData()
-      {
-         return DataSource != null && DataSource.IncludeOriginData;
-      }
-
-      public bool HasCurveWithId(string seriesId)
-      {
-         return CurveFromSeriesId(seriesId) != null;
       }
 
       public void DisableCurveAndAxisEdits()
@@ -517,314 +370,150 @@ namespace OSPSuite.Presentation.Presenters.Charts
          View.DisableAxisHotTracking();
       }
 
-      private void addCurves(IEnumerable<ICurve> curves)
+      private void updateChart()
       {
-         // temporarily make curves (first would be enough) visible, because only after adding a visible series, 
-         // the diagram is available, but availablility of diagram is assumed after adding the first curve.
-         var curvesList = curves as IList<ICurve> ?? curves.OrderBy(x => x.LegendIndex).ToList();
-         var invisibleCurves = curvesList.Where(curve => !curve.Visible).ToList();
-
-         _chartDisplayView.BeginInit();
-         foreach (var curve in curvesList)
+         using (new BatchUpdate(View))
          {
-            if (curve == null) break;
-            if (curve.xData == null) throw new MissingDataException("x", curve.Name);
-            if (curve.yData == null) throw new MissingDataException("y", curve.Name);
+            updateAxes();
 
-            curve.Visible = true; // temporarily
+            updateCurves();
 
-            var curveAdapter = _curveAdapterFactory.CreateFor(curve, _chart.Axes[AxisTypes.X], _chart.Axes[curve.yAxisType]);
+            rebuildQuickCurveBinderCache();
 
+            bindChartToView();
 
-            _curveAdapters.Add(curveAdapter);
-            addCurvesToQuickCacheAdapter(curveAdapter);
-            _chartDisplayView.AddCurve(curveAdapter);
+            //maybe can be done better
+            View.ReOrderLegend();
          }
-         _chartDisplayView.ReOrderLegend();
-         _chartDisplayView.EndInit(); //necessary to generate ChartControl.Axes and .Diagram, but for performance issues this should be called only if necessary (reason for change from addCurve to addCurves)
+         updateViewLayout();
 
-         // axisAdapters cannot be generated directly, because the ChartControl.Axes and .Diagram are generated after adding the first visible Series
+         RefreshAxisBinders();
+      }
 
-         //update DiagramBackColor, because XY diagram only exists if at least a curve was selected=>hence 1
-         _chartDisplayView.DiagramBackColor = _chart.ChartSettings.DiagramBackColor;
+      private void updateViewLayout()
+      {
+         if (Chart.Curves.Any())
+            _view.ShowChart();
+         else
+            _view.ShowHint();
+      }
 
-         // update axisAdapters
-         foreach (var axis in _chart.Axes)
+      private void updateAxes()
+      {
+         pruneAxes();
+
+         Chart.Axes.Each(refreshAxisBinderFor);
+
+         updateYAxesVisibility();
+      }
+
+      private void pruneAxes() => pruneBinders(_axisBinders, Chart.Axes, x => x.Axis, removeAxisBinder);
+
+      private void refreshAxisBinderFor(Axis axis) => getOrCreateAxisBinderFor(axis).Refresh();
+
+      private void removeAxisBinder(IAxisBinder axisBinder)
+      {
+         axisBinder.Dispose();
+         _axisBinders.Remove(axisBinder.AxisType);
+      }
+
+      private void updateCurves()
+      {
+         pruneCurves();
+
+         Chart.Curves.Each(refreshCurveBinderFor);
+
+         _isLLOQVisible = _curveBinders.Any(x => x.LLOQ.HasValue && x.Curve.ShowLLOQ);
+      }
+
+      private void pruneCurves() => pruneBinders(_curveBinders, Chart.Curves, x => x.Curve, removeCurveBinder);
+
+      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects, Func<TBinder, TBoundObject> retrieveBoundObjectFunc, Action<TBinder> removeBinderAction)
+      {
+         //Remove using reference to ensure that the bound object in the binder is the same as the one in the chart
+         binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
+      }
+
+      private void refreshCurveBinderFor(Curve curve) => getOrCreateCurveBinderFor(curve).Refresh();
+
+      private IAxisBinder getOrCreateAxisBinderFor(Axis axis)
+      {
+         var axisBinder = _axisBinders[axis.AxisType];
+         if (axisBinder == null)
          {
-            if (!_axisAdapters.Contains(axis.AxisType))
-            {
-               var axisAdapter = _chartDisplayView.GetAxisAdapter(axis);
-               if (axisAdapter != null)
-               {
-                  _axisAdapters.Add(axisAdapter);
-               }
-            }
+            axisBinder = _axisBinderFactory.Create(axis, View.ChartControl, Chart);
+            _axisBinders.Add(axisBinder);
          }
-         // DevExpress provides Axes first after at least one curve is added to diagram
-         _curveAdapters.Each(x => x.AttachAxisAdapters(_axisAdapters));
-         invisibleCurves.Each(c => c.Visible = false);
 
-         updateYAxisVisibility(AxisTypes.Y);
-         updateYAxisVisibility(AxisTypes.Y2);
-         RefreshAxisAdapters();
-         RefreshCurvesVisibiltyInLegendAdapters();
+         return axisBinder;
       }
 
-      private void addCurvesToQuickCacheAdapter(ICurveAdapter curveAdapter)
+      private ICurveBinder getOrCreateCurveBinderFor(Curve curve)
       {
-         curveAdapter.SeriesIds.Each(seriesId => _quickCurveAdapterCache[seriesId] = curveAdapter);
+         var curveBinder = curveBinderFor(curve);
+         var yAxisBinder = _axisBinders[curve.yAxisType];
+
+         if (curveBinder != null)
+         {
+            if (curveBinder.IsValidFor(_dataModeMapper.MapFrom(curve), curve.yAxisType))
+               return curveBinder;
+
+            removeCurveBinder(curveBinder);
+         }
+         curveBinder = _curveBinderFactory.CreateFor(curve, View.ChartControl, Chart, yAxisBinder);
+         _curveBinders.Add(curveBinder);
+
+         return curveBinder;
       }
 
-      private void removeCurve(string curveId)
+      private void removeCurveBinder(ICurveBinder curveBinder)
       {
-         _chartDisplayView.RemoveCurve(curveId);
-
-         if (_chartDisplayView.NoCurves())
-            removeAllAxes();
-
-         var curveAdapter = _curveAdapters[curveId];
-         curveAdapter.Dispose();
-         removeAdapterFromQuickCache(curveAdapter);
-         _curveAdapters[curveId] = null;
-         _curveAdapters.Remove(curveId);
-
-         updateYAxisVisibility(AxisTypes.Y);
-         updateYAxisVisibility(AxisTypes.Y2);
-         RefreshAxisAdapters();
+         curveBinder.Dispose();
+         _curveBinders.Remove(curveBinder.Id);
+         removeAdapterFromQuickCache(curveBinder);
       }
 
-      private void removeAdapterFromQuickCache(ICurveAdapter curveAdapter)
+      private void addCurvesToQuickCacheAdapter(ICurveBinder curveBinder)
       {
-         curveAdapter.SeriesIds.Each(seriesId => _quickCurveAdapterCache.Remove(seriesId));
+         curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache[seriesId] = curveBinder);
       }
 
-      public void RefreshAxisAdapters()
+      private void removeAdapterFromQuickCache(ICurveBinder curveBinder)
       {
-         _axisAdapters.Each(x => x.RefreshRange(_chart.ChartSettings.SideMarginsEnabled, _chartDisplayView.GetDiagramSize()));
+         curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache.Remove(seriesId));
       }
 
-      public void RefreshCurvesVisibiltyInLegendAdapters()
+      public void RefreshAxisBinders()
       {
-         _curveAdapters.Each(x => x.ShowCurveInLegend(x.Curve.VisibleInLegend));
+         var diagramSize = View.GetDiagramSize();
+         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
+      }
+
+      private void updateYAxesVisibility()
+      {
+         Chart.AllUsedYAxisTypes.Each(updateYAxisVisibility);
       }
 
       private void updateYAxisVisibility(AxisTypes yAxisType)
       {
-         if (!_axisAdapters.Contains(yAxisType)) return;
-         var axisTypeUsed = _chart.Curves.Any(curve => curve.Visible && curve.yAxisType == yAxisType);
+         var axisBinder = _axisBinders[yAxisType];
+         if (axisBinder == null) return;
 
-         if (_axisAdapters[yAxisType].Visible == axisTypeUsed) return;
-
-         _axisAdapters[yAxisType].Visible = axisTypeUsed;
-
-         refreshLegendTexts();
-         RefreshAxisAdapters();
+         var axisTypeUsed = Chart.AllVisibleCurvesOnYAxis(yAxisType).Any();
+         axisBinder.Visible = axisTypeUsed;
       }
 
-      private void removeAxis(AxisTypes axisType)
+      public Axis AxisBy(AxisTypes axisType) => Chart.AxisBy(axisType);
+
+      public void ShowCurveInLegend(Curve curve, bool show)
       {
-         _chartDisplayView.RemoveAxis(axisType);
-         if (_axisAdapters.Contains(axisType))
-         {
-            _axisAdapters[axisType].Dispose();
-            _axisAdapters[axisType] = null;
-            _axisAdapters.Remove(axisType);
-         }
-      }
-
-      private void removeAllAxes()
-      {
-         foreach (var axisType in _axisAdapters.Keys.ToList())
-         {
-            removeAxis(axisType);
-         }
-      }
-
-      private void removeAllCurves()
-      {
-         foreach (var curveId in _curveAdapters.Keys.ToList())
-         {
-            removeCurve(curveId);
-         }
-      }
-
-      private void onChartCurvesChanged(object sender, NotifyCollectionChangedEventArgs e)
-      {
-         try
-         {
-            var curves = sender as INotifyCache<string, ICurve>;
-            if (curves == null) return;
-            switch (e.Action)
-            {
-               case NotifyCollectionChangedAction.Add:
-                  foreach (var item in e.NewItems)
-                  {
-                     var curve = item as ICurve;
-                     if (curve == null) continue;
-                     addCurves(new List<ICurve> {curve});
-                  }
-                  break;
-               case NotifyCollectionChangedAction.Remove:
-                  foreach (var item in e.OldItems)
-                  {
-                     var curve = item as ICurve;
-                     if (curve == null) continue;
-                     removeCurve(curve.Id);
-                  }
-                  break;
-               case NotifyCollectionChangedAction.Replace:
-                  break;
-               case NotifyCollectionChangedAction.Move:
-                  break;
-               case NotifyCollectionChangedAction.Reset:
-                  removeAllCurves();
-                  break;
-               default:
-                  throw new ArgumentOutOfRangeException();
-            }
-         }
-         catch (Exception)
-         {
-            
-         }
-      }
-
-      private void refreshLegendTexts()
-      {
-         _chartDisplayView.BeginSeriesUpdate();
-         _curveAdapters.Each(c => c.RefreshLegendText());
-         _chartDisplayView.EndSeriesUpdate();
-      }
-
-      private void onChartAxesChanged(object sender, NotifyCollectionChangedEventArgs e)
-      {
-         var axes = sender as INotifyCache<AxisTypes, IAxis>;
-         if (axes == null) return;
-         try
-         {
-            switch (e.Action)
-            {
-               case NotifyCollectionChangedAction.Add:
-                  foreach (var item in e.NewItems)
-                  {
-                     var axis = item as IAxis;
-                     if (axis == null) continue;
-                     if (axis.AxisType >= AxisTypes.Y2)
-                     {
-                        IAxisAdapter axisAdapter = _chartDisplayView.GetAxisAdapter(axis);
-                        if (axisAdapter != null)
-                        {
-                           _axisAdapters.Add(axisAdapter);
-                        }
-                     }
-                  }
-
-                  refreshLegendTexts();
-                  break;
-               case NotifyCollectionChangedAction.Remove:
-                  foreach (var item in e.OldItems)
-                  {
-                     var axis = item as IAxis;
-                     if (axis == null) continue;
-                     if (axis.AxisType >= AxisTypes.Y2) removeAxis(axis.AxisType);
-                  }
-
-                  refreshLegendTexts();
-                  break;
-               case NotifyCollectionChangedAction.Replace:
-                  break;
-               case NotifyCollectionChangedAction.Move:
-                  break;
-               case NotifyCollectionChangedAction.Reset:
-                  removeAllAxes();
-                  break;
-               default:
-                  throw new ArgumentOutOfRangeException();
-            }
-         }
-         catch (Exception)
-         {
-
-         }
-      }
-
-      private void onCurveChanged(object obj, ItemChangedEventArgs args)
-      {
-         var curve = args.Item as ICurve;
-
-         updateYAxisVisibility(AxisTypes.Y);
-         updateYAxisVisibility(AxisTypes.Y2);
-         updateYAxisVisibility(AxisTypes.Y3);
-
-         if (curve != null && _curveAdapters.Contains(curve.Id))
-            _curveAdapters[curve.Id].ShowCurveInLegend(curve.VisibleInLegend);
-
-         _chartDisplayView.RefreshData();
-      }
-
-      private void onAxisChanged(object obj, ItemChangedEventArgs args)
-      {
-         _exceptionManager.Execute(() =>
-         {
-            _chartDisplayView.RefreshData();
-            _chartDisplayView.Refresh();
-            RefreshAxisAdapters();
-         });
-      }
-
-      private void onChartPropertyChanged(object sender, PropertyChangedEventArgs e)
-      {
-         _exceptionManager.Execute(() =>
-         {
-            _chartDisplayView.UpdateSettings(_chart);
-            RefreshAxisAdapters();
-
-            if (_chart.PreviewSettings)
-               setDisplay(areChartWidthAndHeightDefined() ? DockStyle.None : DockStyle.Fill, _chart.FontAndSize, true);
-            else
-               setDisplay(DockStyle.Fill, ChartFontAndSizeSettings.Default, previewOriginText: false);
-         });
-      }
-
-      private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool previewOriginText)
-      {
-         _chartDisplayView.SetDockStyle(dockStyle);
-         _chartDisplayView.SetFontAndSizeSettings(fontAndSizeSettings);
-         if (previewOriginText)
-            _chartDisplayView.PreviewOriginText();
-         else
-            _chartDisplayView.ClearOriginText();
-      }
-
-      private bool areChartWidthAndHeightDefined()
-      {
-         return (_chart.FontAndSize.ChartWidth.GetValueOrDefault() > 0 && _chart.FontAndSize.ChartHeight.GetValueOrDefault() > 0);
-      }
-
-      public void ActivateFirstContextMenuEntryFor(IAxis axis)
-      {
-         _axisContextMenuFactory.CreateFor(axis, this).ActivateFirstMenu();
-      }
-
-      public void ActivateFirstContextMenuEntryFor(ICurve curve)
-      {
-         _curveContextMenuFactory.CreateFor(curve, this).ActivateFirstMenu();
-      }
-
-      public IAxis GetAxisFrom(AxisTypes axisType)
-      {
-         return !_chart.Axes.Contains(axisType) ? null : _chart.Axes[axisType];
-      }
-
-      public void ShowCurveInLegend(ICurve curve, bool show)
-      {
-         _curveAdapters[curve.Id].ShowCurveInLegend(visibleInLegend: show);
+         curveBinderFor(curve).ShowCurveInLegend(showInLegend: show);
          curve.VisibleInLegend = show;
       }
 
-      public void MoveSeriesInLegend(ICurve movingCurve, ICurve targetCurve)
+      public void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve)
       {
-         _chart.MoveSeriesInLegend(movingCurve, targetCurve);
+         Chart.MoveCurvesInLegend(movingCurve, targetCurve);
       }
 
       public void SetNoCurvesSelectedHint(string hint)
@@ -832,20 +521,71 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetNoCurvesSelectedHint(hint);
       }
 
-      public void ShowContextMenu(ICurve curve, Point popupLocation)
+      public void Handle(ChartUpdatedEvent chartUpdatedEvent)
       {
-         _curveContextMenuFactory.CreateFor(curve, this).Show(_view, popupLocation);
+         if (!canHandle(chartUpdatedEvent))
+            return;
+
+         updateChart();
       }
 
-      public void ShowContextMenu(IAxis axis, Point popupLocation)
+      public void Handle(ChartPropertiesChangedEvent eventToHandle)
       {
-         _axisContextMenuFactory.CreateFor(axis, this).Show(_view, popupLocation);
+         if (!canHandle(eventToHandle))
+            return;
+
+         bindChartToView();
       }
 
-      public void ShowContextMenu(ICurveChart curveChart, Point popupLocation)
+      private ICurveBinder curveBinderFor(Curve curve)
       {
-         var contextMenu = _curveChartContextMenuFactory.CreateFor(curveChart, this);
+         return _curveBinders[curve.Id];
+      }
+
+      private void bindChartToView()
+      {
+         View.UpdateSettings(Chart);
+
+         var areChartWidthAndHeightDefined = Chart.FontAndSize.SizeIsDefined;
+     
+         if (Chart.PreviewSettings)
+            setDisplay(areChartWidthAndHeightDefined ? DockStyle.None : DockStyle.Fill, Chart.FontAndSize, showingPreview: true);
+         else
+            setDisplay(DockStyle.Fill, _displayChartFontAndSizeSettings, showingPreview: false);
+      }
+
+      private void setDisplay(DockStyle dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool showingPreview)
+      {
+         View.SetDockStyle(dockStyle);
+         View.SetFontAndSizeSettings(fontAndSizeSettings);
+         var showOriginText = showingPreview && Chart.IncludeOriginData;
+         View.ShowOriginText = showOriginText;
+         var watermark = showingPreview ? _applicationSettings.WatermarkTextToUse : null;
+         View.ShowWatermark(watermark);
+      }
+
+      private bool canHandle(ChartEvent chartEvent)
+      {
+         return Equals(Chart, chartEvent.Chart);
+      }
+
+      public void ActivateFirstContextMenuEntryFor(Axis axis)
+      {
+         _contextMenuFactory.CreateFor(viewItemFor(axis), this).ActivateFirstMenu();
+      }
+
+      public void ActivateFirstContextMenuEntryFor(Curve curve)
+      {
+         _contextMenuFactory.CreateFor(viewItemFor(curve), this).ActivateFirstMenu();
+      }
+
+      public void ShowContextMenu(IViewItem viewItem, Point popupLocation)
+      {
+         var contextMenu = _contextMenuFactory.CreateFor(viewItem, this);
          contextMenu.Show(_view, popupLocation);
       }
+
+      private IViewItem viewItemFor(Curve curve) => new CurveViewItem(Chart, curve);
+      private IViewItem viewItemFor(Axis axis) => new AxisViewItem(Chart, axis);
    }
 }

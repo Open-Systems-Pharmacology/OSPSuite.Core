@@ -21,7 +21,7 @@ namespace OSPSuite.Core
       protected ICache<ISimulation, ISimModelBatch> _simModelBatches;
       protected JacobianMatrix _result;
       protected List<OutputMapping> _allOutputMappings;
-      protected List<IdentificationParameter> _allIdentificationParameters;
+      protected List<IdentificationParameter> _allVariableIdentificationParameters;
 
       protected OutputMapping _output1;
       protected OutputMapping _output2;
@@ -44,10 +44,10 @@ namespace OSPSuite.Core
          _runResult = A.Fake<OptimizationRunResult>();
          _simModelBatches = new Cache<ISimulation, ISimModelBatch>();
          _allOutputMappings = new List<OutputMapping>();
-         _allIdentificationParameters = new List<IdentificationParameter>();
+         _allVariableIdentificationParameters = new List<IdentificationParameter>();
 
          A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(_allOutputMappings);
-         A.CallTo(() => _parameterIdentification.AllIdentificationParameters).Returns(_allIdentificationParameters);
+         A.CallTo(() => _parameterIdentification.AllVariableIdentificationParameters).Returns(_allVariableIdentificationParameters);
          sut = new JacobianMatrixCalculator();
 
          _output1 = A.Fake<OutputMapping>();
@@ -93,8 +93,8 @@ namespace OSPSuite.Core
          A.CallTo(() => _ps3.Simulation).Returns(_simulation2);
          _identificationParameter2.AddLinkedParameter(_ps3);
 
-         _allIdentificationParameters.Add(_identificationParameter1);
-         _allIdentificationParameters.Add(_identificationParameter2);
+         _allVariableIdentificationParameters.Add(_identificationParameter1);
+         _allVariableIdentificationParameters.Add(_identificationParameter2);
 
          A.CallTo(() => _runResult.AllResidualsFor(_output1.FullOutputPath)).Returns(new[] {new Residual(1, 11, 1), new Residual(2, 21, 2), new Residual(3, 31, 0)});
          A.CallTo(() => _runResult.AllResidualsFor(_output2.FullOutputPath)).Returns(new[] {new Residual(1, 12, 3), new Residual(3, 32, 4), new Residual(4, 42, 5)});
@@ -263,13 +263,13 @@ namespace OSPSuite.Core
          base.Context();
          _simModelBatches.Clear();
          _allOutputMappings.Clear();
-         _allIdentificationParameters.Clear();
+         _allVariableIdentificationParameters.Clear();
 
          _output1.Scaling = Scalings.Log;
          _simModelBatches.Add(_simulation1, _simModelBatch1);
          _allOutputMappings.Add(_output1);
 
-         _allIdentificationParameters.Add(_identificationParameter1);
+         _allVariableIdentificationParameters.Add(_identificationParameter1);
 
          A.CallTo(() => _runResult.AllResidualsFor(_output1.FullOutputPath)).Returns(new[] {new Residual(1, 11, 1), new Residual(3, -5, 1),});
          A.CallTo(() => _simModelBatch1.SensitivityValuesFor(_output1.OutputPath, _ps1.Path)).Returns(new[] {0d, 21d, 31d, 41d, 51d});

@@ -15,6 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly ICurveTemplatePresenter _curveTemplatePresenter;
       private readonly IAxisSettingsPresenter _axisSettingsPresenter;
       private readonly IChartExportSettingsPresenter _chartExportSettingsPresenter;
+      private CurveChartTemplate _chartTemplate;
 
       public ChartTemplateDetailsPresenter(IChartTemplateDetailsView view, IChartSettingsPresenter chartSettingsPresenter, ICurveTemplatePresenter curveTemplatePresenter, IAxisSettingsPresenter axisSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter)
          : base(view)
@@ -22,6 +23,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter = chartSettingsPresenter;
          _curveTemplatePresenter = curveTemplatePresenter;
          _axisSettingsPresenter = axisSettingsPresenter;
+         _axisSettingsPresenter.AxisRemoved += (o,e)=> axisRemoved(e.Axis);
+         _axisSettingsPresenter.AxisAdded += (o, e) => axisAdded();
          _chartExportSettingsPresenter = chartExportSettingsPresenter;
          _view.SetChartSettingsView(_chartSettingsPresenter.View);
          _view.SetCurveTemplateView(_curveTemplatePresenter.View);
@@ -30,8 +33,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddSubPresenters(_chartSettingsPresenter, _curveTemplatePresenter, _axisSettingsPresenter, _chartExportSettingsPresenter);
       }
 
+      private void axisAdded()
+      {
+         _chartTemplate.AddNewAxis();
+         _axisSettingsPresenter.Refresh();
+      }
+
+      private void axisRemoved(Axis axis)
+      {
+         _chartTemplate.RemoveAxis(axis);
+         _axisSettingsPresenter.Refresh();
+      }
+
       public void Edit(CurveChartTemplate chartTemplate)
       {
+         _chartTemplate = chartTemplate;
          if (chartTemplate == null)
             deleteBinding();
          else
@@ -41,17 +57,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void bindTo(CurveChartTemplate chartTemplate)
       {
          _curveTemplatePresenter.Edit(chartTemplate.Curves);
-         _chartSettingsPresenter.BindTo(chartTemplate);
-         _axisSettingsPresenter.SetDataSource(chartTemplate.Axes);
-         _chartExportSettingsPresenter.BindTo(chartTemplate);
+         _chartSettingsPresenter.Edit(chartTemplate);
+         _axisSettingsPresenter.Edit(chartTemplate.Axes);
+         _chartExportSettingsPresenter.Edit(chartTemplate);
       }
 
       private void deleteBinding()
       {
          _curveTemplatePresenter.Edit(new List<CurveTemplate>());
-         _chartSettingsPresenter.DeleteBinding();
-         _axisSettingsPresenter.SetDataSource(null);
-         _chartExportSettingsPresenter.DeleteBinding();
+         _chartSettingsPresenter.Clear();
+         _axisSettingsPresenter.Edit(null);
+         _chartExportSettingsPresenter.Clear();
       }
    }
 }

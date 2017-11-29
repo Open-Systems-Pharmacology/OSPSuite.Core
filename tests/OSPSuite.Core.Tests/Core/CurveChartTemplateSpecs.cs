@@ -26,7 +26,7 @@ namespace OSPSuite.Core
          base.Context();
          _cloneManager= A.Fake<ICloneManager>();
          _sourceTemplate = new CurveChartTemplate {Name = "TOTO",ChartSettings = {BackColor = Color.Red}};
-         _sourceTemplate.Axes.Add(new Axis(AxisTypes.X));
+         _sourceTemplate.AddAxis(new Axis(AxisTypes.X));
          var curveTemplate = new CurveTemplate{Name = "XX"};
          _cloneCurve = new CurveTemplate();
          _sourceTemplate.Curves.Add(curveTemplate);
@@ -55,6 +55,20 @@ namespace OSPSuite.Core
       public void should_have_created_a_clone_of_the_curve_properties()
       {
          sut.Curves.ShouldContain(_cloneCurve);
+      }
+   }
+
+   public class When_adding_a_new_axis_by_type_to_a_curve_chart_template : concern_for_CurveChartTemplate
+   {
+      protected override void Because()
+      {
+         sut.AddNewAxisFor(AxisTypes.Y);
+      }
+
+      [Observation]
+      public void should_have_an_axis_with_this_type()
+      {
+         sut.HasAxis(AxisTypes.Y).ShouldBeTrue();
       }
    }
 }	

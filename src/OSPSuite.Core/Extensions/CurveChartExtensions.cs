@@ -9,12 +9,12 @@ namespace OSPSuite.Core.Extensions
 {
    public static class CurveChartExtensions
    {
-      public static void AddCurvesFor(this ICurveChart curveChart, DataRepository dataRepository, Func<DataColumn, string> columnNameRetriever, IDimensionFactory dimensionFactory, Action<DataColumn, ICurve> action = null)
+      public static void AddCurvesFor(this CurveChart curveChart, DataRepository dataRepository, Func<DataColumn, string> columnNameRetriever, IDimensionFactory dimensionFactory, Action<DataColumn, Curve> action = null)
       {
          AddCurvesFor(curveChart, dataRepository.AllButBaseGrid(), columnNameRetriever, dimensionFactory, action);
       }
 
-      public static void AddCurvesFor(this ICurveChart curveChart, IEnumerable<DataColumn> columns, Func<DataColumn, string> columnNameRetriever, IDimensionFactory dimensionFactory, Action<DataColumn, ICurve> action = null)
+      public static void AddCurvesFor(this CurveChart curveChart, IEnumerable<DataColumn> columns, Func<DataColumn, string> columnNameRetriever, IDimensionFactory dimensionFactory, Action<DataColumn, Curve> action = null)
       {
          foreach (var column in columns)
          {

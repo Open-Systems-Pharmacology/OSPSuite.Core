@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Views.Charts;
 
@@ -26,15 +23,26 @@ namespace OSPSuite.Presentation.Presenters.Charts
       DefaultColor
    }
 
+   public class AxisEventArgs : EventArgs
+   {
+      public Axis Axis { get; }
+      public AxisEventArgs(Axis axis) => Axis = axis;
+   }
+
    public interface IAxisSettingsPresenter : IPresenterWithColumnSettings, IPresenter<IAxisSettingsView>
    {
-      void SetDataSource(ICache<AxisTypes, IAxis> value);
-
-      void RemoveAxis(AxisTypes axisType);
+      void Edit(IEnumerable<Axis> axes);
+      void Clear();
+      void RemoveAxis(Axis axis);
       void AddYAxis();
-
-      IEnumerable<IDimension> GetDimensions(IDimension dimension);
-      IEnumerable<string> GetUnitNamesFor(IDimension dimension);
+      IEnumerable<IDimension> AllDimensions(IDimension defaultDimension);
+      IEnumerable<string> AllUnitNamesFor(IDimension dimension);
+      void Refresh();
+      event EventHandler AxisAdded;
+      event EventHandler<AxisEventArgs> AxisRemoved;
+      void NotifyAxisPropertyChanged(Axis axis);
+      event EventHandler<AxisEventArgs> AxisPropertyChanged;
+      void UnitChanged(Axis axis);
    }
 
    /// <summary>
@@ -44,14 +52,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
    internal class AxisSettingsPresenter : PresenterWithColumnSettings<IAxisSettingsView, IAxisSettingsPresenter>, IAxisSettingsPresenter
    {
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly IPresentationUserSettings _commonUserSettings;
-      private ICache<AxisTypes, IAxis> _axes;
+      private IEnumerable<Axis> _axes;
+      public event EventHandler AxisAdded = delegate { };
+      public event EventHandler<AxisEventArgs> AxisRemoved = delegate { };
+      public event EventHandler<AxisEventArgs> AxisPropertyChanged = delegate { };
 
-      public AxisSettingsPresenter(IAxisSettingsView view, IDimensionFactory dimensionFactory, IPresentationUserSettings commonUserSettings)
+      public AxisSettingsPresenter(IAxisSettingsView view, IDimensionFactory dimensionFactory)
          : base(view)
       {
          _dimensionFactory = dimensionFactory;
-         _commonUserSettings = commonUserSettings;
       }
 
       protected override void SetDefaultColumnSettings()
@@ -69,46 +78,50 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(AxisOptionsColumns.DefaultColor).WithCaption(Captions.Chart.AxisOptions.DefaultColor);
       }
 
-      public void SetDataSource(ICache<AxisTypes, IAxis> value)
+      public void UnitChanged(Axis axis)
       {
-         _axes = value;
+         axis.ResetRange();
+      }
+
+      public void NotifyAxisPropertyChanged(Axis axis) => AxisPropertyChanged(this, new AxisEventArgs(axis));
+
+      public void Refresh()
+      {
+         Edit(_axes);
+      }
+
+      public void Edit(IEnumerable<Axis> axes)
+      {
+         _axes = axes;
          if (_axes == null)
             _view.DeleteBinding();
          else
-            _view.BindToSource(_axes);
+            _view.BindTo(_axes);
       }
 
-      public void RemoveAxis(AxisTypes axisType)
+      public void Clear()
       {
-         if (axisType >= AxisTypes.Y2 && _axes.Contains(axisType + 1))
-            throw new OSPSuiteException("Remove higher AxisType first!");
-         _axes.Remove(axisType);
+         Edit(null);
+      }
+
+      public void RemoveAxis(Axis axis)
+      {
+         AxisRemoved(this, new AxisEventArgs(axis));
       }
 
       public void AddYAxis()
       {
-         foreach (var axisType in EnumHelper.AllValuesFor<AxisTypes>())
-         {
-            if (_axes.Contains(axisType))
-               continue;
-
-            var axis = new Axis(axisType);
-            if (axis.IsYAxis())
-               axis.Scaling = _commonUserSettings.DefaultChartYScaling;
-
-            _axes.Add(axis);
-            return;
-         }
+         AxisAdded(this, EventArgs.Empty);
       }
 
-      public IEnumerable<IDimension> GetDimensions(IDimension dimension)
+      public IEnumerable<IDimension> AllDimensions(IDimension defaultDimension)
       {
-         return _dimensionFactory.GetAllDimensionsForEditors(dimension);
+         return _dimensionFactory.AllDimensionsForEditors(defaultDimension);
       }
 
-      public IEnumerable<string> GetUnitNamesFor(IDimension dimension)
+      public IEnumerable<string> AllUnitNamesFor(IDimension dimension)
       {
-         if(dimension==null)
+         if (dimension == null)
             return Enumerable.Empty<string>();
 
          return dimension.GetUnitNames();

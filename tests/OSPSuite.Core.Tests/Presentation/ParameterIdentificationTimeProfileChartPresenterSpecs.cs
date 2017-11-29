@@ -1,11 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -25,7 +24,6 @@ namespace OSPSuite.Presentation
       protected IPresentationSettingsTask _presentationSettingsTask;
       protected IParameterIdentificationMultipleRunsAnalysisView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
-      protected IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       protected IDataColumnToPathElementsMapper _pathElementsMapper;
       protected IChartTemplatingTask _chartTemplatingTask;
       protected ParameterIdentificationTimeProfileChart _timeProfileAnalysis;
@@ -42,13 +40,14 @@ namespace OSPSuite.Presentation
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetreiver;
       private ChartPresenterContext _chartPresenterContext;
+      private ICurveNamer _curveNamer;
 
       protected override void Context()
       {
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _view = A.Fake<IParameterIdentificationMultipleRunsAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
-         _quantityDisplayPathMapper = A.Fake<IQuantityPathToQuantityDisplayPathMapper>();
+         _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
@@ -58,8 +57,8 @@ namespace OSPSuite.Presentation
 
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
-         A.CallTo(() => _chartPresenterContext.ChartEditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
-         A.CallTo(() => _chartPresenterContext.QuantityDisplayPathMapper).Returns(_quantityDisplayPathMapper);
+         A.CallTo(() => _chartPresenterContext.EditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
+         A.CallTo(() => _chartPresenterContext.CurveNamer).Returns(_curveNamer);
          A.CallTo(() => _chartPresenterContext.DataColumnToPathElementsMapper).Returns(_pathElementsMapper);
          A.CallTo(() => _chartPresenterContext.TemplatingTask).Returns(_chartTemplatingTask);
          A.CallTo(() => _chartPresenterContext.PresenterSettingsTask).Returns(_presentationSettingsTask);
@@ -103,6 +102,7 @@ namespace OSPSuite.Presentation
       private DataColumn _firstObservedData1;
       private DataRepository _simulationResult2;
       private DataColumn _firstObservedData2;
+      private List<DataRepository> _allAddedDataRepositories;
 
       protected override void Context()
       {
@@ -122,6 +122,11 @@ namespace OSPSuite.Presentation
          _optimizationRunResult2.AddResult(DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult4"));
 
          _parameterIdentification.Configuration.RunMode = new MultipleParameterIdentificationRunMode();
+
+         _allAddedDataRepositories = new List<DataRepository>();;
+         A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._))
+            .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
+
       }
 
       protected override void Because()
@@ -139,14 +144,14 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_add_the_observed_data_to_the_chart_editor()
       {
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_observedData1)).MustHaveHappened();
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_observedData2)).MustHaveHappened();
+         _allAddedDataRepositories.ShouldContain(_observedData1);
+         _allAddedDataRepositories.ShouldContain(_observedData2);
       }
 
       [Observation]
       public void should_add_the_simulation_results_to_the_chart_editor()
       {
-         A.CallTo(() => ChartEditorPresenter.AddDataRepository(_simulationResult1)).MustHaveHappened();
+         _allAddedDataRepositories.ShouldContain(_simulationResult1);
       }
 
       [Observation]

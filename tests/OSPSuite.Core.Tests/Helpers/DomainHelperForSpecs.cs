@@ -61,33 +61,42 @@ namespace OSPSuite.Helpers
          return parameter;
       }
 
-      public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5)
+      public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5, bool isFixed = false)
       {
-         return new IdentificationParameter
+         var identificationParameter=  new IdentificationParameter
          {
             ConstantParameterWithValue(min).WithName(Constants.Parameters.MIN_VALUE),
             ConstantParameterWithValue(startValue).WithName(Constants.Parameters.START_VALUE),
             ConstantParameterWithValue(max).WithName(Constants.Parameters.MAX_VALUE)
          }.WithName(name);
+
+         identificationParameter.IsFixed = isFixed;
+         return identificationParameter;
       }
 
       public static DataRepository ObservedData(string id = "TestData")
       {
-         var observedData = new DataRepository(id);
+         var observedData = new DataRepository(id).WithName(id);
          var baseGrid = new BaseGrid("Time", TimeDimensionForSpecs())
          {
             Values = new[] { 1.0f, 2.0f, 3.0f }
          };
          observedData.Add(baseGrid);
 
-         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            Values = new[] { 10f, 20f, 30f },
-            DataInfo = { Origin = ColumnOrigins.Observation }
-         };
+         var data = ConcentrationColumnForObservedData(baseGrid);
          observedData.Add(data);
 
          return observedData;
+      }
+
+      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid)
+      {
+         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            Values = new[] {10f, 20f, 30f},
+            DataInfo = {Origin = ColumnOrigins.Observation}
+         };
+         return data;
       }
 
       public static DataRepository ObservedDataWithLLOQ(string id = "TestDataWithLLOQ")
@@ -150,16 +159,22 @@ namespace OSPSuite.Helpers
          };
          simulationResults.Add(baseGrid);
 
-         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
-         {
-            Values = new[] { 10f, 20f, 30f },
-            DataInfo = { Origin = ColumnOrigins.Calculation },
-            QuantityInfo = new QuantityInfo("Concentration", new[] { simulationName, "Comp", "Liver", "Cell", "Concentration" }, QuantityType.Drug)
-         };
+         var data = ConcentrationColumnForSimulation(simulationName, baseGrid);
 
          simulationResults.Add(data);
 
          return simulationResults;
+      }
+
+      public static DataColumn ConcentrationColumnForSimulation(string simulationName, BaseGrid baseGrid)
+      {
+         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            Values = new[] {10f, 20f, 30f},
+            DataInfo = {Origin = ColumnOrigins.Calculation},
+            QuantityInfo = new QuantityInfo("Concentration", new[] {simulationName, "Comp", "Liver", "Cell", "Concentration"}, QuantityType.Drug)
+         };
+         return data;
       }
 
       public static IDimension NoDimension()

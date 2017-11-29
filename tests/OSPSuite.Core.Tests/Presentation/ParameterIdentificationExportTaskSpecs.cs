@@ -82,7 +82,7 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns(string.Empty);
+         A.CallTo(_dialogCreator).WithReturnType<string>().Returns(string.Empty);
       }
 
       protected override void Because()
@@ -109,7 +109,7 @@ namespace OSPSuite.Presentation
          _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
          A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns("a path");
          DirectoryHelper.DirectoryExists = path => true;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.DoYouWantToDeleteDirectory(A<string>._), Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
          A.CallTo(() => _parameterIdentification.AllSimulations).Returns(new[] {_simulation});
          A.CallTo(() => _simulationToModelCoreSimulationMapper.MapFrom(_simulation, A<bool>._)).Returns(_modelCoreSimulation);
       }
@@ -148,7 +148,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_dialog_creator_must_be_used_to_inform_the_user()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.DoYouWantToDeleteDirectory(A<string>._), Captions.Delete, Captions.Cancel)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).MustHaveHappened();
       }
    }
 
@@ -164,7 +164,7 @@ namespace OSPSuite.Presentation
          _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
          A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns("a path");
          DirectoryHelper.DirectoryExists = path => true;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.DoYouWantToDeleteDirectory(A<string>._), Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
          A.CallTo(() => _parameterIdentification.AllSimulations).Returns(new[] {_simulation});
          A.CallTo(() => _simulationToModelCoreSimulationMapper.MapFrom(_simulation, A<bool>._)).Returns(_modelCoreSimulation);
       }
@@ -190,7 +190,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_dialog_creator_must_be_used_to_inform_the_user()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.DoYouWantToDeleteDirectory(A<string>._), Captions.Delete, Captions.Cancel)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).MustHaveHappened();
       }
    }
 

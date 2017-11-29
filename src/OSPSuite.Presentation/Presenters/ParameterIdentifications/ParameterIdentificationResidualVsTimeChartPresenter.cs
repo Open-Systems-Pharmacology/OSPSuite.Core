@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
@@ -10,6 +9,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private const string ZERO = "Zero";
 
       public ParameterIdentificationResidualVsTimeChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext) :
-            base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationResidualVsTimeChartPresenter)
+         base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationResidualVsTimeChartPresenter)
       {
          view.HelpId = HelpId.Tool_PI_Analysis_ResidualsVsTime;
       }
@@ -38,8 +38,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          if (ChartIsBeingCreated)
          {
-            Chart.Axes[AxisTypes.Y].Caption = Captions.ParameterIdentification.Residuals;
-            Chart.Axes[AxisTypes.Y].Scaling = Scalings.Linear;
+            Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.Residuals;
+            Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
          }
 
          UpdateChartFromTemplate();
@@ -62,8 +62,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
             AddCurvesFor(dataRepository, (column, curve) =>
             {
-               SelectColorForCalculationColumn(column);
-               UpdateColorForCalculationColumn(curve, column);
+               SelectColorForPath(fullOutputPath);
+               UpdateColorForPath(curve, fullOutputPath);
                curve.Name = fullOutputPath;
                curve.Description = CurveDescription(outputMapping.ObservedDataName, runResult);
                curve.Symbol = Symbols.Circle;
@@ -78,8 +78,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void addZeroMarkerCurveToChart()
       {
          var markerRepository = createMarkerRepository();
-         AddDataRepositoryToEditor(markerRepository);
-         AddCurvesFor(markerRepository, action: (column, curve) =>
+         AddDataRepositoriesToEditor(new[] {markerRepository});
+         AddCurvesFor(markerRepository, (column, curve) =>
          {
             curve.UpdateMarkerCurve(ZERO);
             _markerCurveId = curve.Id;
@@ -90,8 +90,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var id = $"{Chart.Id}-{ZERO}";
          var dataRepository = createEmptyRepository(id, ZERO, ZERO);
-         dataRepository.BaseGrid.Values = new[] { _parameterIdentification.MinObservedDataTime, _parameterIdentification.MaxObservedDataTime };
-         dataRepository.FirstDataColumn().Values = new[] { 0f, 0f };
+         dataRepository.BaseGrid.Values = new[] {_parameterIdentification.MinObservedDataTime, _parameterIdentification.MaxObservedDataTime};
+         dataRepository.FirstDataColumn().Values = new[] {0f, 0f};
          return dataRepository;
       }
 
@@ -120,14 +120,19 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var dataRepository = createEmptyRepository(id, repositoryName, "Values");
          var scatterColumn = dataRepository.FirstDataColumn();
-         scatterColumn.QuantityInfo.Path = outputResidual.FullOutputPath.ToPathArray();
+         var outputPath = new List<string>(outputResidual.FullOutputPath.ToPathArray());
+         //need to create a unique path containing the observed data name. Since we want to keep the entity name and simulation name, we have to insert before the name
+         if (outputPath.Count > 0)
+            outputPath.Insert(outputPath.Count - 1, outputResidual.ObservedDataName);
+
+         scatterColumn.QuantityInfo.Path = outputPath;
          return dataRepository;
       }
 
       private DataRepository createEmptyRepository(string id, string name, string valueName)
       {
-         var dataRepository = new DataRepository(id) { Name = name };
-         var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.GetDimension(Constants.Dimension.TIME));
+         var dataRepository = new DataRepository(id) {Name = name};
+         var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.Dimension(Constants.Dimension.TIME));
          var values = new DataColumn($"{id}-{valueName}", valueName, _chartPresenterContext.DimensionFactory.NoDimension, baseGrid) {DataInfo = {Origin = ColumnOrigins.CalculationAuxiliary}};
          dataRepository.Add(values);
          return dataRepository;

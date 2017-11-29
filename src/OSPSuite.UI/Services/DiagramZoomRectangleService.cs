@@ -4,13 +4,13 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraCharts;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Services
 {
    public class DiagramZoomRectangleService
    {
-      private readonly ChartControl _chartControl;
-      private XYDiagram _diagram;
+      private readonly UxChartControl _chartControl;
       private readonly Action<Control, Rectangle> _zoomAction;
 
       private readonly Cursor _magnifierCursor;
@@ -21,7 +21,7 @@ namespace OSPSuite.UI.Services
       private Point _lastSelectionCorner = Point.Empty;
       private Rectangle _selectionRectangle = Rectangle.Empty;
 
-      public DiagramZoomRectangleService(ChartControl chartControl, Action<Control, Rectangle> zoomAction)
+      public DiagramZoomRectangleService(UxChartControl chartControl, Action<Control, Rectangle> zoomAction)
       {
          _chartControl = chartControl;
          _zoomAction = zoomAction;
@@ -31,13 +31,12 @@ namespace OSPSuite.UI.Services
          _chartControl.MouseDown += (o, e) => this.DoWithinExceptionHandler(() => OnMouseDown(o, e));
          _chartControl.MouseMove += (o, e) => this.DoWithinExceptionHandler(() => OnMouseMove(o, e));
          _chartControl.MouseUp += (o, e) => this.DoWithinExceptionHandler(() => OnMouseUp(o, e));
-      }
 
-      public void InitializeZoomFor(XYDiagram diagram)
-      {
-         _diagram = diagram;
-         _diagram.EnableAxisXZooming = true;
-         _diagram.EnableAxisYZooming = true;
+         if (_chartControl.XYDiagram != null)
+         {
+            _chartControl.XYDiagram.EnableAxisXZooming = true;
+            _chartControl.XYDiagram.EnableAxisYZooming = true;
+         }
       }
 
       // to draw the rectangle for the Zoom without Shift
@@ -116,9 +115,12 @@ namespace OSPSuite.UI.Services
 
       private DiagramCoordinates pointLocationAt(MouseEventArgs e)
       {
+         if (_chartControl.XYDiagram == null)
+            return null;
+
          try
          {
-            return _diagram.PointToDiagram(new Point(e.X, e.Y));
+            return _chartControl.XYDiagram.PointToDiagram(new Point(e.X, e.Y));
          }
          catch (Exception)
          {

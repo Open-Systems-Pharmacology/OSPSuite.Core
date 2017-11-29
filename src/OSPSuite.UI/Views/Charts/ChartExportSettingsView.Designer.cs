@@ -21,7 +21,7 @@ namespace OSPSuite.UI.Views.Charts
       }
        _screenBinderForExportSettings.Dispose();
        _screenBinderForFonts.Dispose();
-       _screenBinderForCurveChart.Dispose();
+       _screenBinderForChartManagement.Dispose();
       base.Dispose(disposing);
     }
 
@@ -34,10 +34,11 @@ namespace OSPSuite.UI.Views.Charts
     private void InitializeComponent()
     {
          this.tbHeight = new DevExpress.XtraEditors.TextEdit();
-         this.layoutControl = new UxLayoutControl();
-         this.fontSizeOriginComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.includeOriginDataInChartCheckEdit = new DevExpress.XtraEditors.CheckEdit();
-         this.cePreviewSettings = new DevExpress.XtraEditors.CheckEdit();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.btnResetValues = new DevExpress.XtraEditors.SimpleButton();
+         this.cbFontSizeOrigin = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.includeOriginDataInChartCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
+         this.cePreviewSettings = new OSPSuite.UI.Controls.UxCheckEdit();
          this.cbFontSizeDescription = new DevExpress.XtraEditors.ComboBoxEdit();
          this.cbFontSizeTitle = new DevExpress.XtraEditors.ComboBoxEdit();
          this.cbFontSizeLegend = new DevExpress.XtraEditors.ComboBoxEdit();
@@ -55,14 +56,15 @@ namespace OSPSuite.UI.Views.Charts
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemFontSizeOrigin = new DevExpress.XtraLayout.LayoutControlItem();
-         this.btnResetValues = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.cbFontSizeWatermark = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.layoutItemFontSizeWatermark = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbHeight.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.fontSizeOriginComboBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeOrigin.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.includeOriginDataInChartCheckEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.cePreviewSettings.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeDescription.Properties)).BeginInit();
@@ -84,6 +86,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemFontSizeOrigin)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeWatermark.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemFontSizeWatermark)).BeginInit();
          this.SuspendLayout();
          // 
          // tbHeight
@@ -99,8 +103,9 @@ namespace OSPSuite.UI.Views.Charts
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.cbFontSizeWatermark);
          this.layoutControl.Controls.Add(this.btnResetValues);
-         this.layoutControl.Controls.Add(this.fontSizeOriginComboBox);
+         this.layoutControl.Controls.Add(this.cbFontSizeOrigin);
          this.layoutControl.Controls.Add(this.includeOriginDataInChartCheckEdit);
          this.layoutControl.Controls.Add(this.cePreviewSettings);
          this.layoutControl.Controls.Add(this.cbFontSizeDescription);
@@ -119,19 +124,29 @@ namespace OSPSuite.UI.Views.Charts
          this.layoutControl.TabIndex = 12;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // btnResetValues
+         // 
+         this.btnResetValues.Location = new System.Drawing.Point(12, 274);
+         this.btnResetValues.Name = "btnResetValues";
+         this.btnResetValues.Size = new System.Drawing.Size(118, 22);
+         this.btnResetValues.StyleController = this.layoutControl;
+         this.btnResetValues.TabIndex = 21;
+         this.btnResetValues.Text = "btnResetValues";
+         // 
          // fontSizeOriginComboBox
          // 
-         this.fontSizeOriginComboBox.Location = new System.Drawing.Point(161, 180);
-         this.fontSizeOriginComboBox.Name = "fontSizeOriginComboBox";
-         this.fontSizeOriginComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+         this.cbFontSizeOrigin.Location = new System.Drawing.Point(161, 180);
+         this.cbFontSizeOrigin.Name = "cbFontSizeOrigin";
+         this.cbFontSizeOrigin.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.fontSizeOriginComboBox.Size = new System.Drawing.Size(222, 20);
-         this.fontSizeOriginComboBox.StyleController = this.layoutControl;
-         this.fontSizeOriginComboBox.TabIndex = 20;
+         this.cbFontSizeOrigin.Size = new System.Drawing.Size(222, 20);
+         this.cbFontSizeOrigin.StyleController = this.layoutControl;
+         this.cbFontSizeOrigin.TabIndex = 20;
          // 
          // includeOriginDataInChartCheckEdit
          // 
-         this.includeOriginDataInChartCheckEdit.Location = new System.Drawing.Point(12, 227);
+         this.includeOriginDataInChartCheckEdit.AllowClicksOutsideControlArea = false;
+         this.includeOriginDataInChartCheckEdit.Location = new System.Drawing.Point(12, 251);
          this.includeOriginDataInChartCheckEdit.Name = "includeOriginDataInChartCheckEdit";
          this.includeOriginDataInChartCheckEdit.Properties.Caption = "includeOriginDataInChart";
          this.includeOriginDataInChartCheckEdit.Size = new System.Drawing.Size(371, 19);
@@ -140,7 +155,8 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // cePreviewSettings
          // 
-         this.cePreviewSettings.Location = new System.Drawing.Point(12, 204);
+         this.cePreviewSettings.AllowClicksOutsideControlArea = false;
+         this.cePreviewSettings.Location = new System.Drawing.Point(12, 228);
          this.cePreviewSettings.Name = "cePreviewSettings";
          this.cePreviewSettings.Properties.Caption = "cePreviewSettings";
          this.cePreviewSettings.Size = new System.Drawing.Size(371, 19);
@@ -224,7 +240,8 @@ namespace OSPSuite.UI.Views.Charts
             this.layoutControlItem3,
             this.layoutItemFontSizeOrigin,
             this.layoutControlItem4,
-            this.emptySpaceItem1});
+            this.emptySpaceItem1,
+            this.layoutItemFontSizeWatermark});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(395, 309);
@@ -298,7 +315,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.layoutControlItem2.Control = this.cePreviewSettings;
          this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 192);
+         this.layoutControlItem2.Location = new System.Drawing.Point(0, 216);
          this.layoutControlItem2.Name = "layoutControlItem2";
          this.layoutControlItem2.Size = new System.Drawing.Size(375, 23);
          this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
@@ -308,7 +325,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.layoutControlItem3.Control = this.includeOriginDataInChartCheckEdit;
          this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
-         this.layoutControlItem3.Location = new System.Drawing.Point(0, 215);
+         this.layoutControlItem3.Location = new System.Drawing.Point(0, 239);
          this.layoutControlItem3.Name = "layoutControlItem3";
          this.layoutControlItem3.Size = new System.Drawing.Size(375, 23);
          this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
@@ -316,38 +333,47 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // layoutItemFontSizeOrigin
          // 
-         this.layoutItemFontSizeOrigin.Control = this.fontSizeOriginComboBox;
+         this.layoutItemFontSizeOrigin.Control = this.cbFontSizeOrigin;
          this.layoutItemFontSizeOrigin.CustomizationFormText = "layoutItemFontSizeOrigin";
          this.layoutItemFontSizeOrigin.Location = new System.Drawing.Point(0, 168);
          this.layoutItemFontSizeOrigin.Name = "layoutItemFontSizeOrigin";
          this.layoutItemFontSizeOrigin.Size = new System.Drawing.Size(375, 24);
          this.layoutItemFontSizeOrigin.TextSize = new System.Drawing.Size(146, 13);
          // 
-         // btnResetValues
-         // 
-         this.btnResetValues.Location = new System.Drawing.Point(12, 250);
-         this.btnResetValues.Name = "btnResetValues";
-         this.btnResetValues.Size = new System.Drawing.Size(118, 22);
-         this.btnResetValues.StyleController = this.layoutControl;
-         this.btnResetValues.TabIndex = 21;
-         this.btnResetValues.Text = "btnResetValues";
-         // 
          // layoutControlItem4
          // 
          this.layoutControlItem4.Control = this.btnResetValues;
-         this.layoutControlItem4.Location = new System.Drawing.Point(0, 238);
+         this.layoutControlItem4.Location = new System.Drawing.Point(0, 262);
          this.layoutControlItem4.Name = "layoutControlItem4";
-         this.layoutControlItem4.Size = new System.Drawing.Size(122, 51);
+         this.layoutControlItem4.Size = new System.Drawing.Size(122, 27);
          this.layoutControlItem4.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem4.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(122, 238);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(122, 262);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(253, 51);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(253, 27);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // fontSizeWatermarkComboBox
+         // 
+         this.cbFontSizeWatermark.Location = new System.Drawing.Point(161, 204);
+         this.cbFontSizeWatermark.Name = "cbFontSizeWatermark";
+         this.cbFontSizeWatermark.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.cbFontSizeWatermark.Size = new System.Drawing.Size(222, 20);
+         this.cbFontSizeWatermark.StyleController = this.layoutControl;
+         this.cbFontSizeWatermark.TabIndex = 22;
+         // 
+         // layoutItemFontSizeWatermark
+         // 
+         this.layoutItemFontSizeWatermark.Control = this.cbFontSizeWatermark;
+         this.layoutItemFontSizeWatermark.Location = new System.Drawing.Point(0, 192);
+         this.layoutItemFontSizeWatermark.Name = "layoutItemFontSizeWatermark";
+         this.layoutItemFontSizeWatermark.Size = new System.Drawing.Size(375, 24);
+         this.layoutItemFontSizeWatermark.TextSize = new System.Drawing.Size(146, 13);
          // 
          // ChartExportSettingsView
          // 
@@ -360,7 +386,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.tbHeight.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.fontSizeOriginComboBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeOrigin.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.includeOriginDataInChartCheckEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.cePreviewSettings.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeDescription.Properties)).EndInit();
@@ -382,6 +408,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemFontSizeOrigin)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbFontSizeWatermark.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemFontSizeWatermark)).EndInit();
          this.ResumeLayout(false);
 
     }
@@ -404,15 +432,16 @@ namespace OSPSuite.UI.Views.Charts
     private DevExpress.XtraLayout.LayoutControlItem layoutItemFontSizeLegend;
     private DevExpress.XtraLayout.LayoutControlItem layoutItemFontSizeTitle;
     private DevExpress.XtraLayout.LayoutControlItem layoutItemFontSizeDescription;
-    private DevExpress.XtraEditors.CheckEdit cePreviewSettings;
     private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-    private DevExpress.XtraEditors.CheckEdit includeOriginDataInChartCheckEdit;
     private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
-    private DevExpress.XtraEditors.ComboBoxEdit fontSizeOriginComboBox;
+    private DevExpress.XtraEditors.ComboBoxEdit cbFontSizeOrigin;
     private DevExpress.XtraLayout.LayoutControlItem layoutItemFontSizeOrigin;
     private DevExpress.XtraEditors.SimpleButton btnResetValues;
     private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
     private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-
-  }
+      private DevExpress.XtraEditors.ComboBoxEdit cbFontSizeWatermark;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemFontSizeWatermark;
+      private UxCheckEdit cePreviewSettings;
+      private UxCheckEdit includeOriginDataInChartCheckEdit;
+   }
 }

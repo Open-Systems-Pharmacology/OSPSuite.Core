@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.Scaling);
          Map(x => x.UseAsFactor);
+         Map(x => x.IsFixed);
          MapEnumerable(x => x.AllLinkedParameters, x => x.AddLinkedParameter);
       }
    }

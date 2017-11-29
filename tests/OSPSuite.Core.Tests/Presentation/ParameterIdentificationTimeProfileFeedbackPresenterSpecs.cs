@@ -2,7 +2,6 @@
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
 using OSPSuite.Assets;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -74,12 +73,10 @@ namespace OSPSuite.Presentation
 
    public class When_the_time_profile_feedback_presenter_is_editing_a_given_parameter_identification : concern_for_ParameterIdentificationTimeProfileFeedbackPresenter
    {
-      private ICurveChart _chart;
 
       protected override void Because()
       {
          sut.EditParameterIdentification(_parameterIdentification);
-         _chart = _chartDisplayPresenter.DataSource;
       }
 
       [Observation]
@@ -97,7 +94,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_have_added_one_curve_for_the_best_and_one_curve_for_the_current_result_as_well_as_one_curve_for_each_observed_data_map_to_the_selected_output()
       {
-         _chart.Curves.Count.ShouldBeEqualTo(4);
+         sut.Chart.Curves.Count.ShouldBeEqualTo(4);
       }
 
       [Observation]
@@ -109,7 +106,6 @@ namespace OSPSuite.Presentation
 
    public class When_updating_the_time_profile_feedback_for_a_given_parameter_identification : concern_for_ParameterIdentificationTimeProfileFeedbackPresenter
    {
-      private ICurveChart _chart;
       private DataColumn _bestCol;
       private DataColumn _currentCol;
 
@@ -117,7 +113,6 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          sut.EditParameterIdentification(_parameterIdentification);
-         _chart = _chartDisplayPresenter.DataSource;
 
          var baseGridBest = new BaseGrid("baseGridBest", DomainHelperForSpecs.TimeDimensionForSpecs())
          {
@@ -151,8 +146,8 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_update_the_best_and_current_values_according_to_the_run_status()
       {
-         var bestCurve = _chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Best));
-         var currentCurve = _chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Current));
+         var bestCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Best));
+         var currentCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Current));
 
          bestCurve.xData.Values.ShouldBeEqualTo(_bestCol.BaseGrid.Values);
          bestCurve.yData.Values.ShouldBeEqualTo(_bestCol.Values);
@@ -164,16 +159,11 @@ namespace OSPSuite.Presentation
 
    public class When_switching_the_selected_output_for_time_profile_feedback : concern_for_ParameterIdentificationTimeProfileFeedbackPresenter
    {
-      private ICurveChart _chart;
-
       protected override void Context()
       {
          base.Context();
          sut.EditParameterIdentification(_parameterIdentification);
-         _chart = _chartDisplayPresenter.DataSource;
-         _chart.Curves.Count.ShouldBeEqualTo(4);
-
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<DataColumn>.That.Matches(x => Equals(x.Dimension, _outputMapping3.Dimension)))).Returns(_outputMapping3.Dimension);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>.That.Matches(x => Equals(x.Dimension, _outputMapping3.Dimension)))).Returns(_outputMapping3.Dimension);
       }
 
       protected override void Because()
@@ -184,17 +174,17 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_dimension_of_the_y_axis_should_change_to_the_same_as_the_output_mapping()
       {
-         var bestCurve = _chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Best));
-         var currentCurve = _chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Current));
-         _chart.Axes[AxisTypes.Y].Dimension.ShouldBeEqualTo(_outputMapping3.Dimension);
-         bestCurve.YDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
-         currentCurve.YDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
+         var bestCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Best));
+         var currentCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Current));
+         sut.Chart.AxisBy(AxisTypes.Y).Dimension.ShouldBeEqualTo(_outputMapping3.Dimension);
+         bestCurve.yDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
+         currentCurve.yDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
       }
 
       [Observation]
       public void should_show_the_observed_data_for_the_newly_selected_output()
       {
-         _chart.Curves.Count.ShouldBeEqualTo(3);
+         sut.Chart.Curves.Count.ShouldBeEqualTo(3);
       }
    }
 

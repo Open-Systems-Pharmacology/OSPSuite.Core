@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -11,14 +10,14 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public abstract class ParameterIdentificationSingleRunAnalysisPresenter<TChart> : ParameterIdentificationAnalysisChartPresenter<TChart, IParameterIdentificationSingleRunAnalysisView, IParameterIdentificationSingleRunAnalysisPresenter>, IParameterIdentificationSingleRunAnalysisPresenter where TChart : IChartWithObservedData, ISimulationAnalysis
+   public abstract class ParameterIdentificationSingleRunAnalysisPresenter<TChart> : ParameterIdentificationAnalysisChartPresenter<TChart, IParameterIdentificationSingleRunAnalysisView, IParameterIdentificationSingleRunAnalysisPresenter>, IParameterIdentificationSingleRunAnalysisPresenter where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       private ParameterIdentificationRunResult _selectedRunResults;
       public IReadOnlyList<ParameterIdentificationRunResult> AllRunResults { get; private set; }
       protected List<DataRepository> _resultsRepositories = new List<DataRepository>();
 
       protected ParameterIdentificationSingleRunAnalysisPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) :
-         base(view, chartPresenterContext,  icon, presentationKey)
+         base(view, chartPresenterContext, icon, presentationKey)
       {
       }
 
@@ -36,11 +35,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public ParameterIdentificationRunResult SelectedRunResults
       {
-         get { return _selectedRunResults; }
+         get => _selectedRunResults;
          set
          {
             UpdateTemplateFromChart();
             updateSelectedRunResults(value);
+            UpdateChartFromTemplate();
          }
       }
 
@@ -52,13 +52,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected void AddResultRepositoryToEditor(DataRepository dataRepository)
       {
-         _resultsRepositories.Add(dataRepository);
-         AddDataRepositoryToEditor(dataRepository);
+         AddResultRepositoriesToEditor(new[] {dataRepository});
       }
 
-      protected void AddResultRepositoriesToEditor(IEnumerable<DataRepository> dataRepositories)
+      protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
       {
-         dataRepositories.Each(AddResultRepositoryToEditor);
+         _resultsRepositories.AddRange(dataRepositories);
+         AddDataRepositoriesToEditor(dataRepositories);
       }
 
       private void clearRunResults()
@@ -74,7 +74,5 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       }
 
       protected abstract void AddRunResultToChart(ParameterIdentificationRunResult selectedRunResults);
-
-     
    }
 }

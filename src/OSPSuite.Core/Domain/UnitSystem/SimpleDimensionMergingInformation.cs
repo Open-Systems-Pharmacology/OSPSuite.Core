@@ -8,13 +8,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
    public class SimpleDimensionMergingInformation : IDimensionMergingInformation
    {
+      public IDimension SourceDimension { get; }
+      public IDimension TargetDimension { get; }
+
       public SimpleDimensionMergingInformation(IDimension source, IDimension target)
       {
          SourceDimension = source;
          TargetDimension = target;
       }
-
-      public IDimension SourceDimension { get; private set; }
-      public IDimension TargetDimension { get; private set; }
    }
 }

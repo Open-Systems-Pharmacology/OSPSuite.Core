@@ -39,20 +39,11 @@ namespace OSPSuite.Helpers
          return factory;
       }
 
-      public static IDimensionFactory Factory
-      {
-         get { return _factory; }
-      }
+      public static IDimensionFactory Factory => _factory;
 
-      public static IDimension ConcentrationDimension
-      {
-         get { return Factory.GetDimension(DimensionNames.Concentration); }
-      }
+      public static IDimension ConcentrationDimension => Factory.Dimension(DimensionNames.Concentration);
 
-      public static IDimension TimeDimension
-      {
-         get { return Factory.GetDimension(Constants.Dimension.TIME); }
-      }
+      public static IDimension TimeDimension => Factory.Dimension(Constants.Dimension.TIME);
 
       public static class DimensionNames
       {

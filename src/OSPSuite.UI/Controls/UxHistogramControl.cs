@@ -79,11 +79,11 @@ namespace OSPSuite.UI.Controls
          if (!distributionData.IsRangeSpecified)
             return;
 
+         var templateView = SeriesTemplate.View as BarSeriesView;
+         if (templateView != null)
+            templateView.BarWidth = distributionData.BarWidth;
+
          AxisX.WholeRange.SetMinMaxValues(distributionData.XMinValue, distributionData.XMaxValue);
-         foreach (var barSeriesView in barSeriesViews)
-         {
-            barSeriesView.BarWidth = distributionData.BarWidth;
-         }
       }
 
       private void plot<T>(DistributionData<T> dataToPlot, DistributionSettings settings)
@@ -170,11 +170,6 @@ namespace OSPSuite.UI.Controls
             barSeriesView.Color = StartColorFor(barSeries.Name);
             ((GradientFillOptionsBase) barSeriesView.FillStyle.Options).Color2 = EndColorFor(barSeries.Name);
          }
-      }
-
-      private IEnumerable<BarSeriesView> barSeriesViews
-      {
-         get { return allBarSeries.Select(x => x.View.DowncastTo<BarSeriesView>()); }
       }
 
       private IEnumerable<Series> allBarSeries

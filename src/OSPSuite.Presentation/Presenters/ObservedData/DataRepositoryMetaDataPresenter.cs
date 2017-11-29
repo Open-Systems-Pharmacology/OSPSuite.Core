@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _editObservedDataTask = editObservedDataTask;
          _observedDataConfiguration = observedDataConfiguration;
          _parameterFactory = parameterFactory;
-         _molWeightDimension = dimensionFactory.GetDimension(Constants.Dimension.MOLECULAR_WEIGHT);
+         _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
       /// <summary>

@@ -1,29 +1,28 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Converter.v5_6
 {
    public class Converter551To561 : IObjectConverter, IVisitor<IPassiveTransportBuildingBlock>
    {
-      public bool IsSatisfiedBy(int version)
-      {
-         return version == PKMLVersion.V5_5_1;
-      }
+      private bool _converted;
+      public bool IsSatisfiedBy(int version) => version == PKMLVersion.V5_5_1;
 
-      public int Convert(object objectToUpdate)
+      public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
+         _converted = false;
          this.Visit(objectToUpdate);
-         return PKMLVersion.V5_6_1;
+         return (PKMLVersion.V5_6_1, _converted);
       }
 
-      public int ConvertXml(XElement element)
+      public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return PKMLVersion.V5_6_1;
+         return (PKMLVersion.V5_6_1, false);
       }
 
       public void Visit(IPassiveTransportBuildingBlock passiveTransportBuildingBlockToConvert)
@@ -35,6 +34,7 @@ namespace OSPSuite.Core.Converter.v5_6
                .ToList();
 
          allNonLocalParameters.Each(p => p.BuildMode = ParameterBuildMode.Local);
+         _converted = true;
       }
    }
 }

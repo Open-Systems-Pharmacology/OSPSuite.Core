@@ -18,9 +18,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       OutputMapping SelectedOutput { get; set; }
       IEnumerable<OutputMapping> AllOutputs { get; }
+      CurveChart Chart { get; }
    }
 
-   public abstract class ParameterIdentificationChartFeedbackPresenter<TChart> : AbstractPresenter<IParameterIdentificationChartFeedbackView, IParameterIdentificationChartFeedbackPresenter>, IParameterIdentificationRunFeedbackPresenter where TChart : ICurveChart
+   public abstract class ParameterIdentificationChartFeedbackPresenter<TChart> : AbstractPresenter<IParameterIdentificationChartFeedbackView, IParameterIdentificationChartFeedbackPresenter>, IParameterIdentificationRunFeedbackPresenter where TChart : CurveChart
    {
       protected readonly IDimensionFactory _dimensionFactory;
       protected DataColumn _bestColumn;
@@ -30,9 +31,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected OutputMapping _selectedOutput;
       protected ParameterIdentification _parameterIdentification;
       protected readonly TChart _chart;
-      protected readonly IChartDisplayPresenter _chartDisplayPresenter;
+      private readonly IChartDisplayPresenter _chartDisplayPresenter;
       protected readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly OutputMappingByFullOutputPathComparer _outputMappingComparer;
+
+      public CurveChart Chart => _chart;
 
       protected ParameterIdentificationChartFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory, IDisplayUnitRetriever displayUnitRetriever, TChart chart) : base(view)
       {
@@ -43,7 +46,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _dimensionFactory = dimensionFactory;
          _chart = chart;
          _outputMappingComparer = new OutputMappingByFullOutputPathComparer();
-         _chart.FontAndSize.Fonts.TitleSize = Constants.ChartFontOptions.DefaultFontSizeTitleForParameterIdentificationFeedback;
+         _chartDisplayPresenter.Edit(_chart, new ChartFontAndSizeSettings().ForParameterIdentificationFeedback());
       }
 
       public IEnumerable<OutputMapping> AllOutputs
@@ -65,7 +68,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _bestColumn = _bestRepository.FirstDataColumn();
          _currentRepository = CreateRepositoryFor(Captions.ParameterIdentification.Current);
          _currentColumn = _currentRepository.FirstDataColumn();
-         _chartDisplayPresenter.View.SetFontAndSizeSettings(_chart.FontAndSize);
 
          AddBestAndCurrent();
 
@@ -74,7 +76,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public OutputMapping SelectedOutput
       {
-         get { return _selectedOutput; }
+         get => _selectedOutput;
          set
          {
             _selectedOutput = value;
@@ -107,17 +109,22 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          column.DisplayUnit = _displayUnitRetriever.PreferredUnitFor(column);
       }
 
-      protected abstract void AddCurvesFor(DataRepository repository, Action<DataColumn, ICurve> action);
+      protected abstract void AddCurvesFor(DataRepository repository, Action<DataColumn, Curve> action);
 
-      protected virtual void SelectedOutputChanged()
+      protected void SelectedOutputChanged()
       {
-         UpdateChartAxesScalings();
+         if (SelectedOutput != null)
+            UpdateChartForSelectedOutput();
+
+         _chartDisplayPresenter.Refresh();
       }
+
+      protected abstract void UpdateChartForSelectedOutput();
 
       protected DataRepository CreateRepositoryFor(string curveName)
       {
          var dataRepository = new DataRepository {Name = curveName};
-         var baseGrid = new BaseGrid("Time", _dimensionFactory.GetDimension(Constants.Dimension.TIME));
+         var baseGrid = new BaseGrid("Time", _dimensionFactory.Dimension(Constants.Dimension.TIME));
          var column = new DataColumn(curveName, SelectedOutput.Dimension, baseGrid);
          column.DisplayUnit = _displayUnitRetriever.PreferredUnitFor(column);
          dataRepository.Add(column);
@@ -134,7 +141,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public virtual void ResetFeedback()
       {
          _chart.Clear();
-         _chartDisplayPresenter.DataSource = null;
+         _chartDisplayPresenter.Refresh();
       }
 
       public void UpdateFeedback(ParameterIdentificationRunState runState)
@@ -151,7 +158,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected virtual void UpdateColumn(DataColumn valueColumn, OptimizationRunResult runResult)
       {
-         var simulationValues = runResult.SimulationResultFor(SelectedOutput.FullOutputPath);
+         var simulationValues = runResult.SimulationResultFor(SelectedOutput?.FullOutputPath);
          if (simulationValues == null)
             return;
 

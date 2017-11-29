@@ -38,7 +38,7 @@ namespace OSPSuite.Starter
             _n++;
 
             var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-            if (quantity.Dimension == null) quantity.Dimension = dimensionFactory.GetDimension("Mass");
+            if (quantity.Dimension == null) quantity.Dimension = dimensionFactory.Dimension("Mass");
 
             DataColumn dc = new DataColumn(quantity.Name, quantity.Dimension, _baseGrid);
             dc.DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.Undefined, quantity.Dimension.DefaultUnitName, _date, _source, "", 320);

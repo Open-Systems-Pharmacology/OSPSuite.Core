@@ -30,7 +30,7 @@
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutItemGrid = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -113,7 +113,7 @@
 
       protected DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      protected DevExpress.XtraGrid.GridControl gridControl;
+      protected UxGridControl gridControl;
       protected UxGridView gridView;
       protected DevExpress.XtraLayout.LayoutControlItem layoutItemGrid;
    }

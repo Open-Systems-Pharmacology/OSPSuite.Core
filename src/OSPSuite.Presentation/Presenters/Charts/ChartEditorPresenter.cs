@@ -1,70 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
-using ItemChangedEventArgs = OSPSuite.Core.Chart.ItemChangedEventArgs;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
    /// <summary>
-   ///    Presenter of ChartDisplay component, which edits a ICurveChart. Consists of subcomponents
-   ///    - DataBrowser for selection of McDataColumns from McDataRepositories for xyData of a curve,
+   ///    Presenter of ChartDisplay component, which edits a CurveChart. Consists of subcomponents
+   ///    - DataBrowser for selection of DataColumns from DataRepositories for xyData of a curve,
    ///    - CurveOptions for editing properties of curves,
    ///    - AxisOptions for editing properties of axes,
    ///    - ChartOptions for editing properties of chartSettings.
    /// </summary>
-   public interface IChartEditorPresenter : IPresenter<IChartEditorView>
+   public interface IChartEditorPresenter : IPresenter<IChartEditorView>,
+      IListener<ChartUpdatedEvent>,
+      IListener<ChartPropertiesChangedEvent>
    {
-      /// <summary>
-      ///    Displayed Chart.
-      /// </summary>
-      ICurveChart DataSource { set; get; }
+      CurveChart Chart { get; }
+
+      void Edit(CurveChart chart);
+
+      void Clear();
 
       /// <summary>
-      ///    Adds DataColumns of DataRepository to DataBrowser.
+      ///    Removes all columns of all <paramref name="dataRepositories" /> from DataBrowser. This does not trigger a redraw of
+      ///    the chart
       /// </summary>
-      void AddDataRepository(DataRepository dataRepository);
+      void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
-      ///    Removes DataColumns of DataRepository from DataBrowser and depending curves from Chart.
+      ///    Remove all data repositories used from DataBrowser. This does not trigger a redraw of the chart
       /// </summary>
-      void RemoveDataRepository(DataRepository dataRepository);
+      void RemoveAllDataRepositories();
 
       /// <summary>
-      ///    Refreshs DataColumns of DataRepository in DataBrowser and and depending curves in Chart.
+      ///    Remove unused columns (e.g. not attached to a <see cref="DataRepository">.</see>This does not trigger a redraw of
+      ///    the chart
       /// </summary>
-      void RefreshDataRepository(DataRepository dataRepository);
+      void RemoveUnusedColumns();
 
       /// <summary>
-      ///    Clears all DataColumns of DataRepository from DataBrowser and depending curves from Chart.
-      /// </summary>
-      void ClearDataRepositories();
-
-      /// <summary>
-      ///    Adds DataRepositories to DataBrowser.
+      ///    Adds <paramref name="dataRepositories" /> to DataBrowser. This does not trigger a redraw of the chart
       /// </summary>
       void AddDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
-      ///    Get all DataColumns of DataBrowser.
+      ///    Returns all DataColumns used in the DataBrowser
       /// </summary>
-      IEnumerable<DataColumn> GetAllDataColumns();
-
-      /// <summary>
-      ///    Get a DataColumn of DataBrowser by id. Returns null, if not available.
-      /// </summary>
-      DataColumn GetDataColumn(string id);
+      IReadOnlyList<DataColumn> AllDataColumns { get; }
 
       /// <summary>
       ///    Creates a ChartEditorSettings object from settings of this presenter. Used for serialization.
@@ -86,17 +82,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Gets Display settings of DataBrowser column.
       /// </summary>
-      GridColumnSettings GetDataBrowserColumnSettings(BrowserColumns browserColumn);
+      GridColumnSettings ColumnSettingsFor(BrowserColumns browserColumn);
 
       /// <summary>
       ///    Gets Display settings of CurveOptions column.
       /// </summary>
-      GridColumnSettings GetCurveOptionsColumnSettings(CurveOptionsColumns curveOptionsColumn);
+      GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn);
 
       /// <summary>
       ///    Gets Display settings of AxisOptions column.
       /// </summary>
-      GridColumnSettings GetAxisOptionsColumnSettings(AxisOptionsColumns axisOptionsColumn);
+      GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn);
 
       /// <summary>
       ///    Sets Definition of displayed QuantityPath in DataBrowser.
@@ -114,18 +110,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition);
 
       /// <summary>
-      ///    Adds a new curve to a the chart for the <paramref name="columnId" /> if one does not already exist.
+      ///    Adds a new curve to a the chart for the <paramref name="dataColumn" /> if one does not already exist.
       ///    Curve options will be applied if they are specified and a new curve is created.
       /// </summary>
       /// <returns>
-      ///    The new curve or existing if chart already contains a curve for the specified <paramref name="columnId" />
+      ///    The new curve or existing if chart already contains a curve for the specified <paramref name="dataColumn" />
       /// </returns>
-      ICurve AddCurveForColumn(string columnId, CurveOptions defaultCurveOptions = null);
-
-      /// <summary>
-      ///    Adds Columns selected in DataBrowser to Chart and CurveOptions.
-      /// </summary>
-      void SelectDataColumns();
+      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null);
 
       /// <summary>
       ///    Add Button to ChartEditor.
@@ -150,12 +141,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Event when ColumnSettings for data browser, curve options or axis options has changed.
       /// </summary>
-      event Action<GridColumnSettings> ColumnSettingsChanged;
+      event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged;
 
       /// <summary>
       ///    Apply all column setting to the editor
       /// </summary>
-      void ApplyColumnSettings();
+      void ApplyAllColumnSettings();
+
+      /// <summary>
+      ///    Apply all column setting to the editor
+      /// </summary>
+      void ApplyColumnSettings(GridColumnSettings columnSettings);
 
       /// <summary>
       ///    Show the customaization form (for internal user only)
@@ -177,22 +173,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Adds chart template menu
       /// </summary>
       void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor);
+
+      /// <summary>
+      ///    Event is thrown everytime a property of the chart is changed (either direct property or indirect such as axes or
+      ///    curves modification)
+      /// </summary>
+      event Action ChartChanged;
+
+      /// <summary>
+      ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
+      /// </summary>
+      void Refresh();
    }
 
-   /// <summary>
-   ///    This class contains the subpresenters, an IChart datasource
-   ///    and a list of McDataColumns, which are displayed in the DataBrowser.
-   ///    It forwards the DataColumn selection from the DataBrowser to the CurveOptions presenter,
-   ///    and forwards the Curve selection from the CurveOptions to DataBrowser presenter.
-   ///    It provides methods for
-   ///    - maintenance of McDataRepositories
-   ///    - access to the GridColumnSettings of the subcomponents
-   ///    - some settings of ChartEditor and subcomponents
-   /// </summary>
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
    {
-      private readonly ICache<string, DataColumn> _dataColumns;
-      private ICurveChart _chart;
       private Func<DataColumn, bool> _showDataColumnInDataBrowserDefinition;
 
       private readonly IAxisSettingsPresenter _axisSettingsPresenter;
@@ -201,17 +196,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly ICurveSettingsPresenter _curveSettingsPresenter;
       private readonly IDataBrowserPresenter _dataBrowserPresenter;
       private readonly IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
-      private readonly string _xDataName;
-      private readonly string _yDataName;
-
-      public event Action<GridColumnSettings> ColumnSettingsChanged = delegate { };
+      private readonly IChartUpdater _chartUpdater;
+      private readonly IEventPublisher _eventPublisher;
+      private readonly IDimensionFactory _dimensionFactory;
+      private Func<DataColumn, string> _curveNameDefinition;
+      private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
+      public CurveChart Chart { get; private set; }
+      public event Action ChartChanged = delegate { };
+      public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
-         ICurveSettingsPresenter curveSettingsPresenter, IDataBrowserPresenter dataBrowserPresenter, IChartTemplateMenuPresenter chartTemplateMenuPresenter)
+         ICurveSettingsPresenter curveSettingsPresenter, IDataBrowserPresenter dataBrowserPresenter,
+         IChartTemplateMenuPresenter chartTemplateMenuPresenter, IChartUpdater chartUpdater, IEventPublisher eventPublisher,
+         IDimensionFactory dimensionFactory)
          : base(view)
       {
-         _dataColumns = new Cache<string, DataColumn>(x => x.Id);
          _showDataColumnInDataBrowserDefinition = col => col.DataInfo.Origin != ColumnOrigins.BaseGrid;
 
          _axisSettingsPresenter = axisSettingsPresenter;
@@ -220,118 +220,128 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter = curveSettingsPresenter;
          _dataBrowserPresenter = dataBrowserPresenter;
          _chartTemplateMenuPresenter = chartTemplateMenuPresenter;
-         _dataBrowserPresenter.UsedChanged += onDataBrowserUsedChanged;
-         _dataBrowserPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
-         _dataBrowserPresenter.SelectedDataChanged += onSelectedDataChanged;
+         _chartUpdater = chartUpdater;
+         _eventPublisher = eventPublisher;
+         _dimensionFactory = dimensionFactory;
+         _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
+         initPresentersWithColumnSettings();
+
+         _dataBrowserPresenter.UsedChanged += (o, e) => onDataBrowserUsedChanged(e);
+         _dataBrowserPresenter.SelectionChanged += (o, e) => onSelectionChanged(e.Columns);
+
+         _chartExportSettingsPresenter.ChartExportSettingsChanged += (o,e)=> onChartPropertiesChanged();
+         _chartSettingsPresenter.ChartSettingsChanged += (o, e) => onChartPropertiesChanged();
+
+         _curveSettingsPresenter.AddCurves += (o,e) => addCurvesForColumns(e.Columns);
+         _curveSettingsPresenter.RemoveCurve += (o,e)=> removeCurve(e.Curve);
+         _curveSettingsPresenter.CurvePropertyChanged += (o,e) => updateChart();
+
+         _axisSettingsPresenter.AxisRemoved += (o, e) => onAxisRemoved(e.Axis);
+         _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
+         _axisSettingsPresenter.AxisPropertyChanged += (o, e) => updateChart();
 
          AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter);
 
-         _curveSettingsPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
-         _axisSettingsPresenter.ColumnSettingsChanged += ColumnSettingsChanged;
-         _xDataName = Helpers.Property<ICurve>(c => c.xData).Name;
-         _yDataName = Helpers.Property<ICurve>(c => c.yData).Name;
          _view.SetAxisSettingsView(axisSettingsPresenter.View);
          _view.SetChartSettingsView(chartSettingsPresenter.View);
          _view.SetChartExportSettingsView(chartExportSettingsPresenter.View);
          _view.SetCurveSettingsView(curveSettingsPresenter.View);
          _view.SetDataBrowserView(dataBrowserPresenter.View);
-         _curveSettingsPresenter.DataColumns = _dataColumns;
       }
 
-      private void onDataBrowserUsedChanged(object sender, UsedChangedEventArgs e)
+      private void initPresentersWithColumnSettings()
       {
-         e.ColumnIds.Each(id =>
+         _presentersWithColumnSettings.Each(x => x.ColumnSettingsChanged += ColumnSettingsChanged);
+      }
+
+      private void onAxisAdded()
+      {
+         using (_chartUpdater.UpdateTransaction(Chart))
          {
-            if (e.Used)
-               _curveSettingsPresenter.AddCurveForColumn(id);
-            else
-               _chart.RemoveCurvesForColumn(id);
-         });
+            Chart.AddNewAxis();
+         }
       }
 
-      public void ApplyColumnSettings()
+      private void onAxisRemoved(Axis axis)
       {
-         _dataBrowserPresenter.ApplyAllColumnSettings();
-         _curveSettingsPresenter.ApplyAllColumnSettings();
-         _axisSettingsPresenter.ApplyAllColumnSettings();
+         if (axis.AxisType >= AxisTypes.Y2 && Chart.HasAxis(axis.AxisType + 1))
+            throw new OSPSuiteException(Error.RemoveHigherAxisTypeFirst((axis.AxisType + 1).ToString()));
+
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            Chart.RemoveAxis(axis);
+         }
       }
 
-      public void ShowCustomizationForm()
+      private void updateChart()
       {
-         _view.ShowCustomizationForm();
+         _chartUpdater.Update(Chart);
       }
 
-      public void AddUsedInMenuItem()
+      private void onChartPropertiesChanged()
       {
-         _view.AddUsedInMenuItemCheckBox();
+         _eventPublisher.PublishEvent(new ChartPropertiesChangedEvent(Chart));
       }
+
+      private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
+      {
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            e.Columns.Each(column =>
+            {
+               if (e.Used)
+                  AddCurveForColumn(column);
+               else
+                  Chart.RemoveCurvesForColumn(column);
+            });
+         }
+      }
+
+      public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
+
+      public void ApplyColumnSettings(GridColumnSettings columnSettings) => _presentersWithColumnSettings.Each(x => x.ApplyColumnSettings(columnSettings));
+
+      public void ShowCustomizationForm() => _view.ShowCustomizationForm();
+
+      public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
 
       public void UpdateUsedForSelection(bool? isUsed)
       {
          if (!isUsed.HasValue) return;
 
-         _dataBrowserPresenter.SetUsedState(_dataBrowserPresenter.SelectedDescendentDataRepositoryColumnIds, usedState: isUsed.Value);
+         _dataBrowserPresenter.UpdateUsedStateForSelection(used: isUsed.Value);
       }
 
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)
       {
-         AddButton(_chartTemplateMenuPresenter.CreateChartTemplateButton(withChartTemplates, () => DataSource, loadMenuFor));
+         AddButton(_chartTemplateMenuPresenter.CreateChartTemplateButton(withChartTemplates, () => Chart, loadMenuFor));
       }
 
-      public ICurveChart DataSource
+      public void Edit(CurveChart chart)
       {
-         get { return _chart; }
-         set
-         {
-            if (_chart != null)
-            {
-               _chart.Curves.CollectionChanged -= onCurvesCollectionChanged;
-               _chart.Curves.ItemPropertyChanged -= onCurvesItemChanged;
-            }
-            _chart = value;
-            if (_chart != null)
-            {
-               _curveSettingsPresenter.SetDatasource(_chart);
-               _chartSettingsPresenter.BindTo(_chart);
-               _chartExportSettingsPresenter.BindTo(_chart);
-               _axisSettingsPresenter.SetDataSource(_chart.Axes);
-               _chart.Curves.CollectionChanged += onCurvesCollectionChanged;
-               onCurvesCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, _chart.Curves));
-
-               _chart.Curves.ItemPropertyChanged += onCurvesItemChanged;
-            }
-            else
-            {
-               _curveSettingsPresenter.SetDatasource(null);
-               _axisSettingsPresenter.SetDataSource(null);
-               _chartSettingsPresenter.DeleteBinding();
-               _chartExportSettingsPresenter.DeleteBinding();
-            }
-         }
+         Chart = chart;
+         _curveSettingsPresenter.Edit(Chart);
+         _chartSettingsPresenter.Edit(Chart);
+         _chartExportSettingsPresenter.Edit(Chart);
+         _axisSettingsPresenter.Edit(Chart.Axes);
       }
 
-      private void onCurvesItemChanged(object sender, ItemChangedEventArgs e)
+      public void Clear()
       {
-         var curve = e.Item as ICurve;
-         if (curve == null) return;
-
-         if (e.PropertyName.IsOneOf(_xDataName, _yDataName))
-            updateUsedColumns();
+         _dataBrowserPresenter.Clear();
+         _curveSettingsPresenter.Clear();
+         _chartSettingsPresenter.Clear();
+         _chartExportSettingsPresenter.Clear();
+         _axisSettingsPresenter.Clear();
       }
 
-      private void onCurvesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+      private void onSelectionChanged(IReadOnlyList<DataColumn> dataColumns)
       {
-         updateUsedColumns();
-      }
-
-      private void onSelectedDataChanged(IEnumerable<string> dataRepositoryColumnIds)
-      {
-         var dataRepositoryColumnIdList = dataRepositoryColumnIds.ToList();
-         if (allColumnsAreUsed(dataRepositoryColumnIdList))
+         if (allColumnsAreUsed(dataColumns))
          {
             _view.SetSelectAllCheckBox(true);
          }
-         else if (noColumnsAreUsed(dataRepositoryColumnIdList))
+         else if (noColumnsAreUsed(dataColumns))
          {
             _view.SetSelectAllCheckBox(false);
          }
@@ -341,47 +351,46 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      private bool noColumnsAreUsed(IEnumerable<string> dataRepositoryColumnIds)
+      private bool noColumnsAreUsed(IEnumerable<DataColumn> dataColumns)
       {
-         return _dataColumns.Where(x => dataRepositoryColumnIds.Contains(x.Id)).All(x => !_dataBrowserPresenter.IsUsed(x.Id));
+         return dataColumns.All(x => !_dataBrowserPresenter.IsUsed(x));
       }
 
-      private bool allColumnsAreUsed(IEnumerable<string> dataRepositoryColumnIds)
+      private bool allColumnsAreUsed(IEnumerable<DataColumn> dataColumns)
       {
-         return _dataColumns.Where(x => dataRepositoryColumnIds.Contains(x.Id)).All(x => _dataBrowserPresenter.IsUsed(x.Id));
+         return dataColumns.All(x => _dataBrowserPresenter.IsUsed(x));
       }
 
       private void updateUsedColumns()
       {
-         if (_chart == null) return;
-         _dataBrowserPresenter.InitializeIsUsedForColumns(_chart.UsedColumnIds);
+         if (Chart == null) return;
+         _dataBrowserPresenter.InitializeIsUsedForDataColumns(Chart.UsedColumns);
       }
 
-      public void AddDataRepository(DataRepository dataRepository)
+      public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
       {
-         foreach (var dataColumn in dataRepository.Where(c => !columnIsForInternalUseOnly(c)))
-         {
-            if (!_dataColumns.Contains(dataColumn.Id))
-            {
-               _dataColumns.Add(dataColumn);
-               _dataBrowserPresenter.AddDataColumn(dataColumn);
-            }
-            else
-               _dataBrowserPresenter.UpdateDataColumn(dataColumn);
-         }
+         var allColumnsToAdd = dataRepositories.SelectMany(x => x.Columns)
+            .Where(c => !columnIsForInternalUseOnly(c))
+            .Where(c => !hasColumn(c))
+            .ToList();
+
+         _dataBrowserPresenter.AddDataColumns(allColumnsToAdd);
 
          updateUsedColumns();
       }
 
-      public void RefreshDataRepository(DataRepository dataRepository)
+      private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
+
+      public void RemoveAllDataRepositories()
       {
-         removeColumns(unusedColumns);
-         AddDataRepository(dataRepository);
+         _dataBrowserPresenter.Clear();
       }
+
+      public void RemoveUnusedColumns() => removeColumns(unusedColumns);
 
       private IReadOnlyList<DataColumn> unusedColumns
       {
-         get { return _dataColumns.Where(x => !x.IsInRepository() || columnIsForInternalUseOnly(x)).ToList(); }
+         get { return AllDataColumns.Where(x => !x.IsInRepository() || columnIsForInternalUseOnly(x)).ToList(); }
       }
 
       private bool columnIsForInternalUseOnly(DataColumn dataColumn)
@@ -391,42 +400,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
                 !_showDataColumnInDataBrowserDefinition(dataColumn);
       }
 
-      public void RemoveDataRepository(DataRepository dataRepository)
+      public void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories)
       {
-         removeColumns(dataRepository);
+         if (dataRepositories == null) return;
+         removeColumns(dataRepositories.SelectMany(x => x.Columns));
       }
 
       private void removeColumns(IEnumerable<DataColumn> dataColumns)
       {
-         dataColumns.Each(removeColumn);
+         _dataBrowserPresenter.RemoveDataColumns(dataColumns);
       }
 
-      private void removeColumn(DataColumn dataColumn)
-      {
-         _dataBrowserPresenter.RemoveDataColumn(dataColumn);
-         _dataColumns.Remove(dataColumn.Id);
-      }
-
-      public void ClearDataRepositories()
-      {
-         _dataBrowserPresenter.ClearDataColumns();
-         _dataColumns.Clear();
-      }
-
-      public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
-      {
-         dataRepositories.Each(AddDataRepository);
-      }
-
-      public IEnumerable<DataColumn> GetAllDataColumns()
-      {
-         return _dataColumns;
-      }
-
-      public DataColumn GetDataColumn(string id)
-      {
-         return _dataColumns.Contains(id) ? _dataColumns[id] : null;
-      }
+      public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
 
       public void CopySettingsFrom(ChartEditorSettings settings)
       {
@@ -438,8 +423,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          foreach (var layoutColumnSettings in settings)
          {
             var presenterColumnSettings = columnSettingsInPresenterByName(layoutColumnSettings.ColumnName);
-            if (presenterColumnSettings != null)
-               presenterColumnSettings.CopyFrom(layoutColumnSettings);
+            presenterColumnSettings?.CopyFrom(layoutColumnSettings);
          }
       }
 
@@ -468,23 +452,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void addSettingsFrom(IPresenterWithColumnSettings presenterWithColumnSettings, ChartEditorSettings settings, Func<ChartEditorSettings, Action<GridColumnSettings>> addAction)
       {
-         presenterWithColumnSettings.AllColumnSettings().Each(x => addAction(settings)(new GridColumnSettings(x)));
+         presenterWithColumnSettings.AllColumnSettings.Each(x => addAction(settings)(new GridColumnSettings(x)));
       }
 
-      public GridColumnSettings GetDataBrowserColumnSettings(BrowserColumns browserColumn)
-      {
-         return _dataBrowserPresenter.ColumnSettings(browserColumn.ToString());
-      }
+      public GridColumnSettings ColumnSettingsFor(BrowserColumns browserColumn) => _dataBrowserPresenter.ColumnSettings(browserColumn.ToString());
 
-      public GridColumnSettings GetCurveOptionsColumnSettings(CurveOptionsColumns curveOptionsColumn)
-      {
-         return _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
-      }
+      public GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn) => _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
 
-      public GridColumnSettings GetAxisOptionsColumnSettings(AxisOptionsColumns axisOptionsColumn)
-      {
-         return _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
-      }
+      public GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn) => _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
       {
@@ -498,26 +473,41 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void SetCurveNameDefinition(Func<DataColumn, string> curveNameDefinition)
       {
+         _curveNameDefinition = curveNameDefinition;
          _curveSettingsPresenter.CurveNameDefinition = curveNameDefinition;
       }
 
-      public ICurve AddCurveForColumn(string columnId, CurveOptions defaultCurveOptions = null)
+      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
-         return _curveSettingsPresenter.AddCurveForColumn(columnId, defaultCurveOptions);
+         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+
+         if (Chart.HasCurve(curve.Id))
+            return Chart.CurveBy(curve.Id);
+
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
+
+         if (defaultCurveOptions != null)
+            curve.CurveOptions.UpdateFrom(defaultCurveOptions);
+
+         Chart.AddCurve(curve);
+
+         return curve;
       }
 
-      public void SelectDataColumns()
+      private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         var usedColumnsIds = _chart.UsedColumnIds;
-         foreach (var column in selectedDataColumns().Where(column => !usedColumnsIds.Contains(column.Id)))
+         using (_chartUpdater.UpdateTransaction(Chart))
          {
-            _curveSettingsPresenter.AddCurveForColumn(column.Id);
+            columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
          }
       }
 
-      private IEnumerable<DataColumn> selectedDataColumns()
+      private void removeCurve(Curve curve)
       {
-         return _dataBrowserPresenter.SelectedDataColumnIds.Select(id => _dataColumns[id]);
+         using (_chartUpdater.UpdateTransaction(Chart))
+         {
+            Chart.RemoveCurve(curve);
+         }
       }
 
       public void AddButton(IMenuBarItem menuBarItem)
@@ -532,14 +522,46 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public event DragEventHandler DragOver
       {
-         add { _dataBrowserPresenter.DragOver += value; }
-         remove { _dataBrowserPresenter.DragOver -= value; }
+         add => _dataBrowserPresenter.DragOver += value;
+         remove => _dataBrowserPresenter.DragOver -= value;
       }
 
       public event DragEventHandler DragDrop
       {
-         add { _dataBrowserPresenter.DragDrop += value; }
-         remove { _dataBrowserPresenter.DragDrop -= value; }
+         add => _dataBrowserPresenter.DragDrop += value;
+         remove => _dataBrowserPresenter.DragDrop -= value;
+      }
+
+      public void Refresh()
+      {
+         Chart.SynchronizeDataDisplayUnit();
+         _curveSettingsPresenter.Refresh();
+         _axisSettingsPresenter.Refresh();
+         updateUsedColumns();
+      }
+
+      private bool canHandle(ChartEvent chartEvent)
+      {
+         return Equals(chartEvent.Chart, Chart);
+      }
+
+      public void Handle(ChartUpdatedEvent chartUpdatedEvent)
+      {
+         if (!canHandle(chartUpdatedEvent))
+            return;
+
+         Refresh();
+
+         if (chartUpdatedEvent.PropogateChartChangeEvent)
+            ChartChanged();
+      }
+
+      public void Handle(ChartPropertiesChangedEvent chartPropertiesChangedEvent)
+      {
+         if (!canHandle(chartPropertiesChangedEvent))
+            return;
+
+         ChartChanged();
       }
    }
 }

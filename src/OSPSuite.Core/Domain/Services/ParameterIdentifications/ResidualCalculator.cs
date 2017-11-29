@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var observedTimeIndices = _timeGridRestrictor.GetRelevantIndices(observedData, _removeLLOQMode, outputMapping.Scaling);
          var outputResiduals = new List<Residual>(observedTimeIndices.Count);
          var lloq = observedValueColumn.DataInfo.LLOQ ?? 0;
-         var mergedDimension = _dimensionFactory.GetMergedDimensionFor(simulationColumn);
+         var mergedDimension = _dimensionFactory.MergedDimensionFor(simulationColumn);
          var currentObservedDataUnit = observedValueColumn.Dimension.BaseUnit;
          var residualCalculatorFunc = residualMethodFor(outputMapping);
 

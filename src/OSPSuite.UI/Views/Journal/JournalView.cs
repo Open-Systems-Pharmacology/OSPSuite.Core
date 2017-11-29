@@ -42,7 +42,6 @@ namespace OSPSuite.UI.Views.Journal
       private readonly DateTimeFormatter _dateTimeFormatter;
       private readonly RepositoryItemRichTextEdit _descriptionRepository;
       private IGridViewColumn _columnTags;
-      private readonly UxRepositoryItemImageComboBox _titleWithImageRepository;
       private readonly RepositoryItemTextEdit _titleRepository;
       public BarManager PopupBarManager { get; private set; }
 
@@ -69,7 +68,6 @@ namespace OSPSuite.UI.Views.Journal
          gridView.ShowFilterPopupListBox += (o, e) => OnEvent(onShowFilterPopupListBox, e);
          gridView.MeasurePreviewHeight += (o, e) => OnEvent(onMeasurePreviewHeight, e);
 
-         _titleWithImageRepository = new UxRepositoryItemImageComboBox(gridView, imageListRetriever);
          _titleRepository = new RepositoryItemTextEdit();
 
          _dateTimeFormatter = new DateTimeFormatter();
@@ -112,12 +110,12 @@ namespace OSPSuite.UI.Views.Journal
 
       private string getFilterString(string fieldName, string tag)
       {
-         return string.Format("[{0}] LIKE '%{1}%'", fieldName, tag);
+         return $"[{fieldName}] LIKE '%{tag}%'";
       }
 
       private string getFilterDisplayText(string tag)
       {
-         return string.Format("Is tagged with '{0}'", tag);
+         return $"Is tagged with '{tag}'";
       }
 
       private void onGridViewDoubleClicked(EventArgs e)
@@ -214,9 +212,8 @@ namespace OSPSuite.UI.Views.Journal
          if (_presenter.AllItemsHaveTheSameOrigin)
             return _titleRepository;
 
-         _titleWithImageRepository.Items.Clear();
-         _titleWithImageRepository.Items.Add(new ImageComboBoxItem(dto.Title, _imageListRetriever.ImageIndex(dto.Origin.Icon)));
-         return _titleWithImageRepository;
+         var titleWithImageRepository = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
+         return titleWithImageRepository.AddItem(dto.Title, dto.Origin.Icon);
       }
 
       private IGridViewAutoBindColumn<JournalPageDTO, T> bind<T>(Expression<Func<JournalPageDTO, T>> expression)

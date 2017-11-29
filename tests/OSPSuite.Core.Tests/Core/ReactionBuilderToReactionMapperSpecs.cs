@@ -56,7 +56,7 @@ namespace OSPSuite.Core
          _educt2 = A.Fake<IReactionPartner>();
          _prod2 = A.Fake<IReactionPartner>();
          _container = A.Fake<IContainer>();
-         A.CallTo(() => _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
+         A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _buildConfiguration)).Returns(_educt1);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _buildConfiguration)).Returns(_educt2);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(prodPartner1, _container, _buildConfiguration)).Returns(_prod1);

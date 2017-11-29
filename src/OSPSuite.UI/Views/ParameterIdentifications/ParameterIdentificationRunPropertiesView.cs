@@ -21,7 +21,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private readonly GridViewBinder<IRunPropertyDTO> _gridViewBinder;
       public event EventHandler<ViewResizedEventArgs> HeightChanged = delegate { };
       private readonly RepositoryItemTextEdit _textRepositoryItem;
-      private readonly UxRepositoryItemImageComboBox _textIconRepositoryItem;
 
       public ParameterIdentificationRunPropertiesView(IImageListRetriever imageListRetriever)
       {
@@ -33,7 +32,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.ShowColumnHeaders = false;
          _gridViewBinder = new GridViewBinder<IRunPropertyDTO>(gridView);
          _textRepositoryItem = new RepositoryItemTextEdit();
-         _textIconRepositoryItem = new UxRepositoryItemImageComboBox(gridView, imageListRetriever);
       }
 
       public void BindTo(IEnumerable<IRunPropertyDTO> properties)
@@ -63,9 +61,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (propertyDTO.Icon == null)
             return _textRepositoryItem;
 
-         _textIconRepositoryItem.Items.Clear();
-         _textIconRepositoryItem.Items.Add(new ImageComboBoxItem(propertyDTO.FormattedValue, _imageListRetriever.ImageIndex(propertyDTO.Icon.IconName)));
-         return _textIconRepositoryItem;
+         var textIconRepositoryItem = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
+         return textIconRepositoryItem.AddItem(propertyDTO.FormattedValue, propertyDTO.Icon);
       }
 
       public void AdjustHeight()

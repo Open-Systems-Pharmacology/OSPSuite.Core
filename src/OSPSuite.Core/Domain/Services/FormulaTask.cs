@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public interface IFormulaTask
    {
       /// <summary>
-      ///    Check that all formula having the same origin id are indeed the same formula.
+      ///    Checks that all formula having the same origin id are indeed the same formula.
       ///    If not, reset the origin id. Discrepancy can happen when a formula witk key words was clone.
       ///    After the cloning operation, the orign id was set but used object path are not the same anymore
       /// </summary>
@@ -24,9 +24,14 @@ namespace OSPSuite.Core.Domain.Services
       bool FormulasAreTheSame(IFormula firstFormula, IFormula secondFormula);
 
       /// <summary>
-      ///    Resolve all dynamic formulas defined in <paramref name="model" />
+      ///    Resolves all dynamic formulas defined in <paramref name="model" />
       /// </summary>
       void ExpandDynamicFormulaIn(IModel model);
+
+      /// <summary>
+      ///    Resolves all dynamic formulas defined in <paramref name="container" />
+      /// </summary>
+      void ExpandDynamicFormulaIn(IContainer container);
 
       /// <summary>
       ///    Adds a reference to the parent container volume in the object path used by the <paramref name="formula" /> and
@@ -125,8 +130,13 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandDynamicFormulaIn(IModel model)
       {
-         var allEntityUsingDynamicFormula = model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
-         var allFormulaUsable = model.Root.GetAllChildren<IFormulaUsable>();
+         ExpandDynamicFormulaIn(model.Root);
+      }
+
+      public void ExpandDynamicFormulaIn(IContainer container)
+      {
+         var allFormulaUsable = container.GetAllChildren<IFormulaUsable>();
+         var allEntityUsingDynamicFormula = container.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
 
          foreach (var entityUsingFormula in allEntityUsingDynamicFormula)
          {
@@ -146,7 +156,7 @@ namespace OSPSuite.Core.Domain.Services
          //possible reference
          var volumeReferencePath = _objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME)
             .WithAlias(volumeAlias)
-            .WithDimension(_dimensionFactory.GetDimension(Constants.Dimension.VOLUME));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.VOLUME));
 
          //do we have one already?
          var volumeReference = formula.ObjectPaths.FirstOrDefault(x => Equals(x.PathAsString, volumeReferencePath.PathAsString));

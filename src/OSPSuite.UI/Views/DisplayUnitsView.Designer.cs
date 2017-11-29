@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views
          this.btnSaveUnits = new DevExpress.XtraEditors.SimpleButton();
          this.btnLoadUnits = new DevExpress.XtraEditors.SimpleButton();
          this.btnAddUnitMap = new DevExpress.XtraEditors.SimpleButton();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -215,7 +215,7 @@ namespace OSPSuite.UI.Views
 
       private UxLayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private DevExpress.XtraEditors.SimpleButton btnAddUnitMap;

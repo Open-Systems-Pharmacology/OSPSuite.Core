@@ -4,8 +4,8 @@
 % but this file can be adjusted for your own customized alogorithm and errorfunctional. 
 % For that the MoBi Toolbox for Matlab provides two functions which
 % accept as input the structure PI, generated in this script:
-% getPIErrorFunctionalForSBSuiteExport
-% getPIWeightedResidualsForSBSuiteExport.
+% getPIErrorFunctionalForOSPSuiteExport
+% getPIWeightedResidualsForOSPSuiteExport.
 
 
 % Name of file that contains the definition of the identification problem
@@ -16,10 +16,10 @@ simulationList = {@SIM_FILE_NAMES};
 
 
 % read xml and initialize simulations with corresponding parameters
-PI=initParameterIdentificationForSBSuiteExport(PI_xml,simulationList);
+PI=initParameterIdentificationForOSPSuiteExport(PI_xml,simulationList);
  
 % start the algorithm
-finalValues = fminsearch(@(p) getPIErrorFunctionalForSBSuiteExport(p,PI),[PI.par(:).startValue]);
+finalValues = fminsearch(@(p) getPIErrorFunctionalForOSPSuiteExport(p,PI),[PI.par(:).startValue]);
 
 % create default output figures for the parameter identification
-plotPIDefaultOutputForSBSuiteExport(PI,finalValues);
+plotPIDefaultOutputForOSPSuiteExport(PI,finalValues);

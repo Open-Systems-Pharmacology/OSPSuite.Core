@@ -8,9 +8,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
       ///    All dimensions defined in the repository
       /// </summary>
       IEnumerable<IDimension> Dimensions { get; }
-      IEnumerable<string> GetDimensionNames();
-      IDimension GetDimension(string name);
-      IDimension GetMergedDimensionFor<T>(T hasDimension) where T : IWithDimension;
+      IEnumerable<string> DimensionNames { get; }
+      IDimension Dimension(string name);
+      IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension;
 
       IDimension AddDimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName);
       void AddDimension(IDimension dimension);

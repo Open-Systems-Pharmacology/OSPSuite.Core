@@ -179,6 +179,16 @@ namespace OSPSuite.Assets
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
 
+      public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine("The watermark feature was introduced to clearly identify draft versions of plots.");
+         sb.AppendLine();
+         sb.AppendLine($"Do you want this installation of {applicationName} to use this feature? If yes, a watermark will be used when copying charts to clipboard.");
+         sb.AppendLine($"This setting, as well as the watermark text, can be changed anytime under '{optionLocation}'.");
+         return sb.ToString();
+      }
+
       public static string IssueTrackerLinkFor(string application) => $"Go to {application} Issue Tracker";
 
       public static string ReallyDeleteAllObservedData(IEnumerable<string> anythingNotDeleted)
@@ -188,7 +198,7 @@ namespace OSPSuite.Assets
          if (notDeleted.Count == 0)
             return prompt;
 
-         return $"{prompt}\n\nWarning:\n\n{notDeleted.ToString("\n\n")}\n\nand will not be removed.";
+         return $"{prompt}\n\nWarning: Following observed data are still in use and will not be deleted: \n\n{notDeleted.ToString("\n\n")}";
       }
 
       public static string CloneObjectBase(string entityType, string name)
@@ -241,31 +251,53 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
-      public static void AppendListItem(string listItem, StringBuilder sb)
+      public static void AppendListItem(StringBuilder sb, bool html, string listItem, int index)
       {
-         sb.Append($"<li>{listItem}</li>");
+         if(html)
+            sb.Append($"<li>{listItem}</li>");
+         else
+            sb.AppendLine($"   {index}: {listItem}");
       }
 
-      public static void AppendLine(string lineToAppend, StringBuilder sb)
+      public static void AppendLine(StringBuilder sb, bool html, string lineToAppend)
       {
-         sb.Append($"<p>{lineToAppend}</p>");
+         if (html)
+            sb.Append($"<p>{lineToAppend}</p>");
+         else
+            sb.AppendLine(lineToAppend);
       }
 
-      public static string ExceptionViewDescription(string issueTrackerUrl)
+
+      public static void AddOrderedList(StringBuilder sb, bool html, params string [] list)
+      {
+         if(html)
+            sb.Append("<ol>");
+
+         list.Each((item, i) =>
+         {
+            //index in list item should start at 1
+            AppendListItem(sb, html, item, i + 1);
+         });
+
+         if (html)
+            sb.Append("</ol>");
+      }
+
+      public static string ExceptionViewDescription(string issueTrackerUrl, bool html=true)
       {
          var sb = new StringBuilder();
-         AppendLine("oops...something went terribly wrong.", sb);
-         AppendLine(string.Empty, sb);
-         AppendLine("To best address the error, please enter an issue in our issue tracker:", sb);
-         sb.Append("<ol>");
-         AppendListItem($"Visit <b>{issueTrackerUrl}</b> or click on the link below", sb);
-         AppendListItem("Click on the <b>New Issue</b> button", sb);
-         AppendListItem("Describe the steps you took prior to the problem emerging", sb);
-         AppendListItem($"Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description", sb);
-         AppendListItem("if possible, attach your project file to the issue (do not attach confidential information)", sb);
-         sb.Append("</ol>");
-         AppendLine(string.Empty, sb);
-         AppendLine("Note: A GitHub account is required to create an issue", sb);
+         AppendLine(sb, html, "oops...something went terribly wrong.");
+         AppendLine(sb, html, string.Empty);
+         AppendLine(sb, html, "To best address the error, please enter an issue in our issue tracker:");
+         AddOrderedList(sb, html, 
+            $"Visit <b>{issueTrackerUrl}</b> or click on the link below",
+            "Click on the <b>New Issue</b> button",
+            "Describe the steps you took prior to the problem emerging",
+            $"Copy the information below by using the <b>{CopyToClipboard}</b> button and paste it in the issue description",
+            "if possible, attach your project file to the issue (do not attach confidential information)"
+         );
+         AppendLine(sb, html, string.Empty);
+         AppendLine(sb, html, "Note: A GitHub account is required to create an issue");
          return sb.ToString();
       }
 
@@ -572,6 +604,7 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string OnlyComputeModelRelevantProperties = "Only compare properties relevant to simulation results";
+         public static readonly string CompareHiddenEntities = "Compare hidden entities (e.g. parameters)";
          public static readonly string FormulaComparisonValue = "Values";
          public static readonly string FormulaComparisonFormula = "Formulas";
          public static readonly string RunComparison = "Start";
@@ -638,6 +671,7 @@ namespace OSPSuite.Assets
          public static readonly string RunMessage = "Message";
          public static readonly string RunIndex = "Run #";
          public static readonly string UseAsFactor = "Use as Factor";
+         public static readonly string IsFixed = "Fixed";
          public static readonly string LLOQMode = "Transform data below LLOQ";
          public static readonly string RemoveLLOQMode = "Remove data below LLOQ";
          public static readonly string TimeProfileAnalysis = "Time Profile";
@@ -945,10 +979,6 @@ namespace OSPSuite.Assets
          return $"Really delete observed data '{observedDataName}' from project";
       }
 
-      public static string IsUsedBy(string name, string typeNamesUsingObservedData)
-      {
-         return $"'{name}' is used by \n{typeNamesUsingObservedData}";
-      }
 
       public static class Chart
       {
@@ -1015,6 +1045,8 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeTitle = "Font Size Title";
             public static readonly string FontSizeDescription = "Font Size Description";
             public static readonly string FontSizeOrigin = "Font Size Origin";
+            public static readonly string FontSizeWatermark = "Font Size Watermark";
+            public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }
    }
@@ -1033,16 +1065,24 @@ namespace OSPSuite.Assets
       public static readonly string SessionDisposed = "Session was disposed";
       public static readonly string OutputMappingHasInconsistentDimension = "Output mapping has inconsistent dimension";
       public static readonly string WeightValueCannotBeNegative = "Weights cannot be negative";
-      public static readonly string CurveNameMissing = "Curve Name is missing";
       public static readonly string DifferentXAxisDimension = "Different from X axis dimension";
       public static readonly string DifferentYAxisDimension = "Different from Y axis dimension";
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
-      public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> typesNamed)
+      public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
-         return $"{buildingBlockType} '{buildingBlockName}' is used by\n\n{typesNamed.ToString("\n")}\n\nand cannot be deleted.";
+         var content = usersOfBuildingBlock.Count > 1 ? 
+            $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : 
+            $"{usersOfBuildingBlock.ToString(""," ")}"; 
+
+         return $"{buildingBlockType} '{buildingBlockName}' is used by{content}and cannot be deleted.";
+      }
+
+      public static string CannotDeleteObservedData(string observedDataName, IReadOnlyList<string> usersOfObservedData)
+      {
+         return CannotDeleteBuildingBlockUsedBy(ObjectTypes.ObservedData, observedDataName, usersOfObservedData);
       }
 
       public static string OutputsDoNotAllHaveTheSameScaling(string outputName)
@@ -1231,6 +1271,8 @@ namespace OSPSuite.Assets
          return $"Could not load chart template. Make sure that the file '{templateFilePath}' is a template file.";
       }
 
+      public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
+
       public static string IndividualIdDoesNotMatchTheValueLength(int indiviudalId, int count)
       {
          return $"Individual Id '{indiviudalId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
@@ -1261,13 +1303,14 @@ namespace OSPSuite.Assets
          return rowOutOfRange(firstDataRow, lastRow, "first data", sheetName);
       }
 
+      public static string RemoveHigherAxisTypeFirst(string type) => $"Please remove Y-Axis {type} first.";
+
       public static string LastDataRowLessThanFirstDataRow(int dataEndRow, int dataStartRow, string sheetName)
       {
          return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
       }
 
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
-
 
 
       public static class SensitivityAnalysis
@@ -1415,6 +1458,20 @@ namespace OSPSuite.Assets
          var separator = "\n\t- ";
          return $"A circular reference was found in formula of {entityType.ToLower()} '{entity}' with path '{entityPath}'\nPlease check the direct or indirect references:{separator}{references.ToString(separator)}";
       }
+
+      public static string AxisMaxMustBeGreaterThanOrEqualToAxisMin(float? axisMinimumValue)
+      {
+         var preamble = "The axis maximum value should be greater than or equal to the axis minimum value";
+         return axisMinimumValue.HasValue ? $"{preamble} '{axisMinimumValue}'" : preamble;
+      }
+
+      public static string AxisMinMustBeLessThanOrEqualToAxisMax(float? axisMaximumValue)
+      {
+         var preamble = "The axis minimum value should be less than or equal to the axis maximum value";
+         return axisMaximumValue.HasValue ? $"{preamble} '{axisMaximumValue}'" : preamble;
+      }
+
+      public static readonly string LogAxisMaxMustBeGreaterThanZero = "Loagarithmic axis maximum must be greater than 0";
    }
 
    public static class Rules
@@ -1458,6 +1515,7 @@ namespace OSPSuite.Assets
       public static readonly string OptimizedValueIsCloseToBoundary = "Identified value is close to boundary";
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transfered.\nPlease set the calculation methods manually.";
+      public static readonly string CurveNameIsMissing = "Curve name is missing";
    }
 
    public static class RibbonCategories
@@ -1559,7 +1617,7 @@ namespace OSPSuite.Assets
       public static readonly string CreateParameterIdentification = "Create a new parameter identification.";
       public static readonly string CreateSensitivityAnalysis = "Create a new sensitivity analysis.";
       public static readonly string RunParameterIdentification = "Run the active parameter identification.";
-      public static readonly string StopParameterIdentification = "Stop the current Parparameterameter identification.";
+      public static readonly string StopParameterIdentification = "Stop the current parameter identification.";
       public static readonly string UnlinkParameter = "Unlink the Parameter";
       public static readonly string TimeProfileAnalysisDescription = "Create a new chart displaying the optimized time profile in comparison to the observed data.";
       public static readonly string PredictedVsObservedAnalysisDescription = "Create a new chart displaying the optimized output vs. the observed data.";
@@ -1571,7 +1629,7 @@ namespace OSPSuite.Assets
       public static readonly string CovarianceMatrix = "Show the covariance matrix.";
       public static readonly string TimeProfilePredictionInterval = "Plot a pointwise linearization of the 95% prediction interval due to both the parameter uncertainty and the measurement error. This plot is only available for measured quantities.";
       public static readonly string TimeProfileConfidenceInterval = "Plot a pointwise linearization of the 95% confidence interval due to the parameter uncertainty.";
-      public static string TimeProfileVPCInterval = "Plot a pointwise linearization of the 95% visual predictive check interval due to the measurement error. This plot is only available for measured quantities.";
+      public static readonly string TimeProfileVPCInterval = "Plot a pointwise linearization of the 95% visual predictive check interval due to the measurement error. This plot is only available for measured quantities.";
       public static readonly string RunSensitivityAnalysis = "Run the active sensitivity analysis.";
       public static readonly string StopSensitivityanalysis = "Stop the current sensitivity analysis.";
    }

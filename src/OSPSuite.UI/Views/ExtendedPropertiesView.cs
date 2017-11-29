@@ -63,7 +63,7 @@ namespace OSPSuite.UI.Views
          _valueColumn = _gridBinder.Bind(x => x.ValueAsObject)
             .WithCaption(Captions.Value)
             .WithRepository(repositoryFor)
-            .WithOnValueSet((property, e) => OnEvent(() => setValue(property, e)));
+            .WithOnValueUpdating((property, e) => OnEvent(() => setValue(property, e)));
 
          _gridBinder.Changed += NotifyViewChanged;
 

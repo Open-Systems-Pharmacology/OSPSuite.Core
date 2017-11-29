@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Commands;
@@ -15,6 +13,8 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services.Charts
 {
@@ -46,16 +46,25 @@ namespace OSPSuite.Presentation.Services.Charts
       /// <summary>
       ///    Returns the serialized chart from <paramref name="chart" />
       /// </summary>
-      string TemplateStringFrom(ICurveChart chart);
+      string TemplateStringFrom(CurveChart chart);
 
-      void InitializeChartFromTemplate(ICurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold);
+      /// <summary>
+      /// Initializes the given <paramref name="chart"/> from the <paramref name="template"/>.
+      /// </summary>
+      /// <param name="chart">Chart to initialize</param>
+      /// <param name="dataColumns">Available columns that will be used to pattern match the curve to create automatically</param>
+      /// <param name="template">Template to use</param>
+      /// <param name="nameDefinition">Application specific name definition for columns</param>
+      /// <param name="warnIfNumberOfCurvesAboveThreshold">If <c>true</c> a warning will be shown to the user if too many curves are created</param>
+      /// <param name="propogateChartChangeEvent">If <c>true</c> a change event will be propagated when updating a chart from template</param>
+      void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold, bool propogateChartChangeEvent = true);
 
       /// <summary>
       ///    Returns a template based on the given <paramref name="chart" />. The template name will be set to the name of the
       ///    chart. If the flag <paramref name="validateTemplate" /> is set to <c>true</c> (default), an exception is thrown
       ///    if the <paramref name="chart" /> does not have any curve.
       /// </summary>
-      CurveChartTemplate TemplateFrom(ICurveChart chart, bool validateTemplate = true);
+      CurveChartTemplate TemplateFrom(CurveChart chart, bool validateTemplate = true);
 
       /// <summary>
       ///    Returns the deserialized chart from <paramref name="serializedChart" />
@@ -67,7 +76,7 @@ namespace OSPSuite.Presentation.Services.Charts
       ///    the template
       ///    based on the <paramref name="existingTemplates" />
       /// </summary>
-      CurveChartTemplate CreateNewTemplateFromChart(ICurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates);
+      CurveChartTemplate CreateNewTemplateFromChart(CurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates);
 
       ICommand AddChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates);
 
@@ -80,9 +89,11 @@ namespace OSPSuite.Presentation.Services.Charts
       ICommand UpdateChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates, string templateName);
 
       /// <summary>
-      ///    Adds simulation outputs for the <paramref name="withOutputSelections" /> to the chart
+      ///    Adds simulation outputs for the <paramref name="simulations" /> to the chart.
+      ///    if <paramref name="customUpdate" /> is not null, this action will be called after all outputs were added to the
+      ///    simulation
       /// </summary>
-      void UpdateDefaultSettings(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> withOutputSelections, bool addCurveIfNoSourceDefined = true);
+      void UpdateDefaultSettings(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> simulations, bool addCurveIfNoSourceDefined = true, Action customUpdate = null);
    }
 
    public abstract class ChartTemplatingTask : IChartTemplatingTask
@@ -92,14 +103,19 @@ namespace OSPSuite.Presentation.Services.Charts
       private readonly ICloneManager _cloneManager;
       private readonly ICurveChartToCurveChartTemplateMapper _chartTemplateMapper;
       private readonly IChartFromTemplateService _chartFromTemplateService;
+      private readonly IChartUpdater _chartUpdater;
+      private readonly IDialogCreator _dialogCreator;
 
-      protected ChartTemplatingTask(IApplicationController applicationController, IChartTemplatePersistor chartTemplatePersistor, ICloneManager cloneManager, ICurveChartToCurveChartTemplateMapper chartTemplateMapper, IChartFromTemplateService chartFromTemplateService)
+      protected ChartTemplatingTask(IApplicationController applicationController, IChartTemplatePersistor chartTemplatePersistor, ICloneManager cloneManager,
+         ICurveChartToCurveChartTemplateMapper chartTemplateMapper, IChartFromTemplateService chartFromTemplateService, IChartUpdater chartUpdater, IDialogCreator dialogCreator)
       {
          _applicationController = applicationController;
          _chartTemplatePersistor = chartTemplatePersistor;
          _cloneManager = cloneManager;
          _chartTemplateMapper = chartTemplateMapper;
          _chartFromTemplateService = chartFromTemplateService;
+         _chartUpdater = chartUpdater;
+         _dialogCreator = dialogCreator;
       }
 
       public void SaveTemplateToFile(CurveChartTemplate template, string filePath)
@@ -148,34 +164,37 @@ namespace OSPSuite.Presentation.Services.Charts
          return AskForInput(Captions.NewName, caption, defaultName, usedNames);
       }
 
-      protected abstract string AskForInput(string caption, string s, string defaultName, List<string> usedNames);
+      protected string AskForInput(string caption, string text, string defaultName, List<string> usedNames)
+      {
+         return _dialogCreator.AskForInput(caption, text, defaultName, usedNames);
+      }
 
       protected abstract ICommand ReplaceTemplatesCommand(IWithChartTemplates withChartTemplates, IEnumerable<CurveChartTemplate> curveChartTemplates);
 
       public ICommand ManageTemplates(IWithChartTemplates withChartTemplates)
       {
-         using (var modalChartTemplateManagerPresenter = _applicationController.Start<IModalChartTemplateManagerPresenter>())
+         using (var presenter = _applicationController.Start<IModalChartTemplateManagerPresenter>())
          {
-            modalChartTemplateManagerPresenter.EditTemplates(withChartTemplates.ChartTemplates);
+            presenter.EditTemplates(withChartTemplates.ChartTemplates);
 
-            modalChartTemplateManagerPresenter.Display();
+            presenter.Display();
 
-            if (!modalChartTemplateManagerPresenter.HasChanged || modalChartTemplateManagerPresenter.Canceled())
+            if (!presenter.HasChanged || presenter.Canceled())
                return new OSPSuiteEmptyCommand<IOSPSuiteExecutionContext>();
 
-            var curveChartTemplates = modalChartTemplateManagerPresenter.EditedTemplates;
+            var curveChartTemplates = presenter.EditedTemplates;
             return ReplaceTemplatesCommand(withChartTemplates, curveChartTemplates);
          }
       }
 
-      protected static void AddCurveForColumnWithOptionsFromSourceCurve(IChartEditorPresenter chartEditorPresenter, DataColumn column, ICurve sourceCurve)
+      protected static void AddCurveForColumnWithOptionsFromSourceCurve(IChartEditorPresenter chartEditorPresenter, DataColumn column, Curve sourceCurve)
       {
-         chartEditorPresenter.AddCurveForColumn(column.Id, sourceCurve == null ? null : sourceCurve.CurveOptions);
+         chartEditorPresenter.AddCurveForColumn(column, sourceCurve?.CurveOptions);
       }
 
       private void addSimulationOutputs(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> simulations, bool addCurveIfNoSourceDefined)
       {
-         var selectedColumns = simulations.SelectMany(x => x.OutputSelections).Take(DataChartConstants.MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE)
+         var selectedColumns = simulations.SelectMany(x => x.OutputSelections).Take(Constants.MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE)
             .SelectMany(selection => allAvailableColumns.ColumnsForPath(selection.Path));
 
          selectedColumns.Each(column =>
@@ -186,50 +205,49 @@ namespace OSPSuite.Presentation.Services.Charts
          });
       }
 
-      private static IEnumerable<ICurve> allCurvesFromSimulations(IEnumerable<ISimulation> simulations)
+      private static IEnumerable<Curve> allCurvesFromSimulations(IEnumerable<ISimulation> simulations)
       {
          return simulations.SelectMany(allCurvesForSimulation);
       }
 
-      private static IEnumerable<ICurve> allCurvesForSimulation(ISimulation simulation)
+      private static IEnumerable<Curve> allCurvesForSimulation(ISimulation simulation)
       {
          return simulation.Charts.SelectMany(x => x.Curves);
       }
 
-      protected ICurve CurvePlotting(ISimulation simulation, DataColumn dataColumn)
+      protected Curve CurvePlotting(ISimulation simulation, DataColumn dataColumn)
       {
          return allCurvesForSimulation(simulation).FirstOrDefault(x => x.PlotsColumn(dataColumn));
       }
 
-      protected ICurve CurvePlotting(IReadOnlyCollection<ISimulation> simulations, DataColumn dataColumn)
+      protected Curve CurvePlotting(IReadOnlyCollection<ISimulation> simulations, DataColumn dataColumn)
       {
          return allCurvesFromSimulations(simulations).FirstOrDefault(x => x.PlotsColumn(dataColumn));
       }
 
-      public virtual void UpdateDefaultSettings(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> withOutputSelections, bool addCurveIfNoSourceDefined = true)
+      public void UpdateDefaultSettings(IChartEditorPresenter chartEditorPresenter, IReadOnlyCollection<DataColumn> allAvailableColumns, IReadOnlyCollection<ISimulation> simulations, bool addCurveIfNoSourceDefined = true, Action customUpdate = null)
       {
-         addSimulationOutputs(chartEditorPresenter, allAvailableColumns, withOutputSelections, addCurveIfNoSourceDefined);
+         using (_chartUpdater.UpdateTransaction(chartEditorPresenter.Chart))
+         {
+            addSimulationOutputs(chartEditorPresenter, allAvailableColumns, simulations, addCurveIfNoSourceDefined);
+            customUpdate?.Invoke();
+         }
       }
 
-      public CurveChartTemplate CreateNewTemplateFromChart(ICurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates)
+      public CurveChartTemplate CreateNewTemplateFromChart(CurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates)
       {
          return createTemplate(existingTemplates, () => TemplateFrom(chart), Captions.CreateNewTemplate, chart.Name);
       }
 
       public abstract ICommand AddChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates);
+
       public abstract ICommand UpdateChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates, string templateName);
 
-      public string TemplateStringFrom(ICurveChart chart)
-      {
-         return _chartTemplatePersistor.SerializeAsStringBasedOn(chart);
-      }
+      public string TemplateStringFrom(CurveChart chart) => _chartTemplatePersistor.SerializeAsStringBasedOn(chart);
 
-      public CurveChartTemplate TemplateFrom(string serializedChart)
-      {
-         return _chartTemplatePersistor.DeserializeFromString(serializedChart);
-      }
+      public CurveChartTemplate TemplateFrom(string serializedChart) => _chartTemplatePersistor.DeserializeFromString(serializedChart);
 
-      public CurveChartTemplate TemplateFrom(ICurveChart chart, bool validateTemplate = true)
+      public CurveChartTemplate TemplateFrom(CurveChart chart, bool validateTemplate = true)
       {
          var template = _chartTemplateMapper.MapFrom(chart);
 
@@ -239,13 +257,12 @@ namespace OSPSuite.Presentation.Services.Charts
          return template;
       }
 
-      public void InitializeChartFromTemplate(ICurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold)
+      public void InitializeChartFromTemplate(CurveChart chart, IEnumerable<DataColumn> dataColumns, CurveChartTemplate template, Func<DataColumn, string> nameDefinition, bool warnIfNumberOfCurvesAboveThreshold, bool propogateChartChangeEvent=true)
       {
          if (dataColumns == null || template == null)
             return;
 
-         _chartFromTemplateService.CurveNameDefinition = nameDefinition;
-         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, warnIfNumberOfCurvesAboveThreshold);
+         _chartFromTemplateService.InitializeChartFromTemplate(chart, dataColumns, template, nameDefinition, warnIfNumberOfCurvesAboveThreshold, propogateChartChangeEvent);
       }
    }
 }

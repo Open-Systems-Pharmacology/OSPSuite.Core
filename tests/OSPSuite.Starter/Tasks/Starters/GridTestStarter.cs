@@ -9,17 +9,11 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class GridTestStarter : IGridTestStarter
    {
-      public void Start()
+      private readonly Form _dataGridView = new GridViewForm();
+
+      public void Start(int width = 0, int height = 0)
       {
-         FrmDataGrid.Show();
+         _dataGridView.Show();
       }
-
-      public static Form FrmDataGrid => createDataGrid();
-
-      private static Form createDataGrid()
-      {
-         return new GridViewForm();
-      }
-
    }
 }

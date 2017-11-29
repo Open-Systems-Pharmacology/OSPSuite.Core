@@ -32,10 +32,10 @@ namespace OSPSuite.Core
          _myDefaultUnit = _dimension1.AddUnit("UNIT", 10, 0);
 
          _dimension2 = A.Fake<IDimension>();
-         _mergedDimensionSource = new MergedDimensionFor<IAxis>(_dimension1, new[] { _dimension2 },new List<IDimensionConverterFor>());
+         _mergedDimensionSource = new MergedDimensionFor<Axis>(_dimension1, new[] { _dimension2 },new List<IDimensionConverterFor>());
          var converter = A.Fake<IDimensionConverterFor>();
          A.CallTo(() => converter.CanConvertTo(_dimension1)).Returns(true);
-         _mergedDimensionTarget = new MergedDimensionFor<IAxis>(_dimension2, new[] { _dimension1 },new [] {converter});
+         _mergedDimensionTarget = new MergedDimensionFor<Axis>(_dimension2, new[] { _dimension1 },new [] {converter});
 
          sut.AddDisplayUnit(new DisplayUnitMap { Dimension = _dimension1, DisplayUnit = _myDefaultUnit });
       }

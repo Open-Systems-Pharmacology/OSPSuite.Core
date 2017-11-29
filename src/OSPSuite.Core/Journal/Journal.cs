@@ -17,10 +17,7 @@ namespace OSPSuite.Core.Journal
       /// </summary>
       public virtual JournalPage Edited { get; set; }
 
-      public virtual IReadOnlyList<JournalPage> JournalPages
-      {
-         get { return _journalPages; }
-      }
+      public virtual IReadOnlyList<JournalPage> JournalPages => _journalPages;
 
       public Journal()
       {
@@ -97,14 +94,8 @@ namespace OSPSuite.Core.Journal
          diagram.Journal = this;
       }
 
-      public JournalDiagram Diagram
-      {
-         get { return _journalDiagrams.FindByName(Captions.Journal.DefaultDiagramName); }
-      }
+      public JournalDiagram Diagram => _journalDiagrams.FindByName(Captions.Journal.DefaultDiagramName);
 
-      public virtual IReadOnlyList<JournalDiagram> Diagrams
-      {
-         get { return _journalDiagrams; }
-      }
+      public virtual IReadOnlyList<JournalDiagram> Diagrams => _journalDiagrams;
    }
 }

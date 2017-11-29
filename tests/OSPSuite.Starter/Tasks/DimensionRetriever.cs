@@ -15,12 +15,12 @@ namespace OSPSuite.Starter.Tasks
 
       public IDimension ReactionDimension
       {
-         get { return _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT_PER_TIME); }
+         get { return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME); }
       }
 
       public IDimension MoleculeDimension
       {
-         get { return _dimensionFactory.GetDimension(Constants.Dimension.AMOUNT); }
+         get { return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT); }
       }
 
       public ReactionDimensionMode SelectedDimensionMode

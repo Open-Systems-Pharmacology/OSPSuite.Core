@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain
       {
          var parameter = _objectBaseFactory.Create<IParameter>()
             .WithName(name)
-            .WithDimension(_dimensionFactory.GetDimension(dimension))
+            .WithDimension(_dimensionFactory.Dimension(dimension))
             .WithFormula(_objectBaseFactory.Create<ConstantFormula>().WithValue(value))
             .WithGroup(Constants.Groups.SIMULATION_SETTINGS);
 

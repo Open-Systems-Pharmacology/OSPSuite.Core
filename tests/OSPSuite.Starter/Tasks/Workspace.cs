@@ -19,6 +19,6 @@ namespace OSPSuite.Starter.Tasks
 
    public class WithWorkspaceLayout : IWithWorkspaceLayout
    {
-      public IWorkspaceLayout WorkspaceLayout { get; set; }
+      public IWorkspaceLayout WorkspaceLayout { get; set; } = new WorkspaceLayout();
    }
 }

@@ -40,6 +40,8 @@ namespace OSPSuite.Starter.Tasks
          ProjectFiles = new List<string>();
          JournalPageEditorSettings = new JournalPageEditorSettings();
          DefaultChartYScaling = Scalings.Log;
+         ParameterIdentificationFeedbackEditorSettings = new ParameterIdentificationFeedbackEditorSettings();
+         SensitivityAnalysisFeedbackEditorSettings = new SensitivityAnalysisFeedbackEditorSettings();
       }
    }
 }

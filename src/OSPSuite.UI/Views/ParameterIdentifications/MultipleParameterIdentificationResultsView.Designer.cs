@@ -35,9 +35,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private void InitializeComponent()
       {
          DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
-         this.optimizedParametersView = new UxGridView();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
-         this.mainView = new UxGridView();
+         
+         this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
+         this.optimizedParametersView = new UxGridView(gridControl);
+         this.mainView = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemResults = new DevExpress.XtraLayout.LayoutControlItem();
@@ -58,6 +59,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.optimizedParametersView.GridControl = this.gridControl;
          this.optimizedParametersView.MultiSelect = false;
          this.optimizedParametersView.Name = "optimizedParametersView";
+         this.optimizedParametersView.OptionsSelection.EnableAppearanceFocusedRow = false;
          // 
          // gridControl
          // 
@@ -137,7 +139,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private DevExpress.XtraGrid.GridControl gridControl;
+      private UxGridControl gridControl;
       private UxGridView mainView;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemResults;
       private UxGridView optimizedParametersView;

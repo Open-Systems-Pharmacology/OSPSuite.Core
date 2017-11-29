@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Events;
-using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core
 {
@@ -119,7 +118,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         sut.StartAsync(_parameterIdentification);
          var runStatus = new[] {RunStatus.RanToCompletion, RunStatus.Canceled, RunStatus.Faulted, RunStatus.Created};
 
          var parameterIdentificationRuns = new List<IParameterIdentificationRun>();
@@ -140,9 +138,9 @@ namespace OSPSuite.Core
             if (runResult.Status == RunStatus.Faulted)
             {
                A.CallTo(() => run.Run(A<CancellationToken>._)).Invokes(r =>
-               {
-                  sut.Stop();
-               })
+                  {
+                     sut.Stop();
+                  })
                   .Returns(runResult);
             }
             parameterIdentificationRuns.Add(run);

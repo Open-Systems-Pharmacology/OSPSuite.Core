@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -21,7 +20,7 @@ namespace OSPSuite.Presentation
    {
       protected IKeyPathMapper _keyPathMapper;
       protected IDimensionFactory _dimensionFactory;
-      protected ICurveChart _chart;
+      protected CurveChart _chart;
       protected List<DataColumn> _dataColumns;
       protected CurveChartTemplate _template;
       protected BaseGrid _baseGrid;
@@ -33,6 +32,7 @@ namespace OSPSuite.Presentation
       private ICloneManager _cloneManager;
       protected string[] _drugTemplatePathArray;
       protected string[] _enzymeTemplatePathArray;
+      protected IChartUpdater _chartUpdater;
 
       protected override void Context()
       {
@@ -40,7 +40,8 @@ namespace OSPSuite.Presentation
          _keyPathMapper = new KeyPathMapper(new EntityPathResolverForSpecs(), new ObjectPathFactoryForSpecs());
          _dialogCreator = A.Fake<IDialogCreator>();
          _cloneManager = A.Fake<ICloneManager>();
-         sut = new ChartFromTemplateService(_dimensionFactory, _keyPathMapper, _dialogCreator, _cloneManager);
+         _chartUpdater= A.Fake<IChartUpdater>();
+         sut = new ChartFromTemplateService(_dimensionFactory, _keyPathMapper, _dialogCreator, _cloneManager, _chartUpdater);
          _chart = new CurveChart();
          _dataColumns = new List<DataColumn>();
          _template = new CurveChartTemplate();
@@ -66,7 +67,7 @@ namespace OSPSuite.Presentation
          _enzymeColumn.QuantityInfo.Type = QuantityType.Enzyme;
          _enzymeColumn.DataInfo.Origin = ColumnOrigins.Calculation;
 
-         A.CallTo(() => _dimensionFactory.GetMergedDimensionFor(A<IWithDimension>._))
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<IWithDimension>._))
             .ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
 
          //always available
@@ -80,7 +81,7 @@ namespace OSPSuite.Presentation
          sut.InitializeChartFromTemplate(_chart, _dataColumns, _template);
       }
 
-      protected void ValidateCurve(ICurve curve, DataColumn xData, DataColumn yData, string name)
+      protected void ValidateCurve(Curve curve, DataColumn xData, DataColumn yData, string name)
       {
          curve.xData.ShouldBeEqualTo(xData);
          curve.yData.ShouldBeEqualTo(yData);
@@ -90,6 +91,8 @@ namespace OSPSuite.Presentation
 
    public class When_initializing_a_chart_from_a_template_containing_curves_with_base_grid_and_with_the_exact_same_path_as_the_data_columns : concern_for_ChartFromTemplateService
    {
+      private bool _propagateChartChangedEvent;
+
       protected override void Context()
       {
          base.Context();
@@ -100,7 +103,14 @@ namespace OSPSuite.Presentation
             xData = {QuantityType = QuantityType.BaseGrid},
             yData = {QuantityType = _drugColumn.QuantityInfo.Type, Path = _drugTemplatePathArray.ToPathString()}
          });
+         _propagateChartChangedEvent = false;
       }
+
+      protected override void Because()
+      {
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, propogateChartChangeEvent:_propagateChartChangedEvent);
+      }
+
 
       [Observation]
       public void should_return_a_chart_with_the_curves_for_the_exact_data()
@@ -114,6 +124,12 @@ namespace OSPSuite.Presentation
       public void should_not_add_the_curve_with_data_having_another_type()
       {
          _chart.Curves.Any(x => x.yData == _enzymeColumn).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_have_updated_the_chart_using_the_chart_updater()
+      {
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, _propagateChartChangedEvent)).MustHaveHappened();
       }
    }
 
@@ -333,7 +349,6 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.WarningThreshold = 1;
          _chart.ChartSettings.BackColor = Color.Red;
          _template.ChartSettings.BackColor = Color.Aqua;
 
@@ -356,7 +371,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true);
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true, warningThreshold:1);
       }
 
       [Observation]
@@ -371,7 +386,6 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.WarningThreshold = 1;
          _chart.ChartSettings.BackColor = Color.Red;
          _template.ChartSettings.BackColor = Color.Aqua;
          A.CallTo(_dialogCreator).WithReturnType<ViewResult>().Returns(ViewResult.Yes);
@@ -391,7 +405,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true);
+         sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, warnIfNumberOfCurvesAboveThreshold: true, warningThreshold:1);
       }
 
       [Observation]
@@ -463,11 +477,13 @@ namespace OSPSuite.Presentation
 
          _repository1.Add(_drugColumn);
 
-         _drugColumn2 = new DataColumn("Drug", _concentrationDimension, new BaseGrid("BaseGrid", _timeDimension));
-         _drugColumn2.QuantityInfo = _drugColumn.QuantityInfo;
-         _drugColumn2.DataInfo = _drugColumn.DataInfo;
-         _repository2.Add(_drugColumn2);
+         _drugColumn2 = new DataColumn("Drug", _concentrationDimension, new BaseGrid("BaseGrid", _timeDimension))
+         {
+            QuantityInfo = _drugColumn.QuantityInfo,
+            DataInfo = _drugColumn.DataInfo
+         };
 
+         _repository2.Add(_drugColumn2);
          _dataColumns.Add(_drugColumn2);
       }
 

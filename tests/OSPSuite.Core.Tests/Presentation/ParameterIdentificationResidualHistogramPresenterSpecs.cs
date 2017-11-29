@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -24,6 +25,8 @@ namespace OSPSuite.Presentation
       protected ParameterIdentification _parameterIdentification;
       protected ParameterIdentificationResidualHistogram _residualHistogram;
       private IParameterIdentificationSingleRunAnalysisView _view;
+      private IApplicationSettings _applicationSettings;
+
 
       protected override void Context()
       {
@@ -32,8 +35,9 @@ namespace OSPSuite.Presentation
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _residualDataCreator = A.Fake<IResidualDistibutionDataCreator>();
          _normalDistributionDataCreator = A.Fake<INormalDistributionDataCreator>();
+         _applicationSettings= A.Fake<IApplicationSettings>();
 
-         sut = new ParameterIdentificationResidualHistogramPresenter(_view, _histogramView,_presentationSettingsTask, _residualDataCreator, _normalDistributionDataCreator);
+         sut = new ParameterIdentificationResidualHistogramPresenter(_view, _histogramView,_presentationSettingsTask, _residualDataCreator, _normalDistributionDataCreator, _applicationSettings);
 
          _parameterIdentification = new ParameterIdentification();
          _residualHistogram = new ParameterIdentificationResidualHistogram();
@@ -81,6 +85,12 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          sut.InitializeAnalysis(_residualHistogram, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_update_the_clibpard_manager_in_the_histogram_view()
+      {
+         _histogramView.CopyToClipboardManager.ShouldBeEqualTo(sut);
       }
 
       [Observation]

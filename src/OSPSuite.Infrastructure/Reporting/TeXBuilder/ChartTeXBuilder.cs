@@ -182,17 +182,17 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 
       private bool isAxisTypeUsed(CurveChart chart, AxisTypes yAxisType)
       {
-         if (!chart.Axes.Contains(yAxisType)) 
+         if (!chart.HasAxis(yAxisType)) 
             return false;
+
          var yAxis = chart.Axes.FirstOrDefault(x => x.AxisType == yAxisType);
-         if (yAxis == null)
+         if (yAxis?.Dimension == null) 
             return false;
-         if (yAxis.Dimension == null) 
-            return false;
+
          return isAtLeastOneCurveCompatibleAndVisible(chart, yAxisType, yAxis);
       }
 
-      private bool isAtLeastOneCurveCompatibleAndVisible(CurveChart chart, AxisTypes yAxisType, IAxis yAxis)
+      private bool isAtLeastOneCurveCompatibleAndVisible(CurveChart chart, AxisTypes yAxisType, Axis yAxis)
       {
          return chart.Curves.Any(x => x.yAxisType == yAxisType && x.Visible && isCurveCompatibleToYAxis(x, yAxis));
       }
@@ -215,7 +215,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          return colors;
       }
 
-      private string getAxisLabel(IAxis axis)
+      private string getAxisLabel(Axis axis)
       {
          var axisLabel = string.IsNullOrEmpty(axis.Caption)
                    ? string.Format("{0}{1}", axis.Dimension,
@@ -306,7 +306,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             case Scalings.Log:
                return AxisOptions.AxisMode.log;
             default:
-               throw new ArgumentOutOfRangeException("scaling");
+               throw new ArgumentOutOfRangeException(nameof(scaling));
          }
       }
 
@@ -365,8 +365,9 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          return 1 + 0.5*(lineThickness - 1);
       }
 
-      private static string getOpacityFor(int transparency)
+      private static string getOpacityFor(byte opacity)
       {
+         var transparency = 255 - opacity;
          return (1 - transparency / 255D).ToString("0.00", CultureInfo.InvariantCulture);
       }
 
@@ -406,20 +407,20 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          return PlotOptions.LineStyles.None;
       }
 
-      private bool isCurveCompatibleToYAxis(ICurve curve, IAxis yaxis)
+      private bool isCurveCompatibleToYAxis(Curve curve, Axis yaxis)
       {
-         return (curve.YDimension.Name == _dimensionFactory.GetMergedDimensionFor(yaxis).Name);
+         return (curve.yDimension.Name == _dimensionFactory.MergedDimensionFor(yaxis).Name);
       }
 
       private List<Plot> getPlots(CurveChart chart, AxisTypes yAxisType)
       {
          var plots = new List<Plot>();
 
-         IAxis xAxis = chart.Axes.First(x => x.AxisType == AxisTypes.X);
-         IAxis yAxis = chart.Axes.First(x => x.AxisType == yAxisType);
+         var xAxis = chart.Axes.First(x => x.AxisType == AxisTypes.X);
+         var yAxis = chart.Axes.First(x => x.AxisType == yAxisType);
 
-         Unit xUnit = xAxis.Dimension.Unit(xAxis.UnitName);
-         Unit yUnit = yAxis.Dimension.Unit(yAxis.UnitName);
+         var xUnit = xAxis.Dimension.Unit(xAxis.UnitName);
+         var yUnit = yAxis.Dimension.Unit(yAxis.UnitName);
 
          foreach (var curve in chart.Curves)
          {
@@ -441,7 +442,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticStdDev))
             {
                arithmeticErr = curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
-               arithmeticErrDim = _dimensionFactory.GetMergedDimensionFor(arithmeticErr);
+               arithmeticErrDim = _dimensionFactory.MergedDimensionFor(arithmeticErr);
                plotOptions.ErrorBars = true;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.arithmetic;
             }
@@ -450,22 +451,22 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.GeometricMeanPop))
             {
                geometricMeanPop = curve.yData.GetRelatedColumn(AuxiliaryType.GeometricMeanPop);
-               geometricMeanPopDim = _dimensionFactory.GetMergedDimensionFor(geometricMeanPop);
+               geometricMeanPopDim = _dimensionFactory.MergedDimensionFor(geometricMeanPop);
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.geometric;
                plotOptions.ShadedErrorBars = true;
-               plotOptions.Opacity = getOpacityFor(Constants.Population.STD_DEV_CURVE_TRANSPARENCY);
+               plotOptions.Opacity = getOpacityFor(Constants.RANGE_AREA_OPACITY);
             }
             DataColumn arithmeticMeanPop = null;
             IDimension arithmeticMeanPopDim = null;
             if (curve.yData.ContainsRelatedColumn(AuxiliaryType.ArithmeticMeanPop))
             {
                arithmeticMeanPop = curve.yData.GetRelatedColumn(AuxiliaryType.ArithmeticMeanPop);
-               arithmeticMeanPopDim = _dimensionFactory.GetMergedDimensionFor(arithmeticMeanPop);
+               arithmeticMeanPopDim = _dimensionFactory.MergedDimensionFor(arithmeticMeanPop);
                plotOptions.ErrorBars = false;
                plotOptions.ErrorType = PlotOptions.ErrorTypes.arithmetic;
                plotOptions.ShadedErrorBars = true;
-               plotOptions.Opacity = getOpacityFor(Constants.Population.STD_DEV_CURVE_TRANSPARENCY);
+               plotOptions.Opacity = getOpacityFor(Constants.RANGE_AREA_OPACITY);
             }
 
             plotOptions.Color = curve.Color.Name;
@@ -475,8 +476,8 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
             plotOptions.Marker = getMarker(curve.Symbol);
             plotOptions.LineStyle = getLineStyle(curve.LineStyle);
 
-            IDimension xDimension = _dimensionFactory.GetMergedDimensionFor(curve.xData);
-            IDimension yDimension = _dimensionFactory.GetMergedDimensionFor(curve.yData);
+            IDimension xDimension = _dimensionFactory.MergedDimensionFor(curve.xData);
+            IDimension yDimension = _dimensionFactory.MergedDimensionFor(curve.yData);
             for (var i = 0; i < curve.xData.Values.Count; i++)
             {
                var xValue = convertToUnit(xUnit, xDimension, curve.xData.Values[i]);

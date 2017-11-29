@@ -19,8 +19,8 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>, IParameterIdentificationAnalysisPresenter
-      where TChart : IChartWithObservedData, ISimulationAnalysis where
-         TView : IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
+      where TChart : ChartWithObservedData, ISimulationAnalysis where
+         TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {
       protected ParameterIdentification _parameterIdentification;
       private readonly Cache<string, Color> _colorCache = new Cache<string, Color>(onMissingKey: x => Color.Black);
@@ -30,10 +30,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext,  ApplicationIcon icon, string presentationKey) :
             base(view, chartPresenterContext)
       {
-         _view.SetAnalysisView(chartPresenterContext.ChartEditorAndDisplayPresenter.BaseView);
+         _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         chartPresenterContext.ChartEditorAndDisplayPresenter.PostEditorLayout = showSimulationColumn;
+         PostEditorLayout = showSimulationColumn;
+         AddAllButtons();
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -43,19 +44,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (ChartIsBeingUpdated)
          {
             UpdateTemplateFromChart();
-            clearChartAndEditor();
+            ClearChartAndDataRepositories();
          }
          else
             updateCacheColor();
 
-         if (!_parameterIdentification.Results.Any())
-            return;
+         if (_parameterIdentification.Results.Any())
+         {
+            _isMultipleRun = _parameterIdentification.Results.Count > 1;
+            UpdateAnalysisBasedOn(_parameterIdentification.Results);
+         }
 
-         _isMultipleRun = _parameterIdentification.Results.Count > 1;
-
-         UpdateAnalysisBasedOn(_parameterIdentification.Results);
-
-         BindChartToEditors();
+         Refresh();
       }
 
       protected virtual void UpdateTemplateFromChart()
@@ -71,16 +71,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          LoadTemplate(_chartTemplate, warnIfNumberOfCurvesAboveThreshold: false);
       }
 
-      protected override void InitEditorLayout()
+      protected override void ConfigureColumns()
       {
-         base.InitEditorLayout();
+         base.ConfigureColumns();
          showSimulationColumn();
       }
 
       private void showSimulationColumn()
       {
-         Column(BrowserColumns.Simulation).Visible = true;
-         Column(BrowserColumns.Simulation).VisibleIndex = 0;
+         var simulationColumnSettings = Column(BrowserColumns.Simulation);
+         simulationColumnSettings.Visible = true;
+         simulationColumnSettings.VisibleIndex = 0;
+         ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
       }
 
       private void updateCacheColor()
@@ -89,13 +91,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.Curves.Each(x => _colorCache[x.yData.PathAsString] = x.Color);
       }
 
-      private void clearChartAndEditor()
+      protected virtual void ClearChartAndDataRepositories()
       {
          Chart.Clear();
-         ChartEditorPresenter.ClearDataRepositories();
-         ChartDisplayPresenter.DataSource = null;
-         ChartEditorPresenter.DataSource = null;
-         RemoveChartEventHandlers();
+         ChartEditorPresenter.RemoveAllDataRepositories();
       }
 
       protected string CurveDescription(string name, ParameterIdentificationRunResult runResult)
@@ -118,12 +117,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return _parameterIdentification.AllSimulations.FindByName(simulationName);
       }
 
-      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, ICurve> action)
+      protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action)
       {
          Chart.AddCurvesFor(dataRepository.AllButBaseGrid(), NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
 
-      protected void AddCurvesFor(IEnumerable<DataColumn> columns, Action<DataColumn, ICurve> action)
+      protected void AddCurvesFor(IEnumerable<DataColumn> columns, Action<DataColumn, Curve> action)
       {
          Chart.AddCurvesFor(columns, NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
@@ -138,20 +137,20 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          SelectColorForPath(calculationColumn.PathAsString);
       }
 
-      protected void UpdateColorForCalculationColumn(ICurve curve, DataColumn calculationColumn)
-      {
-         UpdateColorForPath(curve, calculationColumn.PathAsString);
-      }
-
-      protected void UpdateColorForPath(ICurve curve, string path)
-      {
-         curve.Color = _colorCache[path];
-      }
-
       protected void SelectColorForPath(string path)
       {
          if (!_colorCache.Contains(path))
             _colorCache[path] = Chart.SelectNewColor();
+      }
+
+      protected void UpdateColorForCalculationColumn(Curve curve, DataColumn calculationColumn)
+      {
+         UpdateColorForPath(curve, calculationColumn.PathAsString);
+      }
+
+      protected void UpdateColorForPath(Curve curve, string path)
+      {
+         curve.Color = _colorCache[path];
       }
 
       private void addObservedDataForOutput(IGrouping<string, OutputMapping> outputMappingsByOutput)
@@ -159,7 +158,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var outputPath = outputMappingsByOutput.Key;
          SelectColorForPath(outputPath);
 
-         outputMappingsByOutput.Each(outputMapping => AddDataRepositoryToEditor(outputMapping.WeightedObservedData));
+         AddDataRepositoriesToEditor(outputMappingsByOutput.Select(x=>x.WeightedObservedData.ObservedData));
 
          AddCurvesFor(outputMappingsByOutput.SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()),
             (column, curve) =>

@@ -55,6 +55,7 @@ namespace OSPSuite.Core.Domain
 
       //tolerated precision to relativtely compare to double values 
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
+
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
 
@@ -66,7 +67,6 @@ namespace OSPSuite.Core.Domain
       public static readonly string PRODUCT_SITE = "www.open-systems-pharmacology.org";
       public static readonly string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
       public static readonly string HELP_NAMESPACE = "Open Systems Pharmacology Suite.chm";
-      public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
       public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
       public static readonly string SUITE_NAME = "Open Systems Pharmacology Suite";
 
@@ -78,7 +78,11 @@ namespace OSPSuite.Core.Domain
       public const string Y = "Y";
       public const double TOO_CLOSE_TO_BOUNDARY_FACTOR = 0.01;
       public const int NUMBER_OF_RUNS_WITH_VISIBLE_LEGEND = 10;
+      public const int MAX_NUMBER_OF_CURVES_TO_SHOW_AT_ONCE = 10;
       public const float LOG_SAFE_EPSILON = 1e-20F;
+      public const byte RANGE_AREA_OPACITY = 55;
+      public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
+      public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -89,6 +93,19 @@ namespace OSPSuite.Core.Domain
       public const string FILE = "File";
       public const string SHEET = "Sheet";
 
+      public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
+
+      public static class Files
+      {
+         public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
+         public static readonly string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
+         public static readonly string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
+         public static readonly string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
+         public static readonly string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
+         public static readonly string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
+         public static readonly string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
+         public static readonly string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
+      }
 
       public static class Parameters
       {
@@ -115,9 +132,9 @@ namespace OSPSuite.Core.Domain
          public const string WEIGHT = "Weight";
          public const string DRUG_MASS = "DrugMass";
 
-
          //todo delete when flag is categorial is defined in core for parameter
          public const string HAS_HALOGENS = "Has halogens";
+
          public const string EHC_ENABLED = "Gallbladder emptying enabled";
          public const string USE_PENALTY_FACTOR = "Use pH- and pKa-dependent penalty factor for charged molecule fraction";
          public const string IS_SMALL_MOLECULE = "Is small molecule";
@@ -145,8 +162,7 @@ namespace OSPSuite.Core.Domain
          public const string CL = "Cl";
          public const string F = "F";
          public const string I = "I";
-         public static readonly IReadOnlyCollection<string> Halogens = new List<string> { CL, BR, F, I };
-
+         public static readonly IReadOnlyCollection<string> Halogens = new List<string> {CL, BR, F, I};
 
          public static readonly IReadOnlyCollection<string> AllBooleanParameters = new List<string>
          {
@@ -363,13 +379,11 @@ namespace OSPSuite.Core.Domain
       public static class Population
       {
          public const string ALL_GENDER = "AllGender";
-         public const byte STD_DEV_CURVE_TRANSPARENCY = 200;
          public const string TIME_COLUMN = "Time";
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
       }
-
 
       public static class OptimizationAlgorithm
       {
@@ -470,8 +484,8 @@ namespace OSPSuite.Core.Domain
             public const string BUILDING_BLOCK_ID = "bb";
             public const string LLOQ = "lloq";
             public const string DEFAULT_VALUE = "default";
+            public const string UNIT_NAME = "unitName";
          }
-
       }
 
       public static class ParameterExport
@@ -481,7 +495,6 @@ namespace OSPSuite.Core.Domain
          public const string FORMULA = "Formula";
          public const string RHS_FORMULA = "RHSFormula";
       }
-
 
       public static readonly string NOT = "Not";
       public static readonly string AND = "and";
@@ -516,24 +529,23 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static IEnumerable<string> GetFontFamilies()
-         {
-            return new List<string> {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
-         }
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static IEnumerable<int> GetFontSizes()
-         {
-            return new List<int> {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
-         }
+         public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
 
-         public static string DefaultFontFamilyName = FontFamily.GenericSansSerif.Name;
-         public static int DefaultFontSizeLegend = 8;
-         public static int DefaultFontSizeAxis = 10;
-         public static int DefaultFontSizeTitle = 16;
-         public static int DefaultFontSizeDescription = 12;
-         public static int DefaultFontSizeOrigin = 8;
-         public static int DefaultFontSizeTitleForParameterIdentificationFeedback = 12;
+
+         public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
+         public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;
+         public static readonly int DEFAULT_FONT_SIZE_TITLE = 16;
+         public static readonly int DEFAULT_FONT_SIZE_DESCRIPTION = 12;
+         public static readonly int DEFAULT_FONT_SIZE_ORIGIN = 8;
+         public static readonly int DEFAULT_FONT_SIZE_WATERMARK = 32;
+         public static readonly int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
+
+         //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+
+         public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
-
-  }
+   }
 }

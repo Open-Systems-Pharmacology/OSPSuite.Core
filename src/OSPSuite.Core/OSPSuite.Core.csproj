@@ -58,32 +58,27 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=3.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MathNet.Numerics.3.17.0\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MathNet.Numerics, Version=3.20.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.3.20.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MPFitLib, Version=1.1.0.0, Culture=neutral, PublicKeyToken=be1b3c0b5819660a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\csmpfit.1.1.0\lib\net20\MPFitLib.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MPFitLib, Version=1.1.1.0, Culture=neutral, PublicKeyToken=be1b3c0b5819660a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\csmpfit.1.1.1\lib\net20\MPFitLib.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.FuncParser">
       <HintPath>..\..\packages\OSPSuite.FuncParser.2.0.0.1\lib\net45\OSPSuite.FuncParser.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Serializer">
-      <HintPath>..\..\packages\OSPSuite.Serializer.2.0.0.1\lib\net45\OSPSuite.Serializer.dll</HintPath>
+    <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.SimModel.2.0.0.12\lib\net45\OSPSuite.SimModel.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\OSPSuite.SimModel.2.2.0.6\lib\net45\OSPSuite.SimModel.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.0.4, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.4\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -91,6 +86,9 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -107,14 +105,21 @@
     <Compile Include="Batch\ParameterValue.cs" />
     <Compile Include="Chart\Axis.cs" />
     <Compile Include="Chart\AxisCountMode.cs" />
+    <Compile Include="Chart\ChartFontAndSizeSettingsExtensions.cs" />
+    <Compile Include="Chart\ChartUpdate.cs" />
     <Compile Include="Chart\CurveDataTemplate.cs" />
     <Compile Include="Chart\DistributionData.cs" />
     <Compile Include="Chart\DistributionSettings.cs" />
+    <Compile Include="Chart\Events.cs" />
+    <Compile Include="Chart\ChartUpdater.cs" />
+    <Compile Include="Chart\IWithAxes.cs" />
+    <Compile Include="Chart\Mappers\CurveToDataModeMapper.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationAnalysisChart.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationCorrelationMatrix.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationCovarianceMatrix.cs" />
     <Compile Include="Chart\ParameterIdentifications\ParameterIdentificationResidualHistogram.cs" />
     <Compile Include="Chart\SensitivityAnalyses\SensitivityAnalysisPKParameterAnalysis.cs" />
+    <Compile Include="Chart\WithAxesExtensions.cs" />
     <Compile Include="Commands\Core\Command.cs" />
     <Compile Include="Commands\Core\CommandExpressionParser.cs" />
     <Compile Include="Commands\Core\CommandExtensions.cs" />
@@ -141,6 +146,7 @@
     <Compile Include="Domain\Services\ObservedDataTask.cs" />
     <Compile Include="Domain\Services\ParameterIdentifications\TransferOptimizedParametersToSimulationsTask.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="IApplicationSettings.cs" />
     <Compile Include="Importer\ColumnInfo.cs" />
     <Compile Include="Importer\ColumnMapping.cs" />
     <Compile Include="Importer\DataImporterSettings.cs" />
@@ -194,6 +200,10 @@
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
+    <Compile Include="Services\CurveChartExportTask.cs" />
+    <Compile Include="Services\CurveNamer.cs" />
+    <Compile Include="Services\DataRepositoryNamer.cs" />
+    <Compile Include="Services\ICanCopyToClipboard.cs" />
     <Compile Include="Services\IDialogCreator.cs" />
     <Compile Include="Services\IReportingTask.cs" />
     <Compile Include="Services\IReportTask.cs" />
@@ -242,7 +252,7 @@
     <Compile Include="Domain\SensitivityAnalyses\SensitivityAnalysisRunResult.cs" />
     <Compile Include="Domain\SensitivityAnalyses\SensitivityParameter.cs" />
     <Compile Include="Domain\SensitivityAnalyses\VariationData.cs" />
-    <Compile Include="Domain\Services\IParameterIdentificationValidator.cs" />
+    <Compile Include="Domain\Services\ParameterIdentificationValidator.cs" />
     <Compile Include="Domain\Services\ISimulationSelector.cs" />
     <Compile Include="Domain\Services\ModelFinalizer.cs" />
     <Compile Include="Domain\Services\ISetParameterTask.cs" />
@@ -374,7 +384,6 @@
     <Compile Include="Events\SimulationRemovedEvent.cs" />
     <Compile Include="Events\SimulationReplacedInParameterAnalyzableEvent.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
-    <Compile Include="Extensions\AxisTypesExensions.cs" />
     <Compile Include="Chart\ChartExtensions.cs" />
     <Compile Include="Chart\ChartSettings.cs" />
     <Compile Include="Chart\IChartFactory.cs" />
@@ -387,9 +396,6 @@
     <Compile Include="Chart\CurveChartTemplate.cs" />
     <Compile Include="Chart\CurveOptions.cs" />
     <Compile Include="Chart\CurveTemplate.cs" />
-    <Compile Include="Chart\ErrorInfos.cs" />
-    <Compile Include="Chart\Exceptions.cs" />
-    <Compile Include="Chart\ItemNotifyCache.cs" />
     <Compile Include="Chart\IChart.cs" />
     <Compile Include="Chart\Mappers\CurveChartToCurveChartTemplateMapper.cs" />
     <Compile Include="Chart\Mappers\UnitToMinorIntervalMapper.cs" />
@@ -1028,9 +1034,10 @@
     <Compile Include="Services\IChartFromTemplateService.cs" />
     <Compile Include="Domain\Services\IEditObservedDataTask.cs" />
     <Compile Include="Domain\Services\IObservedDataConfiguration.cs" />
-    <Compile Include="Services\IExportToExcelTask.cs" />
+    <Compile Include="Services\IExportDataTableToExcelTask.cs" />
     <Compile Include="Services\KeyPathMapper.cs" />
     <Compile Include="Services\StartableProcess.cs" />
+    <Compile Include="Services\WatermarkStatusChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

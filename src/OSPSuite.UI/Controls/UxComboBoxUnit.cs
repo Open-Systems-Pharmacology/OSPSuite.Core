@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Controls
          _unitBinder.Bind(x => x.DisplayUnit)
             .To(this)
             .WithValues(dto => dto.AllUnits)
-            .OnValueSet += (o, e) => ParameterUnitSet(o, e.NewValue);
+            .OnValueUpdating += (o, e) => ParameterUnitSet(o, e.NewValue);
       }
 
       public void UpdateUnitsFor(BaseEdit activeEditor, TWithUnit dto)

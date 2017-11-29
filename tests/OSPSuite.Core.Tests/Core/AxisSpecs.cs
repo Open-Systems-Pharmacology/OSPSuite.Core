@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core
 {
@@ -12,19 +13,29 @@ namespace OSPSuite.Core
 
    }
 
-   public abstract class When_testing_axis_types_for_Y : concern_for_Axis
+   public class When_validating_axis_minimum_and_maximum : concern_for_Axis
    {
-      protected AxisTypes _axisType;
-      protected override void Context()
+      [Observation]
+      public void invalid_for_max_less_than_min()
       {
-         sut = new Axis(_axisType);
+         new Axis(AxisTypes.X)
+         {
+            Min = 0,
+            Max = -1
+         }.IsValid().ShouldBeFalse();
       }
 
       [Observation]
-      public void test_for_type_should_be_true()
+      public void invalid_for_log_max_equal_to_0()
       {
-         sut.IsYAxis().ShouldBeTrue();
+         new Axis(AxisTypes.X)
+         {
+            Scaling = Scalings.Log,
+            Min = 0,
+            Max = 0
+         }.IsValid().ShouldBeFalse();
       }
+
    }
 
    public class When_updating_an_axis_properties_from_another : concern_for_Axis
@@ -99,7 +110,22 @@ namespace OSPSuite.Core
       [Observation]
       public void test_for_type_should_be_true()
       {
-         sut.IsYAxis().ShouldBeFalse();
+         sut.IsYAxis.ShouldBeFalse();
+      }
+   }
+
+   public abstract class When_testing_axis_types_for_Y : concern_for_Axis
+   {
+      protected AxisTypes _axisType;
+      protected override void Context()
+      {
+         sut = new Axis(_axisType);
+      }
+
+      [Observation]
+      public void test_for_type_should_be_true()
+      {
+         sut.IsYAxis.ShouldBeTrue();
       }
    }
 

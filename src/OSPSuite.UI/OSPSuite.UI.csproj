@@ -49,92 +49,93 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.BonusSkins.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.BonusSkins.v16.2.dll</HintPath>
+    <Reference Include="Accessibility" />
+    <Reference Include="DevExpress.BonusSkins.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.BonusSkins.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Charts.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Charts.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Charts.v17.1.Core, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.Charts.v17.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Data.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.6\lib\net452\DevExpress.Data.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.Data.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.17.1.5\lib\net45\DevExpress.Data.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Office.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Office.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Office.v17.1.Core, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.Office.v17.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.PivotGrid.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.PivotGrid.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.PivotGrid.v17.1.Core, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.PivotGrid.v17.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Printing.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.Printing.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.Printing.v17.1.Core, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.Printing.v17.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.RichEdit.v16.2.Core, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.RichEdit.v16.2.Core.dll</HintPath>
+    <Reference Include="DevExpress.RichEdit.v17.1.Core, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.RichEdit.v17.1.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.Utils.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.16.2.6\lib\net452\DevExpress.Utils.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.Utils.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.17.1.5\lib\net45\DevExpress.Utils.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraBars.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraBars.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraBars.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraBars.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraCharts.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2.UI, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.UI.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v17.1.UI, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraCharts.v17.1.UI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraCharts.v16.2.Wizard, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraCharts.v16.2.Wizard.dll</HintPath>
+    <Reference Include="DevExpress.XtraCharts.v17.1.Wizard, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraCharts.v17.1.Wizard.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraEditors.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraEditors.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraEditors.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraEditors.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraGrid.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraGrid.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraLayout.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraLayout.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraLayout.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraLayout.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraNavBar.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraNavBar.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraNavBar.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraNavBar.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraPivotGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPivotGrid.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraPivotGrid.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraPrinting.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraPrinting.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraPrinting.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraRichEdit.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraRichEdit.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraRichEdit.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v16.2.Extensions, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraRichEdit.v16.2.Extensions.dll</HintPath>
+    <Reference Include="DevExpress.XtraRichEdit.v17.1.Extensions, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraRichEdit.v17.1.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraTreeList.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraTreeList.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraTreeList.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v16.2, Version=16.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.16.2.6\lib\net452\DevExpress.XtraVerticalGrid.v16.2.dll</HintPath>
+    <Reference Include="DevExpress.XtraVerticalGrid.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraVerticalGrid.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -157,24 +158,32 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.DataBinding">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.2.0.0.1\lib\net45\OSPSuite.DataBinding.dll</HintPath>
+    <Reference Include="OSPSuite.DataBinding, Version=2.1.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.2.1.0.5\lib\net452\OSPSuite.DataBinding.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=2.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.0.0.3\lib\net45\OSPSuite.DataBinding.DevExpress.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=2.1.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.1.0.4\lib\net452\OSPSuite.DataBinding.DevExpress.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.0.4, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.0.4\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.0.5\lib\net45\OSPSuite.Utility.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -186,11 +195,18 @@
     <Compile Include="..\..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Binders\AxisAdapter.cs" />
-    <Compile Include="Binders\CurveAdapter.cs" />
+    <Compile Include="Binders\ArithmeticMeanAreaCurveBinder.cs" />
+    <Compile Include="Binders\ArithmeticStdCurveBinder.cs" />
+    <Compile Include="Binders\AxisBinder.cs" />
+    <Compile Include="Binders\CurveBinder.cs" />
+    <Compile Include="Binders\GeometricMeanAreaCurveBinder.cs" />
+    <Compile Include="Binders\GeometricStdCurveBinder.cs" />
     <Compile Include="Binders\GridViewColumnUnitsMenuBinder.cs" />
     <Compile Include="Binders\OptimizedParametersBinder.cs" />
     <Compile Include="Binders\PathElementsBinder.cs" />
+    <Compile Include="Binders\RangeAreaCurveBinder.cs" />
+    <Compile Include="Binders\SingleValueCurveBinder.cs" />
+    <Compile Include="Binders\StdCurveBinder.cs" />
     <Compile Include="Binders\TokenEditBinder.cs" />
     <Compile Include="Binders\TreeNodeExplorerViewDragDropBinder.cs" />
     <Compile Include="Binders\UnitsMenuBinder.cs" />
@@ -264,6 +280,9 @@
     <Compile Include="Controls\UxDockPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\UxGridControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\UxGridView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -274,9 +293,6 @@
       <DependentUpon>UxHintPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\UxHistogramControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\UxHtmlLabel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\UxImageTreeView.cs">
@@ -393,6 +409,7 @@
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\GridColumnSettingsExtensions.cs" />
+    <Compile Include="Extensions\GridViewBinderExtensions.cs" />
     <Compile Include="Extensions\GridViewColumnExtensions.cs" />
     <Compile Include="Extensions\HelpProviderExtensions.cs" />
     <Compile Include="Extensions\HotTrackEventArgsExtensions.cs" />
@@ -413,7 +430,6 @@
     <Compile Include="Extensions\ToolTipControllerExtensions.cs" />
     <Compile Include="Extensions\TreeListMultiSelectionExtensions.cs" />
     <Compile Include="Extensions\WinFormExtensions.cs" />
-    <Compile Include="Extensions\WithEditableChartPropertiesExtensions.cs" />
     <Compile Include="Extensions\XtraTabControlExtensions.cs" />
     <Compile Include="Extensions\XtraTabExtensions.cs" />
     <Compile Include="Mappers\ApplicationIconsToImageCollectionMapper.cs" />
@@ -453,8 +469,9 @@
     <Compile Include="RepositoryItems\UxRepositoryItemImageComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\AxisBinderFactory.cs" />
     <Compile Include="Services\ClipboardTask.cs" />
-    <Compile Include="Services\CurveAdapterFactory.cs" />
+    <Compile Include="Services\CurveBinderFactory.cs" />
     <Compile Include="Services\DiagramZoomRectangleService.cs" />
     <Compile Include="Services\DialogCreator.cs" />
     <Compile Include="Services\HourGlass.cs" />
@@ -538,11 +555,11 @@
     <Compile Include="Views\Charts\ChartDisplayView.Designer.cs">
       <DependentUpon>ChartDisplayView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Charts\ChartEditorAndDisplayControl.cs">
+    <Compile Include="Views\Charts\ChartEditorAndDisplayView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Charts\ChartEditorAndDisplayControl.Designer.cs">
-      <DependentUpon>ChartEditorAndDisplayControl.cs</DependentUpon>
+    <Compile Include="Views\Charts\ChartEditorAndDisplayView.Designer.cs">
+      <DependentUpon>ChartEditorAndDisplayView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Charts\ChartEditorView.cs">
       <SubType>UserControl</SubType>
@@ -617,26 +634,14 @@
     <Compile Include="Views\Charts\SimpleChartView.Designer.cs">
       <DependentUpon>SimpleChartView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Charts\SingleAxisSettingsModalView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\Charts\SingleAxisSettingsModalView.Designer.cs">
-      <DependentUpon>SingleAxisSettingsModalView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\Charts\SingleAxisSettingsView.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Charts\SingleAxisSettingsView.Designer.cs">
       <DependentUpon>SingleAxisSettingsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Charts\SingleCurveSettingsModalView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\Charts\SingleCurveSettingsModalView.Designer.cs">
-      <DependentUpon>SingleCurveSettingsModalView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\Charts\SingleCurveSettingsView.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Charts\SingleCurveSettingsView.Designer.cs">
       <DependentUpon>SingleCurveSettingsView.cs</DependentUpon>
@@ -1219,7 +1224,6 @@
     <EmbeddedResource Include="Controls\UxHintPanel.resx">
       <DependentUpon>UxHintPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -1247,10 +1251,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Charts\ChartDisplayView.resx">
       <DependentUpon>ChartDisplayView.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Charts\ChartEditorAndDisplayControl.resx">
-      <DependentUpon>ChartEditorAndDisplayControl.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Charts\ChartEditorAndDisplayView.resx">
+      <DependentUpon>ChartEditorAndDisplayView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Charts\ChartEditorView.resx">
@@ -1283,14 +1286,8 @@
     <EmbeddedResource Include="Views\Charts\SimpleChartView.resx">
       <DependentUpon>SimpleChartView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Charts\SingleAxisSettingsModalView.resx">
-      <DependentUpon>SingleAxisSettingsModalView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Views\Charts\SingleAxisSettingsView.resx">
       <DependentUpon>SingleAxisSettingsView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Charts\SingleCurveSettingsModalView.resx">
-      <DependentUpon>SingleCurveSettingsModalView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Charts\SingleCurveSettingsView.resx">
       <DependentUpon>SingleCurveSettingsView.cs</DependentUpon>

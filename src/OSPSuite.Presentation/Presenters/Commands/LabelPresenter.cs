@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
 
    public class LabelPresenter : AbstractDisposablePresenter<ILabelView, ILabelPresenter>, ILabelPresenter
    {
-      public LabelDTO LabelDTO { get; private set; }
+      public LabelDTO LabelDTO { get; } = new LabelDTO();
 
       public LabelPresenter(ILabelView view) : base(view)
       {
@@ -19,8 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
 
       public bool CreateLabel()
       {
-         LabelDTO = new LabelDTO();
-         _view.BindToSource(LabelDTO);
+         _view.BindTo(LabelDTO);
          _view.Display();
          return !_view.Canceled;
       }

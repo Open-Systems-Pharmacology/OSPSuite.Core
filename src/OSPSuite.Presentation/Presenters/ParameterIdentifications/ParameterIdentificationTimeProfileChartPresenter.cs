@@ -55,12 +55,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void addSimulationOutputsForRunResult(ParameterIdentificationRunResult runResult, bool curveVisible)
       {
-         runResult.BestResult.SimulationResults.Each(x => addSimulationResult(x, runResult, curveVisible));
+         addSimulationResult(runResult.BestResult.SimulationResults, runResult, curveVisible);
       }
 
-      private void addSimulationResult(DataRepository simulationResult, ParameterIdentificationRunResult runResult, bool curveVisible)
+      private void addSimulationResult(IReadOnlyList<DataRepository> simulationResults, ParameterIdentificationRunResult runResult, bool curveVisible)
       {
-         AddDataRepositoryToEditor(simulationResult);
+         AddDataRepositoriesToEditor(simulationResults);
+         simulationResults.Each(simulationResult => addCurvesFor(runResult, curveVisible, simulationResult));
+      }
+
+      private void addCurvesFor(ParameterIdentificationRunResult runResult, bool curveVisible, DataRepository simulationResult)
+      {
          AddCurvesFor(simulationResult, (column, curve) =>
          {
             UpdateColorForCalculationColumn(curve, column);
@@ -76,7 +81,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void adjustAxes(DataColumn calculatedColumn)
       {
-         Chart.Axes[AxisTypes.Y].UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
+         Chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
       }
    }
 }

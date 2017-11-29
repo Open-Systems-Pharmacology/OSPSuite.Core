@@ -29,6 +29,8 @@
       private void InitializeComponent()
       {
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.startHistogramTestButton = new DevExpress.XtraEditors.SimpleButton();
+         this.startSensitivityAnalysisTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startExceptionViewButton = new DevExpress.XtraEditors.SimpleButton();
          this.startSimpleUITestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startCommandBrowserTestButton = new DevExpress.XtraEditors.SimpleButton();
@@ -56,6 +58,10 @@
          this.layoutControlItem11 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem12 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem13 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem14 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem15 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.startMatrixTestButton = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutControlItem16 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -73,10 +79,16 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem11)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem12)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem13)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem14)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem15)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem16)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.startMatrixTestButton);
+         this.layoutControl.Controls.Add(this.startHistogramTestButton);
+         this.layoutControl.Controls.Add(this.startSensitivityAnalysisTestButton);
          this.layoutControl.Controls.Add(this.startExceptionViewButton);
          this.layoutControl.Controls.Add(this.startSimpleUITestButton);
          this.layoutControl.Controls.Add(this.startCommandBrowserTestButton);
@@ -98,9 +110,27 @@
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // startHistogramTestButton
+         // 
+         this.startHistogramTestButton.Location = new System.Drawing.Point(12, 376);
+         this.startHistogramTestButton.Name = "startHistogramTestButton";
+         this.startHistogramTestButton.Size = new System.Drawing.Size(402, 22);
+         this.startHistogramTestButton.StyleController = this.layoutControl;
+         this.startHistogramTestButton.TabIndex = 18;
+         this.startHistogramTestButton.Text = "startHistogramTestButton";
+         // 
+         // startSensitivityAnalysisTestButton
+         // 
+         this.startSensitivityAnalysisTestButton.Location = new System.Drawing.Point(12, 272);
+         this.startSensitivityAnalysisTestButton.Name = "startSensitivityAnalysisTestButton";
+         this.startSensitivityAnalysisTestButton.Size = new System.Drawing.Size(402, 22);
+         this.startSensitivityAnalysisTestButton.StyleController = this.layoutControl;
+         this.startSensitivityAnalysisTestButton.TabIndex = 17;
+         this.startSensitivityAnalysisTestButton.Text = "startSensitivityAnalysisTestButton";
+         // 
          // startExceptionViewButton
          // 
-         this.startExceptionViewButton.Location = new System.Drawing.Point(12, 324);
+         this.startExceptionViewButton.Location = new System.Drawing.Point(12, 350);
          this.startExceptionViewButton.Name = "startExceptionViewButton";
          this.startExceptionViewButton.Size = new System.Drawing.Size(402, 22);
          this.startExceptionViewButton.StyleController = this.layoutControl;
@@ -109,7 +139,7 @@
          // 
          // startSimpleUITestButton
          // 
-         this.startSimpleUITestButton.Location = new System.Drawing.Point(12, 298);
+         this.startSimpleUITestButton.Location = new System.Drawing.Point(12, 324);
          this.startSimpleUITestButton.Name = "startSimpleUITestButton";
          this.startSimpleUITestButton.Size = new System.Drawing.Size(402, 22);
          this.startSimpleUITestButton.StyleController = this.layoutControl;
@@ -118,7 +148,7 @@
          // 
          // startCommandBrowserTestButton
          // 
-         this.startCommandBrowserTestButton.Location = new System.Drawing.Point(12, 272);
+         this.startCommandBrowserTestButton.Location = new System.Drawing.Point(12, 298);
          this.startCommandBrowserTestButton.Name = "startCommandBrowserTestButton";
          this.startCommandBrowserTestButton.Size = new System.Drawing.Size(402, 22);
          this.startCommandBrowserTestButton.StyleController = this.layoutControl;
@@ -232,7 +262,10 @@
             this.layoutControlItem10,
             this.layoutControlItem11,
             this.layoutControlItem12,
-            this.layoutControlItem13});
+            this.layoutControlItem13,
+            this.layoutControlItem14,
+            this.layoutControlItem15,
+            this.layoutControlItem16});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(426, 466);
@@ -331,7 +364,7 @@
          // layoutControlItem11
          // 
          this.layoutControlItem11.Control = this.startCommandBrowserTestButton;
-         this.layoutControlItem11.Location = new System.Drawing.Point(0, 260);
+         this.layoutControlItem11.Location = new System.Drawing.Point(0, 286);
          this.layoutControlItem11.Name = "layoutControlItem11";
          this.layoutControlItem11.Size = new System.Drawing.Size(406, 26);
          this.layoutControlItem11.TextSize = new System.Drawing.Size(0, 0);
@@ -340,7 +373,7 @@
          // layoutControlItem12
          // 
          this.layoutControlItem12.Control = this.startSimpleUITestButton;
-         this.layoutControlItem12.Location = new System.Drawing.Point(0, 286);
+         this.layoutControlItem12.Location = new System.Drawing.Point(0, 312);
          this.layoutControlItem12.Name = "layoutControlItem12";
          this.layoutControlItem12.Size = new System.Drawing.Size(406, 26);
          this.layoutControlItem12.TextSize = new System.Drawing.Size(0, 0);
@@ -349,11 +382,47 @@
          // layoutControlItem13
          // 
          this.layoutControlItem13.Control = this.startExceptionViewButton;
-         this.layoutControlItem13.Location = new System.Drawing.Point(0, 312);
+         this.layoutControlItem13.Location = new System.Drawing.Point(0, 338);
          this.layoutControlItem13.Name = "layoutControlItem13";
-         this.layoutControlItem13.Size = new System.Drawing.Size(406, 134);
+         this.layoutControlItem13.Size = new System.Drawing.Size(406, 26);
          this.layoutControlItem13.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem13.TextVisible = false;
+         // 
+         // layoutControlItem14
+         // 
+         this.layoutControlItem14.Control = this.startSensitivityAnalysisTestButton;
+         this.layoutControlItem14.Location = new System.Drawing.Point(0, 260);
+         this.layoutControlItem14.Name = "layoutControlItem14";
+         this.layoutControlItem14.Size = new System.Drawing.Size(406, 26);
+         this.layoutControlItem14.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem14.TextVisible = false;
+         // 
+         // layoutControlItem15
+         // 
+         this.layoutControlItem15.Control = this.startHistogramTestButton;
+         this.layoutControlItem15.Location = new System.Drawing.Point(0, 364);
+         this.layoutControlItem15.Name = "layoutControlItem15";
+         this.layoutControlItem15.Size = new System.Drawing.Size(406, 26);
+         this.layoutControlItem15.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem15.TextVisible = false;
+         // 
+         // startMatrixTestButton
+         // 
+         this.startMatrixTestButton.Location = new System.Drawing.Point(12, 402);
+         this.startMatrixTestButton.Name = "startMatrixTestButton";
+         this.startMatrixTestButton.Size = new System.Drawing.Size(402, 22);
+         this.startMatrixTestButton.StyleController = this.layoutControl;
+         this.startMatrixTestButton.TabIndex = 19;
+         this.startMatrixTestButton.Text = "startMatrixTestButton";
+         // 
+         // layoutControlItem16
+         // 
+         this.layoutControlItem16.Control = this.startMatrixTestButton;
+         this.layoutControlItem16.Location = new System.Drawing.Point(0, 390);
+         this.layoutControlItem16.Name = "layoutControlItem16";
+         this.layoutControlItem16.Size = new System.Drawing.Size(406, 56);
+         this.layoutControlItem16.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem16.TextVisible = false;
          // 
          // TestView
          // 
@@ -379,6 +448,9 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem11)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem12)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem13)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem14)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem15)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem16)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -413,5 +485,11 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem12;
       private DevExpress.XtraEditors.SimpleButton startExceptionViewButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem13;
+      private DevExpress.XtraEditors.SimpleButton startSensitivityAnalysisTestButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem14;
+      private DevExpress.XtraEditors.SimpleButton startHistogramTestButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem15;
+      private DevExpress.XtraEditors.SimpleButton startMatrixTestButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem16;
    }
 }

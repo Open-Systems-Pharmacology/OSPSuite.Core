@@ -5,6 +5,6 @@ namespace OSPSuite.Presentation.Views.Commands
 {
     public interface ILabelView : IModalView<ILabelPresenter>
     {
-        void BindToSource(LabelDTO labelDTO);
+        void BindTo(LabelDTO labelDTO);
     }
 }

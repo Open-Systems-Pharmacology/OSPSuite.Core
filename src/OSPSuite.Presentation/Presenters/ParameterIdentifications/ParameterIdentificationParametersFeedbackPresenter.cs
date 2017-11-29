@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void EditParameterIdentification(ParameterIdentification parameterIdentification)
       {
          var errorFeedbackParameterDTO = createFeedbackDTOFor(Captions.ParameterIdentification.TotalError, Constants.Dimension.NO_DIMENSION);
-         errorFeedbackParameterDTO.NeedBoundaryCheck = false;
+         errorFeedbackParameterDTO.NeedsBoundaryCheck = false;
          _parametersDTO.Add(errorFeedbackParameterDTO);
 
          parameterIdentification.AllIdentificationParameters.Each(x => _parametersDTO.Add(createFeedbackDTOFor(x)));

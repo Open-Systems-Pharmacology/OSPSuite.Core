@@ -27,6 +27,9 @@ namespace OSPSuite.Starter.Views
          startCommandBrowserTestButton.Click += (sender, args) => OnEvent(_presenter.StartCommandBrowserTest);
          startSimpleUITestButton.Click += (sender, args) => OnEvent(_presenter.StartSimpleUITest);
          startExceptionViewButton.Click += (sender, args) => OnEvent(_presenter.StartExceptionView);
+         startSensitivityAnalysisTestButton.Click += (sender, args) => OnEvent(_presenter.StartSentitivityAnalysisTest);
+         startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
+         startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
       }
 
       public override void InitializeResources()
@@ -45,6 +48,9 @@ namespace OSPSuite.Starter.Views
          startCommandBrowserTestButton.Text = "Start Command Browser Test";
          startSimpleUITestButton.Text = "Simple UI Test";
          startExceptionViewButton.Text = "Start Exception View";
+         startSensitivityAnalysisTestButton.Text = "Start Sensitivity Analysis Test";
+         startHistogramTestButton.Text = "Start Histogram Test";
+         startMatrixTestButton.Text = "Start Matrix Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)
