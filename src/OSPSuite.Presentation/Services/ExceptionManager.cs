@@ -14,12 +14,14 @@ namespace OSPSuite.Presentation.Services
    {
       private readonly IDialogCreator _dialogCreator;
       private readonly IExceptionView _exceptionView;
+      private readonly ILogger _logger;
       private readonly string _productInfo;
 
-      public ExceptionManager(IDialogCreator dialogCreator, IExceptionView exceptionView, IApplicationConfiguration configuration)
+      public ExceptionManager(IDialogCreator dialogCreator, IExceptionView exceptionView, IApplicationConfiguration configuration, ILogger logger)
       {
          _dialogCreator = dialogCreator;
          _exceptionView = exceptionView;
+         _logger = logger;
          _productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
          _exceptionView.Initialize($"{_productInfo} - Error", configuration.Icon,  configuration.IssueTrackerUrl, configuration.ProductName);
       }
@@ -30,7 +32,7 @@ namespace OSPSuite.Presentation.Services
          {
             var message = ex.ExceptionMessage();
             _dialogCreator.MessageBoxInfo(message);
-            this.LogInfo(message);
+            _logger.AddInfo(message);
          }
          else
          {
@@ -43,7 +45,7 @@ namespace OSPSuite.Presentation.Services
          var message = ex.FullMessage();
          var stackTrace = ex.FullStackTrace();
          _exceptionView.Display(message, stackTrace, clipboardContentFrom(message, stackTrace));
-         this.LogError(ex);
+         _logger.AddError(message);
       }
 
       private string clipboardContentFrom(string message, string stackTrace)
