@@ -33,6 +33,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -112,8 +114,8 @@
     <Reference Include="OSPSuite.Utility, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.1\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="SX, Version=2.6.5.7, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.5.7\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.6.5.9, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.5.9\lib\net45\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -636,7 +638,6 @@
     <Compile Include="Presentation\MathNetExtensionsForSpecs.cs" />
     <Compile Include="Presentation\MathNetExtensionsSpecs.cs" />
     <Compile Include="Presentation\MatrixToDataTableMapperSpecs.cs" />
-    <Compile Include="Presentation\MessageStatusFilterDTOSpecs.cs" />
     <Compile Include="Presentation\MetaDataDTOSpecs.cs" />
     <Compile Include="Presentation\ModalChartTemplateManagerPresenterSpecs.cs" />
     <Compile Include="Presentation\MRUProviderSpecs.cs" />

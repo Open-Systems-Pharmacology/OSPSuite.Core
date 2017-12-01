@@ -1,9 +1,13 @@
-﻿using OSPSuite.Core.Domain;
+﻿using Microsoft.Extensions.Logging;
 
 namespace OSPSuite.Core.Services
 {
    public interface ILogger
    {
-      void AddToLog(string message, NotificationType messageStatus = NotificationType.None);
+      /// <summary>
+      /// Logs the <paramref name="message"/> using the provided <paramref name="logLevel"/> for the <paramref name="categoryName"/>
+      /// </summary>
+      void AddToLog(string message, LogLevel logLevel, string categoryName);
+
    }
 }
