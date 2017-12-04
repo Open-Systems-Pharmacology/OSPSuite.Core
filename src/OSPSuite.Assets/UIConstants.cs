@@ -178,6 +178,7 @@ namespace OSPSuite.Assets
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
+      public static readonly string LogLevel = "Log Level";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {

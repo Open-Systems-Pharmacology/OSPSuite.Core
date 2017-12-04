@@ -1,9 +1,12 @@
-﻿using OSPSuite.Utility.Events;
-using OSPSuite.Core.Domain;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using OSPSuite.Core;
 using OSPSuite.Core.Events;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -11,15 +14,18 @@ namespace OSPSuite.Presentation.Presenters
       IListener<LogEntryEvent>
    {
       void ClearLog();
+      IEnumerable<LogLevel> AvailableLogLevels { get; }
    }
 
    public class LogPresenter : AbstractPresenter<ILogView, ILogPresenter>, ILogPresenter
    {
+      private readonly IStartOptions _startOptions;
       private readonly MessageStatusFilterDTO _messageStatusFilter;
 
-      public LogPresenter(ILogView view)
+      public LogPresenter(ILogView view, IStartOptions startOptions)
          : base(view)
       {
+         _startOptions = startOptions;
          _messageStatusFilter = new MessageStatusFilterDTO();
          _view.BindTo(_messageStatusFilter);
       }
@@ -36,9 +42,22 @@ namespace OSPSuite.Presentation.Presenters
          _view.ClearLog();
       }
 
+      public IEnumerable<LogLevel> AvailableLogLevels
+      {
+         get
+         {
+            if (_startOptions.IsDeveloperMode)
+               yield return LogLevel.Debug;
+
+            yield return LogLevel.Information;
+            yield return LogLevel.Warning;
+            yield return LogLevel.Error;
+         }
+      }
+
       private bool shouldAddMessageToLog(LogEntry logEntry)
       {
-         return logEntry.MessageStatus == NotificationType.None || (logEntry.MessageStatus.Is(_messageStatusFilter.Status));
+         return logEntry.Level == LogLevel.None || logEntry.Level.Is(_messageStatusFilter.LogLevel);
       }
    }
 }
