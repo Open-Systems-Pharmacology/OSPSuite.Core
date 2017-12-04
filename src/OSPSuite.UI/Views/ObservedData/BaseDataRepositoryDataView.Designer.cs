@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.ObservedData
       {
          this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnAddData = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();

@@ -40,7 +40,7 @@ namespace OSPSuite.UI.Views.Journal
          DevExpress.XtraBars.Ribbon.ReduceOperation reduceOperation3 = new DevExpress.XtraBars.Ribbon.ReduceOperation();
          this.stylesRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.StylesRibbonPageGroup();
          this.galleryChangeStyleItem1 = new DevExpress.XtraRichEdit.UI.GalleryChangeStyleItem();
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.cbSource = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.ribbonControl = new DevExpress.XtraBars.Ribbon.RibbonControl();
          this.uxRichEditControl = new UxRichEditControl();

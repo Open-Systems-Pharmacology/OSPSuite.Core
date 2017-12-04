@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.Journal
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnRunComparison = new DevExpress.XtraEditors.SimpleButton();
          this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();

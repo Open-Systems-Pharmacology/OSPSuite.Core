@@ -36,7 +36,7 @@
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelChartSettings = new DevExpress.XtraEditors.PanelControl();
          this.panelChartExportSettings = new DevExpress.XtraEditors.PanelControl();
          this.panelDataBrowser = new DevExpress.XtraEditors.PanelControl();

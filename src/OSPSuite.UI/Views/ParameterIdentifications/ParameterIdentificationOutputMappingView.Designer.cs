@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnAddOutput = new DevExpress.XtraEditors.SimpleButton();
          this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();

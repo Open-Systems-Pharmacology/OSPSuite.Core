@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.gridProperties = new UxGridControl();
          this.gridViewProperties = new UxGridView();
          this.gridParameters = new UxGridControl();

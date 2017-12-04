@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.Journal
       {
          this.gridControl = new CustomGridControl();
          this.gridView = new CustomGridView();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelSearch = new DevExpress.XtraEditors.PanelControl();
          this.panelPreview = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();

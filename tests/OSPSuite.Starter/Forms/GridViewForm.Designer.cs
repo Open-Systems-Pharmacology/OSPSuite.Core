@@ -30,7 +30,7 @@ namespace OSPSuite.Starter.Forms
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.gridControl1 = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();

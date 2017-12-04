@@ -29,24 +29,25 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.comboBoxLogLevel = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.tbLog = new DevExpress.XtraEditors.MemoEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.comboBoxLogLevel = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.layoutItemLogLevel = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
          this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.comboBoxLogLevel.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbLog.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.comboBoxLogLevel.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLogLevel)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl1
          // 
+         this.layoutControl1.AllowCustomization = false;
          this.layoutControl1.Controls.Add(this.comboBoxLogLevel);
          this.layoutControl1.Controls.Add(this.tbLog);
          this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -56,6 +57,16 @@
          this.layoutControl1.Size = new System.Drawing.Size(744, 523);
          this.layoutControl1.TabIndex = 0;
          this.layoutControl1.Text = "layoutControl1";
+         // 
+         // comboBoxLogLevel
+         // 
+         this.comboBoxLogLevel.Location = new System.Drawing.Point(99, 2);
+         this.comboBoxLogLevel.Name = "comboBoxLogLevel";
+         this.comboBoxLogLevel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.comboBoxLogLevel.Size = new System.Drawing.Size(643, 20);
+         this.comboBoxLogLevel.StyleController = this.layoutControl1;
+         this.comboBoxLogLevel.TabIndex = 14;
          // 
          // tbLog
          // 
@@ -87,16 +98,6 @@
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
-         // comboBoxLogLevel
-         // 
-         this.comboBoxLogLevel.Location = new System.Drawing.Point(99, 2);
-         this.comboBoxLogLevel.Name = "comboBoxLogLevel";
-         this.comboBoxLogLevel.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.comboBoxLogLevel.Size = new System.Drawing.Size(643, 20);
-         this.comboBoxLogLevel.StyleController = this.layoutControl1;
-         this.comboBoxLogLevel.TabIndex = 14;
-         // 
          // layoutItemLogLevel
          // 
          this.layoutItemLogLevel.Control = this.comboBoxLogLevel;
@@ -115,22 +116,21 @@
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
          this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.comboBoxLogLevel.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbLog.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.comboBoxLogLevel.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLogLevel)).EndInit();
          this.ResumeLayout(false);
 
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private DevExpress.XtraEditors.MemoEdit tbLog;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private DevExpress.XtraEditors.ImageComboBoxEdit comboBoxLogLevel;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemLogLevel;
+      private Controls.UxLayoutControl layoutControl1;
    }
 }

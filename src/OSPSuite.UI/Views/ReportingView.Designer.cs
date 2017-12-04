@@ -29,7 +29,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.chkOpenReportAfterCreation = new OSPSuite.UI.Controls.UxCheckEdit();
          this.cbFont = new DevExpress.XtraEditors.ComboBoxEdit();
          this.chkDraft = new OSPSuite.UI.Controls.UxCheckEdit();

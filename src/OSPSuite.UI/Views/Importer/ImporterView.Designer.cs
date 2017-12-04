@@ -31,7 +31,7 @@
       {
          this.xtraTabControl = new DevExpress.XtraTab.XtraTabControl();
          this.SourcePage = new DevExpress.XtraTab.XtraTabPage();
-         this.layoutControlSourceTab = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControlSourceTab = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnSelectRange = new DevExpress.XtraEditors.SimpleButton();
          this.openSourceFileControlPanel = new DevExpress.XtraEditors.PanelControl();
          this.columnMappingControlPanel = new DevExpress.XtraEditors.PanelControl();
@@ -45,14 +45,14 @@
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemSelectRange = new DevExpress.XtraLayout.LayoutControlItem();
          this.ImportsPage = new DevExpress.XtraTab.XtraTabPage();
-         this.layoutControlTab = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControlTab = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelImportedTabs = new DevExpress.XtraEditors.PanelControl();
          this.namingImportPanel = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem7 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemNamingPanel = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
          this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();

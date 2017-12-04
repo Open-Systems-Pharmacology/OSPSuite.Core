@@ -30,7 +30,7 @@ namespace OSPSuite.Starter.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.simpleButton1 = new DevExpress.XtraEditors.SimpleButton();
          this.rightHandCaptionCheckBox = new UxCheckEdit();
          this.allowChecksOutsideControlAreaCheckBox = new UxCheckEdit();

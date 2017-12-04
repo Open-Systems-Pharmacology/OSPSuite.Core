@@ -39,7 +39,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
          this.optimizedParametersView = new UxGridView(gridControl);
          this.mainView = new OSPSuite.UI.Controls.UxGridView();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemResults = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
