@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelChart = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemChart = new DevExpress.XtraLayout.LayoutControlItem();

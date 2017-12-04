@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.chkAllTheSame = new OSPSuite.UI.Controls.UxCheckEdit();
          this.pivotGridControl = new UxPivotGrid();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();

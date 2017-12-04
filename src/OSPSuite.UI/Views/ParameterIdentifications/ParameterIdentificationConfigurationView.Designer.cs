@@ -30,7 +30,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.chkCalculateJacobian = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lblLLOQUsageDescription = new DevExpress.XtraEditors.LabelControl();
          this.lblLLOQModeDescription = new DevExpress.XtraEditors.LabelControl();

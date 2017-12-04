@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.issueTrackerLink = new DevExpress.XtraEditors.HyperLinkEdit();
          this.btnCopyToClipboard = new DevExpress.XtraEditors.SimpleButton();
          this.tbException = new DevExpress.XtraEditors.MemoEdit();

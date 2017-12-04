@@ -29,7 +29,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.progressBarControl = new DevExpress.XtraEditors.ProgressBarControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItemProgressBar = new DevExpress.XtraLayout.LayoutControlItem();

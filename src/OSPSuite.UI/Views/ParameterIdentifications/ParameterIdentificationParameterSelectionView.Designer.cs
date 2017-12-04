@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnAddIdentificationParameter = new DevExpress.XtraEditors.SimpleButton();
          this.btnAddLinkedParameter = new DevExpress.XtraEditors.SimpleButton();
          this.panelLinkedParameters = new DevExpress.XtraEditors.PanelControl();

@@ -30,7 +30,7 @@
       private void InitializeComponent()
       {
          this.btnSelectExcelFile = new DevExpress.XtraEditors.SimpleButton();
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.txtExcelFile = new DevExpress.XtraEditors.TextEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemExcelFile = new DevExpress.XtraLayout.LayoutControlItem();

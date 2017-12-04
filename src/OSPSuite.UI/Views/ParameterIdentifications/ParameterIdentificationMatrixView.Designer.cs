@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          this.matrixGridControl = new UxGridControl();
          this.matrixGridView = new UxGridView();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.legendGridControl = new UxGridControl();
          this.legendGridView = new UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();

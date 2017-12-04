@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.startHistogramTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startSensitivityAnalysisTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startExceptionViewButton = new DevExpress.XtraEditors.SimpleButton();

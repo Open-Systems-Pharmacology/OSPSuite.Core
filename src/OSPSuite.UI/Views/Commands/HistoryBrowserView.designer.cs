@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Views.Commands
         private void InitializeComponent()
         {
          this.components = new System.ComponentModel.Container();
-         this.historyLayoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.historyLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.historyTreeList = new DevExpress.XtraTreeList.TreeList();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();

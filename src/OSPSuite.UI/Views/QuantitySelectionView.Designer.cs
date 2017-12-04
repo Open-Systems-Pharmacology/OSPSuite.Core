@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnDeselectAll = new DevExpress.XtraEditors.SimpleButton();
          this.txtInfo = new DevExpress.XtraEditors.TextEdit();
          this.lblDescription = new DevExpress.XtraEditors.LabelControl();

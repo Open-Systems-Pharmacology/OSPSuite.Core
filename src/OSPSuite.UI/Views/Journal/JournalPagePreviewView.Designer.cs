@@ -29,7 +29,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelRelatedItems = new DevExpress.XtraEditors.PanelControl();
          this.lblUpdatedAt = new DevExpress.XtraEditors.LabelControl();
          this.tokenTags = new DevExpress.XtraEditors.TokenEdit();

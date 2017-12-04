@@ -29,7 +29,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.lblFormulaComparisonModeDescription = new DevExpress.XtraEditors.LabelControl();
          this.lblRelativeToleranceDescription = new DevExpress.XtraEditors.LabelControl();
          this.cbFormulaComparisonMode = new DevExpress.XtraEditors.ComboBoxEdit();
