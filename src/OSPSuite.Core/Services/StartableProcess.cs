@@ -9,16 +9,19 @@ namespace OSPSuite.Core.Services
    {
       private readonly Process _process;
       private bool _exited;
+      public ProcessStartInfo StartInfo { get; }
 
       public StartableProcess(string applicationPath, params string[] arguments)
       {
+         StartInfo = new ProcessStartInfo
+         {
+            FileName = applicationPath,
+            Arguments = string.Join(" ", arguments),
+         };
+
          _process = new Process
          {
-            StartInfo = new ProcessStartInfo
-            {
-               FileName = applicationPath,
-               Arguments = string.Join(" ", arguments)
-            }
+            StartInfo = StartInfo
          };
       }
 
