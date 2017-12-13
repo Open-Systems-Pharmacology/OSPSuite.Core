@@ -47,7 +47,6 @@ namespace OSPSuite.Core.Domain
          if (Root == null || quantity == null)
             return null;
 
-         //Mol weight only available for molecule amount and observer
          var moleculeName = quantity.IsAnImplementationOf<IMoleculeAmount>() ? 
             quantity.Name : 
             quantity.ParentContainer?.Name;
