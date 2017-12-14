@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OSPSuite.Core.Domain
+﻿namespace OSPSuite.Core.Domain
 {
    /// <summary>
    ///    Represents the information defining a parameter in a simulation.
@@ -33,7 +31,7 @@ namespace OSPSuite.Core.Domain
 
       public ParameterOrigin Clone()
       {
-         return new ParameterOrigin { BuilingBlockId = BuilingBlockId, ParameterId = ParameterId, SimulationId = SimulationId };
+         return new ParameterOrigin {BuilingBlockId = BuilingBlockId, ParameterId = ParameterId, SimulationId = SimulationId};
       }
    }
 }
