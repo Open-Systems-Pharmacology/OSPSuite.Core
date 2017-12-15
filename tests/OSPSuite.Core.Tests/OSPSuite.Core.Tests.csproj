@@ -167,6 +167,7 @@
     <Compile Include="Converter\v6_1\Converter60To61Specs.cs" />
     <Compile Include="Converter\v6_3\Converter62To63Specs.cs" />
     <Compile Include="Converter\v7_1\Converter63To710Specs.cs" />
+    <Compile Include="Converter\v7_3\Converter710To730Specs.cs" />
     <Compile Include="Core\AddObservedDataMetaDataCommandSpecs.cs" />
     <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
     <Compile Include="Core\AliasCreatorSpecs.cs" />

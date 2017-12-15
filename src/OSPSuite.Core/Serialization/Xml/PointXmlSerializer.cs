@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       private int getX(XElement element)
       {
-         return getValue(element.GetAttribute(Constants.Serialization.X));
+         return getValue(element.GetAttribute(Constants.Serialization.Attribute.X));
       }
 
       private int getValue(string attributeValue)
@@ -26,13 +26,13 @@ namespace OSPSuite.Core.Serialization.Xml
 
       private int getY(XElement element)
       {
-         return getValue(element.GetAttribute(Constants.Serialization.Y));
+         return getValue(element.GetAttribute(Constants.Serialization.Attribute.Y));
       }
 
       public override void PerformMapping()
       {
-         Map(x => x.X).WithMappingName(Constants.Serialization.X);
-         Map(x => x.Y).WithMappingName(Constants.Serialization.Y);
+         Map(x => x.X).WithMappingName(Constants.Serialization.Attribute.X);
+         Map(x => x.Y).WithMappingName(Constants.Serialization.Attribute.Y);
       }
    }
 }

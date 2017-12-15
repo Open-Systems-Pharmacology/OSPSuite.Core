@@ -15,18 +15,18 @@ namespace OSPSuite.Core.Serialization.Xml
 
       private int getWidth(XElement element)
       {
-         return Convert.ToInt32(element.GetAttribute(Domain.Constants.Serialization.Width));
+         return Convert.ToInt32(element.GetAttribute(Domain.Constants.Serialization.Attribute.Width));
       }
 
       private int getHeight(XElement element)
       {
-         return Convert.ToInt32(element.GetAttribute(Domain.Constants.Serialization.Height));
+         return Convert.ToInt32(element.GetAttribute(Domain.Constants.Serialization.Attribute.Height));
       }
 
       public override void PerformMapping()
       {
-         Map(x => x.Height).WithMappingName(Domain.Constants.Serialization.Height);
-         Map(x => x.Width).WithMappingName(Domain.Constants.Serialization.Width);
+         Map(x => x.Height).WithMappingName(Domain.Constants.Serialization.Attribute.Height);
+         Map(x => x.Width).WithMappingName(Domain.Constants.Serialization.Attribute.Width);
       }
    }
 }
