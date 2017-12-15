@@ -144,7 +144,10 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Domain\Builder\IWithValueOrigin.cs" />
     <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
+    <Compile Include="Domain\ValueOrigin.cs" />
+    <Compile Include="Domain\ValueOriginType.cs" />
     <Compile Include="Domain\PathElement.cs" />
     <Compile Include="Domain\Services\IDataRepositoryTask.cs" />
     <Compile Include="Domain\Services\ObservedDataTask.cs" />
@@ -205,6 +208,8 @@
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
+    <Compile Include="Serialization\Xml\ValueOriginTypeXmlAttributeMapper.cs" />
+    <Compile Include="Serialization\Xml\ValueOriginXmlSerializer.cs" />
     <Compile Include="Services\CurveChartExportTask.cs" />
     <Compile Include="Services\CurveNamer.cs" />
     <Compile Include="Services\DataRepositoryNamer.cs" />

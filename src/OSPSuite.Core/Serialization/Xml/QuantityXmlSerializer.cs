@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.IsFixedValue).WithMappingName(Constants.Serialization.Attribute.IS_FIXED_VALUE);
          Map(x => x.Dimension).WithMappingName(Constants.Serialization.Attribute.Dimension);
          Map(x => x.QuantityType);
-         Map(x => x.ValueDescription);
+         Map(x => x.ValueOrigin);
          Map(x => x.NegativeValuesAllowed);
          MapReference(x => x.Formula).WithMappingName(Constants.Serialization.Attribute.FORMULA);
       }

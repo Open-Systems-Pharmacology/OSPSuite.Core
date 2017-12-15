@@ -618,8 +618,15 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.Persistable, x2.Persistable);
          Assert.AreEqual(x1.QuantityType, x2.QuantityType);
          Assert.AreEqual(x1.NegativeValuesAllowed, x2.NegativeValuesAllowed);
-         AssertAreEqual(x1.ValueDescription, x2.ValueDescription);
+         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
+      }
+
+      public static void AreEqualValueOrigin(ValueOrigin x1, ValueOrigin x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AssertAreEqual(x1.Type, x2.Type);
+         AssertAreEqual(x1.Description, x2.Description);
       }
 
       public static void AreEqualObserver(IObserver x1, IObserver x2)
