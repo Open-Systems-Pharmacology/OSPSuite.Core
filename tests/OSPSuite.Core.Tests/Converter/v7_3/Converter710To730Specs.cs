@@ -34,7 +34,15 @@ namespace OSPSuite.Converter.v7_3
                new XAttribute(Constants.Serialization.Attribute.VALUE_DESCRIPTION, _valueDescription)
             ),
             new XElement("Parameter",
-               new XAttribute("name", "P1")
+               new XAttribute("name", "P2"),
+               new XAttribute(Constants.Serialization.Attribute.VALUE_DESCRIPTION, _valueDescription)
+            ),
+            new XElement("Parameter",
+               new XAttribute("name", "P3"),
+               new XAttribute(Constants.Serialization.Attribute.VALUE_DESCRIPTION, _valueDescription)
+            ),
+            new XElement("Parameter",
+               new XAttribute("name", "P4")
             )
          );
       }
@@ -48,8 +56,22 @@ namespace OSPSuite.Converter.v7_3
       public void should_have_converted_the_value_description_if_presentt()
       {
          var allValueOrigins = _parameterListElement.Descendants(Constants.Serialization.VALUE_ORIGIN).ToList();
-         allValueOrigins.Count.ShouldBeEqualTo(1);
+         allValueOrigins.Count.ShouldBeEqualTo(3);
          allValueOrigins[0].GetAttribute(Constants.Serialization.Attribute.DESCRIPTION).ShouldBeEqualTo(_valueDescription);
+      }
+
+
+      [Observation]
+      public void should_have_removed_the_value_description_attributes()
+      {
+         //retrieve all elements with an attribute dimension
+         var allValueDescriptionAttributes = from child in _parameterListElement.DescendantsAndSelf()
+            where child.HasAttributes
+            let attr = child.Attribute(Constants.Serialization.Attribute.VALUE_DESCRIPTION)
+            where attr != null
+            select attr;
+
+         allValueDescriptionAttributes.ShouldBeEmpty();
       }
 
       [Observation]
