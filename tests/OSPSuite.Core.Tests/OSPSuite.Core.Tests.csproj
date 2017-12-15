@@ -183,6 +183,7 @@
     <Compile Include="Core\OptimizationRunResultSpecs.cs" />
     <Compile Include="Core\ParameterIdentificationPredictedVsObservedChartSpecs.cs" />
     <Compile Include="Core\RegistrationSpecs.cs" />
+    <Compile Include="Core\ValueOriginSpecs.cs" />
     <Compile Include="Core\WatermakStatusCheckerSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />

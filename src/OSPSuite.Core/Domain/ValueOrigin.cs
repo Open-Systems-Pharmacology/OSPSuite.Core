@@ -25,7 +25,7 @@
             return;
 
          Type = valueOrigin.Type;
-         Description = Description;
+         Description = valueOrigin.Description;
       }
    }
 }
