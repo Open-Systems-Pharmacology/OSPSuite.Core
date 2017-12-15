@@ -445,10 +445,7 @@ namespace OSPSuite.Core.Domain
          public const string ALL = "All";
          public const string DESCRIPTOR_CONDITIONS = "DescriptorConditions";
          public const string KEYS = "Keys";
-         public const string X = "x";
-         public const string Y = "y";
-         public const string Width = "width";
-         public const string Height = "height";
+         public const string VALUE_ORIGIN = "ValueOrigin";
 
          public static class Attribute
          {
@@ -485,6 +482,12 @@ namespace OSPSuite.Core.Domain
             public const string LLOQ = "lloq";
             public const string DEFAULT_VALUE = "default";
             public const string UNIT_NAME = "unitName";
+            public const string VALUE_DESCRIPTION = "valueDescription";
+            public const string X = "x";
+            public const string Y = "y";
+            public const string Width = "width";
+            public const string Height = "height";
+            public const string DESCRIPTION = "description";
          }
       }
 
@@ -532,7 +535,6 @@ namespace OSPSuite.Core.Domain
          public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
          public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
-
 
          public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
          public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;

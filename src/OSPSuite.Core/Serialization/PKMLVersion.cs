@@ -12,6 +12,7 @@
       public static readonly int V6_2_1 = 10;
       public static readonly int V6_3_1 = 11;
       public static readonly int V7_1_0 = 12;
-      public static readonly int Current = V7_1_0;
+      public static readonly int V7_3_0 = 13;
+      public static readonly int Current = V7_3_0;
    }
 }
