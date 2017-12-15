@@ -19,9 +19,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    The display unit of the start value. If not set, the default unit of the
       ///    <paramref name="dimension" />will be used
       /// </param>
-      /// <param name="valueDescription">The value description for the value</param>
+      /// <param name="valueOrigin">The value origin for the value</param>
       /// <returns>a MoleculeStartValue object</returns>
-      IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, string valueDescription = null);
+      IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
    }
 
    internal class MoleculeStartValuesCreator : IMoleculeStartValuesCreator
@@ -76,9 +76,9 @@ namespace OSPSuite.Core.Domain.Services
          moleculeStartValue.StartValue = moleculeBuilder.GetDefaultMoleculeStartValue();
       }
 
-      public IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, string valueDescription = null)
+      public IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
       {
-         return new MoleculeStartValue
+         var msv = new MoleculeStartValue
          {
             Id = _idGenerator.NewId(),
             IsPresent = true,
@@ -86,9 +86,11 @@ namespace OSPSuite.Core.Domain.Services
             Name = moleculeName,
             Dimension = dimension,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
-            ValueDescription = valueDescription ?? string.Empty,
             NegativeValuesAllowed = false
          };
+
+         msv.ValueOrigin.UpdateFrom(valueOrigin);
+         return msv;
       }
 
       public IMoleculeStartValue CreateEmptyStartValue(IDimension dimension)

@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Dimension);
          Map(x => x.ContainerPath);
          Map(x => x.StartValue);
-         Map(x => x.ValueDescription);
+         Map(x => x.ValueOrigin);
          MapReference(x => x.Formula);
       }
 

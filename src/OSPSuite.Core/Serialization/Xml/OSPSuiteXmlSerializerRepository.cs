@@ -51,6 +51,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<AuxiliaryType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQModeXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQUsageXmlAttributeMapper<SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new ValueOriginTypeXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new RunStatusXmlAttributeMapper());
 
  

@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Comparison
          CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          CompareValues(x => x.NegativeValuesAllowed, x => x.NegativeValuesAllowed, comparison);
-         CompareStringValues(x => x.ValueDescription, Captions.Comparisons.ValueDescription, comparison);
+        //TODO for MSD CompareStringValues(x => x.ValueDescription, Captions.Comparisons.ValueDescription, comparison);
 
          if (!comparison.Settings.OnlyComputingRelevant)
          {

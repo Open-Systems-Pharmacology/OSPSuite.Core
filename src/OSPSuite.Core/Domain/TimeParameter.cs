@@ -1,18 +1,17 @@
 using System;
 using System.ComponentModel;
-using OSPSuite.Utility.Validation;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Maths.Random;
+using OSPSuite.Utility.Validation;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
    internal class TimeParameter : IParameter
    {
-      private readonly Tags _tags;
       public IContainer ParentContainer { get; set; }
       public event PropertyChangedEventHandler PropertyChanged = delegate { };
       public event Action<object> Changed = delegate { };
@@ -31,6 +30,7 @@ namespace OSPSuite.Core.Domain
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
       public ParameterOrigin Origin { get; private set; }
+      public ValueOrigin ValueOrigin { get; private set; }
       public double? DefaultValue { get; set; }
       public bool IsChangedByCreateIndividual { get; private set; }
 
@@ -49,9 +49,10 @@ namespace OSPSuite.Core.Domain
 
       public TimeParameter()
       {
-         _tags = new Tags {new Tag {Value = Constants.TIME}};
+         Tags = new Tags {new Tag {Value = Constants.TIME}};
          Info = new ParameterInfo();
-         Origin =new ParameterOrigin();
+         Origin = new ParameterOrigin();
+         ValueOrigin = new ValueOrigin();
          CanBeVaried = false;
          CanBeVariedInPopulation = false;
          NegativeValuesAllowed = true;
@@ -87,10 +88,7 @@ namespace OSPSuite.Core.Domain
       public string Icon { get; set; }
       public string Description { get; set; }
 
-      public Tags Tags
-      {
-         get { return _tags; }
-      }
+      public Tags Tags { get; }
 
       public void AddTag(Tag tag)
       {
@@ -176,7 +174,10 @@ namespace OSPSuite.Core.Domain
       public IFormula Formula
       {
          get { return null; }
-         set { ; }
+         set
+         {
+            ;
+         }
       }
 
       /// <summary>
@@ -186,7 +187,10 @@ namespace OSPSuite.Core.Domain
       public bool Persistable
       {
          get { return false; }
-         set { ; }
+         set
+         {
+            ;
+         }
       }
 
       /// <summary>
@@ -198,7 +202,10 @@ namespace OSPSuite.Core.Domain
       public bool IsFixedValue
       {
          get { return true; }
-         set { ; }
+         set
+         {
+            ;
+         }
       }
 
       public QuantityType QuantityType
@@ -218,7 +225,10 @@ namespace OSPSuite.Core.Domain
       public IFormula RHSFormula
       {
          get { return null; }
-         set { ; }
+         set
+         {
+            ;
+         }
       }
 
       public IBusinessRuleSet Rules

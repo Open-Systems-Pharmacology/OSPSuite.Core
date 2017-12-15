@@ -1306,4 +1306,28 @@
   <data name="SensitivityAnalysisVisualFeedback" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SensitivityAnalysisVisualFeedback.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AssumptionValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AssumptionValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DatabaseValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\DatabaseValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DefaultValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\DefaultValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InternetValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\InternetValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ManualFitValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ManualFitValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ParameterIdentificationValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ParameterIdentificationValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReportValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ReportValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UnknownValueOrigin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\UnknownValueOrigin.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

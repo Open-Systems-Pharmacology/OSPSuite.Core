@@ -553,6 +553,18 @@ namespace OSPSuite.Assets
          }
       }
 
+      public static class ValueOrigins
+      {
+         public static string Assumption = "Assumption";
+         public static string Database = "Database";
+         public static string Default = "Default";
+         public static string Internet = "Internet";
+         public static string ManualFit = "Manual Fit";
+         public static string ParameterIdentification = "Parameter Identification";
+         public static string Report = "Report";
+         public static string Unknown = "Unknown";
+      }
+
       public static class Reporting
       {
          public static readonly string DefaultTitle = "Report";

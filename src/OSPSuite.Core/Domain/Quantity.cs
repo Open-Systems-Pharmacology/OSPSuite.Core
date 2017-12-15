@@ -1,10 +1,11 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IQuantity : IFormulaUsable, IUsingFormula
+   public interface IQuantity : IFormulaUsable, IUsingFormula, IWithValueOrigin
    {
       /// <summary>
       ///    Gets or sets a value indicating whether this <see cref="IQuantity" /> values are persisted during simulation run.
@@ -34,11 +35,6 @@ namespace OSPSuite.Core.Domain
       double ValueInDisplayUnit { get; set; }
 
       /// <summary>
-      ///    Optional description explaining the value of the parameter
-      /// </summary>
-      string ValueDescription { get; set; }
-
-      /// <summary>
       ///    Specifies whether negative values are allowed or not for this quantity
       /// </summary>
       bool NegativeValuesAllowed { get; set; }
@@ -51,24 +47,24 @@ namespace OSPSuite.Core.Domain
       private IFormula _formula;
       private bool _isFixedValue;
       private Unit _displayUnit;
-      private string _valueDescription;
       private bool _persistable;
       public IDimension Dimension { get; set; }
       public QuantityType QuantityType { get; set; }
       public bool NegativeValuesAllowed { get; set; }
+      public ValueOrigin ValueOrigin { get; }
 
       protected Quantity()
       {
          Persistable = true;
          QuantityType = QuantityType.Undefined;
          Dimension = Constants.Dimension.NO_DIMENSION;
-         _valueDescription = string.Empty;
          NegativeValuesAllowed = false;
+         ValueOrigin = new ValueOrigin();
       }
 
       public IFormula Formula
       {
-         get { return _formula; }
+         get => _formula;
          set
          {
             if (_formula != null)
@@ -84,35 +80,11 @@ namespace OSPSuite.Core.Domain
          }
       }
 
-      public string ValueDescription
-      {
-         get { return _valueDescription; }
-         set
-         {
-            _valueDescription = value;
-            OnPropertyChanged(() => ValueDescription);
-         }
-      }
-
-      /// <summary>
-      ///    Gets or sets a value indicating whether this <see cref="Quantity" /> values are persisted during simulation run.
-      /// </summary>
-      /// <value>
-      ///    <c>true</c> if persistable; otherwise, <c>false</c> .
-      /// </value>
+      /// <inheritdoc />
       public bool Persistable
       {
-         get { return _persistable; }
-         set
-         {
-            //slight optimization here because this flag is set when running a simulation over all parameters. 
-            //no need to raise event if not required
-            if (_persistable == value)
-               return;
-
-            _persistable = value;
-            OnPropertyChanged(() => Persistable);
-         }
+         get => _persistable;
+         set => SetProperty(ref _persistable, value);
       }
 
       public virtual double Value
@@ -144,32 +116,20 @@ namespace OSPSuite.Core.Domain
 
       public double ValueInDisplayUnit
       {
-         get { return this.ConvertToDisplayUnit(Value); }
-         set { Value = this.ConvertToBaseUnit(value); }
+         get => this.ConvertToDisplayUnit(Value);
+         set => Value = this.ConvertToBaseUnit(value);
       }
 
       public virtual Unit DisplayUnit
       {
-         get
-         {
-            return _displayUnit ?? Dimension?.DefaultUnit;
-         }
-         set
-         {
-            _displayUnit = value;
-            OnPropertyChanged(() => DisplayUnit);
-         }
+         get => _displayUnit ?? Dimension?.DefaultUnit;
+         set => SetProperty(ref _displayUnit, value);
       }
 
-      /// <summary>
-      ///    Gets or sets a value indicating whether this instance  fixed value is used or not.
-      /// </summary>
-      /// <value>
-      ///    <c>true</c> if this instance uses the fixed value; otherwise, <c>false</c> .
-      /// </value>
+      /// <inheritdoc />
       public virtual bool IsFixedValue
       {
-         get { return _isFixedValue; }
+         get => _isFixedValue;
          set
          {
             _cachedValue = value ? Value : double.NaN;
@@ -189,7 +149,7 @@ namespace OSPSuite.Core.Domain
          Persistable = sourceQuantity.Persistable;
          Dimension = sourceQuantity.Dimension;
          DisplayUnit = sourceQuantity.DisplayUnit;
-         ValueDescription = sourceQuantity.ValueDescription;
+         ValueOrigin.UpdateFrom(sourceQuantity.ValueOrigin);
          QuantityType = sourceQuantity.QuantityType;
          NegativeValuesAllowed = sourceQuantity.NegativeValuesAllowed;
 
