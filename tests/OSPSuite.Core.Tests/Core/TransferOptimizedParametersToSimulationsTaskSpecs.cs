@@ -1,9 +1,9 @@
-﻿using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Extensions;
+﻿using System;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -12,7 +12,9 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using IDialogCreator = OSPSuite.Core.Services.IDialogCreator;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
@@ -29,20 +31,21 @@ namespace OSPSuite.Core
       protected ParameterSelection _linkedParameter3;
       protected IDialogCreator _dialogCreator;
       protected ParameterSelection _linkedParameter4;
+      private IOSPSuiteExecutionContext _context;
 
       protected override void Context()
       {
          _parameterTask = A.Fake<ISetParameterTask>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         _parameterIdentification = A.Fake<ParameterIdentification>();
+         _parameterIdentification = new ParameterIdentification();
          _runResult = new ParameterIdentificationRunResult();
 
          _runResult.BestResult.AddValue(new OptimizedParameterValue("P1", 10, 20));
          _runResult.BestResult.AddValue(new OptimizedParameterValue("P2", 4, 5));
 
-         _identificationParameter1 = new IdentificationParameter();
-         _identificationParameter2 = new IdentificationParameter {UseAsFactor = true};
-         _identificationParameter3 = new IdentificationParameter { IsFixed = true, };
+         _identificationParameter1 = new IdentificationParameter {Name = "P1"};
+         _identificationParameter2 = new IdentificationParameter {Name = "P2", UseAsFactor = true};
+         _identificationParameter3 = new IdentificationParameter {Name = "P3", IsFixed = true,};
          _identificationParameter3.Add(DomainHelperForSpecs.ConstantParameterWithValue(25).WithName(Constants.Parameters.START_VALUE));
 
          _linkedParameter1 = A.Fake<ParameterSelection>();
@@ -66,11 +69,12 @@ namespace OSPSuite.Core
          _identificationParameter2.AddLinkedParameter(_linkedParameter3);
          _identificationParameter3.AddLinkedParameter(_linkedParameter4);
 
-         A.CallTo(() => _parameterIdentification.IdentificationParameterByName("P1")).Returns(_identificationParameter1);
-         A.CallTo(() => _parameterIdentification.IdentificationParameterByName("P2")).Returns(_identificationParameter2);
-         A.CallTo(() => _parameterIdentification.AllFixedIdentificationParameters).Returns(new []{_identificationParameter3});
+         _parameterIdentification.AddIdentificationParameter(_identificationParameter1);
+         _parameterIdentification.AddIdentificationParameter(_identificationParameter2);
+         _parameterIdentification.AddIdentificationParameter(_identificationParameter3);
 
-         sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator);
+         _context = A.Fake<IOSPSuiteExecutionContext>();
+         sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator, _context);
 
          A.CallTo(_parameterTask).WithReturnType<ICommand>().Returns(A.Fake<ICommand<IOSPSuiteExecutionContext>>());
       }
@@ -78,7 +82,7 @@ namespace OSPSuite.Core
 
    public class TestTransferOptimizedParametersToSimulationsTask : TransferOptimizedParametersToSimulationsTask<IOSPSuiteExecutionContext>
    {
-      public TestTransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator) : base(parameterTask, dialogCreator)
+      public TestTransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator, IOSPSuiteExecutionContext context) : base(parameterTask, dialogCreator, context)
       {
       }
    }
@@ -86,6 +90,16 @@ namespace OSPSuite.Core
    public class When_transferring_the_optimized_parameters_of_a_completed_parameter_identification_to_the_simulations : concern_for_TransferOptimizedParametersToSimulationsTask
    {
       private ICommand _command;
+      private Func<DateTime> _currentNow;
+      private DateTime _now;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _now = new DateTime(1979, 05, 24);
+         _currentNow = SystemTime.Now;
+         SystemTime.Now = () => _now;
+      }
 
       protected override void Context()
       {
@@ -99,10 +113,18 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_create_one_command_for_each_parameter_to_update()
+      public void should_create_two_commands_for_each_parameter_to_update()
       {
          var macro = _command.DowncastTo<IMacroCommand>();
-         macro.Count.ShouldBeEqualTo(4);
+         //*2 because we have two commands per parmeter to update
+         macro.Count.ShouldBeEqualTo(4 * 2);
+      }
+
+      [Observation]
+      public void should_hide_all_value_origin_commands()
+      {
+         var valueOriginCommands = _command.DowncastTo<IMacroCommand>().All().Where(x => x.IsAnImplementationOf<UpdateValueOriginCommand>());
+         valueOriginCommands.Each(x => x.Visible.ShouldBeFalse());
       }
 
       [Observation]
@@ -128,6 +150,24 @@ namespace OSPSuite.Core
       public void should_not_warn_the_user()
       {
          A.CallTo(() => _dialogCreator.MessageBoxInfo(Warning.ImportingParameterIdentificationValuesFromCancelledRun)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void should_update_the_value_description_with_the_date_and_the_name_of_the_parmaeter_identification()
+      {
+         _linkedParameter1.Parameter.ValueOrigin.Description.ShouldBeEqualTo(Captions.ParameterIdentification.ValueUpdatedFrom(_parameterIdentification.Name, _now.ToIsoFormat()));
+      }
+
+      [Observation]
+      public void should_update_the_value_origin_to_parameter_identification()
+      {
+         _linkedParameter1.Parameter.ValueOrigin.Type.ShouldBeEqualTo(ValueOriginTypes.ParameterIdentification);
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         SystemTime.Now = _currentNow;
       }
    }
 

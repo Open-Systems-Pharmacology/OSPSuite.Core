@@ -1,4 +1,8 @@
-﻿namespace OSPSuite.Core.Domain
+﻿using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Utility.Extensions;
+
+namespace OSPSuite.Core.Domain
 {
    public class ValueOrigin
    {
@@ -27,5 +31,21 @@
          Type = valueOrigin.Type;
          Description = valueOrigin.Description;
       }
+
+      public string Display
+      {
+         get
+         {
+            if (Type == null && string.IsNullOrEmpty(Description))
+               return Captions.ValueOrigins.Undefined;
+
+            return new[]
+            {
+               Type?.Display, Description
+            }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
+         }
+      }
+
+      public override string ToString() => Display;
    }
 }

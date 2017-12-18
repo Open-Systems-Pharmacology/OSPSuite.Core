@@ -563,6 +563,7 @@ namespace OSPSuite.Assets
          public static string ParameterIdentification = "Parameter Identification";
          public static string Report = "Report";
          public static string Unknown = "Unknown";
+         public static string Undefined = "Undefined";
       }
 
       public static class Reporting
@@ -914,6 +915,11 @@ namespace OSPSuite.Assets
          public static string SimulationDoesNotHaveOutputPath(string simulationName, string outputPath)
          {
             return $"Simulation {simulationName} does not have the output path {outputPath}";
+         }
+
+         public static string ValueUpdatedFrom(string parameterIdentification, string isoDate)
+         {
+            return $"Value updated from '{parameterIdentification}' on {isoDate}";
          }
       }
 
@@ -1687,20 +1693,11 @@ namespace OSPSuite.Assets
       public static readonly string MolecularWeightModifiedInDataRepositories = "Molecular weight modified in multiple repositories";
       public static readonly string ObservedDataDeletedFromProject = "Observed data deleted from project";
 
-      public static string CreateProjectDescription(string version)
-      {
-         return $"Project started with version {version}";
-      }
+      public static string CreateProjectDescription(string version) => $"Project started with version {version}";
 
-      public static string SetMetaDataAddedCommandDescripton(string name, string value)
-      {
-         return $"New Meta Data added where {name} = {value}";
-      }
+      public static string SetMetaDataAddedCommandDescripton(string name, string value) => $"New Meta Data added where {name} = {value}";
 
-      public static string SetMetaDataRemovedCommandDescripton(string name, string value)
-      {
-         return $"Meta Data removed where {name} = {value}";
-      }
+      public static string SetMetaDataRemovedCommandDescripton(string name, string value) => $"Meta Data removed where {name} = {value}";
 
       public static string SetMetaDataChangedCommandDescription(string oldName, string oldValue, string newName, string newValue)
       {
@@ -1790,6 +1787,11 @@ namespace OSPSuite.Assets
       public static string RenameObservedData(string oldName, string newName)
       {
          return $"Renamed observed data from '{oldName}' to '{newName}'";
+      }
+
+      public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin)
+      {
+         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}";
       }
    }
 

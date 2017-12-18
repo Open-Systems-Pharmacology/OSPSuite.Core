@@ -144,6 +144,7 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Commands\UpdateValueOriginCommand.cs" />
     <Compile Include="Converter\v7_3\Converter710To730.cs" />
     <Compile Include="Domain\Builder\IWithValueOrigin.cs" />
     <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
