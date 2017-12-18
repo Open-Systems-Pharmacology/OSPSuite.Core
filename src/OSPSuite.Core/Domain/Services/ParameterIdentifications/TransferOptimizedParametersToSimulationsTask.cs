@@ -74,12 +74,17 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var value = identificationParameter.OptimizedParameterValueFor(optimialValue, linkedParameter);
          var parameter = linkedParameter.Parameter;
-         var isoDate = SystemTime.Now().ToIsoFormat();
-         var valueDescription = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate);
 
          var setValueCommand = _parameterTask.SetParameterValue(parameter, value, linkedParameter.Simulation);
-         var updateValueOriginCommand = new UpdateValueOriginCommand(ValueOriginTypes.ParameterIdentification, valueDescription, parameter, _executionContext).Run(_executionContext);
-         return new[] {setValueCommand, updateValueOriginCommand};
+         return new[] {setValueCommand, updateValueOriginCommand(identificationParameter, parameter)};
+      }
+
+      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter)
+      {
+         var isoDate = SystemTime.Now().ToIsoFormat();
+         var valueDescription = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate);
+         return new UpdateValueOriginCommand(ValueOriginTypes.ParameterIdentification, valueDescription, parameter, _executionContext) {Visible = false}
+            .Run(_executionContext);
       }
    }
 }
