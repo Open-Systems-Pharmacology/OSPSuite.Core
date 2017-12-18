@@ -6,7 +6,9 @@ using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
@@ -20,11 +22,13 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    {
       private readonly ISetParameterTask _parameterTask;
       private readonly IDialogCreator _dialogCreator;
+      private readonly IOSPSuiteExecutionContext _executionContext;
 
-      public TransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator)
+      public TransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator, TExecutionContext executionContext)
       {
          _parameterTask = parameterTask;
          _dialogCreator = dialogCreator;
+         _executionContext = executionContext;
       }
 
       public ICommand TransferParametersFrom(ParameterIdentification parameterIdentification, ParameterIdentificationRunResult runResult)
@@ -63,13 +67,24 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private IEnumerable<ICommand> setOptimalParameterValueIn(IdentificationParameter identificationParameter, double optimalValue)
       {
-         return identificationParameter.AllLinkedParameters.Select(linkedParameter => updateParameterValue(identificationParameter, optimalValue, linkedParameter));
+         return identificationParameter.AllLinkedParameters.SelectMany(linkedParameter => updateParameterValue(identificationParameter, optimalValue, linkedParameter));
       }
 
-      private ICommand updateParameterValue(IdentificationParameter identificationParameter, double optimialValue, ParameterSelection linkedParameter)
+      private IEnumerable<ICommand> updateParameterValue(IdentificationParameter identificationParameter, double optimialValue, ParameterSelection linkedParameter)
       {
          var value = identificationParameter.OptimizedParameterValueFor(optimialValue, linkedParameter);
-         return _parameterTask.SetParameterValue(linkedParameter.Parameter, value, linkedParameter.Simulation);
+         var parameter = linkedParameter.Parameter;
+
+         var setValueCommand = _parameterTask.SetParameterValue(parameter, value, linkedParameter.Simulation);
+         return new[] {setValueCommand, updateValueOriginCommand(identificationParameter, parameter)};
+      }
+
+      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter)
+      {
+         var isoDate = SystemTime.Now().ToIsoFormat();
+         var valueDescription = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate);
+         return new UpdateValueOriginCommand(ValueOriginTypes.ParameterIdentification, valueDescription, parameter, _executionContext) {Visible = false}
+            .Run(_executionContext);
       }
    }
 }
