@@ -13,6 +13,7 @@ namespace OSPSuite.Core.Domain
       ManualFit,
       ParameterIdentification,
       Report,
+      Undefined,
       Unknown,
    }
 
@@ -29,6 +30,7 @@ namespace OSPSuite.Core.Domain
       public static ValueOriginType Internet = create(ValueOriginTypeId.ManualFit, Captions.ValueOrigins.ManualFit, ApplicationIcons.ManualFitValueOrigin);
       public static ValueOriginType ParameterIdentification = create(ValueOriginTypeId.ParameterIdentification, Captions.ValueOrigins.ParameterIdentification, ApplicationIcons.ParameterIdentificationValueOrigin);
       public static ValueOriginType Report = create(ValueOriginTypeId.Report, Captions.ValueOrigins.Report, ApplicationIcons.ReportValueOrigin);
+      public static ValueOriginType Undefined = create(ValueOriginTypeId.Undefined, Captions.ValueOrigins.Undefined, ApplicationIcons.EmptyIcon);
       public static ValueOriginType Unknown = create(ValueOriginTypeId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.UnknownValueOrigin);
 
       public static ValueOriginType ById(ValueOriginTypeId valueOriginTypeId)

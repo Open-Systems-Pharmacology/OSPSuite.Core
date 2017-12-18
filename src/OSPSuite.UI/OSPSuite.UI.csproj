@@ -214,6 +214,7 @@
     <Compile Include="Binders\TokenEditBinder.cs" />
     <Compile Include="Binders\TreeNodeExplorerViewDragDropBinder.cs" />
     <Compile Include="Binders\UnitsMenuBinder.cs" />
+    <Compile Include="Binders\ValueOriginBinder.cs" />
     <Compile Include="Controls\BaseContainerUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1205,6 +1206,12 @@
     <Compile Include="Views\ValidationMessagesView.Designer.cs">
       <DependentUpon>ValidationMessagesView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ValueOriginView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ValueOriginView.Designer.cs">
+      <DependentUpon>ValueOriginView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\WizardView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1531,6 +1538,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ValidationMessagesView.resx">
       <DependentUpon>ValidationMessagesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ValueOriginView.resx">
+      <DependentUpon>ValueOriginView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\WizardView.resx">
       <DependentUpon>WizardView.cs</DependentUpon>

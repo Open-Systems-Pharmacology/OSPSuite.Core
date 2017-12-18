@@ -1,13 +1,14 @@
 ﻿using System.Drawing;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Services
 {
@@ -15,6 +16,7 @@ namespace OSPSuite.UI.Services
    {
       SuperToolTip CreateToolTip(string content, string title = null, Image image = null);
       SuperToolTip ToolTipFor(JournalPageDTO journalPageDTO);
+      SuperToolTip ToolTipFor(ValueOrigin valueOrigin);
       SuperToolTip ToolTipFor(RelatedItem relatedItem);
       SuperToolTip ToolTipFor(ValidationMessageDTO validationMessage);
       SuperToolTip ToolTipFor(IdentificationParameterDTO identificationParameterDTO);
@@ -29,7 +31,7 @@ namespace OSPSuite.UI.Services
          // Create an object to initialize the SuperToolTip.
          var superToolTip = CreateToolTip();
          var setupArgs = new SuperToolTipSetupArgs();
-         if(!string.IsNullOrEmpty(title)) 
+         if (!string.IsNullOrEmpty(title))
             setupArgs.Title.Text = title;
 
          setupArgs.Contents.Text = convertHtml(content);
@@ -46,7 +48,7 @@ namespace OSPSuite.UI.Services
       public SuperToolTip ToolTipFor(ValidationMessageDTO validationMessage)
       {
          var toolTip = CreateToolTip(validationMessage.Message, validationMessage.Status.ToString(),
-                  validationMessage.Icon);
+            validationMessage.Icon);
 
          if (!validationMessage.Details.Any())
             return toolTip;
@@ -113,6 +115,17 @@ namespace OSPSuite.UI.Services
          }
 
          return toolTip;
+      }
+
+      public SuperToolTip ToolTipFor(ValueOrigin valueOrigin)
+      {
+         if (valueOrigin.Type == ValueOriginTypes.Undefined)
+            return null;
+
+         if (string.IsNullOrEmpty(valueOrigin.Description))
+            return CreateToolTip(valueOrigin.Type.Display, image: valueOrigin.Type.Icon);
+
+         return CreateToolTip(valueOrigin.Description, valueOrigin.Type.Display, valueOrigin.Type.Icon);
       }
 
       public SuperToolTip ToolTipFor(RelatedItem relatedItem)

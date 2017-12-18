@@ -13,10 +13,7 @@ namespace OSPSuite.Presentation.Presenters
       {
       }
 
-      public virtual bool ShouldCancel
-      {
-         get { return true; }
-      }
+      public virtual bool ShouldClose => true;
 
       protected virtual void Cleanup()
       {

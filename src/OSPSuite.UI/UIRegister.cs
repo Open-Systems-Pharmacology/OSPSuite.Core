@@ -37,6 +37,7 @@ namespace OSPSuite.UI
 
          //Register open types
          container.Register(typeof(PathElementsBinder<>), typeof(PathElementsBinder<>));
+         container.Register(typeof(ValueOriginBinder<>), typeof(ValueOriginBinder<>));
       }
 
       /// <summary>

@@ -1,5 +1,6 @@
 using System.Windows.Forms;
 using OSPSuite.Starter.Forms;
+using OSPSuite.UI.Binders;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.Starter.Tasks.Starters
@@ -12,9 +13,9 @@ namespace OSPSuite.Starter.Tasks.Starters
    {
       private readonly Form _dataGridView;
 
-      public GridTestStarter(IImageListRetriever imageListRetriever)
+      public GridTestStarter(ValueOriginBinder<ParameterDTO> valueOriginBinder )
       {
-         _dataGridView = new GridViewForm(imageListRetriever);
+         _dataGridView = new GridViewForm(valueOriginBinder);
       }
 
       public void Start(int width = 0, int height = 0)

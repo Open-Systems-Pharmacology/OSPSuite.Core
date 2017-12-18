@@ -57,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    Returns true if the form should really be closed otherwise false (default is true)
       /// </summary>
-      bool ShouldCancel { get; }
+      bool ShouldClose { get; }
    }
 
    /// <summary>

@@ -1,27 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.UI.Extensions;
-using OSPSuite.UI.RepositoryItems;
-using OSPSuite.UI.Services;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.UI.Binders;
 
 namespace OSPSuite.Starter.Forms
 {
    public partial class GridViewForm : Form
    {
-      private readonly IImageListRetriever _imageListRetriever;
+      private readonly ValueOriginBinder<ParameterDTO> _valueOriginBinder;
       private readonly GridViewBinder<ParameterDTO> _gridViewBinder;
 
-      public GridViewForm(IImageListRetriever imageListRetriever)
+      public GridViewForm(ValueOriginBinder<ParameterDTO> valueOriginBinder)
       {
-         _imageListRetriever = imageListRetriever;
+         _valueOriginBinder = valueOriginBinder;
          InitializeComponent();
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
@@ -47,18 +43,7 @@ namespace OSPSuite.Starter.Forms
 
          boundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
 
-
-         _gridViewBinder.Bind(x => x.ValueDescription);
-
-         _gridViewBinder.Bind(x => x.ValueOriginType)
-            .WithRepository(getRepository);
-      }
-
-      private RepositoryItem getRepository(ParameterDTO arg)
-      {
-         var repositoryItem = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
-         repositoryItem.FillImageComboBoxRepositoryWith(ValueOriginTypes.AllValueOrigins, x => x.Icon);
-         return repositoryItem;
+         _valueOriginBinder.InitializeBinding(_gridViewBinder);
       }
 
       private IEnumerable<ParameterDTO> generateDummyContent()
@@ -66,13 +51,16 @@ namespace OSPSuite.Starter.Forms
          for (var i = 0; i < 10; i++)
          {
             var parameter = new ParameterDTO().WithName($"Prameter_{i}");
+            if (i % 2 == 0)
+               parameter.ValueOriginType = ValueOriginTypes.Database;
+
             parameter.Formula = new ConstantFormula(i);
             yield return parameter;
          }
       }
    }
 
-   class ParameterDTO : Parameter
+   public class ParameterDTO : Parameter
    {
       public string ValueDescription
       {

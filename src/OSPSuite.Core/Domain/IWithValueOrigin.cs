@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Core.Domain.Builder
+﻿namespace OSPSuite.Core.Domain
 {
    public interface IWithValueOrigin
    {

@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters
          ReleaseFrom(_subPresenterItemManager.EventPublisher);
       }
 
-      public virtual bool ShouldCancel
+      public virtual bool ShouldClose
       {
          get { return true; }
       }
