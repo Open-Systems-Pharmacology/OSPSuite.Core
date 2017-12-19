@@ -1,6 +1,6 @@
-﻿using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using DevExpress.Utils;
+﻿using DevExpress.Utils;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
@@ -17,7 +17,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private ISingleParameterIdentificationResultsPresenter _presenter;
       private readonly GridViewBinder<OptimizedParameterDTO> _gridViewBinder;
       private readonly OptimizedParametersBinder _optimizedParametersBinder;
-
+      private ParameterIdentificationRunResultDTO _resultDTO;
 
       public SingleParameterIdentificationResultsView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -35,9 +35,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       public void BindTo(ParameterIdentificationRunResultDTO resultDTO)
       {
+         _resultDTO = resultDTO;
          _gridViewBinder.BindToSource(resultDTO.OptimizedParameters);
-         gridParameters.ToolTipController = new ToolTipController();
-         gridParameters.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(() => _optimizedParametersBinder.ShowTooltip(e, resultDTO.LegendImage));
       }
 
       public void AddResultPropertiesView(IResizableView view)
@@ -57,6 +56,14 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeBinding();
          _optimizedParametersBinder.InitializeBinding(_gridViewBinder);
          btnTransferToSimulations.Click += (o, e) => OnEvent(_presenter.TransferToSimulation);
+         gridParameters.ToolTipController = new ToolTipController();
+         gridParameters.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(showResultToolTip, e);
+      }
+
+      private void showResultToolTip(ToolTipControllerGetActiveObjectInfoEventArgs e)
+      {
+         if (_resultDTO == null) return;
+         _optimizedParametersBinder.ShowTooltip(e, _resultDTO.LegendImage);
       }
 
       public override void InitializeResources()

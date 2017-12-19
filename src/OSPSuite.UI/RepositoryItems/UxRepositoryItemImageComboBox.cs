@@ -25,19 +25,19 @@ namespace OSPSuite.UI.RepositoryItems
          LargeImages = _imageListRetriever.AllImages32x32;
       }
 
-      public UxRepositoryItemImageComboBox AddItem(object value, ApplicationIcon icon)
+      public UxRepositoryItemImageComboBox AddItem(object value, ApplicationIcon icon, string display = null)
       {
-         return AddItem(value, _imageListRetriever.ImageIndex(icon));
+         return AddItem(value, _imageListRetriever.ImageIndex(icon), display);
       }
 
-      public UxRepositoryItemImageComboBox AddItem(object value, string iconName)
+      public UxRepositoryItemImageComboBox AddItem(object value, string iconName, string display = null)
       {
-         return AddItem(value, _imageListRetriever.ImageIndex(iconName));
+         return AddItem(value, _imageListRetriever.ImageIndex(iconName), display);
       }
 
-      public UxRepositoryItemImageComboBox AddItem(object value, int iconIndex)
+      public UxRepositoryItemImageComboBox AddItem(object value, int iconIndex, string display = null)
       {
-         return AddItem(new ImageComboBoxItem(value, iconIndex));
+         return AddItem(new ImageComboBoxItem(display ?? value.ToString(), value, iconIndex));
       }
 
       public UxRepositoryItemImageComboBox AddItem(ImageComboBoxItem imageComboBoxItem)

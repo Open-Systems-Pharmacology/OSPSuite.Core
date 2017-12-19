@@ -44,6 +44,11 @@ namespace OSPSuite.UI.Extensions
 
       public static UxRepositoryItemImageComboBox FillImageComboBoxRepositoryWith<T>(this UxRepositoryItemImageComboBox repositoryItemImageComboBox, IEnumerable<T> listToAddToComboBoxRepository, Func<T, ApplicationIcon> iconFor)
       {
+         return FillImageComboBoxRepositoryWith(repositoryItemImageComboBox, listToAddToComboBoxRepository, iconFor, x => x.ToString());
+      }
+
+      public static UxRepositoryItemImageComboBox FillImageComboBoxRepositoryWith<T>(this UxRepositoryItemImageComboBox repositoryItemImageComboBox, IEnumerable<T> listToAddToComboBoxRepository, Func<T, ApplicationIcon> iconFor, Func<T, string> displayFunc)
+      {
          listToAddToComboBoxRepository.Each(item => { repositoryItemImageComboBox.AddItem(item, iconFor(item)); });
          return repositoryItemImageComboBox;
       }

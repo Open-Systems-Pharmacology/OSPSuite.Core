@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;

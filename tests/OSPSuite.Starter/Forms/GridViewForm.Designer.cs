@@ -19,6 +19,9 @@ namespace OSPSuite.Starter.Forms
          {
             components.Dispose();
          }
+         _gridViewBinder.Dispose();
+         _valueOriginBinder.Dispose();
+
          base.Dispose(disposing);
       }
 
@@ -31,8 +34,8 @@ namespace OSPSuite.Starter.Forms
       private void InitializeComponent()
       {
          this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.gridControl1 = new UxGridControl();
-         this.gridView = new UxGridView();
+         this.gridControl1 = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridView = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
@@ -45,6 +48,7 @@ namespace OSPSuite.Starter.Forms
          // 
          // layoutControl1
          // 
+         this.layoutControl1.AllowCustomization = false;
          this.layoutControl1.Controls.Add(this.gridControl1);
          this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl1.Location = new System.Drawing.Point(0, 0);
@@ -72,6 +76,7 @@ namespace OSPSuite.Starter.Forms
          this.gridView.GridControl = this.gridControl1;
          this.gridView.MultiSelect = false;
          this.gridView.Name = "gridView";
+         this.gridView.OptionsSelection.EnableAppearanceFocusedRow = false;
          // 
          // layoutControlGroup1
          // 
@@ -114,11 +119,10 @@ namespace OSPSuite.Starter.Forms
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private UxGridControl gridControl1;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private UxLayoutControl layoutControl1;
    }
 }

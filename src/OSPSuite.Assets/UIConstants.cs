@@ -179,6 +179,7 @@ namespace OSPSuite.Assets
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
       public static readonly string LogLevel = "Log Level";
+      public static readonly string ValueDescription = "Value Description";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -563,7 +564,7 @@ namespace OSPSuite.Assets
          public static string ParameterIdentification = "Parameter Identification";
          public static string Report = "Report";
          public static string Unknown = "Unknown";
-         public static string Undefined = "Undefined";
+         public static string Undefined = "";
       }
 
       public static class Reporting

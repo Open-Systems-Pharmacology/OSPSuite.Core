@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters
          return _subPresenterItemManager.PresenterAt(subPresenterItem);
       }
 
-      public override bool ShouldCancel
+      public override bool ShouldClose
       {
          get
          {

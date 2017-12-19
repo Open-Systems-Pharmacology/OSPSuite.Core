@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Origin of the value
       /// </summary>
-      public ValueOriginType Type { get; set; }
+      public ValueOriginType Type { get; set; } = ValueOriginTypes.Undefined;
 
       /// <summary>
       ///    Optional description explaining the quantity value

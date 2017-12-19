@@ -728,6 +728,7 @@
     <Compile Include="Presentation\UICommandExtensionsSpecs.cs" />
     <Compile Include="Presentation\ValidatableDTOExtensionsSpecs.cs" />
     <Compile Include="Presentation\ValidatableDTOSpecs.cs" />
+    <Compile Include="Presentation\ValueOriginPresenterSpecs.cs" />
     <Compile Include="Presentation\WeightedDataRepositoryDataPresenterSpecs.cs" />
     <Compile Include="Presentation\WeightedDataRepositoryToDataTableMapperSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
