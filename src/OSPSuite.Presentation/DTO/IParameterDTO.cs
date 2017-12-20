@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.DTO
 
       bool IsFavorite { get; set; }
 
-      string ValueDescription { get; set; }
+      ValueOrigin ValueOrigin { get; }
 
       bool IsDiscrete { get; }
 
