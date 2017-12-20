@@ -50,7 +50,7 @@ namespace OSPSuite.UI.Views
       protected override void OnFormClosing(FormClosingEventArgs e)
       {
          if (Canceled)
-            e.Cancel = !ShouldCancel();
+            e.Cancel = !ShouldClose;
 
          base.OnFormClosing(e);
       }
@@ -59,23 +59,20 @@ namespace OSPSuite.UI.Views
       ///    should be implemented in derived method if logic to cancel closing is available
       ///    Returns true if the form should close otherwise false
       /// </summary>
-      protected virtual bool ShouldCancel()
-      {
-         return true;
-      }
+      protected virtual bool ShouldClose => true;
 
       public bool Canceled => DialogResult == DialogResult.Cancel;
 
       public bool OkEnabled
       {
-         set { btnOk.Enabled = value; }
-         get { return btnOk.Enabled; }
+         set => btnOk.Enabled = value;
+         get => btnOk.Enabled;
       }
 
       public bool ExtraEnabled
       {
-         set { btnExtra.Enabled = value; }
-         get { return btnExtra.Enabled; }
+         set => btnExtra.Enabled = value;
+         get => btnExtra.Enabled;
       }
 
       protected virtual void SetOkButtonEnable()
@@ -121,14 +118,14 @@ namespace OSPSuite.UI.Views
 
       public bool CancelVisible
       {
-         set { SetItemVisibility(layoutItemCancel, value); }
-         get { return LayoutVisibilityConvertor.ToBoolean(layoutItemCancel.Visibility); }
+         set => SetItemVisibility(layoutItemCancel, value);
+         get => LayoutVisibilityConvertor.ToBoolean(layoutItemCancel.Visibility);
       }
 
       public bool ExtraVisible
       {
-         get { return LayoutVisibilityConvertor.ToBoolean(layoutItemExtra.Visibility); }
-         set { SetItemVisibility(layoutItemExtra, value); }
+         get => LayoutVisibilityConvertor.ToBoolean(layoutItemExtra.Visibility);
+         set => SetItemVisibility(layoutItemExtra, value);
       }
 
       protected void SetItemVisibility(LayoutControlItem itemForButton, bool visible)
@@ -141,7 +138,7 @@ namespace OSPSuite.UI.Views
       /// </summary>
       protected bool OKOnEnter
       {
-         set { AcceptButton = value ? btnOk : null; }
+         set => AcceptButton = value ? btnOk : null;
       }
    }
 }

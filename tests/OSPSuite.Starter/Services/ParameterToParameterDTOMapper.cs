@@ -70,7 +70,7 @@ namespace OSPSuite.Starter.Services
       public IParameter Parameter { get; }
       public double KernelValue => Parameter.Value;
       public bool IsFavorite { get; set; }
-      public string ValueDescription { get; set; }
+      public ValueOrigin ValueOrigin { get; set; } = new ValueOrigin();
       public bool IsDiscrete => false;
       public ICache<double, string> ListOfValues { get; } = new Cache<double, string>();
       public event EventHandler ValueChanged = delegate { };
