@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Presentation.DTO
 {
-   public interface IParameterDTO : IWithDisplayUnitDTO, IWithName, IPathRepresentableDTO, IWithDescription
+   public interface IParameterDTO : IWithDisplayUnitDTO, IWithName, IPathRepresentableDTO, IWithDescription, IWithValueOrigin
    {
       /// <summary>
       ///    Returns the value in display unit
@@ -17,8 +17,6 @@ namespace OSPSuite.Presentation.DTO
       double KernelValue { get; }
 
       bool IsFavorite { get; set; }
-
-      ValueOrigin ValueOrigin { get; }
 
       bool IsDiscrete { get; }
 
