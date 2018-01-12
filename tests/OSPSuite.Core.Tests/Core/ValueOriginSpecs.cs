@@ -11,7 +11,7 @@ namespace OSPSuite.Core
       {
          sut = new ValueOrigin
          {
-            Type = ValueOriginTypes.Assumption,
+            Source = ValueOriginSources.Database,
             Description = "Hello"
          };
       }
@@ -29,7 +29,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_value_origin_having_the_same_properties_at_the_source_value_origin()
       {
-         _clone.Type.ShouldBeEqualTo(sut.Type);
+         _clone.Source.ShouldBeEqualTo(sut.Source);
          _clone.Description.ShouldBeEqualTo(sut.Description);
       }
    }
@@ -44,7 +44,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_not_update_the_value_origin()
       {
-         sut.Type.ShouldBeEqualTo(ValueOriginTypes.Assumption);
+         sut.Source.ShouldBeEqualTo(ValueOriginSources.Database);
          sut.Description.ShouldBeEqualTo("Hello");
       }
    }
@@ -59,7 +59,7 @@ namespace OSPSuite.Core
          _sourceValueOrigin = new ValueOrigin
          {
             Description = "New description",
-            Type = ValueOriginTypes.ManualFit
+            Source = ValueOriginSources.Database
          };
       }
 
@@ -71,7 +71,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_update_the_value_origin()
       {
-         sut.Type.ShouldBeEqualTo(_sourceValueOrigin.Type);
+         sut.Source.ShouldBeEqualTo(_sourceValueOrigin.Source);
          sut.Description.ShouldBeEqualTo(_sourceValueOrigin.Description);
       }
    }
@@ -87,7 +87,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_the_type_if_only_type_is_set_()
       {
-         new ValueOrigin { Type = ValueOriginTypes.Internet}.Display.ShouldBeEqualTo(ValueOriginTypes.Internet.Display);
+         new ValueOrigin { Source = ValueOriginSources.Internet}.Display.ShouldBeEqualTo(ValueOriginSources.Internet.Display);
       }
 
       [Observation]
@@ -98,9 +98,9 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_combination_of_type_and_descriptiion_if_those_properties_are_set()
       {
-         var display = new ValueOrigin {Type = ValueOriginTypes.Internet, Description = "Hello"}.Display;
+         var display = new ValueOrigin {Source = ValueOriginSources.Internet, Description = "Hello"}.Display;
          display.Contains("Hello").ShouldBeTrue();
-         display.Contains(ValueOriginTypes.Internet.Display).ShouldBeTrue();
+         display.Contains(ValueOriginSources.Internet.Display).ShouldBeTrue();
       }
 
    }

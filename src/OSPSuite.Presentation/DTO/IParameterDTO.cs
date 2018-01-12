@@ -1,7 +1,7 @@
 ﻿using System;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.DTO
       bool Editable { get; }
 
       /// <summary>
-      /// Releases possible event handler on the underlying parameter
+      ///    Releases possible event handler on the underlying parameter
       /// </summary>
       void Release();
    }

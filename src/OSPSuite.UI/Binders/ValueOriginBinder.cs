@@ -5,6 +5,7 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid;
+using DevExpress.XtraGrid.Columns;
 using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters;
@@ -25,26 +26,27 @@ namespace OSPSuite.UI.Binders
       private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private UxGridView _gridView;
-      private IGridViewColumn _colValueOrigin;
+      private Action<T, ValueOrigin> _onValueOriginUpdated;
+      private IGridViewColumn _valueOriginColumn;
 
       public ValueOriginBinder(IValueOriginPresenter valueOriginPresenter, IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
          _valueOriginPresenter = valueOriginPresenter;
          _imageListRetriever = imageListRetriever;
          _toolTipCreator = toolTipCreator;
+         _popupControl.FillWith(_valueOriginPresenter.BaseView);
          _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
          _repositoryItemPopupContainerEdit.PopupControl = _popupControl;
          _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = false;
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
-         _popupControl.FillWith(_valueOriginPresenter.BaseView);
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
          var column = _gridView.ColumnAt(e);
-         if (!Equals(_colValueOrigin.XtraColumn, column)) return;
+         if (!Equals(_valueOriginColumn.XtraColumn, column)) return;
 
          var withValueOrigin = _gridViewBinder.ElementAt(e);
          if (withValueOrigin == null) return;
@@ -64,23 +66,22 @@ namespace OSPSuite.UI.Binders
       private void updateValueOrigin(bool canceled)
       {
          //Ensure that we save the edited value only if edit was not canceled
-         if (!canceled)
-            _valueOriginPresenter.Save();
+         if (!canceled && _valueOriginPresenter.ValueOriginChanged)
+            _onValueOriginUpdated(_gridViewBinder.FocusedElement, _valueOriginPresenter.UpdatedValueOrigin);
 
          _gridView.CloseEditor();
       }
 
-      public void InitializeBinding(GridViewBinder<T> gridViewBinder)
+      public void InitializeBinding(GridViewBinder<T> gridViewBinder, Action<T, ValueOrigin> onValueOriginUpdated)
       {
          _gridViewBinder = gridViewBinder;
          _gridView = _gridViewBinder.GridView.DowncastTo<UxGridView>();
+         _onValueOriginUpdated = onValueOriginUpdated;
 
-         _colValueOrigin = _gridViewBinder.Bind(x => x.ValueOrigin)
+         _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
             .WithRepository(x => displayRepositoryFor(x.ValueOrigin))
             .WithEditRepository(x => _repositoryItemPopupContainerEdit)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
-
-         _repositoryItemPopupContainerEdit.EditValueChanged += (o, e) => _gridView.PostEditor();
 
          initializeToolTip(_gridView.GridControl);
       }
@@ -103,7 +104,7 @@ namespace OSPSuite.UI.Binders
       private RepositoryItem displayRepositoryFor(ValueOrigin valueOrigin)
       {
          var repositoryItem = new UxRepositoryItemImageComboBox(_gridView, _imageListRetriever);
-         repositoryItem.AddItem(valueOrigin, valueOrigin.Type.Icon);
+         repositoryItem.AddItem(valueOrigin, valueOrigin.Source.Icon);
          return repositoryItem;
       }
 
@@ -118,6 +119,8 @@ namespace OSPSuite.UI.Binders
       {
          _valueOriginPresenter.Dispose();
       }
+
+      public bool ColumnIsValueOrigin(GridColumn column) => Equals(column, _valueOriginColumn.XtraColumn);
 
       #region Disposable properties
 

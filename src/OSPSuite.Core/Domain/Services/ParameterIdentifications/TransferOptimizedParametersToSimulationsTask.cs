@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var isoDate = SystemTime.Now().ToIsoFormat();
          var valueDescription = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate);
-         return new UpdateValueOriginCommand(ValueOriginTypes.ParameterIdentification, valueDescription, parameter, _executionContext) {Visible = false}
+         return new UpdateValueOriginCommand(ValueOriginSources.ParameterIdentification, valueDescription, parameter, _executionContext) {Visible = false}
             .Run(_executionContext);
       }
    }

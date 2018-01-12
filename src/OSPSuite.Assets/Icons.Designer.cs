@@ -753,16 +753,6 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon DefaultValueOrigin {
-            get {
-                object obj = ResourceManager.GetObject("DefaultValueOrigin", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
         internal static System.Drawing.Icon Delete {
             get {
                 object obj = ResourceManager.GetObject("Delete", resourceCulture);
@@ -2363,6 +2353,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon OtherValueOrigin {
+            get {
+                object obj = ResourceManager.GetObject("OtherValueOrigin", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon OutputInterval {
             get {
                 object obj = ResourceManager.GetObject("OutputInterval", resourceCulture);
@@ -3063,6 +3063,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon PublicationValueOrigin {
+            get {
+                object obj = ResourceManager.GetObject("PublicationValueOrigin", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon R {
             get {
                 object obj = ResourceManager.GetObject("R", resourceCulture);
@@ -3306,16 +3316,6 @@ namespace OSPSuite.Assets {
         internal static System.Drawing.Icon Report {
             get {
                 object obj = ResourceManager.GetObject("Report", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon ReportValueOrigin {
-            get {
-                object obj = ResourceManager.GetObject("ReportValueOrigin", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
