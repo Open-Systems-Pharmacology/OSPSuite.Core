@@ -12,6 +12,8 @@ namespace OSPSuite.Core.Domain
       Other,
       Undefined,
       Unknown,
+      InVitroAssay,
+      Measurement
    }
 
    public static class ValueOriginDeterminationMethods
@@ -25,6 +27,8 @@ namespace OSPSuite.Core.Domain
       public static ValueOriginDeterminationMethod Undefined = create(ValueOriginDeterminationMethodId.Undefined, Captions.ValueOrigins.Undefined, ApplicationIcons.EmptyIcon);
       public static ValueOriginDeterminationMethod Unknown = create(ValueOriginDeterminationMethodId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.UnknownValueOrigin);
       public static ValueOriginDeterminationMethod Other = create(ValueOriginDeterminationMethodId.Other, Captions.ValueOrigins.Other, ApplicationIcons.OtherValueOrigin);
+      public static ValueOriginDeterminationMethod InVitroAssay = create(ValueOriginDeterminationMethodId.InVitroAssay, Captions.ValueOrigins.Methods.InVitroAssay, ApplicationIcons.InVitroAssayValueOrigin);
+      public static ValueOriginDeterminationMethod Measurement = create(ValueOriginDeterminationMethodId.Measurement, Captions.ValueOrigins.Methods.Measurement, ApplicationIcons.MeasurementValueOrigin);
 
       public static ValueOriginDeterminationMethod ById(ValueOriginDeterminationMethodId valueOriginDeterminationMethodId)
       {

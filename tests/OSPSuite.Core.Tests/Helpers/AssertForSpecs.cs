@@ -626,6 +626,7 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqual(x1.Source, x2.Source);
+         AssertAreEqual(x1.Method, x2.Method);
          AssertAreEqual(x1.Description, x2.Description);
       }
 

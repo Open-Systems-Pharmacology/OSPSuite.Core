@@ -4,7 +4,7 @@ using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ValueOriginTypeXmlAttributeMapper<TSerializationContext> : AttributeMapper<ValueOriginSource, TSerializationContext>
+   public class ValueOriginSourceXmlAttributeMapper<TSerializationContext> : AttributeMapper<ValueOriginSource, TSerializationContext>
    {
       public override object ConvertFrom(string attributeValue, TSerializationContext context)
       {

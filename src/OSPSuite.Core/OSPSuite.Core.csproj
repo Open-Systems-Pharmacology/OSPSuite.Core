@@ -211,7 +211,8 @@
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
-    <Compile Include="Serialization\Xml\ValueOriginTypeXmlAttributeMapper.cs" />
+    <Compile Include="Serialization\Xml\ValueOriginDeterminationMethodXmlAttributeMapper.cs" />
+    <Compile Include="Serialization\Xml\ValueOriginSourceXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginXmlSerializer.cs" />
     <Compile Include="Services\CurveChartExportTask.cs" />
     <Compile Include="Services\CurveNamer.cs" />

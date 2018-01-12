@@ -464,6 +464,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ParameterIdentificationValueOrigin = AddNamedIcon(Icons.ParameterIdentificationValueOrigin, "ParameterIdentificationValueOrigin");
       public static readonly ApplicationIcon PublicationValueOrigin = AddNamedIcon(Icons.PublicationValueOrigin, "PublicationValueOrigin");
       public static readonly ApplicationIcon UnknownValueOrigin = AddNamedIcon(Icons.UnknownValueOrigin, "UnknownValueOrigin");
+      public static readonly ApplicationIcon InVitroAssayValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "InVitroAssayValueOrigin");
+      public static readonly ApplicationIcon MeasurementValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "MeasurementValueOrigin");
       public static readonly ApplicationIcon OtherValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "OtherValueOrigin");
 
 
