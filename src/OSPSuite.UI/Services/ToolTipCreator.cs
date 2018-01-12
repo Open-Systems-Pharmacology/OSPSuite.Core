@@ -119,13 +119,13 @@ namespace OSPSuite.UI.Services
 
       public SuperToolTip ToolTipFor(ValueOrigin valueOrigin)
       {
-         if (valueOrigin.Type == ValueOriginTypes.Undefined)
+         if (valueOrigin.Source == ValueOriginSources.Undefined)
             return null;
 
          if (string.IsNullOrEmpty(valueOrigin.Description))
-            return CreateToolTip(valueOrigin.Type.Display, image: valueOrigin.Type.Icon);
+            return CreateToolTip(valueOrigin.Source.Display, image: valueOrigin.Source.Icon);
 
-         return CreateToolTip(valueOrigin.Description, valueOrigin.Type.Display, valueOrigin.Type.Icon);
+         return CreateToolTip(valueOrigin.Description, valueOrigin.Source.Display, valueOrigin.Source.Icon);
       }
 
       public SuperToolTip ToolTipFor(RelatedItem relatedItem)

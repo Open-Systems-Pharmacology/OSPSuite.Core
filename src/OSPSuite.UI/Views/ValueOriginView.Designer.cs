@@ -30,94 +30,108 @@
       private void InitializeComponent()
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.imageComboBoxValueOriginDeterminationMethod = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.mruDescription = new DevExpress.XtraEditors.MRUEdit();
-         this.imageComboBoxValueOriginType = new DevExpress.XtraEditors.ImageComboBoxEdit();
+         this.imageComboBoxValueOriginSource = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutItemValueOriginType = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutItemValueOriginSource = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemValueOriginDescription = new DevExpress.XtraLayout.LayoutControlItem();
-         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.layoutItemValueOriginDeterminationMethod = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginDeterminationMethod.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.mruDescription.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginType.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginSource.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginType)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginSource)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginDescription)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginDeterminationMethod)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.imageComboBoxValueOriginDeterminationMethod);
          this.layoutControl.Controls.Add(this.mruDescription);
-         this.layoutControl.Controls.Add(this.imageComboBoxValueOriginType);
+         this.layoutControl.Controls.Add(this.imageComboBoxValueOriginSource);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.layoutControlGroup;
-         this.layoutControl.Size = new System.Drawing.Size(378, 95);
+         this.layoutControl.Size = new System.Drawing.Size(391, 142);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "uxLayoutControl1";
          // 
+         // imageComboBoxValueOriginDeterminationMethod
+         // 
+         this.imageComboBoxValueOriginDeterminationMethod.Location = new System.Drawing.Point(12, 68);
+         this.imageComboBoxValueOriginDeterminationMethod.Name = "imageComboBoxValueOriginDeterminationMethod";
+         this.imageComboBoxValueOriginDeterminationMethod.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.imageComboBoxValueOriginDeterminationMethod.Size = new System.Drawing.Size(367, 20);
+         this.imageComboBoxValueOriginDeterminationMethod.StyleController = this.layoutControl;
+         this.imageComboBoxValueOriginDeterminationMethod.TabIndex = 7;
+         // 
          // mruDescription
          // 
-         this.mruDescription.Location = new System.Drawing.Point(12, 63);
+         this.mruDescription.Location = new System.Drawing.Point(12, 108);
          this.mruDescription.Name = "mruDescription";
          this.mruDescription.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.mruDescription.Size = new System.Drawing.Size(354, 20);
+         this.mruDescription.Size = new System.Drawing.Size(367, 20);
          this.mruDescription.StyleController = this.layoutControl;
          this.mruDescription.TabIndex = 6;
          // 
-         // imageComboBoxValueOriginType
+         // imageComboBoxValueOriginSource
          // 
-         this.imageComboBoxValueOriginType.Location = new System.Drawing.Point(12, 12);
-         this.imageComboBoxValueOriginType.Name = "imageComboBoxValueOriginType";
-         this.imageComboBoxValueOriginType.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+         this.imageComboBoxValueOriginSource.Location = new System.Drawing.Point(12, 28);
+         this.imageComboBoxValueOriginSource.Name = "imageComboBoxValueOriginSource";
+         this.imageComboBoxValueOriginSource.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.imageComboBoxValueOriginType.Size = new System.Drawing.Size(354, 20);
-         this.imageComboBoxValueOriginType.StyleController = this.layoutControl;
-         this.imageComboBoxValueOriginType.TabIndex = 4;
+         this.imageComboBoxValueOriginSource.Size = new System.Drawing.Size(367, 20);
+         this.imageComboBoxValueOriginSource.StyleController = this.layoutControl;
+         this.imageComboBoxValueOriginSource.TabIndex = 4;
          // 
          // layoutControlGroup
          // 
          this.layoutControlGroup.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
          this.layoutControlGroup.GroupBordersVisible = false;
          this.layoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutItemValueOriginType,
+            this.layoutItemValueOriginSource,
             this.layoutItemValueOriginDescription,
-            this.emptySpaceItem1});
+            this.layoutItemValueOriginDeterminationMethod});
          this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "Root";
-         this.layoutControlGroup.Size = new System.Drawing.Size(378, 95);
+         this.layoutControlGroup.Size = new System.Drawing.Size(391, 142);
          this.layoutControlGroup.TextVisible = false;
          // 
-         // layoutItemValueOriginType
+         // layoutItemValueOriginSource
          // 
-         this.layoutItemValueOriginType.Control = this.imageComboBoxValueOriginType;
-         this.layoutItemValueOriginType.Location = new System.Drawing.Point(0, 0);
-         this.layoutItemValueOriginType.Name = "layoutItemValueOriginType";
-         this.layoutItemValueOriginType.Size = new System.Drawing.Size(358, 24);
-         this.layoutItemValueOriginType.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemValueOriginType.TextVisible = false;
+         this.layoutItemValueOriginSource.Control = this.imageComboBoxValueOriginSource;
+         this.layoutItemValueOriginSource.Location = new System.Drawing.Point(0, 0);
+         this.layoutItemValueOriginSource.Name = "layoutItemValueOriginSource";
+         this.layoutItemValueOriginSource.Size = new System.Drawing.Size(371, 40);
+         this.layoutItemValueOriginSource.TextLocation = DevExpress.Utils.Locations.Top;
+         this.layoutItemValueOriginSource.TextSize = new System.Drawing.Size(209, 13);
          // 
          // layoutItemValueOriginDescription
          // 
          this.layoutItemValueOriginDescription.Control = this.mruDescription;
-         this.layoutItemValueOriginDescription.Location = new System.Drawing.Point(0, 35);
+         this.layoutItemValueOriginDescription.Location = new System.Drawing.Point(0, 80);
          this.layoutItemValueOriginDescription.Name = "layoutItemValueOriginDescription";
-         this.layoutItemValueOriginDescription.Size = new System.Drawing.Size(358, 40);
+         this.layoutItemValueOriginDescription.Size = new System.Drawing.Size(371, 42);
          this.layoutItemValueOriginDescription.TextLocation = DevExpress.Utils.Locations.Top;
-         this.layoutItemValueOriginDescription.TextSize = new System.Drawing.Size(159, 13);
+         this.layoutItemValueOriginDescription.TextSize = new System.Drawing.Size(209, 13);
          // 
-         // emptySpaceItem1
+         // layoutItemValueOriginDeterminationMethod
          // 
-         this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 24);
-         this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(358, 11);
-         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemValueOriginDeterminationMethod.Control = this.imageComboBoxValueOriginDeterminationMethod;
+         this.layoutItemValueOriginDeterminationMethod.Location = new System.Drawing.Point(0, 40);
+         this.layoutItemValueOriginDeterminationMethod.Name = "layoutItemValueOriginDeterminationMethod";
+         this.layoutItemValueOriginDeterminationMethod.Size = new System.Drawing.Size(371, 40);
+         this.layoutItemValueOriginDeterminationMethod.TextLocation = DevExpress.Utils.Locations.Top;
+         this.layoutItemValueOriginDeterminationMethod.TextSize = new System.Drawing.Size(209, 13);
          // 
          // ValueOriginView
          // 
@@ -125,16 +139,17 @@
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl);
          this.Name = "ValueOriginView";
-         this.Size = new System.Drawing.Size(378, 95);
+         this.Size = new System.Drawing.Size(391, 142);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginDeterminationMethod.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.mruDescription.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginType.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.imageComboBoxValueOriginSource.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginType)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginSource)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginDescription)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemValueOriginDeterminationMethod)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -143,10 +158,11 @@
 
       private UI.Controls.UxLayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private DevExpress.XtraEditors.ImageComboBoxEdit imageComboBoxValueOriginType;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemValueOriginType;
+      private DevExpress.XtraEditors.ImageComboBoxEdit imageComboBoxValueOriginSource;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemValueOriginSource;
       private DevExpress.XtraEditors.MRUEdit mruDescription;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemValueOriginDescription;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private DevExpress.XtraEditors.ImageComboBoxEdit imageComboBoxValueOriginDeterminationMethod;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemValueOriginDeterminationMethod;
    }
 }

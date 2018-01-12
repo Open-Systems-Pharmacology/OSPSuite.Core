@@ -161,7 +161,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_update_the_value_origin_to_parameter_identification()
       {
-         _linkedParameter1.Parameter.ValueOrigin.Type.ShouldBeEqualTo(ValueOriginTypes.ParameterIdentification);
+         _linkedParameter1.Parameter.ValueOrigin.Source.ShouldBeEqualTo(ValueOriginSources.ParameterIdentification);
       }
 
       public override void GlobalCleanup()

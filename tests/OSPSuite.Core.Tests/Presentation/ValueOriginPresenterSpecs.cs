@@ -10,9 +10,9 @@ namespace OSPSuite.Presentation
 {
    public abstract class concern_for_ValueOriginPresenter : ContextSpecification<IValueOriginPresenter>
    {
-      private IValueOriginView _view;
+      protected IValueOriginView _view;
       protected ValueOrigin _valueOriginToEdit;
-      protected ValueOriginType _originalType = ValueOriginTypes.Internet;
+      protected ValueOriginSource _originalSource = ValueOriginSources.Internet;
       protected string _originalDescription = "Original description";
       protected ValueOrigin _dto;
 
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation
 
          _valueOriginToEdit = new ValueOrigin
          {
-            Type = _originalType,
+            Source = _originalSource,
             Description = _originalDescription,
          };
 
@@ -43,34 +43,8 @@ namespace OSPSuite.Presentation
       public void it_should_edit_another_instance_of_value_origin_having_the_same_properties_as_the_edited_value_origin()
       {
          _dto.ShouldNotBeEqualTo(_valueOriginToEdit);
-         _dto.Type.ShouldBeEqualTo(_originalType);
+         _dto.Source.ShouldBeEqualTo(_originalSource);
          _dto.Description.ShouldBeEqualTo(_originalDescription);
-      }
-   }
-
-   public class When_the_value_origin_presenter_is_saving_the_edited_value_origin : concern_for_ValueOriginPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         sut.Edit(_valueOriginToEdit);
-         _dto.Type = ValueOriginTypes.ParameterIdentification;
-         _dto.Description = "Hello";
-
-         _valueOriginToEdit.Type.ShouldBeEqualTo(_originalType);
-         _valueOriginToEdit.Description.ShouldBeEqualTo(_originalDescription);
-      }
-
-      protected override void Because()
-      {
-         sut.Save();
-      }
-
-      [Observation]
-      public void should_update_the_value_from_the_value_origin_bound_to_the_view()
-      {
-         _valueOriginToEdit.Type.ShouldBeEqualTo(_dto.Type);
-         _valueOriginToEdit.Description.ShouldBeEqualTo(_dto.Description);
       }
    }
 
@@ -80,7 +54,7 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          sut.Edit(_valueOriginToEdit);
-         _dto.Type = ValueOriginTypes.Undefined;
+         _dto.Source = ValueOriginSources.Undefined;
          _dto.Description = "New Description";
       }
 
@@ -92,8 +66,8 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_udpate_the_value_type_to_unknown()
       {
-         _valueOriginToEdit.Type.ShouldBeEqualTo(ValueOriginTypes.Unknown);
-         _valueOriginToEdit.Description.ShouldBeEqualTo(_dto.Description);
+         _dto.Source.ShouldBeEqualTo(ValueOriginSources.Unknown);
+         _dto.Description.ShouldBeEqualTo(_dto.Description);
       }
    }
 
@@ -103,7 +77,7 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          sut.Edit(_valueOriginToEdit);
-         _dto.Type = ValueOriginTypes.Undefined;
+         _dto.Source = ValueOriginSources.Undefined;
          _dto.Description = "   ";
       }
 
@@ -115,18 +89,92 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_not_update_the_value_origin_type()
       {
-         _valueOriginToEdit.Type.ShouldBeEqualTo(_dto.Type);
+         _dto.Source.ShouldBeEqualTo(ValueOriginSources.Undefined);
       }
    }
 
-   public class When_the_value_origin_presenter_is_return_all_possible_value_origin_types : concern_for_ValueOriginPresenter
+   public class When_the_value_origin_presenter_is_return_all_possible_origin_sources : concern_for_ValueOriginPresenter
    {
       [Observation]
-      public void should_return_all_defined_value_origin_types_except_the_undefined_type()
+      public void should_return_all_defined_value_origin_sources_except_the_undefined_source_sorted_by_display()
       {
-         sut.AllValueOrigins.ShouldOnlyContain(
-            ValueOriginTypes.AllValueOrigins.Except(new[] {ValueOriginTypes.Undefined})
+         sut.AllValueOriginSources.ShouldOnlyContainInOrder(
+            ValueOriginSources.All.Except(new[] {ValueOriginSources.Undefined}).OrderBy(x => x.Display)
          );
+      }
+   }
+
+   public class When_the_value_origin_presenter_is_return_all_possible_origin_determination_methods : concern_for_ValueOriginPresenter
+   {
+      [Observation]
+      public void should_return_all_defined_value_origin_methodss_except_the_undefined_method_sorted_by_display()
+      {
+         sut.AllValueOriginDeterminationMethods.ShouldOnlyContainInOrder(
+            ValueOriginDeterminationMethods.All.Except(new[] { ValueOriginDeterminationMethods.Undefined }).OrderBy(x => x.Display)
+         );
+      }
+   }
+
+   public class When_checking_if_the_edited_value_origin_has_changed : concern_for_ValueOriginPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Edit(_valueOriginToEdit);
+      }
+
+      [Observation]
+      public void should_return_true_if_the_value_origin_source_has_changed()
+      {
+         _dto.Source = ValueOriginSources.Database;
+         sut.ValueOriginChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_true_if_the_value_origin_determination_method_has_changed()
+      {
+         _dto.Method = ValueOriginDeterminationMethods.ParameterIdentification;
+         sut.ValueOriginChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_true_if_the_description_has_changed()
+      {
+         _dto.Description = "A brand new description";
+         sut.ValueOriginChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_false_if_the_description_only_contains_empty_charachters()
+      {
+         _valueOriginToEdit.Description = "";
+         _dto.Description = "     ";
+         sut.ValueOriginChanged.ShouldBeFalse();
+      }
+
+   }
+
+   public class When_the_value_origin_presenter_is_returning_the_updated_value_origin : concern_for_ValueOriginPresenter
+   {
+      private ValueOrigin _updatedValueOrigin;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Edit(_valueOriginToEdit);
+      }
+
+
+      protected override void Because()
+      {
+         _updatedValueOrigin = sut.UpdatedValueOrigin;
+      }
+
+      [Observation]
+      public void should_save_the_value_and_return_the_dto()
+      {
+         A.CallTo(() => _view.Save()).MustHaveHappened();
+         _updatedValueOrigin.ShouldBeEqualTo(_dto);
       }
    }
 }

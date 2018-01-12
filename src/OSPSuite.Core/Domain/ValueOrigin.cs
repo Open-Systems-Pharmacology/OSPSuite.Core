@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
 
@@ -7,9 +8,14 @@ namespace OSPSuite.Core.Domain
    public class ValueOrigin
    {
       /// <summary>
-      ///    Origin of the value
+      ///    Source of the value
       /// </summary>
-      public ValueOriginType Type { get; set; } = ValueOriginTypes.Undefined;
+      public ValueOriginSource Source { get; set; } = ValueOriginSources.Undefined;
+
+      /// <summary>
+      ///    Determination method of the value
+      /// </summary>
+      public ValueOriginDeterminationMethod Method { get; set; } = ValueOriginDeterminationMethods.Undefined;
 
       /// <summary>
       ///    Optional description explaining the quantity value
@@ -28,24 +34,27 @@ namespace OSPSuite.Core.Domain
          if (valueOrigin == null)
             return;
 
-         Type = valueOrigin.Type;
+         Source = valueOrigin.Source;
+         Method = valueOrigin.Method;
          Description = valueOrigin.Description;
       }
 
-      public string Display
-      {
-         get
-         {
-            if (Type == null && string.IsNullOrEmpty(Description))
-               return Captions.ValueOrigins.Undefined;
-
-            return new[]
-            {
-               Type?.Display, Description
-            }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
-         }
-      }
+      public string Display => defaultDisplay(this);
 
       public override string ToString() => Display;
+
+      //TEMP to ensure that we can test the best display text from the app
+      public static Func<ValueOrigin, string> DisplayFunc = defaultDisplay;
+
+      private static string defaultDisplay(ValueOrigin valueOrigin)
+      {
+         if (valueOrigin.Source == null && string.IsNullOrEmpty(valueOrigin.Description))
+            return Captions.ValueOrigins.Undefined;
+
+         return new[]
+         {
+            valueOrigin.Source?.Display, valueOrigin.Description
+         }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
+      }
    }
 }

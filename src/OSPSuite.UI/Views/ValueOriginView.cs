@@ -23,18 +23,25 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          _imageListRetriever = imageListRetriever;
 
-         imageComboBoxValueOriginType.SetImages(imageListRetriever);
+         imageComboBoxValueOriginSource.SetImages(imageListRetriever);
+         imageComboBoxValueOriginDeterminationMethod.SetImages(imageListRetriever);
       }
 
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _screenBinder.Bind(x => x.Type)
-            .To(imageComboBoxValueOriginType)
+
+         _screenBinder.Bind(x => x.Source)
+            .To(imageComboBoxValueOriginSource)
             .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
-            .WithValues( x=> _presenter.AllValueOrigins)
+            .WithValues( x=> _presenter.AllValueOriginSources)
             .AndDisplays(x => x.Display);
 
+         _screenBinder.Bind(x => x.Method)
+            .To(imageComboBoxValueOriginDeterminationMethod)
+            .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
+            .WithValues( x=> _presenter.AllValueOriginDeterminationMethods)
+            .AndDisplays(x => x.Display);
 
          _descriptionElement = _screenBinder.Bind(x => x.Description)
             .To(mruDescription);
@@ -61,7 +68,9 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemValueOriginDescription.Text = Captions.ValueDescription.FormatForLabel();
+         layoutItemValueOriginDescription.Text = Captions.ValueOriginDescription.FormatForLabel();
+         layoutItemValueOriginSource.Text = Captions.ValueOriginSource.FormatForLabel();
+         layoutItemValueOriginDeterminationMethod.Text = Captions.ValueOriginDeterminationMethod.FormatForLabel();
       }
    }
 }

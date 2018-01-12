@@ -4,16 +4,16 @@ using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ValueOriginTypeXmlAttributeMapper<TSerializationContext> : AttributeMapper<ValueOriginType, TSerializationContext>
+   public class ValueOriginTypeXmlAttributeMapper<TSerializationContext> : AttributeMapper<ValueOriginSource, TSerializationContext>
    {
       public override object ConvertFrom(string attributeValue, TSerializationContext context)
       {
-         return ValueOriginTypes.ById(EnumHelper.ParseValue<ValueOriginTypeId>(attributeValue));
+         return ValueOriginSources.ById(EnumHelper.ParseValue<ValueOriginSourceId>(attributeValue));
       }
 
-      public override string Convert(ValueOriginType valueOriginType, TSerializationContext context)
+      public override string Convert(ValueOriginSource valueOriginSource, TSerializationContext context)
       {
-         return valueOriginType?.Id.ToString();
+         return valueOriginSource?.Id.ToString();
       }
    }
 }

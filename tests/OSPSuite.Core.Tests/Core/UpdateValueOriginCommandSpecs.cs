@@ -12,7 +12,7 @@ namespace OSPSuite.Core
    public abstract class concern_for_UpdateValueOriginCommand : ContextSpecification<UpdateValueOriginCommand>
    {
       protected string _newValueDescription = "New value description";
-      protected readonly ValueOriginType _newValueOriginType = ValueOriginTypes.Assumption;
+      protected readonly ValueOriginSource _newValueOriginSource = ValueOriginSources.Database;
       protected ValueOrigin _valueOrigin;
       protected ValueOrigin _oldValueOrigin;
       protected IOSPSuiteExecutionContext _context;
@@ -25,11 +25,11 @@ namespace OSPSuite.Core
          _valueOrigin = new ValueOrigin
          {
             Description = "Old Description",
-            Type = ValueOriginTypes.ManualFit
+            Source = ValueOriginSources.Internet
          };
 
          _oldValueOrigin = _valueOrigin.Clone();
-         sut = new UpdateValueOriginCommand(_newValueOriginType, _newValueDescription, _valueOrigin, _objectType) {Visible = false};
+         sut = new UpdateValueOriginCommand(_newValueOriginSource, _newValueDescription, _valueOrigin, _objectType) {Visible = false};
       }
    }
 
@@ -76,7 +76,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_update_the_value_origin_with_the_new_type_and_description()
       {
-         _valueOrigin.Type.ShouldBeEqualTo(_newValueOriginType);
+         _valueOrigin.Source.ShouldBeEqualTo(_newValueOriginSource);
          _valueOrigin.Description.ShouldBeEqualTo(_newValueDescription);
       }
    }
@@ -91,7 +91,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_reset_the_value_of_type_and_description_to_their_previous_values()
       {
-         _valueOrigin.Type.ShouldBeEqualTo(_oldValueOrigin.Type);
+         _valueOrigin.Source.ShouldBeEqualTo(_oldValueOrigin.Source);
          _valueOrigin.Description.ShouldBeEqualTo(_oldValueOrigin.Description);
       }
    }

@@ -149,7 +149,8 @@
     <Compile Include="Domain\IWithValueOrigin.cs" />
     <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
-    <Compile Include="Domain\ValueOriginType.cs" />
+    <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />
+    <Compile Include="Domain\ValueOriginSource.cs" />
     <Compile Include="Domain\PathElement.cs" />
     <Compile Include="Domain\Services\IDataRepositoryTask.cs" />
     <Compile Include="Domain\Services\ObservedDataTask.cs" />

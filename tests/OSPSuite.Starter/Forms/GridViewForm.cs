@@ -32,18 +32,22 @@ namespace OSPSuite.Starter.Forms
 
       private void initializeBinding()
       {
-         var gridViewBoundColumn = _gridViewBinder.Bind(x => x.Name)
-            .AsReadOnly();
+         var gridViewBoundColumn = _gridViewBinder.Bind(x => x.Name);
+//            .AsReadOnly();
 
          gridViewBoundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
 
-         var boundColumn = _gridViewBinder.Bind(x => x.Value)
-            .AsReadOnly();
+         var boundColumn = _gridViewBinder.Bind(x => x.Value);
+//            .AsReadOnly();
 
 
          boundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
 
-         _valueOriginBinder.InitializeBinding(_gridViewBinder);
+         _valueOriginBinder.InitializeBinding(_gridViewBinder, onValueOriginUpdated);
+      }
+
+      private void onValueOriginUpdated(ParameterDTO parameterDTO, ValueOrigin newValueOrigin)
+      {
       }
 
       private IEnumerable<ParameterDTO> generateDummyContent()
@@ -52,7 +56,7 @@ namespace OSPSuite.Starter.Forms
          {
             var parameter = new ParameterDTO().WithName($"Prameter_{i}");
             if (i % 2 == 0)
-               parameter.ValueOriginType = ValueOriginTypes.Database;
+               parameter.ValueOriginSource = ValueOriginSources.Database;
 
             parameter.Formula = new ConstantFormula(i);
             yield return parameter;
@@ -68,10 +72,10 @@ namespace OSPSuite.Starter.Forms
          set => ValueOrigin.Description = value;
       }
 
-      public ValueOriginType ValueOriginType
+      public ValueOriginSource ValueOriginSource
       {
-         get => ValueOrigin.Type;
-         set => ValueOrigin.Type = value;
+         get => ValueOrigin.Source;
+         set => ValueOrigin.Source = value;
       }
    }
 }

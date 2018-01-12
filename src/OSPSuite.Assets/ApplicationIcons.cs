@@ -459,12 +459,12 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon SensitivityAnalysisVisualFeedback = AddNamedIcon(Icons.SensitivityAnalysisVisualFeedback, "SensitivityAnalysisVisualFeedback");
       public static readonly ApplicationIcon AssumptionValueOrigin = AddNamedIcon(Icons.AssumptionValueOrigin, "AssumptionValueOrigin");
       public static readonly ApplicationIcon DatabaseValueOrigin = AddNamedIcon(Icons.DatabaseValueOrigin, "DatabaseValueOrigin");
-      public static readonly ApplicationIcon DefaultValueOrigin = AddNamedIcon(Icons.DefaultValueOrigin, "DefaultValueOrigin");
       public static readonly ApplicationIcon InternetValueOrigin = AddNamedIcon(Icons.InternetValueOrigin, "InternetValueOrigin");
       public static readonly ApplicationIcon ManualFitValueOrigin = AddNamedIcon(Icons.ManualFitValueOrigin, "ManualFitValueOrigin");
       public static readonly ApplicationIcon ParameterIdentificationValueOrigin = AddNamedIcon(Icons.ParameterIdentificationValueOrigin, "ParameterIdentificationValueOrigin");
-      public static readonly ApplicationIcon ReportValueOrigin = AddNamedIcon(Icons.ReportValueOrigin, "ReportValueOrigin");
+      public static readonly ApplicationIcon PublicationValueOrigin = AddNamedIcon(Icons.PublicationValueOrigin, "PublicationValueOrigin");
       public static readonly ApplicationIcon UnknownValueOrigin = AddNamedIcon(Icons.UnknownValueOrigin, "UnknownValueOrigin");
+      public static readonly ApplicationIcon OtherValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "OtherValueOrigin");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

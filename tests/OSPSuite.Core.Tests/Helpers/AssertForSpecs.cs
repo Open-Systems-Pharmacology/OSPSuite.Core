@@ -625,7 +625,7 @@ namespace OSPSuite.Helpers
       public static void AreEqualValueOrigin(ValueOrigin x1, ValueOrigin x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AssertAreEqual(x1.Type, x2.Type);
+         AssertAreEqual(x1.Source, x2.Source);
          AssertAreEqual(x1.Description, x2.Description);
       }
 

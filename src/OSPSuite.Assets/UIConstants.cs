@@ -179,7 +179,9 @@ namespace OSPSuite.Assets
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
       public static readonly string LogLevel = "Log Level";
-      public static readonly string ValueDescription = "Value Description";
+      public static readonly string ValueOriginDescription = "Value Description";
+      public static readonly string ValueOriginSource = "Source";
+      public static readonly string ValueOriginDeterminationMethod = "Method";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -556,13 +558,24 @@ namespace OSPSuite.Assets
 
       public static class ValueOrigins
       {
-         public static string Assumption = "Assumption";
-         public static string Database = "Database";
-         public static string Default = "Default";
-         public static string Internet = "Internet";
-         public static string ManualFit = "Manual Fit";
-         public static string ParameterIdentification = "Parameter Identification";
-         public static string Report = "Report";
+         public static class Sources
+         {
+            public static string Database = "Database";
+            public static string Internet = "Internet";
+            public static string ParameterIdentification = "Parameter Identification";
+            public static string Publication = "Publication";
+         }
+
+         public static class Methods
+         {
+            public static string Assumption = "Assumption";
+            public static string ManualFit = "Manual Fit";
+            public static string ParameterIdentification = "Parameter Identification";
+            public static string InVitroAssay = "In-Vitro Assay";
+            public static string Measurement = "Measurement";
+         }
+
+         public static string Other = "Other";
          public static string Unknown = "Unknown";
          public static string Undefined = "";
       }
