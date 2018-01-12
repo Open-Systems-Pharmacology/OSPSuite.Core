@@ -16,6 +16,6 @@
   </metadata>
   <files>
     <file src="..\common\ChartLayouts\*.*" target="OSPSuite.Presentation\ChartLayouts" />
-    <file src="bin\$configuration$\$id$.pdb" target="lib\net452" />
+    <file src="bin\$configuration$\$id$.pdb" target="lib\net462" />
   </files>
 </package>

@@ -1033,14 +1033,14 @@
     <None Include="Icons\SBML.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icons\AssumptionValueOrigin.ico" />
-    <Content Include="Icons\DatabaseValueOrigin.ico" />
-    <Content Include="Icons\InternetValueOrigin.ico" />
-    <Content Include="Icons\ManualFitValueOrigin.ico" />
-    <Content Include="Icons\OtherValueOrigin.ico" />
-    <Content Include="Icons\ParameterIdentificationValueOrigin.ico" />
-    <Content Include="Icons\PublicationValueOrigin.ico" />
-    <Content Include="Icons\UnknownValueOrigin.ico" />
+    <None Include="Icons\AssumptionValueOrigin.ico" />
+    <None Include="Icons\DatabaseValueOrigin.ico" />
+    <None Include="Icons\InternetValueOrigin.ico" />
+    <None Include="Icons\ManualFitValueOrigin.ico" />
+    <None Include="Icons\OtherValueOrigin.ico" />
+    <None Include="Icons\ParameterIdentificationValueOrigin.ico" />
+    <None Include="Icons\PublicationValueOrigin.ico" />
+    <None Include="Icons\UnknownValueOrigin.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
