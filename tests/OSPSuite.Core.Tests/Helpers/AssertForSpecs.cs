@@ -628,6 +628,7 @@ namespace OSPSuite.Helpers
          AssertAreEqual(x1.Source, x2.Source);
          AssertAreEqual(x1.Method, x2.Method);
          AssertAreEqual(x1.Description, x2.Description);
+         AssertAreEqual(x1.Default, x2.Default);
       }
 
       public static void AreEqualObserver(IObserver x1, IObserver x2)
