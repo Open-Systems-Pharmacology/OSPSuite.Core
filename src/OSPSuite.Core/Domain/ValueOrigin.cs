@@ -8,6 +8,12 @@ namespace OSPSuite.Core.Domain
    public class ValueOrigin
    {
       /// <summary>
+      /// Indicates if a parameter value is a default value (e.g. coming from the PK-Sim database) or if the value was entered or modified by the user.
+      /// Default value is <c>false</c>
+      /// </summary>
+      public bool Default { get; set; } = false;
+
+      /// <summary>
       ///    Source of the value
       /// </summary>
       public ValueOriginSource Source { get; set; } = ValueOriginSources.Undefined;
@@ -37,6 +43,7 @@ namespace OSPSuite.Core.Domain
          Source = valueOrigin.Source;
          Method = valueOrigin.Method;
          Description = valueOrigin.Description;
+         Default = valueOrigin.Default;
       }
 
       public string Display => defaultDisplay(this);

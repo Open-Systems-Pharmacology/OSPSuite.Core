@@ -12,7 +12,9 @@ namespace OSPSuite.Core
          sut = new ValueOrigin
          {
             Source = ValueOriginSources.Database,
-            Description = "Hello"
+            Method = ValueOriginDeterminationMethods.ManualFit,
+            Description = "Hello",
+            Default = true
          };
       }
    }
@@ -31,6 +33,8 @@ namespace OSPSuite.Core
       {
          _clone.Source.ShouldBeEqualTo(sut.Source);
          _clone.Description.ShouldBeEqualTo(sut.Description);
+         _clone.Method.ShouldBeEqualTo(sut.Method);
+         _clone.Default.ShouldBeEqualTo(sut.Default);
       }
    }
 
@@ -59,7 +63,9 @@ namespace OSPSuite.Core
          _sourceValueOrigin = new ValueOrigin
          {
             Description = "New description",
-            Source = ValueOriginSources.Database
+            Source = ValueOriginSources.Database,
+            Method = ValueOriginDeterminationMethods.ManualFit,
+            Default = true,
          };
       }
 
@@ -73,6 +79,8 @@ namespace OSPSuite.Core
       {
          sut.Source.ShouldBeEqualTo(_sourceValueOrigin.Source);
          sut.Description.ShouldBeEqualTo(_sourceValueOrigin.Description);
+         sut.Method.ShouldBeEqualTo(_sourceValueOrigin.Method);
+         sut.Default.ShouldBeEqualTo(_sourceValueOrigin.Default);
       }
    }
 
