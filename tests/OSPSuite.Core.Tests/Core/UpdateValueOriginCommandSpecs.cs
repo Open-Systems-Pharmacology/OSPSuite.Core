@@ -17,6 +17,8 @@ namespace OSPSuite.Core
       protected ValueOrigin _oldValueOrigin;
       protected IOSPSuiteExecutionContext _context;
       protected string _objectType = "Paramter";
+      private readonly ValueOriginDeterminationMethod _newValueOriginMethod = ValueOriginDeterminationMethods.ManualFit;
+      private ValueOrigin _newValueOrigin;
 
       protected override void Context()
       {
@@ -28,8 +30,16 @@ namespace OSPSuite.Core
             Source = ValueOriginSources.Internet
          };
 
+         _newValueOrigin = new ValueOrigin
+         {
+            Description = _newValueDescription,
+            Source = _newValueOriginSource,
+            Method = _newValueOriginMethod,
+
+         };
+
          _oldValueOrigin = _valueOrigin.Clone();
-         sut = new UpdateValueOriginCommand(_newValueOriginSource, _newValueDescription, _valueOrigin, _objectType) {Visible = false};
+         sut = new UpdateValueOriginCommand(_newValueOrigin,_valueOrigin, _objectType) {Visible = false};
       }
    }
 

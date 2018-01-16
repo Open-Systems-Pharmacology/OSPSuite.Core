@@ -6,7 +6,9 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
@@ -79,6 +81,7 @@ namespace OSPSuite.UI.Binders
          _onValueOriginUpdated = onValueOriginUpdated;
 
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
+            .WithCaption(Captions.ValueOrigin)
             .WithRepository(x => displayRepositoryFor(x.ValueOrigin))
             .WithEditRepository(x => _repositoryItemPopupContainerEdit)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });

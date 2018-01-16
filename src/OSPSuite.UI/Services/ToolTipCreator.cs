@@ -22,6 +22,8 @@ namespace OSPSuite.UI.Services
       SuperToolTip ToolTipFor(IdentificationParameterDTO identificationParameterDTO);
       ToolTipControlInfo ToolTipControlInfoFor(object objectWithToolTip, SuperToolTip superToolTip);
       SuperToolTip ToolTipFor(Image tooltipImage);
+      SuperToolTip AddSubItemTo(SuperToolTip toolTip, string title, string text);
+
    }
 
    public class ToolTipCreator : IToolTipCreator
@@ -107,12 +109,9 @@ namespace OSPSuite.UI.Services
                item.Image = ApplicationIcons.IconByName(relatedItem.IconName);
             }
          }
+
          if (journalPageDTO.Tags.Any())
-         {
-            toolTip.Items.AddSeparator();
-            toolTip.WithTitle(Captions.Journal.Tags);
-            toolTip.WithText(journalPageDTO.TagsDisplay);
-         }
+            AddSubItemTo(toolTip, Captions.Journal.Tags, journalPageDTO.TagsDisplay);
 
          return toolTip;
       }
@@ -122,19 +121,21 @@ namespace OSPSuite.UI.Services
          if (valueOrigin.Source == ValueOriginSources.Undefined)
             return null;
 
-         if (string.IsNullOrEmpty(valueOrigin.Description))
-            return CreateToolTip(valueOrigin.Source.Display, image: valueOrigin.Source.Icon);
+         var title =  new[]
+         {
+            valueOrigin.Source.Display, valueOrigin.Method.Display
+         }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString(" - ");
 
-         return CreateToolTip(valueOrigin.Description, valueOrigin.Source.Display, valueOrigin.Source.Icon);
+         if (string.IsNullOrEmpty(valueOrigin.Description))
+            return CreateToolTip(title, image: valueOrigin.Source.Icon);
+
+         return CreateToolTip(valueOrigin.Description, title, valueOrigin.Source.Icon);
       }
 
       public SuperToolTip ToolTipFor(RelatedItem relatedItem)
       {
          var toolTip = CreateToolTip(relatedItem.Display, Captions.Journal.RelatedItem, ApplicationIcons.IconByName(relatedItem.IconName));
-         toolTip.Items.AddSeparator();
-         toolTip.WithTitle(Captions.Journal.Project);
-         toolTip.WithText(relatedItem.FullPath);
-         return toolTip;
+         return AddSubItemTo(toolTip, Captions.Journal.Project, relatedItem.FullPath);
       }
 
       public ToolTipControlInfo ToolTipControlInfoFor(object objectWithToolTip, SuperToolTip superToolTip)
@@ -148,11 +149,18 @@ namespace OSPSuite.UI.Services
          return addImageToToolTip(tooltipImage, tooltip);
       }
 
+      public SuperToolTip AddSubItemTo(SuperToolTip toolTip, string title, string text)
+      {
+         toolTip.Items.AddSeparator();
+         toolTip.WithTitle(title);
+         toolTip.WithText(text);
+         return toolTip;
+      }
+
       private static SuperToolTip addImageToToolTip(Image tooltipImage, SuperToolTip tooltip)
       {
          var toolTipItem = new ToolTipItem {Image = tooltipImage};
          tooltip.Items.Add(toolTipItem);
-
          return tooltip;
       }
    }

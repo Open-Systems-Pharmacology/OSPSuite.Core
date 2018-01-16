@@ -82,8 +82,14 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter)
       {
          var isoDate = SystemTime.Now().ToIsoFormat();
-         var valueDescription = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate);
-         return new UpdateValueOriginCommand(ValueOriginSources.ParameterIdentification, valueDescription, parameter, _executionContext) {Visible = false}
+         var valueOrigin = new ValueOrigin
+         {
+            Description = Captions.ParameterIdentification.ValueUpdatedFrom(identificationParameter.ParameterIdentification.Name, isoDate),
+            Source = ValueOriginSources.ParameterIdentification,
+            Method = ValueOriginDeterminationMethods.ParameterIdentification
+         };
+
+         return new UpdateValueOriginCommand(valueOrigin, parameter, _executionContext) {Visible = false}
             .Run(_executionContext);
       }
    }
