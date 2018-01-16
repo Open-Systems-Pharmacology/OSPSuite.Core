@@ -32,13 +32,13 @@ namespace OSPSuite.Starter.Forms
 
       private void initializeBinding()
       {
-         var gridViewBoundColumn = _gridViewBinder.Bind(x => x.Name);
-//            .AsReadOnly();
+         var gridViewBoundColumn = _gridViewBinder.Bind(x => x.Name)
+            .AsReadOnly();
 
          gridViewBoundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
 
-         var boundColumn = _gridViewBinder.Bind(x => x.Value);
-//            .AsReadOnly();
+         var boundColumn = _gridViewBinder.Bind(x => x.Value)
+            .AsReadOnly();
 
 
          boundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
@@ -56,7 +56,11 @@ namespace OSPSuite.Starter.Forms
          {
             var parameter = new ParameterDTO().WithName($"Prameter_{i}");
             if (i % 2 == 0)
-               parameter.ValueOriginSource = ValueOriginSources.Database;
+            {
+               parameter.ValueOrigin.Source = ValueOriginSources.Database;
+               parameter.ValueOrigin.Method = ValueOriginDeterminationMethods.ManualFit;
+               parameter.ValueOrigin.Description = "This is the best description ever";
+            }
 
             parameter.Formula = new ConstantFormula(i);
             yield return parameter;
@@ -66,16 +70,5 @@ namespace OSPSuite.Starter.Forms
 
    public class ParameterDTO : Parameter
    {
-      public string ValueDescription
-      {
-         get => ValueOrigin.Description;
-         set => ValueOrigin.Description = value;
-      }
-
-      public ValueOriginSource ValueOriginSource
-      {
-         get => ValueOrigin.Source;
-         set => ValueOrigin.Source = value;
-      }
    }
 }

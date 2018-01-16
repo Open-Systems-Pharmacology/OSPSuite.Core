@@ -182,6 +182,7 @@ namespace OSPSuite.Assets
       public static readonly string ValueOriginDescription = "Value Description";
       public static readonly string ValueOriginSource = "Source";
       public static readonly string ValueOriginDeterminationMethod = "Method";
+      public static readonly string ValueOrigin = "Value Origin";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
