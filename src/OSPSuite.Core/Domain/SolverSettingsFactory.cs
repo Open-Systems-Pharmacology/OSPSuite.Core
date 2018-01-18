@@ -19,7 +19,7 @@
 
       public SolverSettings CreateCVODE()
       {
-         return Create("CVODE1002_2");
+         return Create(Constants.CVODES_282);
       }
 
       public SolverSettings Create(string solverName)
@@ -43,6 +43,7 @@
          parameter.CanBeVariedInPopulation = false;
          parameter.Visible = true;
          parameter.Editable = true;
+         parameter.ValueOrigin.Default = true;
          return parameter;
       }
    }

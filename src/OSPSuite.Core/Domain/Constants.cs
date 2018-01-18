@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Domain
    public static class Constants
    {
       public static readonly int PKML_VERSION = PKMLVersion.Current;
+      public const string CVODES_282 = "CVODES_282";
       public const int SIM_MODEL_VERSION = 4;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
