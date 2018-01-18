@@ -11,6 +11,7 @@ namespace OSPSuite.Core
       {
          sut = new ValueOrigin
          {
+            Id = 4,
             Source = ValueOriginSources.Database,
             Method = ValueOriginDeterminationMethods.ManualFit,
             Description = "Hello",
@@ -26,6 +27,12 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          _clone = sut.Clone();
+      }
+
+      [Observation]
+      public void should_return_a_value_origin_having_the_same_id_as_the_original_value_origin()
+      {
+         _clone.Id.ShouldBeEqualTo(sut.Id);
       }
 
       [Observation]
@@ -62,6 +69,7 @@ namespace OSPSuite.Core
          base.Context();
          _sourceValueOrigin = new ValueOrigin
          {
+            Id = 10,
             Description = "New description",
             Source = ValueOriginSources.Database,
             Method = ValueOriginDeterminationMethods.ManualFit,
@@ -72,6 +80,12 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          sut.UpdateFrom(_sourceValueOrigin);
+      }
+
+      [Observation]
+      public void should_not_update_the_value_origin ()
+      {
+         sut.Id.ShouldNotBeEqualTo(_sourceValueOrigin.Id);
       }
 
       [Observation]
@@ -95,14 +109,15 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_the_type_if_only_type_is_set_()
       {
-         new ValueOrigin { Source = ValueOriginSources.Internet}.Display.ShouldBeEqualTo(ValueOriginSources.Internet.Display);
+         new ValueOrigin {Source = ValueOriginSources.Internet}.Display.ShouldBeEqualTo(ValueOriginSources.Internet.Display);
       }
 
       [Observation]
       public void should_return_the_description_if_only_the_description_is_set()
       {
-         new ValueOrigin { Description = "Hello" }.Display.ShouldBeEqualTo("Hello");
+         new ValueOrigin {Description = "Hello"}.Display.ShouldBeEqualTo("Hello");
       }
+
       [Observation]
       public void should_return_a_combination_of_type_and_descriptiion_if_those_properties_are_set()
       {
@@ -110,6 +125,5 @@ namespace OSPSuite.Core
          display.Contains("Hello").ShouldBeTrue();
          display.Contains(ValueOriginSources.Internet.Display).ShouldBeTrue();
       }
-
    }
 }
