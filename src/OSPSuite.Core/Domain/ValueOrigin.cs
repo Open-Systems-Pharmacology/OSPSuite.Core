@@ -7,11 +7,15 @@ namespace OSPSuite.Core.Domain
 {
    public class ValueOrigin
    {
+      //Id of the given ValueOrigin. This is the database entry for predefined parameters and is set to null if no entry is available
+      public int? Id { get; set; }
+
       /// <summary>
-      /// Indicates if a parameter value is a default value (e.g. coming from the PK-Sim database) or if the value was entered or modified by the user.
-      /// Default value is <c>false</c>
+      ///    Indicates if a parameter value is a default value (e.g. coming from the PK-Sim database) or if the value was entered
+      ///    or modified by the user.
+      ///    Default value is <c>false</c>
       /// </summary>
-      public bool Default { get; set; } = false;
+      public bool Default { get; set; }
 
       /// <summary>
       ///    Source of the value
@@ -30,7 +34,7 @@ namespace OSPSuite.Core.Domain
 
       public ValueOrigin Clone()
       {
-         var clone = new ValueOrigin();
+         var clone = new ValueOrigin {Id = Id};
          clone.UpdateFrom(this);
          return clone;
       }
@@ -40,6 +44,7 @@ namespace OSPSuite.Core.Domain
          if (valueOrigin == null)
             return;
 
+         //do not updated Id in this method
          Source = valueOrigin.Source;
          Method = valueOrigin.Method;
          Description = valueOrigin.Description;
@@ -55,13 +60,23 @@ namespace OSPSuite.Core.Domain
 
       private static string defaultDisplay(ValueOrigin valueOrigin)
       {
-         if (valueOrigin.Source == null && string.IsNullOrEmpty(valueOrigin.Description))
+         if (isUndefined(valueOrigin))
             return Captions.ValueOrigins.Undefined;
 
          return new[]
          {
-            valueOrigin.Source?.Display, valueOrigin.Description
+            valueOrigin.Source.Display, valueOrigin.Method.Display, valueOrigin.Description
          }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
+      }
+
+      private static bool isUndefined(ValueOrigin valueOrigin)
+      {
+         if (valueOrigin.Source == null || valueOrigin.Method == null)
+            return true;
+
+         return valueOrigin.Source == ValueOriginSources.Undefined &&
+                valueOrigin.Method == ValueOriginDeterminationMethods.Undefined &&
+                string.IsNullOrEmpty(valueOrigin.Description);
       }
    }
 }

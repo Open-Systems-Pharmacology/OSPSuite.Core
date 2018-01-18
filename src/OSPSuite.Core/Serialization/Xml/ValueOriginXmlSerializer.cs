@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public override void PerformMapping()
       {
+         Map(x => x.Id);
          Map(x => x.Default);
          Map(x => x.Source);
          Map(x => x.Method);
