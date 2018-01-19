@@ -572,8 +572,8 @@ namespace OSPSuite.Assets
             public static string Assumption = "Assumption";
             public static string ManualFit = "Manual Fit";
             public static string ParameterIdentification = "Parameter Identification";
-            public static string InVitroAssay = "In-Vitro Assay";
-            public static string Measurement = "Measurement";
+            public static string InVitro = "In-Vitro";
+            public static string InVivo = "In-Vivo";
          }
 
          public static string Other = "Other";

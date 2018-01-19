@@ -96,10 +96,10 @@ namespace OSPSuite.Presentation
    public class When_the_value_origin_presenter_is_return_all_possible_origin_sources : concern_for_ValueOriginPresenter
    {
       [Observation]
-      public void should_return_all_defined_value_origin_sources_except_the_undefined_source_sorted_by_display()
+      public void should_return_all_defined_value_origin_sources_except_the_undefined_source()
       {
          sut.AllValueOriginSources.ShouldOnlyContainInOrder(
-            ValueOriginSources.All.Except(new[] {ValueOriginSources.Undefined}).OrderBy(x => x.Display)
+            ValueOriginSources.All.Except(new[] {ValueOriginSources.Undefined})
          );
       }
    }
@@ -107,11 +107,10 @@ namespace OSPSuite.Presentation
    public class When_the_value_origin_presenter_is_return_all_possible_origin_determination_methods : concern_for_ValueOriginPresenter
    {
       [Observation]
-      public void should_return_all_defined_value_origin_methodss_except_the_undefined_method_sorted_by_display()
+      public void should_return_all_defined_value_origin_methodss_except_the_undefined_method()
       {
          sut.AllValueOriginDeterminationMethods.ShouldOnlyContainInOrder(
-            ValueOriginDeterminationMethods.All.Except(new[] { ValueOriginDeterminationMethods.Undefined }).OrderBy(x => x.Display)
-         );
+            ValueOriginDeterminationMethods.All.Except(new[] { ValueOriginDeterminationMethods.Undefined }));
       }
    }
 

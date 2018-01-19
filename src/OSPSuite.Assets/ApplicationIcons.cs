@@ -457,16 +457,19 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PKAnalysesExportToCSV = AddNamedIcon(Icons.PKAnalysesExportToCSV, "PKAnalysesExportToCSV");
       public static readonly ApplicationIcon PKParameterSensitivityAnalysis = AddNamedIcon(Icons.PKParameterSensitivityAnalysis, "PKParameterSensitivityAnalysis");
       public static readonly ApplicationIcon SensitivityAnalysisVisualFeedback = AddNamedIcon(Icons.SensitivityAnalysisVisualFeedback, "SensitivityAnalysisVisualFeedback");
-      public static readonly ApplicationIcon AssumptionValueOrigin = AddNamedIcon(Icons.AssumptionValueOrigin, "AssumptionValueOrigin");
-      public static readonly ApplicationIcon DatabaseValueOrigin = AddNamedIcon(Icons.DatabaseValueOrigin, "DatabaseValueOrigin");
-      public static readonly ApplicationIcon InternetValueOrigin = AddNamedIcon(Icons.InternetValueOrigin, "InternetValueOrigin");
-      public static readonly ApplicationIcon ManualFitValueOrigin = AddNamedIcon(Icons.ManualFitValueOrigin, "ManualFitValueOrigin");
-      public static readonly ApplicationIcon ParameterIdentificationValueOrigin = AddNamedIcon(Icons.ParameterIdentificationValueOrigin, "ParameterIdentificationValueOrigin");
-      public static readonly ApplicationIcon PublicationValueOrigin = AddNamedIcon(Icons.PublicationValueOrigin, "PublicationValueOrigin");
-      public static readonly ApplicationIcon UnknownValueOrigin = AddNamedIcon(Icons.UnknownValueOrigin, "UnknownValueOrigin");
-      public static readonly ApplicationIcon InVitroAssayValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "InVitroAssayValueOrigin");
-      public static readonly ApplicationIcon MeasurementValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "MeasurementValueOrigin");
-      public static readonly ApplicationIcon OtherValueOrigin = AddNamedIcon(Icons.OtherValueOrigin, "OtherValueOrigin");
+      public static readonly ApplicationIcon ValueOriginMethodAssumption = AddNamedIcon(Icons.ValueOriginMethodAssumption, "ValueOriginMethodAssumption");
+      public static readonly ApplicationIcon ValueOriginMethodInVitro = AddNamedIcon(Icons.ValueOriginMethodInVitro, "ValueOriginMethodInVitro");
+      public static readonly ApplicationIcon ValueOriginMethodInVivo = AddNamedIcon(Icons.ValueOriginMethodInVivo, "ValueOriginMethodInVivo");
+      public static readonly ApplicationIcon ValueOriginMethodOther = AddNamedIcon(Icons.ValueOriginMethodOther, "ValueOriginMethodOther");
+      public static readonly ApplicationIcon ValueOriginMethodManualFit = AddNamedIcon(Icons.ValueOriginMethodManualFit, "ValueOriginMethodManualFit");
+      public static readonly ApplicationIcon ValueOriginMethodParameterIdentification = AddNamedIcon(Icons.ValueOriginMethodParameterIdentification, "ValueOriginMethodParameterIdentification");
+      public static readonly ApplicationIcon ValueOriginMethodUnknown = AddNamedIcon(Icons.ValueOriginMethodUnknown, "ValueOriginMethodUnknown");
+      public static readonly ApplicationIcon ValueOriginSourceDatabase = AddNamedIcon(Icons.ValueOriginSourceDatabase, "ValueOriginSourceDatabase");
+      public static readonly ApplicationIcon ValueOriginSourceInternet = AddNamedIcon(Icons.ValueOriginSourceInternet, "ValueOriginSourceInternet");
+      public static readonly ApplicationIcon ValueOriginSourceParameterIdentification = AddNamedIcon(Icons.ValueOriginSourceParameterIdentification, "ValueOriginSourceParameterIdentification");
+      public static readonly ApplicationIcon ValueOriginSourcePublication = AddNamedIcon(Icons.ValueOriginSourcePublication, "ValueOriginSourcePublication");
+      public static readonly ApplicationIcon ValueOriginSourceUnknown = AddNamedIcon(Icons.ValueOriginSourceUnknown, "ValueOriginSourceUnknown");
+      public static readonly ApplicationIcon ValueOriginSourceOther = AddNamedIcon(Icons.ValueOriginSourceOther, "ValueOriginSourceOther");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

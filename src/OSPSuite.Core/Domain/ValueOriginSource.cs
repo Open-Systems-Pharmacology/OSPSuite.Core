@@ -21,13 +21,13 @@ namespace OSPSuite.Core.Domain
 
       public static IReadOnlyCollection<ValueOriginSource> All => _allValueOriginSources;
 
-      public static ValueOriginSource Database = create(ValueOriginSourceId.Database, Captions.ValueOrigins.Sources.Database, ApplicationIcons.DatabaseValueOrigin);
-      public static ValueOriginSource Internet = create(ValueOriginSourceId.Internet, Captions.ValueOrigins.Sources.Internet, ApplicationIcons.InternetValueOrigin);
-      public static ValueOriginSource ParameterIdentification = create(ValueOriginSourceId.ParameterIdentification, Captions.ValueOrigins.Sources.ParameterIdentification, ApplicationIcons.ParameterIdentificationValueOrigin);
-      public static ValueOriginSource Publication = create(ValueOriginSourceId.Publication, Captions.ValueOrigins.Sources.Publication, ApplicationIcons.PublicationValueOrigin);
-      public static ValueOriginSource Other = create(ValueOriginSourceId.Other, Captions.ValueOrigins.Other, ApplicationIcons.OtherValueOrigin);
+      public static ValueOriginSource Database = create(ValueOriginSourceId.Database, Captions.ValueOrigins.Sources.Database, ApplicationIcons.ValueOriginSourceDatabase);
+      public static ValueOriginSource Internet = create(ValueOriginSourceId.Internet, Captions.ValueOrigins.Sources.Internet, ApplicationIcons.ValueOriginSourceInternet);
+      public static ValueOriginSource ParameterIdentification = create(ValueOriginSourceId.ParameterIdentification, Captions.ValueOrigins.Sources.ParameterIdentification, ApplicationIcons.ValueOriginSourceParameterIdentification);
+      public static ValueOriginSource Publication = create(ValueOriginSourceId.Publication, Captions.ValueOrigins.Sources.Publication, ApplicationIcons.ValueOriginSourcePublication);
+      public static ValueOriginSource Other = create(ValueOriginSourceId.Other, Captions.ValueOrigins.Other, ApplicationIcons.ValueOriginSourceOther);
+      public static ValueOriginSource Unknown = create(ValueOriginSourceId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.ValueOriginSourceOther);
       public static ValueOriginSource Undefined = create(ValueOriginSourceId.Undefined, Captions.ValueOrigins.Undefined, ApplicationIcons.EmptyIcon);
-      public static ValueOriginSource Unknown = create(ValueOriginSourceId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.UnknownValueOrigin);
 
       public static ValueOriginSource ById(ValueOriginSourceId valueOriginSourceId)
       {
