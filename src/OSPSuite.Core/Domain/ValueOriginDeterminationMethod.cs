@@ -12,8 +12,8 @@ namespace OSPSuite.Core.Domain
       Other,
       Undefined,
       Unknown,
-      InVitroAssay,
-      Measurement
+      InVitro,
+      InVivo
    }
 
    public static class ValueOriginDeterminationMethods
@@ -21,14 +21,14 @@ namespace OSPSuite.Core.Domain
       private static readonly Cache<ValueOriginDeterminationMethodId, ValueOriginDeterminationMethod> _allValueOriginDeterminationMethods = new Cache<ValueOriginDeterminationMethodId, ValueOriginDeterminationMethod>(x => x.Id);
       public static IReadOnlyCollection<ValueOriginDeterminationMethod> All => _allValueOriginDeterminationMethods;
 
-      public static ValueOriginDeterminationMethod Assumption = create(ValueOriginDeterminationMethodId.Assumption, Captions.ValueOrigins.Methods.Assumption, ApplicationIcons.AssumptionValueOrigin);
-      public static ValueOriginDeterminationMethod ManualFit = create(ValueOriginDeterminationMethodId.ManualFit, Captions.ValueOrigins.Methods.ManualFit, ApplicationIcons.ManualFitValueOrigin);
-      public static ValueOriginDeterminationMethod ParameterIdentification = create(ValueOriginDeterminationMethodId.ParameterIdentification, Captions.ValueOrigins.Methods.ParameterIdentification, ApplicationIcons.ParameterIdentificationValueOrigin);
+      public static ValueOriginDeterminationMethod Assumption = create(ValueOriginDeterminationMethodId.Assumption, Captions.ValueOrigins.Methods.Assumption, ApplicationIcons.ValueOriginMethodAssumption);
+      public static ValueOriginDeterminationMethod ManualFit = create(ValueOriginDeterminationMethodId.ManualFit, Captions.ValueOrigins.Methods.ManualFit, ApplicationIcons.ValueOriginMethodManualFit);
+      public static ValueOriginDeterminationMethod ParameterIdentification = create(ValueOriginDeterminationMethodId.ParameterIdentification, Captions.ValueOrigins.Methods.ParameterIdentification, ApplicationIcons.ValueOriginMethodParameterIdentification);
+      public static ValueOriginDeterminationMethod InVitro = create(ValueOriginDeterminationMethodId.InVitro, Captions.ValueOrigins.Methods.InVitro, ApplicationIcons.ValueOriginMethodInVitro);
+      public static ValueOriginDeterminationMethod InVivo = create(ValueOriginDeterminationMethodId.InVivo, Captions.ValueOrigins.Methods.InVivo, ApplicationIcons.ValueOriginMethodInVivo);
+      public static ValueOriginDeterminationMethod Unknown = create(ValueOriginDeterminationMethodId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.ValueOriginMethodUnknown);
+      public static ValueOriginDeterminationMethod Other = create(ValueOriginDeterminationMethodId.Other, Captions.ValueOrigins.Other, ApplicationIcons.ValueOriginMethodOther);
       public static ValueOriginDeterminationMethod Undefined = create(ValueOriginDeterminationMethodId.Undefined, Captions.ValueOrigins.Undefined, ApplicationIcons.EmptyIcon);
-      public static ValueOriginDeterminationMethod Unknown = create(ValueOriginDeterminationMethodId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.UnknownValueOrigin);
-      public static ValueOriginDeterminationMethod Other = create(ValueOriginDeterminationMethodId.Other, Captions.ValueOrigins.Other, ApplicationIcons.OtherValueOrigin);
-      public static ValueOriginDeterminationMethod InVitroAssay = create(ValueOriginDeterminationMethodId.InVitroAssay, Captions.ValueOrigins.Methods.InVitroAssay, ApplicationIcons.InVitroAssayValueOrigin);
-      public static ValueOriginDeterminationMethod Measurement = create(ValueOriginDeterminationMethodId.Measurement, Captions.ValueOrigins.Methods.Measurement, ApplicationIcons.MeasurementValueOrigin);
 
       public static ValueOriginDeterminationMethod ById(ValueOriginDeterminationMethodId valueOriginDeterminationMethodId)
       {

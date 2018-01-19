@@ -29,8 +29,8 @@ namespace OSPSuite.Presentation.Presenters
       public ValueOriginPresenter(IValueOriginView view) : base(view)
       {
          _valueOriginDTO = new ValueOrigin();
-         _allValueOriginSources.AddRange(ValueOriginSources.All.Except(new[] {ValueOriginSources.Undefined}).OrderBy(x => x.Display));
-         _allValueOriginDeterminationMethods.AddRange(ValueOriginDeterminationMethods.All.Except(new[] {ValueOriginDeterminationMethods.Undefined}).OrderBy(x => x.Display));
+         _allValueOriginSources.AddRange(ValueOriginSources.All.Except(new[] {ValueOriginSources.Undefined}));
+         _allValueOriginDeterminationMethods.AddRange(ValueOriginDeterminationMethods.All.Except(new[] {ValueOriginDeterminationMethods.Undefined}));
       }
 
       public void Edit(ValueOrigin valueOrigin)

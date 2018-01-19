@@ -83,7 +83,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_not_update_the_value_origin ()
+      public void should_not_update_the_value_origin()
       {
          sut.Id.ShouldNotBeEqualTo(_sourceValueOrigin.Id);
       }
@@ -124,6 +124,112 @@ namespace OSPSuite.Core
          var display = new ValueOrigin {Source = ValueOriginSources.Internet, Description = "Hello"}.Display;
          display.Contains("Hello").ShouldBeTrue();
          display.Contains(ValueOriginSources.Internet.Display).ShouldBeTrue();
+      }
+   }
+
+   public class When_comparing_value_origins : concern_for_ValueOrigin
+   {
+      private ValueOrigin _valueOrigin1;
+      private ValueOrigin _valueOrigin2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _valueOrigin1 = new ValueOrigin();
+         _valueOrigin2 = new ValueOrigin();
+         _valueOrigin1.Description = "Hello";
+         _valueOrigin1.Source = ValueOriginSources.Database;
+         _valueOrigin1.Method = ValueOriginDeterminationMethods.InVitro;
+         _valueOrigin2.UpdateFrom(_valueOrigin1);
+      }
+
+      [Observation]
+      public void should_return_comparable_if_they_are_both_undefined()
+      {
+         _valueOrigin1 = new ValueOrigin();
+         _valueOrigin2 = new ValueOrigin();
+         _valueOrigin1.CompareTo(_valueOrigin2).ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void should_return_comparable_if_they_have_the_same_method_source_and_description()
+      {
+         _valueOrigin1.CompareTo(_valueOrigin2).ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void should_return_a_difference_if_they_have_a_different_source()
+      {
+         _valueOrigin2.Source = ValueOriginSources.Internet;
+         _valueOrigin1.CompareTo(_valueOrigin2).ShouldNotBeEqualTo(0);
+      }
+
+
+      [Observation]
+      public void should_return_a_difference_if_they_have_a_different_method()
+      {
+         _valueOrigin2.Method = ValueOriginDeterminationMethods.ManualFit;
+         _valueOrigin1.CompareTo(_valueOrigin2).ShouldNotBeEqualTo(0);
+      }
+
+
+      [Observation]
+      public void should_return_a_difference_if_they_have_a_different_description()
+      {
+         _valueOrigin2.Description = "New";
+         _valueOrigin1.CompareTo(_valueOrigin2).ShouldNotBeEqualTo(0);
+      }
+   }
+
+   public class When_checking_for_equality_for_value_origins : concern_for_ValueOrigin
+   {
+      private ValueOrigin _valueOrigin1;
+      private ValueOrigin _valueOrigin2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _valueOrigin1 = new ValueOrigin();
+         _valueOrigin2 = new ValueOrigin();
+         _valueOrigin1.Description = "Hello";
+         _valueOrigin1.Source = ValueOriginSources.Database;
+         _valueOrigin1.Method = ValueOriginDeterminationMethods.InVitro;
+         _valueOrigin2.UpdateFrom(_valueOrigin1);
+      }
+
+      [Observation]
+      public void should_return_equal_if_they_are_both_undefined()
+      {
+         _valueOrigin1 = new ValueOrigin();
+         _valueOrigin2 = new ValueOrigin();
+         _valueOrigin1.ShouldBeEqualTo(_valueOrigin2);
+      }
+
+      [Observation]
+      public void should_return_equal_if_they_have_the_same_method_source_and_description()
+      {
+         _valueOrigin1.ShouldBeEqualTo(_valueOrigin2);
+      }
+
+      [Observation]
+      public void should_not_return_equal_if_they_have_different_source()
+      {
+         _valueOrigin1.Source = ValueOriginSources.Internet;
+         _valueOrigin1.ShouldNotBeEqualTo(_valueOrigin2);
+      }
+
+      [Observation]
+      public void should_not_return_equal_if_they_have_different_method()
+      {
+         _valueOrigin1.Method = ValueOriginDeterminationMethods.InVivo;
+         _valueOrigin1.ShouldNotBeEqualTo(_valueOrigin2);
+      }
+
+      [Observation]
+      public void should_not_return_equal_if_they_have_different_description()
+      {
+         _valueOrigin1.Description = "New description";
+         _valueOrigin1.ShouldNotBeEqualTo(_valueOrigin2);
       }
    }
 }

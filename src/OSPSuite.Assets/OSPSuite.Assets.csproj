@@ -1033,14 +1033,43 @@
     <None Include="Icons\SBML.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Icons\AssumptionValueOrigin.ico" />
-    <None Include="Icons\DatabaseValueOrigin.ico" />
-    <None Include="Icons\InternetValueOrigin.ico" />
-    <None Include="Icons\ManualFitValueOrigin.ico" />
-    <None Include="Icons\OtherValueOrigin.ico" />
-    <None Include="Icons\ParameterIdentificationValueOrigin.ico" />
-    <None Include="Icons\PublicationValueOrigin.ico" />
-    <None Include="Icons\UnknownValueOrigin.ico" />
+    <None Include="Icons\ValueOriginMethodAssumption.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodInVitro.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodInVivo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodManualFit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodOther.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodParameterIdentification.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodUnknown.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceDatabase.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceInternet.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceOther.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceParameterIdentification.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourcePublication.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceUnknown.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
