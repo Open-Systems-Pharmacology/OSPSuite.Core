@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
@@ -30,6 +31,8 @@ namespace OSPSuite.UI.Binders
       private UxGridView _gridView;
       private Action<T, ValueOrigin> _onValueOriginUpdated;
       private IGridViewColumn _valueOriginColumn;
+      private Func<T, bool> _valueOriginEditableFunc = x => true;
+      private readonly RepositoryItemTextEdit _repositoryItemDisabled = new RepositoryItemTextEdit();
 
       public ValueOriginBinder(IValueOriginPresenter valueOriginPresenter, IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -43,6 +46,9 @@ namespace OSPSuite.UI.Binders
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
+
+         _repositoryItemDisabled.Enabled = false;
+         _repositoryItemDisabled.ReadOnly = true;
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -74,19 +80,33 @@ namespace OSPSuite.UI.Binders
          _gridView.CloseEditor();
       }
 
-      public void InitializeBinding(GridViewBinder<T> gridViewBinder, Action<T, ValueOrigin> onValueOriginUpdated)
+      public void InitializeBinding(GridViewBinder<T> gridViewBinder, Action<T, ValueOrigin> onValueOriginUpdated, Func<T, bool> valueOriginEditableFunc = null)
       {
          _gridViewBinder = gridViewBinder;
          _gridView = _gridViewBinder.GridView.DowncastTo<UxGridView>();
          _onValueOriginUpdated = onValueOriginUpdated;
 
+         if (valueOriginEditableFunc != null)
+            _valueOriginEditableFunc = valueOriginEditableFunc;
+
+         _gridView.ShowingEditor += onShowingEditor;
+
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
             .WithCaption(Captions.ValueOrigin)
-            .WithRepository(x => displayRepositoryFor(x.ValueOrigin))
-            .WithEditRepository(x => _repositoryItemPopupContainerEdit)
+            .WithRepository(displayRepositoryFor)
+            .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
 
          initializeToolTip(_gridView.GridControl);
+      }
+
+      private void onShowingEditor(object sender, CancelEventArgs e)
+      {
+         if (!ColumnIsValueOrigin(_gridView.FocusedColumn))
+            return;
+
+         var withValueOrigin = _gridViewBinder.FocusedElement;
+         e.Cancel = !_valueOriginEditableFunc(withValueOrigin);
       }
 
       private void initializeToolTip(GridControl gridControl)
@@ -104,11 +124,17 @@ namespace OSPSuite.UI.Binders
          gridControl.ToolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
       }
 
-      private RepositoryItem displayRepositoryFor(ValueOrigin valueOrigin)
+      private RepositoryItem displayRepositoryFor(T withValueOrigin)
       {
+         var valueOrigin = withValueOrigin.ValueOrigin;
          var repositoryItem = new UxRepositoryItemImageComboBox(_gridView, _imageListRetriever);
          repositoryItem.AddItem(valueOrigin, valueOrigin.Source.Icon);
          return repositoryItem;
+      }
+
+      private RepositoryItem editRepositoryFor(T withValueOrigin)
+      {
+         return _repositoryItemPopupContainerEdit;
       }
 
       private void queryDisplayText(QueryDisplayTextEventArgs e)
@@ -121,6 +147,8 @@ namespace OSPSuite.UI.Binders
       protected virtual void Cleanup()
       {
          _valueOriginPresenter.Dispose();
+         _valueOriginEditableFunc = null;
+         _onValueOriginUpdated = null;
       }
 
       public bool ColumnIsValueOrigin(GridColumn column) => Equals(column, _valueOriginColumn.XtraColumn);
