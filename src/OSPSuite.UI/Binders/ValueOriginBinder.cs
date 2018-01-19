@@ -32,7 +32,6 @@ namespace OSPSuite.UI.Binders
       private Action<T, ValueOrigin> _onValueOriginUpdated;
       private IGridViewColumn _valueOriginColumn;
       private Func<T, bool> _valueOriginEditableFunc = x => true;
-      private readonly RepositoryItemTextEdit _repositoryItemDisabled = new RepositoryItemTextEdit();
 
       public ValueOriginBinder(IValueOriginPresenter valueOriginPresenter, IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -46,9 +45,6 @@ namespace OSPSuite.UI.Binders
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
-
-         _repositoryItemDisabled.Enabled = false;
-         _repositoryItemDisabled.ReadOnly = true;
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
