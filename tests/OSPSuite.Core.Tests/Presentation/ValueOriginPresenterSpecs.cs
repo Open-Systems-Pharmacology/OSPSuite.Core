@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -42,7 +43,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void it_should_edit_another_instance_of_value_origin_having_the_same_properties_as_the_edited_value_origin()
       {
-         _dto.ShouldNotBeEqualTo(_valueOriginToEdit);
+         Assert.AreNotSame(_dto,_valueOriginToEdit);
          _dto.Source.ShouldBeEqualTo(_originalSource);
          _dto.Description.ShouldBeEqualTo(_originalDescription);
       }

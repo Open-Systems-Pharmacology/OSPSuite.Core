@@ -53,11 +53,14 @@ namespace OSPSuite.Starter.Forms
 
       private bool canEditValueOrigin(ParameterDTO parameter)
       {
+
+         return true;
          return parameter.NameIsOneOf("Prameter_2", "Prameter_4");
       }
 
       private void onValueOriginUpdated(ParameterDTO parameterDTO, ValueOrigin newValueOrigin)
       {
+         parameterDTO.ValueOrigin.UpdateFrom(newValueOrigin);
       }
 
       private IEnumerable<ParameterDTO> generateDummyContent()
