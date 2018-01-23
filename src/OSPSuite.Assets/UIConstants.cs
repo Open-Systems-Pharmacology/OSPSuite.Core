@@ -1806,7 +1806,13 @@ namespace OSPSuite.Assets
 
       public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin)
       {
-         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}";
+         if(string.IsNullOrEmpty(oldValueOrigin))
+            return $"Value origin set to '{newValueOrigin}'";
+
+         if(string.IsNullOrEmpty(newValueOrigin))
+            return $"Value origin set to '{oldValueOrigin}'";
+
+         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}'";
       }
    }
 
