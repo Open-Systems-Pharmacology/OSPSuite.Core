@@ -76,6 +76,20 @@ namespace OSPSuite.UI.Binders
          _gridView.CloseEditor();
       }
 
+      /// <summary>
+      ///    Initializes the binding to <see cref="ValueOrigin" />
+      /// </summary>
+      /// <param name="gridViewBinder">
+      ///    The gridViewBinder that will be extended to receive binding for <see cref="ValueOrigin" />
+      /// </param>
+      /// <param name="onValueOriginUpdated">
+      ///    This method is called whenever the <see cref="ValueOrigin" /> was changed by the
+      ///    user
+      /// </param>
+      /// <param name="valueOriginEditableFunc">
+      ///    Optional method that specifies whether the <see cref="ValueOrigin" /> of a bound
+      ///    object can be edited or not.
+      /// </param>
       public void InitializeBinding(GridViewBinder<T> gridViewBinder, Action<T, ValueOrigin> onValueOriginUpdated, Func<T, bool> valueOriginEditableFunc = null)
       {
          _gridViewBinder = gridViewBinder;
@@ -88,12 +102,19 @@ namespace OSPSuite.UI.Binders
          _gridView.ShowingEditor += onShowingEditor;
 
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
+            .WithWidth(UIConstants.Size.EMBEDDED_DESCRIPTION_WIDTH)
             .WithCaption(Captions.ValueOrigin)
             .WithRepository(displayRepositoryFor)
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
 
          initializeToolTip(_gridView.GridControl);
+      }
+
+      public bool ValueOriginVisible
+      {
+         get => _valueOriginColumn.Visible;
+         set => _valueOriginColumn.UpdateVisibility(value);
       }
 
       private void onShowingEditor(object sender, CancelEventArgs e)
