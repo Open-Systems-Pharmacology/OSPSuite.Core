@@ -77,11 +77,19 @@ namespace OSPSuite.Core.Domain
       public ValueOrigin Clone()
       {
          var clone = new ValueOrigin();
-         clone.UpdateFrom(this, updateId: true);
+         clone.UpdateAllFrom(this);
          return clone;
       }
 
-      public void UpdateFrom(ValueOrigin valueOrigin, bool updateId = false)
+      /// <summary>
+      /// Updates all properties from the value origin including Id and Default state. Typically used in the context of cloning
+      /// </summary>
+      public void UpdateAllFrom(ValueOrigin valueOrigin)
+      {
+         UpdateFrom(valueOrigin, updateId:true, updateDefault:true);
+      }
+
+      public void UpdateFrom(ValueOrigin valueOrigin, bool updateId = false, bool updateDefault = false)
       {
          if (valueOrigin == null)
             return;
@@ -90,10 +98,13 @@ namespace OSPSuite.Core.Domain
          if (updateId)
             Id = valueOrigin.Id;
 
+         //Default is a state coming from database that is changed if the user updates the value. 
+         if (updateDefault)
+            Default = valueOrigin.Default;
+
          Source = valueOrigin.Source;
          Method = valueOrigin.Method;
          Description = valueOrigin.Description;
-         Default = valueOrigin.Default;
       }
 
       public string Display => defaultDisplay(this);

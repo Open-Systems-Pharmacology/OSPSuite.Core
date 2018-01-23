@@ -149,7 +149,7 @@ namespace OSPSuite.Core.Domain
          Persistable = sourceQuantity.Persistable;
          Dimension = sourceQuantity.Dimension;
          DisplayUnit = sourceQuantity.DisplayUnit;
-         ValueOrigin.UpdateFrom(sourceQuantity.ValueOrigin);
+         ValueOrigin.UpdateAllFrom(sourceQuantity.ValueOrigin);
          QuantityType = sourceQuantity.QuantityType;
          NegativeValuesAllowed = sourceQuantity.NegativeValuesAllowed;
 

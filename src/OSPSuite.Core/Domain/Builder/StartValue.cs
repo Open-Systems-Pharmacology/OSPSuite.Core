@@ -151,7 +151,7 @@ namespace OSPSuite.Core.Domain.Builder
          DisplayUnit = sourceStartValue.DisplayUnit;
          Dimension = sourceStartValue.Dimension;
          Formula = cloneManager.Clone(sourceStartValue.Formula);
-         ValueOrigin.UpdateFrom(sourceStartValue.ValueOrigin);
+         ValueOrigin.UpdateAllFrom(sourceStartValue.ValueOrigin);
       }
 
       public override string ToString()
