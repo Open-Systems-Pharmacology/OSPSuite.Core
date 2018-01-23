@@ -90,7 +90,12 @@ namespace OSPSuite.UI.Binders
       ///    Optional method that specifies whether the <see cref="ValueOrigin" /> of a bound
       ///    object can be edited or not.
       /// </param>
-      public void InitializeBinding(GridViewBinder<T> gridViewBinder, Action<T, ValueOrigin> onValueOriginUpdated, Func<T, bool> valueOriginEditableFunc = null)
+      /// <param name="defaultColumnWidth">Default column width for the value origin column. If null, no default witdh will be set</param>
+      public void InitializeBinding(
+         GridViewBinder<T> gridViewBinder,
+         Action<T, ValueOrigin> onValueOriginUpdated,
+         Func<T, bool> valueOriginEditableFunc = null,
+         int? defaultColumnWidth = UIConstants.Size.EMBEDDED_DESCRIPTION_WIDTH)
       {
          _gridViewBinder = gridViewBinder;
          _gridView = _gridViewBinder.GridView.DowncastTo<UxGridView>();
@@ -102,11 +107,13 @@ namespace OSPSuite.UI.Binders
          _gridView.ShowingEditor += onShowingEditor;
 
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
-            .WithWidth(UIConstants.Size.EMBEDDED_DESCRIPTION_WIDTH)
             .WithCaption(Captions.ValueOrigin)
             .WithRepository(displayRepositoryFor)
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
+
+         if (defaultColumnWidth.HasValue)
+            _valueOriginColumn.WithWidth(defaultColumnWidth.Value);
 
          initializeToolTip(_gridView.GridControl);
       }
