@@ -188,7 +188,7 @@ namespace OSPSuite.Core.Domain.Services
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
          };
 
-         psv.ValueOrigin.UpdateFrom(valueOrigin);
+         psv.ValueOrigin.UpdateAllFrom(valueOrigin);
          return psv;
       }
 

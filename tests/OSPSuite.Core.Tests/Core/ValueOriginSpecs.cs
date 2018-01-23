@@ -36,12 +36,18 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_return_a_value_origin_having_the_same_default_flag_as_the_original_value_origin()
+      {
+         _clone.Default.ShouldBeEqualTo(sut.Default);
+      }
+
+
+      [Observation]
       public void should_return_a_value_origin_having_the_same_properties_at_the_source_value_origin()
       {
          _clone.Source.ShouldBeEqualTo(sut.Source);
          _clone.Description.ShouldBeEqualTo(sut.Description);
          _clone.Method.ShouldBeEqualTo(sut.Method);
-         _clone.Default.ShouldBeEqualTo(sut.Default);
       }
    }
 

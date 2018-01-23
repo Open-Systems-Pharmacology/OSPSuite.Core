@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain.Services
             NegativeValuesAllowed = false
          };
 
-         msv.ValueOrigin.UpdateFrom(valueOrigin);
+         msv.ValueOrigin.UpdateAllFrom(valueOrigin);
          return msv;
       }
 
