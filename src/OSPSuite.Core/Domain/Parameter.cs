@@ -5,7 +5,7 @@ using OSPSuite.Core.Maths.Random;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IParameter : IQuantity
+   public interface IParameter : IQuantity, IWithValueOrigin, IWithDefaultState
    {
       ParameterBuildMode BuildMode { get; set; }
       IFormula RHSFormula { get; set; }
@@ -97,6 +97,12 @@ namespace OSPSuite.Core.Domain
       public virtual ParameterOrigin Origin { get; private set; }
       public virtual double? DefaultValue { get; set; }
 
+      /// <inheritdoc />
+      public virtual ValueOrigin ValueOrigin { get; }
+
+      /// <inheritdoc />
+      public bool IsDefault { get; set; }
+
       public Parameter()
       {
          Persistable = false;
@@ -107,6 +113,7 @@ namespace OSPSuite.Core.Domain
          Origin = new ParameterOrigin();
          Rules.AddRange(ParameterRules.All());
          NegativeValuesAllowed = true;
+         ValueOrigin = new ValueOrigin();
       }
 
       public virtual void ResetToDefault()
@@ -127,6 +134,8 @@ namespace OSPSuite.Core.Domain
          Info = sourceParameter.Info.Clone();
          Origin = sourceParameter.Origin.Clone();
          DefaultValue = sourceParameter.DefaultValue;
+         ValueOrigin.UpdateAllFrom(sourceParameter.ValueOrigin);
+         IsDefault = sourceParameter.IsDefault;
       }
 
       public double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null)

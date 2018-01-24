@@ -618,7 +618,6 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.Persistable, x2.Persistable);
          Assert.AreEqual(x1.QuantityType, x2.QuantityType);
          Assert.AreEqual(x1.NegativeValuesAllowed, x2.NegativeValuesAllowed);
-         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 
@@ -629,7 +628,6 @@ namespace OSPSuite.Helpers
          AssertAreEqual(x1.Source, x2.Source);
          AssertAreEqual(x1.Method, x2.Method);
          AssertAreEqual(x1.Description, x2.Description);
-         AssertAreEqual(x1.Default, x2.Default);
       }
 
       public static void AreEqualObserver(IObserver x1, IObserver x2)
@@ -646,6 +644,8 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.CanBeVaried, x2.CanBeVaried);
          Assert.AreEqual(x1.BuildingBlockType, x2.BuildingBlockType);
          Assert.AreEqual(x1.GroupName, x2.GroupName);
+         Assert.AreEqual(x1.IsDefault, x2.IsDefault);
+         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
       }
 
       public static void AreEqualQuantityAndContainer(IQuantityAndContainer x1, IQuantityAndContainer x2)
@@ -939,6 +939,7 @@ namespace OSPSuite.Helpers
          AreEqualStrings(x1.MoleculeName, x2.MoleculeName);
          AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
          Assert.AreEqual(x1.ScaleDivisor, x2.ScaleDivisor, 1e-10);
+         AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 
@@ -949,6 +950,8 @@ namespace OSPSuite.Helpers
          AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
          AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
          AreEqualDimension(x1.Dimension, x2.Dimension);
+         AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
+         Assert.AreEqual(x1.IsDefault, x2.IsDefault);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 

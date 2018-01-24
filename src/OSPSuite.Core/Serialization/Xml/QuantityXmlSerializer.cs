@@ -24,7 +24,6 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.IsFixedValue).WithMappingName(Constants.Serialization.Attribute.IS_FIXED_VALUE);
          Map(x => x.Dimension).WithMappingName(Constants.Serialization.Attribute.Dimension);
          Map(x => x.QuantityType);
-         Map(x => x.ValueOrigin);
          Map(x => x.NegativeValuesAllowed);
          MapReference(x => x.Formula).WithMappingName(Constants.Serialization.Attribute.FORMULA);
       }
@@ -104,7 +103,8 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Info);
          Map(x => x.Origin).WithMappingName(Constants.Serialization.ORIGIN);
          Map(x => x.DefaultValue).WithMappingName(Constants.Serialization.Attribute.DEFAULT_VALUE);
-
+         Map(x => x.ValueOrigin);
+         Map(x => x.IsDefault);
          MapReference(x => x.RHSFormula);
       }
    }

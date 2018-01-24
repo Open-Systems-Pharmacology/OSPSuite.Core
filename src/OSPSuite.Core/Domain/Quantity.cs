@@ -1,11 +1,10 @@
-﻿using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IQuantity : IFormulaUsable, IUsingFormula, IWithValueOrigin
+   public interface IQuantity : IFormulaUsable, IUsingFormula
    {
       /// <summary>
       ///    Gets or sets a value indicating whether this <see cref="IQuantity" /> values are persisted during simulation run.
@@ -16,7 +15,7 @@ namespace OSPSuite.Core.Domain
       bool Persistable { get; set; }
 
       /// <summary>
-      ///    Gets or sets a value indicating whether this instance  fixed value is used or not.
+      ///    Gets or sets a value indicating whether this instance fixed value is used or not.
       /// </summary>
       /// <value>
       ///    <c>true</c> if this instance uses the fixed value; otherwise, <c>false</c> .
@@ -48,10 +47,15 @@ namespace OSPSuite.Core.Domain
       private bool _isFixedValue;
       private Unit _displayUnit;
       private bool _persistable;
+      
+      /// <inheritdoc />
       public IDimension Dimension { get; set; }
+
+      /// <inheritdoc />
       public QuantityType QuantityType { get; set; }
+
+      /// <inheritdoc />
       public bool NegativeValuesAllowed { get; set; }
-      public ValueOrigin ValueOrigin { get; }
 
       protected Quantity()
       {
@@ -59,9 +63,9 @@ namespace OSPSuite.Core.Domain
          QuantityType = QuantityType.Undefined;
          Dimension = Constants.Dimension.NO_DIMENSION;
          NegativeValuesAllowed = false;
-         ValueOrigin = new ValueOrigin();
       }
 
+      /// <inheritdoc />
       public IFormula Formula
       {
          get => _formula;
@@ -87,6 +91,7 @@ namespace OSPSuite.Core.Domain
          set => SetProperty(ref _persistable, value);
       }
 
+      /// <inheritdoc />
       public virtual double Value
       {
          get
@@ -114,12 +119,14 @@ namespace OSPSuite.Core.Domain
          }
       }
 
+      /// <inheritdoc />
       public double ValueInDisplayUnit
       {
          get => this.ConvertToDisplayUnit(Value);
          set => Value = this.ConvertToBaseUnit(value);
       }
 
+      /// <inheritdoc />
       public virtual Unit DisplayUnit
       {
          get => _displayUnit ?? Dimension?.DefaultUnit;
@@ -149,7 +156,6 @@ namespace OSPSuite.Core.Domain
          Persistable = sourceQuantity.Persistable;
          Dimension = sourceQuantity.Dimension;
          DisplayUnit = sourceQuantity.DisplayUnit;
-         ValueOrigin.UpdateAllFrom(sourceQuantity.ValueOrigin);
          QuantityType = sourceQuantity.QuantityType;
          NegativeValuesAllowed = sourceQuantity.NegativeValuesAllowed;
 

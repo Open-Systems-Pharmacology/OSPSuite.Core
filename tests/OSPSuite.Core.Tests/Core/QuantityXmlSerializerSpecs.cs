@@ -86,7 +86,7 @@ namespace OSPSuite.Core
          x1.ValueOrigin.Source = ValueOriginSources.Internet;
          x1.ValueOrigin.Id = 5;
          x1.ValueOrigin.Method = ValueOriginDeterminationMethods.ParameterIdentification;
-         x1.ValueOrigin.Default = true;
+         x1.IsDefault = true;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameter(x2, x1);
       }

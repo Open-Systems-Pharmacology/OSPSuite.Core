@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
             Name = moleculeName,
             Dimension = dimension,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
-            NegativeValuesAllowed = false
+            NegativeValuesAllowed = false,
          };
 
          msv.ValueOrigin.UpdateAllFrom(valueOrigin);

@@ -1,7 +1,7 @@
-﻿using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Maths.Random;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -24,6 +24,12 @@ namespace OSPSuite.Core.Domain
       public ParameterOrigin Origin { get; private set; }
       public double? DefaultValue { get; set; }
 
+      /// <inheritdoc />
+      public virtual ValueOrigin ValueOrigin { get; }
+
+      /// <inheritdoc />
+      public bool IsDefault { get; set; }
+
       public DistributedParameter()
       {
          Persistable = false;
@@ -32,6 +38,7 @@ namespace OSPSuite.Core.Domain
          Origin = new ParameterOrigin();
          Rules.AddRange(ParameterRules.All());
          NegativeValuesAllowed = true;
+         ValueOrigin = new ValueOrigin();
       }
 
       public virtual void ResetToDefault()
@@ -59,16 +66,14 @@ namespace OSPSuite.Core.Domain
 
       public new IDistributionFormula Formula
       {
-         get { return base.Formula as IDistributionFormula; }
-         set { base.Formula = value; }
+         get => base.Formula as IDistributionFormula;
+         set => base.Formula = value;
       }
-
 
       public double ProbabilityDensityFor(double value)
       {
          return Formula.ProbabilityDensityFor(value, this);
       }
-
 
       public double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null)
       {
@@ -92,7 +97,7 @@ namespace OSPSuite.Core.Domain
 
       public double Percentile
       {
-         get { return percentile; }
+         get => percentile;
          set
          {
             IsFixedValue = false;
@@ -113,19 +118,13 @@ namespace OSPSuite.Core.Domain
          Value = Value;
       }
 
-      public IParameter MeanParameter
-      {
-         get { return this.Parameter(Constants.Distribution.MEAN); }
-      }
+      public IParameter MeanParameter => this.Parameter(Constants.Distribution.MEAN);
 
-      public IParameter DeviationParameter
-      {
-         get { return this.Parameter(Constants.Distribution.DEVIATION) ?? this.Parameter(Constants.Distribution.GEOMETRIC_DEVIATION); }
-      }
+      public IParameter DeviationParameter => this.Parameter(Constants.Distribution.DEVIATION) ?? this.Parameter(Constants.Distribution.GEOMETRIC_DEVIATION);
 
       public override bool IsFixedValue
       {
-         get { return base.IsFixedValue; }
+         get => base.IsFixedValue;
          set
          {
             //percentile set first so that correct value is available if a value event is raised
@@ -137,14 +136,11 @@ namespace OSPSuite.Core.Domain
 
       private double percentile
       {
-         get { return percentileParameter.Value; }
-         set { percentileParameter.Value = value; }
+         get => percentileParameter.Value;
+         set => percentileParameter.Value = value;
       }
 
-      private IParameter percentileParameter
-      {
-         get { return this.GetSingleChildByName<IParameter>(Constants.Distribution.PERCENTILE); }
-      }
+      private IParameter percentileParameter => this.GetSingleChildByName<IParameter>(Constants.Distribution.PERCENTILE);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -155,79 +151,78 @@ namespace OSPSuite.Core.Domain
          Info = sourceDistributedParameter.Info.Clone();
          DefaultValue = sourceDistributedParameter.DefaultValue;
          Origin = sourceDistributedParameter.Origin.Clone();
+         ValueOrigin.UpdateAllFrom(sourceDistributedParameter.ValueOrigin);
+         IsDefault = sourceDistributedParameter.IsDefault;
       }
 
-      public virtual bool IsChangedByCreateIndividual
-      {
-         get { return this.IsOfType(PKSimBuildingBlockType.Individual); }
-      }
+      public virtual bool IsChangedByCreateIndividual => this.IsOfType(PKSimBuildingBlockType.Individual);
 
       #region Parameter Info
 
       public bool CanBeVaried
       {
-         get { return Info.CanBeVaried; }
-         set { Info.CanBeVaried = value; }
+         get => Info.CanBeVaried;
+         set => Info.CanBeVaried = value;
       }
 
       public string GroupName
       {
-         get { return Info.GroupName; }
-         set { Info.GroupName = value; }
+         get => Info.GroupName;
+         set => Info.GroupName = value;
       }
 
       public bool Visible
       {
-         get { return Info.Visible; }
-         set { Info.Visible = value; }
+         get => Info.Visible;
+         set => Info.Visible = value;
       }
 
       public bool Editable
       {
-         get { return !Info.ReadOnly; }
-         set { Info.ReadOnly = !value; }
+         get => !Info.ReadOnly;
+         set => Info.ReadOnly = !value;
       }
 
       public int Sequence
       {
-         get { return Info.Sequence; }
-         set { Info.Sequence = value; }
+         get => Info.Sequence;
+         set => Info.Sequence = value;
       }
 
       public bool MinIsAllowed
       {
-         get { return Info.MinIsAllowed; }
-         set { Info.MinIsAllowed = value; }
+         get => Info.MinIsAllowed;
+         set => Info.MinIsAllowed = value;
       }
 
       public double? MinValue
       {
-         get { return Info.MinValue; }
-         set { Info.MinValue = value; }
+         get => Info.MinValue;
+         set => Info.MinValue = value;
       }
 
       public double? MaxValue
       {
-         get { return Info.MaxValue; }
-         set { Info.MaxValue = value; }
+         get => Info.MaxValue;
+         set => Info.MaxValue = value;
       }
 
       public bool MaxIsAllowed
       {
-         get { return Info.MaxIsAllowed; }
-         set { Info.MaxIsAllowed = value; }
+         get => Info.MaxIsAllowed;
+         set => Info.MaxIsAllowed = value;
       }
 
       public bool CanBeVariedInPopulation
       {
-         get { return Info.CanBeVariedInPopulation; }
-         set { Info.CanBeVariedInPopulation = value; }
+         get => Info.CanBeVariedInPopulation;
+         set => Info.CanBeVariedInPopulation = value;
       }
 
       public PKSimBuildingBlockType BuildingBlockType
       {
-         get { return Info.BuildingBlockType; }
-         set { Info.BuildingBlockType = value; }
+         get => Info.BuildingBlockType;
+         set => Info.BuildingBlockType = value;
       }
 
       #endregion

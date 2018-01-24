@@ -29,8 +29,12 @@ namespace OSPSuite.Core
       public void TestSerialization()
       {
          var x1 = new ParameterStartValue {ContainerPath = new ObjectPath("A", "B"), StartValue = 3.6, Dimension = DimensionLength};
+         x1.ValueOrigin.Description = "Hello";
+         x1.ValueOrigin.Method  = ValueOriginDeterminationMethods.Assumption;
+         x1.ValueOrigin.Id = 5;
+         x1.IsDefault = true;
 
-         IParameterStartValue x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualParameterStartValue(x1, x2);
       }

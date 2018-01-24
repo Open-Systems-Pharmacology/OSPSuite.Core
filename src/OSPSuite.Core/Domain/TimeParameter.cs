@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Domain
       public bool MinIsAllowed { get; set; }
       public bool MaxIsAllowed { get; set; }
       public bool CanBeVariedInPopulation { get; set; }
+      public bool IsDefault { get; set; }
 
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
