@@ -25,9 +25,6 @@ namespace OSPSuite.Core.Domain
       public double? DefaultValue { get; set; }
 
       /// <inheritdoc />
-      public virtual ValueOrigin ValueOrigin { get; }
-
-      /// <inheritdoc />
       public bool IsDefault { get; set; }
 
       public DistributedParameter()
@@ -38,7 +35,6 @@ namespace OSPSuite.Core.Domain
          Origin = new ParameterOrigin();
          Rules.AddRange(ParameterRules.All());
          NegativeValuesAllowed = true;
-         ValueOrigin = new ValueOrigin();
       }
 
       public virtual void ResetToDefault()
@@ -151,7 +147,6 @@ namespace OSPSuite.Core.Domain
          Info = sourceDistributedParameter.Info.Clone();
          DefaultValue = sourceDistributedParameter.DefaultValue;
          Origin = sourceDistributedParameter.Origin.Clone();
-         ValueOrigin.UpdateAllFrom(sourceDistributedParameter.ValueOrigin);
          IsDefault = sourceDistributedParameter.IsDefault;
       }
 
