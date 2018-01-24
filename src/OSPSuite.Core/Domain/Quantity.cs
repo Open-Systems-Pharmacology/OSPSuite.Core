@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IQuantity : IFormulaUsable, IUsingFormula
+   public interface IQuantity : IFormulaUsable, IUsingFormula, IWithValueOrigin
    {
       /// <summary>
       ///    Gets or sets a value indicating whether this <see cref="IQuantity" /> values are persisted during simulation run.
@@ -47,7 +47,10 @@ namespace OSPSuite.Core.Domain
       private bool _isFixedValue;
       private Unit _displayUnit;
       private bool _persistable;
-      
+
+      /// <inheritdoc />
+      public virtual ValueOrigin ValueOrigin { get; }
+
       /// <inheritdoc />
       public IDimension Dimension { get; set; }
 
@@ -63,6 +66,7 @@ namespace OSPSuite.Core.Domain
          QuantityType = QuantityType.Undefined;
          Dimension = Constants.Dimension.NO_DIMENSION;
          NegativeValuesAllowed = false;
+         ValueOrigin = new ValueOrigin();
       }
 
       /// <inheritdoc />
@@ -158,6 +162,7 @@ namespace OSPSuite.Core.Domain
          DisplayUnit = sourceQuantity.DisplayUnit;
          QuantityType = sourceQuantity.QuantityType;
          NegativeValuesAllowed = sourceQuantity.NegativeValuesAllowed;
+         ValueOrigin.UpdateAllFrom(sourceQuantity.ValueOrigin);
 
          if (sourceQuantity.IsFixedValue)
          {

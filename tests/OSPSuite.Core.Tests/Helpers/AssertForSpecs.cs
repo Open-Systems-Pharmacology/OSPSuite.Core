@@ -618,6 +618,7 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.Persistable, x2.Persistable);
          Assert.AreEqual(x1.QuantityType, x2.QuantityType);
          Assert.AreEqual(x1.NegativeValuesAllowed, x2.NegativeValuesAllowed);
+         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 
@@ -645,7 +646,6 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.BuildingBlockType, x2.BuildingBlockType);
          Assert.AreEqual(x1.GroupName, x2.GroupName);
          Assert.AreEqual(x1.IsDefault, x2.IsDefault);
-         AreEqualValueOrigin(x1.ValueOrigin, x2.ValueOrigin);
       }
 
       public static void AreEqualQuantityAndContainer(IQuantityAndContainer x1, IQuantityAndContainer x2)
