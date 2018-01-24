@@ -158,5 +158,6 @@ namespace OSPSuite.Core.Domain.Builder
       {
          return $"Path={ContainerPath}, Name={Name}";
       }
+
    }
 }

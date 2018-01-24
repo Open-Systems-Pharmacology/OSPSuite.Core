@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain
          parameter.Visible = true;
          parameter.MinValue = 0;
          parameter.MinIsAllowed = true;
-         parameter.ValueOrigin.Default = true;
+         parameter.IsDefault = true;
 
          return parameter;
       }

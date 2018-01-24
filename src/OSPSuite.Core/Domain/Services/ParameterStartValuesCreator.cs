@@ -43,8 +43,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    <paramref name="dimension" />will be used
       /// </param>
       /// <param name="valueOrigin">Value origin for this parameter start value</param>
+      /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new IParameterStartValue</returns>
-      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
+      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false);
    }
 
    internal class ParameterStartValuesCreator : IParameterStartValuesCreator
@@ -177,15 +178,16 @@ namespace OSPSuite.Core.Domain.Services
          return CreateParameterStartValue(parameterPath, parameter);
       }
 
-      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
+      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
-         var psv =  new ParameterStartValue
+         var psv = new ParameterStartValue
          {
             StartValue = startValue,
             Dimension = dimension,
             Id = _idGenerator.NewId(),
             Path = parameterPath,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
+            IsDefault = isDefault
          };
 
          psv.ValueOrigin.UpdateAllFrom(valueOrigin);
@@ -194,7 +196,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter)
       {
-         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin);
+         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin, parameter.IsDefault);
       }
 
       private IParameterStartValue localMoleculeParameterValueFor(IMoleculeBuilder moleculeBuilder, IParameter parameter, IContainer container)

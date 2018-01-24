@@ -43,7 +43,7 @@
          parameter.CanBeVariedInPopulation = false;
          parameter.Visible = true;
          parameter.Editable = true;
-         parameter.ValueOrigin.Default = true;
+         parameter.IsDefault = true;
          return parameter;
       }
    }

@@ -47,7 +47,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_initialized_the_default_solver_settings_parameter_as_default()
       {
-         _solverSettings.AllParameters().Each(x => x.ValueOrigin.Default.ShouldBeTrue());
+         _solverSettings.AllParameters().Each(x => x.IsDefault.ShouldBeTrue());
       }
 
       [Observation]

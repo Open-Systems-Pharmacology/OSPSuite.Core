@@ -15,7 +15,6 @@ namespace OSPSuite.Core
             Source = ValueOriginSources.Database,
             Method = ValueOriginDeterminationMethods.ManualFit,
             Description = "Hello",
-            Default = true
          };
       }
    }
@@ -33,12 +32,6 @@ namespace OSPSuite.Core
       public void should_return_a_value_origin_having_the_same_id_as_the_original_value_origin()
       {
          _clone.Id.ShouldBeEqualTo(sut.Id);
-      }
-
-      [Observation]
-      public void should_return_a_value_origin_having_the_same_default_flag_as_the_original_value_origin()
-      {
-         _clone.Default.ShouldBeEqualTo(sut.Default);
       }
 
 
@@ -79,7 +72,6 @@ namespace OSPSuite.Core
             Description = "New description",
             Source = ValueOriginSources.Database,
             Method = ValueOriginDeterminationMethods.ManualFit,
-            Default = true,
          };
       }
 
@@ -100,7 +92,6 @@ namespace OSPSuite.Core
          sut.Source.ShouldBeEqualTo(_sourceValueOrigin.Source);
          sut.Description.ShouldBeEqualTo(_sourceValueOrigin.Description);
          sut.Method.ShouldBeEqualTo(_sourceValueOrigin.Method);
-         sut.Default.ShouldBeEqualTo(_sourceValueOrigin.Default);
       }
    }
 

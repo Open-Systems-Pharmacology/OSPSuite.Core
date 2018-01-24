@@ -23,12 +23,6 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public int? Id { get; set; }
 
-      /// <summary>
-      ///    Indicates if a parameter value is a default value (e.g. coming from the PK-Sim database) or if the value was entered
-      ///    or modified by the user. Default value is <c>false</c>
-      ///    <remarks>Default is not part of equality check </remarks>
-      /// </summary>
-      public bool Default { get; set; }
 
       /// <summary>
       ///    Source of the value
@@ -82,14 +76,14 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Updates all properties from the value origin including Id and Default state. Typically used in the context of cloning
+      /// Updates all properties from the value origin including Id. Typically used in the context of cloning
       /// </summary>
       public void UpdateAllFrom(ValueOrigin valueOrigin)
       {
-         UpdateFrom(valueOrigin, updateId:true, updateDefault:true);
+         UpdateFrom(valueOrigin, updateId:true);
       }
 
-      public void UpdateFrom(ValueOrigin valueOrigin, bool updateId = false, bool updateDefault = false)
+      public void UpdateFrom(ValueOrigin valueOrigin, bool updateId = false)
       {
          if (valueOrigin == null)
             return;
@@ -97,10 +91,6 @@ namespace OSPSuite.Core.Domain
          //Id is only updated when creating value origin from database. Otherwise it should never change.
          if (updateId)
             Id = valueOrigin.Id;
-
-         //Default is a state coming from database that is changed if the user updates the value. 
-         if (updateDefault)
-            Default = valueOrigin.Default;
 
          Source = valueOrigin.Source;
          Method = valueOrigin.Method;
