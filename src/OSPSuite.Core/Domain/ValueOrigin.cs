@@ -23,7 +23,6 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public int? Id { get; set; }
 
-
       /// <summary>
       ///    Source of the value
       /// </summary>
@@ -76,11 +75,11 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Updates all properties from the value origin including Id. Typically used in the context of cloning
+      ///    Updates all properties from the value origin including Id. Typically used in the context of cloning
       /// </summary>
       public void UpdateAllFrom(ValueOrigin valueOrigin)
       {
-         UpdateFrom(valueOrigin, updateId:true);
+         UpdateFrom(valueOrigin, updateId: true);
       }
 
       public void UpdateFrom(ValueOrigin valueOrigin, bool updateId = false)
@@ -133,7 +132,7 @@ namespace OSPSuite.Core.Domain
 
       private static string defaultDisplay(ValueOrigin valueOrigin)
       {
-         if (isUndefined(valueOrigin))
+         if (valueOrigin.IsUndefined)
             return Captions.ValueOrigins.Undefined;
 
          return new[]
@@ -142,14 +141,17 @@ namespace OSPSuite.Core.Domain
          }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
       }
 
-      private static bool isUndefined(ValueOrigin valueOrigin)
+      public bool IsUndefined
       {
-         if (valueOrigin.Source == null || valueOrigin.Method == null)
-            return true;
+         get
+         {
+            if (Source == null || Method == null)
+               return true;
 
-         return valueOrigin.Source == ValueOriginSources.Undefined &&
-                valueOrigin.Method == ValueOriginDeterminationMethods.Undefined &&
-                string.IsNullOrEmpty(valueOrigin.Description);
+            return Source == ValueOriginSources.Undefined &&
+                   Method == ValueOriginDeterminationMethods.Undefined &&
+                   string.IsNullOrEmpty(Description);
+         }
       }
 
       private string key
@@ -159,7 +161,7 @@ namespace OSPSuite.Core.Domain
             if (!string.IsNullOrEmpty(_key))
                return _key;
 
-            if (isUndefined(this))
+            if (IsUndefined)
                _key = string.Empty;
 
             _key = new[]
