@@ -7,6 +7,7 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding.DevExpress;
@@ -90,7 +91,10 @@ namespace OSPSuite.UI.Binders
       ///    Optional method that specifies whether the <see cref="ValueOrigin" /> of a bound
       ///    object can be edited or not.
       /// </param>
-      /// <param name="defaultColumnWidth">Default column width for the value origin column. If null, no default witdh will be set</param>
+      /// <param name="defaultColumnWidth">
+      ///    Default column width for the value origin column. If null, no default witdh will be
+      ///    set
+      /// </param>
       public void InitializeBinding(
          GridViewBinder<T> gridViewBinder,
          Action<T, ValueOrigin> onValueOriginUpdated,
@@ -105,6 +109,7 @@ namespace OSPSuite.UI.Binders
             _valueOriginEditableFunc = valueOriginEditableFunc;
 
          _gridView.ShowingEditor += onShowingEditor;
+         _gridView.RowCellStyle += updateRowCellStyle;
 
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
             .WithCaption(Captions.ValueOrigin)
@@ -116,6 +121,19 @@ namespace OSPSuite.UI.Binders
             _valueOriginColumn.WithWidth(defaultColumnWidth.Value);
 
          initializeToolTip(_gridView.GridControl);
+      }
+
+      private void updateRowCellStyle(object sender, RowCellStyleEventArgs e)
+      {
+         if (!ColumnIsValueOrigin(e.Column))
+            return;
+
+         var withValueOrigin = _gridViewBinder.ElementAt(e.RowHandle);
+         if (withValueOrigin == null)
+            return;
+
+         var canEditValueOrigin = _valueOriginEditableFunc(withValueOrigin);
+         _gridView.AdjustAppearance(e, canEditValueOrigin);
       }
 
       public bool ValueOriginVisible

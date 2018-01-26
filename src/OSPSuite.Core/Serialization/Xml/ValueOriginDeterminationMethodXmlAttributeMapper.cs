@@ -13,7 +13,10 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public override string Convert(ValueOriginDeterminationMethod valueOriginDeterminationMethod, TSerializationContext context)
       {
-         return valueOriginDeterminationMethod?.Id.ToString();
+         if (valueOriginDeterminationMethod == null)
+            return null;
+
+         return valueOriginDeterminationMethod == ValueOriginDeterminationMethods.Undefined ? null : valueOriginDeterminationMethod.Id.ToString();
       }
    }
 }

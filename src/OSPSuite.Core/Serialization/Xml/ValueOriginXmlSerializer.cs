@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain;
+﻿using System.Xml.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
@@ -15,6 +16,15 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Source);
          Map(x => x.Method);
          Map(x => x.Description).WithMappingName(Constants.Serialization.Attribute.DESCRIPTION);
+      }
+
+      protected override XElement TypedSerialize(ValueOrigin valueOrigin, SerializationContext context)
+      {
+         //do not serialize undefined value origin
+         if (valueOrigin.IsUndefined)
+            return null;
+
+         return base.TypedSerialize(valueOrigin, context);
       }
    }
 }

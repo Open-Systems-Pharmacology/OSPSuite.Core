@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraGrid.Views.Grid;
@@ -25,15 +24,12 @@ namespace OSPSuite.Starter.Forms
          gridView.OptionsSelection.EnableAppearanceFocusedRow = true;
          gridView.OptionsSelection.EnableAppearanceFocusedCell = true;
          gridView.OptionsSelection.MultiSelect = true;
-     
+
          _gridViewBinder = new GridViewBinder<ParameterDTO>(gridView);
 
          initializeBinding();
          _gridViewBinder.BindToSource(generateDummyContent().ToList());
       }
-
-     
-
 
       private void initializeBinding()
       {
@@ -53,9 +49,10 @@ namespace OSPSuite.Starter.Forms
 
       private bool canEditValueOrigin(ParameterDTO parameter)
       {
+         if (!parameter.NameIsOneOf("Prameter_2", "Prameter_4"))
+            return false;
 
          return true;
-         return parameter.NameIsOneOf("Prameter_2", "Prameter_4");
       }
 
       private void onValueOriginUpdated(ParameterDTO parameterDTO, ValueOrigin newValueOrigin)
