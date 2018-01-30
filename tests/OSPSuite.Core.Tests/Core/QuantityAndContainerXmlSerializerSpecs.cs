@@ -93,9 +93,9 @@ namespace OSPSuite.Core
       public void TestSerializationDistributedParameterWithPercentile()
       {
          _dp.Percentile = 0.8;
+         _dp.IsDefault = true;
 
          var dp = SerializeAndDeserialize(_dp);
-
          dp.Formula.ResolveObjectPathsFor(dp);
 
          AssertForSpecs.AreEqualDistributedParameter(dp, _dp);

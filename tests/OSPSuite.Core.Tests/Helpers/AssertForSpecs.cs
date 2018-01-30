@@ -669,6 +669,7 @@ namespace OSPSuite.Helpers
          AreEqualQuantityAndContainer(x1, x2);
          AssertAreEqualDouble(x1.Percentile, x2.Percentile);
          AreEqualFormula(x1.RHSFormula, x2.RHSFormula);
+         Assert.AreEqual(x1.IsDefault, x2.IsDefault);
       }
 
       public static void AreEqualEventAssignment(IEventAssignment x1, IEventAssignment x2)
