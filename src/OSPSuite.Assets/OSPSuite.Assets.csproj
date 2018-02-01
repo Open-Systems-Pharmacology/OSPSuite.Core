@@ -1071,6 +1071,15 @@
   <ItemGroup>
     <None Include="Icons\ValueOriginSourceUnknown.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Properties.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Tag.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\UserDefinedSpecies.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

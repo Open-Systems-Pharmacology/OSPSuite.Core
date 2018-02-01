@@ -470,6 +470,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ValueOriginSourcePublication = AddNamedIcon(Icons.ValueOriginSourcePublication, "ValueOriginSourcePublication");
       public static readonly ApplicationIcon ValueOriginSourceUnknown = AddNamedIcon(Icons.ValueOriginSourceUnknown, "ValueOriginSourceUnknown");
       public static readonly ApplicationIcon ValueOriginSourceOther = AddNamedIcon(Icons.ValueOriginSourceOther, "ValueOriginSourceOther");
+      public static readonly ApplicationIcon Tag = AddNamedIcon(Icons.Tag, "Tag");
+      public static readonly ApplicationIcon UserDefinedSpecies = AddNamedIcon(Icons.UserDefinedSpecies, "UserDefinedSpecies");
+      public static readonly ApplicationIcon Properties = AddNamedIcon(Icons.Properties, "Properties");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

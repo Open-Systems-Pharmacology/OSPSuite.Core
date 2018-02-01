@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain
       public static ValueOriginSource ParameterIdentification = create(ValueOriginSourceId.ParameterIdentification, Captions.ValueOrigins.Sources.ParameterIdentification, ApplicationIcons.ValueOriginSourceParameterIdentification);
       public static ValueOriginSource Publication = create(ValueOriginSourceId.Publication, Captions.ValueOrigins.Sources.Publication, ApplicationIcons.ValueOriginSourcePublication);
       public static ValueOriginSource Other = create(ValueOriginSourceId.Other, Captions.ValueOrigins.Other, ApplicationIcons.ValueOriginSourceOther);
-      public static ValueOriginSource Unknown = create(ValueOriginSourceId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.ValueOriginSourceOther);
+      public static ValueOriginSource Unknown = create(ValueOriginSourceId.Unknown, Captions.ValueOrigins.Unknown, ApplicationIcons.ValueOriginSourceUnknown);
       public static ValueOriginSource Undefined = create(ValueOriginSourceId.Undefined, Captions.ValueOrigins.Undefined, ApplicationIcons.EmptyIcon);
 
       public static ValueOriginSource ById(ValueOriginSourceId valueOriginSourceId)

@@ -2933,6 +2933,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Properties {
+            get {
+                object obj = ResourceManager.GetObject("Properties", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Protein {
             get {
                 object obj = ResourceManager.GetObject("Protein", resourceCulture);
@@ -3783,6 +3793,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Tag {
+            get {
+                object obj = ResourceManager.GetObject("Tag", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Time {
             get {
                 object obj = ResourceManager.GetObject("Time", resourceCulture);
@@ -3966,6 +3986,16 @@ namespace OSPSuite.Assets {
         internal static System.Drawing.Icon UpperJejunum {
             get {
                 object obj = ResourceManager.GetObject("UpperJejunum", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon UserDefinedSpecies {
+            get {
+                object obj = ResourceManager.GetObject("UserDefinedSpecies", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
