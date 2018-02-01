@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Mappers
 {
    public interface IProcessRateParameterCreator
    {
-      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder,IBuildConfiguration buildConfiguration);
+      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration);
    }
 
    public class ProcessRateParameterCreator : IProcessRateParameterCreator
@@ -20,15 +20,17 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder,IBuildConfiguration buildConfiguration)
+      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration)
       {
-         var parameter = _objectBaseFactory.Create<IParameter>()
-                                           .WithName(Constants.Parameters.PROCESS_RATE)
-                                           .WithDimension(processBuilder.Dimension)
-                                           .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula,buildConfiguration));
+         var parameter = _objectBaseFactory
+            .Create<IParameter>()
+            .WithName(Constants.Parameters.PROCESS_RATE)
+            .WithDimension(processBuilder.Dimension)
+            .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula, buildConfiguration));
 
          parameter.Visible = false;
          parameter.Editable = false;
+         parameter.IsDefault = true;
 
          addAdditionalParentReference(parameter.Formula);
 
@@ -39,6 +41,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          parameter.AddTag(processBuilder.Name);
          parameter.AddTag(Constants.Parameters.PROCESS_RATE);
+
          return parameter;
       }
 
@@ -46,16 +49,21 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          foreach (var objectPath in formula.ObjectPaths)
          {
-            if(isRelativePath(objectPath))
+            if (isRelativePath(objectPath))
                objectPath.AddAtFront(ObjectPath.PARENT_CONTAINER);
          }
       }
 
       private bool isRelativePath(IObjectPath objectPath)
       {
-         if (!objectPath.Any()) return false;
-         if (objectPath[0].Equals(ObjectPath.PARENT_CONTAINER)) return true;
-         if (objectPath.Count().Equals(1))return true;
+         if (!objectPath.Any())
+            return false;
+
+         if (objectPath[0] == ObjectPath.PARENT_CONTAINER)
+            return true;
+
+         if (objectPath.Count == 1)
+            return true;
 
          return false;
       }
