@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.Assets;
@@ -32,6 +33,7 @@ namespace OSPSuite.Core
       protected IDialogCreator _dialogCreator;
       protected ParameterSelection _linkedParameter4;
       private IOSPSuiteExecutionContext _context;
+      protected List<ICommand> _allValueOriginCommands;
 
       protected override void Context()
       {
@@ -76,7 +78,16 @@ namespace OSPSuite.Core
          _context = A.Fake<IOSPSuiteExecutionContext>();
          sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator, _context);
 
-         A.CallTo(_parameterTask).WithReturnType<ICommand>().Returns(A.Fake<ICommand<IOSPSuiteExecutionContext>>());
+         _allValueOriginCommands = new List<ICommand>();
+
+         A.CallTo(() => _parameterTask.SetParameterValue(A<IParameter>._, A<double>._, A<ISimulation>._)).ReturnsLazily(x => A.Fake<IOSPSuiteCommmand<IOSPSuiteExecutionContext>>());
+
+         A.CallTo(() => _parameterTask.UpdateParameterValueOrigin(A<IParameter>._, A<ValueOrigin>._, A<ISimulation>._)).ReturnsLazily(x =>
+         {
+            var command = A.Fake<IOSPSuiteCommmand<IOSPSuiteExecutionContext>>();
+            _allValueOriginCommands.Add(command);
+            return command;
+         });
       }
    }
 
@@ -123,8 +134,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_hide_all_value_origin_commands()
       {
-         var valueOriginCommands = _command.DowncastTo<IMacroCommand>().All().Where(x => x.IsAnImplementationOf<UpdateValueOriginCommand>());
-         valueOriginCommands.Each(x => x.Visible.ShouldBeFalse());
+         _allValueOriginCommands.Each(x => x.Visible.ShouldBeFalse());
       }
 
       [Observation]
@@ -150,18 +160,6 @@ namespace OSPSuite.Core
       public void should_not_warn_the_user()
       {
          A.CallTo(() => _dialogCreator.MessageBoxInfo(Warning.ImportingParameterIdentificationValuesFromCancelledRun)).MustNotHaveHappened();
-      }
-
-      [Observation]
-      public void should_update_the_value_description_with_the_date_and_the_name_of_the_parmaeter_identification()
-      {
-         _linkedParameter1.Parameter.ValueOrigin.Description.ShouldBeEqualTo(Captions.ParameterIdentification.ValueUpdatedFrom(_parameterIdentification.Name, _now.ToIsoFormat()));
-      }
-
-      [Observation]
-      public void should_update_the_value_origin_to_parameter_identification()
-      {
-         _linkedParameter1.Parameter.ValueOrigin.Source.ShouldBeEqualTo(ValueOriginSources.ParameterIdentification);
       }
 
       public override void GlobalCleanup()

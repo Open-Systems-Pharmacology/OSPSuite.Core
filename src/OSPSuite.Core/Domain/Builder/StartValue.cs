@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Builder
       private IDimension _dimension;
       private IObjectPath _containerPath;
       public ValueOrigin ValueOrigin { get; }
-
+ 
       protected StartValueBase()
       {
          Dimension = Constants.Dimension.NO_DIMENSION;
@@ -152,6 +152,15 @@ namespace OSPSuite.Core.Domain.Builder
          Dimension = sourceStartValue.Dimension;
          Formula = cloneManager.Clone(sourceStartValue.Formula);
          ValueOrigin.UpdateAllFrom(sourceStartValue.ValueOrigin);
+      }
+
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
+      {
+         if(Equals(ValueOrigin, sourceValueOrigin))
+            return;
+
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
+         OnPropertyChanged(() => ValueOrigin);
       }
 
       public override string ToString()

@@ -724,6 +724,12 @@
     <Compile Include="Views\EditOutputSelectionsView.Designer.cs">
       <DependentUpon>EditOutputSelectionsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditValueOriginView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\EditValueOriginView.Designer.cs">
+      <DependentUpon>EditValueOriginView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ExceptionView.cs">
       <SubType>Form</SubType>
     </Compile>

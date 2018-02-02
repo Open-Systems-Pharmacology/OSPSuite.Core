@@ -1804,15 +1804,17 @@ namespace OSPSuite.Assets
          return $"Renamed observed data from '{oldName}' to '{newName}'";
       }
 
-      public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin)
+      public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin, string withValueOriginType, string withValueOriginDisplay, string containerType, string containerDisplay)
       {
+         string withObjectTypeInfo = $"for {withValueOriginType} '{withValueOriginDisplay}' in {containerType} '{containerDisplay}'";
+
          if(string.IsNullOrEmpty(oldValueOrigin))
-            return $"Value origin set to '{newValueOrigin}'";
+            return $"Value origin set to '{newValueOrigin}' {withObjectTypeInfo}";
 
          if(string.IsNullOrEmpty(newValueOrigin))
-            return $"Value origin set to '{oldValueOrigin}'";
+            return $"Value origin set to '{oldValueOrigin}' {withObjectTypeInfo}";
 
-         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}'";
+         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}' {withObjectTypeInfo}";
       }
    }
 
