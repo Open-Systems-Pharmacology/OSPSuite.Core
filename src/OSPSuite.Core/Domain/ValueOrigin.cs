@@ -7,6 +7,8 @@ namespace OSPSuite.Core.Domain
 {
    public class ValueOrigin : IComparable<ValueOrigin>, IComparable
    {
+      public static ValueOrigin Undefined = new ValueOrigin();
+
       /// <summary>
       ///    Key computed based on properties to assess if values origin are equals
       /// </summary>
@@ -120,10 +122,7 @@ namespace OSPSuite.Core.Domain
          return Equals(other.key, key);
       }
 
-      public override int GetHashCode()
-      {
-         return key.GetHashCode();
-      }
+      public override int GetHashCode() => key.GetHashCode();
 
       public override string ToString() => Display;
 
@@ -141,18 +140,7 @@ namespace OSPSuite.Core.Domain
          }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString("-");
       }
 
-      public bool IsUndefined
-      {
-         get
-         {
-            if (Source == null || Method == null)
-               return true;
-
-            return Source == ValueOriginSources.Undefined &&
-                   Method == ValueOriginDeterminationMethods.Undefined &&
-                   string.IsNullOrEmpty(Description);
-         }
-      }
+      public bool IsUndefined => Equals(Undefined);
 
       private string key
       {
@@ -160,9 +148,6 @@ namespace OSPSuite.Core.Domain
          {
             if (!string.IsNullOrEmpty(_key))
                return _key;
-
-            if (IsUndefined)
-               _key = string.Empty;
 
             _key = new[]
             {

@@ -32,6 +32,8 @@ namespace OSPSuite.Core.Domain
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
       public ParameterOrigin Origin { get; private set; }
       public ValueOrigin ValueOrigin { get; private set; }
+     
+
       public double? DefaultValue { get; set; }
       public bool IsChangedByCreateIndividual { get; private set; }
 
@@ -65,7 +67,7 @@ namespace OSPSuite.Core.Domain
 
       public string Id
       {
-         get { return Constants.TIME; }
+         get => Constants.TIME;
          set
          {
             /*nothing to do here*/
@@ -74,7 +76,7 @@ namespace OSPSuite.Core.Domain
 
       public string Name
       {
-         get { return Constants.TIME; }
+         get => Constants.TIME;
          set
          {
             /*nothing to do here*/
@@ -126,14 +128,11 @@ namespace OSPSuite.Core.Domain
          return false;
       }
 
-      public IContainer RootContainer
-      {
-         get { return ParentContainer; }
-      }
+      public IContainer RootContainer => ParentContainer;
 
       public double Value
       {
-         get { return 0; }
+         get => 0;
          set
          {
             /*nothing to do here*/
@@ -174,7 +173,7 @@ namespace OSPSuite.Core.Domain
 
       public IFormula Formula
       {
-         get { return null; }
+         get => null;
          set
          {
             ;
@@ -187,7 +186,7 @@ namespace OSPSuite.Core.Domain
       /// <value><c>true</c> if persistable; otherwise, <c>false</c>.</value>
       public bool Persistable
       {
-         get { return false; }
+         get => false;
          set
          {
             ;
@@ -202,7 +201,7 @@ namespace OSPSuite.Core.Domain
       /// </value>
       public bool IsFixedValue
       {
-         get { return true; }
+         get => true;
          set
          {
             ;
@@ -211,7 +210,7 @@ namespace OSPSuite.Core.Domain
 
       public QuantityType QuantityType
       {
-         get { return QuantityType.Undefined; }
+         get => QuantityType.Undefined;
          set { }
       }
 
@@ -219,27 +218,30 @@ namespace OSPSuite.Core.Domain
 
       public ParameterBuildMode BuildMode
       {
-         get { return ParameterBuildMode.Global; }
+         get => ParameterBuildMode.Global;
          set { }
       }
 
       public IFormula RHSFormula
       {
-         get { return null; }
+         get => null;
          set
          {
             ;
          }
       }
 
-      public IBusinessRuleSet Rules
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
       {
-         get { return new BusinessRuleSet(); }
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
       }
+
+
+      public IBusinessRuleSet Rules => new BusinessRuleSet();
 
       public Unit DisplayUnit
       {
-         get { return Dimension.DefaultUnit; }
+         get => Dimension.DefaultUnit;
          set
          {
             /* nothing to do */

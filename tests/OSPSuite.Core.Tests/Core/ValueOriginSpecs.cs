@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using NUnit.Framework;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -33,7 +34,6 @@ namespace OSPSuite.Core
       {
          _clone.Id.ShouldBeEqualTo(sut.Id);
       }
-
 
       [Observation]
       public void should_return_a_value_origin_having_the_same_properties_at_the_source_value_origin()
@@ -161,14 +161,12 @@ namespace OSPSuite.Core
          _valueOrigin1.CompareTo(_valueOrigin2).ShouldNotBeEqualTo(0);
       }
 
-
       [Observation]
       public void should_return_a_difference_if_they_have_a_different_method()
       {
          _valueOrigin2.Method = ValueOriginDeterminationMethods.ManualFit;
          _valueOrigin1.CompareTo(_valueOrigin2).ShouldNotBeEqualTo(0);
       }
-
 
       [Observation]
       public void should_return_a_difference_if_they_have_a_different_description()
@@ -227,6 +225,43 @@ namespace OSPSuite.Core
       {
          _valueOrigin1.Description = "New description";
          _valueOrigin1.ShouldNotBeEqualTo(_valueOrigin2);
+      }
+   }
+
+   public class When_checking_for_equality_between_two_value_origins : concern_for_ValueOrigin
+   {
+      private ValueOrigin _sourceValueOrigin;
+      private ValueOrigin _targetValueOrigin;
+
+      protected override void Context()
+      {
+         base.Context();
+         _sourceValueOrigin = new ValueOrigin();
+         _targetValueOrigin = new ValueOrigin();
+
+         _sourceValueOrigin.Source = ValueOriginSources.Database;
+         _sourceValueOrigin.Method = ValueOriginDeterminationMethods.InVitro;
+         _sourceValueOrigin.Description = "Hello";
+      }
+
+      [Observation]
+      [TestCase(ValueOriginSourceId.Database, ValueOriginDeterminationMethodId.InVitro, "Hello", true)]
+      [TestCase(ValueOriginSourceId.Database, ValueOriginDeterminationMethodId.InVitro, "NOT_SATE", false)]
+      [TestCase(ValueOriginSourceId.Database, ValueOriginDeterminationMethodId.ManualFit, "Hello", false)]
+      [TestCase(ValueOriginSourceId.Internet, ValueOriginDeterminationMethodId.InVitro, "Hello", false)]
+      public void should_return_true_if_they_have_the_same_method_source_description_and_false_otherwise(ValueOriginSourceId source, ValueOriginDeterminationMethodId method, string description, bool equal)
+      {
+         _targetValueOrigin.Source = ValueOriginSources.ById(source);
+         _targetValueOrigin.Method = ValueOriginDeterminationMethods.ById(method);
+         _targetValueOrigin.Description = description;
+         _sourceValueOrigin.Equals(_targetValueOrigin).ShouldBeEqualTo(equal);
+      }
+
+      [Observation]
+      public void shoud_return_true_if_they_are_both_undefined()
+      {
+         _sourceValueOrigin = new ValueOrigin();
+         _sourceValueOrigin.Equals(_targetValueOrigin).ShouldBeTrue();
       }
    }
 }

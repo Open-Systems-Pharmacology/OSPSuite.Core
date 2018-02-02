@@ -121,6 +121,7 @@
     <Compile Include="DTO\SimulationSelectionDTO.cs" />
     <Compile Include="DTO\ValidationMessageDTO.cs" />
     <Compile Include="DTO\ValueDTO.cs" />
+    <Compile Include="DTO\ValueOriginDTO.cs" />
     <Compile Include="Extensions\CurveChartExtensions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Mappers\BaseDataTableMapper.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Mappers\IDataTableToStringMapper.cs" />
     <Compile Include="Mappers\IHistoryItemDTOEnumerableToHistoryItemDTOList.cs" />
     <Compile Include="Mappers\IHistoryToHistoryDTOMapper.cs" />
+    <Compile Include="Presenters\EditValueOriginPresenter.cs" />
     <Compile Include="Presenters\Importer\ExcelPreviewPresenter.cs" />
     <Compile Include="Presenters\Importer\Fonts.cs" />
     <Compile Include="Presenters\Importer\ImportDataTableGridPresenter.cs" />
@@ -563,6 +565,7 @@
     <Compile Include="Views\Commands\ILabelView.cs" />
     <Compile Include="Views\Comparisons\IMainComparisonView.cs" />
     <Compile Include="Views\Diagram\IBaseDiagramView.cs" />
+    <Compile Include="Views\IEditValueOriginView.cs" />
     <Compile Include="Views\Importer\IExcelPreviewView.cs" />
     <Compile Include="Views\Importer\IImportDataTableGridView.cs" />
     <Compile Include="Views\Importer\IImporterView.cs" />

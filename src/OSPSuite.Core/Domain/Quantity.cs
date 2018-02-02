@@ -170,6 +170,15 @@ namespace OSPSuite.Core.Domain
          }
       }
 
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
+      {
+         if (Equals(ValueOrigin, sourceValueOrigin))
+            return;
+
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
+         OnPropertyChanged(() => ValueOrigin);
+      }
+
       private void onFormulaChanged(object obj)
       {
          //Formula has changed but value is fixed. Nothing to do 

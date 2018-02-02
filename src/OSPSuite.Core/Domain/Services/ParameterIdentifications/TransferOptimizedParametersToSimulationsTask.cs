@@ -76,10 +76,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var parameter = linkedParameter.Parameter;
 
          var setValueCommand = _parameterTask.SetParameterValue(parameter, value, linkedParameter.Simulation);
-         return new[] {setValueCommand, updateValueOriginCommand(identificationParameter, parameter)};
+         return new[] {setValueCommand, updateValueOriginCommand(identificationParameter, parameter, linkedParameter.Simulation).AsHidden()};
       }
 
-      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter)
+      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter, ISimulation simulation)
       {
          var isoDate = SystemTime.Now().ToIsoFormat();
          var valueOrigin = new ValueOrigin
@@ -89,8 +89,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             Method = ValueOriginDeterminationMethods.ParameterIdentification
          };
 
-         return new UpdateValueOriginCommand(valueOrigin, parameter, _executionContext) {Visible = false}
-            .Run(_executionContext);
+         return _parameterTask.UpdateParameterValueOrigin(parameter, valueOrigin, simulation);
       }
    }
 }
