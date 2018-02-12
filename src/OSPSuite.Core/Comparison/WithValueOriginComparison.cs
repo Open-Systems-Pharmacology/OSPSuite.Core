@@ -19,11 +19,11 @@ namespace OSPSuite.Core.Comparison
 
       private bool shouldAddValueOriginToComparison(int numberOfItemsInComparisonBeforeStartingComparison, IComparison<T> comparison)
       {
-         //Value origin should alwyas be shown as a difference if all properties should be displayed
+         //Value origin should always be shown as a difference if all properties should be displayed
          if (!comparison.Settings.OnlyComputingRelevant)
             return true;
 
-         //no changes in compared entities, we do not show value origin difference
+         //no change in compared entities, we do not show value origin difference
          if (numberOfItemsInComparisonBeforeStartingComparison == comparison.Report.Count)
             return false;
 
