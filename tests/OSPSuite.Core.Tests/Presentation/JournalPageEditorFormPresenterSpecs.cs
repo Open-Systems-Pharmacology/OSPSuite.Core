@@ -137,7 +137,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void Should_not_have_hidden_the_view()
+      public void should_not_have_hidden_the_view()
       {
          A.CallTo(() => _journalPageEditorFormView.Hide()).MustNotHaveHappened();
       }
@@ -161,7 +161,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void Should_have_hidden_the_view()
+      public void should_have_hidden_the_view()
       {
          A.CallTo(() => _journalPageEditorFormView.Hide()).MustHaveHappened();
       }

@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void Should_set_labels_to_object_Names()
+      public void should_set_labels_to_object_Names()
       {
          _event.LeftCaption.ShouldBeEqualTo(_leftObject.Name);
          _event.RightCaption.ShouldBeEqualTo(_rightObject.Name);
@@ -103,7 +103,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void Should_set_labels_to_specified_names()
+      public void should_set_labels_to_specified_names()
       {
          _event.LeftCaption.ShouldBeEqualTo("A");
          _event.RightCaption.ShouldBeEqualTo("B");

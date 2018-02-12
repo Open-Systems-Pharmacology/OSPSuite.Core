@@ -48,7 +48,7 @@ namespace OSPSuite.Converter.v5_6
       }
 
       [Observation]
-      public void Should_change_all_non_local_passive_transports_parameters_to_local()
+      public void should_change_all_non_local_passive_transports_parameters_to_local()
       {
          _passiveTransportBuildingBlock.SelectMany(
             pbt => pbt.GetAllChildren<IParameter>(p => !p.BuildMode.Equals(ParameterBuildMode.Local))).ShouldBeEmpty();

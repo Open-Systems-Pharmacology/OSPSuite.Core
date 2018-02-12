@@ -42,11 +42,11 @@
 
    public class Comparison<TObject> : IComparison<TObject> where TObject : class
    {
-      public TObject Object1 { get; private set; }
-      public TObject Object2 { get; private set; }
-      public ComparerSettings Settings { get; private set; }
-      public DiffReport Report { get; private set; }
-      public object CommonAncestor { get; private set; }
+      public TObject Object1 { get; }
+      public TObject Object2 { get; }
+      public ComparerSettings Settings { get; }
+      public DiffReport Report { get; }
+      public object CommonAncestor { get; }
 
       public Comparison(TObject object1, TObject object2, ComparerSettings settings, DiffReport report, object commonAncestor)
       {
@@ -62,9 +62,6 @@
          Report.Add(diffItem);
       }
 
-      public bool ComparedObjectsDefined
-      {
-         get { return Object1 != null && Object2 != null; }
-      }
+      public bool ComparedObjectsDefined => Object1 != null && Object2 != null;
    }
 }

@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void Should_use_the_task_to_remove_the_journal_page_from_the_journal()
+      public void should_use_the_task_to_remove_the_journal_page_from_the_journal()
       {
          A.CallTo(() => _journalTask.DeleteJournalPages(A<IReadOnlyList<JournalPage>>.That.Contains(_journalPage))).MustHaveHappened();
       }

@@ -41,13 +41,13 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_have_update_the_properties()
+      public void should_have_update_the_properties()
       {
          _result.Name.ShouldBeEqualTo(sut.Name);
       }
 
       [Observation]
-      public void Should_clone_the_tag()
+      public void should_clone_the_tag()
       {
          var tag = _result.Tags.FirstOrDefault();
          ReferenceEquals(tag,_tag).ShouldBeFalse();

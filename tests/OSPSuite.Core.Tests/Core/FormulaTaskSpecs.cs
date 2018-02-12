@@ -296,7 +296,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_throw_circular_reference_from_sum_formula_Exception()
+      public void should_throw_circular_reference_from_sum_formula_Exception()
       {
          _exception.ShouldBeAnInstanceOf<CircularReferenceInSumFormulaException>();
       }

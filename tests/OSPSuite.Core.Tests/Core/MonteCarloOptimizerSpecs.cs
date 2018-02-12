@@ -38,7 +38,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_compute_the_correct_values()
+      public void should_compute_the_correct_values()
       {
          _results[0].ShouldBeEqualTo(0,1e-8);
          _results[1].ShouldBeEqualTo(0.748097239052678, 1e-8);

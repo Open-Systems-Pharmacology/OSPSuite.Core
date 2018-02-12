@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -39,14 +39,14 @@ namespace OSPSuite.Core.Comparison
             comparerSettings,
             report,
             commonAncestor
-            );
+         );
 
          Compare(comparison);
       }
 
       public abstract void Compare(IComparison<TObject> comparison);
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
+      internal void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
       {
          CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
       }

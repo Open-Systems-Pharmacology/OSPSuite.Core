@@ -634,6 +634,7 @@ namespace OSPSuite.Assets
 
          public static readonly string OnlyComputeModelRelevantProperties = "Only compare properties relevant to simulation results";
          public static readonly string CompareHiddenEntities = "Compare hidden entities (e.g. parameters)";
+         public static readonly string ShowValueOriginForChangedValues = "Show value origin for changed values";
          public static readonly string FormulaComparisonValue = "Values";
          public static readonly string FormulaComparisonFormula = "Formulas";
          public static readonly string RunComparison = "Start";

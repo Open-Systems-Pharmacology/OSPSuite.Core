@@ -30,8 +30,9 @@ namespace OSPSuite.Starter.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.dockManager1 = new DevExpress.XtraBars.Docking.DockManager();
-         this.comparisonPanel = new UxDockPanel();
+         this.components = new System.ComponentModel.Container();
+         this.dockManager1 = new DevExpress.XtraBars.Docking.DockManager(this.components);
+         this.comparisonPanel = new OSPSuite.UI.Controls.UxDockPanel();
          this.dockPanel1_Container = new DevExpress.XtraBars.Docking.ControlContainer();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dockManager1)).BeginInit();
@@ -62,15 +63,15 @@ namespace OSPSuite.Starter.Views
          this.comparisonPanel.ID = new System.Guid("89933267-46a1-4f24-8305-b49b304bf4ff");
          this.comparisonPanel.Location = new System.Drawing.Point(0, 0);
          this.comparisonPanel.Name = "comparisonPanel";
-         this.comparisonPanel.OriginalSize = new System.Drawing.Size(200, 507);
-         this.comparisonPanel.Size = new System.Drawing.Size(1098, 507);
+         this.comparisonPanel.OriginalSize = new System.Drawing.Size(200, 535);
+         this.comparisonPanel.Size = new System.Drawing.Size(1098, 535);
          this.comparisonPanel.Text = "panelComparison";
          // 
          // dockPanel1_Container
          // 
          this.dockPanel1_Container.Location = new System.Drawing.Point(4, 23);
          this.dockPanel1_Container.Name = "dockPanel1_Container";
-         this.dockPanel1_Container.Size = new System.Drawing.Size(1090, 480);
+         this.dockPanel1_Container.Size = new System.Drawing.Size(1090, 507);
          this.dockPanel1_Container.TabIndex = 0;
          // 
          // ComparisonTestView

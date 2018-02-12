@@ -19,7 +19,18 @@ namespace OSPSuite.Starter.Presenters
          _mainComparisonPresenter.Initialize();
 
          var container1 = new Container().WithName("C1");
+
+         var p1C1 = new Parameter().WithName("P1").WithParentContainer(container1);
+         p1C1.Value = 5;
+         p1C1.ValueOrigin.Method = ValueOriginDeterminationMethods.InVitro;
+         p1C1.ValueOrigin.Source = ValueOriginSources.Database;
+
          var container2 = new Container().WithName("C2");
+         var p1C2 = new Parameter().WithName("P1").WithParentContainer(container2);
+         p1C2.Value = 4;
+         p1C2.ValueOrigin.Method = ValueOriginDeterminationMethods.InVitro;
+         p1C2.ValueOrigin.Source = ValueOriginSources.ParameterIdentification;
+
          _mainComparisonPresenter.CompareObjects(container1, container2);
       }
    }

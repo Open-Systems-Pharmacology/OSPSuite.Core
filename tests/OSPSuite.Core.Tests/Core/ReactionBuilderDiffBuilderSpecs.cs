@@ -38,7 +38,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.IsEmpty.ShouldBeTrue();
       }
@@ -68,7 +68,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
       }
@@ -98,7 +98,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
       }
@@ -128,7 +128,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(1);
       }
@@ -169,7 +169,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(1);
          _report[0].DowncastTo<PropertyValueDiffItem>().FormattedValue1.ShouldBeEqualTo(new UnitFormatter().Format(2, _preferredUnit));
@@ -200,7 +200,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
       }
