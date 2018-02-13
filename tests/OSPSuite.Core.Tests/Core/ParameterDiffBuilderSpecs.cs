@@ -41,7 +41,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_one_report_entry_for_each_parameter()
       {
-         _report.Count().ShouldBeEqualTo(2);
+         _report.Count.ShouldBeEqualTo(2);
          _report[0].DowncastTo<PropertyValueDiffItem>().PropertyName.ShouldNotBeNull();
       }
    }
@@ -72,7 +72,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_not_show_any_difference()
       {
-         _report.Count().ShouldBeEqualTo(0);
+         _report.Count.ShouldBeEqualTo(0);
       }
    }
 
@@ -102,9 +102,39 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_some_differences()
       {
-         _report.Count().ShouldBeEqualTo(1);
+         _report.Count.ShouldBeEqualTo(1);
       }
    }
+
+   public class When_comparing_parameters_having_the_same_value_but_using_different_value_origin_and_the_comparison_compares_everything : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var c1 = new Container { Name = "O" };
+         var p11 = new Parameter { Name = "P1" }.WithParentContainer(c1);
+         p11.Formula = new ConstantFormula(5);
+         p11.ValueOrigin.Description = "HELLO";
+
+
+         var c2 = new Container { Name = "O" };
+         var p21 = new Parameter { Name = "P1" }.WithParentContainer(c2);
+         p21.Formula = new ConstantFormula(5);
+         p21.ValueOrigin.Description = "HELLO-2";
+
+         _object1 = c1;
+         _object2 = c2;
+
+         _comparerSettings = new ComparerSettings { FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = false };
+      }
+
+      [Observation]
+      public void should_have_some_differences()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
 
    public class When_comparing_parameters_having_the_different_base_values_but_the_same_display_value : concern_for_ObjectComparer
    {
@@ -200,7 +230,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_report_the_differences_accordingly()
       {
-         _report.Count().ShouldBeEqualTo(1);
+         _report.Count.ShouldBeEqualTo(1);
       }
    }
 
@@ -234,7 +264,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_report_the_differences_accordingly()
       {
-         _report.Count().ShouldBeEqualTo(1);
+         _report.Count.ShouldBeEqualTo(1);
       }
    }
 

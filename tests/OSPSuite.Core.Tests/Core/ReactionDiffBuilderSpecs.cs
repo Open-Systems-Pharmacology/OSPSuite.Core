@@ -30,7 +30,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.IsEmpty.ShouldBeTrue();
       }   
@@ -61,7 +61,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -92,7 +92,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.Count.ShouldBeEqualTo(2);
       }
@@ -123,7 +123,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

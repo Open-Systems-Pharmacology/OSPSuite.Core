@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.FormulaComparison);
          Map(x => x.OnlyComputingRelevant);
          Map(x => x.RelativeTolerance);
+         Map(x => x.ShowValueOrigin);
       }
    }
 }

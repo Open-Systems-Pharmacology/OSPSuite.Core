@@ -23,7 +23,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_a_diiference()
+      public void should_report_a_diiference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -50,7 +50,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_a_diiference()
+      public void should_report_a_diiference()
       {
          _report.Count.ShouldBeEqualTo(2);
       }
@@ -77,7 +77,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_a_diiference()
+      public void should_report_a_diiference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

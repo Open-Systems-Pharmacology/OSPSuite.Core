@@ -90,7 +90,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_replace_keywords_including_molecule()
+      public void should_replace_keywords_including_molecule()
       {
          A.CallTo(() => _keywordReplacerTask.ReplaceIn(_moleculeAmount)).MustHaveHappened();
       }

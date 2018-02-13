@@ -34,7 +34,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_no_differences()
+      public void should_return_no_differences()
       {
          _report.ShouldBeEmpty();
       }
@@ -249,7 +249,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_the_differences()
+      public void should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(3);
       }

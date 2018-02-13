@@ -20,7 +20,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_difference()
+      public void should_report_the_difference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

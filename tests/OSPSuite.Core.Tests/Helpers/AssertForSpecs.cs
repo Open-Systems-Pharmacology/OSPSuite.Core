@@ -770,6 +770,7 @@ namespace OSPSuite.Helpers
          Assert.AreEqual(x1.OnlyComputingRelevant, x2.OnlyComputingRelevant);
          Assert.AreEqual(x1.RelativeTolerance, x2.RelativeTolerance);
          Assert.AreEqual(x1.CompareHiddenEntities, x2.CompareHiddenEntities);
+         Assert.AreEqual(x1.ShowValueOrigin, x2.ShowValueOrigin);
       }
 
       public static void AreEqualCalculationMethod(ICoreCalculationMethod x1, ICoreCalculationMethod x2)

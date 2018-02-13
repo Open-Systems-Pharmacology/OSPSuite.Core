@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Views.Comparisons
 
       public bool SettingsVisible
       {
-         get { return layoutItemSettings.Visible; }
+         get => layoutItemSettings.Visible;
          set
          {
             layoutGroupSettings.Visibility = LayoutVisibilityConvertor.FromBoolean(value);

@@ -52,7 +52,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_have_set_BuildingVersion()
+      public void should_have_set_BuildingVersion()
       {
          sut.Version.ShouldBeEqualTo(_buildingBlockVersion);
       }

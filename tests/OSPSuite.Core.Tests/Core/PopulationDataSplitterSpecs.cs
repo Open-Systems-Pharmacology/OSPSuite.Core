@@ -166,7 +166,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_fill_correct_value_for_nonTableParameters()
+      public void should_fill_correct_value_for_nonTableParameters()
       {
          var nonTableParameters = _variableParameters.Where(x => !x.TablePoints.Any()).ToList();
          nonTableParameters.Count.ShouldBeEqualTo(2);
@@ -176,7 +176,7 @@ namespace OSPSuite.Core
       }      
 
       [Observation]
-      public void Should_fill_correct_value_for_nonTableParameters_in_case_of_corresponding_parameter_in_basis_individual_is_table()
+      public void should_fill_correct_value_for_nonTableParameters_in_case_of_corresponding_parameter_in_basis_individual_is_table()
       {
          var nonTableParameters = _variableParameters.Where(x => x.Path.Equals(_nonAgingPath2)).ToList();
          nonTableParameters.Count.ShouldBeEqualTo(1);
@@ -263,7 +263,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_the_First_IDs()
+      public void should_return_the_First_IDs()
       {
          _result.ShouldOnlyContain(0, 1, 2, 3);
       }
@@ -280,7 +280,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_return_the_Last_IDs()
+      public void should_return_the_Last_IDs()
       {
          _result.ShouldOnlyContain(4, 5, 6);
       }

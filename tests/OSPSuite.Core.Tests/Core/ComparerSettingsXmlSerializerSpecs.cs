@@ -13,12 +13,12 @@ namespace OSPSuite.Core
          {
             FormulaComparison = FormulaComparison.Value,
             OnlyComputingRelevant = true,
-            RelativeTolerance = 1e-2
+            RelativeTolerance = 1e-2,
+            ShowValueOrigin = false
          };
 
 
          var x2 = SerializeAndDeserialize(x1);
-
 
          AssertForSpecs.AreEqualComparerSettings(x1, x2);
       }

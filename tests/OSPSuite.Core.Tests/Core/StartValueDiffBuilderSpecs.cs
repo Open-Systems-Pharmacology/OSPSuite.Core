@@ -29,7 +29,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_not_report_any_differences()
+      public void should_not_report_any_differences()
       {
          _report.ShouldBeEmpty();
       }
@@ -53,7 +53,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -79,7 +79,67 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_be_visible : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv1.IsPresent = true;
+         msv1.ScaleDivisor = 1;
+         msv1.ValueOrigin.Description = "DESC1";
+         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv2.IsPresent = true;
+         msv2.ScaleDivisor = 10;
+         msv2.ValueOrigin.Description = "DESC2";
+
+         _object1 = msv1;
+         _object2 = msv2;
+
+         _comparerSettings.ShowValueOrigin = true;
+      }
+
+      [Observation]
+      public void should_report_the_differences_of_values_and_value_origin()
+      {
+         _report.Count.ShouldBeEqualTo(2);
+      }
+   }
+
+   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_not_be_visible : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv1.IsPresent = true;
+         msv1.ScaleDivisor = 1;
+         msv1.ValueOrigin.Description = "DESC1";
+         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv2.IsPresent = true;
+         msv2.ScaleDivisor = 10;
+         msv2.ValueOrigin.Description = "DESC2";
+
+         _object1 = msv1;
+         _object2 = msv2;
+
+         _comparerSettings.ShowValueOrigin = false;
+      }
+
+      [Observation]
+      public void should_report_the_differences_of_values_only()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -103,7 +163,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -128,7 +188,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -153,7 +213,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_no_difference()
+      public void should_report_no_difference()
       {
          _report.Count.ShouldBeEqualTo(0);
       }
@@ -179,7 +239,7 @@ namespace OSPSuite.Core
 
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -203,7 +263,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_also_report_the_formula_differences()
+      public void should_also_report_the_formula_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
@@ -228,7 +288,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences()
+      public void should_report_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

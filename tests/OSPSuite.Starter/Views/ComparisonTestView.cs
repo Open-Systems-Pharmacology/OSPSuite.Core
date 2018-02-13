@@ -1,7 +1,7 @@
-﻿using OSPSuite.Utility.Container;
-using OSPSuite.Presentation.Regions;
+﻿using OSPSuite.Presentation.Regions;
 using OSPSuite.Starter.Presenters;
 using OSPSuite.UI.Controls;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Views
 {
@@ -20,7 +20,6 @@ namespace OSPSuite.Starter.Views
          _presenter = presenter;
       }
 
-
       private void initializeRegions()
       {
          registerRegion(comparisonPanel, RegionNames.Comparison);
@@ -28,7 +27,7 @@ namespace OSPSuite.Starter.Views
 
       private void registerRegion(UxDockPanel dockPanel, RegionName regionName)
       {
-         IoC.RegisterImplementationOf((IRegion)dockPanel, regionName.Name);
+         IoC.RegisterImplementationOf((IRegion) dockPanel, regionName.Name);
          dockPanel.InitializeWith(regionName);
       }
    }

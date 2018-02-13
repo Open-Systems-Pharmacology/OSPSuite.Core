@@ -23,7 +23,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(1);
       }
@@ -47,7 +47,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(1);
       }
@@ -78,7 +78,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(2);
       }

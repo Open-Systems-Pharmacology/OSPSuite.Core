@@ -45,12 +45,19 @@ namespace OSPSuite.Core.Comparison
       /// </summary>
       public bool CompareHiddenEntities { get; set; }
 
+      /// <summary>
+      /// Specifies if Value origin should be displayed for compared quantities. Default is <c>true</c>
+      /// </summary>
+      public bool ShowValueOrigin { get; set; }
+
+
       public ComparerSettings()
       {
          OnlyComputingRelevant = true;
          FormulaComparison = FormulaComparison.Formula;
          RelativeTolerance = Constants.DOUBLE_RELATIVE_EPSILON;
          CompareHiddenEntities = false;
+         ShowValueOrigin = true;
       }
    }
 }
