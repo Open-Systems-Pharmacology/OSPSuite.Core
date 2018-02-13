@@ -1,10 +1,11 @@
-﻿using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
+﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Services
 {
@@ -13,6 +14,8 @@ namespace OSPSuite.Core.Services
       void SetParameterFavorite(IParameter parameter, bool isFavorite);
       void SaveToFile();
       void LoadFromFile();
+      void MoveUp(IEnumerable<string> entriesToMove);
+      void MoveDown(IEnumerable<string> entriesToMove);
    }
 
    public class FavoriteTask : IFavoriteTask
@@ -64,6 +67,18 @@ namespace OSPSuite.Core.Services
          _favoriteRepository.Clear();
          _favoriteRepository.AddFavorites(favoritesFromFiles);
          _eventPublisher.PublishEvent(new FavoritesLoadedEvent());
+      }
+
+      public void MoveUp(IEnumerable<string> entriesToMove)
+      {
+         _favoriteRepository.Favorites.MoveUp(entriesToMove);
+         _eventPublisher.PublishEvent(new FavoritesOrderChangedEvent());
+      }
+
+      public void MoveDown(IEnumerable<string> entriesToMove)
+      {
+         _favoriteRepository.Favorites.MoveDown(entriesToMove);
+         _eventPublisher.PublishEvent(new FavoritesOrderChangedEvent());
       }
    }
 }
