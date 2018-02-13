@@ -24,4 +24,9 @@ namespace OSPSuite.Core.Events
    {
       
    }
+
+   public class FavoritesOrderChangedEvent
+   {
+
+   }
 }
