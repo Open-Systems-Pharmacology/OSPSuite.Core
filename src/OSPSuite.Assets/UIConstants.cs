@@ -1993,6 +1993,12 @@ namespace OSPSuite.Assets
       {
          public static readonly string HowToCreateReactionLink = "To add a molecule to educts, products or modifiers, draw a connection between reaction and molecule.";
       }
+
+      public static class Journal
+      {
+         public static readonly string NavigateToNextPage = "Navigate to next page";
+         public static readonly string NavigateToPreviousPage = "Navigate to previous page";
+      }
    }
 
    public class ObservedData

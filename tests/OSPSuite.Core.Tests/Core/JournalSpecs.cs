@@ -14,7 +14,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_retrieving_a_working_jounral_item_by_id : concern_for_Journal
+   public class When_retrieving_a_jounral_page_by_id : concern_for_Journal
    {
       private JournalPage _journalPage;
 
@@ -35,6 +35,34 @@ namespace OSPSuite.Core
       public void should_return_null_if_no_journal_page_is_defined_with_the_givn_id()
       {
          sut.JournalPageById("DOES NOT EXIST").ShouldBeNull();
+      }
+   }
+
+   public class When_retrieving_a_jounral_page_by_index : concern_for_Journal
+   {
+      private JournalPage _journalPage1;
+      private JournalPage _journalPage2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _journalPage1 = new JournalPage().WithId("Page1");
+         _journalPage2 = new JournalPage().WithId("Page2");
+         sut.AddJournalPages(new []{_journalPage1,_journalPage2});
+      }
+
+      [Observation]
+      public void should_return_the_page_defined_at_the_given_index_if_the_index_is_withing_the_correct_bound()
+      {
+         sut.JournalPageByIndex(sut.JournalPageIndexFor(_journalPage1)).ShouldBeEqualTo(_journalPage1);
+         sut.JournalPageByIndex(sut.JournalPageIndexFor(_journalPage2)).ShouldBeEqualTo(_journalPage2);
+      }
+
+      [Observation]
+      public void should_return_null_if_the_index_is_out_of_bounds()
+      {
+         sut.JournalPageByIndex(-10).ShouldBeEqualTo(null);
+         sut.JournalPageByIndex(3).ShouldBeEqualTo(null);
       }
    }
 

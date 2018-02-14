@@ -257,7 +257,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true, _journalSearch));
+         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true));
       }
 
       [Observation]
@@ -337,7 +337,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_not_crash()
       {
-         sut.Handle(new EditJournalPageStartedEvent(new JournalPage {Id = "XYZ"}, showEditor: false, journalSearch: null));
+         sut.Handle(new EditJournalPageStartedEvent(new JournalPage {Id = "XYZ"}, showEditor: false));
       }
    }
 
