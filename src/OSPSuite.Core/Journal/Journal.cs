@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Journal
 {
@@ -44,10 +44,29 @@ namespace OSPSuite.Core.Journal
          _journalPages.AddRange(journalPages);
       }
 
-      public virtual JournalPage JournalPageById(string id)
+      /// <summary>
+      ///    Returns the index of the <paramref name="journalPage" /> in the journal. This is not necessarily the UniqueIndex
+      /// </summary>
+      /// <param name="journalPage">Journal page for which the index should be retrieved</param>
+      /// <returns></returns>
+      public virtual int JournalPageIndexFor(JournalPage journalPage)
       {
-         return _journalPages.FindById(id);
+         return _journalPages.IndexOf(journalPage);
       }
+
+      /// <summary>
+      ///    Returns the <see cref="JournalPage" /> with the given <paramref name="index" /> or null if the index is out of bound
+      /// </summary>
+      /// <param name="index">0-based index indicating the position of the page in the list of pages</param>
+      public virtual JournalPage JournalPageByIndex(int index)
+      {
+         if (index < 0 || index >= _journalPages.Count)
+            return null;
+
+         return _journalPages[index];
+      }
+
+      public virtual JournalPage JournalPageById(string id) => _journalPages.FindById(id);
 
       public virtual JournalPage JournalPageContaining(RelatedItem relatedItem)
       {

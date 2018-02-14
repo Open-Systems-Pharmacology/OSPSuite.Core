@@ -1,15 +1,13 @@
-﻿using OSPSuite.Utility.Container;
-using OSPSuite.Infrastructure.Journal.Commands;
+﻿using OSPSuite.Infrastructure.Journal.Commands;
 using OSPSuite.Infrastructure.Journal.Queries;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Infrastructure.Journal
 {
    public interface IDatabaseMediator
    {
-      IJournalDatabaseCommand<T> CommandFor<T>();
       void ExecuteCommand<T>(T payload);
 
-      IJournalDatabaseQuery<TResponse> QueryFor<TResponse>(IQuery<TResponse> query);
       TResponse ExecuteQuery<TResponse>(IQuery<TResponse> query);
    }
 
@@ -22,25 +20,25 @@ namespace OSPSuite.Infrastructure.Journal
          _container = container;
       }
 
-      public IJournalDatabaseCommand<T> CommandFor<T>()
+      private IJournalDatabaseCommand<T> commandFor<T>()
       {
          return _container.Resolve<IJournalDatabaseCommand<T>>();
       }
 
       public void ExecuteCommand<T>(T payload)
       {
-         var command = CommandFor<T>();
+         var command = commandFor<T>();
          command.ExecuteInTransaction(payload);
       }
 
-      public IJournalDatabaseQuery<TResponse> QueryFor<TResponse>(IQuery<TResponse> query) 
+      private IJournalDatabaseQuery<TResponse> queryFor<TResponse>(IQuery<TResponse> query)
       {
          return _container.Resolve<IJournalDatabaseQuery<TResponse>>(query.GetType().Name);
       }
 
-      public TResponse ExecuteQuery<TResponse>(IQuery<TResponse> query) 
+      public TResponse ExecuteQuery<TResponse>(IQuery<TResponse> query)
       {
-         var queryHandler = QueryFor(query);
+         var queryHandler = queryFor(query);
          return queryHandler.QueryInConnection(query);
       }
    }

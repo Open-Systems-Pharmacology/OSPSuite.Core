@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Events;
-using FakeItEasy;
 using OSPSuite.Core.Journal;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views.Journal;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation
 {
@@ -22,6 +22,8 @@ namespace OSPSuite.Presentation
       protected IJournalTask _journalTask;
       protected JournalSearch _journalSearch;
       private IPresentationUserSettings _userSettings;
+      protected IJournalRetriever _journalRetriever;
+      protected Journal _journal;
 
       protected override void Context()
       {
@@ -32,11 +34,15 @@ namespace OSPSuite.Presentation
          _mapper = A.Fake<IJournalPageToJournalPageDTOMapper>();
          _journalSearch = new JournalSearch();
          _userSettings = A.Fake<IPresentationUserSettings>();
-
-         sut = new JournalPageEditorPresenter(_view, _contentLoader, _mapper, _journalTask, _userSettings);
+         _journalRetriever = A.Fake<IJournalRetriever>();
+         sut = new JournalPageEditorPresenter(_view, _contentLoader, _mapper, _journalTask, _journalRetriever, _userSettings);
 
          _journalPage = new JournalPage();
          _journalPageDTO = new JournalPageDTO(_journalPage);
+
+         _journal = new Journal();
+         _journal.AddJournalPage(_journalPage);
+         A.CallTo(() => _journalRetriever.Current).Returns(_journal);
          A.CallTo(_mapper).WithReturnType<JournalPageDTO>().Returns(_journalPageDTO);
       }
    }
@@ -72,7 +78,6 @@ namespace OSPSuite.Presentation
       {
          A.CallTo(() => _view.EnableSaveButton()).MustHaveHappened();
       }
-
    }
 
    public class When_editing_a_page_and_checking_if_that_page_is_already_being_edited : concern_for_JournalPageEditorPresenter
@@ -133,7 +138,6 @@ namespace OSPSuite.Presentation
 
    public class when_editing_journal_page : concern_for_JournalPageEditorPresenter
    {
-
       protected override void Because()
       {
          sut.Edit(_journalPage);
@@ -162,7 +166,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true, _journalSearch));
+         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true));
       }
 
       [Observation]
@@ -182,7 +186,7 @@ namespace OSPSuite.Presentation
    {
       protected override void Because()
       {
-         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true, _journalSearch));
+         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true));
       }
 
       [Observation]
@@ -209,9 +213,7 @@ namespace OSPSuite.Presentation
       }
    }
 
-
-
-   public class when_save_before_exit_is_confirmed : concern_for_JournalPageEditorPresenter
+   public class When_save_before_exit_is_confirmed : concern_for_JournalPageEditorPresenter
    {
       protected override void Context()
       {
@@ -232,4 +234,85 @@ namespace OSPSuite.Presentation
       }
    }
 
-}	
+   public class When_navigating_to_the_previous_page : concern_for_JournalPageEditorPresenter
+   {
+      private JournalPage _journalPage1;
+      private JournalPage _journalPage3;
+
+      protected override void Context()
+      {
+         base.Context();
+         _journal.Remove(_journalPage);
+         _journalPage1 = new JournalPage();
+         _journalPage3 = new JournalPage();
+         _journal.AddJournalPage(_journalPage1);
+         _journal.AddJournalPage(_journalPage);
+         _journal.AddJournalPage(_journalPage3);
+
+         sut.Edit(_journalPage);
+      }
+
+      protected override void Because()
+      {
+         sut.NavigateToPreviousPage();
+      }
+
+      [Observation]
+      public void should_retrieve_the_previous_page_from_the_journal_and_start_the_edit_process()
+      {
+         A.CallTo(() => _journalTask.Edit(_journalPage1, true, null)).MustHaveHappened();
+      }
+   }
+
+   public class When_navigating_to_the_next_page : concern_for_JournalPageEditorPresenter
+   {
+      private JournalPage _journalPage1;
+      private JournalPage _journalPage3;
+
+      protected override void Context()
+      {
+         base.Context();
+         _journal.Remove(_journalPage);
+         _journalPage1 = new JournalPage();
+         _journalPage3 = new JournalPage();
+         _journal.AddJournalPage(_journalPage1);
+         _journal.AddJournalPage(_journalPage);
+         _journal.AddJournalPage(_journalPage3);
+
+         sut.Edit(_journalPage);
+      }
+
+      protected override void Because()
+      {
+         sut.NavigateToNextPage();
+      }
+
+      [Observation]
+      public void should_retrieve_the_previous_page_from_the_journal_and_start_the_edit_process()
+      {
+         A.CallTo(() => _journalTask.Edit(_journalPage3, true, null)).MustHaveHappened();
+      }
+   }
+
+   public class When_navigating_to_the_previous_page_from_the_first_page : concern_for_JournalPageEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _journal.AddJournalPage(_journalPage);
+
+         sut.Edit(_journalPage);
+      }
+
+      protected override void Because()
+      {
+         sut.NavigateToPreviousPage();
+      }
+
+      [Observation]
+      public void should_not_navigate_to_a_new_page()
+      {
+         A.CallTo(() => _journalTask.Edit(A<JournalPage>._, A<bool>._, null)).MustNotHaveHappened();
+      }
+   }
+}

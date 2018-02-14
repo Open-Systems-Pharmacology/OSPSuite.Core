@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true, _journalSearch));
+         sut.Handle(new EditJournalPageStartedEvent(_journalPage, true));
       }
 
       [Observation]
@@ -89,7 +89,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new EditJournalPageStartedEvent(_journalPage, false, _journalSearch));
+         sut.Handle(new EditJournalPageStartedEvent(_journalPage, false));
       }
 
       [Observation]

@@ -197,7 +197,7 @@ namespace OSPSuite.Core
 
       [Observation]
       public void should_have_reordered_the_favorites()
-      {
+      {  
          _favorites.ShouldOnlyContainInOrder("FAV2", "FAV1");
       }
 

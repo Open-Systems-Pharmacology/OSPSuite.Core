@@ -28,13 +28,11 @@ namespace OSPSuite.Core.Journal
 
    public class EditJournalPageStartedEvent : JournalPageEvent
    {
-      public bool ShowEditor { get; private set; }
-      public JournalSearch JournalSearch { get; private set; }
+      public bool ShowEditor { get; }
 
-      public EditJournalPageStartedEvent(JournalPage journalPage, bool showEditor, JournalSearch journalSearch) : base(journalPage)
+      public EditJournalPageStartedEvent(JournalPage journalPage, bool showEditor) : base(journalPage)
       {
          ShowEditor = showEditor;
-         JournalSearch = journalSearch;
       }
    }
 

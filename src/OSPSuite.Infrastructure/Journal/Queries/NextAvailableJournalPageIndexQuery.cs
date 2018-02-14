@@ -1,5 +1,4 @@
-﻿using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Extensions;
+﻿using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Infrastructure.Journal.Queries
 {

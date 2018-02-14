@@ -252,7 +252,7 @@ namespace OSPSuite.UI.Views.Journal
 
       public JournalPageDTO SelectedJournalPage
       {
-         get { return _gridViewBinder.FocusedElement; }
+         get => _gridViewBinder.FocusedElement;
          set
          {
             if (value == null) return;
@@ -263,7 +263,7 @@ namespace OSPSuite.UI.Views.Journal
 
       public bool SearchVisible
       {
-         get { return layoutGroupSearch.Visible; }
+         get => layoutGroupSearch.Visible;
          set
          {
             layoutGroupSearch.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
@@ -335,15 +335,9 @@ namespace OSPSuite.UI.Views.Journal
          return rowHandle == gridView.FocusedRowHandle && gridView.GridControl.Focused;
       }
 
-      private Color focusedRowBackColor
-      {
-         get { return gridView.PaintAppearance.FocusedRow.BackColor; }
-      }
+      private Color focusedRowBackColor => gridView.PaintAppearance.FocusedRow.BackColor;
 
-      private Color focusedRowForeColor
-      {
-         get { return gridView.PaintAppearance.FocusedRow.ForeColor; }
-      }
+      private Color focusedRowForeColor => gridView.PaintAppearance.FocusedRow.ForeColor;
 
       private void setDefaultRowBackColor(AppearanceObject appearance, int rowHandle)
       {
