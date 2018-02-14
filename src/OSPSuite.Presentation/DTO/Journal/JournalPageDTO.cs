@@ -117,6 +117,7 @@ namespace OSPSuite.Presentation.DTO.Journal
 
       public byte[] Data
       {
+         // Return empty byte array if page is not loaded. Sometimes Devexpress tries to access the content when binding
          get => !JournalPage.IsLoaded ? new byte[] { } : JournalPage.Content.Data;
          set => JournalPage.Content.Data = value;
       }
