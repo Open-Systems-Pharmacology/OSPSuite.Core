@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -86,7 +87,11 @@ namespace OSPSuite.Core.Journal
          return Display;
       }
 
-      public string Display => $"{ItemType}: {Name} from {Origin.DisplayName} version {Version}";
+      public string Display => IsFile ? 
+         $"{ItemType}: {FullPath}" : 
+         $"{ItemType}: {Name} from {Origin.DisplayName} version {Version}";
+
+      public bool IsFile => string.Equals(ItemType, Constants.RELATIVE_ITEM_FILE_ITEM_TYPE);
    }
 
    public class JournalPage : ItemWithContent

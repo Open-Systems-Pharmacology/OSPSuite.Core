@@ -68,6 +68,13 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.Clone);
       }
 
+      public static IMenuBarButton AddParameterIdentificationToJournal(ParameterIdentification parameterIdentification)
+      {
+         return CreateMenuButton.WithCaption(Captions.Journal.AddToJournal)
+            .WithCommandFor<AddParameterAnalysableToActiveJournalPageUICommand, IParameterAnalysable>(parameterIdentification)
+            .WithIcon(ApplicationIcons.AddToJournal);
+      }
+
       public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(ParameterIdentification parameterIdentification)
       {
          yield return EditParameterIdentification(parameterIdentification);
@@ -77,7 +84,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          yield return CloneParameterIdentification(parameterIdentification)
             .AsGroupStarter();
          
-         yield return ObjectBaseCommonContextMenuItems.AddToJournal(parameterIdentification);
+         yield return AddParameterIdentificationToJournal(parameterIdentification);
 
          yield return ExportParameterIdentificationToMatlab(parameterIdentification);
 

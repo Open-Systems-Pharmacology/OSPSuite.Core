@@ -1354,4 +1354,13 @@
   <data name="UserDefinedSpecies" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\UserDefinedSpecies.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Snapshot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Snapshot.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnapshotExport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SnapshotExport.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnapshotImport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SnapshotImport.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

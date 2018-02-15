@@ -70,9 +70,10 @@ namespace OSPSuite.Presentation
          _usedObservedData1 = new UsedObservedData {Id = "Obs1"};
          _usedObservedData2 = new UsedObservedData {Id = "Obs2"};
          A.CallTo(() => _observedDataRepository.All()).Returns(new[] {_observedData1, _observedData2});
-         A.CallTo(() => _simulation1.UsesObservedData(_observedData2)).Returns(true);
-         A.CallTo(() => _simulation2.UsesObservedData(_observedData1)).Returns(true);
-         A.CallTo(() => _simulation2.UsesObservedData(_observedData2)).Returns(true);
+
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation1)).Returns(new[] { _observedData2 });
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation2)).Returns(new[] { _observedData1, _observedData2 });
+
          _parameterIdentification.AddSimulation(_simulation1);
          _parameterIdentification.AddSimulation(_simulation2);
 

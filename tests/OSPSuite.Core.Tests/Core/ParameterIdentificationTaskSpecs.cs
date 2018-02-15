@@ -291,10 +291,7 @@ namespace OSPSuite.Core
          _observedData2 = DomainHelperForSpecs.ObservedData("OBS2");
          _observedData3 = DomainHelperForSpecs.ObservedData("OBS3");
 
-         A.CallTo(() => _observedDataRepository.All()).Returns(new[] {_observedData1, _observedData2, _observedData3});
-
-         A.CallTo(() => _simulation.UsesObservedData(_observedData1)).Returns(true);
-         A.CallTo(() => _simulation.UsesObservedData(_observedData2)).Returns(true);
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new []{_observedData1, _observedData2});
 
          var simulationQuantitySelection = A.Fake<SimulationQuantitySelection>();
          A.CallTo(() => simulationQuantitySelection.Path).Returns(_outputPath);

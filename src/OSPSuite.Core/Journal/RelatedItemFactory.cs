@@ -54,8 +54,7 @@ namespace OSPSuite.Core.Journal
          var name = relatedObject.Name;
          var data = _relatedItemSerializer.Serialize(relatedObject);
          var itemType = _relatedItemTypeRetriever.TypeFor(relatedObject);
-
-
+         
          return createRelatedItem(name, itemType, data, relatedItem =>
          {
             relatedItem.Origin = _applicationConfiguration.Product;

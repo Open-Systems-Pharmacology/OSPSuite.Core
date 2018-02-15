@@ -31,12 +31,14 @@
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.buttonAddRelatedItemFromFile = new DevExpress.XtraEditors.SimpleButton();
-         this.gridControl = new Controls.UxGridControl();
-         this.gridView = new Controls.UxGridView();
+         this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridView = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemGrid = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemAddRelatedItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.buttonReloadAllRelatedItems = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutItemReloadAllRelatedItems = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -46,6 +48,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemGrid)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddRelatedItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemReloadAllRelatedItems)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
@@ -53,9 +56,11 @@
          this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.buttonAddRelatedItemFromFile);
          this.layoutControl.Controls.Add(this.gridControl);
+         this.layoutControl.Controls.Add(this.buttonReloadAllRelatedItems);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
          this.layoutControl.Name = "layoutControl";
+         this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(869, 44, 450, 400);
          this.layoutControl.Root = this.layoutControlGroup1;
          this.layoutControl.Size = new System.Drawing.Size(566, 323);
          this.layoutControl.TabIndex = 0;
@@ -63,9 +68,9 @@
          // 
          // buttonAddRelatedItemFromFile
          // 
-         this.buttonAddRelatedItemFromFile.Location = new System.Drawing.Point(285, 2);
+         this.buttonAddRelatedItemFromFile.Location = new System.Drawing.Point(252, 2);
          this.buttonAddRelatedItemFromFile.Name = "buttonAddRelatedItemFromFile";
-         this.buttonAddRelatedItemFromFile.Size = new System.Drawing.Size(279, 22);
+         this.buttonAddRelatedItemFromFile.Size = new System.Drawing.Size(159, 22);
          this.buttonAddRelatedItemFromFile.StyleController = this.layoutControl;
          this.buttonAddRelatedItemFromFile.TabIndex = 5;
          this.buttonAddRelatedItemFromFile.Text = "buttonAddRelatedItemFromFile";
@@ -82,7 +87,10 @@
          // 
          // gridView
          // 
+         this.gridView.AllowsFiltering = true;
+         this.gridView.EnableColumnContextMenu = true;
          this.gridView.GridControl = this.gridControl;
+         this.gridView.MultiSelect = false;
          this.gridView.Name = "gridView";
          // 
          // layoutControlGroup1
@@ -91,10 +99,11 @@
          this.layoutControlGroup1.GroupBordersVisible = false;
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemGrid,
-            this.layoutItemAddRelatedItem,
-            this.emptySpaceItem});
+            this.emptySpaceItem,
+            this.layoutItemReloadAllRelatedItems,
+            this.layoutItemAddRelatedItem});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
+         this.layoutControlGroup1.Name = "Root";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.layoutControlGroup1.Size = new System.Drawing.Size(566, 323);
          this.layoutControlGroup1.TextVisible = false;
@@ -111,9 +120,9 @@
          // layoutItemAddRelatedItem
          // 
          this.layoutItemAddRelatedItem.Control = this.buttonAddRelatedItemFromFile;
-         this.layoutItemAddRelatedItem.Location = new System.Drawing.Point(283, 0);
+         this.layoutItemAddRelatedItem.Location = new System.Drawing.Point(250, 0);
          this.layoutItemAddRelatedItem.Name = "layoutItemAddRelatedItem";
-         this.layoutItemAddRelatedItem.Size = new System.Drawing.Size(283, 26);
+         this.layoutItemAddRelatedItem.Size = new System.Drawing.Size(163, 26);
          this.layoutItemAddRelatedItem.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemAddRelatedItem.TextVisible = false;
          // 
@@ -122,8 +131,26 @@
          this.emptySpaceItem.AllowHotTrack = false;
          this.emptySpaceItem.Location = new System.Drawing.Point(0, 0);
          this.emptySpaceItem.Name = "emptySpaceItem";
-         this.emptySpaceItem.Size = new System.Drawing.Size(283, 26);
+         this.emptySpaceItem.Size = new System.Drawing.Size(250, 26);
          this.emptySpaceItem.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // buttonReloadAllRelatedItems
+         // 
+         this.buttonReloadAllRelatedItems.Location = new System.Drawing.Point(415, 2);
+         this.buttonReloadAllRelatedItems.Name = "buttonReloadAllRelatedItems";
+         this.buttonReloadAllRelatedItems.Size = new System.Drawing.Size(149, 22);
+         this.buttonReloadAllRelatedItems.StyleController = this.layoutControl;
+         this.buttonReloadAllRelatedItems.TabIndex = 6;
+         this.buttonReloadAllRelatedItems.Text = "buttonReloadAllRelatedItems";
+         // 
+         // layoutItemReloadAllRelatedItems
+         // 
+         this.layoutItemReloadAllRelatedItems.Control = this.buttonReloadAllRelatedItems;
+         this.layoutItemReloadAllRelatedItems.Location = new System.Drawing.Point(413, 0);
+         this.layoutItemReloadAllRelatedItems.Name = "layoutItemReloadAllRelatedItems";
+         this.layoutItemReloadAllRelatedItems.Size = new System.Drawing.Size(153, 26);
+         this.layoutItemReloadAllRelatedItems.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemReloadAllRelatedItems.TextVisible = false;
          // 
          // RelatedItemsView
          // 
@@ -141,6 +168,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemGrid)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddRelatedItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemReloadAllRelatedItems)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -155,5 +183,7 @@
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem;
       private Controls.UxGridControl gridControl;
       private Controls.UxGridView gridView;
+      private DevExpress.XtraEditors.SimpleButton buttonReloadAllRelatedItems;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemReloadAllRelatedItems;
    }
 }

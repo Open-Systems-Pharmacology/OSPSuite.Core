@@ -1080,6 +1080,15 @@
   <ItemGroup>
     <None Include="Icons\UserDefinedSpecies.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Snapshot.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\SnapshotExport.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\SnapshotImport.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

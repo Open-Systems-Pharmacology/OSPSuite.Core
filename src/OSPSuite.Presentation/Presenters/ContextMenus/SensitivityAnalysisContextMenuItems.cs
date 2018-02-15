@@ -50,7 +50,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IMenuBarItem AddToJournal(SensitivityAnalysis sensitivityAnalysis)
       {
-         return ObjectBaseCommonContextMenuItems.AddToJournal(sensitivityAnalysis);
+         return CreateMenuButton.WithCaption(Captions.Journal.AddToJournal)
+            .WithCommandFor<AddParameterAnalysableToActiveJournalPageUICommand, IParameterAnalysable>(sensitivityAnalysis)
+            .WithIcon(ApplicationIcons.AddToJournal);
       }
 
       public static IMenuBarItem Rename(SensitivityAnalysis sensitivityAnalysis)

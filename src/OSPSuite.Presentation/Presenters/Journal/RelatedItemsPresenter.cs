@@ -11,6 +11,7 @@ namespace OSPSuite.Presentation.Presenters.Journal
       void DeleteBinding();
       void ReloadRelatedItem(RelatedItem relatedItem);
       void AddRelatedItemFromFile();
+      void ReloadAllRelatedItems();
    }
 
    public class RelatedItemsPresenter : AbstractCommandCollectorPresenter<IRelatedItemsView, IRelatedItemsPresenter>, IRelatedItemsPresenter
@@ -68,6 +69,11 @@ namespace OSPSuite.Presentation.Presenters.Journal
       {
          _journalPageTask.AddRelatedItemFromFile(_journalPage);
          rebind();
+      }
+
+      public void ReloadAllRelatedItems()
+      {
+         _reloadRelatedItemTask.ImportAllIntoApplication(_journalPage.RelatedItems);
       }
 
       private void rebind()

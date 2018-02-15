@@ -135,6 +135,9 @@ namespace OSPSuite.UI.Services
       public SuperToolTip ToolTipFor(RelatedItem relatedItem)
       {
          var toolTip = CreateToolTip(relatedItem.Display, Captions.Journal.RelatedItem, ApplicationIcons.IconByName(relatedItem.IconName));
+         if(relatedItem.IsFile)
+            return toolTip;
+
          return AddSubItemTo(toolTip, Captions.Journal.Project, relatedItem.FullPath);
       }
 
