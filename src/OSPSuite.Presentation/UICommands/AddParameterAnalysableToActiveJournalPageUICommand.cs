@@ -4,7 +4,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.UICommands
 {

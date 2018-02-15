@@ -64,7 +64,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Action<int> HotTracked { set; }
 
       /// <summary>
-      /// Refresh the display after external changes were made to the chart
+      ///    Refresh the display after external changes were made to the chart
       /// </summary>
       void Refresh();
    }

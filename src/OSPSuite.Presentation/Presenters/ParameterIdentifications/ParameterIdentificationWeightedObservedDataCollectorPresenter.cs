@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -51,14 +51,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          {
             using (new BatchUpdate(View))
             {
-               // You can get a null weighted observed data when a mapping has not been assigned observed data yet
-               allWeightedObservedData.Where(x => x != null).Each(AddObservedData);
+               allWeightedObservedData.Each(AddObservedData);
             }
          });
       }
 
       public void AddObservedData(WeightedObservedData weightedObservedData)
       {
+         // You can get a null weighted observed data when a mapping has not been assigned observed data yet or if mapping is corrupted
+         if (weightedObservedData?.ObservedData == null)
+            return;
+
          if (_allObservedDataPresenters.Contains(weightedObservedData))
             return;
 
@@ -111,9 +114,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private IParameterIdentificationWeightedObservedDataPresenter edit(WeightedObservedData weightedObservedData)
       {
-         if (weightedObservedData == null)
-            return null;
-
          var observedDataPresenter = _allObservedDataPresenters[weightedObservedData];
          observedDataPresenter?.Edit(weightedObservedData);
 
