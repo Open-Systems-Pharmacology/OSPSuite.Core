@@ -46,9 +46,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
       }
 
-      protected override DataTable MapDataTableFromColumns(IEnumerable<DataColumn> dataColumns)
+      protected override DataTable MapDataTableFromColumns()
       {
-         return _dataRepositoryTask.ToDataTable(dataColumns, formatOutput: false).First();
+         return _dataRepositoryTask.ToDataTable(_observedData, formatOutput: false).First();
       }
 
       public void ValueIsSet(CellValueChangedDTO cellValueChangedDTO)

@@ -5,13 +5,13 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 {
-   public interface IWeightedDataRepositoryToDataTableMapper
+   public interface IWeightedDataRepositoryToDataTableMapper : IMapper<WeightedObservedData, DataTable>
    {
-      DataTable MapFrom(WeightedObservedData weightedObservedData);
    }
 
    public class WeightedDataRepositoryToDataTableMapper : IWeightedDataRepositoryToDataTableMapper

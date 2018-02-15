@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _weightedDataRepositoryToDataTableMapper = weightedDataRepositoryToDataTableMapper;
       }
 
-      protected override DataTable MapDataTableFromColumns(IEnumerable<DataColumn> dataColumns)
+      protected override DataTable MapDataTableFromColumns()
       {
          return _weightedDataRepositoryToDataTableMapper.MapFrom(_weightedObservedData);
       }

@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public bool IsLatched { get; set; }
 
-      protected abstract DataTable MapDataTableFromColumns(IEnumerable<DataColumn> dataColumns);
+      protected abstract DataTable MapDataTableFromColumns();
 
       public Color BackgroundColorForRow(int sourceRow)
       {
@@ -60,7 +60,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected void Rebind()
       {
-         _datatable = MapDataTableFromColumns(_observedData);
+         _datatable = MapDataTableFromColumns();
          _view.BindTo(_datatable);
       }
 
@@ -84,8 +84,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public string NumericDisplayTextFor(string displayText)
       {
-         float currentValue;
-         return float.TryParse(displayText, NumberStyles.Any, CultureInfo.InvariantCulture, out currentValue) ? _numericFormatter.Format(currentValue) : displayText;
+         return float.TryParse(displayText, NumberStyles.Any, CultureInfo.InvariantCulture, out var currentValue) ? 
+            _numericFormatter.Format(currentValue) : 
+            displayText;
       }
 
       public void Handle(ObservedDataValueChangedEvent eventToHandle)
@@ -121,9 +122,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected static string ColumnIdFromColumn(System.Data.DataColumn column)
       {
-         return column.ExtendedProperties.Contains(Constants.DATA_REPOSITORY_COLUMN_ID)
-            ? column.ExtendedProperties[Constants.DATA_REPOSITORY_COLUMN_ID].ToString()
-            : string.Empty;
+         return column.ExtendedProperties.Contains(Constants.DATA_REPOSITORY_COLUMN_ID) ?
+            column.ExtendedProperties[Constants.DATA_REPOSITORY_COLUMN_ID].ToString() : 
+            string.Empty;
       }
    }
 }

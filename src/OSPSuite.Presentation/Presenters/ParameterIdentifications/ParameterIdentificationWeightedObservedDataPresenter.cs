@@ -42,13 +42,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public string Caption
       {
-         get { return View.Caption; }
-         set { View.Caption = value; }
+         get => View.Caption;
+         set => View.Caption = value;
       }
 
-      private void hotTracked(int rowIndex)
-      {
-         _dataPresenter.SelectRow(rowIndex);
-      }
+      private void hotTracked(int rowIndex) => _dataPresenter.SelectRow(rowIndex);
    }
 }
