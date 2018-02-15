@@ -87,14 +87,16 @@ namespace OSPSuite.Core.Domain
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
-
       public const string STD_DEV_GEOMETRIC = "Geometric Standard Deviation";
       public const string STD_DEV_ARITHMETIC = "Arithmetic Standard Deviation";
       public const string AUXILIARY_TYPE = "AuxiliaryType";
       public const string FILE = "File";
       public const string SHEET = "Sheet";
-
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
+
+      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5_000_000; 
+      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50_000_000; 
+      public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File"; 
 
       public static class Files
       {
@@ -225,7 +227,9 @@ namespace OSPSuite.Core.Domain
          public static readonly string XLSX_EXTENSION = ".xlsx";
          public static readonly string TEXT_EXTENSION = ".txt";
          public static readonly string JSON_EXTENSION = ".json";
-         public static readonly string DOCX_EXTENSION = ".docs";
+         public static readonly string DOCX_EXTENSION = ".docx";
+         public static readonly string DOC_EXTENSION = ".doc";
+         public static readonly string ANY_EXTENSION = ".*";
 
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
          public static readonly string UNITS_FILE_FILTER = XmlFilter("Units");

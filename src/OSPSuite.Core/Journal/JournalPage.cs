@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Journal
 {
@@ -48,7 +48,8 @@ namespace OSPSuite.Core.Journal
          set
          {
             _content = value;
-            ContentId = _content.Id;
+            if (_content != null)
+               ContentId = _content.Id;
          }
       }
 

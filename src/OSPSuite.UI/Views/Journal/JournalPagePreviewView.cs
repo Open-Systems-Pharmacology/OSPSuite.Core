@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using DevExpress.XtraEditors;
+﻿using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Extensions;
@@ -50,15 +49,17 @@ namespace OSPSuite.UI.Views.Journal
       {
          _journalPageDTO = journalPageDTO;
          _screenBinder.BindToSource(journalPageDTO);
-         updateControlVisibility(relatedItemVisible: journalPageDTO.RelatedItems.Any(), tagVisible: true);
+         updateControlVisibility(relatedItemVisible: true, tagVisible: true);
       }
 
       public override void InitializeResources()
       {
          base.InitializeResources();
          layoutItemUpdatedAt.Text = Captions.Journal.UpdatedAt.FormatForLabel();
-         layoutItemTags.Text = Captions.Journal.Tags;
-         layoutItemRelatedItems.Text = Captions.Journal.RelatedItems;
+         layoutGroupItemTags.Text = Captions.Journal.Tags;
+         layoutItemTags.TextVisible = false;
+         layoutGroupRelatedItems.Text = Captions.Journal.RelatedItems;
+         layoutItemRelatedItems.TextVisible = false;
          DeleteBinding();
       }
 
@@ -75,8 +76,8 @@ namespace OSPSuite.UI.Views.Journal
 
       private void updateControlVisibility(bool relatedItemVisible, bool tagVisible)
       {
-         layoutItemRelatedItems.Visibility = LayoutVisibilityConvertor.FromBoolean(relatedItemVisible);
-         layoutItemTags.Visibility = LayoutVisibilityConvertor.FromBoolean(tagVisible);
+         layoutGroupRelatedItems.Visibility = LayoutVisibilityConvertor.FromBoolean(relatedItemVisible);
+         layoutGroupItemTags.Visibility = LayoutVisibilityConvertor.FromBoolean(tagVisible);
       }
 
       public void AttachPresenter(IJournalPagePreviewPresenter presenter)
@@ -84,6 +85,6 @@ namespace OSPSuite.UI.Views.Journal
          _presenter = presenter;
       }
 
-      protected override int TopicId=> HelpId.Tool_Journal;
+      protected override int TopicId => HelpId.Tool_Journal;
    }
 }

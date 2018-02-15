@@ -20,6 +20,11 @@ namespace OSPSuite.Core.Journal
       void AddRelatedItemTo(JournalPage journalPage, RelatedItem relatedItem);
 
       /// <summary>
+      /// Adds a new related item to the <paramref name="journalPage" /> from a file selected by the user.
+      /// </summary>
+      void AddRelatedItemFromFile(JournalPage journalPage);
+
+      /// <summary>
       ///    Deletes the <paramref name="relatedItem" /> from the <paramref name="journal" />
       /// </summary>
       void DeleteRelatedItemFrom(Journal journal, RelatedItem relatedItem);
