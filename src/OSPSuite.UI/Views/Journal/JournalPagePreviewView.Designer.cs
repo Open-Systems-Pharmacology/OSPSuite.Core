@@ -37,6 +37,8 @@
          this.layoutItemUpdatedAt = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemTags = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemRelatedItems = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutGroupRelatedItems = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutGroupItemTags = new DevExpress.XtraLayout.LayoutControlGroup();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
          this.layoutControl1.SuspendLayout();
@@ -46,10 +48,13 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemUpdatedAt)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTags)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemRelatedItems)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutGroupRelatedItems)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutGroupItemTags)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl1
          // 
+         this.layoutControl1.AllowCustomization = false;
          this.layoutControl1.Controls.Add(this.panelRelatedItems);
          this.layoutControl1.Controls.Add(this.lblUpdatedAt);
          this.layoutControl1.Controls.Add(this.tokenTags);
@@ -63,9 +68,9 @@
          // 
          // panelRelatedItems
          // 
-         this.panelRelatedItems.Location = new System.Drawing.Point(0, 73);
+         this.panelRelatedItems.Location = new System.Drawing.Point(131, 113);
          this.panelRelatedItems.Name = "panelRelatedItems";
-         this.panelRelatedItems.Size = new System.Drawing.Size(330, 316);
+         this.panelRelatedItems.Size = new System.Drawing.Size(187, 264);
          this.panelRelatedItems.TabIndex = 10;
          // 
          // lblUpdatedAt
@@ -79,11 +84,11 @@
          // 
          // tokenTags
          // 
-         this.tokenTags.Location = new System.Drawing.Point(2, 35);
+         this.tokenTags.Location = new System.Drawing.Point(133, 49);
          this.tokenTags.Name = "tokenTags";
          this.tokenTags.Properties.Separators.AddRange(new string[] {
             ","});
-         this.tokenTags.Size = new System.Drawing.Size(326, 20);
+         this.tokenTags.Size = new System.Drawing.Size(183, 20);
          this.tokenTags.StyleController = this.layoutControl1;
          this.tokenTags.TabIndex = 7;
          // 
@@ -94,10 +99,10 @@
          this.layoutControlGroup1.GroupBordersVisible = false;
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemUpdatedAt,
-            this.layoutItemTags,
-            this.layoutItemRelatedItems});
+            this.layoutGroupRelatedItems,
+            this.layoutGroupItemTags});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
+         this.layoutControlGroup1.Name = "Root";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.layoutControlGroup1.Size = new System.Drawing.Size(330, 389);
          this.layoutControlGroup1.TextVisible = false;
@@ -116,23 +121,37 @@
          // 
          this.layoutItemTags.Control = this.tokenTags;
          this.layoutItemTags.CustomizationFormText = "layoutItemTags";
-         this.layoutItemTags.Location = new System.Drawing.Point(0, 17);
+         this.layoutItemTags.Location = new System.Drawing.Point(0, 0);
          this.layoutItemTags.Name = "layoutItemTags";
-         this.layoutItemTags.Size = new System.Drawing.Size(330, 40);
-         this.layoutItemTags.TextLocation = DevExpress.Utils.Locations.Top;
+         this.layoutItemTags.Size = new System.Drawing.Size(306, 24);
          this.layoutItemTags.TextSize = new System.Drawing.Size(116, 13);
          // 
          // layoutItemRelatedItems
          // 
          this.layoutItemRelatedItems.Control = this.panelRelatedItems;
-         this.layoutItemRelatedItems.Location = new System.Drawing.Point(0, 57);
+         this.layoutItemRelatedItems.Location = new System.Drawing.Point(0, 0);
          this.layoutItemRelatedItems.Name = "layoutItemRelatedItems";
          this.layoutItemRelatedItems.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutItemRelatedItems.Size = new System.Drawing.Size(330, 332);
-         this.layoutItemRelatedItems.TextLocation = DevExpress.Utils.Locations.Top;
+         this.layoutItemRelatedItems.Size = new System.Drawing.Size(306, 264);
          this.layoutItemRelatedItems.TextSize = new System.Drawing.Size(116, 13);
          // 
-         // WorkingJournalItemPreviewView
+         // layoutGroupRelatedItems
+         // 
+         this.layoutGroupRelatedItems.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutItemRelatedItems});
+         this.layoutGroupRelatedItems.Location = new System.Drawing.Point(0, 83);
+         this.layoutGroupRelatedItems.Name = "layoutGroupRelatedItems";
+         this.layoutGroupRelatedItems.Size = new System.Drawing.Size(330, 306);
+         // 
+         // layoutGroupItemTags
+         // 
+         this.layoutGroupItemTags.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutItemTags});
+         this.layoutGroupItemTags.Location = new System.Drawing.Point(0, 17);
+         this.layoutGroupItemTags.Name = "layoutGroupItemTags";
+         this.layoutGroupItemTags.Size = new System.Drawing.Size(330, 66);
+         // 
+         // JournalPagePreviewView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -148,13 +167,13 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemUpdatedAt)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTags)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemRelatedItems)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutGroupRelatedItems)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutGroupItemTags)).EndInit();
          this.ResumeLayout(false);
 
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private DevExpress.XtraEditors.TokenEdit tokenTags;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTags;
@@ -162,5 +181,8 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutItemUpdatedAt;
       private DevExpress.XtraEditors.PanelControl panelRelatedItems;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemRelatedItems;
+      private Controls.UxLayoutControl layoutControl1;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutGroupRelatedItems;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutGroupItemTags;
    }
 }

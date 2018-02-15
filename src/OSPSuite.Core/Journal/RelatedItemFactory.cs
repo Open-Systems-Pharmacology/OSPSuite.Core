@@ -1,14 +1,26 @@
-﻿using OSPSuite.Utility;
+﻿using System;
+using System.IO;
+using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Journal
 {
    public interface IRelatedItemFactory
    {
+      /// <summary>
+      /// Creates and reaturns a related item containing the given <paramref name="relatedObject"/> as data.
+      /// </summary>
       RelatedItem Create<T>(T relatedObject) where T : class, IObjectBase;
+
+      /// <summary>
+      /// Creates and reaturns a related item containing the content of the file located at <paramref name="fileFullPath"/> as data.
+      /// </summary>
+      RelatedItem CreateFromFile(string fileFullPath);
    }
 
    public class RelatedItemFactory : IRelatedItemFactory
@@ -22,8 +34,8 @@ namespace OSPSuite.Core.Journal
       private readonly IRelatedItemTypeRetriever _relatedItemTypeRetriever;
 
       public RelatedItemFactory(IOSPSuiteExecutionContext executionContext, IApplicationConfiguration applicationConfiguration,
-         IProjectRetriever projectRetriever, IApplicationDiscriminator applicationDiscriminator, 
-         IRelatedItemSerializer relatedItemSerializer,IRelatedItemDescriptionCreator relatedItemDescriptionCreator,
+         IProjectRetriever projectRetriever, IApplicationDiscriminator applicationDiscriminator,
+         IRelatedItemSerializer relatedItemSerializer, IRelatedItemDescriptionCreator relatedItemDescriptionCreator,
          IRelatedItemTypeRetriever relatedItemTypeRetriever)
       {
          _executionContext = executionContext;
@@ -39,22 +51,67 @@ namespace OSPSuite.Core.Journal
       {
          _executionContext.Load(relatedObject);
 
-         return new RelatedItem
+         var name = relatedObject.Name;
+         var data = _relatedItemSerializer.Serialize(relatedObject);
+         var itemType = _relatedItemTypeRetriever.TypeFor(relatedObject);
+
+
+         return createRelatedItem(name, itemType, data, relatedItem =>
+         {
+            relatedItem.Origin = _applicationConfiguration.Product;
+            relatedItem.IconName = relatedObject.Icon;
+            relatedItem.FullPath = _projectRetriever.CurrentProject.FilePath;
+            relatedItem.Discriminator = _applicationDiscriminator.DiscriminatorFor(relatedObject);
+            relatedItem.Description = _relatedItemDescriptionCreator.DescriptionFor(relatedObject);
+         });
+      }
+
+      public RelatedItem CreateFromFile(string fileFullPath)
+      {
+         var name = FileHelper.FileNameFromFileFullPath(fileFullPath);
+         var data = File.ReadAllBytes(fileFullPath);
+         var itemType = Constants.RELATIVE_ITEM_FILE_ITEM_TYPE;
+
+         return createRelatedItem(name, itemType, data, x =>
+         {
+            x.Origin = Origins.Other;
+            x.IconName = iconFromFileExtension(new FileInfo(fileFullPath).Extension).IconName;
+            x.FullPath = fileFullPath;
+            x.Discriminator = itemType;
+         });
+      }
+
+      private RelatedItem createRelatedItem(string name, string itemType, byte[] data, Action<RelatedItem> configurationFunc)
+      {
+         var relatedItem = new RelatedItem
          {
             CreatedAt = SystemTime.UtcNow(),
-            Name = relatedObject.Name,
-            ItemType = _relatedItemTypeRetriever.TypeFor(relatedObject),
+            Name = name,
+            ItemType = itemType,
             Content = new Content
             {
-               Data = _relatedItemSerializer.Serialize(relatedObject)
+               Data = data
             },
-            Origin = _applicationConfiguration.Product,
             Version = _applicationConfiguration.FullVersion,
-            IconName = relatedObject.Icon,
-            FullPath = _projectRetriever.CurrentProject.FilePath,
-            Discriminator = _applicationDiscriminator.DiscriminatorFor(relatedObject),
-            Description = _relatedItemDescriptionCreator.DescriptionFor(relatedObject)
          };
+
+         configurationFunc(relatedItem);
+         return relatedItem;
+      }
+
+      private ApplicationIcon iconFromFileExtension(string extension)
+      {
+         if (extension.IsOneOf(Constants.Filter.XLSX_EXTENSION, Constants.Filter.XLS_EXTENSION))
+            return ApplicationIcons.Excel;
+
+         if (extension.IsOneOf(Constants.Filter.DOCX_EXTENSION, Constants.Filter.DOC_EXTENSION))
+            return ApplicationIcons.JournalExportToWord;
+
+         if (extension.IsOneOf(Constants.Filter.PDF_EXTENSION))
+            return ApplicationIcons.PDF;
+
+         //File icon
+         return ApplicationIcons.ProjectNew;
       }
    }
 }

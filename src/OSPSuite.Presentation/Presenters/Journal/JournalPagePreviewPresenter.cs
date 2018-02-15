@@ -20,8 +20,11 @@ namespace OSPSuite.Presentation.Presenters.Journal
       private readonly IRelatedItemsPresenter _relatedItemsPresenter;
       private JournalPageDTO _journalPageDTO;
 
-      public JournalPagePreviewPresenter(IJournalPagePreviewView view, IJournalTask journalTask,
-         IJournalPageTask journalPageTask, IRelatedItemsPresenter relatedItemsPresenter)
+      public JournalPagePreviewPresenter(
+         IJournalPagePreviewView view, 
+         IJournalTask journalTask,
+         IJournalPageTask journalPageTask, 
+         IRelatedItemsPresenter relatedItemsPresenter)
          : base(view)
       {
          _journalTask = journalTask;
@@ -53,19 +56,13 @@ namespace OSPSuite.Presentation.Presenters.Journal
          _relatedItemsPresenter.DeleteBinding();
       }
 
-      public IEnumerable<string> AllKnownTags
-      {
-         get { return _journalTask.AllKnownTags; }
-      }
+      public IEnumerable<string> AllKnownTags => _journalTask.AllKnownTags;
 
       public void UpdateTags(IEnumerable<string> tags)
       {
          _journalPageTask.UpdateTags(journalPage, tags);
       }
 
-      private JournalPage journalPage
-      {
-         get { return _journalPageDTO.JournalPage; }
-      }
+      private JournalPage journalPage => _journalPageDTO.JournalPage;
    }
 }

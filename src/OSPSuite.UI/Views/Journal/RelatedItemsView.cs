@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Journal;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views;
@@ -20,7 +21,7 @@ using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.Journal
 {
-   public partial class RelatedItemsView : BaseGridViewOnlyUserControl, IRelatedItemsView
+   public partial class RelatedItemsView : BaseResizableUserControl, IRelatedItemsView
    {
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
@@ -93,12 +94,17 @@ namespace OSPSuite.UI.Views.Journal
 
          _removeRelatedItemRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.DeleteRelatedItem(_gridViewBinder.FocusedElement));
          _reloadRelatedItemRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ReloadRelatedItem(_gridViewBinder.FocusedElement));
+         buttonAddRelatedItemFromFile.Click += (o, e) => OnEvent(() => _presenter.AddRelatedItemFromFile());
       }
 
       private RepositoryItem getCompareRelatdItemRepository(RelatedItem item)
       {
          _repositoryCompareRelatedItem.Buttons[0].ToolTip = Captions.Journal.ToolTip.CompareRelatedItemWithProjectItems(item.Name, item.ItemType);
-         _reloadRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
+
+         _reloadRelatedItemRepository.Buttons[0].ToolTip = item.ItemType == Constants.RELATIVE_ITEM_FILE_ITEM_TYPE ? 
+            Captions.Journal.ToolTip.ExportRelatedItemToFile(item.Name) : 
+            Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
+
          return _repositoryCompareRelatedItem;
       }
 
@@ -137,7 +143,12 @@ namespace OSPSuite.UI.Views.Journal
          _reloadRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
          _reloadRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Load.ToImage(IconSizes.Size16x16);
 
+         _removeRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
+         _removeRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Delete.ToImage(IconSizes.Size16x16);
          _removeRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.DeleteRelatedItem;
+
+         layoutItemAddRelatedItem.AdjustButtonSize();
+         buttonAddRelatedItemFromFile.InitWithImage(ApplicationIcons.Add, text:Captions.Journal.AddRelatedItem, toolTip:ToolTips.Journal.AddRelatedItemFromFile);
       }
 
       public void AttachPresenter(IRelatedItemsPresenter presenter)
@@ -160,6 +171,9 @@ namespace OSPSuite.UI.Views.Journal
       {
          _gridViewBinder.DeleteBinding();
       }
+
+
+      public override int OptimalHeight => gridView.OptimalHeight + layoutItemGrid.Padding.Height + layoutItemAddRelatedItem.Height;
 
       protected override int TopicId => HelpId.Tool_Journal_RelatedItems;
    }

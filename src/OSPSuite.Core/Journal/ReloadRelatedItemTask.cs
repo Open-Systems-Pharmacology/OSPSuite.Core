@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Journal
 {

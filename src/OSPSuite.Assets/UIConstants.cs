@@ -463,6 +463,14 @@ namespace OSPSuite.Assets
          public static readonly string OpenJournalButton = "Open";
          public static readonly string CancelJournalButton = "Cancel";
          public static readonly string RunComparison = "Compare";
+         public static readonly string AddRelatedItem = "Add New";
+         public static readonly string RelatedItemFile = $"{ObjectTypes.RelatedItem} file";
+         public static readonly string SelectedFileToLoadAsRelatedItem = "Select file to load as related item";
+
+         public static string ReallyLoadRelatedItemFileExceedingThreshold(string fileSizeInMegaBytes, string thresholdSizeInMegaBytes)
+         {
+            return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the recommended file size of '{thresholdSizeInMegaBytes} MB'. Do you want to continue?";
+         }
 
          public static string JournalWillBeSharedBetweenProjectInfo(string journalName)
          {
@@ -538,10 +546,9 @@ namespace OSPSuite.Assets
                return $"Compare '{relatedItemName}' with {type.Pluralize()} defined in project";
             }
 
-            public static string ReloadRelatedItem(string relatedItemName, string relatedItemType)
-            {
-               return $"Reload {relatedItemType.ToLower()} '{relatedItemName}' into project";
-            }
+            public static string ReloadRelatedItem(string relatedItemName, string relatedItemType) => $"Reload {relatedItemType.ToLower()} '{relatedItemName}' into project";
+
+            public static string ExportRelatedItemToFile(string relatedItemName) => $"Export '{relatedItemName}' to file";
 
             public static string DeleteRelatedItem = $"Delete {RelatedItem.ToLower()}";
          }
@@ -1378,6 +1385,11 @@ namespace OSPSuite.Assets
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
       }
+
+      public static string FileSizeExceedsMaximumSize(string fileSizeInMegaBytes, string maxSizeInMegaBytes)
+      {
+         return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the maximum supported size of '{maxSizeInMegaBytes} MB'.";
+      }
    }
 
    public static class Validation
@@ -1998,6 +2010,7 @@ namespace OSPSuite.Assets
       {
          public static readonly string NavigateToNextPage = "Navigate to next page";
          public static readonly string NavigateToPreviousPage = "Navigate to previous page";
+         public static readonly string AddRelatedItemFromFile = "Add new related item from a selected file";
       }
    }
 

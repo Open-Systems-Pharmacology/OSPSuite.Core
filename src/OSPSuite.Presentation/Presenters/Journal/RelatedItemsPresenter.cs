@@ -10,6 +10,7 @@ namespace OSPSuite.Presentation.Presenters.Journal
       void Edit(JournalPage journalPage);
       void DeleteBinding();
       void ReloadRelatedItem(RelatedItem relatedItem);
+      void AddRelatedItemFromFile();
    }
 
    public class RelatedItemsPresenter : AbstractCommandCollectorPresenter<IRelatedItemsView, IRelatedItemsPresenter>, IRelatedItemsPresenter
@@ -20,8 +21,11 @@ namespace OSPSuite.Presentation.Presenters.Journal
       private readonly IReloadRelatedItemTask _reloadRelatedItemTask;
       private JournalPage _journalPage;
 
-      public RelatedItemsPresenter(IRelatedItemsView view, IJournalRetriever journalRetriever,
-         IJournalPageTask journalPageTask, IRelatedItemComparablePresenter relatedItemComparablePresenter,
+      public RelatedItemsPresenter(
+         IRelatedItemsView view, 
+         IJournalRetriever journalRetriever,
+         IJournalPageTask journalPageTask, 
+         IRelatedItemComparablePresenter relatedItemComparablePresenter,
          IReloadRelatedItemTask reloadRelatedItemTask) : base(view)
       {
          _journalRetriever = journalRetriever;
@@ -58,6 +62,12 @@ namespace OSPSuite.Presentation.Presenters.Journal
       public void ReloadRelatedItem(RelatedItem relatedItem)
       {
          _reloadRelatedItemTask.Load(relatedItem);
+      }
+
+      public void AddRelatedItemFromFile()
+      {
+         _journalPageTask.AddRelatedItemFromFile(_journalPage);
+         rebind();
       }
 
       private void rebind()

@@ -24,7 +24,7 @@ namespace OSPSuite.Starter.Tasks
 
       protected override bool RelatedItemCanBeLaunchedBySisterApplication(RelatedItem relatedItem)
       {
-         throw new NotSupportedException();
+         return false;
       }
    }
 
