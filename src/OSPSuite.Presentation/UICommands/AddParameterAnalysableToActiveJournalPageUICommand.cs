@@ -33,6 +33,7 @@ namespace OSPSuite.Presentation.UICommands
          //Load the subject first to ensure that we can retrieve the observed data used
          _executionContext.Load(Subject);
 
+         //Add first observed data if available
          if (Subject is IUsesObservedData usesObservedData)
             items.AddRange(_observedDataRepository.AllObservedDataUsedBy(usesObservedData));
 
