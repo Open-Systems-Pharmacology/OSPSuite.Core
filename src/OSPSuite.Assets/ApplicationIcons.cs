@@ -473,6 +473,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Tag = AddNamedIcon(Icons.Tag, "Tag");
       public static readonly ApplicationIcon UserDefinedSpecies = AddNamedIcon(Icons.UserDefinedSpecies, "UserDefinedSpecies");
       public static readonly ApplicationIcon Properties = AddNamedIcon(Icons.Properties, "Properties");
+      public static readonly ApplicationIcon Snapshot = AddNamedIcon(Icons.Snapshot, "Snapshot");
+      public static readonly ApplicationIcon SnapshotExport = AddNamedIcon(Icons.SnapshotExport, "SnapshotExport");
+      public static readonly ApplicationIcon SnapshotImport = AddNamedIcon(Icons.SnapshotImport, "SnapshotImport");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

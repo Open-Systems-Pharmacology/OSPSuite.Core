@@ -464,6 +464,7 @@ namespace OSPSuite.Assets
          public static readonly string CancelJournalButton = "Cancel";
          public static readonly string RunComparison = "Compare";
          public static readonly string AddRelatedItem = "Add New";
+         public static readonly string ImportAllRelatedItem = "Load All";
          public static readonly string RelatedItemFile = $"{ObjectTypes.RelatedItem} file";
          public static readonly string SelectedFileToLoadAsRelatedItem = "Select file to load as related item";
 
@@ -2011,6 +2012,7 @@ namespace OSPSuite.Assets
          public static readonly string NavigateToNextPage = "Navigate to next page";
          public static readonly string NavigateToPreviousPage = "Navigate to previous page";
          public static readonly string AddRelatedItemFromFile = "Add new related item from a selected file";
+         public static readonly string ImportAllRelatedItem = "Import all items into project";
       }
    }
 

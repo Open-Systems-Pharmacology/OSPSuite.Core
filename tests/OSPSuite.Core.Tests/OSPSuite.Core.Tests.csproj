@@ -176,6 +176,7 @@
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\ComparerSettingsSpecs.cs" />
     <Compile Include="Core\CurveSpecs.cs" />
+    <Compile Include="Core\ObservedDataRepositorySpecs.cs" />
     <Compile Include="Core\ObservedDataTaskSpecs.cs" />
     <Compile Include="Core\SolverSettingsFactorySpecs.cs" />
     <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />

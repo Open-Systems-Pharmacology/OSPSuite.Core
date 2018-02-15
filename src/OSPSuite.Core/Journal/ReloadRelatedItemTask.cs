@@ -1,14 +1,29 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Journal
 {
    public interface IReloadRelatedItemTask
    {
+      /// <summary>
+      ///    Load the related item and import it either in the app if possible, or in the sister app (MoBi for PKSim) if
+      ///    possible.
+      ///    Lastly dump the content of the reported item into file otherwise
+      /// </summary>
+      /// <param name="relatedItem">Related item to load</param>
       void Load(RelatedItem relatedItem);
+
+      /// <summary>
+      ///    Import all related items into calling application. THat means that file based related item or sister application
+      ///    related items won't be loaded
+      /// </summary>
+      void ImportAllIntoApplication(IEnumerable<RelatedItem> relatedItems);
    }
 
    public abstract class ReloadRelatedItemTask : IReloadRelatedItemTask
@@ -36,6 +51,15 @@ namespace OSPSuite.Core.Journal
 
          else
             DumpContentToUserDefinedLocation(relatedItem);
+      }
+
+      public void ImportAllIntoApplication(IEnumerable<RelatedItem> relatedItems)
+      {
+         relatedItems.Where(RelatedItemBelongsToApplication).Each(x =>
+         {
+            _contentLoader.Load(x);
+            LoadOwnContent(x);
+         });
       }
 
       protected void LoadContentInSisterApplication(RelatedItem relatedItem)
@@ -66,6 +90,7 @@ namespace OSPSuite.Core.Journal
          var defaultFileName = FileHelper.FileNameFromFileFullPath(relatedItem.FullPath);
          var relatedItemFilter = Captions.Journal.ExportRelatedItemToFileFilter(relatedItemPath.Extension);
          var filePath = _dialogCreator.AskForFileToSave(Captions.Journal.ExportRelatedItemToFile, relatedItemFilter, Constants.DirectoryKey.REPORT, defaultFileName: defaultFileName);
+
          if (string.IsNullOrEmpty(filePath))
             return;
 
