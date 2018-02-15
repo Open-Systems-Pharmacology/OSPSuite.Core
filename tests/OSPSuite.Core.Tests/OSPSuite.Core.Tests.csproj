@@ -141,6 +141,7 @@
     </Compile>
     <Compile Include="Batch\SimulationResultsExporterSpecs.cs" />
     <Compile Include="Batch\SimulationResultsToBatchSimulationExportMapperSpecs.cs" />
+    <Compile Include="Commands\AddParameterAnalysableToActiveJournalPageUICommandSpecs.cs" />
     <Compile Include="Commands\CommandExpressionParserSpecs.cs" />
     <Compile Include="Commands\CommandExtensionsSpecs.cs" />
     <Compile Include="Commands\CommandHelperForSpecs.cs" />

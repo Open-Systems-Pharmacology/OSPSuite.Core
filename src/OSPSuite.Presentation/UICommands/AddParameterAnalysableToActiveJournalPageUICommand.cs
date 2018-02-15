@@ -16,9 +16,10 @@ namespace OSPSuite.Presentation.UICommands
 
       public AddParameterAnalysableToActiveJournalPageUICommand(
          IJournalTask journalTask,
-         IActiveSubjectRetriever activeSubjectRetriever,
          IObservedDataRepository observedDataRepository,
-         IOSPSuiteExecutionContext executionContext) : base(activeSubjectRetriever)
+         IOSPSuiteExecutionContext executionContext,
+         IActiveSubjectRetriever activeSubjectRetriever
+         ) : base(activeSubjectRetriever)
       {
          _journalTask = journalTask;
          _observedDataRepository = observedDataRepository;
@@ -29,8 +30,8 @@ namespace OSPSuite.Presentation.UICommands
       {
          var items = new List<IObjectBase>();
 
-         //Load all used simulation
-         Subject.AllSimulations.Each(_executionContext.Load);
+         //Load the subject first to ensure that we can retrieve the observed data used
+         _executionContext.Load(Subject);
 
          if (Subject is IUsesObservedData usesObservedData)
             items.AddRange(_observedDataRepository.AllObservedDataUsedBy(usesObservedData));
@@ -40,6 +41,7 @@ namespace OSPSuite.Presentation.UICommands
 
          //last subect
          items.Add(Subject);
+
          _journalTask.AddAsRelatedItemsToJournal(items);
       }
    }
