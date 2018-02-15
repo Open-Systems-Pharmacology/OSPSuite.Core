@@ -25,8 +25,9 @@ namespace OSPSuite.UI.Views.Diagram
       {
          base.InitializeResources();
 
-         _goView.SelectionMoved += (o,e) => OnEvent(() => onSelectionMoved(o,e));
-         _goView.ObjectContextClicked += (o, e) => OnEvent(() => OnContextClicked(e));
+         _goView.SelectionMoved += (o, e) => OnEvent(() => onSelectionMoved(o, e));
+         _goView.ObjectContextClicked += (o, e) => OnEvent(OnContextClicked,e);
+         _goView.ObjectSingleClicked += (o, e) => OnEvent(onSingleClicked, e);
       }
 
       protected virtual void OnContextClicked(GoObjectEventArgs e)
@@ -62,17 +63,17 @@ namespace OSPSuite.UI.Views.Diagram
       {
          InitializeComponent();
          _goView.NoFocusSelectionColor = _goView.SecondarySelectionColor;
-         _barManager.Images = imageListRetriever.AllImages16x16;
+         PopupBarManager.Images = imageListRetriever.AllImages16x16;
       }
 
-      protected override int TopicId=> HelpId.MoBi_Diagrams;
+      protected override int TopicId => HelpId.MoBi_Diagrams;
 
       public IDiagramModel Model
       {
          set
          {
             var baseDiagramModel = value as DiagramModel;
-            if (baseDiagramModel == null) throw new InvalidTypeException(baseDiagramModel, typeof (DiagramModel));
+            if (baseDiagramModel == null) throw new InvalidTypeException(baseDiagramModel, typeof(DiagramModel));
             _goView.Document = baseDiagramModel;
          }
       }
@@ -80,19 +81,17 @@ namespace OSPSuite.UI.Views.Diagram
       public virtual void AttachPresenter(IBaseDiagramPresenter presenter)
       {
          _presenter = presenter;
-         _goView.ObjectSingleClicked += (o, e) => OnEvent(() => onSingleClicked(e));
       }
-
-
 
       private void onSingleClicked(GoObjectEventArgs e)
       {
          var containerBaseHandle = e.GoObject as GoSubGraphHandle;
-         if (containerBaseHandle == null) return;
-         var containerBaseNode = containerBaseHandle.Parent as IContainerNode;
-         if (containerBaseNode == null) return;
+         var containerBaseNode = containerBaseHandle?.Parent as IContainerNode;
+         if (containerBaseNode == null)
+            return;
+
          // keep original Expansion state
-         bool containerBaseNodeIsExpanded = containerBaseNode.IsExpanded; 
+         bool containerBaseNodeIsExpanded = containerBaseNode.IsExpanded;
          try
          {
             if (e.Control && containerBaseNode.IsExpanded)
@@ -129,14 +128,14 @@ namespace OSPSuite.UI.Views.Diagram
 
       public bool GridVisible
       {
-         set { _goView.GridStyle = value ? GoViewGridStyle.Dot : GoViewGridStyle.None; }
-         get { return _goView.GridStyle != GoViewGridStyle.None; }
+         set => _goView.GridStyle = value ? GoViewGridStyle.Dot : GoViewGridStyle.None;
+         get => _goView.GridStyle != GoViewGridStyle.None;
       }
 
       public void Zoom(PointF currentLocation, float factor)
       {
          if (factor <= 0.0F) _goView.RescaleToFit();
-         else _goView.RescaleWithCenter(_goView.DocScale*factor, currentLocation);
+         else _goView.RescaleWithCenter(_goView.DocScale * factor, currentLocation);
       }
 
       public void SetBackColor(Color color)
@@ -158,6 +157,7 @@ namespace OSPSuite.UI.Views.Diagram
             T node = goObject as T;
             if (node != null) nodes.Add(node);
          }
+
          return nodes;
       }
 
@@ -176,15 +176,9 @@ namespace OSPSuite.UI.Views.Diagram
          _goView.Selection.Clear();
       }
 
-      public IBaseDiagramPresenter Presenter
-      {
-         get { return _presenter; }
-      }
+      public IBaseDiagramPresenter Presenter => _presenter;
 
-      public BarManager PopupBarManager
-      {
-         get { return _barManager; }
-      }
+      public BarManager PopupBarManager { get; private set; }
 
       public Bitmap GetBitmap(IContainerBase containerBase)
       {
