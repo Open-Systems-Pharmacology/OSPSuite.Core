@@ -94,8 +94,9 @@ namespace OSPSuite.Core.Domain
       public const string SHEET = "Sheet";
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
-      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5_000_000; 
-      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50_000_000; 
+      public const int MB_TO_BYTES = 1024 * 1024; //1 MB = 1024 * 1024 bytes
+      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5 * MB_TO_BYTES; 
+      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES; 
       public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File"; 
 
       public static class Files
@@ -217,7 +218,10 @@ namespace OSPSuite.Core.Domain
       {
          public static readonly string PNG_EXTENSION = ".png";
          public static readonly string MATLAB_EXTENSION = ".m";
+         public static readonly string MAT_EXTENSION = ".mat";
+         public static readonly string FIG_EXTENSION = ".fig";
          public static readonly string R_EXTENSION = ".r";
+         public static readonly string RD_EXTENSION = ".rd";
          public static readonly string XML_EXTENSION = ".xml";
          public static readonly string JOURNAL_EXTENSION = ".sbj";
          public static readonly string CSV_EXTENSION = ".csv";
