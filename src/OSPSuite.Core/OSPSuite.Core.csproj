@@ -148,6 +148,7 @@
     <Compile Include="Converter\v7_3\Converter710To730.cs" />
     <Compile Include="Domain\IWithDefaultState.cs" />
     <Compile Include="Domain\IWithValueOrigin.cs" />
+    <Compile Include="Domain\Mappers\FileExtensionToIconMapper.cs" />
     <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
     <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />

@@ -177,6 +177,8 @@
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\ComparerSettingsSpecs.cs" />
     <Compile Include="Core\CurveSpecs.cs" />
+    <Compile Include="Core\FavoritesSpecs.cs" />
+    <Compile Include="Core\FileExtensionToIconMapperSpecs.cs" />
     <Compile Include="Core\ObservedDataRepositorySpecs.cs" />
     <Compile Include="Core\ObservedDataTaskSpecs.cs" />
     <Compile Include="Core\SolverSettingsFactorySpecs.cs" />

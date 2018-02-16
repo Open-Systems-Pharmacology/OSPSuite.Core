@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
-using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility;
 
@@ -13,12 +12,13 @@ namespace OSPSuite.Core.Journal
    public interface IRelatedItemFactory
    {
       /// <summary>
-      /// Creates and reaturns a related item containing the given <paramref name="relatedObject"/> as data.
+      ///    Creates and reaturns a related item containing the given <paramref name="relatedObject" /> as data.
       /// </summary>
       RelatedItem Create<T>(T relatedObject) where T : class, IObjectBase;
 
       /// <summary>
-      /// Creates and reaturns a related item containing the content of the file located at <paramref name="fileFullPath"/> as data.
+      ///    Creates and reaturns a related item containing the content of the file located at <paramref name="fileFullPath" />
+      ///    as data.
       /// </summary>
       RelatedItem CreateFromFile(string fileFullPath);
    }
@@ -32,11 +32,16 @@ namespace OSPSuite.Core.Journal
       private readonly IRelatedItemSerializer _relatedItemSerializer;
       private readonly IRelatedItemDescriptionCreator _relatedItemDescriptionCreator;
       private readonly IRelatedItemTypeRetriever _relatedItemTypeRetriever;
+      private readonly IFileExtensionToIconMapper _iconMapper;
 
-      public RelatedItemFactory(IOSPSuiteExecutionContext executionContext, IApplicationConfiguration applicationConfiguration,
-         IProjectRetriever projectRetriever, IApplicationDiscriminator applicationDiscriminator,
-         IRelatedItemSerializer relatedItemSerializer, IRelatedItemDescriptionCreator relatedItemDescriptionCreator,
-         IRelatedItemTypeRetriever relatedItemTypeRetriever)
+      public RelatedItemFactory(IOSPSuiteExecutionContext executionContext,
+         IApplicationConfiguration applicationConfiguration,
+         IProjectRetriever projectRetriever,
+         IApplicationDiscriminator applicationDiscriminator,
+         IRelatedItemSerializer relatedItemSerializer,
+         IRelatedItemDescriptionCreator relatedItemDescriptionCreator,
+         IRelatedItemTypeRetriever relatedItemTypeRetriever,
+         IFileExtensionToIconMapper iconMapper)
       {
          _executionContext = executionContext;
          _applicationConfiguration = applicationConfiguration;
@@ -45,6 +50,7 @@ namespace OSPSuite.Core.Journal
          _relatedItemSerializer = relatedItemSerializer;
          _relatedItemDescriptionCreator = relatedItemDescriptionCreator;
          _relatedItemTypeRetriever = relatedItemTypeRetriever;
+         _iconMapper = iconMapper;
       }
 
       public RelatedItem Create<T>(T relatedObject) where T : class, IObjectBase
@@ -54,7 +60,7 @@ namespace OSPSuite.Core.Journal
          var name = relatedObject.Name;
          var data = _relatedItemSerializer.Serialize(relatedObject);
          var itemType = _relatedItemTypeRetriever.TypeFor(relatedObject);
-         
+
          return createRelatedItem(name, itemType, data, relatedItem =>
          {
             relatedItem.Origin = _applicationConfiguration.Product;
@@ -67,14 +73,15 @@ namespace OSPSuite.Core.Journal
 
       public RelatedItem CreateFromFile(string fileFullPath)
       {
-         var name = FileHelper.FileNameFromFileFullPath(fileFullPath);
+         var fileInfo = new FileInfo(fileFullPath);
+         var name = fileInfo.Name;
          var data = File.ReadAllBytes(fileFullPath);
          var itemType = Constants.RELATIVE_ITEM_FILE_ITEM_TYPE;
 
          return createRelatedItem(name, itemType, data, x =>
          {
             x.Origin = Origins.Other;
-            x.IconName = iconFromFileExtension(new FileInfo(fileFullPath).Extension).IconName;
+            x.IconName = _iconMapper.MapFrom(fileInfo.Extension).IconName;
             x.FullPath = fileFullPath;
             x.Discriminator = itemType;
          });
@@ -96,21 +103,6 @@ namespace OSPSuite.Core.Journal
 
          configurationFunc(relatedItem);
          return relatedItem;
-      }
-
-      private ApplicationIcon iconFromFileExtension(string extension)
-      {
-         if (extension.IsOneOf(Constants.Filter.XLSX_EXTENSION, Constants.Filter.XLS_EXTENSION))
-            return ApplicationIcons.Excel;
-
-         if (extension.IsOneOf(Constants.Filter.DOCX_EXTENSION, Constants.Filter.DOC_EXTENSION))
-            return ApplicationIcons.JournalExportToWord;
-
-         if (extension.IsOneOf(Constants.Filter.PDF_EXTENSION))
-            return ApplicationIcons.PDF;
-
-         //File icon
-         return ApplicationIcons.ProjectNew;
       }
    }
 }

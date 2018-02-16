@@ -6,6 +6,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
@@ -22,6 +23,7 @@ namespace OSPSuite.Core
       protected IRelatedItemSerializer _relatedItemSerializer;
       protected IRelatedItemDescriptionCreator _relatedItemDescriptionCreator;
       protected IRelatedItemTypeRetriever _relatedItemTypeRetriever;
+      protected IFileExtensionToIconMapper _iconMapper;
 
       protected override void Context()
       {
@@ -32,8 +34,10 @@ namespace OSPSuite.Core
          _relatedItemSerializer = A.Fake<IRelatedItemSerializer>();
          _relatedItemDescriptionCreator = A.Fake<IRelatedItemDescriptionCreator>();
          _relatedItemTypeRetriever = A.Fake<IRelatedItemTypeRetriever>();
-         sut = new RelatedItemFactory(_executionContext, _applicationConfiguration, _projectRetriever, _applicationDiscriminator, _relatedItemSerializer, _relatedItemDescriptionCreator,
-            _relatedItemTypeRetriever);
+         _iconMapper= A.Fake<IFileExtensionToIconMapper>();
+         sut = new RelatedItemFactory(_executionContext, _applicationConfiguration, _projectRetriever, 
+            _applicationDiscriminator, _relatedItemSerializer, _relatedItemDescriptionCreator,
+            _relatedItemTypeRetriever,_iconMapper);
       }
    }
 
@@ -134,15 +138,21 @@ namespace OSPSuite.Core
    {
       private string _fileFullPath;
       private RelatedItem _relatedItem;
-      private string _fileName;
+      private string _fileNameWithExtension;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _fileFullPath = FileHelper.GenerateTemporaryFileName();
-         _fileName = FileHelper.FileNameFromFileFullPath(_fileFullPath);
+         _fileNameWithExtension = new FileInfo(_fileFullPath).Name;
          string[] lines = {"First line", "Second line", "Third line"};
          File.WriteAllLines(_fileFullPath, lines);
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(_iconMapper).WithReturnType<ApplicationIcon>().Returns(ApplicationIcons.Excel);
       }
 
       protected override void Because()
@@ -165,8 +175,8 @@ namespace OSPSuite.Core
       [Observation]
       public void should_save_the_expected_meta_data_of_file_into_the_related_item()
       {
-         _relatedItem.IconName.ShouldBeEqualTo(ApplicationIcons.ProjectNew.IconName);
-         _relatedItem.Name.ShouldBeEqualTo(_fileName);
+         _relatedItem.IconName.ShouldBeEqualTo(ApplicationIcons.Excel.IconName);
+         _relatedItem.Name.ShouldBeEqualTo(_fileNameWithExtension);
          _relatedItem.ItemType.ShouldBeEqualTo(Constants.RELATIVE_ITEM_FILE_ITEM_TYPE);
          _relatedItem.FullPath.ShouldBeEqualTo(_fileFullPath);
       }

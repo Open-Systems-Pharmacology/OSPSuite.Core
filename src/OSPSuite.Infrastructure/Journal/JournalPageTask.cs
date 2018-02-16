@@ -23,8 +23,8 @@ namespace OSPSuite.Infrastructure.Journal
       private readonly NumericFormatter<double> _fileSizeFormatter;
 
       public JournalPageTask(
-         IDatabaseMediator databaseMediator, 
-         IEventPublisher eventPublisher, 
+         IDatabaseMediator databaseMediator,
+         IEventPublisher eventPublisher,
          IDialogCreator dialogCreator,
          IRelatedItemFactory relatedItemFactory)
       {
@@ -79,7 +79,7 @@ namespace OSPSuite.Infrastructure.Journal
          var sizeInBytes = FileLength(fileName);
          var sizeInMegaBytes = sizeInMb(sizeInBytes);
 
-         if (sizeInBytes >=  Constants.RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES)
+         if (sizeInBytes >= Constants.RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES)
             throw new OSPSuiteException(Error.FileSizeExceedsMaximumSize(sizeInMegaBytes, sizeInMb(Constants.RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES)));
 
          if (sizeInBytes < Constants.RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES)
@@ -91,7 +91,7 @@ namespace OSPSuite.Infrastructure.Journal
          return res == ViewResult.Yes;
       }
 
-      private string sizeInMb(long sizeInByte) => _fileSizeFormatter.Format(sizeInByte / 1_000_000.0);
+      private string sizeInMb(long sizeInByte) => _fileSizeFormatter.Format(sizeInByte * 1.0 / Constants.MB_TO_BYTES);
 
       public void DeleteRelatedItemFrom(Core.Journal.Journal journal, RelatedItem relatedItem)
       {
@@ -150,6 +150,6 @@ namespace OSPSuite.Infrastructure.Journal
       }
 
       //JUST FOR TESTING
-      public Func<string, long> FileLength { get; set; } =  (fileFullPath) => new FileInfo(fileFullPath).Length;
+      public Func<string, long> FileLength { get; set; } = (fileFullPath) => new FileInfo(fileFullPath).Length;
    }
 }
