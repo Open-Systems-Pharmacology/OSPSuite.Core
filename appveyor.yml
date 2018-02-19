@@ -2,7 +2,7 @@ configuration: Debug
 image: Visual Studio 2017
 
 environment:
-  app_version: '7.2.0'
+  app_version: '7.2.2'
 
 version: '%app_version%.{build}'
 
@@ -38,7 +38,7 @@ skip_branch_with_pr: true
 
 branches:
   only:
-    - develop
+    - hotfix/7.2.2
 test:
   assemblies:
     - OSPSuite.Core.Tests.dll
