@@ -1,13 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraEditors.ViewInfo;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.DataBinding.DevExpress;
@@ -21,7 +25,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Binders
 {
-   public class ValueOriginBinder<T> : IDisposable where T : IWithValueOrigin
+   public class ValueOriginBinder<T> : IDisposable where T : class, IWithValueOrigin
    {
       private readonly IValueOriginPresenter _valueOriginPresenter;
       private readonly IImageListRetriever _imageListRetriever;
@@ -33,6 +37,7 @@ namespace OSPSuite.UI.Binders
       private Action<T, ValueOrigin> _onValueOriginUpdated;
       private IGridViewColumn _valueOriginColumn;
       private Func<T, bool> _valueOriginEditableFunc = x => true;
+      private const int IMAGE_OFFSET = 2;
 
       public ValueOriginBinder(IValueOriginPresenter valueOriginPresenter, IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -46,18 +51,22 @@ namespace OSPSuite.UI.Binders
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
+         _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
          var column = _gridView.ColumnAt(e);
-         if (!Equals(_valueOriginColumn.XtraColumn, column)) return;
+         if(!ColumnIsValueOrigin(column))
+            return;
 
          var withValueOrigin = _gridViewBinder.ElementAt(e);
-         if (withValueOrigin == null) return;
+         if (withValueOrigin == null)
+            return;
 
          var superToolTip = _toolTipCreator.ToolTipFor(withValueOrigin.ValueOrigin);
-         if (superToolTip == null) return;
+         if (superToolTip == null)
+            return;
 
          e.Info = _toolTipCreator.ToolTipControlInfoFor(withValueOrigin, superToolTip);
       }
@@ -110,10 +119,10 @@ namespace OSPSuite.UI.Binders
 
          _gridView.ShowingEditor += onShowingEditor;
          _gridView.RowCellStyle += updateRowCellStyle;
+         _gridView.CustomDrawCell += customDrawCell;
 
          _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
             .WithCaption(Captions.ValueOrigin)
-            .WithRepository(displayRepositoryFor)
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
 
@@ -123,17 +132,51 @@ namespace OSPSuite.UI.Binders
          initializeToolTip(_gridView.GridControl);
       }
 
-      private void updateRowCellStyle(object sender, RowCellStyleEventArgs e)
+      private void customDrawCell(object sender, RowCellCustomDrawEventArgs e)
       {
-         if (!ColumnIsValueOrigin(e.Column))
+         var valueOrigin = withValueOriginAt(e)?.ValueOrigin;
+         if (valueOrigin == null)
             return;
 
-         var withValueOrigin = _gridViewBinder.ElementAt(e.RowHandle);
+         var cellInfo = e.Cell as GridCellInfo;
+         var info = cellInfo?.ViewInfo as TextEditViewInfo;
+         if (info == null)
+            return;
+
+         var firstImage = valueOrigin.Source.Icon.ToImage(IconSizes.Size16x16);
+         var secondImage = valueOrigin.Method.Icon.ToImage(IconSizes.Size16x16);
+         var resultImage = new Bitmap(firstImage.Width + secondImage.Width + IMAGE_OFFSET, firstImage.Height);
+
+         using (Graphics g = Graphics.FromImage(resultImage))
+         {
+            g.DrawImage(firstImage, new PointF(0, 0));
+            g.DrawImage(secondImage, new PointF(firstImage.Width + IMAGE_OFFSET, 0));
+         }
+
+         info.ContextImage = resultImage;
+         info.CalcViewInfo();
+      }
+
+      private void updateRowCellStyle(object sender, RowCellStyleEventArgs e)
+      {
+         var withValueOrigin = withValueOriginAt(e);
          if (withValueOrigin == null)
             return;
 
          var canEditValueOrigin = _valueOriginEditableFunc(withValueOrigin);
          _gridView.AdjustAppearance(e, canEditValueOrigin);
+      }
+
+      private T withValueOriginAt(RowCellCustomDrawEventArgs e) => withValueOriginAt(e.Column, e.RowHandle);
+
+      private T withValueOriginAt(CustomRowCellEventArgs e) => withValueOriginAt(e.Column, e.RowHandle);
+
+      private T withValueOriginAt(GridColumn column, int rowHandle)
+      {
+         if (!ColumnIsValueOrigin(column))
+            return null;
+
+         return _gridViewBinder.ElementAt(rowHandle);
       }
 
       public bool ValueOriginVisible
@@ -164,14 +207,6 @@ namespace OSPSuite.UI.Binders
          }
 
          gridControl.ToolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
-      }
-
-      private RepositoryItem displayRepositoryFor(T withValueOrigin)
-      {
-         var valueOrigin = withValueOrigin.ValueOrigin;
-         var repositoryItem = new UxRepositoryItemImageComboBox(_gridView, _imageListRetriever);
-         repositoryItem.AddItem(valueOrigin, valueOrigin.Source.Icon);
-         return repositoryItem;
       }
 
       private RepositoryItem editRepositoryFor(T withValueOrigin)

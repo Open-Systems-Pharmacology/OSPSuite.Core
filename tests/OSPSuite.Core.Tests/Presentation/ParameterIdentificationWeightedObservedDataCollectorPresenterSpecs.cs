@@ -61,7 +61,9 @@ namespace OSPSuite.Presentation
       protected override void Context()
       {
          base.Context();
+#pragma warning disable 618
          _weightedObservedData = new WeightedObservedData();
+#pragma warning restore 618
          _outputMapping.WeightedObservedData = _weightedObservedData;
       }
 

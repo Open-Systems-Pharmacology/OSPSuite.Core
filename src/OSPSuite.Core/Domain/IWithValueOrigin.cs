@@ -7,11 +7,13 @@
       /// </summary>
       ValueOrigin ValueOrigin { get; }
 
-
       /// <summary>
-      /// Updates the value origin in the underlying object. The object is responsible to decide HOW the update should be performed
+      ///    Updates the value origin in the underlying object. The object is responsible to decide HOW the update should be
+      ///    performed
       /// </summary>
-      /// <param name="sourceValueOrigin">Value origin containing the properties used to update own <see cref="ValueOrigin"/></param>
+      /// <param name="sourceValueOrigin">
+      ///    Value origin containing the properties used to update own <see cref="ValueOrigin" />
+      /// </param>
       void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin);
    }
 }
