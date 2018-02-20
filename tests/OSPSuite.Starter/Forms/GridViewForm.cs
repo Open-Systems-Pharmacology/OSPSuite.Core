@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraGrid.Views.Grid;
@@ -7,6 +9,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.UI.Binders;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Starter.Forms
 {
@@ -14,6 +17,8 @@ namespace OSPSuite.Starter.Forms
    {
       private readonly ValueOriginBinder<ParameterDTO> _valueOriginBinder;
       private readonly GridViewBinder<ParameterDTO> _gridViewBinder;
+      private List<ParameterDTO> _allParameters;
+      private ParameterDTO _firstParmaeter;
 
       public GridViewForm(ValueOriginBinder<ParameterDTO> valueOriginBinder)
       {
@@ -28,7 +33,20 @@ namespace OSPSuite.Starter.Forms
          _gridViewBinder = new GridViewBinder<ParameterDTO>(gridView);
 
          initializeBinding();
-         _gridViewBinder.BindToSource(generateDummyContent().ToList());
+
+         _allParameters = generateDummyContent().ToList();
+         _gridViewBinder.BindToSource(_allParameters);
+
+         _firstParmaeter = _allParameters[0];
+         _firstParmaeter.PropertyChanged += propertyChanged;
+      }
+
+      private void propertyChanged(object sender, PropertyChangedEventArgs e)
+      {
+         if (e.PropertyName != "ValueOrigin")
+            return;
+
+         Debug.Print(sender.DowncastTo<ParameterDTO>().Name);
       }
 
       private void initializeBinding()
@@ -49,15 +67,18 @@ namespace OSPSuite.Starter.Forms
 
       private bool canEditValueOrigin(ParameterDTO parameter)
       {
-         if (!parameter.NameIsOneOf("Prameter_2", "Prameter_4"))
-            return false;
+//         if (!parameter.NameIsOneOf("Prameter_2", "Prameter_4"))
+//            return false;
 
          return true;
       }
 
       private void onValueOriginUpdated(ParameterDTO parameterDTO, ValueOrigin newValueOrigin)
       {
-         parameterDTO.ValueOrigin.UpdateFrom(newValueOrigin);
+         parameterDTO.UpdateValueOriginFrom(newValueOrigin);
+
+         //Also update first parmaeter with same value origin to test update
+         _firstParmaeter.UpdateValueOriginFrom(newValueOrigin);
       }
 
       private IEnumerable<ParameterDTO> generateDummyContent()
@@ -80,5 +101,6 @@ namespace OSPSuite.Starter.Forms
 
    public class ParameterDTO : Parameter
    {
+
    }
 }

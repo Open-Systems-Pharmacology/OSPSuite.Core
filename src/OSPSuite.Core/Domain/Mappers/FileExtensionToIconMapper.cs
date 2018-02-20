@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (extension.IsOneOf(Constants.Filter.R_EXTENSION, Constants.Filter.RD_EXTENSION))
             return ApplicationIcons.R;
 
-         if (extension.IsOneOf(Constants.Filter.PKML_EXTENSION, Constants.Filter.RD_EXTENSION))
+         if (extension.IsOneOf(Constants.Filter.PKML_EXTENSION))
             return ApplicationIcons.PKML;
 
          if (extension.IsOneOf(Constants.Filter.CSV_EXTENSION))
