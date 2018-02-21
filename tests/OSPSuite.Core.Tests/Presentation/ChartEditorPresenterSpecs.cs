@@ -571,20 +571,6 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_the_chart_editor_presenter_is_being_notified_that_the_chart_settings_were_changed : concern_for_ChartEditorPresenter
-   {
-      protected override void Because()
-      {
-         _chartSettingsPresenter.ChartSettingsChanged += Raise.WithEmpty();
-      }
-
-      [Observation]
-      public void should_notify_a_chart_property_changed_event()
-      {
-         A.CallTo(() => _eventPublisher.PublishEvent(A<ChartPropertiesChangedEvent>.That.Matches(x => x.Chart == _chart))).MustHaveHappened();
-      }
-   }
-
    public class When_the_chart_editor_presenter_is_being_notified_that_the_chart_export_settings_were_changed : concern_for_ChartEditorPresenter
    {
       protected override void Because()
