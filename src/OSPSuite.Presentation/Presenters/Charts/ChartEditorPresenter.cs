@@ -26,8 +26,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    ///    - ChartOptions for editing properties of chartSettings.
    /// </summary>
    public interface IChartEditorPresenter : IPresenter<IChartEditorView>,
-      IListener<ChartUpdatedEvent>,
-      IListener<ChartPropertiesChangedEvent>
+      IListener<ChartUpdatedEvent>
    {
       CurveChart Chart { get; }
 
@@ -230,7 +229,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.SelectionChanged += (o, e) => onSelectionChanged(e.Columns);
 
          _chartExportSettingsPresenter.ChartExportSettingsChanged += (o,e)=> onChartPropertiesChanged();
-         _chartSettingsPresenter.ChartSettingsChanged += (o, e) => onChartPropertiesChanged();
+         _chartSettingsPresenter.ChartSettingsChanged += (o, e) => updateChart();
 
          _curveSettingsPresenter.AddCurves += (o,e) => addCurvesForColumns(e.Columns);
          _curveSettingsPresenter.RemoveCurve += (o,e)=> removeCurve(e.Curve);
@@ -281,6 +280,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void onChartPropertiesChanged()
       {
          _eventPublisher.PublishEvent(new ChartPropertiesChangedEvent(Chart));
+         ChartChanged();
       }
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
@@ -554,14 +554,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (chartUpdatedEvent.PropogateChartChangeEvent)
             ChartChanged();
-      }
-
-      public void Handle(ChartPropertiesChangedEvent chartPropertiesChangedEvent)
-      {
-         if (!canHandle(chartPropertiesChangedEvent))
-            return;
-
-         ChartChanged();
       }
    }
 }

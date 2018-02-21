@@ -403,7 +403,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn,_baseGrid,  }));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
       }
 
       [Observation]
@@ -424,7 +424,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
       }
 
       [Observation]
@@ -433,7 +433,6 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _view.SetSelectAllCheckBox(false)).MustHaveHappened();
       }
    }
-
 
    public class When_the_chart_editor_presenter_is_notified_that_the_selected_columns_have_changed_in_the_data_browser_and_some__columns_are_used_and_other_unused : concern_for_ChartEditorPresenter
    {
@@ -446,7 +445,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
       }
 
       [Observation]
@@ -455,7 +454,6 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _view.SetSelectAllCheckBox(null)).MustHaveHappened();
       }
    }
-
 
    public class When_the_chart_editor_presenter_is_notified_that_the_used_state_of_some_columns_was_changed_to_unused : concern_for_ChartEditorPresenter
    {
@@ -633,7 +631,7 @@ namespace OSPSuite.Presentation
    {
       protected override void Because()
       {
-         _curveSettingsPresenter.AddCurves += Raise.With(new ColumnsEventArgs(new []{_standardColumn, }));
+         _curveSettingsPresenter.AddCurves += Raise.With(new ColumnsEventArgs(new[] {_standardColumn,}));
       }
 
       [Observation]
@@ -662,6 +660,20 @@ namespace OSPSuite.Presentation
       protected override void Because()
       {
          _curveSettingsPresenter.CurvePropertyChanged += Raise.With(new CurveEventArgs(_curve));
+      }
+
+      [Observation]
+      public void should_update_the_chart()
+      {
+         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_chart_settings_were_changed : concern_for_ChartEditorPresenter
+   {
+      protected override void Because()
+      {
+         _chartSettingsPresenter.ChartSettingsChanged += Raise.WithEmpty();
       }
 
       [Observation]
