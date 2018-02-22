@@ -45,6 +45,11 @@ namespace OSPSuite.Core.Domain
       DataRepository ObservedDataBy(string dataRepositoryId);
 
       /// <summary>
+      ///    Returns the observed data referenced by <paramref name="usedObservedData"/>
+      /// </summary>
+      DataRepository ObservedDataBy(UsedObservedData usedObservedData);
+
+      /// <summary>
       ///    List of favorites defined in the project
       /// </summary>
       Favorites Favorites { get; }
@@ -60,7 +65,7 @@ namespace OSPSuite.Core.Domain
       IReadOnlyCollection<IClassification> AllClassificationsByType(ClassificationType classificationType);
 
       /// <summary>
-      ///    Add a new classification to the project
+      ///    Adds a new classification to the project
       /// </summary>
       void AddClassification(IClassification classification);
 

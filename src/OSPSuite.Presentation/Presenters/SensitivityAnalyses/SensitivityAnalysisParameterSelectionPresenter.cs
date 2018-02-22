@@ -125,7 +125,8 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       private static bool isNonFormulaParameter(ParameterSelection parameterSelection)
       {
-         return !parameterSelection.Parameter.Formula.IsExplicit();
+         var parameter = parameterSelection.Parameter;
+         return parameter.IsFixedValue || !parameter.Formula.IsExplicit();
       }
 
       public void Handle(SimulationReplacedInParameterAnalyzableEvent eventToHandle)

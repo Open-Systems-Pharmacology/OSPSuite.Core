@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.BDDHelper;
 using FakeItEasy;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
+using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -111,6 +114,69 @@ namespace OSPSuite.Presentation
       public void the_sub_presenters_must_edit_the_analysis()
       {
          A.CallTo(() => _sensitivityAnalysisParametersPresenter.EditSensitivityAnalysis(_sensitivityAnalysis)).MustHaveHappened();
+      }
+   }
+
+   public class When_adding_all_constant_parameter_to_the_sensitivity_analysis : concern_for_SensitivityAnalysisParameterSelectionPresenter
+   {
+      private ParameterSelection _constantParameterSelection;
+      private ParameterSelection _formulaParameterSelection;
+      private ParameterSelection _formulaFixedParameterSelection;
+      private ISimulation _simulation;
+      private IParameter _constantParameter;
+      private IParameter _formulaParameter;
+      private IParameter _formulaFixedParameter;
+      private IReadOnlyList<ParameterSelection> _addedParameters;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation= A.Fake<ISimulation>();
+         var rootContainer = new Container();
+         _simulation.Model.Root = rootContainer;
+
+         _constantParameter = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("ConstantParameter");
+         _formulaParameter  = new Parameter().WithFormula(new ExplicitFormula("1+2")).WithName("FormulaParameter");
+         _formulaFixedParameter = new Parameter().WithFormula(new ExplicitFormula("1+2")).WithName("FormulaFixedParameter");
+         _formulaFixedParameter.Value = 10;
+
+         rootContainer.Add(_constantParameter);
+         rootContainer.Add(_formulaParameter);
+         rootContainer.Add(_formulaFixedParameter);
+
+         _constantParameterSelection = new ParameterSelection(_simulation, _constantParameter.Name);
+         _formulaParameterSelection = new ParameterSelection(_simulation, _formulaParameter.Name);
+         _formulaFixedParameterSelection = new ParameterSelection(_simulation, _formulaFixedParameter.Name);
+
+
+         A.CallTo(() => _simulationParametersPresenter.AllParameters).Returns(new []{_constantParameterSelection, _formulaParameterSelection,_formulaFixedParameterSelection});
+
+         A.CallTo(() => _sensitivityAnalysisParametersPresenter.AddParameters(A<IReadOnlyList<ParameterSelection>>._))
+            .Invokes(x => _addedParameters = x.GetArgument<IReadOnlyList<ParameterSelection>>(0));
+      }
+
+      protected override void Because()
+      {
+         sut.AddAllConstantParameters();
+      }
+
+      [Observation]
+      public void should_ensure_that_all_non_formula_parameters_are_added()
+      {
+         _addedParameters.ShouldContain(_constantParameterSelection);
+      }
+
+      [Observation]
+      public void should_ensure_that_all_formula_with_fixed_value_are_added()
+      {
+         _addedParameters.ShouldContain(_formulaFixedParameterSelection);
+      }
+
+      [Observation]
+      public void should_not_add_formula_parameters_that_were_not_changed_by_user()
+      {
+         _addedParameters.ShouldNotContain(_formulaParameterSelection);
+
       }
    }
 }

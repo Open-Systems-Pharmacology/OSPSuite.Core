@@ -54,11 +54,10 @@ namespace OSPSuite.Core.Domain
          RemoveClassifiable(classifiable);
       }
 
-      public DataRepository ObservedDataBy(string dataRepositoryId)
-      {
-         return _allObservedData[dataRepositoryId];
-      }
+      public DataRepository ObservedDataBy(string dataRepositoryId) => _allObservedData[dataRepositoryId];
 
+      public virtual DataRepository ObservedDataBy(UsedObservedData usedObservedData) => ObservedDataBy(usedObservedData.Id);
+      
       public IReadOnlyCollection<IClassification> AllClassifications => _allClassifications;
 
       public IReadOnlyCollection<IClassification> AllClassificationsByType(ClassificationType classificationType)
