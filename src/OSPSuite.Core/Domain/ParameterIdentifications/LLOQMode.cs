@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return mode;
       }
 
-      public static object ByName(string name)
+      public static LLOQMode ByName(string name)
       {
          return _allModes[name];
       }
