@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -10,6 +8,8 @@ using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -32,6 +32,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly ICategorialParameterIdentificationToCalculationMethodPermutationMapper _categorialCalculationMethodPermutationMapper;
       private CategorialRunModeDTO _runModeDTO;
       private readonly List<CategoryDTO> _allCategoriesDTO;
+      public string ValueAreaColumn { get; } = Constants.CategoryOptimizations.VALUE;
+      public int WarningThreshold { get; } = Constants.CategoryOptimizations.WARNING_THRESHOLD;
+      public bool IsLatched { get; set; }
 
       public CategorialParameterIdentificationRunModePresenter(ICategorialParameterIdentificationRunModeView view,
          ICategorialRunModeToCategorialRunModeDTOMapper categorialDTOMapper, ICategorialParameterIdentificationToCalculationMethodPermutationMapper categorialCalculationMethodPermutationMapper,
@@ -43,13 +46,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindTo(_allCategoriesDTO);
       }
 
-      public string ValueAreaColumn => Constants.CategoryOptimizations.VALUE;
-
-      public int WarningThreshold => 5;
-
       public bool HasCategories => _allCategoriesDTO.Any();
-
-      public bool IsLatched { get; set; }
 
       public override void Edit(ParameterIdentification parameterIdentification)
       {

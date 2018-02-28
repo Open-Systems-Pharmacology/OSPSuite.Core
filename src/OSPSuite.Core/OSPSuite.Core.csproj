@@ -150,6 +150,9 @@
     <Compile Include="Domain\IWithValueOrigin.cs" />
     <Compile Include="Domain\Mappers\FileExtensionToIconMapper.cs" />
     <Compile Include="Domain\Mappers\IQuantityPathToQuantityDisplayPathMapper.cs" />
+    <Compile Include="Domain\ParameterIdentifications\CategorialParameterIdentificationRunMode.cs" />
+    <Compile Include="Domain\ParameterIdentifications\MultipleParameterIdentificationRunMode.cs" />
+    <Compile Include="Domain\ParameterIdentifications\StandardParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
     <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />
     <Compile Include="Domain\ValueOriginSource.cs" />
