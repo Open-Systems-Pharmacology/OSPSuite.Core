@@ -29,7 +29,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected override Matrix CalculateMatrix()
       {
-         if (SelectedRunResults.JacobianMatrix == null)
+         if (SelectedRunResults?.JacobianMatrix == null)
             return null;
 
          return _matrixCalculator.CovarianceMatrixFrom(SelectedRunResults.JacobianMatrix, SelectedRunResults.BestResult.ResidualsResult);
