@@ -410,6 +410,7 @@ namespace OSPSuite.Core.Domain
          public const string CALCULATION_METHOD = "CalculationMethod";
          public const string CALCULATION_METHOD_DISPLAY = "Calculation Method Display";
          public const string VALUE = "Value";
+         public const int WARNING_THRESHOLD = 5;
       }
 
       public static class LLOQModes

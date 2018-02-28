@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -9,19 +9,13 @@ namespace OSPSuite.Presentation.DTO
       private bool _selected;
       public string Name { set; get; }
       public string DisplayName { get; set; }
+
       public IReadOnlyList<CalculationMethod> Methods { get; set; }
 
       public bool Selected
       {
-         get { return _selected; }
-         set
-         {
-            if(_selected==value)
-               return;
-            
-            _selected = value;
-            OnPropertyChanged(() => Selected);
-         }
+         get => _selected;
+         set => SetProperty(ref _selected, value);
       }
    }
 }

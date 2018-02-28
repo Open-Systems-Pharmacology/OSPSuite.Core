@@ -173,6 +173,7 @@
     <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
     <Compile Include="Core\AliasCreatorSpecs.cs" />
     <Compile Include="Core\AxisXmlSerializerSpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationRunModeSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsExtensionsSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
     <Compile Include="Core\ComparerSettingsSpecs.cs" />
