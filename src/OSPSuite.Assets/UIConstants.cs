@@ -143,6 +143,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataFolder = "Observed Data";
       public static readonly string ParameterIdentificationFolder = "Parameter Identifications";
       public static readonly string SensitivityAnalysisFolder = "Sensitivity Analyses";
+      public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
       public static readonly string Delete = "Delete";
       public static readonly string SelectSimulations = "Select Simulations";

@@ -41,8 +41,8 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string Name
       {
-         get { return Subject.Name; }
-         set { Subject.Name = value; }
+         get => Subject.Name;
+         set => Subject.Name = value;
       }
 
       /// <summary>
@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public T Subject
       {
-         get { return _subject; }
+         get => _subject;
          set
          {
             _subject = value;
@@ -66,9 +66,6 @@ namespace OSPSuite.Core.Domain
          Subject = subject.DowncastTo<T>();
       }
 
-      public IWithId WrappedObject
-      {
-         get { return Subject; }
-      }
+      public IWithId WrappedObject => Subject;
    }
 }
