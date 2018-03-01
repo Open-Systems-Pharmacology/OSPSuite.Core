@@ -318,7 +318,12 @@ namespace OSPSuite.Presentation.Services.Importer
                         if (!newTable.MetaData.Columns.ContainsName(metaData.Target)) continue;
                         var metaDataColumn = newTable.MetaData.Columns.ItemByName(metaData.Target);
                         if (!filterRow.Table.Columns.Contains(metaData.SourceColumn)) continue;
-                        metaDataColumn.DefaultValue = filterRow[metaData.SourceColumn];
+
+                        var defaultValue = filterRow[metaData.SourceColumn].ToString();
+
+                        if(!metaDataColumn.IsListOfValuesFixed || metaDataColumn.ListOfValues.ContainsValue(defaultValue))
+                           metaDataColumn.DefaultValue = defaultValue;
+
                         metaDataColumn.IsColumnUsedForGrouping = true;
                      }
                   }
