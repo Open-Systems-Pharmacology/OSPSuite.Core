@@ -2,16 +2,17 @@
 using System.Data;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_ParametersReportCreator : ContextSpecification<IParametersReportCreator>
    {
       protected List<IParameter> _allParameters;
+
       protected override void Context()
       {
          _allParameters = new List<IParameter>();
@@ -19,27 +20,27 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_exporting_some_parameters_to_a_csv_file_using_the_paramteres_report : concern_for_ParametersReportCreator
    {
       private string _csvFile;
-      
+
       protected override void Context()
       {
          base.Context();
          _csvFile = FileHelper.GenerateTemporaryFileName();
-         _allParameters.Add(new Parameter{Name = "P1",Formula = new ConstantFormula(1)});
-         _allParameters.Add(new Parameter{Name = "P2",Formula = new ExplicitFormula("4+5")});
+         _allParameters.Add(new Parameter {Name = "P1", Formula = new ConstantFormula(1)});
+         _allParameters.Add(new Parameter {Name = "P2", Formula = new ExplicitFormula("4+5")});
       }
 
       protected override void Because()
       {
-         sut.ExportParametersTo(_allParameters,_csvFile);
+         sut.ExportParametersTo(_allParameters, _csvFile);
       }
+
       [Observation]
       public void should_have_create_the_file()
       {
-         FileHelper.FileExists(_csvFile).ShouldBeTrue();   
+         FileHelper.FileExists(_csvFile).ShouldBeTrue();
       }
 
       public override void Cleanup()
@@ -48,7 +49,7 @@ namespace OSPSuite.Core
          FileHelper.DeleteFile(_csvFile);
       }
    }
-   
+
    public class When_exporting_some_parameters_to_a_datatable_using_the_paramteres_report : concern_for_ParametersReportCreator
    {
       private DataTable _table;
@@ -56,9 +57,9 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _allParameters.Add(new Parameter { Name = "P1", Formula = new ConstantFormula(1) });
-         _allParameters.Add(new Parameter { Name = "P2", Formula = new ExplicitFormula("4+5") });
-         _allParameters.Add(new Parameter { Name = "P3", Formula = new ExplicitFormula("8+9"), RHSFormula = new ExplicitFormula("A;B")});
+         _allParameters.Add(new Parameter {Name = "P1", Formula = new ConstantFormula(1)});
+         _allParameters.Add(new Parameter {Name = "P2", Formula = new ExplicitFormula("4+5")});
+         _allParameters.Add(new Parameter {Name = "P3", Formula = new ExplicitFormula("8+9"), RHSFormula = new ExplicitFormula("A;B")});
       }
 
       protected override void Because()
@@ -101,7 +102,7 @@ namespace OSPSuite.Core
       {
          _table.Rows[0][Constants.ParameterExport.RHS_FORMULA].ShouldBeEqualTo(string.Empty);
          _table.Rows[1][Constants.ParameterExport.RHS_FORMULA].ShouldBeEqualTo(string.Empty);
-         _table.Rows[2][Constants.ParameterExport.RHS_FORMULA].ShouldBeEqualTo("A,B");
+         _table.Rows[2][Constants.ParameterExport.RHS_FORMULA].ShouldBeEqualTo("A;B");
       }
    }
-}	
+}
