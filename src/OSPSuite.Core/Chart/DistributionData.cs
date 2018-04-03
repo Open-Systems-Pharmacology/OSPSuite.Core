@@ -1,5 +1,5 @@
 using System.Data;
-using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart
 {

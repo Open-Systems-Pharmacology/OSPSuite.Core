@@ -3,6 +3,7 @@ using System.Data;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers
 {

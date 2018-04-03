@@ -56,13 +56,8 @@ namespace OSPSuite.Core.Domain.Services
       private static string formulaStringFrom(IFormula formula)
       {
          if (formula != null && formula.IsExplicit())
-         {
-            //Remove ; that would interfere with csv export
-            return formula.DowncastTo<ExplicitFormula>()
-                          .FormulaString
-                          .Replace(";", ",");
-         }
-       
+            return formula.DowncastTo<ExplicitFormula>().FormulaString;
+
          return string.Empty;
       }
 
@@ -79,14 +74,14 @@ namespace OSPSuite.Core.Domain.Services
       public DataTable ExportParametersToTable(IEnumerable<IParameter> parametersToExport)
       {
          var dataTable = new DataTable();
-         var colPath = dataTable.Columns.Add(Constants.ParameterExport.PARAMETER_PATH, typeof(string));
-         var colValue = dataTable.Columns.Add(Constants.ParameterExport.VALUE, typeof(double));
-         var colFormula = dataTable.Columns.Add(Constants.ParameterExport.FORMULA, typeof(string));
-         var colRHSFormula = dataTable.Columns.Add(Constants.ParameterExport.RHS_FORMULA, typeof(string));
+         var colPath = dataTable.AddColumn(Constants.ParameterExport.PARAMETER_PATH);
+         var colValue = dataTable.AddColumn<double>(Constants.ParameterExport.VALUE);
+         var colFormula = dataTable.AddColumn(Constants.ParameterExport.FORMULA);
+         var colRHSFormula = dataTable.AddColumn(Constants.ParameterExport.RHS_FORMULA);
 
          foreach (var parameter in parametersToExport)
          {
-            DataRow row = dataTable.NewRow();
+            var row = dataTable.NewRow();
             row[colPath] = _objectPathFactory.CreateAbsoluteObjectPath(parameter);
             try
             {

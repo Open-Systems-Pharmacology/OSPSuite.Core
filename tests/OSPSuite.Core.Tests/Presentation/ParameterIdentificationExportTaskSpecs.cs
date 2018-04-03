@@ -20,6 +20,7 @@ using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation
 {
