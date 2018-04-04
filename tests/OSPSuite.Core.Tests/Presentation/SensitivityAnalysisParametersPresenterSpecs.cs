@@ -23,6 +23,8 @@ namespace OSPSuite.Presentation
       protected SensitivityParameter _selectedSensitivityParameter;
       protected SensitivityParameter _unSelectedSensitivityParameter;
       protected IParameterDTO _parameterDTO;
+      protected ISensitivityAnalysisTask _sensitivityAnalysisTask;
+      protected SensitivityParameterDTO _sensitivityParameterDTO;
 
       protected override void Context()
       {
@@ -31,7 +33,11 @@ namespace OSPSuite.Presentation
          _sensitivityParameterToSensitivityParameterDTOMapper = A.Fake<ISensitivityParameterToSensitivityParameterDTOMapper>();
          _sensitivityAnalysisSetNMaxPresenter = A.Fake<ISensitivityAnalysisSetValuePresenter>();
          _sensitivityAnalysisSetRangePresenter = A.Fake<ISensitivityAnalysisSetValuePresenter>();
-         sut = new SensitivityAnalysisParametersPresenter(_sensitivityAnalysisParametersView, _sensitivityParameterFactory, _sensitivityParameterToSensitivityParameterDTOMapper, _sensitivityAnalysisSetNMaxPresenter, _sensitivityAnalysisSetRangePresenter);
+         _sensitivityAnalysisTask= A.Fake<ISensitivityAnalysisTask>();
+
+         sut = new SensitivityAnalysisParametersPresenter(_sensitivityAnalysisParametersView, _sensitivityParameterFactory, 
+            _sensitivityParameterToSensitivityParameterDTOMapper, _sensitivityAnalysisSetNMaxPresenter, 
+            _sensitivityAnalysisSetRangePresenter, _sensitivityAnalysisTask);
          _sensitivityAnalysis = new SensitivityAnalysis();
 
          _parameterDTO = A.Fake<IParameterDTO>();
@@ -44,9 +50,10 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _selectedSensitivityParameter.VariationRangeParameter).Returns(new Parameter());
          A.CallTo(() => _unSelectedSensitivityParameter.NumberOfStepsParameter).Returns(new Parameter());
          A.CallTo(() => _unSelectedSensitivityParameter.VariationRangeParameter).Returns(new Parameter());
-         A.CallTo(() => _sensitivityAnalysisParametersView.SelectedParameters()).Returns(new[] { new SensitivityParameterDTO(_selectedSensitivityParameter) });
+         _sensitivityParameterDTO = new SensitivityParameterDTO(_selectedSensitivityParameter); 
+         A.CallTo(() => _sensitivityAnalysisParametersView.SelectedParameters()).Returns(new[] { _sensitivityParameterDTO });
 
-         A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(_selectedSensitivityParameter)).Returns(new SensitivityParameterDTO(_selectedSensitivityParameter));
+         A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(_selectedSensitivityParameter)).Returns(_sensitivityParameterDTO);
          A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(_unSelectedSensitivityParameter)).Returns(new SensitivityParameterDTO(_unSelectedSensitivityParameter));
       }
    }
@@ -132,6 +139,26 @@ namespace OSPSuite.Presentation
       {
          _selectedSensitivityParameter.VariationRangeParameter.Value.ShouldBeEqualTo(4);
          _unSelectedSensitivityParameter.VariationRangeParameter.Value.ShouldBeEqualTo(double.NaN);
+      }
+   }
+
+   public class When_renaming_a_sensitivity_analysis_parameter : concern_for_SensitivityAnalysisParametersPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.EditSensitivityAnalysis(_sensitivityAnalysis);
+      }
+
+      protected override void Because()
+      {
+         sut.ChangeName(_sensitivityParameterDTO, "NEW NAME");
+      }
+
+      [Observation]
+      public void should_leverage_the_sensitivity_analysis_task_to_rename_the_parameter_in_the_edited_sensitivity_analysis()
+      {
+         A.CallTo(() => _sensitivityAnalysisTask.UpdateSensitivityParameterName(_sensitivityAnalysis, _selectedSensitivityParameter, "NEW NAME")).MustHaveHappened();
       }
    }
 }

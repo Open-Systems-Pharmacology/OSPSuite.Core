@@ -22,8 +22,13 @@ namespace OSPSuite.Presentation.Services.SensitivityAnalyses
       private readonly ISensitivityAnalysisSimulationSwapValidator _sensitivityAnalysisSimulationSwapValidator;
       private readonly IDialogCreator _dialogCreator;
 
-      public SensitivityAnalysisTask(ISensitivityAnalysisFactory sensitivityAnalysisFactory, IOSPSuiteExecutionContext executionContext, IApplicationController applicationController,
-         ISensitivityAnalysisSimulationSwapCorrector sensitivityAnalysisSimulationSwapCorrector, ISensitivityAnalysisSimulationSwapValidator sensitivityAnalysisSimulationSwapValidator, IDialogCreator dialogCreator)
+      public SensitivityAnalysisTask(
+         ISensitivityAnalysisFactory sensitivityAnalysisFactory, 
+         IOSPSuiteExecutionContext executionContext, 
+         IApplicationController applicationController,
+         ISensitivityAnalysisSimulationSwapCorrector sensitivityAnalysisSimulationSwapCorrector,
+         ISensitivityAnalysisSimulationSwapValidator sensitivityAnalysisSimulationSwapValidator, 
+         IDialogCreator dialogCreator)
       {
          _sensitivityAnalysisFactory = sensitivityAnalysisFactory;
          _executionContext = executionContext;
@@ -91,6 +96,17 @@ namespace OSPSuite.Presentation.Services.SensitivityAnalyses
          {
             return clonePresenter.CreateCloneFor(sensitivityAnalysis);
          }
+      }
+
+      public void UpdateSensitivityParameterName(SensitivityAnalysis sensitivityAnalysis, SensitivityParameter sensitivityParameter, string newName)
+      {
+         var oldName = sensitivityParameter.Name;
+         sensitivityParameter.Name = newName;
+         if (!sensitivityAnalysis.HasResults)
+            return;
+
+         sensitivityAnalysis.Results.UpdateSensitivityParameterName(oldName, newName);
+         _executionContext.PublishEvent(new SensitivityAnalysisResultsUpdatedEvent(sensitivityAnalysis));
       }
 
       public void AddToProject(SensitivityAnalysis sensitivityAnalysis)

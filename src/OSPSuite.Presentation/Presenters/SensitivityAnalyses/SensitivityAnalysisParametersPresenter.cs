@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
@@ -8,12 +7,13 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.SensitivityAnalyses;
 using OSPSuite.Presentation.Mappers.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisParametersPresenter : IPresenter<ISensitivityAnalysisParametersView>, IAbstractParameterSelectionPresenter, ISensitivityAnalysisPresenter
    {
-      void ChangeName(SensitivityParameterDTO sensitivityParameterDTO, string oldName, string newName);
+      void ChangeName(SensitivityParameterDTO sensitivityParameterDTO, string newName);
       void RemoveSensitivityParameter(SensitivityParameterDTO sensitivityParameterDTO);
       void RemoveSelectedSensitivityParameters();
       void Refresh();
@@ -28,15 +28,23 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       private readonly List<SensitivityParameterDTO> _allSensitivityParameterDTOs = new List<SensitivityParameterDTO>();
       private SensitivityParameter _sensitivityParameterForUpdates;
       private readonly ISensitivityAnalysisSetValuePresenter _sensitivityAnalysisSetRangePresenter;
+      private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
       private readonly ISensitivityAnalysisSetValuePresenter _sensitivityAnalysisSetNMaxPresenter;
 
-      public SensitivityAnalysisParametersPresenter(ISensitivityAnalysisParametersView view, ISensitivityParameterFactory sensitivityParameterFactory, ISensitivityParameterToSensitivityParameterDTOMapper sensitivityParameterDTOMapper,
-         ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetNMaxPresenter, ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetRangePresenter) : base(view)
+      public SensitivityAnalysisParametersPresenter(
+         ISensitivityAnalysisParametersView view,
+         ISensitivityParameterFactory sensitivityParameterFactory,
+         ISensitivityParameterToSensitivityParameterDTOMapper sensitivityParameterDTOMapper,
+         ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetNMaxPresenter,
+         ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetRangePresenter,
+         ISensitivityAnalysisTask sensitivityAnalysisTask
+      ) : base(view)
       {
          _sensitivityParameterFactory = sensitivityParameterFactory;
          _sensitivityParameterDTOMapper = sensitivityParameterDTOMapper;
 
          _sensitivityAnalysisSetRangePresenter = sensitivityAnalysisSetRangePresenter;
+         _sensitivityAnalysisTask = sensitivityAnalysisTask;
          _sensitivityAnalysisSetNMaxPresenter = sensitivityAnalysisSetNMaxPresenter;
 
          _subPresenterManager.Add(sensitivityAnalysisSetNMaxPresenter);
@@ -49,8 +57,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       }
 
       private void configureSetValuePresenters(ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetNMaxPresenter, ISensitivityAnalysisSetValuePresenter sensitivityAnalysisSetRangePresenter)
-      { 
-
+      {
          sensitivityAnalysisSetNMaxPresenter.ApplyAll = applyValueToAllNMax;
          sensitivityAnalysisSetNMaxPresenter.ApplySelection = applyValueToSelectedNMax;
          sensitivityAnalysisSetNMaxPresenter.ConfigureForUInt();
@@ -109,9 +116,9 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
          updateView();
       }
 
-      public void ChangeName(SensitivityParameterDTO sensitivityParameterDTO, string oldName, string newName)
+      public void ChangeName(SensitivityParameterDTO sensitivityParameterDTO, string newName)
       {
-         sensitivityParameterDTO.SensitivityParameter.Name = newName;
+         _sensitivityAnalysisTask.UpdateSensitivityParameterName(_sensitivityAnalysis, sensitivityParameterDTO.SensitivityParameter, newName);
       }
 
       public void RemoveSensitivityParameter(SensitivityParameterDTO sensitivityParameterDTO)

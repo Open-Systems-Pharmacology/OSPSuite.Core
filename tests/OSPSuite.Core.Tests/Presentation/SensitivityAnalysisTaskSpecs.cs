@@ -1,10 +1,11 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
+using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
@@ -30,8 +31,8 @@ namespace OSPSuite.Presentation
          _applicationController = A.Fake<IApplicationController>();
          _sensitivityAnalysisSwapCorrector = A.Fake<ISensitivityAnalysisSimulationSwapCorrector>();
          _sensitivityAnalysisSwapValidator = A.Fake<ISensitivityAnalysisSimulationSwapValidator>();
-         _dialogCreator= A.Fake<IDialogCreator>();
-         sut = new SensitivityAnalysisTask(_sensitivityAnalysisFactory, _executionContext, _applicationController, _sensitivityAnalysisSwapCorrector, _sensitivityAnalysisSwapValidator,_dialogCreator);
+         _dialogCreator = A.Fake<IDialogCreator>();
+         sut = new SensitivityAnalysisTask(_sensitivityAnalysisFactory, _executionContext, _applicationController, _sensitivityAnalysisSwapCorrector, _sensitivityAnalysisSwapValidator, _dialogCreator);
 
          _validationMessagesPresenter = A.Fake<IValidationMessagesPresenter>();
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_validationMessagesPresenter);
@@ -162,6 +163,56 @@ namespace OSPSuite.Presentation
       public void should_leverage_the_clone_object_presenter_to_clone_the_sensitivity_and_return_the_clone()
       {
          _result.ShouldBeEqualTo(_cloneSensitivityAnalysis);
+      }
+   }
+
+   public class When_updating_the_name_of_a_sensitivity_parameter : concern_for_SensitivityAnalysisTask
+   {
+      private SensitivityAnalysis _sensitivityAnalysis;
+      private PKParameterSensitivity _parameterSensitivity1;
+      private PKParameterSensitivity _parameterSensitivity2;
+      private SensitivityParameter _sensitivityParameter;
+      private readonly string _newName = "NEW_NAME";
+
+      protected override void Context()
+      {
+         base.Context();
+         _sensitivityAnalysis = new SensitivityAnalysis();
+         _sensitivityParameter = new SensitivityParameter().WithName("OLD_NAME");
+         _parameterSensitivity1 = new PKParameterSensitivity {ParameterName = _sensitivityParameter.Name};
+         _parameterSensitivity2 = new PKParameterSensitivity {ParameterName = "Another name"};
+         _sensitivityAnalysis.Results = new SensitivityAnalysisRunResult();
+         _sensitivityAnalysis.Results.AddPKParameterSensitivity(_parameterSensitivity1);
+         _sensitivityAnalysis.Results.AddPKParameterSensitivity(_parameterSensitivity2);
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateSensitivityParameterName(_sensitivityAnalysis, _sensitivityParameter, _newName);
+      }
+
+      [Observation]
+      public void should_rename_the_name_of_the_sensitivity_parameter()
+      {
+         _sensitivityParameter.Name.ShouldBeEqualTo(_newName);
+      }
+
+      [Observation]
+      public void should_update_the_name_of_the_parameter_in_the_underlying_results()
+      {  
+         _parameterSensitivity1.ParameterName.ShouldBeEqualTo(_newName);
+      }
+
+      [Observation]
+      public void should_not_rename_the_name_of_unrelated_parameter_in_underlying_results()
+      {
+         _parameterSensitivity2.ParameterName.ShouldNotBeEqualTo(_newName);
+      }
+
+      [Observation]
+      public void should_notify_a_result_updated_event()
+      {
+         A.CallTo(() => _executionContext.PublishEvent(A<SensitivityAnalysisResultsUpdatedEvent>._)).MustHaveHappened();
       }
    }
 }
