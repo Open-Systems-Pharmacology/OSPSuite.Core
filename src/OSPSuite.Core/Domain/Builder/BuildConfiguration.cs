@@ -91,7 +91,7 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Set to <c>true</c> (default), the circulare reference check will be performed when creating a simulation. This
       ///    should only be set to <c>false</c> for very massive model.
       /// </summary>
-      bool PerformCicularReferenceCheck { get; set; }
+      bool PerformCircularReferenceCheck { get; set; }
 
       /// <summary>
       ///    Retrieve the builder used to create the <paramref name="modelObject" /> given as parameter
@@ -141,7 +141,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool ShouldValidate { get; set; } = true;
       public bool ShowProgress { get; set; } = true;
-      public bool PerformCicularReferenceCheck { get; set; } = true;
+      public bool PerformCircularReferenceCheck { get; set; } = true;
 
       public BuildConfiguration()
       {
