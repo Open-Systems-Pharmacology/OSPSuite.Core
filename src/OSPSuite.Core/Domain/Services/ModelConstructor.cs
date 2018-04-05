@@ -89,6 +89,7 @@ namespace OSPSuite.Core.Domain.Services
             _keywordReplacerTask.ReplaceIn(model.Root);
 
             creationResult.Add(validateModel(model, buildConfiguration));
+
             if (creationResult.State == ValidationState.Invalid)
                return creationResult;
 
@@ -114,9 +115,15 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult validateModel(IModel model, IBuildConfiguration buildConfiguration)
       {
-         var modelValidator = validate<ValidatorForQuantities>(model, buildConfiguration);
-         var circularReferenceValidator = checkCircularReferences(model, buildConfiguration);
-         return new ValidationResult(modelValidator.Messages.Union(circularReferenceValidator.Messages));
+         if (!buildConfiguration.ShouldValidate)
+            return new ValidationResult();
+
+         var modelValidation = validate<ValidatorForQuantities>(model, buildConfiguration);
+         if (!buildConfiguration.PerformCicularReferenceCheck)
+            return new ValidationResult(modelValidation.Messages);
+
+         var circularReferenceValidation = checkCircularReferences(model, buildConfiguration);
+         return new ValidationResult(modelValidation.Messages.Union(circularReferenceValidation.Messages));
       }
 
       private CreationResult buildProcess(IModel model, IBuildConfiguration buildConfiguration, params Func<IModel, IBuildConfiguration, ValidationResult>[] steps)
@@ -129,7 +136,7 @@ namespace OSPSuite.Core.Domain.Services
             if (buildConfiguration.ShowProgress)
             {
                progress = _progressManager.Create();
-               progress.Initialize(steps.Count(), Messages.CreatingModel);
+               progress.Initialize(steps.Length, Messages.CreatingModel);
             }
 
             foreach (var step in steps)
