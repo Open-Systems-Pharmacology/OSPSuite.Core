@@ -119,7 +119,7 @@ namespace OSPSuite.Core.Domain.Services
             return new ValidationResult();
 
          var modelValidation = validate<ValidatorForQuantities>(model, buildConfiguration);
-         if (!buildConfiguration.PerformCicularReferenceCheck)
+         if (!buildConfiguration.PerformCircularReferenceCheck)
             return new ValidationResult(modelValidation.Messages);
 
          var circularReferenceValidation = checkCircularReferences(model, buildConfiguration);
