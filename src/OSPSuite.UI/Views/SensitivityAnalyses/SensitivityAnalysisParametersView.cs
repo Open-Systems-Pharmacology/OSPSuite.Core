@@ -61,7 +61,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
 
       public void BindTo(IReadOnlyList<SensitivityParameterDTO> allSensitivityParameterDtos)
       {
-         _gridViewBinder.BindToSource(allSensitivityParameterDtos);
+         _gridViewBinder.BindToSource(allSensitivityParameterDtos.ToBindingList());
          gridView.RefreshData();
          gridView.CloseEditor();
          lblNumberOfParameters.Text = Captions.SensitivityAnalysis.NumberOfSelectedParameters(allSensitivityParameterDtos.Count);
@@ -109,7 +109,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          base.InitializeBinding();
          _colName = _gridViewBinder.Bind(x => x.Name)
             .WithCaption(Captions.Name)
-            .WithOnValueUpdating((o, e) => OnEvent(() => _presenter.ChangeName(o, e.OldValue, e.NewValue)));
+            .WithOnValueUpdating((o, e) => OnEvent(() => _presenter.ChangeName(o, e.NewValue)));
             
          _colName.XtraColumn.SortMode = ColumnSortMode.Value;
          _colName.XtraColumn.SortOrder = ColumnSortOrder.Ascending;

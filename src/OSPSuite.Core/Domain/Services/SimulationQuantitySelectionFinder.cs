@@ -10,8 +10,7 @@ namespace OSPSuite.Core.Domain.Services
       public bool SimulationHasSelection(SimulationQuantitySelection parameterSelection, IWithModel newSimulation)
       {
          var path = new ObjectPath(parameterSelection.PathArray);
-         bool success;
-         path.TryResolve<IEntity>(newSimulation.Model.Root, out success);
+         path.TryResolve<IEntity>(newSimulation.Model.Root, out var success);
          return success;
       }
    }

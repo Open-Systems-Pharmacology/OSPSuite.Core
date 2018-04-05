@@ -5,7 +5,6 @@ using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Presentation.Mappers.SensitivityAnalyses
 {

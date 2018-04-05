@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -22,6 +23,28 @@ namespace OSPSuite.Starter.Services
       public ParameterDTO(IParameter parameter) : base(parameter)
       {
          Parameter = parameter;
+         bindToParameter();
+      }
+
+      private void bindToParameter()
+      {
+         if (Parameter == null)
+            return;
+
+         Parameter.PropertyChanged += handlePropertyChanged;
+
+         if (Parameter.Editable)
+            Rules.Add(ParameterDTORules.ParameterIsValid());
+      }
+
+      private void handlePropertyChanged(object sender, PropertyChangedEventArgs e)
+      {
+         if (e.PropertyName.Equals("Value"))
+         {
+            ValueChanged(this, EventArgs.Empty);
+         }
+
+         RaisePropertyChanged(e.PropertyName);
       }
 
       public IDimension Dimension
@@ -45,10 +68,7 @@ namespace OSPSuite.Starter.Services
       public IEnumerable<Unit> AllUnits
       {
          get => Parameter.Dimension.Units;
-         set
-         {
-            
-         }
+         set { }
       }
 
       public double Value
@@ -85,6 +105,10 @@ namespace OSPSuite.Starter.Services
 
       public void Release()
       {
+         if (Parameter == null)
+            return;
+
+         Parameter.PropertyChanged -= handlePropertyChanged;
       }
    }
 }
