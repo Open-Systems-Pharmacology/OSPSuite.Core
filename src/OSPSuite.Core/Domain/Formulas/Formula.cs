@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
@@ -69,20 +68,12 @@ namespace OSPSuite.Core.Domain.Formulas
 
    public abstract class Formula : ObjectBase, IFormula
    {
-      private readonly List<IObjectReference> _objectReferences;
-      private List<IFormulaUsablePath> _objectPaths;
-      public virtual IDimension Dimension { get; set; }
+      private readonly List<IObjectReference> _objectReferences = new List<IObjectReference>();
+      private List<IFormulaUsablePath> _objectPaths = new List<IFormulaUsablePath>();
+      public virtual IDimension Dimension { get; set; } = Constants.Dimension.NO_DIMENSION;
 
-      protected Formula()
-      {
-         _objectReferences = new List<IObjectReference>();
-         _objectPaths = new List<IFormulaUsablePath>();
-      }
 
-      public virtual IReadOnlyList<IObjectReference> ObjectReferences
-      {
-         get { return _objectReferences; }
-      }
+      public virtual IReadOnlyList<IObjectReference> ObjectReferences => _objectReferences;
 
       public virtual void ResolveObjectPathsFor(IEntity dependentEntity)
       {
@@ -90,6 +81,7 @@ namespace OSPSuite.Core.Domain.Formulas
          {
             objectReference.Object.PropertyChanged -= onReferencePropertyChanged;
          }
+
          _objectReferences.Clear();
 
          foreach (var reference in ObjectPaths)
@@ -101,9 +93,10 @@ namespace OSPSuite.Core.Domain.Formulas
             objectReference.Object.PropertyChanged += onReferencePropertyChanged;
             _objectReferences.Add(objectReference);
          }
+
          OnChanged();
       }
-         
+
       private void onReferencePropertyChanged(object sender, PropertyChangedEventArgs e)
       {
          if (e.PropertyName.Equals("Value"))
@@ -114,7 +107,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       public virtual IReadOnlyList<IFormulaUsablePath> ObjectPaths
       {
-         get { return _objectPaths; }
+         get => _objectPaths;
          set
          {
             checkAliases(value.Select(path => path.Alias));
@@ -122,10 +115,7 @@ namespace OSPSuite.Core.Domain.Formulas
          }
       }
 
-      public virtual bool AreReferencesResolved
-      {
-         get { return (ObjectReferences.Count() == ObjectPaths.Count()); }
-      }
+      public virtual bool AreReferencesResolved => (ObjectReferences.Count() == ObjectPaths.Count());
 
       private void checkAliases(IEnumerable<string> aliases)
       {
@@ -224,8 +214,12 @@ namespace OSPSuite.Core.Domain.Formulas
 
       public string FormulaString
       {
-         get { return _formulaString; }
-         set { _formulaString = value; OnChanged(); }
+         get => _formulaString;
+         set
+         {
+            _formulaString = value;
+            OnChanged();
+         }
       }
 
       /// <summary>

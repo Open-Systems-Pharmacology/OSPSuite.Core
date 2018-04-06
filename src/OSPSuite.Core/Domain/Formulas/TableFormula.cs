@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Dimension of the X Values (e.g. Time, NoDim)
       /// </summary>
-      public virtual IDimension XDimension { get; set; }
+      public virtual IDimension XDimension { get; set; } = Constants.Dimension.NO_DIMENSION;
 
       /// <summary>
       ///    Name of the value representing the X values( Time, pH..)
@@ -166,7 +166,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual Unit XDisplayUnit
       {
-         get { return displayUnit(_xDisplayUnit, XDimension); }
+         get => displayUnit(_xDisplayUnit, XDimension);
          set
          {
             _xDisplayUnit = value;
@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual Unit YDisplayUnit
       {
-         get { return displayUnit(_yDisplayUnit, Dimension); }
+         get => displayUnit(_yDisplayUnit, Dimension);
          set
          {
             _yDisplayUnit = value;
@@ -189,10 +189,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       private Unit displayUnit(Unit unit, IDimension dimension)
       {
-         if (unit != null)
-            return unit;
-
-         return dimension?.DefaultUnit;
+         return unit ?? dimension?.DefaultUnit;
       }
 
       /// <summary>
