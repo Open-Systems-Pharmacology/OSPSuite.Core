@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.DTO;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -24,8 +22,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private readonly PathElementsBinder<LinkedParameterDTO> _pathElementsBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disableRemoveButtonRepository = new UxRemoveButtonRepository();
-      private readonly RepositoryItemButtonEdit _unlinkButtonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Redo);
-      private readonly RepositoryItemButtonEdit _disabledUnlinkButtonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Redo);
+      private readonly RepositoryItemButtonEdit _unlinkButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Redo, MenuDescriptions.UnlinkParameter);
+      private readonly RepositoryItemButtonEdit _disabledUnlinkButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Redo);
 
       public ParameterIdentificationLinkedParametersView(IImageListRetriever imageListRetriever)
       {
@@ -33,7 +31,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.AllowsFiltering = false;
          _gridViewBinder = new GridViewBinder<LinkedParameterDTO>(gridView);
          _pathElementsBinder = new PathElementsBinder<LinkedParameterDTO>(imageListRetriever);
-         _unlinkButtonRepository.Buttons[0].ToolTip = MenuDescriptions.UnlinkParameter;
          gridView.ShouldUseColorForDisabledCell = false;
          _disableRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnlinkButtonRepository.Buttons[0].Enabled = false;

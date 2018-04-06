@@ -4,21 +4,28 @@ using OSPSuite.Assets;
 namespace OSPSuite.UI.RepositoryItems
 {
    /// <summary>
-   /// A repository only containing an image used as a button
+   ///    A repository only containing an image used as a button
    /// </summary>
    public class UxRepositoryItemButtonImage : UxRepositoryItemButtonEdit
    {
-      public UxRepositoryItemButtonImage(ApplicationIcon applicationIcon)
-         : this(applicationIcon, string.Empty)
-      {
-      }
-
-      public UxRepositoryItemButtonImage(ApplicationIcon applicationIcon, string toolTip)
+      public UxRepositoryItemButtonImage(ApplicationIcon applicationIcon, string toolTip = null)
          : base(ButtonPredefines.Glyph)
       {
          TextEditStyle = TextEditStyles.HideTextEditor;
-         Buttons[0].Image = applicationIcon;
-         Buttons[0].ToolTip = toolTip;
+         UpdateButton(Buttons[0], applicationIcon, toolTip);
+      }
+
+      public EditorButton AddButton(ApplicationIcon applicationIcon, string toolTip = null)
+      {
+         var newButton = AddButton(ButtonPredefines.Glyph);
+         return UpdateButton(newButton, applicationIcon, toolTip);
+      }
+
+      public EditorButton UpdateButton(EditorButton editorButton, ApplicationIcon applicationIcon, string toolTip = null)
+      {
+         editorButton.Image = applicationIcon;
+         editorButton.ToolTip = toolTip;
+         return editorButton;
       }
    }
 }
