@@ -477,6 +477,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon SnapshotExport = AddNamedIcon(Icons.SnapshotExport, "SnapshotExport");
       public static readonly ApplicationIcon SnapshotImport = AddNamedIcon(Icons.SnapshotImport, "SnapshotImport");
       public static readonly ApplicationIcon File = AddNamedIcon(Icons.ProjectNew, "File");
+      public static readonly ApplicationIcon Redo = AddNamedIcon(Icons.Redo, "Redo");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

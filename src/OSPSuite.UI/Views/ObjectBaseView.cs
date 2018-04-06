@@ -13,6 +13,11 @@ namespace OSPSuite.UI.Views
    {
       private readonly ScreenBinder<ObjectBaseDTO> _screenBinder;
 
+      //only for design time
+      public ObjectBaseView() : this(null)
+      {
+      }
+
       public ObjectBaseView(IShell shell): base(shell)
       {
          InitializeComponent();
@@ -24,8 +29,8 @@ namespace OSPSuite.UI.Views
 
       public string NameDescription
       {
-         set { layoutItemName.Text = value.FormatForLabel(checkCase: false); }
-         get { return layoutItemName.Text; }
+         set => layoutItemName.Text = value.FormatForLabel(checkCase: false);
+         get => layoutItemName.Text;
       }
 
       public void AttachPresenter(IObjectBasePresenter presenter)
@@ -54,7 +59,7 @@ namespace OSPSuite.UI.Views
             if(value) return;
             Height -= (layoutItemDescription.Height-layoutItemDescription.Padding.All);
          }
-         get { return LayoutVisibilityConvertor.ToBoolean(layoutItemDescription.Visibility); }
+         get => LayoutVisibilityConvertor.ToBoolean(layoutItemDescription.Visibility);
       }
 
       public bool NameVisible
@@ -65,7 +70,7 @@ namespace OSPSuite.UI.Views
             if (value) return;
             Height -= (layoutItemName.Height - layoutItemName.Padding.All);
          }
-         get { return LayoutVisibilityConvertor.ToBoolean(layoutItemName.Visibility); }
+         get => LayoutVisibilityConvertor.ToBoolean(layoutItemName.Visibility);
       }
 
       public bool NameEditable
@@ -75,19 +80,16 @@ namespace OSPSuite.UI.Views
             tbName.Enabled = value;
             tbName.Properties.ReadOnly = !value;
          }
-         get {return  tbName.Enabled; }
+         get => tbName.Enabled;
       }
 
       public bool NameDescriptionVisible
       {
-         get { return layoutItemName.TextVisible; }
-         set { layoutItemName.TextVisible = value; }
+         get => layoutItemName.TextVisible;
+         set => layoutItemName.TextVisible = value;
       }
 
-      public override bool HasError
-      {
-         get { return _screenBinder.HasError; }
-      }
+      public override bool HasError => _screenBinder.HasError;
 
       public override void InitializeResources()
       {
