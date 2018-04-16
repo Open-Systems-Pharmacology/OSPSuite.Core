@@ -54,11 +54,19 @@ namespace OSPSuite.Core.Domain.Formulas
       }
 
       /// <summary>
-      ///    Returns true the formula is a table formula (without offset) otherwise false
+      ///    Returns true the formula is a table formula (with offset) otherwise false
       /// </summary>
       public static bool IsTableWithOffSet(this IFormula formula)
       {
          return formula.IsAnImplementationOf<TableFormulaWithOffset>();
+      }
+
+      /// <summary>
+      ///    Returns true the formula is a table formula with argument otherwise false
+      /// </summary>
+      public static bool IsTableWithXArgument(this IFormula formula)
+      {
+         return formula.IsAnImplementationOf<TableFormulaWithXArgument>();
       }
 
       /// <summary>
@@ -70,7 +78,8 @@ namespace OSPSuite.Core.Domain.Formulas
                 || formula.IsBlackBox()
                 || formula.IsDynamic()
                 || formula.IsTable()
-                || formula.IsTableWithOffSet();
+                || formula.IsTableWithOffSet()
+                || formula.IsTableWithXArgument();
       }
 
       /// <summary>

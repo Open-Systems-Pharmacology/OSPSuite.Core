@@ -4,13 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.DTO;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
@@ -61,8 +61,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          try
          {
             _modelExport = new SimulationExport();
-            _idMap = new Cache<string, int>();
-            _idMap.Add(Constants.TIME, 0);
+            _idMap = new Cache<string, int> {{Constants.TIME, 0}};
             _exportMode = exportMode;
             _allProcesses = model.Root.GetAllChildren<IProcess>();
             _modelExport.ObjectPathDelimiter = ObjectPath.PATH_DELIMITER;
@@ -112,10 +111,9 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          if (stoichiometricCoefficient == 1.0)
             return;
 
-         if (stoichiometricCoefficient == -1.0)
-            rhsExport.Equation = string.Format("-({0})", rhsExport.Equation);
-         else
-            rhsExport.Equation = string.Format("{0}*({1})", stoichiometricCoefficient, rhsExport.Equation);
+         rhsExport.Equation = stoichiometricCoefficient == -1.0 ? 
+            $"-({rhsExport.Equation})" : 
+            $"{stoichiometricCoefficient}*({rhsExport.Equation})";
       }
 
       private ExplicitFormulaExport createProcessRHS(IMoleculeAmount moleculeAmount, IProcess process)
@@ -205,6 +203,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          {
             createRHSforAmount(reaction, reationPartner.Partner, reationPartner.StoichiometricCoefficient * -1);
          }
+
          foreach (var reationPartner in reaction.Products)
          {
             createRHSforAmount(reaction, reationPartner.Partner, reationPartner.StoichiometricCoefficient);
@@ -231,6 +230,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
             assigmentExport.UseAsValue = assignment.UseAsValue;
             eventExport.AssignmentList.Add(assigmentExport);
          }
+
          _modelExport.EventList.Add(eventExport);
       }
 
@@ -261,7 +261,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
       private void addObjectReferenceToList(IFormula formula, IDictionary<string, int> list, IObjectReference objectReference)
       {
-         string alias = Regex.Replace(objectReference.Alias, @"\s", "_");
+         var alias = Regex.Replace(objectReference.Alias, @"\s", "_");
          try
          {
             list.Add(alias, idFor(objectReference.Object));
@@ -282,49 +282,48 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          //resolve to ensure that mapping works as expected
          amountKinetic.ResolveObjectPathsFor(process);
 
-         return mapFormula(process, amountKinetic).DowncastTo<ExplicitFormulaExport>(); 
+         return mapFormula(process, amountKinetic).DowncastTo<ExplicitFormulaExport>();
       }
 
       private FormulaExport mapFormula(IUsingFormula usingFormula, IFormula formula)
       {
-         FormulaExport formulaExport;
-         if (formula.IsExplicit())
-         {
-            var explicitFormula = formula.DowncastTo<ExplicitFormula>();
-            var explicitFormulaExport = new ExplicitFormulaExport {Equation = explicitFormula.FormulaString};
-
-            addObjectReferencesTo(explicitFormula, explicitFormulaExport.ReferenceList);
-
-            formulaExport = explicitFormulaExport;
-         }
-         else if (formula.IsAnImplementationOf<TableFormulaWithOffset>())
-         {
-            var tableFormulaWithOffset = formula.DowncastTo<TableFormulaWithOffset>();
-            var tableFormulaWithOffsetExport = new TableFormulaWithOffsetExport
-            {
-               TableObjectId = idFor(tableFormulaWithOffset.GetTableObject(usingFormula)),
-               OffsetObjectId = idFor(tableFormulaWithOffset.GetOffsetObject(usingFormula))
-            };
-
-            formulaExport = tableFormulaWithOffsetExport;
-         }
-         else if (formula.IsAnImplementationOf<TableFormula>())
-         {
-            formulaExport = _tableFormulaExportMapper.MapFrom(formula.DowncastTo<TableFormula>());
-         }
-         else
-         {
-            var otherFormulaExport = new ExplicitFormulaExport {Equation = formula.Calculate(usingFormula).ToString(NumberFormatInfo.InvariantInfo)};
-            formulaExport = otherFormulaExport;
-         }
+         var formulaExport = createFormulaExport(usingFormula, formula);
          _modelExport.FormulaList.Add(formulaExport);
-         formulaExport.Id = getNewFormulaId();
+         formulaExport.Id = _modelExport.NewId();
          return formulaExport;
       }
 
-      private int getNewFormulaId()
+      private FormulaExport createFormulaExport(IUsingFormula usingFormula, IFormula formula)
       {
-         return _modelExport.NewId();
+         switch (formula)
+         {
+            case ExplicitFormula explicitFormula:
+               var explicitFormulaExport = new ExplicitFormulaExport {Equation = explicitFormula.FormulaString};
+               addObjectReferencesTo(explicitFormula, explicitFormulaExport.ReferenceList);
+               return explicitFormulaExport;
+
+            case TableFormulaWithXArgument tableFormulaWithXArgument:
+               var tableFormulaWithXArgumentExport = new TableFormulaWithXArgumentExport()
+               {
+                  TableObjectId = idFor(tableFormulaWithXArgument.GetTableObject(usingFormula)),
+                  XArgumentObjectId = idFor(tableFormulaWithXArgument.GetXArgumentObject(usingFormula))
+               };
+               return tableFormulaWithXArgumentExport;
+
+            case TableFormulaWithOffset tableFormulaWithOffset:
+               var tableFormulaWithOffsetExport = new TableFormulaWithOffsetExport
+               {
+                  TableObjectId = idFor(tableFormulaWithOffset.GetTableObject(usingFormula)),
+                  OffsetObjectId = idFor(tableFormulaWithOffset.GetOffsetObject(usingFormula))
+               };
+               return tableFormulaWithOffsetExport;
+
+            case TableFormula tableFormula:
+               return _tableFormulaExportMapper.MapFrom(tableFormula);
+
+            default:
+               return new ExplicitFormulaExport {Equation = formula.Calculate(usingFormula).ToString(NumberFormatInfo.InvariantInfo)};
+         }
       }
 
       private int idFor(IObjectBase objectBase)

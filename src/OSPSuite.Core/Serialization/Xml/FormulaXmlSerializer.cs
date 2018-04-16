@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
-using OSPSuite.Serializer;
-using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Serializer;
+using OSPSuite.Serializer.Xml.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       protected override XElement TypedSerialize(TFormula tableFormula, SerializationContext serializationContext)
       {
-         var formulaElenent = base.TypedSerialize(tableFormula,serializationContext);
+         var formulaElenent = base.TypedSerialize(tableFormula, serializationContext);
          if (tableFormula.XDisplayUnit != null)
             formulaElenent.AddAttribute(Constants.Serialization.Attribute.X_DISPLAY_UNIT, tableFormula.XDisplayUnit.Name);
 
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       protected override void TypedDeserialize(TFormula tableFormula, XElement formulaElement, SerializationContext serializationContext)
       {
-         base.TypedDeserialize(tableFormula, formulaElement,serializationContext);
+         base.TypedDeserialize(tableFormula, formulaElement, serializationContext);
          string xDisplayUnit = formulaElement.GetAttribute(Constants.Serialization.Attribute.X_DISPLAY_UNIT);
          string yDisplayUnit = formulaElement.GetAttribute(Constants.Serialization.Attribute.Y_DISPLAY_UNIT);
 
@@ -106,6 +106,16 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.TableObjectAlias);
          Map(x => x.OffsetObjectAlias);
+      }
+   }
+
+   public class TableFormulaWithXArgumentXmlSerializer : FormulaXmlSerializer<TableFormulaWithXArgument>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.TableObjectAlias);
+         Map(x => x.XArgumentAlias);
       }
    }
 

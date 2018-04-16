@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
       public IDictionary<string, int> ReferenceList { get; private set; }
    }
 
-   internal class DiscreteFormulaExport : FormulaExport
+   public class DiscreteFormulaExport : FormulaExport
    {
       public DiscreteFormulaExport()
       {

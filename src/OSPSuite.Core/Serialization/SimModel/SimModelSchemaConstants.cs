@@ -34,8 +34,10 @@ namespace OSPSuite.Core.Serialization.SimModel
       public static readonly string ValuePoint="Point";
       public static readonly string TableFormula = "TableFormula";
       public static readonly string TableFormulaWithOffset = "TableFormulaWithOffset";
+      public static readonly string TableFormulaWithXArgument = "TableFormulaWithXArgument";
       public static readonly string TableObject = "Table";
       public static readonly string OffsetObject = "Offset";
+      public static readonly string XArgumentObject = "XArgument";
       public static readonly string UseDerivedValues = "useDerivedValues";
       public static readonly string NegativeValuesAllowed = "negativeValuesAllowed";
    }

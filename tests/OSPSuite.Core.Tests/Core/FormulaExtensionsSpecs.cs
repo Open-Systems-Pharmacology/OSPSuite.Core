@@ -41,6 +41,12 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_return_true_for_a_table_with_xargument_formula()
+      {
+         new TableFormulaWithXArgument().IsCachable().ShouldBeTrue();
+      }
+
+      [Observation]
       public void should_return_false_otherwise()
       {
          new ConstantFormula().IsCachable().ShouldBeFalse();

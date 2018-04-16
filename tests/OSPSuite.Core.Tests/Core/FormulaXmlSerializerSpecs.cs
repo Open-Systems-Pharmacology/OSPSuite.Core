@@ -29,6 +29,17 @@ namespace OSPSuite.Core
       }
 
       [Test]
+      public void TestSerializationTableFormulaWithArgument()
+      {
+         var x1 = CreateObject<TableFormulaWithXArgument>().WithName("Fortunato").WithDimension(DimensionLength);
+         x1.AddTableObjectPath(ObjectPathFactory.CreateAbsoluteFormulaUsablePath(P1));
+         x1.AddXArgumentObjectPath(ObjectPathFactory.CreateRelativeFormulaUsablePath(P, P0));
+
+         var x2 = SerializeAndDeserialize(x1);
+         AssertForSpecs.AreEqualTableFormulaWithArgument(x2, x1);
+      }
+
+      [Test]
       public void TestSerializationFormulaWithObjectPathsWithObjectReferences()
       {
          ExplicitFormula x1 = CreateObject<ExplicitFormula>().WithName("Fortunato").WithDimension(DimensionLength);

@@ -462,6 +462,13 @@ namespace OSPSuite.Helpers
          AreEqualEnumerableOfNamedObjects(x1.ObjectPaths, x2.ObjectPaths, x => x.Alias);
       }
 
+      public static void AreEqualTableFormulaWithArgument(TableFormulaWithXArgument x1, TableFormulaWithXArgument x2)
+      {
+         AreEqualFormula(x1, x2);
+         Assert.AreEqual(x1.TableObjectAlias, x2.TableObjectAlias);
+         Assert.AreEqual(x1.XArgumentAlias, x2.XArgumentAlias);
+      }
+
       public static void AreEqualConstantFormula(ConstantFormula x1, ConstantFormula x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
