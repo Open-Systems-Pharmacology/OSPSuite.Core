@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Serialization.SimModel
       public static readonly string ExplicitFormula = "ExplicitFormula";
       public static readonly string FormulaId = "formulaId";
       public static readonly string Id = "id";
-      public static readonly string Namespace = "http://www.systems-biology.com";
+      public static readonly string Namespace = "http://www.open-systems-pharmacology.org";
       public static readonly string Observer = "Observer";
       public static readonly string ObserverList = "ObserverList";
       public static readonly string OutputInterval = "OutputInterval";
