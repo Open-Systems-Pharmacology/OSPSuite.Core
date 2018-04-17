@@ -27,7 +27,8 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode);
    }
 
-   public class CreateExportModelVisitor : IVisitor<IReaction>,
+   public class CreateExportModelVisitor :
+      IVisitor<IReaction>,
       IVisitor<IObserver>,
       IVisitor<IParameter>,
       IVisitor<IMoleculeAmount>,
@@ -199,14 +200,14 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
       public void Visit(IReaction reaction)
       {
-         foreach (var reationPartner in reaction.Educts)
+         foreach (var reactionPartner in reaction.Educts)
          {
-            createRHSforAmount(reaction, reationPartner.Partner, reationPartner.StoichiometricCoefficient * -1);
+            createRHSforAmount(reaction, reactionPartner.Partner, reactionPartner.StoichiometricCoefficient * -1);
          }
 
-         foreach (var reationPartner in reaction.Products)
+         foreach (var reactionPartner in reaction.Products)
          {
-            createRHSforAmount(reaction, reationPartner.Partner, reationPartner.StoichiometricCoefficient);
+            createRHSforAmount(reaction, reactionPartner.Partner, reactionPartner.StoichiometricCoefficient);
          }
       }
 
@@ -216,18 +217,23 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       /// <param name="eventToVisit">The object to visit.</param>
       public void Visit(IEvent eventToVisit)
       {
-         var eventExport = new EventExport();
-         eventExport.Id = idFor(eventToVisit);
-         eventExport.EntityId = eventToVisit.Id;
-         eventExport.ConditionFormulaId = mapFormula(eventToVisit, eventToVisit.Formula).Id;
-         eventExport.OneTime = eventToVisit.OneTime;
+         var eventExport = new EventExport
+         {
+            Id = idFor(eventToVisit),
+            EntityId = eventToVisit.Id,
+            ConditionFormulaId = mapFormula(eventToVisit, eventToVisit.Formula).Id,
+            OneTime = eventToVisit.OneTime
+         };
+
          foreach (var assignment in eventToVisit.Assignments)
          {
             var alternateFormula = assignment.Formula;
-            var assigmentExport = new AssigmentExport();
-            assigmentExport.ObjectId = idFor(assignment.ChangedEntity);
-            assigmentExport.NewFormulaId = mapFormula(assignment, alternateFormula).Id;
-            assigmentExport.UseAsValue = assignment.UseAsValue;
+            var assigmentExport = new AssigmentExport
+            {
+               ObjectId = idFor(assignment.ChangedEntity),
+               NewFormulaId = mapFormula(assignment, alternateFormula).Id,
+               UseAsValue = assignment.UseAsValue
+            };
             eventExport.AssignmentList.Add(assigmentExport);
          }
 

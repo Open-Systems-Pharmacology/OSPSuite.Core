@@ -1220,6 +1220,8 @@ namespace OSPSuite.Assets
       public static readonly string InvalidChecksum = "File might have been tampered with. Checksum is not valid";
       public static readonly string TimeNotStrictlyMonotone = "The time column is not strictly monotonically increasing. Ensure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
 
+      public static string UnableToFindEntityWithAlias(string alias) => $"Unable to find entity with alias '{alias}'";
+
       public static string WrongColumnDimensions(string columnName, int xDim, int yDim)
       {
          return $"Data column {columnName} has {xDim} values and its base grid has {yDim} values";
@@ -1278,10 +1280,7 @@ namespace OSPSuite.Assets
          return $"Parameter '{parameter}' defined in molecule '{molecule}' has an invalid value: {value}";
       }
 
-      public static string MoleculeNameNotUnique(string moleculeName)
-      {
-         return $"Molecule name '{moleculeName}' is not unique";
-      }
+      public static string MoleculeNameNotUnique(string moleculeName) => $"Molecule name '{moleculeName}' is not unique";
 
       public static string MoleculeNameExistsInAnotherList(string moleculeName)
       {

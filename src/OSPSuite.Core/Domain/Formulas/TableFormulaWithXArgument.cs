@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
@@ -9,9 +11,8 @@ namespace OSPSuite.Core.Domain.Formulas
       public string XArgumentAlias { get; set; }
 
       /// <summary>
-      ///    Add path to the object with table formula
+      ///    Adds path to the object with table formula
       /// </summary>
-      /// <param name="tableObjectPath"></param>
       public void AddTableObjectPath(IFormulaUsablePath tableObjectPath)
       {
          TableObjectAlias = tableObjectPath.Alias;
@@ -19,9 +20,8 @@ namespace OSPSuite.Core.Domain.Formulas
       }
 
       /// <summary>
-      ///    Add path to the object with offset formula
+      ///    Adds path to the object with x-argument
       /// </summary>
-      /// <param name="xArgumentObjectPath"></param>
       public void AddXArgumentObjectPath(IFormulaUsablePath xArgumentObjectPath)
       {
          XArgumentAlias = xArgumentObjectPath.Alias;
@@ -32,29 +32,40 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Returns table formula object
       /// </summary>
       /// <param name="refObject">Entity using formula</param>
-      public IUsingFormula GetTableObject(IUsingFormula refObject)
+      public IQuantity GetTableObject(IUsingFormula refObject)
       {
-         return GetReferencedEntityByAlias(TableObjectAlias, refObject) as IUsingFormula;
+         return GetReferencedEntityByAlias(TableObjectAlias, refObject) as IQuantity;
       }
 
       /// <summary>
       ///    Returns reference object used for table formula
       /// </summary>
       /// <param name="refObject">Entity using formula</param>
-      public IFormulaUsable GetXArgumentObject(IUsingFormula refObject)
+      public IQuantity GetXArgumentObject(IUsingFormula refObject)
       {
-         return GetReferencedEntityByAlias(XArgumentAlias, refObject);
+         return GetReferencedEntityByAlias(XArgumentAlias, refObject) as IQuantity;
       }
 
       /// <summary>
-      ///    Return the value of the table object for 0-offset value
+      ///    Returns the value of the table object for x = default value of table formula
       /// </summary>
       protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var tableObject = GetTableObject(dependentObject);
-         var tableFormula = tableObject?.Formula as TableFormula;
+         if (tableObject == null)
+            throw new OSPSuiteException(Error.UnableToFindEntityWithAlias(TableObjectAlias));
 
-         return tableFormula?.ValueAt(GetXArgumentObject(dependentObject).Value) ?? double.NaN;
+
+         var tableFormula = tableObject.Formula as TableFormula;
+
+         if (tableFormula == null)
+            return tableObject.Value;
+
+         var xArgumentObject = GetXArgumentObject(dependentObject);
+         if (xArgumentObject == null)
+            throw new OSPSuiteException(Error.UnableToFindEntityWithAlias(XArgumentAlias));
+
+         return tableFormula.ValueAt(xArgumentObject.Value);
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

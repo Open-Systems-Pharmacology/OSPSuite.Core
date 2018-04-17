@@ -2,7 +2,7 @@
 {
    public static class ParameterIdentificationExportSchemaConstants
    {
-      public const string Namespace = "http://www.open-systems-pharmacology.org";
+      public const string Namespace = "http://www.systems-biology.com";
       public const string ParameterIdentification = "ParameterIdentification";
       public const string OutputMapping = "OutputMapping";
       public const string ParameterIdentificationConfiguration = "ParameterIdentificationConfiguration";

@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
@@ -78,6 +79,21 @@ namespace OSPSuite.Core
       {
          _xArgumentObject.Value = 1.5;
          CalcValue().ShouldBeEqualTo(15);
+      }
+   }
+
+   public class When_calculating_values_for_a_table_formula_object_that_is_not_a_table_formula : concern_for_TableFormulaWithXArgument
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _tableObject.Formula = new ConstantFormula(10);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => CalcValue()).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }
