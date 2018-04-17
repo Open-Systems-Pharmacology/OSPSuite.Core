@@ -73,6 +73,9 @@ namespace OSPSuite.Core.Converter.v5_2
          if (formula.IsAnImplementationOf<TableFormulaWithOffset>())
             return;
 
+         if (formula.IsAnImplementationOf<TableFormulaWithXArgument>())
+            return;
+
          foreach (var objectPath in formula.ObjectPaths)
          {
             _usingDimensionConverter.Convert(objectPath);

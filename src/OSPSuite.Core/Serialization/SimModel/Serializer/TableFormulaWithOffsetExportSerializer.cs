@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
+using OSPSuite.Core.Serialization.SimModel.DTO;
 using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Serialization.SimModel.DTO;
 
 namespace OSPSuite.Core.Serialization.SimModel.Serializer
 {
@@ -13,9 +13,9 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
          ElementName = SimModelSchemaConstants.TableFormulaWithOffset;
       }
 
-      protected override XElement TypedSerialize(TableFormulaWithOffsetExport tableFormulaWithOffsetExport,SimModelSerializationContext serializationContext)
+      protected override XElement TypedSerialize(TableFormulaWithOffsetExport tableFormulaWithOffsetExport, SimModelSerializationContext serializationContext)
       {
-         var formulaNode = base.TypedSerialize(tableFormulaWithOffsetExport,serializationContext);
+         var formulaNode = base.TypedSerialize(tableFormulaWithOffsetExport, serializationContext);
 
          var tableObjectNode = SerializerRepository.CreateElement(SimModelSchemaConstants.TableObject);
          tableObjectNode.AddAttribute(SimModelSchemaConstants.Id, tableFormulaWithOffsetExport.TableObjectId.ConvertedTo<string>());
@@ -28,5 +28,4 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
          return formulaNode;
       }
    }
-
 }

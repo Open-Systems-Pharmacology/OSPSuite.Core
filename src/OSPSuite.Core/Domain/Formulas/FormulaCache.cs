@@ -27,8 +27,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       public bool Contains(IFormula formula)
       {
-         if (formula == null) return false;
-         return Contains(formula.Id);
+         return formula != null && Contains(formula.Id);
       }
 
       public void Remove(IFormula formula)

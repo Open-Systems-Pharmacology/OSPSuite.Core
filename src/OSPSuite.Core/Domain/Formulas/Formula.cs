@@ -204,7 +204,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject)
       {
-         return GetUsedObjectsFrom(refObject).First(entityReference => entityReference.Alias.Equals(alias)).Object;
+         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias,alias)).Object;
       }
    }
 

@@ -185,6 +185,7 @@
     <Compile Include="Core\ObservedDataRepositorySpecs.cs" />
     <Compile Include="Core\ObservedDataTaskSpecs.cs" />
     <Compile Include="Core\SolverSettingsFactorySpecs.cs" />
+    <Compile Include="Core\TableFormulaWithXArgumentSpecs.cs" />
     <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />
     <Compile Include="Core\ConstantsSpecs.cs" />
     <Compile Include="Core\CurveNamerSpecs.cs" />
