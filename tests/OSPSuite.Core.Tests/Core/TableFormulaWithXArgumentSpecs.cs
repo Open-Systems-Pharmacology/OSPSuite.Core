@@ -87,13 +87,13 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _tableObject.Formula = new ConstantFormula(10);
+         _tableObject.Formula = new ConstantFormula(45);
       }
 
       [Observation]
-      public void should_throw_an_exception()
+      public void should_return_the_value_of_the_formula_instead()
       {
-         The.Action(() => CalcValue()).ShouldThrowAn<OSPSuiteException>();
+         CalcValue().ShouldBeEqualTo(45);
       }
    }
 }
