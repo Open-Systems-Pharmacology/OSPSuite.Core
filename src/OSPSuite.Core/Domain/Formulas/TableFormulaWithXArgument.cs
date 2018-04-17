@@ -54,8 +54,7 @@ namespace OSPSuite.Core.Domain.Formulas
          var tableObject = GetTableObject(dependentObject);
          if (tableObject == null)
             throw new OSPSuiteException(Error.UnableToFindEntityWithAlias(TableObjectAlias));
-
-
+         
          var tableFormula = tableObject.Formula as TableFormula;
 
          if (tableFormula == null)

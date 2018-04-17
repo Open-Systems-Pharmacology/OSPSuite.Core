@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
@@ -94,6 +95,21 @@ namespace OSPSuite.Core
       public void should_return_the_value_of_the_formula_instead()
       {
          CalcValue().ShouldBeEqualTo(45);
+      }
+   }
+
+   public class When_calculating_values_for_a_table_formula_object_that_is_not_a_found_by_alias : concern_for_TableFormulaWithXArgument
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.TableObjectAlias = "XXX";
+      }
+
+      [Observation]
+      public void should_throw_an_exception_containing_the_alias()
+      {
+         The.Action(() => CalcValue()).ShouldThrowAn<Exception>();
       }
    }
 }
