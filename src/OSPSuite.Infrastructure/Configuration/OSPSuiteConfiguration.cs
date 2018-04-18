@@ -55,12 +55,12 @@ namespace OSPSuite.Infrastructure.Configuration
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
          BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
-         PKParametersFilePath = AllUsersOrLocalPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
+         PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
          SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
-         TeXTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
-         ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
-         DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
-         LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
+         TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
+         ChartLayoutTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
+         DimensionFilePath = LocalOrAllUsersPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
+         LogConfigurationFile = LocalOrAllUsersPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = CurrentUserFile(UserSettingsFileName);
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
@@ -136,25 +136,26 @@ namespace OSPSuite.Infrastructure.Configuration
       /// </summary>
       protected string LocalPathFor(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-      private string createApplicationDataOrLocalPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
+      private string getLocalPathOrAllUsersPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
       {
-         var applicationDataOrLocal = AllUsersFile(appDataName);
-         if (existsFunc(applicationDataOrLocal))
-            return applicationDataOrLocal;
-
-         //try local if id does not exist
+         //local first. 
          var localPath = LocalPathFor(localName);
          if (existsFunc(localPath))
             return localPath;
 
+         //local does not exist, try global
+         var applicationDataPath = AllUsersFile(appDataName);
+         if (existsFunc(applicationDataPath))
+            return applicationDataPath;
+
          //neither app data nor local exist, return app data
-         return applicationDataOrLocal;
+         return applicationDataPath;
       }
 
-      protected string AllUsersOrLocalPathForFile(string fileName) => createApplicationDataOrLocalPathFor(fileName, fileName, FileHelper.FileExists);
+      protected string LocalOrAllUsersPathForFile(string fileName) => getLocalPathOrAllUsersPathFor(fileName, fileName, FileHelper.FileExists);
 
-      protected string AllUsersOrLocalPathForFolder(string folderName) => AllUsersOrLocalPathForFolder(folderName, folderName);
+      protected string LocalOrAllUsersPathForFolder(string folderName) => LocalOrAllUsersPathForFolder(folderName, folderName);
 
-      protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
+      protected string LocalOrAllUsersPathForFolder(string folderNameAppData, string folderNameLocal) => getLocalPathOrAllUsersPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
    }
 }
