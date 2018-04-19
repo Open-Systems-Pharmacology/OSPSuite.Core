@@ -76,6 +76,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       /// </summary>
       bool SimulationCanBeUsedForIdentification(ISimulation simulation);
 
+      /// <summary>
+      /// Returns a clone of the <paramref name="parameterIdentification"/> or null if the user cancels the clone action
+      /// </summary>
       ParameterIdentification Clone(ParameterIdentification parameterIdentification);
    }
 }

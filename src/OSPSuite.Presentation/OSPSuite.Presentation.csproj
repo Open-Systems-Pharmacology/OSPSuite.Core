@@ -261,7 +261,7 @@
     <Compile Include="Presenters\ObservedData\DataRepositoryChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CategorialParameterIdentificationRunModePresenter.cs" />
-    <Compile Include="Presenters\ParameterIdentifications\CloneObjectBasePresenter.cs" />
+    <Compile Include="Presenters\CloneObjectBasePresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\EditParameterIdentificationPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\IdentificationParameterEventArgs.cs" />
     <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationAnalysisPresenter.cs" />

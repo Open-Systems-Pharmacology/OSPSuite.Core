@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
@@ -9,7 +8,7 @@ using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services.SensitivityAnalyses
 {
@@ -23,11 +22,11 @@ namespace OSPSuite.Presentation.Services.SensitivityAnalyses
       private readonly IDialogCreator _dialogCreator;
 
       public SensitivityAnalysisTask(
-         ISensitivityAnalysisFactory sensitivityAnalysisFactory, 
-         IOSPSuiteExecutionContext executionContext, 
+         ISensitivityAnalysisFactory sensitivityAnalysisFactory,
+         IOSPSuiteExecutionContext executionContext,
          IApplicationController applicationController,
          ISensitivityAnalysisSimulationSwapCorrector sensitivityAnalysisSimulationSwapCorrector,
-         ISensitivityAnalysisSimulationSwapValidator sensitivityAnalysisSimulationSwapValidator, 
+         ISensitivityAnalysisSimulationSwapValidator sensitivityAnalysisSimulationSwapValidator,
          IDialogCreator dialogCreator)
       {
          _sensitivityAnalysisFactory = sensitivityAnalysisFactory;
@@ -116,7 +115,7 @@ namespace OSPSuite.Presentation.Services.SensitivityAnalyses
 
       public bool Delete(IReadOnlyList<SensitivityAnalysis> sensitivityAnalyses)
       {
-          var res = _dialogCreator.MessageBoxYesNo(Captions.SensitivityAnalysis.ReallyDeleteSensitivityAnalyses(sensitivityAnalyses.AllNames()));
+         var res = _dialogCreator.MessageBoxYesNo(Captions.SensitivityAnalysis.ReallyDeleteSensitivityAnalyses(sensitivityAnalyses.AllNames()));
          if (res == ViewResult.No)
             return false;
 

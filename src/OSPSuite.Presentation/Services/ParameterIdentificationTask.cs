@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -15,7 +14,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Services
 {
@@ -35,13 +34,24 @@ namespace OSPSuite.Presentation.Services
       private readonly IDialogCreator _dialogCreator;
       private readonly ISimulationSelector _simulationSelector;
       private readonly IHeavyWorkManager _heavyWorkManager;
+      private readonly IParameterAnalysableParameterSelector _parameterSelector;
 
-      public ParameterIdentificationTask(IParameterIdentificationFactory parameterIdentificationFactory, IWithIdRepository withIdRepository,
-         IEntitiesInSimulationRetriever entitiesInSimulationRetriever, IObservedDataRepository observedDataRepository,
-         IEntityPathResolver entityPathResolver, IIdentificationParameterFactory identificationParameterFactory,
-         IOSPSuiteExecutionContext executionContext, IFavoriteRepository favoriteRepository, IParameterIdentificationSimulationSwapValidator simulationSwapValidator,
-         IApplicationController applicationController, IParameterIdentificationSimulationSwapCorrector parameterIdentificationSimulationSwapCorrector, IDialogCreator dialogCreator,
-         ISimulationSelector simulationSelector, IHeavyWorkManager heavyWorkManager)
+      public ParameterIdentificationTask(
+         IParameterIdentificationFactory parameterIdentificationFactory,
+         IWithIdRepository withIdRepository,
+         IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
+         IObservedDataRepository observedDataRepository,
+         IEntityPathResolver entityPathResolver,
+         IIdentificationParameterFactory identificationParameterFactory,
+         IOSPSuiteExecutionContext executionContext,
+         IFavoriteRepository favoriteRepository,
+         IParameterIdentificationSimulationSwapValidator simulationSwapValidator,
+         IApplicationController applicationController,
+         IParameterIdentificationSimulationSwapCorrector parameterIdentificationSimulationSwapCorrector,
+         IDialogCreator dialogCreator,
+         ISimulationSelector simulationSelector,
+         IHeavyWorkManager heavyWorkManager,
+         IParameterAnalysableParameterSelector parameterSelector)
       {
          _parameterIdentificationFactory = parameterIdentificationFactory;
          _withIdRepository = withIdRepository;
@@ -57,6 +67,7 @@ namespace OSPSuite.Presentation.Services
          _dialogCreator = dialogCreator;
          _simulationSelector = simulationSelector;
          _heavyWorkManager = heavyWorkManager;
+         _parameterSelector = parameterSelector;
       }
 
       public void AddToProject(ParameterIdentification parameterIdentification)
@@ -122,7 +133,10 @@ namespace OSPSuite.Presentation.Services
       private void addFavoriteParametersTo(ParameterIdentification parameterIdentification, ISimulation simulation)
       {
          var allParameters = _entitiesInSimulationRetriever.ParametersFrom(simulation);
-         var parametersToAdd = _favoriteRepository.All().Select(path => allParameters[path]).Where(p => p != null);
+         var parametersToAdd = _favoriteRepository.All()
+            .Select(path => allParameters[path])
+            .Where(p => p != null);
+
          AddParametersTo(parameterIdentification, parametersToAdd);
       }
 
@@ -146,6 +160,9 @@ namespace OSPSuite.Presentation.Services
 
       public void AddParameterTo(ParameterIdentification parameterIdentification, IParameter parameter)
       {
+         if (!_parameterSelector.CanUseParameter(parameter))
+            return;
+
          var simulation = simulationContaining(parameter);
          if (simulation == null)
             return;

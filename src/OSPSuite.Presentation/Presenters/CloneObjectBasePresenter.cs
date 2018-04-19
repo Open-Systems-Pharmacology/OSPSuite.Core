@@ -3,11 +3,11 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views;
 
-namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
+namespace OSPSuite.Presentation.Presenters
 {
    public interface ICloneObjectBasePresenter<TObjectBase> : IObjectBasePresenter
    {
-      TObjectBase CreateCloneFor(TObjectBase parameterIdentificationToClone);
+      TObjectBase CreateCloneFor(TObjectBase objectBaseToClone);
    }
 
    public class CloneObjectBasePresenter<TObjectBase> : AbstractClonePresenter<TObjectBase>, ICloneObjectBasePresenter<TObjectBase> where TObjectBase : class, IObjectBase
