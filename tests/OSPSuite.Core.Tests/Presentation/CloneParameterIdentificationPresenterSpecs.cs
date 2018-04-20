@@ -3,7 +3,7 @@ using FakeItEasy;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation

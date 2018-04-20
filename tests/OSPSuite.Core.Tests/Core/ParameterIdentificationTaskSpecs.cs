@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
 using FakeItEasy;
 using OSPSuite.Assets;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -13,10 +13,8 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Core
@@ -37,6 +35,7 @@ namespace OSPSuite.Core
       protected IDialogCreator _dialogCreator;
       private ISimulationSelector _simulationSelector;
       private IHeavyWorkManager _heavyWorkManager;
+      protected IParameterAnalysableParameterSelector _parameterAnalysableParameterSelector;
 
       protected override void Context()
       {
@@ -53,10 +52,12 @@ namespace OSPSuite.Core
          _simulationSwapCorrector = A.Fake<IParameterIdentificationSimulationSwapCorrector>();
          _dialogCreator = A.Fake<IDialogCreator>();
          _simulationSelector = A.Fake<ISimulationSelector>();
+         _parameterAnalysableParameterSelector = A.Fake<IParameterAnalysableParameterSelector>();
+
          _heavyWorkManager = new HeavyWorkManagerForSpecs();
          sut = new ParameterIdentificationTask(_parameterIdentificationFactory, _withIdRepository, _entitiesInSimulationRetriever, _observedDataRepository,
             _entityPathResolver, _identificationParameterFactory, _executionContext, _favoriteRepository, _simulationSwapValidator, _applicationController,
-            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager);
+            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager, _parameterAnalysableParameterSelector);
       }
    }
 
@@ -291,7 +292,7 @@ namespace OSPSuite.Core
          _observedData2 = DomainHelperForSpecs.ObservedData("OBS2");
          _observedData3 = DomainHelperForSpecs.ObservedData("OBS3");
 
-         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new []{_observedData1, _observedData2});
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new[] {_observedData1, _observedData2});
 
          var simulationQuantitySelection = A.Fake<SimulationQuantitySelection>();
          A.CallTo(() => simulationQuantitySelection.Path).Returns(_outputPath);
@@ -341,6 +342,7 @@ namespace OSPSuite.Core
          A.CallTo(() => _entityPathResolver.PathFor(_parameter)).Returns("Path");
          _identificationParameter = new IdentificationParameter();
          A.CallTo(_identificationParameterFactory).WithReturnType<IdentificationParameter>().Returns(_identificationParameter);
+         A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter)).Returns(true);
       }
 
       protected override void Because()
@@ -382,6 +384,8 @@ namespace OSPSuite.Core
          _identificationParameter = new IdentificationParameter();
          _identificationParameter.AddLinkedParameter(new ParameterSelection(_simulation2, "Path"));
          _parameterIdentification.AddIdentificationParameter(_identificationParameter);
+
+         A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter)).Returns(true);
       }
 
       protected override void Because()
@@ -402,7 +406,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_the_parameter_identification_task_is_creating_a_parameter_identification_based_on_a_given_parameter : concern_for_ParameterIdentificationTask
+   public class When_the_parameter_identification_task_is_creating_a_parameter_identification_based_on_a_given_parameter_that_can_be_used_in_parameter_analysis : concern_for_ParameterIdentificationTask
    {
       private IParameter _parameter;
       private ISimulation _simulation;
@@ -419,7 +423,7 @@ namespace OSPSuite.Core
          A.CallTo(() => _withIdRepository.Get<ISimulation>("Sim")).Returns(_simulation);
          A.CallTo(() => _entityPathResolver.PathFor(_parameter)).Returns("Path");
          A.CallTo(() => _parameterIdentificationFactory.Create()).Returns(new ParameterIdentification());
-
+         A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter)).Returns(true);
          A.CallTo(() => _executionContext.Project).Returns(_project);
       }
 
@@ -447,30 +451,40 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_the_parameter_identification_task_is_creating_a_parameter_identificaiton_based_on_simulations : concern_for_ParameterIdentificationTask
+   public class When_the_parameter_identification_task_is_creating_a_parameter_identification_based_on_simulations : concern_for_ParameterIdentificationTask
    {
       private ISimulation _simulation;
       private ParameterIdentification _result;
-      private IParameter _parameter;
-      private string _parameterPath;
+      private IParameter _parameter1;
+      private IParameter _parameter2;
+      private readonly string _parameterPath1 = "Organ|Liver|P1";
+      private readonly string _parameterPath2 = "Organ|Liver|P2";
+      private IdentificationParameter _parameter1IdentificationParameter;
 
       protected override void Context()
       {
          base.Context();
          _simulation = A.Fake<ISimulation>().WithName("S");
-         _parameter = A.Fake<IParameter>();
-         _parameter.Origin.SimulationId = "S";
+         _parameter1 = A.Fake<IParameter>();
+         _parameter2 = A.Fake<IParameter>();
+         _parameter1.Origin.SimulationId = "S";
+         _parameter2.Origin.SimulationId = "S";
 
-         A.CallTo(() => _withIdRepository.Get<ISimulation>(_parameter.Origin.SimulationId)).Returns(_simulation);
+         A.CallTo(() => _withIdRepository.Get<ISimulation>(_parameter1.Origin.SimulationId)).Returns(_simulation);
+         A.CallTo(() => _withIdRepository.Get<ISimulation>(_parameter2.Origin.SimulationId)).Returns(_simulation);
          A.CallTo(() => _parameterIdentificationFactory.Create()).Returns(new ParameterIdentification());
          A.CallTo(() => _executionContext.Project).Returns(A.Fake<IProject>());
 
-         var parameterCache = new PathCacheForSpecs<IParameter>();
-         _parameterPath = "Organ|Liver|P";
-         parameterCache.Add(_parameterPath, _parameter);
+         var parameterCache = new PathCacheForSpecs<IParameter> {{_parameterPath1, _parameter1}, {_parameterPath2, _parameter2}};
          A.CallTo(() => _entitiesInSimulationRetriever.ParametersFrom(_simulation)).Returns(parameterCache);
-         A.CallTo(() => _favoriteRepository.All()).Returns(new[] {_parameterPath});
-         A.CallTo(() => _entityPathResolver.PathFor(_parameter)).Returns(_parameterPath);
+         A.CallTo(() => _favoriteRepository.All()).Returns(new[] {_parameterPath1, _parameterPath2,});
+         A.CallTo(() => _entityPathResolver.PathFor(_parameter1)).Returns(_parameterPath1);
+         A.CallTo(() => _entityPathResolver.PathFor(_parameter2)).Returns(_parameterPath2);
+         A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter1)).Returns(true);
+         A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter2)).Returns(false);
+
+         _parameter1IdentificationParameter = new IdentificationParameter();
+         A.CallTo(() => _identificationParameterFactory.CreateFor(A<ParameterSelection>.That.Matches(x => x.Path == _parameterPath1), A<ParameterIdentification>._)).Returns(_parameter1IdentificationParameter);
       }
 
       protected override void Because()
@@ -491,9 +505,9 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_add_the_parameter_defined_as_favorites_to_the_pi_as_identification_parameters()
+      public void should_add_only_favorite_parameters_to_the_pi_that_can_be_used_in_parameter_identification()
       {
-         _result.AllIdentificationParameters.Count.ShouldBeEqualTo(1);
+         _result.AllIdentificationParameters.ShouldOnlyContain(_parameter1IdentificationParameter);
       }
    }
 
