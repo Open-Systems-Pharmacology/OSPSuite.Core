@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.Services
 
       protected AbstractParameterAnalysableParameterSelector()
       {
-         _categorialParameters = new List<string>(Constants.Parameters.AllWithListOfValues);
+         _categorialParameters = new List<string>(Constants.Parameters.AllCategorialParameters);
       }
 
       protected virtual bool ParameterIsTable(IParameter parameter)
