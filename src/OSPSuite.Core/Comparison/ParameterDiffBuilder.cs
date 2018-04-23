@@ -41,18 +41,23 @@ namespace OSPSuite.Core.Comparison
          return comparison.Object1.RHSFormula != null && comparison.Object2.RHSFormula != null;
       }
 
-      public bool ShouldCompareParametersIn(IComparison<IParameter> comparison)
+      public virtual bool ShouldCompareParametersIn(IComparison<IParameter> comparison)
       {
          if (!comparison.ComparedObjectsDefined)
             return true;
 
          var parameter1 = comparison.Object1;
          var parameter2 = comparison.Object2;
-         if (parameter1.Visible && parameter2.Visible)
+
+         return ShouldCompareParameters(parameter1, parameter2, comparison);
+      }
+
+      public virtual bool ShouldCompareParameters(IParameter parameter1, IParameter parameter2, IComparison<IParameter> comparison)
+      {
+         if (comparison.Settings.CompareHiddenEntities)
             return true;
 
-         //at least one parameter hidden
-         return comparison.Settings.CompareHiddenEntities;
+         return parameter1.Visible && parameter2.Visible;
       }
    }
 }
