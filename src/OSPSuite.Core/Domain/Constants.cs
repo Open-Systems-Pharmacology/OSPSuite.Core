@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Domain
             USE_AS_SUSPENSION
          };
 
-         public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllBooleanParameters))
+         public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
          {
             PARTICLE_SIZE_DISTRIBUTION,
             NUMBER_OF_BINS,
@@ -193,6 +193,8 @@ namespace OSPSuite.Core.Domain
             GESTATIONAL_AGE,
             PLASMA_PROTEIN_BINDING_PARTNER
          };
+
+         public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllCategorialParameters));
 
          //end of  delete
       }
