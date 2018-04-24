@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer.Compare(comparison.FormulaComparison());
          _enumerableComparer.CompareEnumerables(comparison, x => x.Educts, item => item.Partner.Name);
          _enumerableComparer.CompareEnumerables(comparison, x => x.Products, item => item.Partner.Name);
-         _enumerableComparer.CompareEnumerables(comparison, x => x.ModifierNames, item => item, ObjectTypes.Modifier);
+         _enumerableComparer.CompareEnumerables(comparison, x => x.ModifierNames, item => item, missingItemType: ObjectTypes.Modifier);
       }
    }
 }

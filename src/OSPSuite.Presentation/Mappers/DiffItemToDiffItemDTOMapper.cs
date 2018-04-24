@@ -64,14 +64,22 @@ namespace OSPSuite.Presentation.Mappers
          if (missingDiffItem.MissingObject2 != null)
          {
             value1 = Captions.Comparisons.Absent;
-            value2 = Captions.Comparisons.Present;
+            value2 = presentWithDetails(missingDiffItem.PresentObjectDetails);
          }
          else if (missingDiffItem.MissingObject1 != null)
          {
-            value1 = Captions.Comparisons.Present;
+            value1 = presentWithDetails(missingDiffItem.PresentObjectDetails);
             value2 = Captions.Comparisons.Absent;
          }
          updateDiffItem(value1, value2, missingDiffItem.MissingObjectType, missingDiffItem.MissingObjectName, missingDiffItem.CommonAncestor, itemIsMissing: true);
+      }
+
+      private string presentWithDetails(string presentDetails)
+      {
+         if (string.IsNullOrEmpty(presentDetails))
+            return Captions.Comparisons.Present;
+
+         return $"{Captions.Comparisons.Present} ({presentDetails})";
       }
 
       public void Visit(PropertyValueDiffItem propertyDiffItem)

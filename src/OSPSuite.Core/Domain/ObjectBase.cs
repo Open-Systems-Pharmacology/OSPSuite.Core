@@ -49,15 +49,8 @@ namespace OSPSuite.Core.Domain
 
       public virtual string Name
       {
-         get { return _name; }
-         set
-         {
-            if (string.Equals(_name, value))
-               return;
-
-            _name = value;
-            OnPropertyChanged(() => Name);
-         }
+         get => _name;
+         set => SetProperty(ref _name, value);
       }
 
       public virtual void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

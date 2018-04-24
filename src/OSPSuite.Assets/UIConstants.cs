@@ -383,7 +383,7 @@ namespace OSPSuite.Assets
 
          public static string DifferentTypes(string type1, string type2)
          {
-            return $"Different Types:  ({type1} vs {type2})";
+            return $"Different Types: ({type1} vs {type2})";
          }
 
          public static string ObjectMissing(string containerType, string containerName, string missingObjectType, string missingObjectName)

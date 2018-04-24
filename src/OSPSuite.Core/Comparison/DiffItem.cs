@@ -72,6 +72,11 @@
       ///    The type name of the missing object.
       /// </summary>
       public string MissingObjectType { get; set; }
+
+      /// <summary>
+      /// Some extra information describing the object that was found and can help understand the output of the differentiation better (either for object1 or 2)
+      /// </summary>
+      public string PresentObjectDetails { get; set; }
    }
 
    public class MismatchDiffItem : DiffItem
