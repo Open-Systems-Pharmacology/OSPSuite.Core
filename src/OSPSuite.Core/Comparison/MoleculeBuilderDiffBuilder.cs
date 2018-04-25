@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class MoleculeBuilderDiffBuilder : DiffBuilder<IMoleculeBuilder>
+   internal class MoleculeBuilderDiffBuilder : DiffBuilder<IMoleculeBuilder>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -20,14 +20,16 @@ namespace OSPSuite.Core.Comparison
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x=>!x.IsFloating,Captions.Diff.Stationary,comparison);
-         _enumerableComparerComparer.CompareEnumerables(comparison,x=>x.UsedCalculationMethods,x=>x.Category,ObjectTypes.CalculationMethod);
+         _enumerableComparerComparer.CompareEnumerables(comparison,x=>x.UsedCalculationMethods,x=>x.Category, missingItemType: ObjectTypes.CalculationMethod);
          _objectComparer.Compare(comparison.ChildComparison(x => x.DefaultStartFormula));
-         if (comparison.Settings.OnlyComputingRelevant) return;
+         if (comparison.Settings.OnlyComputingRelevant)
+            return;
+
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
       }
    }
 
-   class UsedCalculationMethodDiffBuilder:DiffBuilder<UsedCalculationMethod>
+  internal class UsedCalculationMethodDiffBuilder:DiffBuilder<UsedCalculationMethod>
    {
       public override void Compare(IComparison<UsedCalculationMethod> comparison)
       {

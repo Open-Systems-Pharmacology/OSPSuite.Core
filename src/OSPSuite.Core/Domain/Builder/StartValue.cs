@@ -91,7 +91,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (second == null)
             return false;
 
-         return transform == null ? first.Equals(second) : transform(first).Equals(transform(second));
+         return transform?.Invoke(first).Equals(transform(second)) ?? first.Equals(second);
       }
 
       private void entityFullPathToComponents(IObjectPath fullPath)

@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Comparison
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
       private readonly Func<T, object> _equalityProperty;
+      protected Func<T, string> _presentObjectDetailsFunc;
 
       protected BuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder,
          EnumerableComparer enumerableComparer, Func<T, object> equalityProperty)
@@ -26,7 +27,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<IBuildingBlock<T>> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
-         _enumerableComparer.CompareEnumerables(comparison, x => x, _equalityProperty);
+         _enumerableComparer.CompareEnumerables(comparison, x => x, _equalityProperty, _presentObjectDetailsFunc);
       }
    }
 
@@ -76,18 +77,40 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class MoleculeStartValueBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IMoleculeStartValue>
+   public abstract class StartValueBuildingBlockDiffBuilder<TStartValue> : BuildingBlockDiffBuilder<TStartValue> where TStartValue : class, IStartValue
    {
-      public MoleculeStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
-         : base(objectBaseDiffBuilder, enumerableComparer, item => item.Path)
+      private readonly UnitFormatter _unitFormatter = new UnitFormatter();
+
+      protected StartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) :
+         base(objectBaseDiffBuilder, enumerableComparer, x => x.Path)
+      {
+         _presentObjectDetailsFunc = startValueDisplayFor;
+      }
+
+      private string startValueDisplayFor(TStartValue startValue)
+      {
+         if (startValue.Formula != null)
+         {
+            var name = startValue.Formula.Name;
+            var display = startValue.Formula.ToString();
+            return string.Equals(name, display) ? name : $"{name} ({display})";
+         }
+
+         var value = startValue.ConvertToDisplayUnit(startValue.StartValue);
+         return _unitFormatter.Format(value, startValue.DisplayUnit);
+      }
+   }
+
+   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IMoleculeStartValue>
+   {
+      public MoleculeStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }
 
-   public class ParameterStartValueBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IParameterStartValue>
+   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IParameterStartValue>
    {
-      public ParameterStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
-         : base(objectBaseDiffBuilder, enumerableComparer, item => item.Path)
+      public ParameterStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }

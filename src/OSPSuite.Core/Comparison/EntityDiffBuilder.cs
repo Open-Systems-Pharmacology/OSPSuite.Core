@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<IEntity> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
-         _enumerableComprer.CompareEnumerables(comparison, x => x.Tags, x => x.Value, Captions.Diff.Tag);
+         _enumerableComprer.CompareEnumerables(comparison, x => x.Tags, x => x.Value, missingItemType: Captions.Diff.Tag);
       }
    }
 }

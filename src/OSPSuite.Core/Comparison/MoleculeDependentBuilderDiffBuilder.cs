@@ -22,10 +22,10 @@ namespace OSPSuite.Core.Comparison
 
          if (comparison.Object1.ForAll) 
             // For All = true so only compare exclude list, include is not used
-            _enumerableComparer.CompareEnumerables(comparison, x => x.MoleculeList.MoleculeNamesToExclude, x => x, Captions.Diff.ExcludeMolecule);
+            _enumerableComparer.CompareEnumerables(comparison, x => x.MoleculeList.MoleculeNamesToExclude, x => x, missingItemType: Captions.Diff.ExcludeMolecule);
          else 
             // For All = True so only compare include list, exclude is not used
-            _enumerableComparer.CompareEnumerables(comparison, x => x.MoleculeList.MoleculeNames, x => x, Captions.Diff.IncludeMolecule);
+            _enumerableComparer.CompareEnumerables(comparison, x => x.MoleculeList.MoleculeNames, x => x, missingItemType: Captions.Diff.IncludeMolecule);
       }
    }
 }
