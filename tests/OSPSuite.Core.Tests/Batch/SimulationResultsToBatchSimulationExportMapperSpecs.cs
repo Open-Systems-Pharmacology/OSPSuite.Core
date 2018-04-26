@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 
@@ -14,12 +15,12 @@ namespace OSPSuite.Batch
 {
    public abstract class concern_for_SimulationResultsToBatchSimulationExportMapper : ContextSpecification<ISimulationResultsToBatchSimulationExportMapper>
    {
-      protected IObjectPathFactory _objectPathFactory;
+      protected IEntityPathResolver _entityPathResolver;
 
       protected override void Context()
       {
-         _objectPathFactory = A.Fake<IObjectPathFactory>();
-         sut = new SimulationResultsToBatchSimulationExportMapper( _objectPathFactory);
+         _entityPathResolver= A.Fake<IEntityPathResolver>();   
+         sut = new SimulationResultsToBatchSimulationExportMapper( _entityPathResolver);
       }
    }
 
@@ -55,18 +56,18 @@ namespace OSPSuite.Batch
          _col1 = new DataColumn("Drug1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             Values = new[] {10f, 20f, 30f},
-            QuantityInfo = {Path = new[] {"P1", "P2"}},
+            QuantityInfo = {Path = new[] {"Sim", "P2"}},
             DataInfo = {ComparisonThreshold = 1e-2f}
          };
          _col2 = new DataColumn("Drug2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             Values = new[] {100f, 200f, 300f},
-            QuantityInfo = {Path = new[] {"P3", "P4"}}
+            QuantityInfo = {Path = new[] {"Sim", "P4"}}
          };
          _dataRepository = new DataRepository {_col1, _col2};
 
          
-         A.CallTo(() => _objectPathFactory.CreateAbsoluteObjectPath(_parameter)).Returns(new ObjectPath("Sim", "P1"));
+         A.CallTo(() => _entityPathResolver.PathFor(_parameter)).Returns("SIM|P1");
       }
 
       protected override void Because()
@@ -86,8 +87,8 @@ namespace OSPSuite.Batch
       public void should_have_created_one_output_value_for_each_output_results()
       {
          _simulationExport.OutputValues.Count.ShouldBeEqualTo(2);
-         verifyOutputExport(_simulationExport.OutputValues[0], _col1, _col1.PathAsString, _col1.DataInfo.ComparisonThreshold.Value, _col1.Dimension);
-         verifyOutputExport(_simulationExport.OutputValues[1], _col2, _col2.PathAsString, 0, _col2.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[0], _col1, "P2", _col1.DataInfo.ComparisonThreshold.Value, _col1.Dimension);
+         verifyOutputExport(_simulationExport.OutputValues[1], _col2, "P4", 0, _col2.Dimension);
       }
 
       private void verifyOutputExport(BatchOutputValues outputValues, DataColumn column, string path, double comparisonThreshold, IDimension dimension)
@@ -108,7 +109,7 @@ namespace OSPSuite.Batch
       public void should_have_exported_parameter_values()
       {
          _simulationExport.ParameterValues.Count.ShouldBeEqualTo(1);
-         _simulationExport.ParameterValues[0].Path.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_parameter).PathAsString);
+         _simulationExport.ParameterValues[0].Path.ShouldBeEqualTo(_entityPathResolver.PathFor(_parameter));
          _simulationExport.ParameterValues[0].Value.ShouldBeEqualTo(_parameter.Value);
       }
    }
