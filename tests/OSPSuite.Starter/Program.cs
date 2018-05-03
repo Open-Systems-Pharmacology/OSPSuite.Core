@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Starter.Bootstrapping;
 using OSPSuite.Starter.Presenters;
+using OSPSuite.Starter.Tasks;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter
@@ -23,6 +24,7 @@ namespace OSPSuite.Starter
          Application.SetCompatibleTextRenderingDefault(false);
          ApplicationStartup.Initialize();
 
+         var applicationConfugration = new ApplicationConfiguration();
          Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
       }
    }

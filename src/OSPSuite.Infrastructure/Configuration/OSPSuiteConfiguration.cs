@@ -8,6 +8,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Configuration
 {
@@ -34,6 +35,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string MajorVersion { get; }
       public string ProductDisplayName { get; }
       public string FullVersion { get; }
+      public string FullVersionDisplay { get; }
       public string Version { get; }
       public string UserSettingsFilePath { get; }
       public string ApplicationSettingsFilePath { get; }
@@ -48,15 +50,18 @@ namespace OSPSuite.Infrastructure.Configuration
       {
          var assemblyVersion = AssemblyVersion;
          MajorVersion = version(assemblyVersion.Minor);
-         Version = $"{MajorVersion}.{assemblyVersion.Build}";
+         Version = combineVersions(MajorVersion,assemblyVersion.Build);
+         BuildVersion = assemblyVersion.Revision.ToString();
+         FullVersion = combineVersions(Version, BuildVersion);
+
          ReleaseDescription = retrieveReleaseDescription();
-         _isReleasedVersion = isReleasedVersion(Version, assemblyVersion.Revision, ReleaseDescription);
-         FullVersion = fullVersionFrom(assemblyVersion.Revision);
+         _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
+
+         FullVersionDisplay = retrieveFullVersionDisplay();
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
          ProductDisplayName = retrieveProductDisplayName();
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
-         BuildVersion = assemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
          PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
          SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
          TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
@@ -67,19 +72,14 @@ namespace OSPSuite.Infrastructure.Configuration
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
 
-      private bool isReleasedVersion(string version, int revision, string releaseDescription)
-      {
-         return string.Equals($"{version}.{revision}", releaseDescription);
-      }
-
       private string retrieveProductDisplayName()
       {
          return _isReleasedVersion ? $"{ProductNameWithTrademark} {MajorVersion}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
       }
 
-      private string fullVersionFrom(int revision)
+      private string retrieveFullVersionDisplay()
       {
-         return _isReleasedVersion ? $"{Version} - Build {revision}" : ReleaseDescription;
+         return _isReleasedVersion ? $"{Version} - Build {BuildVersion}" : ReleaseDescription;
       }
 
       private string retrieveReleaseDescription()
@@ -89,10 +89,12 @@ namespace OSPSuite.Infrastructure.Configuration
             .OfType<AssemblyInformationalVersionAttribute>()
             .FirstOrDefault();
 
-         return informationalVersionAttribute?.InformationalVersion ?? string.Empty;
+         return string.IsNullOrEmpty(informationalVersionAttribute?.InformationalVersion) ? FullVersion : informationalVersionAttribute.InformationalVersion;
       }
 
-      private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
+      private string version(int minor) => combineVersions(AssemblyVersion.Major, minor);
+
+      private string combineVersions(params object[] items) => items.ToString(".");
 
       public IEnumerable<string> UserSettingsFilePaths => SettingsFilePaths(UserSettingsFilePath, userSettingsFilePathFor);
 
