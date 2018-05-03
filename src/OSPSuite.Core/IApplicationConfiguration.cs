@@ -30,9 +30,14 @@ namespace OSPSuite.Core
       string LicenseAgreementFilePath { get; }
 
       /// <summary>
-      ///    Returns the full version of the software in a format 1.2.3 - Build 123
+      ///    Returns the full version of the software in a format 1.2.3.4
       /// </summary>
       string FullVersion { get; }
+
+      /// <summary>
+      ///    Returns the full version of the software in a format 1.2.3 - Build 123
+      /// </summary>
+      string FullVersionDisplay { get; }
 
       /// <summary>
       ///    Returns the version of the software in the format 1.2.3
