@@ -50,7 +50,7 @@ namespace OSPSuite.Core
       string BuildVersion { get; }
 
       /// <summary>
-      /// Release description. Typically empty for a release product. Could be alpha, beta, EAP during dvelopment
+      /// Release description. Typically empty for a release product. Could be 1.2.3 alpha, 1.2 beta, 1.2.3.4 EAP during dvelopment
       /// </summary>
       string ReleaseDescription { get; }
 

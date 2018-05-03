@@ -67,11 +67,10 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string retrieveProductDisplayName()
       {
-         var productDisplayName = $"{ProductNameWithTrademark} {MajorVersion}";
          if (string.IsNullOrEmpty(ReleaseDescription))
-            return productDisplayName;
+            return $"{ProductNameWithTrademark} {MajorVersion}";
 
-         return $"{productDisplayName} - {ReleaseDescription}";
+         return $"{ProductNameWithTrademark} {ReleaseDescription}";
       }
 
       private string fullVersionFrom(int revision)
@@ -79,7 +78,7 @@ namespace OSPSuite.Infrastructure.Configuration
          if (string.IsNullOrEmpty(ReleaseDescription))
             return $"{Version} - Build {revision}";
 
-         return $"{Version}.{revision} - {ReleaseDescription}";
+         return ReleaseDescription;
       }
 
       private string retrieveReleaseDescription()
