@@ -31,15 +31,12 @@ namespace OSPSuite.Core.Domain
          Children.ToList().Each(child => child.AcceptVisitor(visitor));
       }
 
-      public IEnumerable<IEntity> Children
-      {
-         get { return _container.Children; }
-      }
+      public IEnumerable<IEntity> Children => _container.Children;
 
       public ContainerMode Mode
       {
-         get { return _container.Mode; }
-         set { _container.Mode = value; }
+         get => _container.Mode;
+         set => _container.Mode = value;
       }
 
       public void Add(IEntity newChild)
