@@ -42,6 +42,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract string WatermarkOptionLocation { get; }
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
+      private readonly bool _isReleasedVersion;
 
       protected OSPSuiteConfiguration()
       {
@@ -49,12 +50,13 @@ namespace OSPSuite.Infrastructure.Configuration
          MajorVersion = version(assemblyVersion.Minor);
          Version = $"{MajorVersion}.{assemblyVersion.Build}";
          ReleaseDescription = retrieveReleaseDescription();
+         _isReleasedVersion = isReleasedVersion(Version, assemblyVersion.Revision, ReleaseDescription);
          FullVersion = fullVersionFrom(assemblyVersion.Revision);
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
          ProductDisplayName = retrieveProductDisplayName();
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
-         BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
+         BuildVersion = assemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
          PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
          SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
          TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
@@ -65,20 +67,19 @@ namespace OSPSuite.Infrastructure.Configuration
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
 
+      private bool isReleasedVersion(string version, int revision, string releaseDescription)
+      {
+         return string.Equals($"{version}.{revision}", releaseDescription);
+      }
+
       private string retrieveProductDisplayName()
       {
-         if (string.IsNullOrEmpty(ReleaseDescription))
-            return $"{ProductNameWithTrademark} {MajorVersion}";
-
-         return $"{ProductNameWithTrademark} {ReleaseDescription}";
+         return _isReleasedVersion ? $"{ProductNameWithTrademark} {MajorVersion}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
       }
 
       private string fullVersionFrom(int revision)
       {
-         if (string.IsNullOrEmpty(ReleaseDescription))
-            return $"{Version} - Build {revision}";
-
-         return ReleaseDescription;
+         return _isReleasedVersion ? $"{Version} - Build {revision}" : ReleaseDescription;
       }
 
       private string retrieveReleaseDescription()
