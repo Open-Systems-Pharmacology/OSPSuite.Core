@@ -21,6 +21,7 @@
             Origin = _applicationConfiguration.Product,
             CreationMode = CreationMode.New,
             Version = _applicationConfiguration.Version,
+            InternalVersion = _applicationConfiguration.InternalVersion
          };
       }
    }

@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          Map(x => x.Name);
          Map(x => x.Description);
+         Map(x => x.Creation);
          Map(x => x.JournalPath);
          Map(x => x.DisplayUnits);
          Map(x => x.Favorites);

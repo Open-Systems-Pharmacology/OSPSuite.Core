@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IProject : IObjectBase, IWithChartTemplates
+   public interface IProject : IObjectBase, IWithChartTemplates, IWithCreationMetaData
    {
       /// <summary>
       ///    Full path of project (empty if the project was not saved yet)

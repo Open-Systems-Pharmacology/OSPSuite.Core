@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.CreationMode);
          Map(x => x.Origin);
          Map(x => x.Version);
+         Map(x => x.InternalVersion);
          Map(x => x.ClonedFrom);
       }
    }
