@@ -5,13 +5,8 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IProject : IObjectBase, IWithChartTemplates
+   public interface IProject : IObjectBase, IWithChartTemplates, IWithCreationMetaData
    {
-      /// <summary>
-      /// Defines the meta data associated with the project (when was it created, with which version etc...)
-      /// </summary>
-      CreationMetaData Creation { get; set; }
-
       /// <summary>
       ///    Full path of project (empty if the project was not saved yet)
       /// </summary>
