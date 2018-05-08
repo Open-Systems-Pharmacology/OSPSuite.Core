@@ -22,6 +22,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string SimModelSchemaFilePath { get; }
       public string DimensionFilePath { get; }
       public abstract string ProductName { get; }
+      public abstract int InternalVersion { get; }
       public abstract Origin Product { get; }
       public abstract string ProductNameWithTrademark { get; }
       public abstract ApplicationIcon Icon { get; }
@@ -150,8 +151,8 @@ namespace OSPSuite.Infrastructure.Configuration
          if (existsFunc(applicationDataPath))
             return applicationDataPath;
 
-         //neither app data nor local exist, return app data
-         return applicationDataPath;
+         //neither app data nor local exist. This is probably a portable installation and suggest local path;
+         return localPath;
       }
 
       protected string LocalOrAllUsersPathForFile(string fileName) => getLocalPathOrAllUsersPathFor(fileName, fileName, FileHelper.FileExists);

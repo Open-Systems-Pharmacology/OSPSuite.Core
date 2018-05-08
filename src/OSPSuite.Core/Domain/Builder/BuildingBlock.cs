@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Builder
    /// </summary>
    public abstract class BuildingBlock : ObjectBase, IBuildingBlock
    {
-      public IFormulaCache FormulaCache { get; private set; }
+      public IFormulaCache FormulaCache { get; }
       public uint Version { set; get; }
       public CreationMetaData Creation { get; set; }
 

@@ -45,6 +45,11 @@ namespace OSPSuite.Core
       string Version { get; }
 
       /// <summary>
+      /// Returns the internal version of the software (for internal use only)
+      /// </summary>
+      int InternalVersion { get; }
+
+      /// <summary>
       ///    Returns the version of the software in the format 1.2
       /// </summary>
       string MajorVersion { get; }

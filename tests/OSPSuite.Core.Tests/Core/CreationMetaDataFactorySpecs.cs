@@ -22,6 +22,7 @@ namespace OSPSuite.Core
          _version = "123";
          A.CallTo(() => _applicationConfiguration.Version).Returns(_version);
          A.CallTo(() => _applicationConfiguration.Product).Returns(_product);
+         A.CallTo(() => _applicationConfiguration.InternalVersion).Returns(66);
       }
    }
 
@@ -77,6 +78,12 @@ namespace OSPSuite.Core
       public void should_set_the_version_to_the_product_version_defined_in_the_configuration()
       {
          _creationMetaData.Version.ShouldBeEqualTo(_version);
+      }
+
+      [Observation]
+      public void should_set_the_internal_version_to_the_internal_version_defined_in_the_configuration()
+      {
+         _creationMetaData.InternalVersion.ShouldBeEqualTo(_applicationConfiguration.InternalVersion);
       }
 
       public override void GlobalCleanup()
