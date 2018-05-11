@@ -90,6 +90,8 @@ namespace OSPSuite.UI.Views.Charts
          _gridViewBinder.AutoBind(x => x.Symbol)
             .WithRepository(x => _symbolRepository);
 
+         _gridViewBinder.AutoBind(x => x.Visible);
+
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH * _buttonRepository.Buttons.Count)

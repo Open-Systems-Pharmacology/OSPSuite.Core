@@ -120,7 +120,7 @@ namespace OSPSuite.UI.Binders
          _gridView.RowCellStyle += updateRowCellStyle;
          _gridView.CustomDrawCell += customDrawCell;
 
-         _valueOriginColumn = _gridViewBinder.AutoBind(x => x.ValueOrigin)
+         _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
             .WithCaption(Captions.ValueOrigin)
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });

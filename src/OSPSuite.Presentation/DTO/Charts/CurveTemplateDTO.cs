@@ -70,6 +70,12 @@ namespace OSPSuite.Presentation.DTO.Charts
          set => CurveTemplate.CurveOptions.Color = value;
       }
 
+      public bool Visible
+      {
+         get => CurveTemplate.CurveOptions.Visible;
+         set => CurveTemplate.CurveOptions.Visible = value;
+      }
+
       public int LineThickness
       {
          get => CurveTemplate.CurveOptions.LineThickness;
