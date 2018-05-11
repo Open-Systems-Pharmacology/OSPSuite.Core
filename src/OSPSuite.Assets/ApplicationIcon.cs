@@ -68,7 +68,7 @@ namespace OSPSuite.Assets
          if (!_imageCache.Contains(imageSize))
          {
             var icon = WithSize(imageSize);
-            var image = icon == null ? new Bitmap(imageSize.Width, imageSize.Height) : icon.ToBitmap();
+            var image = icon?.ToBitmap() ?? new Bitmap(imageSize.Width, imageSize.Height);
             _imageCache.Add(imageSize, image);
          }
          return _imageCache[imageSize];

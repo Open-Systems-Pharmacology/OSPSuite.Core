@@ -19,7 +19,6 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 
@@ -57,7 +56,7 @@ namespace OSPSuite.UI.Binders
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
          var column = _gridView.ColumnAt(e);
-         if(!ColumnIsValueOrigin(column))
+         if (!ColumnIsValueOrigin(column))
             return;
 
          var withValueOrigin = _gridViewBinder.ElementAt(e);
@@ -121,7 +120,7 @@ namespace OSPSuite.UI.Binders
          _gridView.RowCellStyle += updateRowCellStyle;
          _gridView.CustomDrawCell += customDrawCell;
 
-         _valueOriginColumn = _gridViewBinder.Bind(x => x.ValueOrigin)
+         _valueOriginColumn = _gridViewBinder.AutoBind(x => x.ValueOrigin)
             .WithCaption(Captions.ValueOrigin)
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
@@ -143,18 +142,29 @@ namespace OSPSuite.UI.Binders
          if (info == null)
             return;
 
-         var firstImage = valueOrigin.Source.Icon.ToImage(IconSizes.Size16x16);
-         var secondImage = valueOrigin.Method.Icon.ToImage(IconSizes.Size16x16);
-         var resultImage = new Bitmap(firstImage.Width + secondImage.Width + IMAGE_OFFSET, firstImage.Height);
+         info.ContextImage = imageFor(valueOrigin);
+         info.CalcViewInfo();
+      }
 
-         using (Graphics g = Graphics.FromImage(resultImage))
+      private Image imageFor(ValueOrigin valueOrigin)
+      {
+         var sourceImage = valueOrigin.Source.Icon.ToImage(IconSizes.Size16x16);
+         if (valueOrigin.Method == ValueOriginDeterminationMethods.Undefined)
+            return sourceImage;
+
+         var methodImage = valueOrigin.Method.Icon.ToImage(IconSizes.Size16x16);
+         if (valueOrigin.Source == ValueOriginSources.Undefined)
+            return methodImage;
+
+         var resultImage = new Bitmap(sourceImage.Width + methodImage.Width + IMAGE_OFFSET, sourceImage.Height);
+
+         using (var g = Graphics.FromImage(resultImage))
          {
-            g.DrawImage(firstImage, new PointF(0, 0));
-            g.DrawImage(secondImage, new PointF(firstImage.Width + IMAGE_OFFSET, 0));
+            g.DrawImage(sourceImage, new PointF(0, 0));
+            g.DrawImage(methodImage, new PointF(sourceImage.Width + IMAGE_OFFSET, 0));
          }
 
-         info.ContextImage = resultImage;
-         info.CalcViewInfo();
+         return resultImage;
       }
 
       private void updateRowCellStyle(object sender, RowCellStyleEventArgs e)
