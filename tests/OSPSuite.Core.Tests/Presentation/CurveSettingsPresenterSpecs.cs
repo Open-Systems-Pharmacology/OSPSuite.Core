@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation
    public abstract class concern_for_CurveSettingsPresenter : ContextSpecification<CurveSettingsPresenter>
    {
       protected IDimensionFactory _dimensionFactory;
-      private ICurveSettingsView _view;
+      protected ICurveSettingsView _view;
       protected CurveChart _chart;
       protected Curve _curve1;
       protected Curve _curve2;
@@ -250,6 +250,28 @@ namespace OSPSuite.Presentation
       {
          _allCurveDTOs.Find(x => x.Curve == _curve3).ShouldNotBeNull();
       }
+   }
+
+   public class When_the_curve_settings_presenter_is_refreshing_and_is_in_latch: concern_for_CurveSettingsPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.IsLatched = true;
+      }
+
+      protected override void Because()
+      {
+         sut.Refresh();
+      }
+
+      [Observation]
+      public void should_not_update_the_view()
+      {
+         //once becasue of initial context
+         A.CallTo(() => _view.BindTo(A<IEnumerable<CurveDTO>>._)).MustHaveHappened(Repeated.Exactly.Once);
+      }
+
    }
 
    public class When_the_curve_settings_presenter_is_moving_a_curve_legend_position_after_another_curve : concern_for_CurveSettingsPresenter

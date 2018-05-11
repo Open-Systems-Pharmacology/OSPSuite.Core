@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -32,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class CurveEventArgs : EventArgs
    {
       public Curve Curve { get; }
-      public CurveEventArgs(Curve curve) => Curve=curve;
+      public CurveEventArgs(Curve curve) => Curve = curve;
    }
 
    public interface ICurveSettingsPresenter : IPresenter<ICurveSettingsView>, IPresenterWithColumnSettings
@@ -60,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void UpdateCurveColor(CurveDTO curveDTO, Color color);
    }
 
-   public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter
+   public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter, ILatchable
    {
       public event EventHandler<CurveEventArgs> RemoveCurve = delegate { };
       public event EventHandler<ColumnsEventArgs> AddCurves = delegate { };
@@ -71,6 +72,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public Func<DataColumn, string> CurveNameDefinition { get; set; }
       private CurveChart _chart;
       private readonly List<CurveDTO> _allCurvesDTOs = new List<CurveDTO>();
+      public bool IsLatched { get; set; }
 
       public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
 
@@ -126,12 +128,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Remove(CurveDTO curveDTO) => RemoveCurve(this, new CurveEventArgs(curveDTO.Curve));
 
-      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns) => AddCurves(this ,new ColumnsEventArgs(dataColumns));
+      public void AddCurvesForColumns(IReadOnlyList<DataColumn> dataColumns) => AddCurves(this, new ColumnsEventArgs(dataColumns));
 
       private CurveDTO mapFrom(Curve curve) => new CurveDTO(curve, _chart);
 
       public void Refresh()
       {
+         //Refresh initiated from UI action
+         if(IsLatched)
+            return;
+
          foreach (var curve in _chart.Curves)
          {
             if (hasCurveDTOFor(curve))
@@ -151,7 +157,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void NotifyCurvePropertyChange(CurveDTO curveDTO)
       {
-         CurvePropertyChanged(this, new CurveEventArgs(curveDTO.Curve));
+         this.DoWithinLatch(() =>
+            CurvePropertyChanged(this, new CurveEventArgs(curveDTO.Curve))
+         );
       }
 
       private void rebind()
