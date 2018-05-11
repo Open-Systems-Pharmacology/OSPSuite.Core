@@ -35,7 +35,7 @@ namespace OSPSuite.Starter.Forms
          initializeBinding();
 
          _allParameters = generateDummyContent().ToList();
-         _gridViewBinder.BindToSource(_allParameters);
+         _gridViewBinder.BindToSource(_allParameters.ToBindingList());
 
          _firstParmaeter = _allParameters[0];
          _firstParmaeter.PropertyChanged += propertyChanged;
@@ -89,7 +89,10 @@ namespace OSPSuite.Starter.Forms
             if (i % 2 == 0)
             {
                parameter.ValueOrigin.Source = ValueOriginSources.Database;
-               parameter.ValueOrigin.Method = ValueOriginDeterminationMethods.ManualFit;
+
+               if(i!=4)
+                  parameter.ValueOrigin.Method = ValueOriginDeterminationMethods.ManualFit;
+
                parameter.ValueOrigin.Description = "This is the best description ever";
             }
 
