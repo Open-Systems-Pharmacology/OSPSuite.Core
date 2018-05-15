@@ -58,45 +58,45 @@ namespace OSPSuite.Core.Converter.v7_3
 
       public void Visit(ISimulation simulation)
       {
-         convertAllParametersIn(simulation.Model.Root);
+         ConvertAllParametersIn(simulation.Model.Root);
       }
 
       public void Visit(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
       {
-         parameterStartValuesBuildingBlock.Each(convertWithDefaultStateObjectToDefault);
+         parameterStartValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
       }
 
       public void Visit(IEventGroupBuildingBlock eventGroupBuildingBlock)
       {
-         convertAllParametersIn(eventGroupBuildingBlock);
+         ConvertAllParametersIn(eventGroupBuildingBlock);
       }
 
       public void Visit(IMoleculeBuildingBlock moleculeBuildingBlock)
       {
-         convertAllParametersIn(moleculeBuildingBlock);
+         ConvertAllParametersIn(moleculeBuildingBlock);
       }
 
       public void Visit(IReactionBuildingBlock reactionBuildingBlock)
       {
-         convertAllParametersIn(reactionBuildingBlock);
+         ConvertAllParametersIn(reactionBuildingBlock);
       }
 
       public void Visit(ISpatialStructure spatialStructure)
       {
-         convertAllParametersIn(spatialStructure);
+         ConvertAllParametersIn(spatialStructure);
       }
 
-      private void convertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer
+      public void ConvertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer
       {
-         buildingBlock.Each(convertAllParametersIn);
+         buildingBlock.Each(ConvertAllParametersIn);
       }
 
-      private void convertAllParametersIn(IContainer container)
+      public void ConvertAllParametersIn(IContainer container)
       {
-         container.GetAllChildren<IParameter>().Each(convertWithDefaultStateObjectToDefault);
+         container.GetAllChildren<IParameter>().Each(ConvertWithDefaultStateObjectToDefault);
       }
 
-      private void convertWithDefaultStateObjectToDefault(IWithDefaultState withDefaultState)
+      public void ConvertWithDefaultStateObjectToDefault(IWithDefaultState withDefaultState)
       {
          withDefaultState.IsDefault = true;
          _converted = true;
