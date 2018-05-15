@@ -7,8 +7,17 @@ namespace OSPSuite.Core.Domain
 {
    public class ValueOrigin : IComparable<ValueOrigin>, IComparable
    {
+      /// <summary>
+      /// Default Value origin for all parameters
+      /// </summary>
       public static ValueOrigin Undefined = new ValueOrigin();
 
+      /// <summary>
+      /// Unknown value origin that will be used as soon as a default value is being overwritten in PK-Sim or MoBi
+      /// </summary>
+      public static ValueOrigin Unknown = new ValueOrigin{Source = ValueOriginSources.Unknown, Method = ValueOriginDeterminationMethods.Undefined};
+
+      
       /// <summary>
       ///    Key computed based on properties to assess if values origin are equals
       /// </summary>

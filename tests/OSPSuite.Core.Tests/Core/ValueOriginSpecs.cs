@@ -264,4 +264,32 @@ namespace OSPSuite.Core
          _sourceValueOrigin.Equals(_targetValueOrigin).ShouldBeTrue();
       }
    }
+
+   public class When_retrieving_the_unknown_value_origin : concern_for_ValueOrigin
+   {
+      private ValueOrigin _unknownValueOrigin;
+
+      protected override void Because()
+      {
+         _unknownValueOrigin = ValueOrigin.Unknown;
+      }
+
+      [Observation]
+      public void should_return_a_value_origin_with_an_undefined_source()
+      {
+         _unknownValueOrigin.Source.ShouldBeEqualTo(ValueOriginSources.Unknown);
+      }
+
+      [Observation]
+      public void should_return_a_value_origin_with_an_unknown_method()
+      {
+         _unknownValueOrigin.Method.ShouldBeEqualTo(ValueOriginDeterminationMethods.Undefined);
+      }
+
+      [Observation]
+      public void should_return_a_value_origin_with_an_empty_description()
+      {
+         string.IsNullOrEmpty(_unknownValueOrigin.Description).ShouldBeTrue();
+      }
+   }
 }
