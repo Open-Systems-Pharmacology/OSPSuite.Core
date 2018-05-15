@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Converter.v7_3;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Serializer.Xml.Extensions;
 
@@ -59,7 +60,6 @@ namespace OSPSuite.Converter.v7_3
          allValueOrigins.Count.ShouldBeEqualTo(3);
          allValueOrigins[0].GetAttribute(Constants.Serialization.Attribute.DESCRIPTION).ShouldBeEqualTo(_valueDescription);
       }
-
 
       [Observation]
       public void should_have_removed_the_value_description_attributes()
@@ -144,6 +144,42 @@ namespace OSPSuite.Converter.v7_3
          var allValueOrigins = _parameterElement.Descendants(Constants.Serialization.VALUE_ORIGIN).ToList();
          allValueOrigins.Count.ShouldBeEqualTo(1);
          allValueOrigins[0].GetAttribute(Constants.Serialization.Attribute.DESCRIPTION).ShouldBeEqualTo(_valueDescription);
+      }
+   }
+
+   public class When_converting_a_building_block_with_parameters : concern_for_Converter710To730
+   {
+      private bool _converted;
+      private int _version;
+      private ReactionBuildingBlock _reactionBuildingBlock;
+      private IReactionBuilder _reaction;
+      private IParameter _parameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameter = new Parameter {IsDefault = false};
+         _reaction = new ReactionBuilder();
+         _reaction.AddParameter(_parameter);
+         _reactionBuildingBlock = new ReactionBuildingBlock {_reaction};
+      }
+
+      protected override void Because()
+      {
+         (_version, _converted) = sut.Convert(_reactionBuildingBlock);
+      }
+
+      [Observation]
+      public void should_have_set_all_set_the_default_flag_of_all_parmaeters_to_true()
+      {
+         _parameter.IsDefault.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_performed_the_conversion()
+      {
+         _version.ShouldBeEqualTo(PKMLVersion.V7_3_0);
+         _converted.ShouldBeTrue();
       }
    }
 }
