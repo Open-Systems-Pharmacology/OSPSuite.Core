@@ -10,6 +10,8 @@ namespace OSPSuite.Core.Converter.v7_3
 {
    public class Converter710To730 : IObjectConverter,
       IVisitor<IParameterStartValuesBuildingBlock>,
+      IVisitor<IPassiveTransportBuildingBlock>,
+      IVisitor<ISimulationSettings>,
       IVisitor<IEventGroupBuildingBlock>,
       IVisitor<IMoleculeBuildingBlock>,
       IVisitor<IReactionBuildingBlock>,
@@ -93,13 +95,24 @@ namespace OSPSuite.Core.Converter.v7_3
 
       public void ConvertAllParametersIn(IContainer container)
       {
-         container.GetAllChildren<IParameter>().Each(ConvertWithDefaultStateObjectToDefault);
+         container?.GetAllChildren<IParameter>().Each(ConvertWithDefaultStateObjectToDefault);
       }
 
       public void ConvertWithDefaultStateObjectToDefault(IWithDefaultState withDefaultState)
       {
          withDefaultState.IsDefault = true;
          _converted = true;
+      }
+
+      public void Visit(IPassiveTransportBuildingBlock passiveTransportBuildingBlock)
+      {
+         ConvertAllParametersIn(passiveTransportBuildingBlock);
+      }
+
+      public void Visit(ISimulationSettings simulationSettings)
+      {
+         ConvertAllParametersIn(simulationSettings.Solver);
+         ConvertAllParametersIn(simulationSettings.OutputSchema);
       }
    }
 }

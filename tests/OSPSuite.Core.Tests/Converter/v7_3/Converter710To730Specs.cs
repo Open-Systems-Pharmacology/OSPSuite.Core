@@ -182,4 +182,40 @@ namespace OSPSuite.Converter.v7_3
          _converted.ShouldBeTrue();
       }
    }
+
+   public class When_converting_simulation_settings_with_parameters : concern_for_Converter710To730
+   {
+      private bool _converted;
+      private int _version;
+      private SimulationSettings _simulationSettings;
+      private IParameter _parameter;
+      private OutputInterval _interval;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameter = new Parameter { IsDefault = false };
+         _interval = new OutputInterval {_parameter};
+         _simulationSettings = new SimulationSettings {OutputSchema = new OutputSchema()};
+         _simulationSettings.OutputSchema.AddInterval(_interval);
+      }
+
+      protected override void Because()
+      {
+         (_version, _converted) = sut.Convert(_simulationSettings);
+      }
+
+      [Observation]
+      public void should_have_set_all_set_the_default_flag_of_all_parmaeters_to_true()
+      {
+         _parameter.IsDefault.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_performed_the_conversion()
+      {
+         _version.ShouldBeEqualTo(PKMLVersion.V7_3_0);
+         _converted.ShouldBeTrue();
+      }
+   }
 }

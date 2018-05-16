@@ -13,6 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
    public interface ISimulationSettings : IBuildingBlock, IWithChartTemplates
    {
       SolverSettings Solver { get; set; }
+
       OutputSchema OutputSchema { get; set; }
 
       double RandomSeed { get; }
