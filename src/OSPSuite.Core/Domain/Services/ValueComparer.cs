@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       /// <summary>
-      ///    returns <c>true</c> if the values of the given parameters are equals otherwise <c>false</c>
+      ///    returns <c>true</c> if the value of <paramref name="parameter"/> is equal to <paramref name="value"/> otherwise <c>false</c>
       /// </summary>
       public static bool AreValuesEqual(IParameter parameter, double value)
       {
