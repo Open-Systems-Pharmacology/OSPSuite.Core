@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Services
    public static class ValueComparer
    {
       /// <summary>
-      ///    returns <c>true</c> if the values are equals otherwise <c>false</c> according to the given relative tolerance
+      ///    returns <c>true</c> if the values are equals according to the given relative tolerance otherwise <c>false</c>
       /// </summary>
       public static bool AreValuesEqual(double value1, double value2, double relTol = Constants.DOUBLE_RELATIVE_EPSILON)
       {
