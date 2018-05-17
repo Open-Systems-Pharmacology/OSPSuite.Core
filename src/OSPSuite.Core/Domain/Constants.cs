@@ -56,6 +56,7 @@ namespace OSPSuite.Core.Domain
 
       //tolerated precision to relativtely compare to double values 
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
+      public const double DOUBLE_PERCENTILE_RELATIVE_TOLERANCE = 1e-2;
 
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
