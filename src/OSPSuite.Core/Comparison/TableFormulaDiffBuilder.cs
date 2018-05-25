@@ -1,7 +1,8 @@
 ﻿using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -25,7 +26,7 @@ namespace OSPSuite.Core.Comparison
          CompareStringValues(x => x.XName, x => x.XName, comparison);
          CompareStringValues(x => x.YName, x => x.YName, comparison);
          CompareValues(x => x.UseDerivedValues, x => x.UseDerivedValues, comparison);
-         _enumerableComparer.CompareEnumerables(comparison, x => x.AllPoints(), (pt1, pt2) => pt1.X == pt2.X, x => displayValueFor(x, comparison));
+         _enumerableComparer.CompareEnumerables(comparison, x => x.AllPoints(), (pt1, pt2) => ValueComparer.AreValuesEqual(pt1.X, pt2.X, comparison.Settings.RelativeTolerance), x => displayValueFor(x, comparison));
       }
 
       private string displayValueFor(ValuePoint valuePoint, IComparison<TableFormula> comparison)
