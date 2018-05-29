@@ -1,14 +1,21 @@
 namespace OSPSuite.Core.Maths.Interpolations
 {
-    public class Sample
-    {
-        public Sample(double x, double y)
-        {
-            X = x;
-            Y = y;
-        }
+   public class Sample<T>
+   {
+      public double X { get; }
+      public T Y { get; }
 
-        public double X { get; private set; }
-        public double Y { get; private set; }
-    }
+      public Sample(double x, T y)
+      {
+         X = x;
+         Y = y;
+      }
+   }
+
+   public class Sample : Sample<double>
+   {
+      public Sample(double x, double y) : base(x, y)
+      {
+      }
+   }
 }
