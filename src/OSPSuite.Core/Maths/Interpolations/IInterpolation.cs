@@ -4,6 +4,7 @@ namespace OSPSuite.Core.Maths.Interpolations
 {
     public interface IInterpolation
     {
-        double Interpolate(IEnumerable<Sample> knownSamples, double valueToInterpolate);
+        T Interpolate<T>(IEnumerable<Sample<T>> knownSamples, double valueToInterpolate);
+        double Interpolate(IEnumerable<Sample<double>> knownSamples, double valueToInterpolate);
     }
 }
