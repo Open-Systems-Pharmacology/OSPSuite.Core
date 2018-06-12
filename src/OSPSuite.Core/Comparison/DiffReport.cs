@@ -33,10 +33,7 @@ namespace OSPSuite.Core.Comparison
          return _allItems;
       }
 
-      public bool IsEmpty
-      {
-         get { return _allItems.Count == 0; }
-      }
+      public bool IsEmpty => _allItems.Count == 0;
 
       public IEnumerator<DiffItem> GetEnumerator()
       {
@@ -48,14 +45,8 @@ namespace OSPSuite.Core.Comparison
          return GetEnumerator();
       }
 
-      public int Count
-      {
-         get { return _allItems.Count; }
-      }
+      public int Count => _allItems.Count;
 
-      public DiffItem this[int index]
-      {
-         get { return _allItems[index]; }
-      }
+      public DiffItem this[int index] => _allItems[index];
    }
 }

@@ -47,7 +47,7 @@ namespace OSPSuite.Core.Journal
       void DeleteJournalPages(IReadOnlyList<JournalPage> journalPages);
 
       /// <summary>
-      ///    Gets the working journal item currently being edited
+      ///    Gets the  journal page currently being edited
       /// </summary>
       JournalPage JournalPageCurrentlyEdited { get; }
 
@@ -59,6 +59,9 @@ namespace OSPSuite.Core.Journal
       /// </summary>
       void Edit(JournalPage journalPage, bool showEditor, JournalSearch journalSearch = null);
 
+      /// <summary>
+      /// Returns all tags available in the journal
+      /// </summary>
       IEnumerable<string> AllKnownTags { get; }
 
       /// <summary>
@@ -76,7 +79,6 @@ namespace OSPSuite.Core.Journal
       ///    Reloads the journal currently open
       /// </summary>
       void ReloadJournal();
-
 
       /// <summary>
       /// Shows the current journal if defined

@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          this.components = new System.ComponentModel.Container();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParameterIdentificationSimulationSelectionView));
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnAddSimulation = new DevExpress.XtraEditors.SimpleButton();
          this.treeView = new UxImageTreeView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();

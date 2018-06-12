@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite.Presentation</RootNamespace>
     <AssemblyName>OSPSuite.Presentation</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,17 +43,20 @@
       <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.17.1.5\lib\net45\DevExpress.Utils.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.0.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.1.0.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.0.8\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="SX, Version=2.6.5.7, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.5.7\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.6.7.6, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.7.6\lib\net45\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -117,6 +121,7 @@
     <Compile Include="DTO\SimulationSelectionDTO.cs" />
     <Compile Include="DTO\ValidationMessageDTO.cs" />
     <Compile Include="DTO\ValueDTO.cs" />
+    <Compile Include="DTO\ValueOriginDTO.cs" />
     <Compile Include="Extensions\CurveChartExtensions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Mappers\BaseDataTableMapper.cs" />
@@ -126,6 +131,7 @@
     <Compile Include="Mappers\IDataTableToStringMapper.cs" />
     <Compile Include="Mappers\IHistoryItemDTOEnumerableToHistoryItemDTOList.cs" />
     <Compile Include="Mappers\IHistoryToHistoryDTOMapper.cs" />
+    <Compile Include="Presenters\EditValueOriginPresenter.cs" />
     <Compile Include="Presenters\Importer\ExcelPreviewPresenter.cs" />
     <Compile Include="Presenters\Importer\Fonts.cs" />
     <Compile Include="Presenters\Importer\ImportDataTableGridPresenter.cs" />
@@ -255,7 +261,7 @@
     <Compile Include="Presenters\ObservedData\DataRepositoryChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CategorialParameterIdentificationRunModePresenter.cs" />
-    <Compile Include="Presenters\ParameterIdentifications\CloneObjectBasePresenter.cs" />
+    <Compile Include="Presenters\CloneObjectBasePresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\EditParameterIdentificationPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\IdentificationParameterEventArgs.cs" />
     <Compile Include="Presenters\ParameterIdentifications\IParameterIdentificationAnalysisPresenter.cs" />
@@ -302,6 +308,7 @@
     <Compile Include="Presenters\ParameterIdentifications\WeightedDataRepositoryDataPresenter.cs" />
     <Compile Include="Presenters\PresenterConstants.cs" />
     <Compile Include="Presenters\ValidationMessagesPresenter.cs" />
+    <Compile Include="Presenters\ValueOriginPresenter.cs" />
     <Compile Include="Serialization\ChartEditorSettingsXmlSerializer.cs" />
     <Compile Include="Serialization\DataPersistor.cs" />
     <Compile Include="Serialization\GridColumnSettingsXmlSerializer.cs" />
@@ -485,6 +492,7 @@
     <Compile Include="Settings\ViewSettings.cs" />
     <Compile Include="UICommands\ActivateSkinCommand.cs" />
     <Compile Include="UICommands\ActiveObjectUICommand.cs" />
+    <Compile Include="UICommands\AddParameterAnalysableToActiveJournalPageUICommand.cs" />
     <Compile Include="UICommands\AddRelatedItemsToActiveJournalPageUICommand.cs" />
     <Compile Include="UICommands\CloneParameterIdentificationUICommand.cs" />
     <Compile Include="UICommands\CloneSensitivityAnalysisCommand.cs" />
@@ -558,10 +566,12 @@
     <Compile Include="Views\Commands\ILabelView.cs" />
     <Compile Include="Views\Comparisons\IMainComparisonView.cs" />
     <Compile Include="Views\Diagram\IBaseDiagramView.cs" />
+    <Compile Include="Views\IEditValueOriginView.cs" />
     <Compile Include="Views\Importer\IExcelPreviewView.cs" />
     <Compile Include="Views\Importer\IImportDataTableGridView.cs" />
     <Compile Include="Views\Importer\IImporterView.cs" />
     <Compile Include="Views\Importer\INamingPatternView.cs" />
+    <Compile Include="Views\IValueOriginView.cs" />
     <Compile Include="Views\Journal\IJournalDiagramMainView.cs" />
     <Compile Include="Views\Journal\IJournalDiagramView.cs" />
     <Compile Include="Views\ExplorerViewExtensions.cs" />

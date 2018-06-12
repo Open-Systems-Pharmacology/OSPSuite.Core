@@ -3,7 +3,6 @@ using System.Data;
 using System.Text;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraPivotGrid;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.UI.Mappers
 {

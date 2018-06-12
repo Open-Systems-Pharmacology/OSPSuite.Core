@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Repositories
@@ -35,7 +34,7 @@ namespace OSPSuite.Core.Domain.Repositories
 
       public bool Contains(IObjectPath parameterPath)
       {
-         return All().Contains(parameterPath.PathAsString);
+         return Favorites.Contains(parameterPath.PathAsString);
       }
 
       public void Clear()
@@ -43,15 +42,6 @@ namespace OSPSuite.Core.Domain.Repositories
          Favorites.Clear();
       }
 
-      public Favorites Favorites
-      {
-         get
-         {
-            if (_projectRetriever.CurrentProject == null)
-               return new Favorites();
-
-            return _projectRetriever.CurrentProject.Favorites;
-         }
-      }
+      public Favorites Favorites => _projectRetriever.CurrentProject?.Favorites ?? new Favorites();
    }
 }

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -39,14 +39,14 @@ namespace OSPSuite.Core.Comparison
             comparerSettings,
             report,
             commonAncestor
-            );
+         );
 
          Compare(comparison);
       }
 
       public abstract void Compare(IComparison<TObject> comparison);
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
+      internal void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
       {
          CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
       }
@@ -61,12 +61,12 @@ namespace OSPSuite.Core.Comparison
          CompareStringValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
       }
 
-      protected void CompareNullableDoubleValues<TInput>(Func<TInput, double?> funcEvaluation, Expression<Func<TInput, double?>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class, IWithDimension
+      protected void CompareNullableDoubleValues<TInput>(Func<TInput, double?> funcEvaluation, Expression<Func<TInput, double?>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
          CompareNullableDoubleValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, displayUnitFunc);
       }
-
-      protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, Expression<Func<TInput, double>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class, IWithDimension
+      
+      protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, Expression<Func<TInput, double>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
          CompareDoubleValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, displayUnitFunc);
       }
@@ -97,12 +97,13 @@ namespace OSPSuite.Core.Comparison
          CompareValues(funcEvaluation, propertyName, comparison, areStringEquals, defaultFormatter);
       }
 
-      protected void CompareNullableDoubleValues<TInput>(Func<TInput, double?> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class, IWithDimension
+      protected void CompareNullableDoubleValues<TInput>(Func<TInput, double?> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
          CompareDoubleValues(x => funcEvaluation(x).GetValueOrDefault(double.NaN), propertyName, comparison, displayUnitFunc);
       }
 
-      protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class, IWithDimension
+    
+      protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
          try
          {
@@ -163,13 +164,17 @@ namespace OSPSuite.Core.Comparison
          return output?.ToString() ?? string.Empty;
       }
 
-      private string numericFormatter<TInput>(TInput input, double value, Func<TInput, Unit> unitRetrieverFunc) where TInput : IWithDimension
+      private string numericFormatter<TInput>(TInput input, double value, Func<TInput, Unit> unitRetrieverFunc)
       {
-         if (unitRetrieverFunc == null || input.Dimension == null)
+         var withDimension = input as IWithDimension;
+         if (withDimension == null)
+            return _numericFormatter.Format(value);
+
+         if (unitRetrieverFunc == null || withDimension.Dimension == null)
             return _numericFormatter.Format(value);
 
          var displayUnit = unitRetrieverFunc(input);
-         var displayValue = input.Dimension.BaseUnitValueToUnitValue(displayUnit, value);
+         var displayValue = withDimension.Dimension.BaseUnitValueToUnitValue(displayUnit, value);
          return _numericFormatter.Format(displayValue, displayUnit);
       }
 

@@ -125,6 +125,7 @@ namespace OSPSuite.Core
             scan.ExcludeType<DiffBuilderRepository>();
             scan.WithConvention<RegisterTypeConvention<IDiffBuilder>>();
          });
+         container.Register(typeof(WithValueOriginComparison<>), typeof(WithValueOriginComparison<>));
          container.Register<EnumerableComparer, EnumerableComparer>();
       }
 

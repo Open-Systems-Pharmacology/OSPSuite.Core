@@ -1,8 +1,6 @@
-﻿using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -19,11 +17,17 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
       private readonly IMoleculeBuilderToMoleculeAmountMapper _moleculeMapper;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
-      private readonly IDimensionFactory _dimensionFactory;
+      private readonly IParameterFactory _parameterFactory;
 
-      public EventGroupBuilderToEventGroupMapper(IObjectBaseFactory objectBaseFactory, ICloneManagerForModel cloneManagerForModel,
-                                                 IContainerBuilderToContainerMapper containerMapper, IEventBuilderToEventMapper eventMapper, IParameterBuilderToParameterMapper parameterMapper,
-                                                 IMoleculeBuilderToMoleculeAmountMapper moleculeMapper, IFormulaBuilderToFormulaMapper formulaMapper, IDimensionFactory dimensionFactory)
+      public EventGroupBuilderToEventGroupMapper(
+         IObjectBaseFactory objectBaseFactory,
+         ICloneManagerForModel cloneManagerForModel,
+         IContainerBuilderToContainerMapper containerMapper,
+         IEventBuilderToEventMapper eventMapper,
+         IParameterBuilderToParameterMapper parameterMapper,
+         IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
+         IFormulaBuilderToFormulaMapper formulaMapper,
+         IParameterFactory parameterFactory)
       {
          _objectBaseFactory = objectBaseFactory;
          _cloneManagerForModel = cloneManagerForModel;
@@ -32,7 +36,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterMapper = parameterMapper;
          _moleculeMapper = moleculeMapper;
          _formulaMapper = formulaMapper;
-         _dimensionFactory = dimensionFactory;
+         _parameterFactory = parameterFactory;
       }
 
       public IEventGroup MapFrom(IEventGroupBuilder eventGroupBuilder, IBuildConfiguration buildConfiguration)
@@ -108,13 +112,11 @@ namespace OSPSuite.Core.Domain.Mappers
          if (moleculeContainer.ContainsName(Constants.Parameters.VOLUME))
             return;
 
-         var volume = _objectBaseFactory.Create<IParameter>()
-            .WithName(Constants.Parameters.VOLUME)
-            .WithFormula(_objectBaseFactory.Create<ConstantFormula>().WithValue(1.0))
-            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.VOLUME));
+         var volume = _parameterFactory.CreateVolumeParameter();
 
          volume.Editable = false;
          volume.Visible = false;
+         volume.IsDefault = true;
 
          moleculeContainer.Add(volume);
       }

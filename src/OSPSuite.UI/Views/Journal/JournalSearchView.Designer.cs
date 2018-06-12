@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Views.Journal
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.tbSearch = new UxMRUEdit();
          this.chkCaseSensitive = new OSPSuite.UI.Controls.UxCheckEdit();
          this.btnClear = new DevExpress.XtraEditors.SimpleButton();

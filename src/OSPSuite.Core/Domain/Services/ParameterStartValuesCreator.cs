@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -42,9 +42,10 @@ namespace OSPSuite.Core.Domain.Services
       ///    The display unit of the start value. If not set, the default unit of the
       ///    <paramref name="dimension" />will be used
       /// </param>
-      /// <param name="valueDescription">Value description for this parameter value</param>
+      /// <param name="valueOrigin">Value origin for this parameter start value</param>
+      /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new IParameterStartValue</returns>
-      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, string valueDescription = null);
+      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false);
    }
 
    internal class ParameterStartValuesCreator : IParameterStartValuesCreator
@@ -105,8 +106,8 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (
                var paramValue in
-                  moleculeBuildingBlock.SelectMany(
-                     moleculeBuilder => getMoleculePropertiesParameterValues(moleculeProperties, moleculeBuilder)))
+               moleculeBuildingBlock.SelectMany(
+                  moleculeBuilder => getMoleculePropertiesParameterValues(moleculeProperties, moleculeBuilder)))
             {
                parameterStartValuesBuildingBlock.Add(paramValue);
             }
@@ -177,22 +178,25 @@ namespace OSPSuite.Core.Domain.Services
          return CreateParameterStartValue(parameterPath, parameter);
       }
 
-      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, string valueDescription = null)
+      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
-         return new ParameterStartValue
+         var psv = new ParameterStartValue
          {
             StartValue = startValue,
             Dimension = dimension,
             Id = _idGenerator.NewId(),
             Path = parameterPath,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
-            ValueDescription = valueDescription ?? string.Empty
+            IsDefault = isDefault
          };
+
+         psv.ValueOrigin.UpdateAllFrom(valueOrigin);
+         return psv;
       }
 
       public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter)
       {
-         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueDescription);
+         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin, parameter.IsDefault);
       }
 
       private IParameterStartValue localMoleculeParameterValueFor(IMoleculeBuilder moleculeBuilder, IParameter parameter, IContainer container)

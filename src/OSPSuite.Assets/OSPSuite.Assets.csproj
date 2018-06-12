@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite.Assets</RootNamespace>
     <AssemblyName>OSPSuite.Assets</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,8 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -1030,6 +1031,63 @@
     <None Include="Icons\Results.ico" />
     <None Include="Icons\PKParameterSensitivityAnalysis.ico" />
     <None Include="Icons\SBML.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodAssumption.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodInVitro.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodInVivo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodManualFit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodOther.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodParameterIdentification.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginMethodUnknown.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceDatabase.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceInternet.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceOther.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceParameterIdentification.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourcePublication.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\ValueOriginSourceUnknown.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Properties.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Tag.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\UserDefinedSpecies.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Snapshot.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\SnapshotExport.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\SnapshotImport.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -5,7 +5,7 @@ using OSPSuite.Core.Maths.Random;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IParameter : IQuantity
+   public interface IParameter : IQuantity, IWithDefaultState
    {
       ParameterBuildMode BuildMode { get; set; }
       IFormula RHSFormula { get; set; }
@@ -97,6 +97,9 @@ namespace OSPSuite.Core.Domain
       public virtual ParameterOrigin Origin { get; private set; }
       public virtual double? DefaultValue { get; set; }
 
+      /// <inheritdoc />
+      public bool IsDefault { get; set; }
+
       public Parameter()
       {
          Persistable = false;
@@ -127,6 +130,7 @@ namespace OSPSuite.Core.Domain
          Info = sourceParameter.Info.Clone();
          Origin = sourceParameter.Origin.Clone();
          DefaultValue = sourceParameter.DefaultValue;
+         IsDefault = sourceParameter.IsDefault;
       }
 
       public double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null)
@@ -140,77 +144,74 @@ namespace OSPSuite.Core.Domain
          return randomGenerator.UniformDeviate(minValue.Value, maxValue.Value);
       }
 
-      public virtual bool IsChangedByCreateIndividual
-      {
-         get { return false; }
-      }
+      public virtual bool IsChangedByCreateIndividual => false;
 
       #region Parameter Info
 
       public bool CanBeVaried
       {
-         get { return Info.CanBeVaried; }
-         set { Info.CanBeVaried = value; }
+         get => Info.CanBeVaried;
+         set => Info.CanBeVaried = value;
       }
 
       public string GroupName
       {
-         get { return Info.GroupName; }
-         set { Info.GroupName = value; }
+         get => Info.GroupName;
+         set => Info.GroupName = value;
       }
 
       public bool Visible
       {
-         get { return Info.Visible; }
-         set { Info.Visible = value; }
+         get => Info.Visible;
+         set => Info.Visible = value;
       }
 
       public bool Editable
       {
-         get { return !Info.ReadOnly; }
-         set { Info.ReadOnly = !value; }
+         get => !Info.ReadOnly;
+         set => Info.ReadOnly = !value;
       }
 
       public int Sequence
       {
-         get { return Info.Sequence; }
-         set { Info.Sequence = value; }
+         get => Info.Sequence;
+         set => Info.Sequence = value;
       }
 
       public bool MinIsAllowed
       {
-         get { return Info.MinIsAllowed; }
-         set { Info.MinIsAllowed = value; }
+         get => Info.MinIsAllowed;
+         set => Info.MinIsAllowed = value;
       }
 
       public double? MinValue
       {
-         get { return Info.MinValue; }
-         set { Info.MinValue = value; }
+         get => Info.MinValue;
+         set => Info.MinValue = value;
       }
 
       public double? MaxValue
       {
-         get { return Info.MaxValue; }
-         set { Info.MaxValue = value; }
+         get => Info.MaxValue;
+         set => Info.MaxValue = value;
       }
 
       public bool MaxIsAllowed
       {
-         get { return Info.MaxIsAllowed; }
-         set { Info.MaxIsAllowed = value; }
+         get => Info.MaxIsAllowed;
+         set => Info.MaxIsAllowed = value;
       }
 
       public bool CanBeVariedInPopulation
       {
-         get { return Info.CanBeVariedInPopulation; }
-         set { Info.CanBeVariedInPopulation = value; }
+         get => Info.CanBeVariedInPopulation;
+         set => Info.CanBeVariedInPopulation = value;
       }
 
       public PKSimBuildingBlockType BuildingBlockType
       {
-         get { return Info.BuildingBlockType; }
-         set { Info.BuildingBlockType = value; }
+         get => Info.BuildingBlockType;
+         set => Info.BuildingBlockType = value;
       }
 
       #endregion

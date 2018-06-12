@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Comparison
          if (parameter1.IsFixedValue || parameter2.IsFixedValue)
             return false;
 
-         return _parameterDiffBuilder.ShouldCompareParametersIn(comparison);
+         return ParameterDiffBuilder.ShouldCompareParametersIn(comparison);
       }
    }
 }

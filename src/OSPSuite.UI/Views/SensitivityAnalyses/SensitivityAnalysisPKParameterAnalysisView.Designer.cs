@@ -38,7 +38,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          DevExpress.XtraCharts.ChartTitle chartTitle5 = new DevExpress.XtraCharts.ChartTitle();
          DevExpress.XtraCharts.ChartTitle chartTitle6 = new DevExpress.XtraCharts.ChartTitle();
          this.chartControl = new UxChartControl();
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.cbOutputPathSelection = new DevExpress.XtraEditors.ComboBoxEdit();
          this.lblSensitivityNotCalculated = new DevExpress.XtraEditors.LabelControl();
          this.cbPKParameter = new DevExpress.XtraEditors.ComboBoxEdit();

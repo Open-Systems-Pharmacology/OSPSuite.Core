@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.logLinToggleSwitch = new DevExpress.XtraEditors.ToggleSwitch();
          this.chartPanel = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();

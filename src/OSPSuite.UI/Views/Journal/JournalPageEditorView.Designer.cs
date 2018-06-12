@@ -34,16 +34,15 @@ namespace OSPSuite.UI.Views.Journal
       {
          this.components = new System.ComponentModel.Container();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JournalPageEditorView));
-         DevExpress.XtraBars.Ribbon.GalleryItemGroup galleryItemGroup5 = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
-         DevExpress.XtraBars.Ribbon.GalleryItemGroup galleryItemGroup6 = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
-         DevExpress.XtraRichEdit.Model.BorderInfo borderInfo1 = new DevExpress.XtraRichEdit.Model.BorderInfo();
-         DevExpress.XtraBars.Ribbon.ReduceOperation reduceOperation3 = new DevExpress.XtraBars.Ribbon.ReduceOperation();
+         DevExpress.XtraBars.Ribbon.GalleryItemGroup galleryItemGroup1 = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
+         DevExpress.XtraBars.Ribbon.GalleryItemGroup galleryItemGroup2 = new DevExpress.XtraBars.Ribbon.GalleryItemGroup();
+         DevExpress.XtraBars.Ribbon.ReduceOperation reduceOperation1 = new DevExpress.XtraBars.Ribbon.ReduceOperation();
          this.stylesRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.StylesRibbonPageGroup();
          this.galleryChangeStyleItem1 = new DevExpress.XtraRichEdit.UI.GalleryChangeStyleItem();
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-         this.cbSource = new DevExpress.XtraEditors.ImageComboBoxEdit();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.tbTitle = new DevExpress.XtraEditors.TextEdit();
          this.ribbonControl = new DevExpress.XtraBars.Ribbon.RibbonControl();
-         this.uxRichEditControl = new UxRichEditControl();
+         this.uxRichEditControl = new OSPSuite.UI.Controls.UxRichEditControl();
          this.undoItem1 = new DevExpress.XtraRichEdit.UI.UndoItem();
          this.redoItem1 = new DevExpress.XtraRichEdit.UI.RedoItem();
          this.fileNewItem1 = new DevExpress.XtraRichEdit.UI.FileNewItem();
@@ -203,31 +202,37 @@ namespace OSPSuite.UI.Views.Journal
          this.headerFooterRibbonPageGroup = new DevExpress.XtraRichEdit.UI.HeaderFooterRibbonPageGroup();
          this.textRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.TextRibbonPageGroup();
          this.symbolsRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.SymbolsRibbonPageGroup();
+         this.cbSource = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.tagEdit = new DevExpress.XtraEditors.TokenEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.richEditControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemTokenEdit = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemSource = new DevExpress.XtraLayout.LayoutControlItem();
-         this.richEditBarController1 = new DevExpress.XtraRichEdit.UI.RichEditBarController();
-         this.tbTitle = new DevExpress.XtraEditors.TextEdit();
          this.layoutItemTitle = new DevExpress.XtraLayout.LayoutControlItem();
+         this.richEditBarController1 = new DevExpress.XtraRichEdit.UI.RichEditBarController();
+         this.buttonNextPage = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutItemButtonNextPage = new DevExpress.XtraLayout.LayoutControlItem();
+         this.buttonPreviousPage = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutItemButtonPreviousPage = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
          this.layoutControl1.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineStyle1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineWeight1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRichEditFontSizeEdit1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tagEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.richEditControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTokenEdit)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemSource)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.richEditBarController1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTitle)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.richEditBarController1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemButtonNextPage)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemButtonPreviousPage)).BeginInit();
          this.SuspendLayout();
          // 
          // stylesRibbonPageGroup1
@@ -243,35 +248,37 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.galleryChangeStyleItem1.Gallery.ColumnCount = 10;
          this.galleryChangeStyleItem1.Gallery.Groups.AddRange(new DevExpress.XtraBars.Ribbon.GalleryItemGroup[] {
-            galleryItemGroup5});
+            galleryItemGroup1});
          this.galleryChangeStyleItem1.Gallery.ImageSize = new System.Drawing.Size(65, 46);
          this.galleryChangeStyleItem1.Id = 128;
          this.galleryChangeStyleItem1.Name = "galleryChangeStyleItem1";
          // 
          // layoutControl1
          // 
+         this.layoutControl1.AllowCustomization = false;
          this.layoutControl1.Controls.Add(this.tbTitle);
          this.layoutControl1.Controls.Add(this.cbSource);
          this.layoutControl1.Controls.Add(this.tagEdit);
          this.layoutControl1.Controls.Add(this.uxRichEditControl);
+         this.layoutControl1.Controls.Add(this.buttonNextPage);
+         this.layoutControl1.Controls.Add(this.buttonPreviousPage);
          this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 142);
+         this.layoutControl1.Location = new System.Drawing.Point(0, 141);
          this.layoutControl1.Name = "layoutControl1";
+         this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1167, 385, 450, 400);
          this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(940, 402);
+         this.layoutControl1.Size = new System.Drawing.Size(940, 403);
          this.layoutControl1.TabIndex = 0;
          this.layoutControl1.Text = "layoutControl1";
          // 
-         // cbSource
+         // tbTitle
          // 
-         this.cbSource.Location = new System.Drawing.Point(837, 2);
-         this.cbSource.MenuManager = this.ribbonControl;
-         this.cbSource.Name = "cbSource";
-         this.cbSource.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.cbSource.Size = new System.Drawing.Size(101, 20);
-         this.cbSource.StyleController = this.layoutControl1;
-         this.cbSource.TabIndex = 7;
+         this.tbTitle.Location = new System.Drawing.Point(79, 2);
+         this.tbTitle.MenuManager = this.ribbonControl;
+         this.tbTitle.Name = "tbTitle";
+         this.tbTitle.Size = new System.Drawing.Size(664, 20);
+         this.tbTitle.StyleController = this.layoutControl1;
+         this.tbTitle.TabIndex = 8;
          // 
          // ribbonControl
          // 
@@ -423,16 +430,15 @@ namespace OSPSuite.UI.Views.Journal
             this.repositoryItemBorderLineWeight1,
             this.repositoryItemFontEdit1,
             this.repositoryItemRichEditFontSizeEdit1});
-         this.ribbonControl.Size = new System.Drawing.Size(940, 142);
+         this.ribbonControl.Size = new System.Drawing.Size(940, 141);
          this.ribbonControl.ToolbarLocation = DevExpress.XtraBars.Ribbon.RibbonQuickAccessToolbarLocation.Above;
          // 
          // uxRichEditControl
          // 
-         this.uxRichEditControl.EnableToolTips = true;
          this.uxRichEditControl.Location = new System.Drawing.Point(2, 26);
          this.uxRichEditControl.MenuManager = this.ribbonControl;
          this.uxRichEditControl.Name = "uxRichEditControl";
-         this.uxRichEditControl.Size = new System.Drawing.Size(936, 350);
+         this.uxRichEditControl.Size = new System.Drawing.Size(936, 349);
          this.uxRichEditControl.TabIndex = 4;
          // 
          // undoItem1
@@ -579,15 +585,13 @@ namespace OSPSuite.UI.Views.Journal
          // galleryChangeTableStyleItem1
          // 
          this.galleryChangeTableStyleItem1.CurrentItem = null;
-         this.galleryChangeTableStyleItem1.CurrentItemStyle = null;
-         this.galleryChangeTableStyleItem1.CurrentStyle = null;
          this.galleryChangeTableStyleItem1.DeleteItemLink = null;
          // 
          // 
          // 
          this.galleryChangeTableStyleItem1.Gallery.ColumnCount = 3;
          this.galleryChangeTableStyleItem1.Gallery.Groups.AddRange(new DevExpress.XtraBars.Ribbon.GalleryItemGroup[] {
-            galleryItemGroup6});
+            galleryItemGroup2});
          this.galleryChangeTableStyleItem1.Gallery.ImageSize = new System.Drawing.Size(65, 46);
          this.galleryChangeTableStyleItem1.Id = 28;
          this.galleryChangeTableStyleItem1.ModifyItemLink = null;
@@ -598,13 +602,7 @@ namespace OSPSuite.UI.Views.Journal
          // changeTableBorderLineStyleItem1
          // 
          this.changeTableBorderLineStyleItem1.Edit = this.repositoryItemBorderLineStyle1;
-         borderInfo1.Color = System.Drawing.Color.Black;
-         borderInfo1.Frame = false;
-         borderInfo1.Offset = 0;
-         borderInfo1.Shadow = false;
-         borderInfo1.Style = DevExpress.XtraRichEdit.Model.BorderLineStyle.Single;
-         borderInfo1.Width = 10;
-         this.changeTableBorderLineStyleItem1.EditValue = borderInfo1;
+         this.changeTableBorderLineStyleItem1.EditWidth = 130;
          this.changeTableBorderLineStyleItem1.Id = 29;
          this.changeTableBorderLineStyleItem1.Name = "changeTableBorderLineStyleItem1";
          // 
@@ -620,6 +618,7 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.changeTableBorderLineWeightItem1.Edit = this.repositoryItemBorderLineWeight1;
          this.changeTableBorderLineWeightItem1.EditValue = 20;
+         this.changeTableBorderLineWeightItem1.EditWidth = 130;
          this.changeTableBorderLineWeightItem1.Id = 30;
          this.changeTableBorderLineWeightItem1.Name = "changeTableBorderLineWeightItem1";
          // 
@@ -650,7 +649,7 @@ namespace OSPSuite.UI.Views.Journal
             new DevExpress.XtraBars.LinkPersistInfo(this.toggleTableCellsInsideBorderItem1),
             new DevExpress.XtraBars.LinkPersistInfo(this.toggleTableCellsInsideHorizontalBorderItem1, true),
             new DevExpress.XtraBars.LinkPersistInfo(this.toggleTableCellsInsideVerticalBorderItem1),
-            new DevExpress.XtraBars.LinkPersistInfo(this.toggleShowTableGridLinesItem1, true)});
+            new DevExpress.XtraBars.LinkPersistInfo(DevExpress.XtraBars.BarLinkUserDefines.KeyTip, this.toggleShowTableGridLinesItem1, "", true, true, true, 0, null, DevExpress.XtraBars.BarItemPaintStyle.Standard, "TG", "")});
          this.changeTableBordersItem1.Name = "changeTableBordersItem1";
          // 
          // toggleTableCellsBottomBorderItem1
@@ -910,10 +909,10 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup1
          // 
          this.barButtonGroup1.Id = 77;
-         this.barButtonGroup1.ItemLinks.Add(this.changeFontNameItem1);
+         this.barButtonGroup1.ItemLinks.Add(this.changeFontNameItem1, "FF");
          this.barButtonGroup1.ItemLinks.Add(this.changeFontSizeItem1);
-         this.barButtonGroup1.ItemLinks.Add(this.fontSizeIncreaseItem1);
-         this.barButtonGroup1.ItemLinks.Add(this.fontSizeDecreaseItem1);
+         this.barButtonGroup1.ItemLinks.Add(this.fontSizeIncreaseItem1, "FG");
+         this.barButtonGroup1.ItemLinks.Add(this.fontSizeDecreaseItem1, "FK");
          this.barButtonGroup1.Name = "barButtonGroup1";
          this.barButtonGroup1.Tag = "{97BBE334-159B-44d9-A168-0411957565E8}";
          // 
@@ -1011,8 +1010,8 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup3
          // 
          this.barButtonGroup3.Id = 79;
-         this.barButtonGroup3.ItemLinks.Add(this.changeFontColorItem1);
-         this.barButtonGroup3.ItemLinks.Add(this.changeFontBackColorItem1);
+         this.barButtonGroup3.ItemLinks.Add(this.changeFontColorItem1, "FC");
+         this.barButtonGroup3.ItemLinks.Add(this.changeFontBackColorItem1, "I");
          this.barButtonGroup3.Name = "barButtonGroup3";
          this.barButtonGroup3.Tag = "{DF8C5334-EDE3-47c9-A42C-FE9A9247E180}";
          // 
@@ -1064,9 +1063,9 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup4
          // 
          this.barButtonGroup4.Id = 80;
-         this.barButtonGroup4.ItemLinks.Add(this.toggleBulletedListItem1);
-         this.barButtonGroup4.ItemLinks.Add(this.toggleNumberingListItem1);
-         this.barButtonGroup4.ItemLinks.Add(this.toggleMultiLevelListItem1);
+         this.barButtonGroup4.ItemLinks.Add(this.toggleBulletedListItem1, "U");
+         this.barButtonGroup4.ItemLinks.Add(this.toggleNumberingListItem1, "N");
+         this.barButtonGroup4.ItemLinks.Add(this.toggleMultiLevelListItem1, "M");
          this.barButtonGroup4.Name = "barButtonGroup4";
          this.barButtonGroup4.Tag = "{0B3A7A43-3079-4ce0-83A8-3789F5F6DC9F}";
          // 
@@ -1088,8 +1087,8 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup5
          // 
          this.barButtonGroup5.Id = 81;
-         this.barButtonGroup5.ItemLinks.Add(this.decreaseIndentItem1);
-         this.barButtonGroup5.ItemLinks.Add(this.increaseIndentItem1);
+         this.barButtonGroup5.ItemLinks.Add(this.decreaseIndentItem1, "AO");
+         this.barButtonGroup5.ItemLinks.Add(this.increaseIndentItem1, "AI");
          this.barButtonGroup5.ItemLinks.Add(this.toggleShowWhitespaceItem1);
          this.barButtonGroup5.Name = "barButtonGroup5";
          this.barButtonGroup5.Tag = "{4747D5AB-2BEB-4ea6-9A1D-8E4FB36F1B40}";
@@ -1112,10 +1111,10 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup6
          // 
          this.barButtonGroup6.Id = 82;
-         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentLeftItem1);
-         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentCenterItem1);
-         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentRightItem1);
-         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentJustifyItem1);
+         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentLeftItem1, "AL");
+         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentCenterItem1, "AC");
+         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentRightItem1, "AR");
+         this.barButtonGroup6.ItemLinks.Add(this.toggleParagraphAlignmentJustifyItem1, "AJ");
          this.barButtonGroup6.Name = "barButtonGroup6";
          this.barButtonGroup6.Tag = "{8E89E775-996E-49a0-AADA-DE338E34732E}";
          // 
@@ -1142,8 +1141,8 @@ namespace OSPSuite.UI.Views.Journal
          // barButtonGroup7
          // 
          this.barButtonGroup7.Id = 83;
-         this.barButtonGroup7.ItemLinks.Add(this.changeParagraphLineSpacingItem1);
-         this.barButtonGroup7.ItemLinks.Add(this.changeParagraphBackColorItem1);
+         this.barButtonGroup7.ItemLinks.Add(this.changeParagraphLineSpacingItem1, "K");
+         this.barButtonGroup7.ItemLinks.Add(this.changeParagraphBackColorItem1, "H");
          this.barButtonGroup7.Name = "barButtonGroup7";
          this.barButtonGroup7.Tag = "{9A8DEAD8-3890-4857-A395-EC625FD02217}";
          // 
@@ -1155,7 +1154,7 @@ namespace OSPSuite.UI.Views.Journal
             new DevExpress.XtraBars.LinkPersistInfo(this.setSesquialteralParagraphSpacingItem1),
             new DevExpress.XtraBars.LinkPersistInfo(this.setDoubleParagraphSpacingItem1),
             new DevExpress.XtraBars.LinkPersistInfo(this.showLineSpacingFormItem1),
-            new DevExpress.XtraBars.LinkPersistInfo(this.addSpacingBeforeParagraphItem1),
+            new DevExpress.XtraBars.LinkPersistInfo(DevExpress.XtraBars.BarLinkUserDefines.KeyTip, this.addSpacingBeforeParagraphItem1, "", false, true, true, 0, null, DevExpress.XtraBars.BarItemPaintStyle.Standard, "B", ""),
             new DevExpress.XtraBars.LinkPersistInfo(this.removeSpacingBeforeParagraphItem1),
             new DevExpress.XtraBars.LinkPersistInfo(this.addSpacingAfterParagraphItem1),
             new DevExpress.XtraBars.LinkPersistInfo(this.removeSpacingAfterParagraphItem1)});
@@ -1252,9 +1251,9 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBorderLineStyleItem1);
          this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBorderLineWeightItem1);
-         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBorderColorItem1);
-         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBordersItem1);
-         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableCellsShadingItem1);
+         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBorderColorItem1, "C");
+         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableBordersItem1, "B");
+         this.tableDrawBordersRibbonPageGroup1.ItemLinks.Add(this.changeTableCellsShadingItem1, "H");
          this.tableDrawBordersRibbonPageGroup1.Name = "tableDrawBordersRibbonPageGroup1";
          // 
          // tableLayoutRibbonPage1
@@ -1269,46 +1268,46 @@ namespace OSPSuite.UI.Views.Journal
          // 
          // tableTableRibbonPageGroup1
          // 
-         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.selectTableElementsItem1);
-         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.toggleShowTableGridLinesItem1);
-         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.showTablePropertiesFormItem1);
+         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.selectTableElementsItem1, "K");
+         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.toggleShowTableGridLinesItem1, "TG");
+         this.tableTableRibbonPageGroup1.ItemLinks.Add(this.showTablePropertiesFormItem1, "O");
          this.tableTableRibbonPageGroup1.Name = "tableTableRibbonPageGroup1";
          // 
          // tableRowsAndColumnsRibbonPageGroup1
          // 
-         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.deleteTableElementsItem1);
-         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableRowAboveItem1);
-         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableRowBelowItem1);
-         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableColumnToLeftItem1);
-         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableColumnToRightItem1);
+         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.deleteTableElementsItem1, "D");
+         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableRowAboveItem1, "A");
+         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableRowBelowItem1, "E");
+         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableColumnToLeftItem1, "L");
+         this.tableRowsAndColumnsRibbonPageGroup1.ItemLinks.Add(this.insertTableColumnToRightItem1, "R");
          this.tableRowsAndColumnsRibbonPageGroup1.Name = "tableRowsAndColumnsRibbonPageGroup1";
          // 
          // tableMergeRibbonPageGroup1
          // 
-         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.mergeTableCellsItem1);
-         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.showSplitTableCellsForm1);
-         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.splitTableItem1);
+         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.mergeTableCellsItem1, "M");
+         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.showSplitTableCellsForm1, "P");
+         this.tableMergeRibbonPageGroup1.ItemLinks.Add(this.splitTableItem1, "Q");
          this.tableMergeRibbonPageGroup1.Name = "tableMergeRibbonPageGroup1";
          // 
          // tableCellSizeRibbonPageGroup1
          // 
          this.tableCellSizeRibbonPageGroup1.AllowTextClipping = false;
-         this.tableCellSizeRibbonPageGroup1.ItemLinks.Add(this.toggleTableAutoFitItem1);
+         this.tableCellSizeRibbonPageGroup1.ItemLinks.Add(this.toggleTableAutoFitItem1, "F");
          this.tableCellSizeRibbonPageGroup1.Name = "tableCellSizeRibbonPageGroup1";
          // 
          // tableAlignmentRibbonPageGroup1
          // 
          this.tableAlignmentRibbonPageGroup1.Glyph = ((System.Drawing.Image)(resources.GetObject("tableAlignmentRibbonPageGroup1.Glyph")));
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopLeftAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleLeftAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomLeftAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopCenterAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleCenterAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomCenterAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopRightAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleRightAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomRightAlignmentItem1);
-         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.showTableOptionsFormItem1);
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopLeftAlignmentItem1, "TL");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleLeftAlignmentItem1, "CL");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomLeftAlignmentItem1, "BL");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopCenterAlignmentItem1, "TC");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleCenterAlignmentItem1, "CC");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomCenterAlignmentItem1, "BC");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsTopRightAlignmentItem1, "TR");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsMiddleRightAlignmentItem1, "CR");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.toggleTableCellsBottomRightAlignmentItem1, "BR");
+         this.tableAlignmentRibbonPageGroup1.ItemLinks.Add(this.showTableOptionsFormItem1, "N");
          this.tableAlignmentRibbonPageGroup1.Name = "tableAlignmentRibbonPageGroup1";
          // 
          // homeRibbonPage1
@@ -1320,18 +1319,18 @@ namespace OSPSuite.UI.Views.Journal
             this.stylesRibbonPageGroup1,
             this.editingRibbonPageGroup1});
          this.homeRibbonPage1.Name = "homeRibbonPage1";
-         reduceOperation3.Behavior = DevExpress.XtraBars.Ribbon.ReduceOperationBehavior.UntilAvailable;
-         reduceOperation3.Group = this.stylesRibbonPageGroup1;
-         reduceOperation3.ItemLinkIndex = 0;
-         reduceOperation3.ItemLinksCount = 0;
-         reduceOperation3.Operation = DevExpress.XtraBars.Ribbon.ReduceOperationType.Gallery;
-         this.homeRibbonPage1.ReduceOperations.Add(reduceOperation3);
+         reduceOperation1.Behavior = DevExpress.XtraBars.Ribbon.ReduceOperationBehavior.UntilAvailable;
+         reduceOperation1.Group = this.stylesRibbonPageGroup1;
+         reduceOperation1.ItemLinkIndex = 0;
+         reduceOperation1.ItemLinksCount = 0;
+         reduceOperation1.Operation = DevExpress.XtraBars.Ribbon.ReduceOperationType.Gallery;
+         this.homeRibbonPage1.ReduceOperations.Add(reduceOperation1);
          // 
          // clipboardRibbonPageGroup1
          // 
-         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.pasteItem1);
-         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.cutItem1);
-         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.copyItem1);
+         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.pasteItem1, "V");
+         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.cutItem1, "X");
+         this.clipboardRibbonPageGroup1.ItemLinks.Add(this.copyItem1, "C");
          this.clipboardRibbonPageGroup1.ItemLinks.Add(this.pasteSpecialItem1);
          this.clipboardRibbonPageGroup1.Name = "clipboardRibbonPageGroup1";
          // 
@@ -1341,7 +1340,7 @@ namespace OSPSuite.UI.Views.Journal
          this.fontRibbonPageGroup1.ItemLinks.Add(this.barButtonGroup2);
          this.fontRibbonPageGroup1.ItemLinks.Add(this.barButtonGroup3);
          this.fontRibbonPageGroup1.ItemLinks.Add(this.changeTextCaseItem1);
-         this.fontRibbonPageGroup1.ItemLinks.Add(this.clearFormattingItem1);
+         this.fontRibbonPageGroup1.ItemLinks.Add(this.clearFormattingItem1, "E");
          this.fontRibbonPageGroup1.Name = "fontRibbonPageGroup1";
          // 
          // paragraphRibbonPageGroup1
@@ -1354,8 +1353,8 @@ namespace OSPSuite.UI.Views.Journal
          // 
          // editingRibbonPageGroup1
          // 
-         this.editingRibbonPageGroup1.ItemLinks.Add(this.findItem1);
-         this.editingRibbonPageGroup1.ItemLinks.Add(this.replaceItem1);
+         this.editingRibbonPageGroup1.ItemLinks.Add(this.findItem1, "FD");
+         this.editingRibbonPageGroup1.ItemLinks.Add(this.replaceItem1, "R");
          this.editingRibbonPageGroup1.Name = "editingRibbonPageGroup1";
          // 
          // fileRibbonPage1
@@ -1368,12 +1367,12 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.commonRibbonPageGroup1.ItemLinks.Add(this.undoItem1);
          this.commonRibbonPageGroup1.ItemLinks.Add(this.redoItem1);
-         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileNewItem1);
-         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileOpenItem1);
-         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileSaveItem1);
-         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileSaveAsItem1);
+         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileNewItem1, "N");
+         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileOpenItem1, "O");
+         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileSaveItem1, "S");
+         this.commonRibbonPageGroup1.ItemLinks.Add(this.fileSaveAsItem1, "A");
          this.commonRibbonPageGroup1.ItemLinks.Add(this.quickPrintItem1);
-         this.commonRibbonPageGroup1.ItemLinks.Add(this.printItem1);
+         this.commonRibbonPageGroup1.ItemLinks.Add(this.printItem1, "P");
          this.commonRibbonPageGroup1.ItemLinks.Add(this.printPreviewItem1);
          this.commonRibbonPageGroup1.Name = "commonRibbonPageGroup1";
          // 
@@ -1389,59 +1388,70 @@ namespace OSPSuite.UI.Views.Journal
             this.symbolsRibbonPageGroup1});
          this.insertRibbonPage1.Name = "insertRibbonPage1";
          // 
-         // pagesRibbonPageGroup1
+         // pagesRibbonPageGroup
          // 
          this.pagesRibbonPageGroup.AllowTextClipping = false;
-         this.pagesRibbonPageGroup.ItemLinks.Add(this.insertPageBreakItem21);
+         this.pagesRibbonPageGroup.ItemLinks.Add(this.insertPageBreakItem21, "B");
          this.pagesRibbonPageGroup.Name = "pagesRibbonPageGroup";
          // 
          // tablesRibbonPageGroup1
          // 
          this.tablesRibbonPageGroup1.AllowTextClipping = false;
-         this.tablesRibbonPageGroup1.ItemLinks.Add(this.insertTableItem1);
+         this.tablesRibbonPageGroup1.ItemLinks.Add(this.insertTableItem1, "T");
          this.tablesRibbonPageGroup1.Name = "tablesRibbonPageGroup1";
          // 
          // illustrationsRibbonPageGroup1
          // 
-         this.illustrationsRibbonPageGroup1.ItemLinks.Add(this.insertPictureItem1);
+         this.illustrationsRibbonPageGroup1.ItemLinks.Add(this.insertPictureItem1, "P");
          this.illustrationsRibbonPageGroup1.ItemLinks.Add(this.insertFloatingPictureItem1);
          this.illustrationsRibbonPageGroup1.Name = "illustrationsRibbonPageGroup1";
          // 
          // linksRibbonPageGroup1
          // 
-         this.linksRibbonPageGroup1.ItemLinks.Add(this.insertBookmarkItem1);
-         this.linksRibbonPageGroup1.ItemLinks.Add(this.insertHyperlinkItem1);
+         this.linksRibbonPageGroup1.ItemLinks.Add(this.insertBookmarkItem1, "K");
+         this.linksRibbonPageGroup1.ItemLinks.Add(this.insertHyperlinkItem1, "I");
          this.linksRibbonPageGroup1.Name = "linksRibbonPageGroup1";
          // 
          // headerFooterRibbonPageGroup
          // 
-         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.editPageHeaderItem1);
-         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.editPageFooterItem1);
-         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.insertPageNumberItem1);
+         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.editPageHeaderItem1, "H");
+         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.editPageFooterItem1, "O");
+         this.headerFooterRibbonPageGroup.ItemLinks.Add(this.insertPageNumberItem1, "NU");
          this.headerFooterRibbonPageGroup.ItemLinks.Add(this.insertPageCountItem1);
          this.headerFooterRibbonPageGroup.Name = "headerFooterRibbonPageGroup";
          // 
          // textRibbonPageGroup1
          // 
          this.textRibbonPageGroup1.Glyph = ((System.Drawing.Image)(resources.GetObject("textRibbonPageGroup1.Glyph")));
-         this.textRibbonPageGroup1.ItemLinks.Add(this.insertTextBoxItem1);
+         this.textRibbonPageGroup1.ItemLinks.Add(this.insertTextBoxItem1, "X");
          this.textRibbonPageGroup1.Name = "textRibbonPageGroup1";
          // 
          // symbolsRibbonPageGroup1
          // 
          this.symbolsRibbonPageGroup1.AllowTextClipping = false;
-         this.symbolsRibbonPageGroup1.ItemLinks.Add(this.insertSymbolItem1);
+         this.symbolsRibbonPageGroup1.ItemLinks.Add(this.insertSymbolItem1, "U");
          this.symbolsRibbonPageGroup1.Name = "symbolsRibbonPageGroup1";
+         // 
+         // cbSource
+         // 
+         this.cbSource.Location = new System.Drawing.Point(837, 2);
+         this.cbSource.MenuManager = this.ribbonControl;
+         this.cbSource.Name = "cbSource";
+         this.cbSource.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.cbSource.Size = new System.Drawing.Size(101, 20);
+         this.cbSource.StyleController = this.layoutControl1;
+         this.cbSource.TabIndex = 7;
          // 
          // tagEdit
          // 
-         this.tagEdit.Location = new System.Drawing.Point(106, 380);
+         this.tagEdit.Location = new System.Drawing.Point(106, 379);
          this.tagEdit.MenuManager = this.ribbonControl;
          this.tagEdit.Name = "tagEdit";
          this.tagEdit.Properties.EditMode = DevExpress.XtraEditors.TokenEditMode.Manual;
          this.tagEdit.Properties.Separators.AddRange(new string[] {
             ","});
-         this.tagEdit.Size = new System.Drawing.Size(832, 20);
+         this.tagEdit.Size = new System.Drawing.Size(362, 20);
          this.tagEdit.StyleController = this.layoutControl1;
          this.tagEdit.TabIndex = 5;
          // 
@@ -1454,11 +1464,13 @@ namespace OSPSuite.UI.Views.Journal
             this.richEditControlItem,
             this.layoutItemTokenEdit,
             this.layoutItemSource,
-            this.layoutItemTitle});
+            this.layoutItemTitle,
+            this.layoutItemButtonPreviousPage,
+            this.layoutItemButtonNextPage});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
+         this.layoutControlGroup1.Name = "Root";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutControlGroup1.Size = new System.Drawing.Size(940, 402);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(940, 403);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // richEditControlItem
@@ -1467,7 +1479,7 @@ namespace OSPSuite.UI.Views.Journal
          this.richEditControlItem.CustomizationFormText = "richEditControlItem";
          this.richEditControlItem.Location = new System.Drawing.Point(0, 24);
          this.richEditControlItem.Name = "richEditControlItem";
-         this.richEditControlItem.Size = new System.Drawing.Size(940, 354);
+         this.richEditControlItem.Size = new System.Drawing.Size(940, 353);
          this.richEditControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.richEditControlItem.TextVisible = false;
          // 
@@ -1475,10 +1487,9 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.layoutItemTokenEdit.Control = this.tagEdit;
          this.layoutItemTokenEdit.CustomizationFormText = "tokenEditControlItem";
-         this.layoutItemTokenEdit.Location = new System.Drawing.Point(0, 378);
+         this.layoutItemTokenEdit.Location = new System.Drawing.Point(0, 377);
          this.layoutItemTokenEdit.Name = "layoutItemTokenEdit";
-         this.layoutItemTokenEdit.Size = new System.Drawing.Size(940, 24);
-         this.layoutItemTokenEdit.Text = "layoutItemTokenEdit";
+         this.layoutItemTokenEdit.Size = new System.Drawing.Size(470, 26);
          this.layoutItemTokenEdit.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize;
          this.layoutItemTokenEdit.TextSize = new System.Drawing.Size(99, 13);
          this.layoutItemTokenEdit.TextToControlDistance = 5;
@@ -1495,6 +1506,16 @@ namespace OSPSuite.UI.Views.Journal
          this.layoutItemSource.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize;
          this.layoutItemSource.TextSize = new System.Drawing.Size(85, 13);
          this.layoutItemSource.TextToControlDistance = 5;
+         // 
+         // layoutItemTitle
+         // 
+         this.layoutItemTitle.Control = this.tbTitle;
+         this.layoutItemTitle.Location = new System.Drawing.Point(0, 0);
+         this.layoutItemTitle.Name = "layoutItemTitle";
+         this.layoutItemTitle.Size = new System.Drawing.Size(745, 24);
+         this.layoutItemTitle.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize;
+         this.layoutItemTitle.TextSize = new System.Drawing.Size(72, 13);
+         this.layoutItemTitle.TextToControlDistance = 5;
          // 
          // richEditBarController1
          // 
@@ -1623,26 +1644,43 @@ namespace OSPSuite.UI.Views.Journal
          this.richEditBarController1.BarItems.Add(this.replaceItem1);
          this.richEditBarController1.Control = this.uxRichEditControl;
          // 
-         // tbTitle
+         // buttonNextPage
          // 
-         this.tbTitle.Location = new System.Drawing.Point(79, 2);
-         this.tbTitle.MenuManager = this.ribbonControl;
-         this.tbTitle.Name = "tbTitle";
-         this.tbTitle.Size = new System.Drawing.Size(664, 20);
-         this.tbTitle.StyleController = this.layoutControl1;
-         this.tbTitle.TabIndex = 8;
+         this.buttonNextPage.Location = new System.Drawing.Point(707, 379);
+         this.buttonNextPage.Name = "buttonNextPage";
+         this.buttonNextPage.Size = new System.Drawing.Size(231, 22);
+         this.buttonNextPage.StyleController = this.layoutControl1;
+         this.buttonNextPage.TabIndex = 9;
+         this.buttonNextPage.Text = "buttonNextPage";
          // 
-         // layoutItemTitle
+         // layoutItemButtonNextPage
          // 
-         this.layoutItemTitle.Control = this.tbTitle;
-         this.layoutItemTitle.Location = new System.Drawing.Point(0, 0);
-         this.layoutItemTitle.Name = "layoutItemTitle";
-         this.layoutItemTitle.Size = new System.Drawing.Size(745, 24);
-         this.layoutItemTitle.TextAlignMode = DevExpress.XtraLayout.TextAlignModeItem.AutoSize;
-         this.layoutItemTitle.TextSize = new System.Drawing.Size(72, 13);
-         this.layoutItemTitle.TextToControlDistance = 5;
+         this.layoutItemButtonNextPage.Control = this.buttonNextPage;
+         this.layoutItemButtonNextPage.Location = new System.Drawing.Point(705, 377);
+         this.layoutItemButtonNextPage.Name = "layoutItemButtonNextPage";
+         this.layoutItemButtonNextPage.Size = new System.Drawing.Size(235, 26);
+         this.layoutItemButtonNextPage.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemButtonNextPage.TextVisible = false;
          // 
-         // WorkingJournalItemEditorView
+         // buttonPreviousPage
+         // 
+         this.buttonPreviousPage.Location = new System.Drawing.Point(472, 379);
+         this.buttonPreviousPage.Name = "buttonPreviousPage";
+         this.buttonPreviousPage.Size = new System.Drawing.Size(231, 22);
+         this.buttonPreviousPage.StyleController = this.layoutControl1;
+         this.buttonPreviousPage.TabIndex = 10;
+         this.buttonPreviousPage.Text = "buttonPreviousPage";
+         // 
+         // layoutItemButtonPreviousPage
+         // 
+         this.layoutItemButtonPreviousPage.Control = this.buttonPreviousPage;
+         this.layoutItemButtonPreviousPage.Location = new System.Drawing.Point(470, 377);
+         this.layoutItemButtonPreviousPage.Name = "layoutItemButtonPreviousPage";
+         this.layoutItemButtonPreviousPage.Size = new System.Drawing.Size(235, 26);
+         this.layoutItemButtonPreviousPage.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemButtonPreviousPage.TextVisible = false;
+         // 
+         // JournalPageEditorView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1653,28 +1691,28 @@ namespace OSPSuite.UI.Views.Journal
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
          this.layoutControl1.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineStyle1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineWeight1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRichEditFontSizeEdit1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tagEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.richEditControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTokenEdit)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemSource)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.richEditBarController1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemTitle)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.richEditBarController1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemButtonNextPage)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemButtonPreviousPage)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       protected UxRichEditControl uxRichEditControl;
       private DevExpress.XtraLayout.LayoutControlItem richEditControlItem;
@@ -1847,5 +1885,10 @@ namespace OSPSuite.UI.Views.Journal
       private DevExpress.XtraLayout.LayoutControlItem layoutItemSource;
       private TextEdit tbTitle;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTitle;
+      private UxLayoutControl layoutControl1;
+      private SimpleButton buttonNextPage;
+      private SimpleButton buttonPreviousPage;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemButtonPreviousPage;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemButtonNextPage;
    }
 }

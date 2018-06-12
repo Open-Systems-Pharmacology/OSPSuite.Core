@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite.Starter</RootNamespace>
     <AssemblyName>OSPSuite.Starter</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>OSPSuite.Starter.Program</StartupObject>
     <FileUpgradeFlags>
@@ -34,6 +34,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -154,6 +155,9 @@
       <HintPath>..\..\packages\OSPSuite.DevExpress.17.1.5\lib\net45\DevExpress.XtraVerticalGrid.v17.1.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.0.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Northwoods.Go, Version=5.2.0.45, Culture=neutral, PublicKeyToken=a4e3b7b70161cfe8, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.dll</HintPath>
       <Private>True</Private>
@@ -182,23 +186,23 @@
       <HintPath>..\..\packages\Northwoods.GoWin.5.2.0\lib\net45\Northwoods.Go.Xml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OSPSuite.DataBinding, Version=2.1.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.2.1.0.5\lib\net452\OSPSuite.DataBinding.dll</HintPath>
+    <Reference Include="OSPSuite.DataBinding, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.2.2.0.2\lib\net462\OSPSuite.DataBinding.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=2.1.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.1.0.4\lib\net452\OSPSuite.DataBinding.DevExpress.dll</HintPath>
+    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=2.2.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.2.2.0.2\lib\net462\OSPSuite.DataBinding.DevExpress.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.SimModel.2.2.0.6\lib\net45\OSPSuite.SimModel.dll</HintPath>
+      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.0.16\lib\net45\OSPSuite.SimModel.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.1.0.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.0.8\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -241,6 +245,7 @@
     <Compile Include="Presenters\MatrixTestPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalysisStarter.cs" />
     <Compile Include="Services\ApplicationSettings.cs" />
+    <Compile Include="Services\OSPLogger.cs" />
     <Compile Include="Tasks\Calculations.cs" />
     <Compile Include="Tasks\DataRepositoryCreator.cs" />
     <Compile Include="Tasks\SingleStartPresenterTask.cs" />
@@ -407,7 +412,6 @@
     <EmbeddedResource Include="Forms\GridViewForm.resx">
       <DependentUpon>GridViewForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

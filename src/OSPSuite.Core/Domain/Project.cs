@@ -19,6 +19,7 @@ namespace OSPSuite.Core.Domain
       private readonly List<SensitivityAnalysis> _allSensitivityAnalyses = new List<SensitivityAnalysis>();
 
       private readonly ICache<string, CurveChartTemplate> _chartTemplates;
+      public CreationMetaData Creation { get; set; }
       public string FilePath { get; set; }
       public abstract bool HasChanged { get; set; }
       public string JournalPath { get; set; }
@@ -30,6 +31,7 @@ namespace OSPSuite.Core.Domain
          Name = Constants.ProjectUndefined;
          FilePath = string.Empty;
          _chartTemplates = new Cache<string, CurveChartTemplate>(x => x.Name, x => null);
+         Creation = new CreationMetaData();
       }
 
       public abstract IReadOnlyCollection<T> All<T>() where T : class;
@@ -54,11 +56,10 @@ namespace OSPSuite.Core.Domain
          RemoveClassifiable(classifiable);
       }
 
-      public DataRepository ObservedDataBy(string dataRepositoryId)
-      {
-         return _allObservedData[dataRepositoryId];
-      }
+      public DataRepository ObservedDataBy(string dataRepositoryId) => _allObservedData[dataRepositoryId];
 
+      public virtual DataRepository ObservedDataBy(UsedObservedData usedObservedData) => ObservedDataBy(usedObservedData.Id);
+      
       public IReadOnlyCollection<IClassification> AllClassifications => _allClassifications;
 
       public IReadOnlyCollection<IClassification> AllClassificationsByType(ClassificationType classificationType)

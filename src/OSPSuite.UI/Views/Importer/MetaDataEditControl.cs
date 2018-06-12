@@ -221,7 +221,7 @@ namespace OSPSuite.UI.Views.Importer
             editor.Name = col.ColumnName;
             editor.DataBindings.Add(new Binding("EditValue", _data, col.ColumnName));
             editor.DataBindings.DefaultDataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
-            if (col.DefaultValue != null && col.DefaultValue != DBNull.Value)
+            if (shouldSetDefaultValue(col))
                editor.EditValue = col.DefaultValue;
 
             colItem.Control = editor;
@@ -252,6 +252,12 @@ namespace OSPSuite.UI.Views.Importer
          _copyButton.Enabled = IsDataValid;
          _copyButton.Click += onCopyButtonClick;
          copyItem.TextVisible = false;
+      }
+
+      private static bool shouldSetDefaultValue(MetaDataColumn metaDataColumn)
+      {
+         var hasDefaultValue = metaDataColumn.DefaultValue != null && metaDataColumn.DefaultValue != DBNull.Value;
+         return hasDefaultValue && (!metaDataColumn.IsListOfValuesFixed || metaDataColumn.ListOfValues.ContainsValue(metaDataColumn.DefaultValue.ToString()));
       }
 
       private int maxLengthFor(MetaDataColumn col)

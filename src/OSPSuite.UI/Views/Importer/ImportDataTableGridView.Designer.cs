@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Importer
       private void InitializeComponent()
       {
          this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.gridControl = new UxGridControl();
          this.gridView = new UxGridView(gridControl);
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();

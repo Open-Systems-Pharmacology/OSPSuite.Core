@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.Utils;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;

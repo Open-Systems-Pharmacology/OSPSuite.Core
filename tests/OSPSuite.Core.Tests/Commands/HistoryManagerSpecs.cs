@@ -282,7 +282,7 @@ namespace OSPSuite.Commands
       }
 
       [Observation]
-      public void Should_return_an_empty_command()
+      public void should_return_an_empty_command()
       {
          _result.ShouldBeAnInstanceOf<EmptyCommand<MyContext>>();
       }

@@ -31,8 +31,8 @@ namespace OSPSuite.UI.Controls
 
       protected bool GridVisible
       {
-         get { return layoutItemGrid.Visible; }
-         set { layoutItemGrid.Visibility = LayoutVisibilityConvertor.FromBoolean(value); }
+         get => layoutItemGrid.Visible;
+         set => layoutItemGrid.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
       public override void AdjustHeight()

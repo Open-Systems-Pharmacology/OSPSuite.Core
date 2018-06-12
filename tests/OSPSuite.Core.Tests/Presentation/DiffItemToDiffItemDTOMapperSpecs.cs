@@ -195,6 +195,38 @@ namespace OSPSuite.Presentation
       }
    }
 
+
+   public class When_mapping_a_missing_left_item_to_a_diff_item_dto_with_present_object_details : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _diffItem = new MissingDiffItem
+         {
+            MissingObject1 = new Parameter().WithName("P1"),
+            MissingObject2 = null,
+            MissingObjectName = "A",
+            PresentObjectDetails = "5L"
+         };
+      }
+
+      [Observation]
+      public void should_return_a_dto_having_the_expected_left_and_right_object_including_present_object_details()
+      {
+         _dto.PathElements.ToList().ShouldBeEqualTo(_pathElements.ToList());
+         _dto.Value1.Contains(Captions.Comparisons.Present).ShouldBeTrue();
+         _dto.Value1.Contains("5L").ShouldBeTrue();
+         _dto.Value2.ShouldBeEqualTo(Captions.Comparisons.Absent);
+         _dto.ObjectName.ShouldBeEqualTo("A");
+      }
+
+      [Observation]
+      public void should_return_a_dto_having_the_missing_item_flag_to_true()
+      {
+         _dto.ItemIsMissing.ShouldBeTrue();
+      }
+   }
+
    public class When_mapping_a_missing_right_item_to_a_diff_item_dto : concern_for_DiffItemToDiffItemDTOMapper
    {
       protected override void Context()

@@ -20,11 +20,11 @@ namespace OSPSuite.Core
       {
          sut = new TableFormulaWithOffset();
 
-         _dimensionLength = new Dimension(new BaseDimensionRepresentation { LengthExponent = 1 }, "Length", "m");
+         _dimensionLength = new Dimension(new BaseDimensionRepresentation {LengthExponent = 1}, "Length", "m");
          _dimensionLength.AddUnit("cm", 0.01, 0);
          _dimensionpH = new Dimension(new BaseDimensionRepresentation(), "pH", "");
 
-         _tableFormula=new TableFormula().WithName(_tableObjectAlias);
+         _tableFormula = new TableFormula().WithName(_tableObjectAlias);
          _tableFormula.AddPoint(1, 10);
          _tableFormula.AddPoint(2, 20);
          _tableFormula.AddPoint(3, 30);
@@ -33,61 +33,51 @@ namespace OSPSuite.Core
          _tableObject.Formula = _tableFormula;
          _offsetObject = new Parameter().WithName(_offsetObjectAlias).WithValue(5);
 
-         _dependentObject=new MoleculeAmount();
-         _dependentObject.Add(_tableObject);
-         _dependentObject.Add(_offsetObject);
+         _dependentObject = new MoleculeAmount {_tableObject, _offsetObject};
 
-         IFormulaUsablePath tableObjectPath = new FormulaUsablePath(new[] { _tableObjectAlias }).WithAlias(_tableObjectAlias);
+         var tableObjectPath = new FormulaUsablePath(_tableObjectAlias).WithAlias(_tableObjectAlias);
          sut.AddTableObjectPath(tableObjectPath);
-         IFormulaUsablePath offsetObjectPath = new FormulaUsablePath(new[] { _offsetObjectAlias }).WithAlias(_offsetObjectAlias);
+         var offsetObjectPath = new FormulaUsablePath(_offsetObjectAlias).WithAlias(_offsetObjectAlias);
          sut.AddOffsetObjectPath(offsetObjectPath);
       }
 
-      protected double calcValue()
+      protected double CalcValue()
       {
          return sut.Calculate(_dependentObject);
       }
    }
 
-   
    public class When_calculating_values_for_table_with_offset_formula : concern_for_TableFormulaWithOffset
    {
-      protected override void Context()
-      {
-         base.Context();
-      }
-
       [Observation]
       public void should_be_able_to_retrieve_the_given_value_for_an_exact_time()
       {
          _offsetObject.Value = -1;
-         calcValue().ShouldBeEqualTo(10);
+         CalcValue().ShouldBeEqualTo(10);
 
          _offsetObject.Value = -3;
-         calcValue().ShouldBeEqualTo(30);
+         CalcValue().ShouldBeEqualTo(30);
       }
 
       [Observation]
       public void should_return_the_first_value_for_a_time_below_the_first_time_sample()
       {
          _offsetObject.Value = 0;
-         calcValue().ShouldBeEqualTo(10);
+         CalcValue().ShouldBeEqualTo(10);
       }
 
       [Observation]
       public void should_return_the_largest_value_for_a_time_above_the_first_time_sample()
       {
          _offsetObject.Value = -4;
-         calcValue().ShouldBeEqualTo(30);
+         CalcValue().ShouldBeEqualTo(30);
       }
 
       [Observation]
       public void should_retun_the_interpolated_value_if_the_time_is_not_one_of_the_defined_time()
       {
          _offsetObject.Value = -1.5;
-         calcValue().ShouldBeEqualTo(15);
+         CalcValue().ShouldBeEqualTo(15);
       }
    }
-
-
 }

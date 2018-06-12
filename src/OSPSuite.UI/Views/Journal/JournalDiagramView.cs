@@ -34,14 +34,29 @@ namespace OSPSuite.UI.Views.Journal
             base.OnContextClicked(e);
       }
 
+      public override void InitializeBinding()
+      {
+         base.InitializeBinding();
+         _goView.ObjectDoubleClicked += (o, e) => OnEvent(onDoubleClicked, e);
+         _goView.LinkCreated += (o, e) => OnEvent(onLinkCreated, e);
+         _goView.SelectionDeleting += (o, e) => OnEvent(onSelectionDeleting, e);
+         _goView.BackgroundContextClicked += (o, e) => OnEvent(onBackgroundContextClicked, e);
+      }
+
+      private void onDoubleClicked(GoObjectEventArgs e)
+      {
+         var journalPageNode = e.GoObject?.ParentNode as JournalPageNode;
+         if (journalPageNode == null)
+            return;
+
+         _journalDiagramPresenter.EditJournalPage(journalPageNode);
+      }
+
       public override void InitializeResources()
       {
          base.InitializeResources();
-         _goView.GridCellSize = new SizeF(10,10);
-         _goView.LinkCreated += (o, e) => OnEvent(() => onLinkCreated(e));
-         _goView.SelectionDeleting += (o, e) => OnEvent(() => onSelectionDeleting(e));
+         _goView.GridCellSize = new SizeF(10, 10);
          _goView.ReplaceMouseTool(typeof(GoToolDragging), new JournalPageDraggingTool(_goView));
-         _goView.BackgroundContextClicked += (o, e) => OnEvent(() => onBackgroundContextClicked(e));
       }
 
       private void onBackgroundContextClicked(GoInputEventArgs goInputEventArgs)
@@ -51,9 +66,9 @@ namespace OSPSuite.UI.Views.Journal
 
       private void onLinkCreated(GoSelectionEventArgs e)
       {
-         var link = (NewLink)e.GoObject;
-         var node1 = (IBaseNode)link.FromNode;
-         var node2 = (IBaseNode)link.ToNode;
+         var link = (NewLink) e.GoObject;
+         var node1 = (IBaseNode) link.FromNode;
+         var node2 = (IBaseNode) link.ToNode;
 
          var parentNode = getParentNodeFromLink(link);
          var childNode = parentNode == node1 ? node2 : node1;
@@ -62,7 +77,6 @@ namespace OSPSuite.UI.Views.Journal
          _goView.Document.Remove(link);
       }
 
-
       private JournalPageNode getParentNodeFromLink(IGoLink goLink)
       {
          if (goLink.FromPort == null || goLink.ToPort == null)
@@ -70,9 +84,9 @@ namespace OSPSuite.UI.Views.Journal
 
          // connecting to the child port of the other node (means the other node is the parent)
          if (goLink.FromPort is JournalChildPort)
-            return (JournalPageNode)goLink.FromPort.Node;
+            return (JournalPageNode) goLink.FromPort.Node;
 
-         return (JournalPageNode)goLink.ToPort.Node;
+         return (JournalPageNode) goLink.ToPort.Node;
       }
 
       private void onSelectionDeleting(CancelEventArgs e)
@@ -104,6 +118,6 @@ namespace OSPSuite.UI.Views.Journal
          _goView.Selection.RemoveAllSelectionHandles();
       }
 
-      protected override int TopicId=> HelpId.Tool_Journal_Diagram;
+      protected override int TopicId => HelpId.Tool_Journal_Diagram;
    }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Office.Utils;
+using DevExpress.Utils;
+using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraEditors;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.Commands;
@@ -11,6 +10,8 @@ using DevExpress.XtraRichEdit.Forms;
 using DevExpress.XtraRichEdit.Services;
 using OSPSuite.Assets;
 using OSPSuite.Core.Journal;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Extensions;
@@ -21,6 +22,7 @@ using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Journal
 {
@@ -86,8 +88,8 @@ namespace OSPSuite.UI.Views.Journal
          addParagraphStyle("Header 1", "Cambria", 14, true, Color.FromArgb(255, 54, 95, 145), 16);
          addParagraphStyle("Header 2", "Cambria", 13, true, Color.FromArgb(255, 79, 129, 189), 12);
          addParagraphStyle("Header 3", "Cambria", 11, true, Color.FromArgb(255, 79, 129, 189), 6);
-         addCharacterStyle("Emphasized", "Normal", true, true, Color.FromArgb(255, 54, 95, 145)); 
-         
+         addCharacterStyle("Emphasized", "Normal", true, true, Color.FromArgb(255, 54, 95, 145));
+
          _screenBinder.BindToSource(journalPageDTO);
 
          ActiveControl = uxRichEditControl;
@@ -188,6 +190,9 @@ namespace OSPSuite.UI.Views.Journal
             .WithValues(dto => _presenter.AllOrigins)
             .AndDisplays(x => x.DisplayName)
             .Changed += () => OnEvent(sourceChanged);
+
+         buttonPreviousPage.Click += (o, e) => OnEvent(_presenter.NavigateToPreviousPage);
+         buttonNextPage.Click += (o, e) => OnEvent(_presenter.NavigateToNextPage);
       }
 
       private CustomRichEditCommandFactoryService createCustomCommandFactoryService()
@@ -220,6 +225,15 @@ namespace OSPSuite.UI.Views.Journal
          layoutItemSource.Text = Captions.Journal.Source.FormatForLabel();
 
          cbSource.SetImages(_imageListRetriever);
+
+         ribbonControl.ShowToolbarCustomizeItem = false;
+         ribbonControl.ToolbarLocation = RibbonQuickAccessToolbarLocation.Hidden;
+         ribbonControl.ShowApplicationButton = DefaultBoolean.False;
+
+         buttonPreviousPage.InitWithImage(ApplicationIcons.Previous, imageLocation: ImageLocation.MiddleCenter, toolTip: ToolTips.Journal.NavigateToPreviousPage);
+         buttonNextPage.InitWithImage(ApplicationIcons.Next, imageLocation: ImageLocation.MiddleCenter, toolTip: ToolTips.Journal.NavigateToNextPage);
+         layoutItemButtonNextPage.AdjustButtonSizeWithImageOnly();
+         layoutItemButtonPreviousPage.AdjustButtonSizeWithImageOnly();
       }
 
       private void addParagraphStyle(string name, string fontName, int fontSize, bool isBold, Color color, int spacingBefore)
@@ -253,6 +267,7 @@ namespace OSPSuite.UI.Views.Journal
             styles.Add(style);
          }
       }
+
       private void changeTitle()
       {
          _presenter.TitleChanged(tbTitle.Text);
@@ -285,6 +300,6 @@ namespace OSPSuite.UI.Views.Journal
          _presenter = presenter;
       }
 
-      protected override int TopicId=> HelpId.Tool_Journal_Content;
+      protected override int TopicId => HelpId.Tool_Journal_Content;
    }
 }

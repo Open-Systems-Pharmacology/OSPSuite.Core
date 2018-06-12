@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Comparison
@@ -41,18 +42,8 @@ namespace OSPSuite.Core.Comparison
          return comparison.Object1.RHSFormula != null && comparison.Object2.RHSFormula != null;
       }
 
-      public bool ShouldCompareParametersIn(IComparison<IParameter> comparison)
-      {
-         if (!comparison.ComparedObjectsDefined)
-            return true;
+      public static Func<IComparison<IParameter>, bool> ShouldCompareParametersIn { get; set; } = shouldCompareParameterInComparison;
 
-         var parameter1 = comparison.Object1;
-         var parameter2 = comparison.Object2;
-         if (parameter1.Visible && parameter2.Visible)
-            return true;
-
-         //at least one parameter hidden
-         return comparison.Settings.CompareHiddenEntities;
-      }
+      private static bool shouldCompareParameterInComparison(IComparison<IParameter> comparison) => comparison.ComparedObjectsDefined;
    }
 }

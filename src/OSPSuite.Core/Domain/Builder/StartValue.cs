@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IStartValue : IUsingFormula, IWithDisplayUnit
+   public interface IStartValue : IUsingFormula, IWithDisplayUnit, IWithValueOrigin
    {
       /// <summary>
       ///    Path of parent container in spatial structure
@@ -22,11 +22,6 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Full path of entity in spatial structure or model
       /// </summary>
       IObjectPath Path { get; set; }
-
-      /// <summary>
-      ///    Optional description explaining the value of the parameter
-      /// </summary>
-      string ValueDescription { get; set; }
    }
 
    public abstract class StartValueBase : Entity, IStartValue
@@ -36,35 +31,24 @@ namespace OSPSuite.Core.Domain.Builder
       private IFormula _formula;
       private IDimension _dimension;
       private IObjectPath _containerPath;
-      private string _valueDescription;
-
+      public ValueOrigin ValueOrigin { get; }
+ 
       protected StartValueBase()
       {
          Dimension = Constants.Dimension.NO_DIMENSION;
          StartValue = null;
          ContainerPath = ObjectPath.Empty;
-         _valueDescription = string.Empty;
+         ValueOrigin = new ValueOrigin();
       }
 
       public IObjectPath Path
       {
-         get { return ContainerPath.Clone<IObjectPath>().AndAdd(Name); }
-         set { entityFullPathToComponents(value); }
-      }
-
-
-      public string ValueDescription
-      {
-         get { return _valueDescription; }
-         set
-         {
-            _valueDescription = value;
-            OnPropertyChanged(() => ValueDescription);
-         }
+         get => ContainerPath.Clone<IObjectPath>().AndAdd(Name);
+         set => entityFullPathToComponents(value);
       }
 
       /// <summary>
-      /// Tests whether or not the value is public-member-equivalent to the target
+      ///    Tests whether or not the value is public-member-equivalent to the target
       /// </summary>
       /// <param name="target">The comparable object</param>
       /// <returns>True if all the public members are equal, otherwise false</returns>
@@ -72,14 +56,13 @@ namespace OSPSuite.Core.Domain.Builder
       {
          if (ReferenceEquals(this, target))
             return true;
+
          return
             NullableEqualsCheck(ContainerPath, target.ContainerPath) &&
             NullableEqualsCheck(Path, target.Path) &&
-            StartValue.HasValue == target.StartValue.HasValue && 
-            
+            StartValue.HasValue == target.StartValue.HasValue &&
             (!StartValue.HasValue || ValueComparer.AreValuesEqual(StartValue.GetValueOrDefault(), target.StartValue.GetValueOrDefault())) &&
-            
-            NullableEqualsCheck(Formula, target.Formula, x=> x.ToString()) &&
+            NullableEqualsCheck(Formula, target.Formula, x => x.ToString()) &&
             NullableEqualsCheck(Dimension, target.Dimension, x => x.ToString()) &&
             NullableEqualsCheck(Icon, target.Icon) &&
             NullableEqualsCheck(Description, target.Description) &&
@@ -87,14 +70,19 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      /// Compares two objects of the same type first checking for null, then for .Equals
+      ///    Compares two objects of the same type first checking for null, then for .Equals
       /// </summary>
       /// <typeparam name="T">The type being compared</typeparam>
       /// <param name="first">The first element being compared</param>
       /// <param name="second">The second element being compared</param>
-      /// <param name="transform">An optional transform done on the parameter before .Equals. Often this is .ToString
-      /// making the the comparison the same as first.ToString().Equals(second.ToString())</param>
-      /// <returns>The result of the transform and .Equals calls as outlined if first is not null. If first is null, returns true if second is null</returns>
+      /// <param name="transform">
+      ///    An optional transform done on the parameter before .Equals. Often this is .ToString
+      ///    making the the comparison the same as first.ToString().Equals(second.ToString())
+      /// </param>
+      /// <returns>
+      ///    The result of the transform and .Equals calls as outlined if first is not null. If first is null, returns true
+      ///    if second is null
+      /// </returns>
       protected bool NullableEqualsCheck<T>(T first, T second, Func<T, object> transform = null) where T : class
       {
          if (first == null)
@@ -103,8 +91,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (second == null)
             return false;
 
-         return transform == null ? first.Equals(second) : transform(first).Equals(transform(second));
-
+         return transform?.Invoke(first).Equals(transform(second)) ?? first.Equals(second);
       }
 
       private void entityFullPathToComponents(IObjectPath fullPath)
@@ -125,52 +112,32 @@ namespace OSPSuite.Core.Domain.Builder
 
       public double? StartValue
       {
-         get { return _startValue; }
-         set
-         {
-            _startValue = value;
-            OnPropertyChanged(() => StartValue);
-         }
+         get => _startValue;
+         set => SetProperty(ref _startValue, value);
       }
 
       public IFormula Formula
       {
-         get { return _formula; }
-         set
-         {
-            _formula = value;
-            OnPropertyChanged(() => Formula);
-         }
+         get => _formula;
+         set => SetProperty(ref _formula, value);
       }
 
       public IDimension Dimension
       {
-         get { return _dimension; }
-         set
-         {
-            _dimension = value;
-            OnPropertyChanged(() => Dimension);
-         }
+         get => _dimension;
+         set => SetProperty(ref _dimension, value);
       }
 
       public IObjectPath ContainerPath
       {
-         get { return _containerPath; }
-         set
-         {
-            _containerPath = value;
-            OnPropertyChanged(() => ContainerPath);
-         }
+         get => _containerPath;
+         set => SetProperty(ref _containerPath, value);
       }
 
       public Unit DisplayUnit
       {
-         get { return _displayUnit ?? Dimension.DefaultUnit; }
-         set
-         {
-            _displayUnit = value;
-            OnPropertyChanged(() => DisplayUnit);
-         }
+         get => _displayUnit ?? Dimension.DefaultUnit;
+         set => SetProperty(ref _displayUnit, value);
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
@@ -180,16 +147,26 @@ namespace OSPSuite.Core.Domain.Builder
          if (sourceStartValue == null) return;
 
          StartValue = sourceStartValue.StartValue;
-         ValueDescription = sourceStartValue.ValueDescription;
          ContainerPath = sourceStartValue.ContainerPath.Clone<IObjectPath>();
          DisplayUnit = sourceStartValue.DisplayUnit;
          Dimension = sourceStartValue.Dimension;
          Formula = cloneManager.Clone(sourceStartValue.Formula);
+         ValueOrigin.UpdateAllFrom(sourceStartValue.ValueOrigin);
+      }
+
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
+      {
+         if(Equals(ValueOrigin, sourceValueOrigin))
+            return;
+
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
+         OnPropertyChanged(() => ValueOrigin);
       }
 
       public override string ToString()
       {
          return $"Path={ContainerPath}, Name={Name}";
       }
+
    }
 }

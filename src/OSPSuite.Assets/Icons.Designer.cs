@@ -19,7 +19,7 @@ namespace OSPSuite.Assets {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Icons {
@@ -2933,6 +2933,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Properties {
+            get {
+                object obj = ResourceManager.GetObject("Properties", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Protein {
             get {
                 object obj = ResourceManager.GetObject("Protein", resourceCulture);
@@ -3633,6 +3643,36 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Snapshot {
+            get {
+                object obj = ResourceManager.GetObject("Snapshot", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SnapshotExport {
+            get {
+                object obj = ResourceManager.GetObject("SnapshotExport", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SnapshotImport {
+            get {
+                object obj = ResourceManager.GetObject("SnapshotImport", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Solver {
             get {
                 object obj = ResourceManager.GetObject("Solver", resourceCulture);
@@ -3776,6 +3816,16 @@ namespace OSPSuite.Assets {
         internal static System.Drawing.Icon Swap {
             get {
                 object obj = ResourceManager.GetObject("Swap", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Tag {
+            get {
+                object obj = ResourceManager.GetObject("Tag", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -3973,6 +4023,16 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon UserDefinedSpecies {
+            get {
+                object obj = ResourceManager.GetObject("UserDefinedSpecies", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon UserDefinedVariability {
             get {
                 object obj = ResourceManager.GetObject("UserDefinedVariability", resourceCulture);
@@ -3986,6 +4046,136 @@ namespace OSPSuite.Assets {
         internal static System.Drawing.Icon UserDisplayUnitsConfigure {
             get {
                 object obj = ResourceManager.GetObject("UserDisplayUnitsConfigure", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodAssumption {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodAssumption", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodInVitro {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodInVitro", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodInVivo {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodInVivo", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodManualFit {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodManualFit", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodOther {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodOther", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodParameterIdentification {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodParameterIdentification", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginMethodUnknown {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginMethodUnknown", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourceDatabase {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourceDatabase", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourceInternet {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourceInternet", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourceOther {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourceOther", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourceParameterIdentification {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourceParameterIdentification", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourcePublication {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourcePublication", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ValueOriginSourceUnknown {
+            get {
+                object obj = ResourceManager.GetObject("ValueOriginSourceUnknown", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

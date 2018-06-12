@@ -1,12 +1,11 @@
-﻿using OSPSuite.BDDHelper;
-using OSPSuite.Utility.Events;
-using FakeItEasy;
-using OSPSuite.Core;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation
 {
@@ -16,7 +15,7 @@ namespace OSPSuite.Presentation
       protected IParameterIdentificationWeightedObservedDataCollectorView _view;
       protected IApplicationController _applicationController;
       protected ParameterIdentification _parameterIdentification;
-      private OutputMapping _outputMapping;
+      protected OutputMapping _outputMapping;
       protected WeightedObservedData _weightedObservedData;
       protected IParameterIdentificationWeightedObservedDataPresenter _presenter;
 
@@ -39,7 +38,6 @@ namespace OSPSuite.Presentation
 
    public class When_the_weighted_observed_data_collector_presenter_is_edtiting_a_parameter_identification : concern_for_ParameterIdentificationWeightedObservedDataCollectorPresenter
    {
- 
       protected override void Because()
       {
          sut.EditParameterIdentification(_parameterIdentification);
@@ -58,9 +56,31 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_the_weighted_observed_data_collector_presenter_is_editing_a_parmaeter_identification_with_an_output_using_an_invalid_weighted_observed_data : concern_for_ParameterIdentificationWeightedObservedDataCollectorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+#pragma warning disable 618
+         _weightedObservedData = new WeightedObservedData();
+#pragma warning restore 618
+         _outputMapping.WeightedObservedData = _weightedObservedData;
+      }
+
+      protected override void Because()
+      {
+         sut.EditParameterIdentification(_parameterIdentification);
+      }
+
+      [Observation]
+      public void should_not_add_a_view_for_this_observed_data()
+      {
+         A.CallTo(() => _presenter.Edit(_weightedObservedData)).MustNotHaveHappened();
+      }
+   }
+
    public class When_the_weighted_observed_data_collector_presenter_is_told_to_remove_some_observed_data_from_its_view : concern_for_ParameterIdentificationWeightedObservedDataCollectorPresenter
    {
-   
       protected override void Context()
       {
          base.Context();
@@ -101,10 +121,9 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_edit_the_corresponding_presenter()
       {
-         A.CallTo(() => _presenter.Edit(_weightedObservedData)).MustHaveHappened();   
+         A.CallTo(() => _presenter.Edit(_weightedObservedData)).MustHaveHappened();
       }
    }
-
 
    public class When_the_weighted_observed_data_collector_presenter_is_told_to_select_some_given_weighted_observed_data : concern_for_ParameterIdentificationWeightedObservedDataCollectorPresenter
    {
@@ -124,7 +143,6 @@ namespace OSPSuite.Presentation
       {
          A.CallTo(() => _view.SelectObservedDataView(_presenter.View)).MustHaveHappened();
       }
-
 
       [Observation]
       public void should_edit_the_corresponding_presenter()

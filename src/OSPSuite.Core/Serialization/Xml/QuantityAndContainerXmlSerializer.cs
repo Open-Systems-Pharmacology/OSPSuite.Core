@@ -1,4 +1,5 @@
 using OSPSuite.Core.Domain;
+using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -30,7 +31,10 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.BuildMode);
          Map(x => x.Info);
+         Map(x => x.IsDefault);
          MapReference(x => x.RHSFormula);
+
+         //no need to save origin, or default value for core parameter are those values are only used in PK-Sim
       }
    }
 

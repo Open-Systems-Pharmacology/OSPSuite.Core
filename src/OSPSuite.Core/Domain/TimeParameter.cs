@@ -1,18 +1,17 @@
 using System;
 using System.ComponentModel;
-using OSPSuite.Utility.Validation;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Maths.Random;
+using OSPSuite.Utility.Validation;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
    internal class TimeParameter : IParameter
    {
-      private readonly Tags _tags;
       public IContainer ParentContainer { get; set; }
       public event PropertyChangedEventHandler PropertyChanged = delegate { };
       public event Action<object> Changed = delegate { };
@@ -27,10 +26,14 @@ namespace OSPSuite.Core.Domain
       public bool MinIsAllowed { get; set; }
       public bool MaxIsAllowed { get; set; }
       public bool CanBeVariedInPopulation { get; set; }
+      public bool IsDefault { get; set; }
 
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
       public ParameterOrigin Origin { get; private set; }
+      public ValueOrigin ValueOrigin { get; private set; }
+     
+
       public double? DefaultValue { get; set; }
       public bool IsChangedByCreateIndividual { get; private set; }
 
@@ -49,9 +52,10 @@ namespace OSPSuite.Core.Domain
 
       public TimeParameter()
       {
-         _tags = new Tags {new Tag {Value = Constants.TIME}};
+         Tags = new Tags {new Tag {Value = Constants.TIME}};
          Info = new ParameterInfo();
-         Origin =new ParameterOrigin();
+         Origin = new ParameterOrigin();
+         ValueOrigin = new ValueOrigin();
          CanBeVaried = false;
          CanBeVariedInPopulation = false;
          NegativeValuesAllowed = true;
@@ -63,7 +67,7 @@ namespace OSPSuite.Core.Domain
 
       public string Id
       {
-         get { return Constants.TIME; }
+         get => Constants.TIME;
          set
          {
             /*nothing to do here*/
@@ -72,7 +76,7 @@ namespace OSPSuite.Core.Domain
 
       public string Name
       {
-         get { return Constants.TIME; }
+         get => Constants.TIME;
          set
          {
             /*nothing to do here*/
@@ -87,10 +91,7 @@ namespace OSPSuite.Core.Domain
       public string Icon { get; set; }
       public string Description { get; set; }
 
-      public Tags Tags
-      {
-         get { return _tags; }
-      }
+      public Tags Tags { get; }
 
       public void AddTag(Tag tag)
       {
@@ -127,14 +128,11 @@ namespace OSPSuite.Core.Domain
          return false;
       }
 
-      public IContainer RootContainer
-      {
-         get { return ParentContainer; }
-      }
+      public IContainer RootContainer => ParentContainer;
 
       public double Value
       {
-         get { return 0; }
+         get => 0;
          set
          {
             /*nothing to do here*/
@@ -175,8 +173,11 @@ namespace OSPSuite.Core.Domain
 
       public IFormula Formula
       {
-         get { return null; }
-         set { ; }
+         get => null;
+         set
+         {
+            ;
+         }
       }
 
       /// <summary>
@@ -185,8 +186,11 @@ namespace OSPSuite.Core.Domain
       /// <value><c>true</c> if persistable; otherwise, <c>false</c>.</value>
       public bool Persistable
       {
-         get { return false; }
-         set { ; }
+         get => false;
+         set
+         {
+            ;
+         }
       }
 
       /// <summary>
@@ -197,13 +201,16 @@ namespace OSPSuite.Core.Domain
       /// </value>
       public bool IsFixedValue
       {
-         get { return true; }
-         set { ; }
+         get => true;
+         set
+         {
+            ;
+         }
       }
 
       public QuantityType QuantityType
       {
-         get { return QuantityType.Undefined; }
+         get => QuantityType.Undefined;
          set { }
       }
 
@@ -211,24 +218,30 @@ namespace OSPSuite.Core.Domain
 
       public ParameterBuildMode BuildMode
       {
-         get { return ParameterBuildMode.Global; }
+         get => ParameterBuildMode.Global;
          set { }
       }
 
       public IFormula RHSFormula
       {
-         get { return null; }
-         set { ; }
+         get => null;
+         set
+         {
+            ;
+         }
       }
 
-      public IBusinessRuleSet Rules
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
       {
-         get { return new BusinessRuleSet(); }
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
       }
+
+
+      public IBusinessRuleSet Rules => new BusinessRuleSet();
 
       public Unit DisplayUnit
       {
-         get { return Dimension.DefaultUnit; }
+         get => Dimension.DefaultUnit;
          set
          {
             /* nothing to do */

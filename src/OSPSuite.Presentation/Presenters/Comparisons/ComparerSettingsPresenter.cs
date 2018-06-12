@@ -30,10 +30,7 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
          _view.BindTo(comparerSettings);
       }
 
-      public IEnumerable<FormulaComparison> FormulaComparisonValues
-      {
-         get { return EnumHelper.AllValuesFor<FormulaComparison>(); }
-      }
+      public IEnumerable<FormulaComparison> FormulaComparisonValues => EnumHelper.AllValuesFor<FormulaComparison>();
 
       public string FormulaComparisonDisplayValueFor(FormulaComparison formulaComparison)
       {
@@ -44,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
             case FormulaComparison.Formula:
                return Captions.Comparisons.FormulaComparisonFormula;
             default:
-               throw new ArgumentOutOfRangeException("formulaComparison");
+               throw new ArgumentOutOfRangeException(nameof(formulaComparison));
          }
       }
 

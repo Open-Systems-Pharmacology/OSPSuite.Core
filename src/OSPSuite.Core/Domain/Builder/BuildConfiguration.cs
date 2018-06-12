@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Serialization.SimModel.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -88,6 +88,12 @@ namespace OSPSuite.Core.Domain.Builder
       bool ShowProgress { get; set; }
 
       /// <summary>
+      ///    Set to <c>true</c> (default), the circulare reference check will be performed when creating a simulation. This
+      ///    should only be set to <c>false</c> for very massive model.
+      /// </summary>
+      bool PerformCircularReferenceCheck { get; set; }
+
+      /// <summary>
       ///    Retrieve the builder used to create the <paramref name="modelObject" /> given as parameter
       /// </summary>
       /// <param name="modelObject">Object for which a builder should be retrieved</param>
@@ -131,16 +137,14 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual IEventGroupBuildingBlock EventGroups { get; set; }
       public virtual ISimulationSettings SimulationSettings { get; set; }
 
-      public SimModelExportMode SimModelExportMode { get; set; }
+      public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
-      public bool ShouldValidate { get; set; }
-      public bool ShowProgress { get; set; }
+      public bool ShouldValidate { get; set; } = true;
+      public bool ShowProgress { get; set; } = true;
+      public bool PerformCircularReferenceCheck { get; set; } = true;
 
       public BuildConfiguration()
       {
-         ShouldValidate = true;
-         ShowProgress = true;
-         SimModelExportMode = SimModelExportMode.Full;
          _allCalculationMethods = new List<ICoreCalculationMethod>();
          _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
       }
@@ -213,7 +217,7 @@ namespace OSPSuite.Core.Domain.Builder
          {
             return new IBuildingBlock[]
             {
-               Molecules, Reactions, SpatialStructure, 
+               Molecules, Reactions, SpatialStructure,
                PassiveTransports, Observers, EventGroups,
                MoleculeStartValues, ParameterStartValues, SimulationSettings
             }.Where(bb => bb != null);

@@ -33,16 +33,16 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.uxHintPanel = new OSPSuite.UI.Controls.UxHintPanel();
          this.chkAllTheSame = new OSPSuite.UI.Controls.UxCheckEdit();
-         this.pivotGridControl = new UxPivotGrid();
+         this.pivotGridControl = new OSPSuite.UI.Controls.UxPivotGrid();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemPivotGrid = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutGroupCalculationMethodCategories = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemCheckAllTheSame = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-         this.uxHintPanel = new UxHintPanel();
          this.layoutControlItemHintPanel = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -60,6 +60,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // 
          // layoutControl
          // 
+         this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.uxHintPanel);
          this.layoutControl.Controls.Add(this.chkAllTheSame);
          this.layoutControl.Controls.Add(this.pivotGridControl);
@@ -72,8 +73,19 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // uxHintPanel
+         // 
+         this.uxHintPanel.Location = new System.Drawing.Point(0, 49);
+         this.uxHintPanel.MaximumSize = new System.Drawing.Size(1000000, 40);
+         this.uxHintPanel.MinimumSize = new System.Drawing.Size(200, 0);
+         this.uxHintPanel.Name = "uxHintPanel";
+         this.uxHintPanel.NoteText = "uxHintPanel";
+         this.uxHintPanel.Size = new System.Drawing.Size(514, 40);
+         this.uxHintPanel.TabIndex = 7;
+         // 
          // chkAllTheSame
          // 
+         this.chkAllTheSame.AllowClicksOutsideControlArea = false;
          this.chkAllTheSame.Location = new System.Drawing.Point(191, 14);
          this.chkAllTheSame.Name = "chkAllTheSame";
          this.chkAllTheSame.Properties.Caption = "chkAllTheSame";
@@ -152,16 +164,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.emptySpaceItem1.Size = new System.Drawing.Size(10, 23);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
-         // uxHintPanel
-         // 
-         this.uxHintPanel.Location = new System.Drawing.Point(0, 49);
-         this.uxHintPanel.MaximumSize = new System.Drawing.Size(1000000, 40);
-         this.uxHintPanel.MinimumSize = new System.Drawing.Size(200, 0);
-         this.uxHintPanel.Name = "uxHintPanel";
-         this.uxHintPanel.NoteText = "uxHintPanel";
-         this.uxHintPanel.Size = new System.Drawing.Size(514, 40);
-         this.uxHintPanel.TabIndex = 7;
-         // 
          // layoutControlItemHintPanel
          // 
          this.layoutControlItemHintPanel.Control = this.uxHintPanel;
@@ -196,17 +198,16 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private UxPivotGrid pivotGridControl;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemPivotGrid;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupCalculationMethodCategories;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemCheckAllTheSame;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem;
-      private DevExpress.XtraEditors.CheckEdit chkAllTheSame;
       private UxHintPanel uxHintPanel;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItemHintPanel;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private UxLayoutControl layoutControl;
+      private UxCheckEdit chkAllTheSame;
    }
 }

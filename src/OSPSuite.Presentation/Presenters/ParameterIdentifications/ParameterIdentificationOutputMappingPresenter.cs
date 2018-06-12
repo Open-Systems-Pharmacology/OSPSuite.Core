@@ -152,9 +152,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (outputSelectionDTO == null)
             return Enumerable.Empty<DataRepository>();
 
-         return _observedDataRepository.All().Where(outputSelectionDTO.Simulation.UsesObservedData)
+         return _observedDataRepository.AllObservedDataUsedBy(outputSelectionDTO.Simulation)
             .Distinct()
-            .OrderBy(x => x.Name);
+            .OrderBy(x => x.Name);        
       }
 
       public void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData)

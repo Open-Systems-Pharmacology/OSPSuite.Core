@@ -1,151 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO.Journal
 {
    public class JournalPageDTO : ValidatableDTO, IViewItem
    {
-      public JournalPage JournalPage { get; private set; }
+      public JournalPage JournalPage { get; }
       public bool Edited { get; set; }
       public int UniqueIndex { get; set; }
       public int LineCount { get; set; }
+      private Origin _origin;
+      private string _title;
+      private string _createdAtBy;
+      private string _updatedAtBy;
+      private string _updatedBy;
+      private DateTime _updatedAt;
+      private string _description;
+      private string _createdBy;
+      private DateTime _createdAt;
 
       public JournalPageDTO(JournalPage journalPage)
       {
          JournalPage = journalPage;
       }
 
+      public virtual string Caption => $"{UniqueIndex} - {Title}";
 
-      private Origin _origin;
       public Origin Origin
       {
-         get { return _origin; }
-         set
-         {
-            _origin = value;
-            OnPropertyChanged(() => Origin);
-         }
+         get => _origin;
+         set => SetProperty(ref _origin, value);
       }
-
-      private string _title;
 
       public virtual string Title
       {
-         get { return _title; }
-         set
-         {
-            _title = value;
-            OnPropertyChanged(() => Title);
-         }
+         get => _title;
+         set => SetProperty(ref _title, value);
       }
-
-      public virtual string Caption
-      {
-         get { return string.Format("{0} - {1}", UniqueIndex, Title); }
-      }
-
-      private DateTime _createdAt;
 
       public virtual DateTime CreatedAt
       {
-         get { return _createdAt; }
-         set
-         {
-            _createdAt = value;
-            OnPropertyChanged(() => CreatedAt);
-         }
+         get => _createdAt;
+         set => SetProperty(ref _createdAt, value);
       }
-
-      private string _createdAtBy;
 
       public virtual string CreatedAtBy
       {
-         get { return _createdAtBy; }
-         set
-         {
-            _createdAtBy = value;
-            OnPropertyChanged(() => CreatedAtBy);
-         }
+         get => _createdAtBy;
+         set => SetProperty(ref _createdAtBy, value);
       }
-
-      private string _updatedAtBy;
 
       public virtual string UpdatedAtBy
       {
-         get { return _updatedAtBy; }
-         set
-         {
-            _updatedAtBy = value;
-            OnPropertyChanged(() => UpdatedAtBy);
-         }
+         get => _updatedAtBy;
+         set => SetProperty(ref _updatedAtBy, value);
       }
-
-      private string _updatedBy;
 
       public virtual string UpdatedBy
       {
-         get { return _updatedBy; }
-         set
-         {
-            _updatedBy = value;
-            OnPropertyChanged(() => UpdatedBy);
-         }
+         get => _updatedBy;
+         set => SetProperty(ref _updatedBy, value);
       }
-
-      private DateTime _updatedAt;
 
       public virtual DateTime UpdatedAt
       {
-         get { return _updatedAt; }
-         set
-         {
-            _updatedAt = value;
-            OnPropertyChanged(() => UpdatedAt);
-         }
+         get => _updatedAt;
+         set => SetProperty(ref _updatedAt, value);
       }
-
-      private string _description;
 
       public virtual string Description
       {
-         get { return _description; }
-         set
-         {
-            _description = value;
-            OnPropertyChanged(() => Description);
-         }
+         get => _description;
+         set => SetProperty(ref _description, value);
       }
-
-      private string _createdBy;
 
       public virtual string CreatedBy
       {
-         get { return _createdBy; }
-         set
-         {
-            _createdBy = value;
-            OnPropertyChanged(() => CreatedBy);
-         }
+         get => _createdBy;
+         set => SetProperty(ref _createdBy, value);
       }
 
-      private IEnumerable<IBusinessRule> getTagRules()
+      private static IBusinessRule tagNotEmpty { get; } = CreateRule.For<string>()
+         .Property(s => s.Length)
+         .WithRule((s, length) => !string.IsNullOrEmpty(s) && !string.Equals(Separator, s))
+         .WithError(string.Empty);
+
+      private IEnumerable<IBusinessRule> allTagRules { get; } = new[]
       {
-         yield return CreateRule.For<string>().Property(s => s.Length).WithRule((s, length) =>
-            !string.IsNullOrEmpty(s) && !string.Equals(Separator, s)
-            ).WithError(string.Empty);
-      }
+         tagNotEmpty
+      };
 
       private IEnumerable<string> _tags;
 
       public IEnumerable<string> Tags
       {
-         get { return _tags; }
+         get => _tags;
          set
          {
             _tags = value;
@@ -154,34 +109,22 @@ namespace OSPSuite.Presentation.DTO.Journal
          }
       }
 
-      public string TagsDisplay
-      {
-         get { return Tags.ToString(Separator); }
-      }
+      public string TagsDisplay => Tags.ToString(Separator);
 
-      public IReadOnlyList<RelatedItem> RelatedItems
-      {
-         get { return JournalPage.RelatedItems; }
-      }
+      public IReadOnlyList<RelatedItem> RelatedItems => JournalPage.RelatedItems;
 
-      public static string Separator
-      {
-         get { return ","; }
-      }
+      public static string Separator => ",";
 
       public byte[] Data
       {
-         get
-         {
-            // Return empty byte array if page is not loaded. Sometimes Devexpress tries to access the content when binding
-            return !JournalPage.IsLoaded ? new byte[]{} :  JournalPage.Content.Data;
-         }
-         set { JournalPage.Content.Data = value; }
+         // Return empty byte array if page is not loaded. Sometimes Devexpress tries to access the content when binding
+         get => !JournalPage.IsLoaded ? new byte[] { } : JournalPage.Content.Data;
+         set => JournalPage.Content.Data = value;
       }
 
       public bool ValidateTag(string tag)
       {
-         return getTagRules().All(rule => rule.IsSatisfiedBy(tag));
+         return allTagRules.All(rule => rule.IsSatisfiedBy(tag));
       }
    }
 }

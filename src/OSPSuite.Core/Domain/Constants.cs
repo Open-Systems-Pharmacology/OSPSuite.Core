@@ -9,11 +9,12 @@ namespace OSPSuite.Core.Domain
    public static class Constants
    {
       public static readonly int PKML_VERSION = PKMLVersion.Current;
+      public const string CVODES_282 = "CVODES_282";
       public const int SIM_MODEL_VERSION = 4;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
-      public static readonly IReadOnlyList<string> ILLEGAL_CHARACTERS = new List<string> {ObjectPath.PATH_DELIMITER, ":", "*", "?", "<", ">", "|", "{", "}"}.Distinct().ToList();
+      public static readonly IReadOnlyList<string> ILLEGAL_CHARACTERS = new List<string> {ObjectPath.PATH_DELIMITER, ":", "*", "?", "<", ">", "|", "{", "}", "\""}.Distinct().ToList();
 
       public const string DRUG_MASS = "DrugMass";
       public const string MOLECULE_PROPERTIES = "MoleculeProperties";
@@ -55,6 +56,7 @@ namespace OSPSuite.Core.Domain
 
       //tolerated precision to relativtely compare to double values 
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
+      public const double DOUBLE_PERCENTILE_RELATIVE_TOLERANCE = 1e-2;
 
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
@@ -86,14 +88,17 @@ namespace OSPSuite.Core.Domain
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
-
       public const string STD_DEV_GEOMETRIC = "Geometric Standard Deviation";
       public const string STD_DEV_ARITHMETIC = "Arithmetic Standard Deviation";
       public const string AUXILIARY_TYPE = "AuxiliaryType";
       public const string FILE = "File";
       public const string SHEET = "Sheet";
-
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
+
+      public const int MB_TO_BYTES = 1024 * 1024; //1 MB = 1024 * 1024 bytes
+      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5 * MB_TO_BYTES; 
+      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES; 
+      public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File"; 
 
       public static class Files
       {
@@ -175,7 +180,7 @@ namespace OSPSuite.Core.Domain
             USE_AS_SUSPENSION
          };
 
-         public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllBooleanParameters))
+         public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
          {
             PARTICLE_SIZE_DISTRIBUTION,
             NUMBER_OF_BINS,
@@ -189,6 +194,8 @@ namespace OSPSuite.Core.Domain
             GESTATIONAL_AGE,
             PLASMA_PROTEIN_BINDING_PARTNER
          };
+
+         public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllCategorialParameters));
 
          //end of  delete
       }
@@ -214,7 +221,10 @@ namespace OSPSuite.Core.Domain
       {
          public static readonly string PNG_EXTENSION = ".png";
          public static readonly string MATLAB_EXTENSION = ".m";
+         public static readonly string MAT_EXTENSION = ".mat";
+         public static readonly string FIG_EXTENSION = ".fig";
          public static readonly string R_EXTENSION = ".r";
+         public static readonly string RD_EXTENSION = ".rd";
          public static readonly string XML_EXTENSION = ".xml";
          public static readonly string JOURNAL_EXTENSION = ".sbj";
          public static readonly string CSV_EXTENSION = ".csv";
@@ -224,7 +234,9 @@ namespace OSPSuite.Core.Domain
          public static readonly string XLSX_EXTENSION = ".xlsx";
          public static readonly string TEXT_EXTENSION = ".txt";
          public static readonly string JSON_EXTENSION = ".json";
-         public static readonly string DOCX_EXTENSION = ".docs";
+         public static readonly string DOCX_EXTENSION = ".docx";
+         public static readonly string DOC_EXTENSION = ".doc";
+         public static readonly string ANY_EXTENSION = ".*";
 
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
          public static readonly string UNITS_FILE_FILTER = XmlFilter("Units");
@@ -401,6 +413,7 @@ namespace OSPSuite.Core.Domain
          public const string CALCULATION_METHOD = "CalculationMethod";
          public const string CALCULATION_METHOD_DISPLAY = "Calculation Method Display";
          public const string VALUE = "Value";
+         public const int WARNING_THRESHOLD = 5;
       }
 
       public static class LLOQModes
@@ -445,10 +458,7 @@ namespace OSPSuite.Core.Domain
          public const string ALL = "All";
          public const string DESCRIPTOR_CONDITIONS = "DescriptorConditions";
          public const string KEYS = "Keys";
-         public const string X = "x";
-         public const string Y = "y";
-         public const string Width = "width";
-         public const string Height = "height";
+         public const string VALUE_ORIGIN = "ValueOrigin";
 
          public static class Attribute
          {
@@ -485,6 +495,12 @@ namespace OSPSuite.Core.Domain
             public const string LLOQ = "lloq";
             public const string DEFAULT_VALUE = "default";
             public const string UNIT_NAME = "unitName";
+            public const string VALUE_DESCRIPTION = "valueDescription";
+            public const string X = "x";
+            public const string Y = "y";
+            public const string Width = "width";
+            public const string Height = "height";
+            public const string DESCRIPTION = "description";
          }
       }
 
@@ -532,7 +548,6 @@ namespace OSPSuite.Core.Domain
          public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
          public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
-
 
          public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
          public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;

@@ -77,6 +77,15 @@ namespace OSPSuite.Core
          _interval.Resolution.Editable.ShouldBeTrue();
       }
 
+
+      [Observation]
+      public void the_created_parameters_should_be_set_to_default()
+      {
+         _interval.StartTime.IsDefault.ShouldBeTrue();
+         _interval.EndTime.IsDefault.ShouldBeTrue();
+         _interval.Resolution.IsDefault.ShouldBeTrue();
+      }
+
       [Observation]
       public void the_created_parameters_should_not_be_variable()
       {

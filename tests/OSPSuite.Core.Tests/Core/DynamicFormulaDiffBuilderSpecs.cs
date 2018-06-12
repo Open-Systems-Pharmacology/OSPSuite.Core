@@ -29,7 +29,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_criteria_and_variable_difference()
+      public void should_report_the_criteria_and_variable_difference()
       {
          _report.Count.ShouldBeEqualTo(2);
       }

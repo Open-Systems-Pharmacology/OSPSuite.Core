@@ -31,7 +31,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_path_entries_and_different_entries_as_difference()
+      public void should_report_the_path_entries_and_different_entries_as_difference()
       {
          _report.Count.ShouldBeEqualTo(5);
       }

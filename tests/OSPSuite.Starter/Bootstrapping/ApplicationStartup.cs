@@ -9,11 +9,13 @@ using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Starter.Services;
 using OSPSuite.UI;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Compression;
@@ -80,6 +82,7 @@ namespace OSPSuite.Starter.Bootstrapping
          container.Register<ICompression, SharpLibCompression>();
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
          container.Register<IStringCompression, StringCompression>(LifeStyle.Singleton);
+         container.Register<ILogger, OSPLogger>(LifeStyle.Singleton);
          container.RegisterImplementationOf(getCurrentContext());
 
          container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));

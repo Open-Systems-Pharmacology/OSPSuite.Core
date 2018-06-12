@@ -82,7 +82,11 @@ namespace OSPSuite.Core
          x1.RHSFormula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(3.4);
          x1.CanBeVaried = false;
          x1.DisplayUnit = DimensionLength.Unit("cm");
-         x1.ValueDescription = "This is the value description";
+         x1.ValueOrigin.Description = "This is the value description";
+         x1.ValueOrigin.Source = ValueOriginSources.Internet;
+         x1.ValueOrigin.Id = 5;
+         x1.ValueOrigin.Method = ValueOriginDeterminationMethods.ParameterIdentification;
+         x1.IsDefault = true;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameter(x2, x1);
       }

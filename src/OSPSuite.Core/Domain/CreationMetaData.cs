@@ -29,14 +29,20 @@ namespace OSPSuite.Core.Domain
    public class CreationMetaData
    {
       private DateTime _createdAt;
-      public virtual string CreatedBy { get; private set; }
+      public virtual string CreatedBy { get; }
 
       public virtual Origin Origin { get; set; }
-
+      
       /// <summary>
       /// Version of the application (typically X.Y.Z)
       /// </summary>
       public virtual string Version { get; set; }
+
+      /// <summary>
+      /// Internal version that can be referenced to check the real internal version of the project
+      /// </summary>
+      public virtual int? InternalVersion { get; set; }
+
       public virtual CreationMode CreationMode { get; set; }
 
       /// <summary>
@@ -47,8 +53,8 @@ namespace OSPSuite.Core.Domain
 
       public virtual DateTime CreatedAt
       {
-         get { return _createdAt; }
-         private set { _createdAt = value.ToUniversalTime(); }
+         get => _createdAt;
+         private set => _createdAt = value.ToUniversalTime();
       }
 
       public CreationMetaData AsCloneOf(IWithName objectToClone)
@@ -76,6 +82,7 @@ namespace OSPSuite.Core.Domain
          {
             Origin = Origin,
             Version = Version,
+            InternalVersion = InternalVersion,
             CreationMode = CreationMode,
             ClonedFrom = ClonedFrom,
          };

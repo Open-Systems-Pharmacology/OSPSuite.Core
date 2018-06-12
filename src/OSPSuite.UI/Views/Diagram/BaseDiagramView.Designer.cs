@@ -29,23 +29,23 @@
       private void InitializeComponent()
       {
          this.components = new System.ComponentModel.Container();
-         this._barManager = new DevExpress.XtraBars.BarManager(this.components);
+         this.PopupBarManager = new DevExpress.XtraBars.BarManager(this.components);
          this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
          this._goView = new DiagramBaseView();
-         ((System.ComponentModel.ISupportInitialize)(this._barManager)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.PopupBarManager)).BeginInit();
          this.SuspendLayout();
          // 
          // _barManager
          // 
-         this._barManager.DockControls.Add(this.barDockControlTop);
-         this._barManager.DockControls.Add(this.barDockControlBottom);
-         this._barManager.DockControls.Add(this.barDockControlLeft);
-         this._barManager.DockControls.Add(this.barDockControlRight);
-         this._barManager.Form = this;
-         this._barManager.MaxItemId = 0;
+         this.PopupBarManager.DockControls.Add(this.barDockControlTop);
+         this.PopupBarManager.DockControls.Add(this.barDockControlBottom);
+         this.PopupBarManager.DockControls.Add(this.barDockControlLeft);
+         this.PopupBarManager.DockControls.Add(this.barDockControlRight);
+         this.PopupBarManager.Form = this;
+         this.PopupBarManager.MaxItemId = 0;
          // 
          // _goView
          // 
@@ -70,14 +70,13 @@
          this.Controls.Add(this.barDockControlTop);
          this.Name = "ReactionDiagramView";
          this.Size = new System.Drawing.Size(436, 357);
-         ((System.ComponentModel.ISupportInitialize)(this._barManager)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.PopupBarManager)).EndInit();
          this.ResumeLayout(false);
 
       }
 
       #endregion
 
-      private DevExpress.XtraBars.BarManager _barManager;
       private DevExpress.XtraBars.BarDockControl barDockControlTop;
       private DevExpress.XtraBars.BarDockControl barDockControlBottom;
       private DevExpress.XtraBars.BarDockControl barDockControlLeft;

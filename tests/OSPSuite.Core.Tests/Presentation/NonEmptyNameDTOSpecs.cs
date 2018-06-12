@@ -28,5 +28,12 @@ namespace OSPSuite.Presentation
          sut.Name = string.Empty;
          sut.Validate().IsEmpty.ShouldBeFalse();
       }
+
+      [Observation]
+      public void should_return_that_the_object_is_valid_if_its_name_contains_quote()
+      {
+         sut.Name = "toto\"";
+         sut.Validate().IsEmpty.ShouldBeFalse();
+      }
    }
 }

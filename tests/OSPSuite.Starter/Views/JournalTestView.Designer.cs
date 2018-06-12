@@ -31,9 +31,9 @@ namespace OSPSuite.Starter.Views
       private void InitializeComponent()
       {
          this.components = new System.ComponentModel.Container();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
-         this.controlsLayoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.controlsLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnResetOrdering = new DevExpress.XtraEditors.SimpleButton();
          this.searchButton = new DevExpress.XtraEditors.SimpleButton();
          this.saveDiagramButton = new DevExpress.XtraEditors.SimpleButton();

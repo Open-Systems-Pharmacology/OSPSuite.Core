@@ -78,9 +78,15 @@ namespace OSPSuite.Presentation.Presenters.Journal
       private readonly NotifyList<JournalPageDTO> _allJournalPageDTOs;
       private JournalSearch _journalSearch;
 
-      protected JournalPresenter(IJournalView view, IRegionResolver regionResolver, IJournalPageToJournalPageDTOMapper mapper,
-         IJournalTask journalTask, IViewItemContextMenuFactory viewItemContextMenuFactory, IJournalRetriever journalRetriever,
-         IJournalPagePreviewPresenter previewPresenter, IJournalSearchPresenter searchPresenter, RegionName regionName)
+      protected JournalPresenter(
+         IJournalView view, 
+         IRegionResolver regionResolver, 
+         IJournalPageToJournalPageDTOMapper mapper,
+         IJournalTask journalTask, 
+         IViewItemContextMenuFactory viewItemContextMenuFactory, 
+         IJournalRetriever journalRetriever,
+         IJournalPagePreviewPresenter previewPresenter, 
+         IJournalSearchPresenter searchPresenter, RegionName regionName)
          : base(view)
       {
          _mapper = mapper;

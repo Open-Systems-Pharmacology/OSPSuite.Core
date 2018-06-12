@@ -1,5 +1,5 @@
-﻿using OSPSuite.BDDHelper;
-using FakeItEasy;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Journal;
@@ -74,6 +74,53 @@ namespace OSPSuite.Presentation
       public void should_leverage_the_reload_related_item_task_to_reload_the_item()
       {
          A.CallTo(() => _reloadRelatedItemTask.Load(_relatedItem)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_user_decides_to_add_related_item_from_file : concern_for_RelatedItemsPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Edit(_journalPage);
+      }
+
+      protected override void Because()
+      {
+         sut.AddRelatedItemFromFile();
+      }
+
+      [Observation]
+      public void should_leverage_the_journal_page_task_to_add_a_related_item_to_the_edited_page()
+      {
+         A.CallTo(() => _journalPageTask.AddRelatedItemFromFile(_journalPage)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_update_the_view()
+      {
+         //one for edit and one for add items
+         A.CallTo(() => _view.BindTo(_journalPage.RelatedItems)).MustHaveHappened(Repeated.Exactly.Twice);
+      }
+   }
+
+   public class When_the_user_decides_to_reimport_all_related_items_into_the_app : concern_for_RelatedItemsPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Edit(_journalPage);
+      }
+
+      protected override void Because()
+      {
+        sut.ReloadAllRelatedItems();
+      }
+
+      [Observation]
+      public void should_levrage_the_reload_item_task_to_load_all_application_items_back_into_the_app()
+      {
+         A.CallTo(() => _reloadRelatedItemTask.ImportAllIntoApplication(_journalPage.RelatedItems)).MustHaveHappened();   
       }
    }
 }

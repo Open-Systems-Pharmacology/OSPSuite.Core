@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain
 
       public bool ReadOnly
       {
-         get { return (ParameterFlag & ParameterFlag.ReadOnly) == ParameterFlag.ReadOnly; }
+         get => (ParameterFlag & ParameterFlag.ReadOnly) == ParameterFlag.ReadOnly;
          set
          {
             if (ReadOnly != value)
@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain
 
       public bool CanBeVaried
       {
-         get { return (ParameterFlag & ParameterFlag.CanBeVaried) == ParameterFlag.CanBeVaried; }
+         get => (ParameterFlag & ParameterFlag.CanBeVaried) == ParameterFlag.CanBeVaried;
          set
          {
             if (CanBeVaried != value)
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain
 
       public bool MinIsAllowed
       {
-         get { return (ParameterFlag & ParameterFlag.MinIsAllowed) == ParameterFlag.MinIsAllowed; }
+         get => (ParameterFlag & ParameterFlag.MinIsAllowed) == ParameterFlag.MinIsAllowed;
          set
          {
             if (MinIsAllowed != value)
@@ -80,7 +80,7 @@ namespace OSPSuite.Core.Domain
 
       public bool MaxIsAllowed
       {
-         get { return (ParameterFlag & ParameterFlag.MaxIsAllowed) == ParameterFlag.MaxIsAllowed; }
+         get => (ParameterFlag & ParameterFlag.MaxIsAllowed) == ParameterFlag.MaxIsAllowed;
          set
          {
             if (MaxIsAllowed != value)
@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain
 
       public bool Visible
       {
-         get { return (ParameterFlag & ParameterFlag.Visible) == ParameterFlag.Visible; }
+         get => (ParameterFlag & ParameterFlag.Visible) == ParameterFlag.Visible;
          set
          {
             if (Visible != value)
@@ -104,7 +104,7 @@ namespace OSPSuite.Core.Domain
 
       public bool CanBeVariedInPopulation
       {
-         get { return (ParameterFlag & ParameterFlag.CanBeVariedInPopulation) == ParameterFlag.CanBeVariedInPopulation; }
+         get => (ParameterFlag & ParameterFlag.CanBeVariedInPopulation) == ParameterFlag.CanBeVariedInPopulation;
          set
          {
             if (CanBeVariedInPopulation != value)

@@ -30,7 +30,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_not_report_any_differences()
+      public void should_not_report_any_differences()
       {
          _report.ShouldBeEmpty();
       }
@@ -61,7 +61,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_not_report_any_differences()
+      public void should_not_report_any_differences()
       {
          _report.ShouldBeEmpty();
       }
@@ -91,7 +91,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_one_difference()
+      public void should_report_one_difference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

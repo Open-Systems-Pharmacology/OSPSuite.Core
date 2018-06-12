@@ -8,6 +8,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Configuration
 {
@@ -21,6 +22,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string SimModelSchemaFilePath { get; }
       public string DimensionFilePath { get; }
       public abstract string ProductName { get; }
+      public abstract int InternalVersion { get; }
       public abstract Origin Product { get; }
       public abstract string ProductNameWithTrademark { get; }
       public abstract ApplicationIcon Icon { get; }
@@ -34,6 +36,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public string MajorVersion { get; }
       public string ProductDisplayName { get; }
       public string FullVersion { get; }
+      public string FullVersionDisplay { get; }
       public string Version { get; }
       public string UserSettingsFilePath { get; }
       public string ApplicationSettingsFilePath { get; }
@@ -42,44 +45,42 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract string WatermarkOptionLocation { get; }
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
+      private readonly bool _isReleasedVersion;
 
       protected OSPSuiteConfiguration()
       {
          var assemblyVersion = AssemblyVersion;
          MajorVersion = version(assemblyVersion.Minor);
-         Version = $"{MajorVersion}.{assemblyVersion.Build}";
+         Version = combineVersions(MajorVersion,assemblyVersion.Build);
+         BuildVersion = assemblyVersion.Revision.ToString();
+         FullVersion = combineVersions(Version, BuildVersion);
+
          ReleaseDescription = retrieveReleaseDescription();
-         FullVersion = fullVersionFrom(assemblyVersion.Revision);
+         _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
+
+         FullVersionDisplay = retrieveFullVersionDisplay();
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
          ProductDisplayName = retrieveProductDisplayName();
          CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
          AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
-         BuildVersion = AssemblyVersion.Revision.ToString(CultureInfo.InvariantCulture);
-         PKParametersFilePath = AllUsersOrLocalPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
+         PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
          SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
-         TeXTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
-         ChartLayoutTemplateFolderPath = AllUsersOrLocalPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
-         DimensionFilePath = AllUsersOrLocalPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
-         LogConfigurationFile = AllUsersOrLocalPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
+         TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
+         ChartLayoutTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
+         DimensionFilePath = LocalOrAllUsersPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
+         LogConfigurationFile = LocalOrAllUsersPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = CurrentUserFile(UserSettingsFileName);
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }
 
       private string retrieveProductDisplayName()
       {
-         var productDisplayName = $"{ProductNameWithTrademark} {MajorVersion}";
-         if (string.IsNullOrEmpty(ReleaseDescription))
-            return productDisplayName;
-
-         return $"{productDisplayName} - {ReleaseDescription}";
+         return _isReleasedVersion ? $"{ProductNameWithTrademark} {MajorVersion}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
       }
 
-      private string fullVersionFrom(int revision)
+      private string retrieveFullVersionDisplay()
       {
-         if (string.IsNullOrEmpty(ReleaseDescription))
-            return $"{Version} - Build {revision}";
-
-         return $"{Version}.{revision} - {ReleaseDescription}";
+         return _isReleasedVersion ? $"{Version} - Build {BuildVersion}" : ReleaseDescription;
       }
 
       private string retrieveReleaseDescription()
@@ -89,10 +90,12 @@ namespace OSPSuite.Infrastructure.Configuration
             .OfType<AssemblyInformationalVersionAttribute>()
             .FirstOrDefault();
 
-         return informationalVersionAttribute?.InformationalVersion ?? string.Empty;
+         return string.IsNullOrEmpty(informationalVersionAttribute?.InformationalVersion) ? FullVersion : informationalVersionAttribute.InformationalVersion;
       }
 
-      private string version(int minor) => $"{AssemblyVersion.Major}.{minor}";
+      private string version(int minor) => combineVersions(AssemblyVersion.Major, minor);
+
+      private string combineVersions(params object[] items) => items.ToString(".");
 
       public IEnumerable<string> UserSettingsFilePaths => SettingsFilePaths(UserSettingsFilePath, userSettingsFilePathFor);
 
@@ -136,25 +139,26 @@ namespace OSPSuite.Infrastructure.Configuration
       /// </summary>
       protected string LocalPathFor(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-      private string createApplicationDataOrLocalPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
+      private string getLocalPathOrAllUsersPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
       {
-         var applicationDataOrLocal = AllUsersFile(appDataName);
-         if (existsFunc(applicationDataOrLocal))
-            return applicationDataOrLocal;
-
-         //try local if id does not exist
+         //local first. 
          var localPath = LocalPathFor(localName);
          if (existsFunc(localPath))
             return localPath;
 
-         //neither app data nor local exist, return app data
-         return applicationDataOrLocal;
+         //local does not exist, try global
+         var applicationDataPath = AllUsersFile(appDataName);
+         if (existsFunc(applicationDataPath))
+            return applicationDataPath;
+
+         //neither app data nor local exist. This is probably a portable installation and suggest local path;
+         return localPath;
       }
 
-      protected string AllUsersOrLocalPathForFile(string fileName) => createApplicationDataOrLocalPathFor(fileName, fileName, FileHelper.FileExists);
+      protected string LocalOrAllUsersPathForFile(string fileName) => getLocalPathOrAllUsersPathFor(fileName, fileName, FileHelper.FileExists);
 
-      protected string AllUsersOrLocalPathForFolder(string folderName) => AllUsersOrLocalPathForFolder(folderName, folderName);
+      protected string LocalOrAllUsersPathForFolder(string folderName) => LocalOrAllUsersPathForFolder(folderName, folderName);
 
-      protected string AllUsersOrLocalPathForFolder(string folderNameAppData, string folderNameLocal) => createApplicationDataOrLocalPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
+      protected string LocalOrAllUsersPathForFolder(string folderNameAppData, string folderNameLocal) => getLocalPathOrAllUsersPathFor(folderNameAppData, folderNameLocal, DirectoryHelper.DirectoryExists);
    }
 }

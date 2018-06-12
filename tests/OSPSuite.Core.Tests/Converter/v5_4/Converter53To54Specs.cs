@@ -37,14 +37,14 @@ namespace OSPSuite.Converter.v5_4
       }
 
       [Observation]
-      public void Should_change_container_type_of_applicationbuilders_to_application()
+      public void should_change_container_type_of_applicationbuilders_to_application()
       {
          _rootApplication.ContainerType.ShouldBeEqualTo(ContainerType.Application);
          _application.ContainerType.ShouldBeEqualTo(ContainerType.Application);
       }
 
       [Observation]
-      public void Should_not_change_container_type_of_other_to_application()
+      public void should_not_change_container_type_of_other_to_application()
       {
          _eventGroup.ContainerType.ShouldBeEqualTo(ContainerType.EventGroup);
          _container.ContainerType.ShouldBeEqualTo(ContainerType.Other);
@@ -89,7 +89,7 @@ namespace OSPSuite.Converter.v5_4
       }
 
       [Observation]
-      public void Should_change_container_type_of_applications_to_application()
+      public void should_change_container_type_of_applications_to_application()
       {
          _simApp.ContainerType.ShouldBeEqualTo(ContainerType.Application);
          _globalApp.ContainerType.ShouldBeEqualTo(ContainerType.Application);

@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       IParameter CreateConcentrationParameter(IFormulaCache formulaCache);
 
       /// <summary>
-      ///    Create a volume parameter
+      ///    Create a volume parameter with value 1L
       /// </summary>
       IParameter CreateVolumeParameter();
 

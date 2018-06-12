@@ -24,8 +24,8 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.IsFixedValue).WithMappingName(Constants.Serialization.Attribute.IS_FIXED_VALUE);
          Map(x => x.Dimension).WithMappingName(Constants.Serialization.Attribute.Dimension);
          Map(x => x.QuantityType);
-         Map(x => x.ValueDescription);
          Map(x => x.NegativeValuesAllowed);
+         Map(x => x.ValueOrigin);
          MapReference(x => x.Formula).WithMappingName(Constants.Serialization.Attribute.FORMULA);
       }
 
@@ -102,10 +102,10 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.BuildMode);
          Map(x => x.Info);
-         Map(x => x.Origin).WithMappingName(Constants.Serialization.ORIGIN);
-         Map(x => x.DefaultValue).WithMappingName(Constants.Serialization.Attribute.DEFAULT_VALUE);
-
+         Map(x => x.IsDefault);
          MapReference(x => x.RHSFormula);
+
+         //no need to save origin, or default value for core parameter are those values are only used in PK-Sim
       }
    }
 

@@ -68,9 +68,15 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void created_Parameter_should_be_persistable()
+      public void created_parameter_should_be_persistable()
       {
          _processRateParameter.Persistable.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void created_parameter_should_be_default()
+      {
+         _processRateParameter.IsDefault.ShouldBeTrue();
       }
 
       [Observation]

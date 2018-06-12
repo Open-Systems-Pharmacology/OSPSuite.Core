@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Journal
 {
@@ -14,10 +15,7 @@ namespace OSPSuite.Core.Journal
       /// <summary>
       ///    Returns <c>true</c> if the object has not been persisted yet
       /// </summary>
-      public bool IsTransient
-      {
-         get { return string.IsNullOrEmpty(Id); }
-      }
+      public bool IsTransient => string.IsNullOrEmpty(Id);
    }
 
    public abstract class ItemWithContent : JournalEntity, IWithDescription
@@ -30,14 +28,14 @@ namespace OSPSuite.Core.Journal
 
       public virtual Origin Origin
       {
-         get { return Origins.ById(OriginId); }
-         set { OriginId = value.Id; }
+         get => Origins.ById(OriginId);
+         set => OriginId = value.Id;
       }
 
       public virtual DateTime CreatedAt
       {
-         get { return _createdAt; }
-         set { _createdAt = value.ToUniversalTime(); }
+         get => _createdAt;
+         set => _createdAt = value.ToUniversalTime();
       }
 
       protected ItemWithContent()
@@ -47,18 +45,16 @@ namespace OSPSuite.Core.Journal
 
       public virtual Content Content
       {
-         get { return _content; }
+         get => _content;
          set
          {
             _content = value;
-            ContentId = _content.Id;
+            if (_content != null)
+               ContentId = _content.Id;
          }
       }
 
-      public bool IsLoaded
-      {
-         get { return Content != null; }
-      }
+      public bool IsLoaded => Content != null;
    }
 
    public class Content : JournalEntity
@@ -91,10 +87,11 @@ namespace OSPSuite.Core.Journal
          return Display;
       }
 
-      public string Display
-      {
-         get { return string.Format("{0}: {1} from {2} version {3}", ItemType, Name, Origin.DisplayName, Version); }
-      }
+      public string Display => IsFile ? 
+         $"{ItemType}: {FullPath}" : 
+         $"{ItemType}: {Name} from {Origin.DisplayName} version {Version}";
+
+      public bool IsFile => string.Equals(ItemType, Constants.RELATIVE_ITEM_FILE_ITEM_TYPE);
    }
 
    public class JournalPage : ItemWithContent
@@ -117,20 +114,14 @@ namespace OSPSuite.Core.Journal
          _relatedItems = new List<RelatedItem>();
       }
 
-      public virtual IEnumerable<string> Tags
-      {
-         get { return _tags; }
-      }
+      public virtual IEnumerable<string> Tags => _tags;
 
-      public virtual IReadOnlyList<RelatedItem> RelatedItems
-      {
-         get { return _relatedItems; }
-      }
+      public virtual IReadOnlyList<RelatedItem> RelatedItems => _relatedItems;
 
       public virtual DateTime UpdatedAt
       {
-         get { return _updatedAt; }
-         set { _updatedAt = value.ToUniversalTime(); }
+         get => _updatedAt;
+         set => _updatedAt = value.ToUniversalTime();
       }
 
       public void AddTag(string tag)
@@ -139,11 +130,6 @@ namespace OSPSuite.Core.Journal
             return;
 
          _tags.Add(tag);
-      }
-
-      public void RemoteTag(string tag)
-      {
-         _tags.Remove(tag);
       }
 
       public void AddRelatedItem(RelatedItem relatedItem)

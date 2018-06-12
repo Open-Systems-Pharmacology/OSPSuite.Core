@@ -7,6 +7,7 @@ namespace OSPSuite.Core.Domain
       Simulation,
       Comparison,
       ParameterIdentification,
-      SensitiviyAnalysis
+      SensitiviyAnalysis,
+      QualificationPlan
    }
 }

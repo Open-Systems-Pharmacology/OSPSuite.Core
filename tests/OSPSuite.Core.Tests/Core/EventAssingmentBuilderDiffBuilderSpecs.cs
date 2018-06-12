@@ -34,7 +34,7 @@ namespace OSPSuite.Core
 
 
       [Observation]
-      public void Should_report_the_differences_accordingly()
+      public void should_report_the_differences_accordingly()
       {
          _report.Count().ShouldBeEqualTo(1);
       }
@@ -68,7 +68,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_as_property_difference_and_not_as_missing()
+      public void should_report_the_differences_as_property_difference_and_not_as_missing()
       {
          _report.Count().ShouldBeEqualTo(2);
       }
@@ -103,7 +103,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_differences_as_property_difference_and_not_as_missing()
+      public void should_report_the_differences_as_property_difference_and_not_as_missing()
       {
          _report.Count().ShouldBeEqualTo(1);
       }

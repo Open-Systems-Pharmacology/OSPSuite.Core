@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Mappers;
+using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Journal;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.Journal
 {
@@ -45,7 +46,7 @@ namespace OSPSuite.Presentation.Presenters.Journal
       IEnumerable<Origin> AllOrigins { get; }
 
       /// <summary>
-      ///   True if the table should have gridlines visible when the table cell boundaries are not shown
+      ///    True if the table should have gridlines visible when the table cell boundaries are not shown
       /// </summary>
       bool EnableTableGridLines { get; set; }
 
@@ -55,14 +56,25 @@ namespace OSPSuite.Presentation.Presenters.Journal
       void SourceChanged();
 
       /// <summary>
-      ///   Returns <c>true</c> of the editor is already showing the content for <paramref name="journalPage"/> other wise <c>false</c>
+      ///    Returns <c>true</c> of the editor is already showing the content for <paramref name="journalPage" /> other wise
+      ///    <c>false</c>
       /// </summary>
       bool AlreadyEditing(JournalPage journalPage);
 
       /// <summary>
-      /// Updates the user preferences from the current rich editor configuration
+      ///    Updates the user preferences from the current rich editor configuration
       /// </summary>
       void UpdateUserPreferences();
+
+      /// <summary>
+      ///    Displays the page that was defined before this one in the working journal
+      /// </summary>
+      void NavigateToPreviousPage();
+
+      /// <summary>
+      ///    Displays the page that was defined after this one in the working journal
+      /// </summary>
+      void NavigateToNextPage();
    }
 
    public class JournalPageEditorPresenter : AbstractPresenter<IJournalPageEditorView, IJournalPageEditorPresenter>,
@@ -71,23 +83,29 @@ namespace OSPSuite.Presentation.Presenters.Journal
       private readonly IContentLoader _contentLoader;
       private readonly IJournalPageToJournalPageDTOMapper _mapper;
       private readonly IJournalTask _journalTask;
-      private readonly IPresentationUserSettings _userSettings;
+      private readonly IJournalRetriever _journalRetriever;
       private JournalPageDTO _journalPageDTO;
+      private readonly JournalPageEditorSettings _journalPageSettings;
 
-      public JournalPageEditorPresenter(IJournalPageEditorView view, IContentLoader contentLoader, IJournalPageToJournalPageDTOMapper mapper, IJournalTask journalTask, IPresentationUserSettings userSettings)
+      public JournalPageEditorPresenter(
+         IJournalPageEditorView view,
+         IContentLoader contentLoader,
+         IJournalPageToJournalPageDTOMapper mapper,
+         IJournalTask journalTask,
+         IJournalRetriever journalRetriever,
+         IPresentationUserSettings userSettings
+      )
          : base(view)
       {
          _contentLoader = contentLoader;
          _mapper = mapper;
          _journalTask = journalTask;
-         _userSettings = userSettings;
-         _view.ApplyUserSettingsToRichEdit(userSettings.JournalPageEditorSettings);
+         _journalRetriever = journalRetriever;
+         _journalPageSettings = userSettings.JournalPageEditorSettings;
+         _view.ApplyUserSettingsToRichEdit(_journalPageSettings);
       }
 
-      public IEnumerable<string> AllKnownTags
-      {
-         get { return _journalTask.AllKnownTags; }
-      }
+      public IEnumerable<string> AllKnownTags => _journalTask.AllKnownTags;
 
       public void TitleChanged(string text)
       {
@@ -120,15 +138,12 @@ namespace OSPSuite.Presentation.Presenters.Journal
          _view.DeleteBinding();
       }
 
-      public IEnumerable<Origin> AllOrigins
-      {
-         get { return Origins.All; }
-      }
+      public IEnumerable<Origin> AllOrigins => Origins.All;
 
       public bool EnableTableGridLines
       {
-         get { return _userSettings.JournalPageEditorSettings.ShowTableGridLines; }
-         set { _userSettings.JournalPageEditorSettings.ShowTableGridLines = value; }
+         get => _journalPageSettings.ShowTableGridLines;
+         set => _journalPageSettings.ShowTableGridLines = value;
       }
 
       public void SourceChanged()
@@ -194,7 +209,27 @@ namespace OSPSuite.Presentation.Presenters.Journal
 
       public void UpdateUserPreferences()
       {
-         _userSettings.JournalPageEditorSettings.ShowTableGridLines = _view.GetGridLinesPreference();
+         _journalPageSettings.ShowTableGridLines = _view.GetGridLinesPreference();
+      }
+
+      public void NavigateToPreviousPage() => navigateToPage(-1);
+
+      public void NavigateToNextPage() => navigateToPage(1);
+
+      private void navigateToPage(int pageOffset)
+      {
+         var journalPage = _journalPageDTO?.JournalPage;
+         if (journalPage == null)
+            return;
+
+         var journal = _journalRetriever.Current;
+         var pageIndex = journal.JournalPageIndexFor(journalPage);
+         var pageToNavigateTo = journal.JournalPageByIndex(pageIndex + pageOffset);
+
+         if (pageToNavigateTo == null)
+            return;
+
+         _journalTask.Edit(pageToNavigateTo, showEditor: true);
       }
 
       public void Handle(ShowJournalSearchEvent eventToHandle)

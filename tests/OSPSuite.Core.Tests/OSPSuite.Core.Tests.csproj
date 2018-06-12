@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OSPSuite</RootNamespace>
     <AssemblyName>OSPSuite.Core.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -33,6 +33,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,7 +78,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FakeItEasy, Version=4.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FakeItEasy.4.2.0\lib\net45\FakeItEasy.dll</HintPath>
+      <HintPath>..\..\packages\FakeItEasy.4.5.1\lib\net45\FakeItEasy.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Iesi.Collections.4.0.2\lib\net40\Iesi.Collections.dll</HintPath>
@@ -84,8 +86,8 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="MathNet.Numerics, Version=3.20.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MathNet.Numerics.3.20.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.4.4.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
@@ -94,32 +96,34 @@
     <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.BDDHelper">
-      <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.0.1\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
+    <Reference Include="OSPSuite.BDDHelper, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.BDDHelper.2.0.1.4\lib\net45\OSPSuite.BDDHelper.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.FuncParser">
-      <HintPath>..\..\packages\OSPSuite.FuncParser.2.0.0.1\lib\net45\OSPSuite.FuncParser.dll</HintPath>
+    <Reference Include="OSPSuite.FuncParser, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\packages\OSPSuite.FuncParser.3.0.0.6\lib\net45\OSPSuite.FuncParser.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.SimModel.2.2.0.6\lib\net45\OSPSuite.SimModel.dll</HintPath>
+      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.0.16\lib\net45\OSPSuite.SimModel.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.0.1.7, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.0.1.7\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    <Reference Include="OSPSuite.TeXReporting, Version=2.1.0.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.0.8\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.2.0.1.4\lib\net452\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="SX, Version=2.6.5.7, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.5.7\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.6.7.6, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.7.6\lib\net45\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -139,6 +143,7 @@
     </Compile>
     <Compile Include="Batch\SimulationResultsExporterSpecs.cs" />
     <Compile Include="Batch\SimulationResultsToBatchSimulationExportMapperSpecs.cs" />
+    <Compile Include="Commands\AddParameterAnalysableToActiveJournalPageUICommandSpecs.cs" />
     <Compile Include="Commands\CommandExpressionParserSpecs.cs" />
     <Compile Include="Commands\CommandExtensionsSpecs.cs" />
     <Compile Include="Commands\CommandHelperForSpecs.cs" />
@@ -165,14 +170,22 @@
     <Compile Include="Converter\v6_1\Converter60To61Specs.cs" />
     <Compile Include="Converter\v6_3\Converter62To63Specs.cs" />
     <Compile Include="Converter\v7_1\Converter63To710Specs.cs" />
+    <Compile Include="Converter\v7_3\Converter710To730Specs.cs" />
     <Compile Include="Core\AddObservedDataMetaDataCommandSpecs.cs" />
     <Compile Include="Core\AddObservedDataRowCommandSpecs.cs" />
     <Compile Include="Core\AliasCreatorSpecs.cs" />
     <Compile Include="Core\AxisXmlSerializerSpecs.cs" />
+    <Compile Include="Core\CategorialParameterIdentificationRunModeSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsExtensionsSpecs.cs" />
     <Compile Include="Core\ChartFontAndSizeSettingsSpecs.cs" />
+    <Compile Include="Core\ComparerSettingsSpecs.cs" />
     <Compile Include="Core\CurveSpecs.cs" />
+    <Compile Include="Core\FavoritesSpecs.cs" />
+    <Compile Include="Core\FileExtensionToIconMapperSpecs.cs" />
+    <Compile Include="Core\ObservedDataRepositorySpecs.cs" />
     <Compile Include="Core\ObservedDataTaskSpecs.cs" />
+    <Compile Include="Core\SolverSettingsFactorySpecs.cs" />
+    <Compile Include="Core\TableFormulaWithXArgumentSpecs.cs" />
     <Compile Include="Core\UnitToMinorIntervalMapperSpecs.cs" />
     <Compile Include="Core\ConstantsSpecs.cs" />
     <Compile Include="Core\CurveNamerSpecs.cs" />
@@ -181,6 +194,7 @@
     <Compile Include="Core\OptimizationRunResultSpecs.cs" />
     <Compile Include="Core\ParameterIdentificationPredictedVsObservedChartSpecs.cs" />
     <Compile Include="Core\RegistrationSpecs.cs" />
+    <Compile Include="Core\ValueOriginSpecs.cs" />
     <Compile Include="Core\WatermakStatusCheckerSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
@@ -554,8 +568,6 @@
     <Compile Include="Infrastructure\HistoryItemMetaDataRepositorySpecs.cs" />
     <Compile Include="Infrastructure\HistoryManagerPersistorSpecs.cs" />
     <Compile Include="Infrastructure\JournalPageIdsFromSearchQuerySpecs.cs" />
-    <Compile Include="Infrastructure\Log4NetLogFactorySpecs.cs" />
-    <Compile Include="Infrastructure\Log4NetLoggerSpecs.cs" />
     <Compile Include="Infrastructure\NextAvailableWorkingJournalIndexQuerySpecs.cs" />
     <Compile Include="Infrastructure\SessionManagerSpecs.cs" />
     <Compile Include="Infrastructure\SharpLibCompressionSpecs.cs" />
@@ -638,7 +650,6 @@
     <Compile Include="Presentation\MathNetExtensionsForSpecs.cs" />
     <Compile Include="Presentation\MathNetExtensionsSpecs.cs" />
     <Compile Include="Presentation\MatrixToDataTableMapperSpecs.cs" />
-    <Compile Include="Presentation\MessageStatusFilterDTOSpecs.cs" />
     <Compile Include="Presentation\MetaDataDTOSpecs.cs" />
     <Compile Include="Presentation\ModalChartTemplateManagerPresenterSpecs.cs" />
     <Compile Include="Presentation\MRUProviderSpecs.cs" />
@@ -706,6 +717,7 @@
     <Compile Include="Presentation\SensitivityAnalysisParameterSelectionPresenterSpecs.cs" />
     <Compile Include="Presentation\SensitivityAnalysisParametersPresenterSpecs.cs" />
     <Compile Include="Presentation\SensitivityAnalysisPKParameterAnalysisPresenterSpecs.cs" />
+    <Compile Include="Presentation\SensitivityAnalysisRunResultSpecs.cs" />
     <Compile Include="Presentation\SensitivityAnalysisTaskSpecs.cs" />
     <Compile Include="Presentation\SensitivityParameterFactorySpecs.cs" />
     <Compile Include="Presentation\SimpleChartPresenterSpecs.cs" />
@@ -726,6 +738,7 @@
     <Compile Include="Presentation\UICommandExtensionsSpecs.cs" />
     <Compile Include="Presentation\ValidatableDTOExtensionsSpecs.cs" />
     <Compile Include="Presentation\ValidatableDTOSpecs.cs" />
+    <Compile Include="Presentation\ValueOriginPresenterSpecs.cs" />
     <Compile Include="Presentation\WeightedDataRepositoryDataPresenterSpecs.cs" />
     <Compile Include="Presentation\WeightedDataRepositoryToDataTableMapperSpecs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -744,22 +757,22 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\packages\OSPSuite.SimModelSolver_CVODES282.2.0.0.1\lib\net45\OSPSuite.SimModelSolver_CVODES282.dll">
+    <None Include="..\..\packages\OSPSuite.SimModelSolver_CVODES282.3.0.0.7\lib\net45\OSPSuite.SimModelSolver_CVODES282.dll">
       <Link>OSPSuite.SimModelSolver_CVODES282.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="..\..\packages\System.Data.SQLite.Core.1.0.105.2\build\net45\x86\SQLite.Interop.dll">
       <Link>SQLite.Interop.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
+    <None Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
       <Link>OSPSuite.Dimensions.xml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml">
+    </None>
+    <None Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml">
       <Link>OSPSuite.PKParameters.xml</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\OSPSuite.SimModel.Schema\OSPSuite.SimModel.xsd">

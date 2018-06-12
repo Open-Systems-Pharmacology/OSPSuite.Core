@@ -22,6 +22,24 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_creating_a_default_table_formula : concern_for_TableFormula
+   {
+      [Observation]
+      public void x_dimension_and_y_dimension_should_not_be_null()
+      {
+         sut.XDimension.ShouldNotBeNull();
+         sut.Dimension.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void x_display_unit_and_y_display_unit_should_not_be_null()
+      {
+         sut.XDisplayUnit.ShouldNotBeNull();
+         sut.YDisplayUnit.ShouldNotBeNull();
+      }
+
+   }
+
    public class When_adding_points_to_the_table_formula : concern_for_TableFormula
    {
       protected override void Context()

@@ -6,8 +6,8 @@ namespace OSPSuite.Core.Comparison
    {
       public override void Compare(IComparison<ValuePoint> comparison)
       {
-         CompareValues(x => x.X, x => x.X, comparison);
-         CompareValues(x => x.Y, x => x.Y, comparison);
+         CompareDoubleValues(x => x.X, x => x.X, comparison);
+         CompareDoubleValues(x => x.Y, x => x.Y, comparison);
          CompareValues(x => x.RestartSolver, x => x.RestartSolver, comparison);
       }
    }

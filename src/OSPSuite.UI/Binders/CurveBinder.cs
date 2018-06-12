@@ -10,7 +10,6 @@ using OSPSuite.Core.Chart.Mappers;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Utility.Extensions;
 using Axis = OSPSuite.Core.Chart.Axis;

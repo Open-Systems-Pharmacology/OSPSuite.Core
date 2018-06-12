@@ -94,6 +94,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          }
       }
 
+
       private FisherCalculationResults calculateFisherMatrix(JacobianMatrix jacobianMatrix)
       {
          //fisher = Jacob'*Jacob;

@@ -5,6 +5,7 @@ using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Maths.Interpolations;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
@@ -64,7 +65,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Dimension of the X Values (e.g. Time, NoDim)
       /// </summary>
-      public virtual IDimension XDimension { get; set; }
+      public virtual IDimension XDimension { get; set; } = Constants.Dimension.NO_DIMENSION;
 
       /// <summary>
       ///    Name of the value representing the X values( Time, pH..)
@@ -166,12 +167,8 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual Unit XDisplayUnit
       {
-         get { return displayUnit(_xDisplayUnit, XDimension); }
-         set
-         {
-            _xDisplayUnit = value;
-            OnPropertyChanged(() => XDisplayUnit);
-         }
+         get => displayUnit(_xDisplayUnit, XDimension);
+         set => SetProperty(ref _xDisplayUnit, value);
       }
 
       /// <summary>
@@ -179,20 +176,13 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual Unit YDisplayUnit
       {
-         get { return displayUnit(_yDisplayUnit, Dimension); }
-         set
-         {
-            _yDisplayUnit = value;
-            OnPropertyChanged(() => YDisplayUnit);
-         }
+         get => displayUnit(_yDisplayUnit, Dimension);
+         set => SetProperty(ref _yDisplayUnit, value);
       }
 
       private Unit displayUnit(Unit unit, IDimension dimension)
       {
-         if (unit != null)
-            return unit;
-
-         return dimension?.DefaultUnit;
+         return unit ?? dimension?.DefaultUnit;
       }
 
       /// <summary>
@@ -201,6 +191,7 @@ namespace OSPSuite.Core.Domain.Formulas
       public virtual void ClearPoints()
       {
          _allPoints.Clear();
+         OnChanged();
       }
 
       protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
@@ -240,6 +231,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
          //does not exist
          _allPoints.Insert(~index, point);
+         OnChanged();
          return index;
       }
 
@@ -273,6 +265,8 @@ namespace OSPSuite.Core.Domain.Formulas
             return -1;
 
          _allPoints.RemoveAt(index);
+         OnChanged();
+
          return index;
       }
 
@@ -282,14 +276,15 @@ namespace OSPSuite.Core.Domain.Formulas
 
          var tableFormula = source as TableFormula;
          if (tableFormula == null) return;
-         ClearPoints();
-         tableFormula.AllPoints().Each(p => AddPoint(p.Clone()));
          XDimension = tableFormula.XDimension;
          XName = tableFormula.XName;
          YName = tableFormula.YName;
          UseDerivedValues = tableFormula.UseDerivedValues;
          _xDisplayUnit = tableFormula._xDisplayUnit;
          _yDisplayUnit = tableFormula._yDisplayUnit;
+
+         ClearPoints();
+         tableFormula.AllPoints().Each(p => AddPoint(p.Clone()));
       }
    }
 }

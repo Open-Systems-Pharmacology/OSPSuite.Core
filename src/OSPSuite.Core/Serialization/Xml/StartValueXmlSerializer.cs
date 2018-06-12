@@ -12,7 +12,6 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Dimension);
          Map(x => x.ContainerPath);
          Map(x => x.StartValue);
-         Map(x => x.ValueDescription);
          MapReference(x => x.Formula);
       }
 
@@ -42,5 +41,11 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class ParameterStartValueXmlSerializer : StartValueXmlSerializer<ParameterStartValue>
    {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.ValueOrigin);
+         Map(x => x.IsDefault);
+      }
    }
 }

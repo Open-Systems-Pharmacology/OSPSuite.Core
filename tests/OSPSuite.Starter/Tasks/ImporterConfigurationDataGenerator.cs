@@ -186,7 +186,11 @@ namespace OSPSuite.Starter.Tasks
 
       private static MetaDataCategory getConcentrationCategory()
       {
-         return createMetaDataCategory<string>("Compound", isMandatory: true);
+         var metaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
+         metaDataCategory.IsListOfValuesFixed = true;
+         metaDataCategory.DefaultValue = "JustOne";
+         metaDataCategory.ListOfValues.Add("JustOne", "JustOne");
+         return metaDataCategory;
       }
 
       private static MetaDataCategory getCompartmentCategory()

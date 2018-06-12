@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
+﻿using System;
+using System.Collections.Generic;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
@@ -9,6 +8,8 @@ using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Journal;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views;
@@ -20,7 +21,7 @@ using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.Journal
 {
-   public partial class RelatedItemsView : BaseGridViewOnlyUserControl, IRelatedItemsView
+   public partial class RelatedItemsView : BaseResizableUserControl, IRelatedItemsView
    {
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
@@ -28,7 +29,6 @@ namespace OSPSuite.UI.Views.Journal
       private readonly RepositoryItemButtonEdit _removeRelatedItemRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _reloadRelatedItemRepository = new UxAddButtonRepository();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
-      private readonly RepositoryItemPopupContainerEdit _repositoryCompareRelatedItem = new RepositoryItemPopupContainerEdit();
       private readonly GridViewBinder<RelatedItem> _gridViewBinder;
       private IGridViewColumn _compareColumn;
       private IGridViewColumn _reloadColumn;
@@ -39,8 +39,6 @@ namespace OSPSuite.UI.Views.Journal
          _imageListRetriever = imageListRetriever;
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
-         _repositoryCompareRelatedItem.PopupControl = _popupControl;
-         _repositoryCompareRelatedItem.EditValueChanged += (o, e) => gridView.PostEditor();
          _gridViewBinder = new GridViewBinder<RelatedItem>(gridView);
          gridView.AllowsFiltering = false;
          gridView.ShouldUseColorForDisabledCell = false;
@@ -50,6 +48,8 @@ namespace OSPSuite.UI.Views.Journal
          toolTipController.Initialize(imageListRetriever);
          gridControl.ToolTipController = toolTipController;
       }
+
+      private void saveCompareRelatedItem(object sender, EventArgs e) => gridView.PostEditor();
 
       public override void InitializeBinding()
       {
@@ -75,14 +75,14 @@ namespace OSPSuite.UI.Views.Journal
          _compareColumn = _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(getCompareRelatdItemRepository)
+            .WithRepository(getCompareRelatedItemRepository)
             .WithEditorConfiguration(updateRelatedItemsForComparison)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
          _reloadColumn = _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(x => _reloadRelatedItemRepository)
+            .WithRepository(getReloadRelatedItemRepository)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
          _deleteColumn = _gridViewBinder.AddUnboundColumn()
@@ -93,17 +93,45 @@ namespace OSPSuite.UI.Views.Journal
 
          _removeRelatedItemRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.DeleteRelatedItem(_gridViewBinder.FocusedElement));
          _reloadRelatedItemRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ReloadRelatedItem(_gridViewBinder.FocusedElement));
+
+         buttonAddRelatedItemFromFile.Click += (o, e) => OnEvent(() => _presenter.AddRelatedItemFromFile());
+         buttonReloadAllRelatedItems.Click += (o, e) => OnEvent(() => _presenter.ReloadAllRelatedItems());
       }
 
-      private RepositoryItem getCompareRelatdItemRepository(RelatedItem item)
+      private RepositoryItem getCompareRelatedItemRepository(RelatedItem item)
       {
-         _repositoryCompareRelatedItem.Buttons[0].ToolTip = Captions.Journal.ToolTip.CompareRelatedItemWithProjectItems(item.Name, item.ItemType);
-         _reloadRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
-         return _repositoryCompareRelatedItem;
+         var repositoryCompareRelatedItem = new RepositoryItemPopupContainerEdit {PopupControl = _popupControl};
+         repositoryCompareRelatedItem.Buttons[0].Kind = ButtonPredefines.Glyph;
+         repositoryCompareRelatedItem.Buttons[0].Image = ApplicationIcons.Comparison.ToImage(IconSizes.Size16x16);
+         repositoryCompareRelatedItem.CloseOnOuterMouseClick = false;
+         repositoryCompareRelatedItem.TextEditStyle = TextEditStyles.HideTextEditor;
+
+         if (item.IsFile)
+         {
+            repositoryCompareRelatedItem.Enabled = false;
+            repositoryCompareRelatedItem.ReadOnly = true;
+         }
+         else
+         {
+            repositoryCompareRelatedItem.EditValueChanged += saveCompareRelatedItem;
+            repositoryCompareRelatedItem.Buttons[0].ToolTip = Captions.Journal.ToolTip.CompareRelatedItemWithProjectItems(item.Name, item.ItemType);
+         }
+
+         return repositoryCompareRelatedItem;
+      }
+
+      private RepositoryItem getReloadRelatedItemRepository(RelatedItem item)
+      {
+         _reloadRelatedItemRepository.Buttons[0].ToolTip = item.IsFile ? 
+            Captions.Journal.ToolTip.ExportRelatedItemToFile(item.Name) : 
+            Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
+
+         return _reloadRelatedItemRepository;
       }
 
       private void updateRelatedItemsForComparison(BaseEdit baseEdit, RelatedItem relatedItem)
       {
+         if(baseEdit.ReadOnly) return;
          OnEvent(() => _presenter.StartComparisonFor(relatedItem));
       }
 
@@ -129,15 +157,19 @@ namespace OSPSuite.UI.Views.Journal
       public override void InitializeResources()
       {
          base.InitializeResources();
-         _repositoryCompareRelatedItem.Buttons[0].Kind = ButtonPredefines.Glyph;
-         _repositoryCompareRelatedItem.Buttons[0].Image = ApplicationIcons.Comparison.ToImage(IconSizes.Size16x16);
-         _repositoryCompareRelatedItem.CloseOnOuterMouseClick = false;
-         _repositoryCompareRelatedItem.TextEditStyle = TextEditStyles.HideTextEditor;
 
          _reloadRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
          _reloadRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Load.ToImage(IconSizes.Size16x16);
 
+         _removeRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
+         _removeRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Delete.ToImage(IconSizes.Size16x16);
          _removeRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.DeleteRelatedItem;
+
+         layoutItemAddRelatedItem.AdjustButtonSize();
+         buttonAddRelatedItemFromFile.InitWithImage(ApplicationIcons.Add, text: Captions.Journal.AddRelatedItem, toolTip: ToolTips.Journal.AddRelatedItemFromFile);
+
+         layoutItemReloadAllRelatedItems.AdjustButtonSize();
+         buttonReloadAllRelatedItems.InitWithImage(ApplicationIcons.ImportAll, text: Captions.Journal.ImportAllRelatedItem, toolTip: ToolTips.Journal.ImportAllRelatedItem);
       }
 
       public void AttachPresenter(IRelatedItemsPresenter presenter)
@@ -160,6 +192,8 @@ namespace OSPSuite.UI.Views.Journal
       {
          _gridViewBinder.DeleteBinding();
       }
+
+      public override int OptimalHeight => gridView.OptimalHeight + layoutItemGrid.Padding.Height + layoutItemAddRelatedItem.Height;
 
       protected override int TopicId => HelpId.Tool_Journal_RelatedItems;
    }

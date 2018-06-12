@@ -1,24 +1,19 @@
-﻿using DevExpress.XtraEditors.Controls;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.UI.RepositoryItems;
 
 namespace OSPSuite.UI.Controls
 {
-   public class UxAddButtonRepository : UxRepositoryItemButtonEdit
+   public class UxAddButtonRepository : UxRepositoryItemButtonImage
    {
-      public UxAddButtonRepository()
-         : base(ButtonPredefines.Plus)
+      public UxAddButtonRepository() : base(ApplicationIcons.Add, Captions.AddEntry)
       {
-         Buttons[0].ToolTip = Captions.AddEntry;
       }
    }
 
-   public class UxRemoveButtonRepository : UxRepositoryItemButtonEdit
+   public class UxRemoveButtonRepository : UxRepositoryItemButtonImage
    {
-      public UxRemoveButtonRepository()
-         : base(ButtonPredefines.Delete)
+      public UxRemoveButtonRepository() : base(ApplicationIcons.Remove, Captions.DeleteEntry)
       {
-         Buttons[0].ToolTip = Captions.DeleteEntry;
       }
    }
 
@@ -26,7 +21,7 @@ namespace OSPSuite.UI.Controls
    {
       public UxAddAndRemoveButtonRepository()
       {
-         Buttons.Add(new EditorButton(ButtonPredefines.Delete) {ToolTip = Captions.DeleteEntry});
+         AddButton(ApplicationIcons.Remove, Captions.DeleteEntry);
       }
    }
 

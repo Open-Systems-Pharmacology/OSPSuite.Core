@@ -1,11 +1,11 @@
 ﻿using System;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.DTO
 {
-   public interface IParameterDTO : IWithDisplayUnitDTO, IWithName, IPathRepresentableDTO, IWithDescription
+   public interface IParameterDTO : IWithDisplayUnitDTO, IWithName, IPathRepresentableDTO, IWithDescription, IWithValueOrigin
    {
       /// <summary>
       ///    Returns the value in display unit
@@ -17,8 +17,6 @@ namespace OSPSuite.Presentation.DTO
       double KernelValue { get; }
 
       bool IsFavorite { get; set; }
-
-      string ValueDescription { get; set; }
 
       bool IsDiscrete { get; }
 
@@ -37,7 +35,7 @@ namespace OSPSuite.Presentation.DTO
       bool Editable { get; }
 
       /// <summary>
-      /// Releases possible event handler on the underlying parameter
+      ///    Releases possible event handler on the underlying parameter
       /// </summary>
       void Release();
    }

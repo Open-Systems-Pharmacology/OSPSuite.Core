@@ -20,13 +20,7 @@ namespace OSPSuite.UI.Controls
       /// <summary>
       ///    Returns the control optimal height so that it is displayed entirely without wasting space
       /// </summary>
-      public virtual int OptimalHeight
-      {
-         get
-         {
-            return DefaultSize.Height;
-         }
-      }
+      public virtual int OptimalHeight => DefaultSize.Height;
 
       public virtual void Repaint()
       {

@@ -8,20 +8,26 @@ namespace OSPSuite.Core.Comparison
    {
       private readonly IObjectComparer _objectComparer;
       private readonly EntityDiffBuilder _entityDiffBuilder;
+      private readonly WithValueOriginComparison<IQuantity> _withValueOriginComparison;
 
-      public QuantityDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder)
+      public QuantityDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<IQuantity> withValueOriginComparison)
       {
          _objectComparer = objectComparer;
          _entityDiffBuilder = entityDiffBuilder;
+         _withValueOriginComparison = withValueOriginComparison;
       }
 
       public override void Compare(IComparison<IQuantity> comparison)
+      {
+         _withValueOriginComparison.AddValueOriginToComparison(comparison, this, compareQuantities);
+      }
+
+      private void compareQuantities(IComparison<IQuantity> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          CompareValues(x => x.NegativeValuesAllowed, x => x.NegativeValuesAllowed, comparison);
-         CompareStringValues(x => x.ValueDescription, Captions.Comparisons.ValueDescription, comparison);
 
          if (!comparison.Settings.OnlyComputingRelevant)
          {

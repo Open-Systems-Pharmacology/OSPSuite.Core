@@ -1,13 +1,16 @@
 ﻿using System;
+using System.IO;
+using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility;
-using FakeItEasy;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core
 {
@@ -20,6 +23,7 @@ namespace OSPSuite.Core
       protected IRelatedItemSerializer _relatedItemSerializer;
       protected IRelatedItemDescriptionCreator _relatedItemDescriptionCreator;
       protected IRelatedItemTypeRetriever _relatedItemTypeRetriever;
+      protected IFileExtensionToIconMapper _iconMapper;
 
       protected override void Context()
       {
@@ -28,10 +32,12 @@ namespace OSPSuite.Core
          _projectRetriever = A.Fake<IProjectRetriever>();
          _applicationDiscriminator = A.Fake<IApplicationDiscriminator>();
          _relatedItemSerializer = A.Fake<IRelatedItemSerializer>();
-         _relatedItemDescriptionCreator= A.Fake<IRelatedItemDescriptionCreator>();
+         _relatedItemDescriptionCreator = A.Fake<IRelatedItemDescriptionCreator>();
          _relatedItemTypeRetriever = A.Fake<IRelatedItemTypeRetriever>();
-         sut = new RelatedItemFactory(_executionContext, _applicationConfiguration, _projectRetriever, _applicationDiscriminator, _relatedItemSerializer, _relatedItemDescriptionCreator,
-            _relatedItemTypeRetriever);
+         _iconMapper= A.Fake<IFileExtensionToIconMapper>();
+         sut = new RelatedItemFactory(_executionContext, _applicationConfiguration, _projectRetriever, 
+            _applicationDiscriminator, _relatedItemSerializer, _relatedItemDescriptionCreator,
+            _relatedItemTypeRetriever,_iconMapper);
       }
    }
 
@@ -65,7 +71,7 @@ namespace OSPSuite.Core
 
          A.CallTo(() => _relatedItemTypeRetriever.TypeFor(_relatedObject)).Returns("MyType");
 
-         _data = new byte[] { 15, 05, 24 };
+         _data = new byte[] {15, 05, 24};
 
          A.CallTo(() => _relatedItemSerializer.Serialize(_relatedObject)).Returns(_data);
          A.CallTo(() => _relatedItemDescriptionCreator.DescriptionFor(_relatedObject)).Returns("DESC");
@@ -128,4 +134,64 @@ namespace OSPSuite.Core
       }
    }
 
-}	
+   public class When_creating_a_related_item_from_file : concern_for_RelatedItemFactory
+   {
+      private string _fileFullPath;
+      private RelatedItem _relatedItem;
+      private string _fileNameWithExtension;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _fileFullPath = FileHelper.GenerateTemporaryFileName();
+         _fileNameWithExtension = new FileInfo(_fileFullPath).Name;
+         string[] lines = {"First line", "Second line", "Third line"};
+         File.WriteAllLines(_fileFullPath, lines);
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(_iconMapper).WithReturnType<ApplicationIcon>().Returns(ApplicationIcons.Excel);
+      }
+
+      protected override void Because()
+      {
+         _relatedItem = sut.CreateFromFile(_fileFullPath);
+      }
+
+      [Observation]
+      public void should_return_a_related_item_containing_the_content_of_the_file_in_bytes()
+      {
+         _relatedItem.Content.Data.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_have_created_a_transient_object()
+      {
+         _relatedItem.IsTransient.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_save_the_expected_meta_data_of_file_into_the_related_item()
+      {
+         _relatedItem.IconName.ShouldBeEqualTo(ApplicationIcons.Excel.IconName);
+         _relatedItem.Name.ShouldBeEqualTo(_fileNameWithExtension);
+         _relatedItem.ItemType.ShouldBeEqualTo(Constants.RELATIVE_ITEM_FILE_ITEM_TYPE);
+         _relatedItem.FullPath.ShouldBeEqualTo(_fileFullPath);
+      }
+
+      [Observation]
+      public void should_save_the_expected_application_meta_data()
+      {
+         _relatedItem.Origin.ShouldBeEqualTo(Origins.Other);
+         _relatedItem.Version.ShouldBeEqualTo(_applicationConfiguration.FullVersion);
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         FileHelper.DeleteFile(_fileFullPath);
+      }
+   }
+}

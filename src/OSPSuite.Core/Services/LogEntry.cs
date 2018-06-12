@@ -1,15 +1,15 @@
-﻿using OSPSuite.Core.Domain;
+﻿using Microsoft.Extensions.Logging;
 
 namespace OSPSuite.Core.Services
 {
    public class LogEntry
    {
-      public NotificationType MessageStatus { get; private set; }
-      public string Message { get; private set; }
+      public LogLevel Level { get; }
+      public string Message { get; }
 
-      public LogEntry(NotificationType messageStatus, string message)
+      public LogEntry(LogLevel level, string message)
       {
-         MessageStatus = messageStatus;
+         Level = level;
          Message = message;
       }
 
@@ -18,15 +18,6 @@ namespace OSPSuite.Core.Services
          return Display;
       }
 
-      public string Display
-      {
-         get
-         {
-            if (MessageStatus == NotificationType.None)
-               return Message;
-
-            return string.Format("{0}: {1}", MessageStatus, Message);
-         }
-      }
+      public string Display => Level == LogLevel.None ? Message : $"{Level}: {Message}";
    }
 }

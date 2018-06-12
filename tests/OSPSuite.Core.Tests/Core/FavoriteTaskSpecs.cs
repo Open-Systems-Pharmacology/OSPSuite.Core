@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Collections.Generic;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Utility.Events;
 using FakeItEasy;
@@ -148,6 +149,62 @@ namespace OSPSuite.Core
       public void should_raise_the_favorites_loaded_event()
       {
          A.CallTo(() => _eventPublisher.PublishEvent(A<FavoritesLoadedEvent>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_reordering_favorites_by_moving_some_entries_up : concern_for_FavoriteTask
+   {
+      private readonly IReadOnlyList<string> _entriesToMove = new[] { "FAV1" };
+
+      protected override void Context()
+      {
+         base.Context();
+         _favorites.AddFavorites(new []{"FAV1", "FAV2" });
+      }
+
+      protected override void Because()
+      {
+         sut.MoveUp(_entriesToMove);
+      }
+
+      [Observation]
+      public void should_have_reordered_the_favorites()
+      {
+         _favorites.ShouldOnlyContainInOrder("FAV2", "FAV1");
+      }
+
+      [Observation]
+      public void should_raise_the_favorites_reordered_event()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<FavoritesOrderChangedEvent>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_reordering_favorites_by_moving_some_entries_down : concern_for_FavoriteTask
+   {
+      private readonly IReadOnlyList<string> _entriesToMove = new[] { "FAV1" };
+
+      protected override void Context()
+      {
+         base.Context();
+         _favorites.AddFavorites(new[] { "FAV1", "FAV2" });
+      }
+
+      protected override void Because()
+      {
+         sut.MoveDown(_entriesToMove);
+      }
+
+      [Observation]
+      public void should_have_reordered_the_favorites()
+      {  
+         _favorites.ShouldOnlyContainInOrder("FAV2", "FAV1");
+      }
+
+      [Observation]
+      public void should_raise_the_favorites_reordered_event()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<FavoritesOrderChangedEvent>._)).MustHaveHappened();
       }
    }
 }

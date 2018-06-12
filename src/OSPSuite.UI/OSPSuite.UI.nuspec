@@ -11,10 +11,10 @@
     <licenseUrl>https://github.com/Open-Systems-Pharmacology/$id$/blob/master/LICENSE</licenseUrl>
     <iconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>Copyright © 2017 - Open Systems Pharmacology Community</copyright>
+    <copyright>Copyright © 2018 - Open Systems Pharmacology Community</copyright>
     <tags>open-systems-pharmacology</tags>
   </metadata>
   <files>
-    <file src="bin\$configuration$\$id$.pdb" target="lib\net452" />
+    <file src="bin\$configuration$\$id$.pdb" target="lib\net462" />
   </files>
 </package>

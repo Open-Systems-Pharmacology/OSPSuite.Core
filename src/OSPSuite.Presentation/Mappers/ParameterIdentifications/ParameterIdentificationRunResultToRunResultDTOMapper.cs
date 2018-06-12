@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 
          parameterIdentification.AllFixedIdentificationParameters.Each(x =>
          {
-            var fixedParameterDTO = mapFrom(x, x.StartValue);
+            var fixedParameterDTO = mapFrom(x, x.StartValue, x.StartValue);
             addOptimizedParameterDTOTo(runResultDTO, fixedParameterDTO);
          });
 
@@ -56,16 +56,16 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
          if (identificationParameter == null)
             return null;
 
-         return mapFrom(identificationParameter, optimizedParameterValue.Value);
+         return mapFrom(identificationParameter, optimizedParameterValue.Value, optimizedParameterValue.StartValue);
       }
 
-      private OptimizedParameterDTO mapFrom(IdentificationParameter identificationParameter, double optimalValue)
+      private OptimizedParameterDTO mapFrom(IdentificationParameter identificationParameter, double optimalValue, double startValue)
       {
          var dto = new OptimizedParameterDTO
          {
             Name = identificationParameter.Name,
             OptimalValue = mapFrom(optimalValue, identificationParameter.StartValueParameter),
-            StartValue = mapFrom(identificationParameter.StartValue, identificationParameter.StartValueParameter),
+            StartValue = mapFrom(startValue, identificationParameter.StartValueParameter),
             MinValue = mapFrom(identificationParameter.MinValue, identificationParameter.MinValueParameter),
             MaxValue = mapFrom(identificationParameter.MaxValue, identificationParameter.MaxValueParameter),
             Scaling = identificationParameter.Scaling

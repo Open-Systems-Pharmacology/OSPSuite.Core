@@ -30,7 +30,7 @@
       private void InitializeComponent()
       {
          DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          ((System.ComponentModel.ISupportInitialize)(layoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();

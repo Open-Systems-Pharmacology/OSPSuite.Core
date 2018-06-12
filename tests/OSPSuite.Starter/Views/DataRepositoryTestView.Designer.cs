@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.splitContainerControl = new DevExpress.XtraEditors.SplitContainerControl();
          this.splitContainerControlLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();

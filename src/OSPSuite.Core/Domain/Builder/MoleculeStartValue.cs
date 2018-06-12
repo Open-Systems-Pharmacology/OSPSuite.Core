@@ -43,18 +43,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool IsPresent
       {
-         get { return _isPresent; }
-         set
-         {
-            _isPresent = value;
-            OnPropertyChanged(() => IsPresent);
-         }
+         get => _isPresent;
+         set => SetProperty(ref _isPresent, value);
       }
 
-      public string MoleculeName
-      {
-         get { return Name; }
-      }
+      public string MoleculeName => Name;
 
       public bool IsEquivalentTo(IMoleculeStartValue moleculeStartValue)
       {
@@ -70,12 +63,8 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual double ScaleDivisor
       {
-         get { return _scaleDivisor; }
-         set
-         {
-            _scaleDivisor = value;
-            OnPropertyChanged(() => ScaleDivisor);
-         }
+         get => _scaleDivisor;
+         set => SetProperty(ref _scaleDivisor, value);
       }
    }
 }

@@ -143,6 +143,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataFolder = "Observed Data";
       public static readonly string ParameterIdentificationFolder = "Parameter Identifications";
       public static readonly string SensitivityAnalysisFolder = "Sensitivity Analyses";
+      public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
       public static readonly string Delete = "Delete";
       public static readonly string SelectSimulations = "Select Simulations";
@@ -178,6 +179,11 @@ namespace OSPSuite.Assets
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string Exception = "Exception";
       public static readonly string StackTrace = "Stack Trace";
+      public static readonly string LogLevel = "Log Level";
+      public static readonly string ValueOriginDescription = "Value Description";
+      public static readonly string ValueOriginSource = "Source";
+      public static readonly string ValueOriginDeterminationMethod = "Method";
+      public static readonly string ValueOrigin = "Value Origin";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -377,7 +383,7 @@ namespace OSPSuite.Assets
 
          public static string DifferentTypes(string type1, string type2)
          {
-            return $"Different Types:  ({type1} vs {type2})";
+            return $"Different Types: ({type1} vs {type2})";
          }
 
          public static string ObjectMissing(string containerType, string containerName, string missingObjectType, string missingObjectName)
@@ -458,6 +464,15 @@ namespace OSPSuite.Assets
          public static readonly string OpenJournalButton = "Open";
          public static readonly string CancelJournalButton = "Cancel";
          public static readonly string RunComparison = "Compare";
+         public static readonly string AddRelatedItem = "Add New";
+         public static readonly string ImportAllRelatedItem = "Load All";
+         public static readonly string RelatedItemFile = $"{ObjectTypes.RelatedItem} file";
+         public static readonly string SelectedFileToLoadAsRelatedItem = "Select file to load as related item";
+
+         public static string ReallyLoadRelatedItemFileExceedingThreshold(string fileSizeInMegaBytes, string thresholdSizeInMegaBytes)
+         {
+            return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the recommended file size of '{thresholdSizeInMegaBytes} MB'. Do you want to continue?";
+         }
 
          public static string JournalWillBeSharedBetweenProjectInfo(string journalName)
          {
@@ -533,10 +548,9 @@ namespace OSPSuite.Assets
                return $"Compare '{relatedItemName}' with {type.Pluralize()} defined in project";
             }
 
-            public static string ReloadRelatedItem(string relatedItemName, string relatedItemType)
-            {
-               return $"Reload {relatedItemType.ToLower()} '{relatedItemName}' into project";
-            }
+            public static string ReloadRelatedItem(string relatedItemName, string relatedItemType) => $"Reload {relatedItemType.ToLower()} '{relatedItemName}' into project";
+
+            public static string ExportRelatedItemToFile(string relatedItemName) => $"Export '{relatedItemName}' to file";
 
             public static string DeleteRelatedItem = $"Delete {RelatedItem.ToLower()}";
          }
@@ -550,6 +564,30 @@ namespace OSPSuite.Assets
          {
             return $"With parent {uniqueIndex}";
          }
+      }
+
+      public static class ValueOrigins
+      {
+         public static class Sources
+         {
+            public static string Database = "Database";
+            public static string Internet = "Internet";
+            public static string ParameterIdentification = "Parameter Identification";
+            public static string Publication = "Publication";
+         }
+
+         public static class Methods
+         {
+            public static string Assumption = "Assumption";
+            public static string ManualFit = "Manual Fit";
+            public static string ParameterIdentification = "Parameter Identification";
+            public static string InVitro = "In Vitro";
+            public static string InVivo = "In Vivo";
+         }
+
+         public static string Other = "Other";
+         public static string Unknown = "Unknown";
+         public static string Undefined = "";
       }
 
       public static class Reporting
@@ -605,6 +643,7 @@ namespace OSPSuite.Assets
 
          public static readonly string OnlyComputeModelRelevantProperties = "Only compare properties relevant to simulation results";
          public static readonly string CompareHiddenEntities = "Compare hidden entities (e.g. parameters)";
+         public static readonly string ShowValueOriginForChangedValues = "Show value origin for changed values";
          public static readonly string FormulaComparisonValue = "Values";
          public static readonly string FormulaComparisonFormula = "Formulas";
          public static readonly string RunComparison = "Start";
@@ -902,6 +941,11 @@ namespace OSPSuite.Assets
          {
             return $"Simulation {simulationName} does not have the output path {outputPath}";
          }
+
+         public static string ValueUpdatedFrom(string parameterIdentification, string isoDate)
+         {
+            return $"Value updated from '{parameterIdentification}' on {isoDate}";
+         }
       }
 
       public static class SensitivityAnalysis
@@ -1176,6 +1220,8 @@ namespace OSPSuite.Assets
       public static readonly string InvalidChecksum = "File might have been tampered with. Checksum is not valid";
       public static readonly string TimeNotStrictlyMonotone = "The time column is not strictly monotonically increasing. Ensure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
 
+      public static string UnableToFindEntityWithAlias(string alias) => $"Unable to find entity with alias '{alias}'";
+
       public static string WrongColumnDimensions(string columnName, int xDim, int yDim)
       {
          return $"Data column {columnName} has {xDim} values and its base grid has {yDim} values";
@@ -1234,10 +1280,7 @@ namespace OSPSuite.Assets
          return $"Parameter '{parameter}' defined in molecule '{molecule}' has an invalid value: {value}";
       }
 
-      public static string MoleculeNameNotUnique(string moleculeName)
-      {
-         return $"Molecule name '{moleculeName}' is not unique";
-      }
+      public static string MoleculeNameNotUnique(string moleculeName) => $"Molecule name '{moleculeName}' is not unique";
 
       public static string MoleculeNameExistsInAnotherList(string moleculeName)
       {
@@ -1342,6 +1385,11 @@ namespace OSPSuite.Assets
          public static string UnknownStatus(string status) => $"Unknown status: {status}";
          public static readonly string GeneralInputError = "General input error";
          public static string OptimizationFailed(string error) => $"Levenberg-Marquardt optimization failed: {error}";
+      }
+
+      public static string FileSizeExceedsMaximumSize(string fileSizeInMegaBytes, string maxSizeInMegaBytes)
+      {
+         return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the maximum supported size of '{maxSizeInMegaBytes} MB'.";
       }
    }
 
@@ -1674,20 +1722,11 @@ namespace OSPSuite.Assets
       public static readonly string MolecularWeightModifiedInDataRepositories = "Molecular weight modified in multiple repositories";
       public static readonly string ObservedDataDeletedFromProject = "Observed data deleted from project";
 
-      public static string CreateProjectDescription(string version)
-      {
-         return $"Project started with version {version}";
-      }
+      public static string CreateProjectDescription(string version) => $"Project started with version {version}";
 
-      public static string SetMetaDataAddedCommandDescripton(string name, string value)
-      {
-         return $"New Meta Data added where {name} = {value}";
-      }
+      public static string SetMetaDataAddedCommandDescripton(string name, string value) => $"New Meta Data added where {name} = {value}";
 
-      public static string SetMetaDataRemovedCommandDescripton(string name, string value)
-      {
-         return $"Meta Data removed where {name} = {value}";
-      }
+      public static string SetMetaDataRemovedCommandDescripton(string name, string value) => $"Meta Data removed where {name} = {value}";
 
       public static string SetMetaDataChangedCommandDescription(string oldName, string oldValue, string newName, string newValue)
       {
@@ -1777,6 +1816,19 @@ namespace OSPSuite.Assets
       public static string RenameObservedData(string oldName, string newName)
       {
          return $"Renamed observed data from '{oldName}' to '{newName}'";
+      }
+
+      public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin, string withValueOriginType, string withValueOriginDisplay, string containerType, string containerDisplay)
+      {
+         string withObjectTypeInfo = $"for {withValueOriginType} '{withValueOriginDisplay}' in {containerType} '{containerDisplay}'";
+
+         if(string.IsNullOrEmpty(oldValueOrigin))
+            return $"Value origin set to '{newValueOrigin}' {withObjectTypeInfo}";
+
+         if(string.IsNullOrEmpty(newValueOrigin))
+            return $"Value origin set to '{oldValueOrigin}' {withObjectTypeInfo}";
+
+         return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}' {withObjectTypeInfo}";
       }
    }
 
@@ -1953,6 +2005,14 @@ namespace OSPSuite.Assets
       public static class BuildingBlockReaction
       {
          public static readonly string HowToCreateReactionLink = "To add a molecule to educts, products or modifiers, draw a connection between reaction and molecule.";
+      }
+
+      public static class Journal
+      {
+         public static readonly string NavigateToNextPage = "Navigate to next page";
+         public static readonly string NavigateToPreviousPage = "Navigate to previous page";
+         public static readonly string AddRelatedItemFromFile = "Add new related item from a selected file";
+         public static readonly string ImportAllRelatedItem = "Import all items into project";
       }
    }
 

@@ -12,8 +12,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public virtual ISimulation Simulation { get; set; }
       private readonly List<ISimulationAnalysis> _allSimulationAnalyses = new List<ISimulationAnalysis>();
       private readonly List<SensitivityParameter> _allSensitivityParameters = new List<SensitivityParameter>();
+
       public SensitivityAnalysisRunResult Results { get; set; }
+
       public bool IsLoaded { get; set; }
+
       public bool HasChanged { get; private set; }
 
       public virtual IReadOnlyList<SensitivityParameter> AllSensitivityParameters => _allSensitivityParameters;
@@ -32,13 +35,12 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public IEnumerable<ISimulationAnalysis> Analyses => _allSimulationAnalyses;
 
       public virtual bool HasResults => Results != null && Results.AllPKParameterSensitivities.Any();
+
       public virtual bool HasUpToDateResults => Simulation != null && Simulation.HasUpToDateResults;
+
       public virtual bool ComesFromPKSim => Simulation != null && Simulation.ComesFromPKSim;
 
-      public bool UsesObservedData(DataRepository observedData)
-      {
-         return false;
-      }
+      public bool UsesObservedData(DataRepository observedData) => false;
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -107,6 +109,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       }
 
       private double[] defaultParameterValues => _allSensitivityParameters.Select(x => x.Parameter.Value).ToArray();
+
       public IReadOnlyList<string> AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToList();
 
       public bool Uses(IParameter parameter)
@@ -139,10 +142,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          });
       }
 
-      public bool UsesSimulation(ISimulation oldSimulation)
-      {
-         return Equals(Simulation, oldSimulation);
-      }
+      public bool UsesSimulation(ISimulation oldSimulation) => Equals(Simulation, oldSimulation);
 
       public void RemoveAllSensitivityParameters()
       {

@@ -20,8 +20,5 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<AddRelatedItemsToActiveJournalPageUICommand, IReadOnlyList<IObjectBase>>(objects)
             .WithIcon(ApplicationIcons.AddToJournal);
       }
-
-
-
    }
 }

@@ -13,9 +13,9 @@ namespace OSPSuite.Presentation.DTO
 
       public PathElementDTO()
       {
-         DisplayName = String.Empty;
-         Description = String.Empty;
-         IconName = String.Empty;
+         DisplayName = string.Empty;
+         Description = string.Empty;
+         IconName = string.Empty;
       }
 
       public override string ToString()
@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.DTO
 
       public int CompareTo(PathElementDTO other)
       {
-         return String.Compare(DisplayName, other.DisplayName, StringComparison.Ordinal);
+         return string.Compare(DisplayName, other.DisplayName, StringComparison.Ordinal);
       }
 
       public int CompareTo(object obj)
@@ -48,8 +48,8 @@ namespace OSPSuite.Presentation.DTO
       public override int GetHashCode()
       {
          return
-            String.IsNullOrEmpty(DisplayName)
-               ? String.Empty.GetHashCode()
+            string.IsNullOrEmpty(DisplayName)
+               ? string.Empty.GetHashCode()
                : DisplayName.GetHashCode();
       }
    }

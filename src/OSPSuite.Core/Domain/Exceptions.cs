@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Domain
 
    public class UnableToResolvePathException : OSPSuiteException
    {
-      private const string _errorMessage = "Unable to resolve Path '{0}' for entity '{1}'";
+      private const string _errorMessage = "Unable to resolve path '{0}' for entity '{1}'";
 
       public UnableToResolvePathException(IObjectPath objectPath, IEntity currentEntity)
          : base(string.Format(_errorMessage, objectPath, currentEntity.Name))

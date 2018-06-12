@@ -30,7 +30,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_the_path_entries_and_different_entries_as_difference()
+      public void should_report_the_path_entries_and_different_entries_as_difference()
       {
          _report.Count.ShouldBeEqualTo(3);
       }
@@ -67,7 +67,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_not_report_the_path_entries_difference()
+      public void should_not_report_the_path_entries_difference()
       {
          _report.Count.ShouldBeEqualTo(0);
       }
@@ -93,7 +93,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Should_report_a_path_entries_difference()
+      public void should_report_a_path_entries_difference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

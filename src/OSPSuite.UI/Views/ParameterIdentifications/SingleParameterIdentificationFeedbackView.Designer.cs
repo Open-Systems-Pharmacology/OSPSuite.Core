@@ -38,7 +38,7 @@
          this.layoutItemErrorHistory = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemTimeProfile = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemPredictedVsObserved = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelParameters)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelErrorHistory)).BeginInit();

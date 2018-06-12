@@ -45,6 +45,10 @@ namespace OSPSuite.UI.Views.Comparisons
             .To(chkCompareHiddenEntities)
             .WithCaption(Captions.Comparisons.CompareHiddenEntities);
 
+         _screenBinder.Bind(x => x.ShowValueOrigin)
+            .To(chkShowValueOrigin)
+            .WithCaption(Captions.Comparisons.ShowValueOriginForChangedValues);
+     
          _screenBinder.Bind(x => x.FormulaComparison)
             .To(cbFormulaComparisonMode)
             .WithValues(x => _presenter.FormulaComparisonValues)

@@ -31,20 +31,20 @@ namespace OSPSuite.UI.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new UxLayoutControl();
+         this.layoutControl = new UxLayoutControl();
          this.tbDescription = new DevExpress.XtraEditors.MemoEdit();
          this.tbName = new DevExpress.XtraEditors.TextEdit();
-         this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemName = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
          this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
+         this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.tbDescription.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbName.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemName)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).BeginInit();
          this.SuspendLayout();
@@ -73,23 +73,23 @@ namespace OSPSuite.UI.Views
          // 
          // layoutControl1
          // 
-         this.layoutControl1.AllowCustomization = false;
-         this.layoutControl1.Controls.Add(this.tbDescription);
-         this.layoutControl1.Controls.Add(this.tbName);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(421, 217);
-         this.layoutControl1.TabIndex = 34;
-         this.layoutControl1.Text = "layoutControl1";
+         this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.tbDescription);
+         this.layoutControl.Controls.Add(this.tbName);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl.Name = "layoutControl";
+         this.layoutControl.Root = this.layoutControlGroup;
+         this.layoutControl.Size = new System.Drawing.Size(421, 217);
+         this.layoutControl.TabIndex = 34;
+         this.layoutControl.Text = "layoutControl1";
          // 
          // tbDescription
          // 
          this.tbDescription.Location = new System.Drawing.Point(12, 68);
          this.tbDescription.Name = "tbDescription";
          this.tbDescription.Size = new System.Drawing.Size(397, 137);
-         this.tbDescription.StyleController = this.layoutControl1;
+         this.tbDescription.StyleController = this.layoutControl;
          this.tbDescription.TabIndex = 5;
          // 
          // tbName
@@ -97,22 +97,22 @@ namespace OSPSuite.UI.Views
          this.tbName.Location = new System.Drawing.Point(12, 28);
          this.tbName.Name = "tbName";
          this.tbName.Size = new System.Drawing.Size(397, 20);
-         this.tbName.StyleController = this.layoutControl1;
+         this.tbName.StyleController = this.layoutControl;
          this.tbName.TabIndex = 4;
          // 
          // layoutControlGroup1
          // 
-         this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
-         this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.layoutControlGroup1.GroupBordersVisible = false;
-         this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.layoutControlGroup.CustomizationFormText = "layoutControlGroup1";
+         this.layoutControlGroup.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.layoutControlGroup.GroupBordersVisible = false;
+         this.layoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemName,
             this.layoutItemDescription});
-         this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(421, 217);
-         this.layoutControlGroup1.Text = "layoutControlGroup1";
-         this.layoutControlGroup1.TextVisible = false;
+         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlGroup.Name = "layoutControlGroup";
+         this.layoutControlGroup.Size = new System.Drawing.Size(421, 217);
+         this.layoutControlGroup.Text = "layoutControlGroup1";
+         this.layoutControlGroup.TextVisible = false;
          // 
          // layoutItemName
          // 
@@ -142,19 +142,19 @@ namespace OSPSuite.UI.Views
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "ObjectBaseView";
          this.ClientSize = new System.Drawing.Size(421, 263);
-         this.Controls.Add(this.layoutControl1);
+         this.Controls.Add(this.layoutControl);
          this.Name = "ObjectBaseView";
          this.Text = "ObjectBaseView";
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
-         this.Controls.SetChildIndex(this.layoutControl1, 0);
+         this.Controls.SetChildIndex(this.layoutControl, 0);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
          this.layoutControlBase.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
+         this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.tbDescription.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tbName.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemName)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).EndInit();
          this.ResumeLayout(false);
@@ -163,11 +163,11 @@ namespace OSPSuite.UI.Views
 
       #endregion
 
-      private UxLayoutControl layoutControl1;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
+      protected UxLayoutControl layoutControl;
+      protected DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       protected DevExpress.XtraEditors.MemoEdit tbDescription;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemName;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
+      protected DevExpress.XtraLayout.LayoutControlItem layoutItemName;
+      protected DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
       protected DevExpress.XtraEditors.TextEdit tbName;
 
    }

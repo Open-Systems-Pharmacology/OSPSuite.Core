@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -72,7 +71,7 @@ namespace OSPSuite.UI.Binders
       {
          var colIndex = _columnPathElementCache.Keys.ToList().IndexOf(pathElement);
          if (colIndex < 0) return;
-         ColumnAt(pathElement).UpdateVisibleIndex(colIndex + 1, visible);
+         ColumnAt(pathElement).UpdateVisibility(visible);
       }
 
       public IGridViewColumn ColumnAt(PathElement pathElement)

@@ -1,7 +1,6 @@
-﻿using System.Data;
-using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Maths.Random;
+﻿using System.Data;using OSPSuite.Core.Maths.Random;
 using OSPSuite.Core.Maths.Statistics;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {

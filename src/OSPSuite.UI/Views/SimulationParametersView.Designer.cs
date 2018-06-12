@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.gridControl = new UxGridControl();
          this.gridView = new UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();

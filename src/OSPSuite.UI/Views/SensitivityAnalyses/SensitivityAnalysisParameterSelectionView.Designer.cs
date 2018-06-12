@@ -29,7 +29,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnAddAllConstantParameters = new DevExpress.XtraEditors.SimpleButton();
          this.pnlParameterSelection = new DevExpress.XtraEditors.PanelControl();
          this.cbSimulationSelector = new DevExpress.XtraEditors.ImageComboBoxEdit();

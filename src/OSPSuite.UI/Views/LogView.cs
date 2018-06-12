@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Controls;
@@ -35,10 +37,9 @@ namespace OSPSuite.UI.Views
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _screenBinder.Bind(x => x.Error).To(chkError);
-         _screenBinder.Bind(x => x.Debug).To(chkDebug);
-         _screenBinder.Bind(x => x.Info).To(chkInfo);
-         _screenBinder.Bind(x => x.Warning).To(chkWarning);
+         _screenBinder.Bind(x => x.LogLevel)
+            .To(comboBoxLogLevel)
+            .WithValues(x => _presenter.AvailableLogLevels);
       }
 
       public void ClearLog()
@@ -54,10 +55,7 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         chkDebug.Text = "Debug";
-         chkError.Text = "Error";
-         chkInfo.Text = "Info";
-         chkWarning.Text = "Warming";
+         layoutItemLogLevel.Text = Captions.LogLevel.FormatForLabel();
       }
    }
 }

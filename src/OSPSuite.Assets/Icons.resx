@@ -1306,4 +1306,61 @@
   <data name="SensitivityAnalysisVisualFeedback" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SensitivityAnalysisVisualFeedback.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ValueOriginMethodAssumption" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodAssumption.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodInVitro" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodInVitro.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodInVivo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodInVivo.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodManualFit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodManualFit.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodOther" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodOther.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodParameterIdentification" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodParameterIdentification.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginMethodUnknown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginMethodUnknown.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourceDatabase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourceDatabase.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourceInternet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourceInternet.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourceOther" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourceOther.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourceParameterIdentification" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourceParameterIdentification.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourcePublication" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourcePublication.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ValueOriginSourceUnknown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\ValueOriginSourceUnknown.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Properties" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Properties.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Tag.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UserDefinedSpecies" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\UserDefinedSpecies.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Snapshot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Snapshot.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnapshotExport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SnapshotExport.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SnapshotImport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SnapshotImport.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

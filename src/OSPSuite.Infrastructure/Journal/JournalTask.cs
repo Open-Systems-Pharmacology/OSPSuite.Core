@@ -112,10 +112,7 @@ namespace OSPSuite.Infrastructure.Journal
          if (!isConnectedToJournal())
             return;
 
-         var currentJournalPage = JournalPageCurrentlyEdited;
-
-         if (currentJournalPage == null)
-            currentJournalPage = CreateJournalPage(showEditor: true);
+         var currentJournalPage = JournalPageCurrentlyEdited ?? CreateJournalPage(showEditor: true);
 
          relatedItems.Each(x => _journalPageTask.AddRelatedItemTo(currentJournalPage, _relatedItemFactory.Create(x)));
       }
@@ -158,7 +155,7 @@ namespace OSPSuite.Infrastructure.Journal
 
       public void Edit(JournalPage journalPage, bool showEditor, JournalSearch journalSearch = null)
       {
-         _eventPublisher.PublishEvent(new EditJournalPageStartedEvent(journalPage, showEditor, journalSearch));
+         _eventPublisher.PublishEvent(new EditJournalPageStartedEvent(journalPage, showEditor));
          if (journalSearch == null) return;
          _eventPublisher.PublishEvent(new ShowJournalSearchEvent(journalSearch));
       }
