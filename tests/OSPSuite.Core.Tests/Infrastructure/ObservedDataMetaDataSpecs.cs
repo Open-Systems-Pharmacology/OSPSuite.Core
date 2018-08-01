@@ -16,22 +16,19 @@ namespace OSPSuite.Infrastructure
 
       protected override void Context()
       {
-         _session= A.Fake<ISession>();
+         _session = A.Fake<ISession>();
          _dataRepository = new DataRepositoryMetaData();
-         _dataRepository.Content.Data = new byte[]{125, 154};
+         _dataRepository.Content.Data = new byte[] {125, 154};
          _dataRepository.Content.Id = 10;
          sut = new ObservedDataMetaData {DataRepository = _dataRepository};
-         _newDataRepository = new DataRepositoryMetaData { Name = "NEW" };
-         _newDataRepository.Content.Data = new byte[] { 150, 25 };
-         _newObservedDataMetaData = new ObservedDataMetaData { DataRepository = _newDataRepository };
-
+         _newDataRepository = new DataRepositoryMetaData {Name = "NEW"};
+         _newDataRepository.Content.Data = new byte[] {150, 25};
+         _newObservedDataMetaData = new ObservedDataMetaData {DataRepository = _newDataRepository};
       }
    }
 
    public class When_updating_an_observed_meta_data_from_another_observed_data_meta_data : concern_for_ObservedDataMetaData
    {
-
-  
       protected override void Because()
       {
          sut.UpdateFrom(_newObservedDataMetaData, _session);
@@ -77,5 +74,4 @@ namespace OSPSuite.Infrastructure
          Assert.AreSame(sut.DataRepository, _newDataRepository);
       }
    }
-
 }
