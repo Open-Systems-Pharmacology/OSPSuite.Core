@@ -10,7 +10,7 @@
       /// <summary>
       /// Serialization of the entire meta data
       /// </summary>
-      public virtual MetaDataContent Content { get; private set; }
+      public virtual MetaDataContent Content { get; }
 
       protected MetaDataWithContent()
       {
