@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Extensions
          {
             command.CommandText = query;
             command.CommandType = CommandType.Text;
-            using (IDataReader reader = command.ExecuteReader())
+            using (var reader = command.ExecuteReader())
             {
                rawData.Load(reader);
             }

@@ -494,6 +494,7 @@
     <Compile Include="UICommands\ActiveObjectUICommand.cs" />
     <Compile Include="UICommands\AddParameterAnalysableToActiveJournalPageUICommand.cs" />
     <Compile Include="UICommands\AddRelatedItemsToActiveJournalPageUICommand.cs" />
+    <Compile Include="UICommands\ClearHistoryUICommand.cs" />
     <Compile Include="UICommands\CloneParameterIdentificationUICommand.cs" />
     <Compile Include="UICommands\CloneSensitivityAnalysisCommand.cs" />
     <Compile Include="UICommands\CloseAllButMdiViewCommand.cs" />

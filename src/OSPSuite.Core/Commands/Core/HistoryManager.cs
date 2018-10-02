@@ -124,10 +124,7 @@ namespace OSPSuite.Core.Commands.Core
          addToHistory(_historyItemFactory.CreateFor(commandToAddToHistory), state);
       }
 
-      public IEnumerable<IHistoryItem> History
-      {
-         get { return _history; }
-      }
+      public IEnumerable<IHistoryItem> History => _history;
 
       public void Clear()
       {

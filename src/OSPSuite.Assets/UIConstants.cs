@@ -146,6 +146,7 @@ namespace OSPSuite.Assets
       public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
       public static readonly string Delete = "Delete";
+      public static readonly string Clear = "Clear";
       public static readonly string SelectSimulations = "Select Simulations";
       public const string AddButtonText = "Add";
       public const string RemoveButtonText = "Remove";
@@ -317,6 +318,13 @@ namespace OSPSuite.Assets
          return $"New name for {type} '{name}'";
       }
 
+      public static string ReallyDeleteObservedData(string observedDataName)
+      {
+         return $"Really delete observed data '{observedDataName}' from project";
+      }
+      
+      public static string ReallyClearHistory= "Really clear command history? This action is irreversible.";
+      
       public static class Importer
       {
          public static readonly string ImportAll = "Import All";
@@ -410,6 +418,7 @@ namespace OSPSuite.Assets
          public static readonly string EditComment = "Edit Comment";
          public static readonly string Rollback = "Rollback";
          public static readonly string ExtendedDescription = "Extended Description";
+         public static readonly string ClearHistory = "Clear History";
 
          public static string CommentViewCaption(int historyItemState) => $"Edit comments for state '{historyItemState}' ...";
       }
@@ -1016,13 +1025,7 @@ namespace OSPSuite.Assets
          {
             return $"Number of selected parameters: {numberOfParameters}";
          }
-      }
-
-      public static string ReallyDeleteObservedData(string observedDataName)
-      {
-         return $"Really delete observed data '{observedDataName}' from project";
-      }
-
+      }   
 
       public static class Chart
       {
@@ -1645,6 +1648,7 @@ namespace OSPSuite.Assets
       public static readonly string RunSensitivityAnalysis = "Run";
       public static readonly string StopSensitivityanalysis = "Stop";
       public static readonly string StartSensitivityanalysis = "Start Sensitivity Analysis...";
+      public static readonly string ClearHistory = "Clear";
 
       public static string CompareObjects(string objectType)
       {
@@ -1925,6 +1929,7 @@ namespace OSPSuite.Assets
       public static readonly string DefaultLineStyle = string.Format("Sets the line style for each curve added to this axis.{0}Setting 'None' will use the default style for the curve.{0}Default line style has no effect for X axis.", Environment.NewLine);
       public static readonly string DefaultLineStyleTitle = "Default Line Style for Curve";
       public static readonly string DoNotShowVersionUpdate = "Ignore this update";
+      public static readonly string ClearHistory = "Clear the project history. This action is irreversible";
 
       public static string ToolTipForLLOQ(string seriesName, string lloq)
       {
@@ -2016,7 +2021,7 @@ namespace OSPSuite.Assets
       }
    }
 
-   public class ObservedData
+   public static class ObservedData
    {
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";

@@ -8,7 +8,8 @@ using OSPSuite.Core.Events;
 
 namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
 {
-   public interface ICommandMetaDataRepository : IRepository<CommandMetaData>,
+   public interface ICommandMetaDataRepository : 
+      IRepository<CommandMetaData>,
       IListener<ProjectClosedEvent>
    {
       CommandMetaData FindById(string commandMetaDataId);

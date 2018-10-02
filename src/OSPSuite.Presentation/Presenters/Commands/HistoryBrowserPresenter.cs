@@ -1,14 +1,18 @@
 using System.Linq;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Events;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.Commands;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Services.Commands;
 using OSPSuite.Presentation.Views.Commands;
+using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Commands
 {
-   public interface IHistoryBrowserPresenter
+   public interface IHistoryBrowserPresenter : 
+      IListener<HistoryClearedEvent>
    {
       /// <summary>
       ///    Refreshes the history in the view
@@ -44,6 +48,12 @@ namespace OSPSuite.Presentation.Presenters.Commands
       ///    Adds a label to the history
       /// </summary>
       void AddLabel();
+
+
+      /// <summary>
+      /// Triggers the clear history command that will clear the history in the project
+      /// </summary>
+      void ClearHistory();
 
       /// <summary>
       ///    Returns the view associated with the history browser
@@ -104,16 +114,18 @@ namespace OSPSuite.Presentation.Presenters.Commands
       private readonly ICommentTask _commentTask;
       private readonly IHistoryToHistoryDTOMapper _mapper;
       private readonly IHistoryItemDTOEnumerableToHistoryItemDTOList _historyItemDTOListMapper;
+      private readonly IHistoryTask _historyTask;
       private IHistoryItemDTOList _historyItemDtoList;
 
       public HistoryBrowserPresenter(IHistoryBrowserView view, ILabelTask labelTask, ICommentTask commentTask,
-         IHistoryToHistoryDTOMapper mapper, IHistoryItemDTOEnumerableToHistoryItemDTOList historyItemDTOListMapper)
+         IHistoryToHistoryDTOMapper mapper, IHistoryItemDTOEnumerableToHistoryItemDTOList historyItemDTOListMapper, IHistoryTask historyTask)
       {
          View = view;
          _labelTask = labelTask;
          _commentTask = commentTask;
          _mapper = mapper;
          _historyItemDTOListMapper = historyItemDTOListMapper;
+         _historyTask = historyTask;
          EnableFiltering = true;
          EnableAutoFilterRow = true;
          EnableHistoryPruning = true;
@@ -130,7 +142,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
 
       public bool EnableHistoryPruning
       {
-         set { _mapper.EnableHistoryPruning = value; }
+         set => _mapper.EnableHistoryPruning = value;
       }
 
       public bool IsLabel(string historyItemId)
@@ -150,18 +162,23 @@ namespace OSPSuite.Presentation.Presenters.Commands
 
       public bool EnableFiltering
       {
-         set { View.EnableFiltering = value; }
+         set => View.EnableFiltering = value;
       }
 
       public bool EnableAutoFilterRow
       {
-         set { View.EnableAutoFilterRow = value; }
+         set => View.EnableAutoFilterRow = value;
       }
 
       public void AddLabel()
       {
          _labelTask.AddLabelTo(HistoryManager);
          UpdateHistory();
+      }
+
+      public void ClearHistory()
+      {
+         _historyTask.ClearHistory();
       }
 
       public IHistoryBrowserView View { get; }
@@ -212,7 +229,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
 
       public IHistoryManager HistoryManager
       {
-         get { return _historyManager ?? new NullHistoryManager(); }
+         get => _historyManager ?? new NullHistoryManager();
          set
          {
             if (_historyManager != null)
@@ -223,6 +240,11 @@ namespace OSPSuite.Presentation.Presenters.Commands
             if (_historyManager != null)
                _historyManager.CommandAdded += HistoryItemAdded;
          }
+      }
+
+      public void Handle(HistoryClearedEvent eventToHandle)
+      {
+         UpdateHistory();
       }
    }
 }
