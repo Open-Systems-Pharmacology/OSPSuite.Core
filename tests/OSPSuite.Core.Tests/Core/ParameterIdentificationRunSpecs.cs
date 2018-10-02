@@ -403,8 +403,8 @@ namespace OSPSuite.Core
             .Invokes(x =>
             {
                _cancellationTokenSource.Cancel();
-               _cancellationToken.ThrowIfCancellationRequested();
-            });
+            })
+            .Throws(x=> new OperationCanceledException());
       }
 
       protected override void Because()
@@ -428,7 +428,7 @@ namespace OSPSuite.Core
          base.Context();
 
          A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._, A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
-            .Invokes(x => { throw new ArithmeticException("Math Error"); });
+            .Throws(x => new ArithmeticException("Math Error"));
       }
 
       protected override void Because()
