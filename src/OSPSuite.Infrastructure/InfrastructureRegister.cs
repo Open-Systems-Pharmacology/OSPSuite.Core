@@ -35,6 +35,8 @@ namespace OSPSuite.Infrastructure
          container.Register<ISessionManager, SessionManager>(LifeStyle.Singleton);
          container.Register<ICommandMetaDataRepository, CommandMetaDataRepository>(LifeStyle.Singleton);
 
+         container.Register<SQLiteProjectCommandExecuter, SQLiteProjectCommandExecuter>();
+
          //Register working journal query and commands
          container.AddScanner(scan =>
          {

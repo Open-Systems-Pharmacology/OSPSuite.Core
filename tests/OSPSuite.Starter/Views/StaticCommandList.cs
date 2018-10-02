@@ -4,6 +4,7 @@ using OSPSuite.Utility.Container;
 using DevExpress.XtraEditors;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation.Presenters.Commands;
 using OSPSuite.Starter.Tasks;
@@ -24,8 +25,9 @@ namespace OSPSuite.Starter.Views
          _reportTask = new ReportTask();
          IoC.Container.Register<IHistoryManager, HistoryManager<MyContext>>();
          IoC.Container.Register<MyContext, MyContext>();
-
+         
          var historyBrowserConfiguation = IoC.Resolve<IHistoryBrowserConfiguration>();
+         var historyManagerRetriever = IoC.Resolve<IHistoryManagerRetriever>();
          historyBrowserConfiguation.AddDynamicColumn("p1", "A wonderful p1");
          historyBrowserConfiguation.AddDynamicColumn("p2", "A great p2");
 
@@ -36,7 +38,7 @@ namespace OSPSuite.Starter.Views
          HistoryColumns.Description.Position = 4;
          HistoryColumns.State.Position = 5;
 
-         _historyManager = IoC.Resolve<IHistoryManager>();
+         _historyManager = historyManagerRetriever.Current;
 
          _historyBrowserPresenter = IoC.Resolve<IHistoryBrowserPresenter>();
          _historyBrowserPresenter.Initialize();

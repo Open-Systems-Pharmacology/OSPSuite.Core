@@ -164,7 +164,9 @@
     <Compile Include="Services\DataRepositoryTask.cs" />
     <Compile Include="Services\ExportDataTableToExcelTask.cs" />
     <Compile Include="Services\ExportToExcelTask.cs" />
+    <Compile Include="Services\HistoryTask.cs" />
     <Compile Include="Services\ISessionFactoryProvider.cs" />
+    <Compile Include="Services\SQLiteProjectCommandExecuter.cs" />
     <Compile Include="Services\ReportTask.cs" />
     <Compile Include="Services\ReportTemplateRepository.cs" />
     <Compile Include="Services\SessionManager.cs" />

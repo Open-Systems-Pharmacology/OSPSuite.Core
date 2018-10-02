@@ -157,6 +157,7 @@
     <Compile Include="Domain\ParameterIdentifications\CategorialParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\MultipleParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\StandardParameterIdentificationRunMode.cs" />
+    <Compile Include="Domain\Services\IHistoryManagerRetriever.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
     <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />
     <Compile Include="Domain\ValueOriginSource.cs" />
@@ -229,6 +230,7 @@
     <Compile Include="Services\CurveNamer.cs" />
     <Compile Include="Services\DataRepositoryNamer.cs" />
     <Compile Include="Services\ICanCopyToClipboard.cs" />
+    <Compile Include="Services\IHistoryTask.cs" />
     <Compile Include="Services\IDialogCreator.cs" />
     <Compile Include="Services\IReportingTask.cs" />
     <Compile Include="Services\IReportTask.cs" />

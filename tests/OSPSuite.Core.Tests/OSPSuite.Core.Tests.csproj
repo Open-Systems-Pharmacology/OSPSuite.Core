@@ -568,6 +568,7 @@
     <Compile Include="Infrastructure\DeleteRelatedItemFromJournalPageCommandSpecs.cs" />
     <Compile Include="Infrastructure\HistoryItemMetaDataRepositorySpecs.cs" />
     <Compile Include="Infrastructure\HistoryManagerPersistorSpecs.cs" />
+    <Compile Include="Infrastructure\HistoryTaskSpecs.cs" />
     <Compile Include="Infrastructure\JournalPageIdsFromSearchQuerySpecs.cs" />
     <Compile Include="Infrastructure\NextAvailableWorkingJournalIndexQuerySpecs.cs" />
     <Compile Include="Infrastructure\ObservedDataMetaDataSpecs.cs" />
@@ -596,6 +597,7 @@
     <Compile Include="Presentation\ChartTemplateManagerPresenterSpecs.cs" />
     <Compile Include="Presentation\ClassificationPresenterSpecs.cs" />
     <Compile Include="Presentation\ClassificationTypeToRootNodeTypeMapperSpecs.cs" />
+    <Compile Include="Presentation\ClearHistoryUICommandSpecs.cs" />
     <Compile Include="Presentation\CloneParameterIdentificationPresenterSpecs.cs" />
     <Compile Include="Presentation\CloneParameterIdentificationUICommandSpecs.cs" />
     <Compile Include="Presentation\CloseAllButMdiViewCommandSpecs.cs" />

@@ -7,7 +7,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public static class CommonMenuBarButtons
    {
-
       public static IMenuBarButton SaveFavoritesToFile(MenuBarItemId menuBarItemId)
       {
          return CreateMenuButton.WithCaption(MenuNames.SaveFavoriteToFile)
@@ -26,7 +25,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.FavoritesLoad);
       }
 
- 
       public static IMenuBarButton ManageProjectDisplayUnits(MenuBarItemId menuBarItemId)
       {
          return CreateMenuButton.WithCaption(MenuNames.ManageProjectDisplayUnits)
@@ -61,6 +59,15 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithDescription(Captions.Journal.JournalDiagramDescription)
             .WithCommand<JournalDiagramVisibilityUICommand>()
             .WithIcon(ApplicationIcons.JournalDiagram);
+      }
+
+      public static IMenuBarItem ClearHistory(MenuBarItemId menuBarItemId)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.ClearHistory)
+            .WithId(menuBarItemId)
+            .WithDescription(ToolTips.ClearHistory)
+            .WithCommand<ClearHistoryUICommand>()
+            .WithIcon(ApplicationIcons.ClearHistory);
       }
    }
 }

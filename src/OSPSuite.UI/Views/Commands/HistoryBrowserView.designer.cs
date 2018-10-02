@@ -47,6 +47,7 @@ namespace OSPSuite.UI.Views.Commands
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
+         this.btnClearHistory = new DevExpress.XtraBars.BarButtonItem();
          ((System.ComponentModel.ISupportInitialize)(this.historyLayoutControl)).BeginInit();
          this.historyLayoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.historyTreeList)).BeginInit();
@@ -111,8 +112,9 @@ namespace OSPSuite.UI.Views.Commands
             this.btnAddLabel,
             this.btnEditComment,
             this.tbRollBackState,
-            this.lblRollBack});
-         this._barManager.MaxItemId = 6;
+            this.lblRollBack,
+            this.btnClearHistory});
+         this._barManager.MaxItemId = 7;
          this._barManager.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.tbRollBackStateEditor});
          // 
@@ -127,7 +129,8 @@ namespace OSPSuite.UI.Views.Commands
             new DevExpress.XtraBars.LinkPersistInfo(this.btnAddLabel),
             new DevExpress.XtraBars.LinkPersistInfo(this.btnEditComment),
             new DevExpress.XtraBars.LinkPersistInfo(this.lblRollBack),
-            new DevExpress.XtraBars.LinkPersistInfo(this.tbRollBackState)});
+            new DevExpress.XtraBars.LinkPersistInfo(this.tbRollBackState),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnClearHistory)});
          this.menuBar.OptionsBar.AllowQuickCustomization = false;
          this.menuBar.OptionsBar.DisableClose = true;
          this.menuBar.OptionsBar.DisableCustomization = true;
@@ -158,16 +161,15 @@ namespace OSPSuite.UI.Views.Commands
          this.lblRollBack.Caption = "btnRollBackLabel";
          this.lblRollBack.Id = 4;
          this.lblRollBack.Name = "lblRollBack";
-         this.lblRollBack.TextAlignment = System.Drawing.StringAlignment.Near;
          // 
          // tbRollBackState
          // 
          this.tbRollBackState.Alignment = DevExpress.XtraBars.BarItemLinkAlignment.Right;
          this.tbRollBackState.Caption = "btnRollBack";
          this.tbRollBackState.Edit = this.tbRollBackStateEditor;
+         this.tbRollBackState.EditWidth = 92;
          this.tbRollBackState.Id = 3;
          this.tbRollBackState.Name = "tbRollBackState";
-         this.tbRollBackState.Width = 92;
          // 
          // tbRollBackStateEditor
          // 
@@ -181,6 +183,7 @@ namespace OSPSuite.UI.Views.Commands
          this.barDockControlTop.CausesValidation = false;
          this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
          this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
+         this.barDockControlTop.Manager = this._barManager;
          this.barDockControlTop.Size = new System.Drawing.Size(792, 29);
          // 
          // barDockControlBottom
@@ -188,6 +191,7 @@ namespace OSPSuite.UI.Views.Commands
          this.barDockControlBottom.CausesValidation = false;
          this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
          this.barDockControlBottom.Location = new System.Drawing.Point(0, 581);
+         this.barDockControlBottom.Manager = this._barManager;
          this.barDockControlBottom.Size = new System.Drawing.Size(792, 0);
          // 
          // barDockControlLeft
@@ -195,6 +199,7 @@ namespace OSPSuite.UI.Views.Commands
          this.barDockControlLeft.CausesValidation = false;
          this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
          this.barDockControlLeft.Location = new System.Drawing.Point(0, 29);
+         this.barDockControlLeft.Manager = this._barManager;
          this.barDockControlLeft.Size = new System.Drawing.Size(0, 552);
          // 
          // barDockControlRight
@@ -202,7 +207,14 @@ namespace OSPSuite.UI.Views.Commands
          this.barDockControlRight.CausesValidation = false;
          this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
          this.barDockControlRight.Location = new System.Drawing.Point(792, 29);
+         this.barDockControlRight.Manager = this._barManager;
          this.barDockControlRight.Size = new System.Drawing.Size(0, 552);
+         // 
+         // btnClearHistory
+         // 
+         this.btnClearHistory.Caption = "btnClearHistory";
+         this.btnClearHistory.Id = 6;
+         this.btnClearHistory.Name = "btnClearHistory";
          // 
          // HistoryBrowserView
          // 
@@ -229,7 +241,7 @@ namespace OSPSuite.UI.Views.Commands
 
         #endregion
 
-        private DevExpress.XtraLayout.LayoutControl historyLayoutControl;
+        private OSPSuite.UI.Controls.UxLayoutControl historyLayoutControl;
         private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
         private DevExpress.XtraTreeList.TreeList historyTreeList;
         private LayoutControlItem layoutControlItem5;
@@ -245,5 +257,6 @@ namespace OSPSuite.UI.Views.Commands
         private DevExpress.XtraBars.BarDockControl barDockControlBottom;
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
-    }
+        private DevExpress.XtraBars.BarButtonItem btnClearHistory;
+   }
 }
