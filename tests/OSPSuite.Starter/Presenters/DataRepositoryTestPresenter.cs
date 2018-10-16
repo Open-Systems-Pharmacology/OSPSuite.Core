@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ObservedData;
+using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 
@@ -14,7 +16,7 @@ namespace OSPSuite.Starter.Presenters
       void Edit(DataRepository repository);
    }
 
-   public class DataRepositoryTestPresenter : AbstractPresenter<IDataRepositoryTestView, IDataRepositoryTestPresenter>, IDataRepositoryTestPresenter
+   public class DataRepositoryTestPresenter : AbstractCommandCollectorPresenter<IDataRepositoryTestView, IDataRepositoryTestPresenter>, IDataRepositoryTestPresenter
    {
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private readonly IDataRepositoryChartPresenter _chartPresenter;
@@ -28,13 +30,14 @@ namespace OSPSuite.Starter.Presenters
 
          _subPresenterManager.Add(_dataPresenter);
          _subPresenterManager.Add(_chartPresenter);
+         _subPresenterManager.Add(_metaDataPresenter);
 
          _view.AddChartView(_chartPresenter.BaseView);
          _view.AddDataView(_dataPresenter.BaseView);
          _view.AddMetaDataView(_metaDataPresenter.BaseView);
 
+         InitializeWith(new OSPSuiteMacroCommand<OSPSuiteExecutionContext>());
          Edit(importObservedDataTask.ImportObservedData());
-
       }
 
       public void Edit(DataRepository repository)

@@ -1,15 +1,16 @@
 ﻿using System.Data;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Services;
 using OSPSuite.UI.Views.ObservedData;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
@@ -49,7 +50,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          emptySpaceItem.Visibility = LayoutVisibility.Never;
 
          gridView.OptionsSelection.EnableAppearanceFocusedCell = false;
-         gridView.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.RowFocus;
+         gridView.FocusRectStyle = DrawFocusRectStyle.RowFocus;
       }
 
       public override void BindTo(DataTable dataTable)
