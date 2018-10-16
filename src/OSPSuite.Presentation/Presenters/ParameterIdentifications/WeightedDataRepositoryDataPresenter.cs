@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ObservedData;
@@ -17,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       bool ColumnIsInDataRepository(System.Data.DataColumn column);
       void DisableRepositoryColumns();
       void SelectRow(int rowIndex);
-      IEnumerable<string> GetValidationMessagesForWeight(float weightValue);
+      IEnumerable<string> GetValidationMessagesForWeight(string weightValue);
    }
 
    public class WeightedDataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IWeightedDataRepositoryDataView, IWeightedDataRepositoryDataPresenter>, IWeightedDataRepositoryDataPresenter
@@ -50,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var columnId = GetColumnIdFromColumnIndex(_datatable.Columns.IndexOf(column));
 
-         return _weightedObservedData.ObservedData.Columns.Any(col => string.Equals(col.Id, columnId));
+         return _weightedObservedData.ObservedData.Columns.ExistsById(columnId);
       }
 
       public void DisableRepositoryColumns()
@@ -63,19 +64,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          }
       }
 
-      public void SelectRow(int rowIndex)
+      public void SelectRow(int rowIndex) => _view.SelectRow(rowIndex);
+
+      public IEnumerable<string> GetValidationMessagesForWeight(string weightValue)
       {
-         _view.SelectRow(rowIndex);
+         if (!float.TryParse(weightValue, out var proposedValue))
+            return new[] { Error.ValueIsRequired };
+
+         return isValidWeight(proposedValue) ? Enumerable.Empty<string>() : new[] { Error.WeightValueCannotBeNegative };
       }
 
-      public IEnumerable<string> GetValidationMessagesForWeight(float weightValue)
-      {
-         return isValidWeight(weightValue) ? Enumerable.Empty<string>() : new[] { Error.WeightValueCannotBeNegative };
-      }
-
-      private bool isValidWeight(float value)
-      {
-         return value >= 0;
-      }
+      private bool isValidWeight(float value) => value >= 0;
    }
 }

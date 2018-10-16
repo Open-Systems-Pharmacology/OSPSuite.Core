@@ -1101,6 +1101,7 @@ namespace OSPSuite.Assets
    public static class Error
    {
       public static readonly string NameIsRequired = "Name is required.";
+      public static readonly string ValueIsRequired = "Value is required.";
       public static readonly string DescriptionIsRequired = "Description is required";
       public static readonly string RenameSameNameError = "The new name is the same as the original one.";
       public static readonly string CanOnlyCompareTwoObjectsAtATime = "Object comparison is only available for two objects at the same time.";

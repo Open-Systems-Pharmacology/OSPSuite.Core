@@ -60,7 +60,7 @@ namespace OSPSuite.UI.Views.ObservedData
          var observedDataRowIndex = gridView.GetDataSourceRowIndex(rowHandle);
          if (_presenter.AnyObservationInThisRowIsBelowLLOQ(observedDataRowIndex))
          {
-            e.Info = new ToolTipControlInfo(rowHandle, "")
+            e.Info = new ToolTipControlInfo(rowHandle, string.Empty)
             {
                SuperTip = _tooltipCreator.CreateToolTip(_presenter.ToolTipTextForRow(observedDataRowIndex), Captions.LLOQ),
                ToolTipType = ToolTipType.SuperTip
@@ -87,10 +87,7 @@ namespace OSPSuite.UI.Views.ObservedData
          e.DisplayText = _presenter.NumericDisplayTextFor(e.DisplayText);
       }
 
-      public override ApplicationIcon ApplicationIcon
-      {
-         get { return ApplicationIcons.Parameters; }
-      }
+      public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;
 
       public override void InitializeResources()
       {

@@ -146,7 +146,7 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_getting_validation_messages_for_basegrid_values : concern_for_DataRepositoryDataPresenter
+   public class When_getting_validation_messages_for_invalid_value : concern_for_DataRepositoryDataPresenter
    {
       private List<string> _result;
 
@@ -157,9 +157,9 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_pass_validation()
+      public void should_not_pass_validation()
       {
-         _result.Count.ShouldBeEqualTo(0);
+         _result.Count.ShouldBeEqualTo(1);
       }
    }
 

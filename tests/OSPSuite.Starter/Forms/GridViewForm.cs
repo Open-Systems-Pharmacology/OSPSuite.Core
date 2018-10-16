@@ -56,8 +56,7 @@ namespace OSPSuite.Starter.Forms
 
          gridViewBoundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
 
-         var boundColumn = _gridViewBinder.Bind(x => x.Value)
-            .AsReadOnly();
+         var boundColumn = _gridViewBinder.Bind(x => x.Value);
 
 
          boundColumn.XtraColumn.OptionsColumn.AllowFocus = true;
