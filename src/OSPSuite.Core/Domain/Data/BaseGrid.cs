@@ -32,14 +32,19 @@ namespace OSPSuite.Core.Domain.Data
 
       public override IReadOnlyList<float> Values
       {
-         get { return _values; }
+         get => _values;
          set
          {
             //check strong monotony of values first (values are sorted and unique)
             for (int i = 1; i < value.Count; i++)
             {
                if (value[i] <= value[i - 1])
-                  throw new InvalidArgumentException(Error.TimeNotStrictlyMonotone);
+               {
+
+                  var beforeValue =this.ConvertToDisplayUnit(value[i - 1]);
+                  var afterValue = this.ConvertToDisplayUnit(value[i]);
+                  throw new InvalidArgumentException(Error.TimeNotStrictlyMonotone(beforeValue, afterValue, DisplayUnit.Name));
+               }
             }
 
             _values.Clear();
@@ -49,17 +54,14 @@ namespace OSPSuite.Core.Domain.Data
 
       public override List<float> InternalValues
       {
-         get { return _values; }
-         internal set { _values = value; }
+         get => _values;
+         internal set => _values = value;
       }
 
-      public override bool HasSingleValue
-      {
-         get { return false; }
-      }
+      public override bool HasSingleValue => false;
 
       /// <summary>
-      /// Insert the given values and returns the index where the value should be inserted
+      ///    Insert the given values and returns the index where the value should be inserted
       /// </summary>
       public virtual void Insert(float value)
       {
@@ -77,9 +79,10 @@ namespace OSPSuite.Core.Domain.Data
             _values.Insert(index, value);
             replaced = false;
          }
-         return index;
 
+         return index;
       }
+
       public virtual void InsertInterval(float start, float end, int numberOfTimePoints)
       {
          if (end <= start) throw new InvalidArgumentException("end <= start");
@@ -90,6 +93,7 @@ namespace OSPSuite.Core.Domain.Data
          {
             Insert(start + i * timeInterval);
          }
+
          Insert(end);
       }
 
@@ -103,10 +107,7 @@ namespace OSPSuite.Core.Domain.Data
          _values.Clear();
       }
 
-      public virtual int Count
-      {
-         get { return _values.Count; }
-      }
+      public virtual int Count => _values.Count;
 
       public virtual int IndexOf(float value)
       {

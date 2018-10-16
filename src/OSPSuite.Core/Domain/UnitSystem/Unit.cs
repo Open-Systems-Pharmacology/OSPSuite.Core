@@ -16,16 +16,16 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <summary>
       ///    Offset that will be added to a value in this unit to be converted in the base unit of a dimenion (default is 0)
       /// </summary>
-      public virtual double Offset { get; private set; }
+      public virtual double Offset { get; }
 
       /// <summary>
       ///    Name of unit. Should be unique in the dimension containing this unit
       /// </summary>
-      public virtual string Name { get; private set; }
+      public virtual string Name { get; }
 
       /// <summary>
-      /// Gets or sets if a unit should be displayed or not (some kernel unit are typcally hidden)
-      /// Default is false
+      ///    Gets or sets if a unit should be displayed or not (some kernel unit are typcally hidden)
+      ///    Default is false
       /// </summary>
       public virtual bool Visible { get; set; }
 

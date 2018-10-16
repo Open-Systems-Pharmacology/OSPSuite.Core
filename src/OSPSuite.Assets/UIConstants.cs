@@ -1221,8 +1221,13 @@ namespace OSPSuite.Assets
       public static readonly string InvalidPKValueType = "PK value {0} has invalid type (e.g. complex)";
       public static readonly string TableFormulaWithOffsetUsesNonTableFormulaObject = "Object used in table formula with offset must be based an a table formula";
       public static readonly string ScaleFactorShouldBeGreaterThanZero = "Scale factor should be greater than 0";
-      public static readonly string InvalidChecksum = "File might have been tampered with. Checksum is not valid";
-      public static readonly string TimeNotStrictlyMonotone = "The time column is not strictly monotonically increasing. Ensure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+
+      public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
+      {
+         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+
+         return $"The time column is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+      }
 
       public static string UnableToFindEntityWithAlias(string alias) => $"Unable to find entity with alias '{alias}'";
 
