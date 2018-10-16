@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       bool ColumnIsInDataRepository(System.Data.DataColumn column);
       void DisableRepositoryColumns();
       void SelectRow(int rowIndex);
-      IEnumerable<string> GetValidationMessagesForWeight(float weightValue);
+      IEnumerable<string> GetValidationMessagesForWeight(string weightValue);
    }
 
    public class WeightedDataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IWeightedDataRepositoryDataView, IWeightedDataRepositoryDataPresenter>, IWeightedDataRepositoryDataPresenter
@@ -66,9 +66,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void SelectRow(int rowIndex) => _view.SelectRow(rowIndex);
 
-      public IEnumerable<string> GetValidationMessagesForWeight(float weightValue)
+      public IEnumerable<string> GetValidationMessagesForWeight(string weightValue)
       {
-         return isValidWeight(weightValue) ? Enumerable.Empty<string>() : new[] { Error.WeightValueCannotBeNegative };
+         if (!float.TryParse(weightValue, out var proposedValue))
+            return new[] { Error.ValueIsRequired };
+
+         return isValidWeight(proposedValue) ? Enumerable.Empty<string>() : new[] { Error.WeightValueCannotBeNegative };
       }
 
       private bool isValidWeight(float value) => value >= 0;

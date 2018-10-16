@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private void validateEditor(BaseContainerValidateEditorEventArgs e)
       {
-         var validationMessages = _presenter.GetValidationMessagesForWeight(e.Value.ConvertedTo<float>()).ToList();
+         var validationMessages = _presenter.GetValidationMessagesForWeight(e.Value.ToString()).ToList();
 
          if (!validationMessages.Any()) return;
 
