@@ -63,14 +63,11 @@ namespace OSPSuite.Core.Domain.Data
 
       public DataRepository Repository
       {
-         set { _repository = value == null ? null : new WeakRef<DataRepository>(value); }
-         get { return _repository?.Target; }
+         set => _repository = value == null ? null : new WeakRef<DataRepository>(value);
+         get => _repository?.Target;
       }
 
-      public virtual bool IsInRepository()
-      {
-         return (_repository != null && _repository.Target != null);
-      }
+      public virtual bool IsInRepository() => _repository?.Target != null;
 
       public virtual float this[int index]
       {
@@ -122,7 +119,7 @@ namespace OSPSuite.Core.Domain.Data
          set
          {
             if (value != null && BaseGrid != null && value.Count != BaseGrid.Count && value.Count != 1)
-               throw new ArgumentException("Values.Length = " + value.Count + " != " + BaseGrid.Count + " = BaseGrid.Count");
+               throw new ArgumentException($"Values.Length = {value.Count} != {BaseGrid.Count} = BaseGrid.Count");
 
             _values = value?.ToList();
             _cachedValues = null;
@@ -134,8 +131,8 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public virtual List<float> InternalValues
       {
-         get { return _values; }
-         internal set { _values = value; }
+         get => _values;
+         internal set => _values = value;
       }
 
       public string PathAsString => QuantityInfo.PathAsString;
@@ -143,7 +140,7 @@ namespace OSPSuite.Core.Domain.Data
       public virtual void AddRelatedColumn(DataColumn relatedColumn)
       {
          if (!relatedColumn.BaseGrid.Equals(BaseGrid))
-            throw new InvalidArgumentException("Different BaseGrid " + relatedColumn.BaseGrid.Name + " instead of " + BaseGrid.Name);
+            throw new InvalidArgumentException($"Different BaseGrid {relatedColumn.BaseGrid.Name} instead of {BaseGrid.Name}");
 
          switch (relatedColumn.DataInfo.AuxiliaryType)
          {
@@ -167,13 +164,13 @@ namespace OSPSuite.Core.Domain.Data
       private static void validateDimensionIsDimensionsLess(AuxiliaryType auxiliaryType, IDimension dimension)
       {
          if (!dimension.IsEquivalentTo(Constants.Dimension.NO_DIMENSION))
-            throw new InvalidArgumentException("Wrong Dimension for " + auxiliaryType + ": " + dimension.Name + " instead of Dimensionless");
+            throw new InvalidArgumentException($"Wrong Dimension for {auxiliaryType}: {dimension.Name} instead of Dimensionless");
       }
 
       private static void validateDimensionIs(AuxiliaryType auxiliaryType, IDimension dimension, IDimension targetDimension)
       {
          if (!dimension.Equals(targetDimension))
-            throw new InvalidArgumentException("Wrong Dimension for " + auxiliaryType + ": " + dimension.Name + " instead of " + targetDimension.Name);
+            throw new InvalidArgumentException($"Wrong Dimension for {auxiliaryType}: {dimension.Name} instead of {targetDimension.Name}");
       }
 
       public virtual void RemoveRelatedColumn(AuxiliaryType auxiliaryType)
@@ -233,8 +230,8 @@ namespace OSPSuite.Core.Domain.Data
 
       public Unit DisplayUnit
       {
-         get { return Dimension.UnitOrDefault(DataInfo.DisplayUnitName); }
-         set { DataInfo.DisplayUnitName = value == null ? Dimension.DefaultUnit.Name : value.Name; }
+         get => Dimension.UnitOrDefault(DataInfo.DisplayUnitName);
+         set => DataInfo.DisplayUnitName = value == null ? Dimension.DefaultUnit.Name : value.Name;
       }
 
       internal void RemoveValueAt(int index)
