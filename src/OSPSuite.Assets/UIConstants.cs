@@ -1209,7 +1209,7 @@ namespace OSPSuite.Assets
       }
 
       public static string EntityIsInvalid(string entityType, string name)
-      {
+      {  
          return $"{entityType} '{name}' is invalid";
       }
 
@@ -1654,7 +1654,7 @@ namespace OSPSuite.Assets
       public static readonly string RunSensitivityAnalysis = "Run";
       public static readonly string StopSensitivityanalysis = "Stop";
       public static readonly string StartSensitivityanalysis = "Start Sensitivity Analysis...";
-      public static readonly string ClearHistory = "Clear";
+      public static readonly string ClearHistory = "Clear History";
 
       public static string CompareObjects(string objectType)
       {

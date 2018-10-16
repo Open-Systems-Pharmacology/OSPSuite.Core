@@ -8,16 +8,16 @@ namespace OSPSuite.UI.RepositoryItems
    /// </summary>
    public class UxRepositoryItemButtonImage : UxRepositoryItemButtonEdit
    {
-      public UxRepositoryItemButtonImage(ApplicationIcon applicationIcon, string toolTip = null)
-         : base(ButtonPredefines.Glyph)
+      public UxRepositoryItemButtonImage(ApplicationIcon applicationIcon, string toolTip = null, object tag = null)
+         : base(ButtonPredefines.Glyph,toolTip, tag)
       {
          TextEditStyle = TextEditStyles.HideTextEditor;
          UpdateButton(Buttons[0], applicationIcon, toolTip);
       }
 
-      public EditorButton AddButton(ApplicationIcon applicationIcon, string toolTip = null)
+      public EditorButton AddButton(ApplicationIcon applicationIcon, string toolTip = null, object tag = null)
       {
-         var newButton = AddButton(ButtonPredefines.Glyph);
+         var newButton = AddButton(ButtonPredefines.Glyph, toolTip, tag);
          return UpdateButton(newButton, applicationIcon, toolTip);
       }
 
