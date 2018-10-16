@@ -7,7 +7,8 @@ namespace OSPSuite.UI.Controls
    public enum ButtonType {
       Add,
       Remove,
-      Update
+      Update,
+      Other
    }
 
    public class UxAddButtonRepository : UxRepositoryItemButtonEdit
