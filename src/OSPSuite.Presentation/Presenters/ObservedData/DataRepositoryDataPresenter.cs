@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Format;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -16,7 +12,10 @@ using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.ObservedData;
-using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
+using DataColumn = System.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.ObservedData
 {
@@ -43,12 +42,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          _dataRepositoryTask = dataRepositoryTask;
          _editObservedDataTask = editObservedDataTask;
-         _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
       }
 
       protected override DataTable MapDataTableFromColumns()
       {
-         return _dataRepositoryTask.ToDataTable(_observedData, formatOutput: false).First();
+         return _dataRepositoryTask.ToDataTable(_observedData, forceColumnTypeAsObject: true).First();
       }
 
       public void ValueIsSet(CellValueChangedDTO cellValueChangedDTO)
@@ -68,7 +66,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void AddRow()
       {
          var identificationsUsingObservedData = _editObservedDataTask.ParamterIdentificationsUsingDataRepository(_observedData);
-         if(identificationsUsingObservedData.Any())
+         if (identificationsUsingObservedData.Any())
             throw new OSPSuiteException(Captions.ParameterIdentification.CannotAddObservedDataPointBeingUsedByParameterIdentification(_observedData.Name, identificationsUsingObservedData));
 
          _datatable.Rows.Add(_datatable.NewRow());
@@ -84,7 +82,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      /// This method validates the proposed new value in the context of the other values in the table. 
+      ///    This method validates the proposed new value in the context of the other values in the table.
       /// </summary>
       /// <param name="rowIndex">The row of the proposed change</param>
       /// <param name="columnIndex">The column of the proposed change</param>
@@ -97,7 +95,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
          var editedColumnId = GetColumnIdFromColumnIndex(columnIndex);
 
-         if (string.Equals(editedColumnId,_observedData.BaseGrid.Id))
+         if (string.Equals(editedColumnId, _observedData.BaseGrid.Id))
             return validateBaseGridValueChange(proposedValue, rowIndex);
 
          return Enumerable.Empty<string>();
@@ -150,24 +148,24 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return rowData;
       }
 
-      private System.Data.DataColumn baseGridColumn()
+      private DataColumn baseGridColumn()
       {
          var baseGridId = _observedData.BaseGrid.Id;
-         return _datatable.Columns.Cast<System.Data.DataColumn>().First(x => getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
+         return _datatable.Columns.Cast<DataColumn>().First(x => getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
       }
 
-      private IEnumerable<System.Data.DataColumn> allButBaseGrid()
+      private IEnumerable<DataColumn> allButBaseGrid()
       {
          var baseGridId = _observedData.BaseGrid.Id;
-         return _datatable.Columns.Cast<System.Data.DataColumn>().Where(x => !getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
+         return _datatable.Columns.Cast<DataColumn>().Where(x => !getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
       }
 
-      private string getRepositoryColumnIdFromDataColumn(System.Data.DataColumn column)
+      private string getRepositoryColumnIdFromDataColumn(DataColumn column)
       {
          return GetColumnIdFromColumnIndex(_datatable.Columns.IndexOf(column));
       }
 
-      private float convertCellToFloat(int rowIndex, System.Data.DataColumn column)
+      private float convertCellToFloat(int rowIndex, DataColumn column)
       {
          if (_datatable.Rows[rowIndex][column] is DBNull)
             return float.NaN;
@@ -188,7 +186,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          };
       }
 
-      private static float valueInBaseUnit(float valueInDisplayUnit, DataColumn column)
+      private static float valueInBaseUnit(float valueInDisplayUnit, OSPSuite.Core.Domain.Data.DataColumn column)
       {
          return Convert.ToSingle(column.ConvertToBaseUnit(valueInDisplayUnit));
       }
@@ -211,7 +209,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return col?.DisplayUnit;
       }
 
-      private DataColumn columnFromColumnIndex(int columnIndex)
+      private OSPSuite.Core.Domain.Data.DataColumn columnFromColumnIndex(int columnIndex)
       {
          var id = GetColumnIdFromColumnIndex(columnIndex);
          return _observedData.Contains(id) ? _observedData[id] : null;

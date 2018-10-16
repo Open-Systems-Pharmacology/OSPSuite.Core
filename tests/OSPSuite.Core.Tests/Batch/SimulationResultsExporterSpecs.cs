@@ -73,7 +73,7 @@ namespace OSPSuite.Batch
       [Observation]
       public void should_export_the_value_unformatted_and_in_core_unit()
       {
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<Func<DataColumn, string>>._, A<Func<DataColumn, IDimension>>._, false, false)).MustHaveHappened();
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<Func<DataColumn, string>>._, A<Func<DataColumn, IDimension>>._, false, false,false)).MustHaveHappened();
       }
    }
 

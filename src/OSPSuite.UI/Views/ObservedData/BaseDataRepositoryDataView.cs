@@ -3,12 +3,15 @@ using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.Extensions;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.ObservedData
 {
@@ -29,6 +32,17 @@ namespace OSPSuite.UI.Views.ObservedData
       {
          gridControl.DataSource = dataTable;
          gridView.PopulateColumns();
+         updateColumnFormatting();
+      }
+
+      private void updateColumnFormatting()
+      {
+         gridView.Columns.Each(col =>
+         {
+            col.DisplayFormat.AddDefaultFormattingFor<float>();
+            col.RealColumnEdit.ConfigureWith(typeof(float));
+            col.AppearanceCell.TextOptions.HAlignment = HorzAlignment.Far;
+         });
       }
 
       public void AttachPresenter(TPresenter presenter)
@@ -38,7 +52,6 @@ namespace OSPSuite.UI.Views.ObservedData
 
       public override void InitializeBinding()
       {
-         gridView.CustomColumnDisplayText += (o, e) => OnEvent(onCustomColumnDisplayText, e);
          gridView.RowStyle += (sender, args) => OnEvent(() => highlightRowsBelowLLOQ(args));
          gridControl.ToolTipController = new ToolTipController();
          gridControl.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(() => createToolTip(e));
@@ -80,11 +93,6 @@ namespace OSPSuite.UI.Views.ObservedData
 
          var color = _presenter.BackgroundColorForRow(sourceRow);
          gridView.AdjustAppearance(e, color);
-      }
-
-      private void onCustomColumnDisplayText(CustomColumnDisplayTextEventArgs e)
-      {
-         e.DisplayText = _presenter.NumericDisplayTextFor(e.DisplayText);
       }
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;

@@ -15,24 +15,41 @@ namespace OSPSuite.Core.Domain.Services
       ///    Returns one datable for each base grid and associated columns representing the content of the repository (one column
       ///    for each DataColumn)
       ///    The column headers will be set to the column name();
-      ///    If the flag <paramref name="formatOutput" /> is set to <c>true</c> (default is <c>false</c>), the value will be formatted using the number of decimal
+      ///    If the flag <paramref name="formatOutput" /> is set to <c>true</c> (default is <c>false</c>), the value will be
+      ///    formatted using the number of decimal
       ///    places defined in the application
-      ///    If the flag <paramref name="useDisplayUnit" /> is set to <c>true</c> (default is <c>true</c>), the value will be exported in the display unit of the 
+      ///    If the flag <paramref name="useDisplayUnit" /> is set to <c>true</c> (default is <c>true</c>), the value will be
+      ///    exported in the display unit of the
       ///    corresponding DataColumn
+      ///    If the flag <paramref name="forceColumnTypeAsObject" /> is set to <c>true</c> (default is <c>false</c>), the
+      ///    exported columns will have the type set to object instead of float.
+      ///    This is required when using the resulting DataTable for direct binding in the UI
       /// </summary>
-      IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true);
+      IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true, bool forceColumnTypeAsObject = false);
 
       /// <summary>
       ///    Returns one datable for each base grid and associated columns representing the content of the repository (one column
       ///    for each DataColumn)
       ///    The column header will be defined using the <paramref name="columnNameRetriever" /> given as parameter.
-      ///    The dimension used for the export will be defined using the <paramref name="dimensionRetriever" /> given as parameter.
-      ///    If the flag <paramref name="formatOutput" /> is set to <c>true</c> (default is <c>false</c>), the value will be formatted using the number of decimal
+      ///    The dimension used for the export will be defined using the <paramref name="dimensionRetriever" /> given as
+      ///    parameter.
+      ///    If the flag <paramref name="formatOutput" /> is set to <c>true</c> (default is <c>false</c>), the value will be
+      ///    formatted using the number of decimal
       ///    places defined in the application
-      ///    If the flag <paramref name="useDisplayUnit" /> is set to <c>true</c> (default is <c>true</c>), the value will be exported in the display unit of the 
+      ///    If the flag <paramref name="useDisplayUnit" /> is set to <c>true</c> (default is <c>true</c>), the value will be
+      ///    exported in the display unit of the
       ///    corresponding DataColumn
+      ///    If the flag <paramref name="forceColumnTypeToObject" /> is set to <c>true</c> (default is <c>false</c>), the
+      ///    exported columns will have the type set to object instead of float.
+      ///    This is required when using the resulting DataTable for direct binding in the UI
       /// </summary>
-      IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool formatOutput = false, bool useDisplayUnit = true);
+      IEnumerable<DataTable> ToDataTable(
+         IEnumerable<DataColumn> dataColumns, 
+         Func<DataColumn, string> columnNameRetriever, 
+         Func<DataColumn, IDimension> dimensionRetriever, 
+         bool formatOutput = false, 
+         bool useDisplayUnit = true,
+         bool forceColumnTypeToObject = false);
 
       /// <summary>
       ///    Export the given data repository to excel using the ToDataTable function
@@ -42,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Export the given data repository to excel using the ToDataTable function
       /// </summary>
-      void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever,  Func<DataColumn, IDimension> dimensionRetriever,  bool launchExcel = true);
+      void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool launchExcel = true);
 
       /// <summary>
       ///    Export the given data tables to excel

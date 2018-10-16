@@ -73,7 +73,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartShellTest() => _shellPresenter.Start();
 
-      public void StartDataRepositoryTest() => start<IDataRepositoryTestPresenter>();
+      public void StartDataRepositoryTest() => startLarge<IDataRepositoryTestPresenter>();
 
       public void StartPivotGridTest() => start<IPivotGridTestPresenter>();
 
