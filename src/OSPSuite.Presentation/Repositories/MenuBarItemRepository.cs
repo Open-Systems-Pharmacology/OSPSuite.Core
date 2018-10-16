@@ -40,10 +40,7 @@ namespace OSPSuite.Presentation.Repositories
          return _menuBarItemList[menuBarItemId.Name] ?? CreateMenuButton.WithCaption("Empty Menu Bar Item");
       }
 
-      public IMenuBarItem this[MenuBarItemId menuBarItemId]
-      {
-         get { return Find(menuBarItemId); }
-      }
+      public IMenuBarItem this[MenuBarItemId menuBarItemId] => Find(menuBarItemId);
 
       public IMenuBarItem DynamicFileMenuFor(string path)
       {

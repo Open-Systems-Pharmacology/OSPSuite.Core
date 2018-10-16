@@ -17,7 +17,7 @@ namespace OSPSuite.UI.RepositoryItems
 
       public EditorButton AddButton(ApplicationIcon applicationIcon, string toolTip = null)
       {
-         var newButton = AddButton(ButtonPredefines.Glyph);
+         var newButton = AddButton(ButtonPredefines.Glyph, toolTip);
          return UpdateButton(newButton, applicationIcon, toolTip);
       }
 
