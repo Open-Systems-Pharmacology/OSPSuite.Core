@@ -1,15 +1,13 @@
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Globalization;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Format;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ObservedData;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Format;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.ObservedData
@@ -19,20 +17,18 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       Color BackgroundColorForRow(int sourceRow);
       bool AnyObservationInThisRowIsBelowLLOQ(int sourceRow);
       string ToolTipTextForRow(int observedDataRowIndex);
-      string NumericDisplayTextFor(string displayText);
    }
 
-   public abstract class BaseDataRepositoryDataPresenter<TView, TPresenter>: AbstractSubPresenter<TView, TPresenter> 
+   public abstract class BaseDataRepositoryDataPresenter<TView, TPresenter> : AbstractSubPresenter<TView, TPresenter>
       where TView : IBaseDataRepositoryDataView<TPresenter>
       where TPresenter : IBaseDataRepositoryDataPresenter<TView>
    {
       protected DataRepository _observedData;
       protected DataTable _datatable;
-      protected NumericFormatter<double> _numericFormatter;
+      private readonly NumericFormatter<double> _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
 
       protected BaseDataRepositoryDataPresenter(TView view) : base(view)
       {
-         _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
       }
 
       public bool IsLatched { get; set; }
@@ -82,13 +78,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return observationColumn.Values[sourceRow];
       }
 
-      public string NumericDisplayTextFor(string displayText)
-      {
-         return float.TryParse(displayText, NumberStyles.Any, CultureInfo.InvariantCulture, out var currentValue) ? 
-            _numericFormatter.Format(currentValue) : 
-            displayText;
-      }
-
       public void Handle(ObservedDataValueChangedEvent eventToHandle)
       {
          if (IsLatched) return;
@@ -122,9 +111,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected static string ColumnIdFromColumn(System.Data.DataColumn column)
       {
-         return column.ExtendedProperties.Contains(Constants.DATA_REPOSITORY_COLUMN_ID) ?
-            column.ExtendedProperties[Constants.DATA_REPOSITORY_COLUMN_ID].ToString() : 
-            string.Empty;
+         return column.ExtendedProperties.Contains(Constants.DATA_REPOSITORY_COLUMN_ID) ? column.ExtendedProperties[Constants.DATA_REPOSITORY_COLUMN_ID].ToString() : string.Empty;
       }
    }
 }

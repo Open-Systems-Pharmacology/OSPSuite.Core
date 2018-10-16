@@ -99,16 +99,35 @@ namespace OSPSuite.Infrastructure.Services
          return _idMap[column.Id];
       }
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true)
+      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true, bool forceColumnTypeAsObject=false)
       {
-         return ToDataTable(dataColumns, c => c.Name, c => c.Dimension, formatOutput, useDisplayUnit);
+         return ToDataTable(dataColumns, c => c.Name, c => c.Dimension, formatOutput, useDisplayUnit, forceColumnTypeAsObject);
       }
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetrieverFunc, bool formatOutput = false, bool useDisplayUnit = true)
+      public IEnumerable<DataTable> ToDataTable(
+         IEnumerable<DataColumn> dataColumns, 
+         Func<DataColumn, string> columnNameRetriever, 
+         Func<DataColumn, IDimension> dimensionRetrieverFunc, 
+         bool formatOutput = false, 
+         bool useDisplayUnit = true,
+         bool forceColumnTypeToObject = false
+         )
       {
          var allColumns = allColumnsWithRelatedColumnsFrom(dataColumns);
          var cacheName = retrieveUniqueNamesForTables(allColumns);
-         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, dimensionRetrieverFunc, formatOutput, useDisplayUnit));
+         var valueFormatter = valueFormatterFor(formatOutput);
+         var columnType = forceColumnTypeToObject ? typeof(object) : formatOutput ? typeof(string) : typeof(float);
+
+         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, dimensionRetrieverFunc, useDisplayUnit, columnType, valueFormatter));
+      }
+
+
+      private Func<double, object> valueFormatterFor(bool formatOutput)
+      {
+         if (formatOutput)
+            return v => _numericFormatter.Format(v);
+
+         return v => v;
       }
 
       private HashSet<DataColumn> allColumnsWithRelatedColumnsFrom(IEnumerable<DataColumn> dataColumns)
@@ -167,7 +186,15 @@ namespace OSPSuite.Infrastructure.Services
          ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
       }
 
-      private DataTable createTableFor(string tableName, DataColumn baseGridColumn, IEnumerable<DataColumn> columnsToExport, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool formatOutput, bool useDisplayUnit)
+      private DataTable createTableFor(
+         string tableName, 
+         DataColumn baseGridColumn, 
+         IEnumerable<DataColumn> columnsToExport, 
+         Func<DataColumn, string> columnNameRetriever, 
+         Func<DataColumn, IDimension> dimensionRetriever,
+         bool useDisplayUnit,
+         Type columnType, 
+         Func<double, object> valueFunc)
       {
          var dataTable = new DataTable(tableName);
 
@@ -183,7 +210,7 @@ namespace OSPSuite.Infrastructure.Services
 
          allColumns.Each(x =>
          {
-            var column = dataTable.Columns.Add(cacheName[x], formatOutput ? typeof(string) : typeof(float));
+            var column = dataTable.Columns.Add(cacheName[x], columnType);
             column.ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, x.Id);
          });
 
@@ -207,12 +234,8 @@ namespace OSPSuite.Infrastructure.Services
                var columnToExport = allColumns[j];
                var dimension = cacheDimensions[columnToExport];
                var unit = unitFor(dimension, columnToExport, useDisplayUnit);
-               double value = dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
-
-               if (formatOutput)
-                  row[j] = _numericFormatter.Format(value);
-               else
-                  row[j] = value;
+               var value = dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
+               row[j] = valueFunc(value);
             }
             dataTable.Rows.Add(row);
          }
