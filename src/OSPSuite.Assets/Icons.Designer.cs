@@ -153,6 +153,26 @@ namespace OSPSuite.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon AmountObservedData {
+            get {
+                object obj = ResourceManager.GetObject("AmountObservedData", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon AmountObservedDataForMolecule {
+            get {
+                object obj = ResourceManager.GetObject("AmountObservedDataForMolecule", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon AnalysesLoad {
             get {
                 object obj = ResourceManager.GetObject("AnalysesLoad", resourceCulture);
@@ -2176,16 +2196,6 @@ namespace OSPSuite.Assets {
         internal static System.Drawing.Icon ObservedData {
             get {
                 object obj = ResourceManager.GetObject("ObservedData", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon ObservedDataCompound {
-            get {
-                object obj = ResourceManager.GetObject("ObservedDataCompound", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
