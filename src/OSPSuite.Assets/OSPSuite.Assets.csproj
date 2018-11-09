@@ -541,9 +541,6 @@
     <None Include="Icons\ObservedData.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Icons\ObservedDataCompound.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Icons\ObservedDataFolder.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -1088,6 +1085,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\SnapshotImport.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\AmountObservedData.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\AmountObservedDataForMolecule.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
