@@ -4,7 +4,6 @@ using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using DevExpress.XtraLayout;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -91,7 +90,5 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          textEdit.Properties.ConfigureWith(typeof(uint));
          _textEditElementBinder.WithFormat(value => Convert.ToUInt32(value).ToString());
       }
-
-      protected override int TopicId => HelpId.Tool_SensitivityAnalysis_Parameter_Definition;
    }
 }

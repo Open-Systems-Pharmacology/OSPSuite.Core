@@ -24,7 +24,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          covarianceAnalysisView.SetConfidenceIntevalView(_confidenceIntervalPresenter.View);
          view.SetAnalysisView(covarianceAnalysisView);
          AddSubPresenters(_confidenceIntervalPresenter);
-         view.HelpId = HelpId.Tool_PI_Analysis_CovarianceMatrix;
       }
 
       protected override Matrix CalculateMatrix()

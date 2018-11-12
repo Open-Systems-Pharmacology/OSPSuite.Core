@@ -5,7 +5,6 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
@@ -93,6 +92,5 @@ namespace OSPSuite.UI.Views
          btnSaveUnits.InitWithImage(ApplicationIcons.Save, Captions.SaveUnits, toolTip: ToolTips.SaveUnits);
       }
 
-      protected override int TopicId => HelpId.Tool_UnitManagement;
    }
 }

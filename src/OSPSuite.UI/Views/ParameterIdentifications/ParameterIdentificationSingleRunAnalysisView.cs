@@ -13,7 +13,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
    {
       private IParameterIdentificationSingleRunAnalysisPresenter _presenter;
       private readonly ScreenBinder<IParameterIdentificationSingleRunAnalysisPresenter> _screenBinder;
-      public int HelpId { get; set; } = OSPSuite.Presentation.HelpId.Tool_Parameter_Identification_Analyses;
 
       public ParameterIdentificationSingleRunAnalysisView()
       {
@@ -42,7 +41,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       public bool CanSelectRunResults
       {
-         set { layoutItemRunSelection.Visibility = LayoutVisibilityConvertor.FromBoolean(value); }
+         set => layoutItemRunSelection.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
       public void BindToSelectedRunResult()
@@ -57,6 +56,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          layoutItemRunSelection.TextVisible = false;
       }
 
-      protected override int TopicId => HelpId;
    }
 }

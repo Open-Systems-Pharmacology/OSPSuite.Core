@@ -5,7 +5,6 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraBars;
 using DevExpress.XtraGrid;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
@@ -116,8 +115,6 @@ namespace OSPSuite.UI.Views
       {
          this.DoWithinWaitCursor(() => _presenter.NodeDoubleClicked(node));
       }
-
-      protected override int TopicId=> HelpId.PKSim_Projects;
 
       public void Display()
       {

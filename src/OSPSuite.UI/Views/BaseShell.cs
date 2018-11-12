@@ -17,7 +17,6 @@ using DevExpress.XtraTab.ViewInfo;
 using DevExpress.XtraTabbedMdi;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Main;
@@ -140,10 +139,8 @@ namespace OSPSuite.UI.Views
 
       public void ShowHelp()
       {
-         Help.ShowHelp(this, Constants.HELP_NAMESPACE, HelpNavigator.TopicId, AppHelpId.ToString(CultureInfo.InvariantCulture));
+         Help.ShowHelp(this, Constants.HELP_NAMESPACE, HelpNavigator.Topic);
       }
-
-      protected virtual int AppHelpId => HelpId.Master;
 
       public void DisplayNotification(string caption, string notification, string url)
       {

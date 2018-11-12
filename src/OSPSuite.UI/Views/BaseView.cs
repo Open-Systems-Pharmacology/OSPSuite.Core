@@ -4,7 +4,6 @@ using OSPSuite.DataBinding;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -26,10 +25,7 @@ namespace OSPSuite.UI.Views
       private void initializeHelp()
       {
          _helpProvider.Initialize(this);
-         _helpProvider.SetTopicId(this, TopicId);
       }
-
-      protected virtual int TopicId => HelpId.GettingStarted ;
 
       public virtual void InitializeResources()
       {

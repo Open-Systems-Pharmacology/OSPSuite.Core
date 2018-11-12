@@ -19,7 +19,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          matrixPresenter.NumberFormatter = new NumericFormatter<double>(new NumericFormatterOptions {AllowsScientificNotation = false, DecimalPlace = NumericFormatterOptions.Instance.DecimalPlace});
          view.SetAnalysisView(matrixPresenter.View);
-         view.HelpId = HelpId.Tool_PI_Analysis_CorrelationMatrix;
       }
 
       protected override Matrix CalculateMatrix()

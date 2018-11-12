@@ -1655,6 +1655,7 @@ namespace OSPSuite.Assets
       public static readonly string StopSensitivityanalysis = "Stop";
       public static readonly string StartSensitivityanalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
+      public static readonly string Help = "Help";
 
       public static string CompareObjects(string objectType)
       {

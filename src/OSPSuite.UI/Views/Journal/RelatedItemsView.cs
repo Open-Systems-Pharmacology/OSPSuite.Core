@@ -10,7 +10,6 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Journal;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Journal;
@@ -194,7 +193,5 @@ namespace OSPSuite.UI.Views.Journal
       }
 
       public override int OptimalHeight => gridView.OptimalHeight + layoutItemGrid.Padding.Height + layoutItemAddRelatedItem.Height;
-
-      protected override int TopicId => HelpId.Tool_Journal_RelatedItems;
    }
 }

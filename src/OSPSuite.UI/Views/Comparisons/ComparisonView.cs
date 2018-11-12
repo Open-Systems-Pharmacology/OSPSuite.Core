@@ -7,7 +7,6 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Comparisons;
@@ -111,7 +110,5 @@ namespace OSPSuite.UI.Views.Comparisons
          lblNoDifference.Font = new Font(lblNoDifference.Font.FontFamily, 14);
          lblNoDifference.Appearance.TextOptions.HAlignment = HorzAlignment.Center;
       }
-
-      protected override int TopicId => HelpId.Tool_ComparisonBuildingBlocks;
    }
 }

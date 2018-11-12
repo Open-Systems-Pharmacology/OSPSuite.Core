@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using Northwoods.Go;
 using OSPSuite.Core.Diagram;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views.Journal;
@@ -117,7 +116,5 @@ namespace OSPSuite.UI.Views.Journal
       {
          _goView.Selection.RemoveAllSelectionHandles();
       }
-
-      protected override int TopicId => HelpId.Tool_Journal_Diagram;
    }
 }
