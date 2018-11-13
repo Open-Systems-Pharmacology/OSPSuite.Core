@@ -26,8 +26,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          base(view, chartPresenterContext, ApplicationIcons.TimeProfileAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationTimeProfileChartPresenter)
       {
          _displayUnitRetriever = displayUnitRetriever;
-         view.HelpId = HelpId.Tool_PI_Analysis_TimeProfile;
-      }
+     }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
       {

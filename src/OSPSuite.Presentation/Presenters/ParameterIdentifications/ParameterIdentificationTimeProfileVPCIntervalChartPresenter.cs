@@ -15,7 +15,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public ParameterIdentificationTimeProfileVPCIntervalChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, ITimeProfileConfidenceIntervalCalculator timeProfileConfidenceIntervalCalculator) :
          base(view, chartPresenterContext, timeProfileConfidenceIntervalCalculator, ApplicationIcons.TimeProfileVPCInterval, PresenterConstants.PresenterKeys.ParameterIdentificationTimeProfileVPCIntervalChartPresenter, x => x.CalculateVPCIntervalFor)
       {
-         view.HelpId = HelpId.Tool_PI_VPC_Interval;
       }
    }
 }

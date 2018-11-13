@@ -19,7 +19,6 @@ using DevExpress.XtraRichEdit;
 using OSPSuite.Assets;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Journal;
@@ -344,7 +343,5 @@ namespace OSPSuite.UI.Views.Journal
          var rowAppearance = rowHandle % 2 == 0 ? gridView.PaintAppearance.EvenRow : gridView.PaintAppearance.Row;
          appearance.BackColor = rowAppearance.BackColor;
       }
-
-      protected override int TopicId => HelpId.Tool_Journal;
    }
 }

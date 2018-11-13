@@ -4,7 +4,6 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -118,7 +117,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          gridView.CloseEditor();
       }
-
-      protected override int TopicId => HelpId.Tool_ParameterIdentification_Output_Mapping;
    }
 }

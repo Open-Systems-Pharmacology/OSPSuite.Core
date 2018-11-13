@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -60,7 +59,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _lblInfo.Top = 200;
          _lblInfo.Left = 200;
       }
-
-      protected override int TopicId => HelpId.Tool_PI_Results;
    }
 }

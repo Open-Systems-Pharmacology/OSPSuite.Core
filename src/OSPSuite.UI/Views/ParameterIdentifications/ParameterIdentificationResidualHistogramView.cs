@@ -6,7 +6,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -83,8 +82,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          chart.CopyToClipboard(watermark);
       }
-
-      protected override int TopicId => HelpId.Tool_PI_Analysis_HistogramResiduals;
 
    }
 }

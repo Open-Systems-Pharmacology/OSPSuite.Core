@@ -2,7 +2,6 @@
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Core.Comparison;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Comparisons;
 using OSPSuite.Presentation.Views.Comparisons;
@@ -74,7 +73,5 @@ namespace OSPSuite.UI.Views.Comparisons
          lblFormulaComparisonModeDescription.AsDescription();
          lblFormulaComparisonModeDescription.Text = Captions.Comparisons.FormulaComparisonModeDescription.FormatForDescription();
       }
-
-      protected override int TopicId => HelpId.Tool_ComparisonBuildingBlocks;
    }
 }

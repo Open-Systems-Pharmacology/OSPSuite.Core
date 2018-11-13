@@ -5,7 +5,6 @@ using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -87,8 +86,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _lblInfo.Width = Width - _lblInfo.Left;
          _lblInfo.Top = Height / 2;
       }
-
-      protected override int TopicId => HelpId.Tool_PI_VisualFeedback;
-
    }
 }

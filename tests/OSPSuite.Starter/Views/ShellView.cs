@@ -21,6 +21,7 @@ namespace OSPSuite.Starter.Views
          container.RegisterImplementationOf(xtraTabbedMdiManager);
          container.RegisterImplementationOf(new ApplicationMenu());
          container.RegisterImplementationOf(new PanelControl());
+         container.RegisterImplementationOf(ribbon);
       }
 
       public void AttachPresenter(IShellPresenter presenter)

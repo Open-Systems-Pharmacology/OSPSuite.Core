@@ -9,7 +9,7 @@ namespace OSPSuite.UI.Extensions
       public static void Initialize(this HelpProvider helpProvider, Control control)
       {
          helpProvider.HelpNamespace = Constants.HELP_NAMESPACE;
-         helpProvider.SetHelpNavigator(control, HelpNavigator.TopicId);
+         helpProvider.SetHelpNavigator(control, HelpNavigator.Topic);
       }
 
       public static void SetTopicId(this HelpProvider helpProvider, Control control, int topicId)
@@ -17,4 +17,4 @@ namespace OSPSuite.UI.Extensions
          helpProvider.SetHelpKeyword(control, topicId.ToString(CultureInfo.InvariantCulture));
       }
    }
-}
+}  

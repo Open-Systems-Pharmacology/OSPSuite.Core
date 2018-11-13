@@ -62,7 +62,7 @@ namespace OSPSuite.Starter
          container.Register<IReactionDimensionRetriever, DimensionRetriever>(LifeStyle.Singleton);
          container.Register<ISimulationRepository, SimulationRepository>(LifeStyle.Singleton);
          container.Register<IShellPresenter, IMainViewPresenter, ShellPresenter>(LifeStyle.Singleton);
-         container.Register<IShell, IShellView, ShellView>(LifeStyle.Singleton);
+         container.Register<IShell, IShellView, IMainView, ShellView>(LifeStyle.Singleton);
          container.Register<IApplicationSettings, ApplicationSettings>(LifeStyle.Singleton); ;
 
          container.Register<IObjectIdResetter, ObjectIdResetter>();

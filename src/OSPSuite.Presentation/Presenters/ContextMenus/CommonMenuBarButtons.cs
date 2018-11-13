@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Windows.Forms;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -68,6 +69,15 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithDescription(ToolTips.ClearHistory)
             .WithCommand<ClearHistoryUICommand>()
             .WithIcon(ApplicationIcons.ClearHistory);
+      }
+
+      public static IMenuBarItem Help(MenuBarItemId menuBarItemId)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.Help)
+            .WithId(menuBarItemId)
+            .WithIcon(ApplicationIcons.Help)
+            .WithCommand<ShowHelpCommand>()
+            .WithShortcut(Keys.F1);
       }
    }
 }

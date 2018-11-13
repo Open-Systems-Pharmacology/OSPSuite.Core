@@ -12,7 +12,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -217,6 +216,5 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
 
       private string createPointLabel(double value, string parameterName) => $"{parameterName}: {value}";
 
-      protected override int TopicId => HelpId.Tool_SensitivityAnalysis_Ranking;
    }
 }

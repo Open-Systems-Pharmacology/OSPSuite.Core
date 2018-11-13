@@ -9,8 +9,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
    public partial class ParameterIdentificationMultipleRunsAnalysisView : BaseUserControl, IParameterIdentificationMultipleRunsAnalysisView
    {
       private IParameterIdentificationAnalysisPresenter _presenter;
-      public int HelpId { get; set; } = OSPSuite.Presentation.HelpId.Tool_Parameter_Identification_Analyses;
-
       public ParameterIdentificationMultipleRunsAnalysisView()
       {
          InitializeComponent();
@@ -26,7 +24,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          panelChart.FillWith(view);
       }
-
-      protected override int TopicId => HelpId;
    }
 }

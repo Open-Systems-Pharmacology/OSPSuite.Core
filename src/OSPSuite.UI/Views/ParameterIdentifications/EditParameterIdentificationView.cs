@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -20,7 +19,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       }
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.ParameterIdentification;
-
-      protected override int TopicId => HelpId.Tool_ParameterIdentification_Create;
    }
 }

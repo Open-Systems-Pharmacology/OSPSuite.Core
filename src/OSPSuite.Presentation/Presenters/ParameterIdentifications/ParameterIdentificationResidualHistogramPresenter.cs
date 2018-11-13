@@ -67,7 +67,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          };
          _view.SetAnalysisView(histogramView);
          _histogramView.CopyToClipboardManager = this;
-         view.HelpId = HelpId.Tool_PI_Analysis_HistogramResiduals;
       }
 
       public void UpdateAnalysisBasedOn(IAnalysable analysable)
