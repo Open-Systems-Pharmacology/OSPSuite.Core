@@ -145,23 +145,6 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_getting_validation_messages_for_invalid_value : concern_for_DataRepositoryDataPresenter
-   {
-      private List<string> _result;
-
-      protected override void Because()
-      {
-         sut.EditObservedData(_dataRepository);
-         _result = sut.GetCellValidationErrorMessages(0, 0, "blah").ToList();
-      }
-
-      [Observation]
-      public void should_not_pass_validation()
-      {
-         _result.Count.ShouldBeEqualTo(1);
-      }
-   }
-
    public class When_getting_validation_messages_for_repeated_basegrid_values : concern_for_DataRepositoryDataPresenter
    {
       private List<string> _result;

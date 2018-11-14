@@ -90,9 +90,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// <returns></returns>
       public IEnumerable<string> GetCellValidationErrorMessages(int rowIndex, int columnIndex, string newValue)
       {
-         if (!float.TryParse(newValue, out var proposedValue))
-            return new[] {Error.ValueIsRequired};
-
+         var proposedValue = newValue.ConvertedTo<float>();
          var editedColumnId = GetColumnIdFromColumnIndex(columnIndex);
 
          if (string.Equals(editedColumnId, _observedData.BaseGrid.Id))
