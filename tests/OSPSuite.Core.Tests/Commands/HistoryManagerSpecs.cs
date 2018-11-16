@@ -518,4 +518,39 @@ namespace OSPSuite.Commands
          sut.Undo();
       }
    }
+
+   public class When_clearing_the_history : concern_for_HistoryManager
+   {
+      protected IReversibleCommand<MyContext> _command1;
+      protected IReversibleCommand<MyContext> _command2;
+      protected ILabelCommand _labelCommand;
+
+      protected override void Context()
+      {
+         base.Context();
+         _command1 = new MyReversibleCommand {Loaded = true};
+         _command2 = new MyReversibleCommand {Loaded = true};
+         _labelCommand=new LabelCommand();
+         sut.AddToHistory(_command1);
+         sut.AddToHistory(_command2);
+      }
+
+      protected override void Because()
+      {
+          sut.Clear();
+      }
+
+      [Observation]
+      public void should_remove_all_history_entries_from_the_list()
+      {
+         sut.History.Count().ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void adding_a_label_should_have_set_the_state_to_one()
+      {
+         sut.AddLabel(_labelCommand);
+         sut.History.ElementAt(0).State.ShouldBeEqualTo(1);
+      }
+   }
 }

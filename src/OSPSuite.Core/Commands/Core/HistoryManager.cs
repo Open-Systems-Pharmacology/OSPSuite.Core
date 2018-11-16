@@ -74,6 +74,8 @@ namespace OSPSuite.Core.Commands.Core
       private readonly IRollBackCommandFactory _rollBackCommandFactory;
       private int _currentState;
 
+      private static int DEFAULT_STATE = 1;
+
       public event Action<IHistoryItem> CommandAdded = delegate { };
 
       public HistoryManager(TExecutionContext executionContext, IEventPublisher eventPublisher, IExceptionManager exceptionManager, IHistoryItemFactory historyItemFactory, IRollBackCommandFactory rollBackCommandFactory)
@@ -90,7 +92,7 @@ namespace OSPSuite.Core.Commands.Core
          _history = history;
          _historyItemFactory = historyItemFactory;
          _rollBackCommandFactory = rollBackCommandFactory;
-         _currentState = 1;
+         resetState();
       }
 
       public void AddToHistory(ICommand commandToAddToHistory)
@@ -129,7 +131,10 @@ namespace OSPSuite.Core.Commands.Core
       public void Clear()
       {
          _history.Clear();
+         resetState();
       }
+
+      private void resetState() => _currentState = DEFAULT_STATE;
 
       public void Undo()
       {
