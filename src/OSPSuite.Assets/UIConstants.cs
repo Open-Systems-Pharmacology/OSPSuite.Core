@@ -323,7 +323,7 @@ namespace OSPSuite.Assets
          return $"Really delete observed data '{observedDataName}' from project";
       }
       
-      public static string ReallyClearHistory= "Really clear command history? This action is irreversible.";
+      public static string ReallyClearHistory= "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
       
       public static class Importer
       {
