@@ -90,6 +90,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// <returns></returns>
       public IEnumerable<string> GetCellValidationErrorMessages(int rowIndex, int columnIndex, string newValue)
       {
+         if (string.IsNullOrWhiteSpace(newValue))
+            return new[] {Error.ValueIsRequired};
+
          var proposedValue = newValue.ConvertedTo<float>();
          var editedColumnId = GetColumnIdFromColumnIndex(columnIndex);
 
