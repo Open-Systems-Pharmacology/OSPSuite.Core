@@ -145,6 +145,24 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_getting_validation_messages_for_an_empty_value : concern_for_DataRepositoryDataPresenter
+   {
+      private List<string> _result;
+
+      protected override void Because()
+      {
+         sut.EditObservedData(_dataRepository);
+         _result = sut.GetCellValidationErrorMessages(0, 1, "    ").ToList();
+      }
+
+      [Observation]
+      public void should_return_validation_messages()
+      {
+         _result.Count.ShouldBeEqualTo(1);
+         _result[0].ShouldBeEqualTo(Error.ValueIsRequired);
+      }
+   }
+
    public class When_getting_validation_messages_for_repeated_basegrid_values : concern_for_DataRepositoryDataPresenter
    {
       private List<string> _result;
