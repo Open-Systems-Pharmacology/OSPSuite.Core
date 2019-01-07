@@ -43,6 +43,7 @@ namespace OSPSuite.UI.Views.Commands
          initializeButton(btnUndo, ApplicationIcons.Undo, Captions.Commands.Undo, () => _presenter.Undo(), ToolTips.Commands.Undo);
          initializeButton(btnAddLabel, ApplicationIcons.LabelAdd, Captions.Commands.AddLabel, () => _presenter.AddLabel(), ToolTips.Commands.AddLabel);
          initializeButton(btnEditComment, ApplicationIcons.Edit, Captions.Commands.EditComment, () => _presenter.EditCommentFor(historyItemIdFrom(historyTreeList.FocusedNode)), ToolTips.Commands.EditComment);
+         initializeButton(btnClearHistory, ApplicationIcons.ClearHistory, Captions.Commands.ClearHistory, () => _presenter.ClearHistory(), ToolTips.ClearHistory);
          lblRollBack.Caption = Captions.Commands.Rollback;
          tbRollBackState.Caption = Captions.Commands.Rollback;
          tbRollBackState.EditValue = 0;

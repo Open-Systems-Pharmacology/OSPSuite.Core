@@ -6,7 +6,6 @@ using OSPSuite.DataBinding.DevExpress;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Views;
@@ -165,7 +164,5 @@ namespace OSPSuite.UI.Views.Journal
             return height;
          }
       }
-
-      protected override int TopicId => HelpId.Tool_Journal_Search;
    }
 }

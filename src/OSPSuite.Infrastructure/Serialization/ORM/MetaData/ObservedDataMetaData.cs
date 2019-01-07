@@ -2,13 +2,16 @@
 
 namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
 {
-   public class ObservedDataMetaData: MetaData<string>, IUpdatableFrom<ObservedDataMetaData>
+   public class ObservedDataMetaData : MetaData<string>, IUpdatableFrom<ObservedDataMetaData>
    {
-       public virtual DataRepositoryMetaData DataRepository { get; set; }
+      public virtual DataRepositoryMetaData DataRepository { get; set; }
 
       public void UpdateFrom(ObservedDataMetaData source, ISession session)
       {
-         DataRepository = source.DataRepository;
+         if (DataRepository == null)
+            DataRepository = source.DataRepository;
+         else
+            DataRepository.UpdateFrom(source.DataRepository, session);
       }
    }
 }

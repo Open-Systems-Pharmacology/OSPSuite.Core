@@ -27,7 +27,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
-         view.HelpId = HelpId.Tool_PI_Analysis_PredictedVsObserved;
          _identityRepositories = new List<DataRepository>();
       }
 

@@ -13,7 +13,6 @@ using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.SensitivityAnalyses;
 using OSPSuite.Presentation.Extensions;
@@ -177,7 +176,5 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          panelControl.MinimumSize = panelSize;
          panelControl.MaximumSize = panelSize;
       }
-
-      protected override int TopicId => HelpId.Tool_SensitivityAnalysis_Parameters;
    }
 }

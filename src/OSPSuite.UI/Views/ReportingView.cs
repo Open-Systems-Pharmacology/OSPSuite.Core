@@ -7,7 +7,6 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Reporting;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
@@ -105,8 +104,6 @@ namespace OSPSuite.UI.Views
       }
 
       public override bool HasError => _screenBinder.HasError;
-
-      protected override int TopicId => HelpId.Tool_Reporting;
 
       public override void InitializeResources()
       {

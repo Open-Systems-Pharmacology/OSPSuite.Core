@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Data
       {
          var myBaseGrid = BaseGrid;
          if (column.BaseGrid != null && myBaseGrid != null && column.BaseGrid != myBaseGrid)
-            throw new InvalidOperationException("Column " + column.Name + " does not have the same base grid as other columns in this repository.");
+            throw new InvalidOperationException($"Column {column.Name} does not have the same base grid as other columns in this repository.");
 
          addColumnIfRequired(column.BaseGrid);
          column.RelatedColumns.Each(addColumnIfRequired);
@@ -119,7 +119,7 @@ namespace OSPSuite.Core.Domain.Data
             return;
 
          if (column.IsInRepository() && !Equals(column.Repository, this))
-            throw new InvalidOperationException("Column " + column.Name + " belongs to another Repository.");
+            throw new InvalidOperationException($"Column {column.Name} belongs to another Repository.");
 
          _allColumns.Add(column);
          column.Repository = this;

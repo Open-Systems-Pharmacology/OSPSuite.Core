@@ -28,11 +28,10 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
       public DataTable MapFrom(WeightedObservedData weightedObservedData)
       {
          var columns = weightedObservedData.ObservedData.ToList();
-
          var dataColumn = createWeightColumn(weightedObservedData.ObservedData.BaseGrid, weightedObservedData);
 
          columns.Add(dataColumn);
-         return _dataRepositoryTask.ToDataTable(columns).First();
+         return _dataRepositoryTask.ToDataTable(columns, forceColumnTypeAsObject: true).First();
       }
 
       private DataColumn createWeightColumn(BaseGrid baseGrid, WeightedObservedData weightedObservedData)

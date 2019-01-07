@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Format;
 using FakeItEasy;
 using OSPSuite.Assets;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -18,6 +16,7 @@ using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ObservedData;
+using OSPSuite.Utility.Extensions;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation
@@ -46,13 +45,13 @@ namespace OSPSuite.Presentation
          //common setup
          _dataRepository = new DataRepository();
          _dataTable = new DataTable();
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, false, true)).Returns(new[] { _dataTable });
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, false, true, true)).Returns(new[] {_dataTable});
 
          var col = _dataTable.AddColumn<float>("test");
          col.ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, "col");
-         _baseGrid = new BaseGrid("base", "base", Constants.Dimension.NO_DIMENSION) { Values = new ArraySegment<float>() };
+         _baseGrid = new BaseGrid("base", "base", Constants.Dimension.NO_DIMENSION) {Values = new ArraySegment<float>()};
          _dim = A.Fake<IDimension>();
-         _col = new DataColumn("col", "col", _dim, _baseGrid) { Values = new ArraySegment<float>() };
+         _col = new DataColumn("col", "col", _dim, _baseGrid) {Values = new ArraySegment<float>()};
          _dataRepository.Add(_baseGrid);
          _dataRepository.Add(_col);
       }
@@ -65,7 +64,7 @@ namespace OSPSuite.Presentation
          base.Context();
          _col.DataInfo.LLOQ = 10;
          _col.InsertValueAt(0, 10.0f);
-         _baseGrid.InsertValueAt(0,0);
+         _baseGrid.InsertValueAt(0, 0);
          _col.DataInfo.Origin = ColumnOrigins.Observation;
          sut.EditObservedData(_dataRepository);
       }
@@ -146,20 +145,21 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_getting_validation_messages_for_basegrid_values : concern_for_DataRepositoryDataPresenter
+   public class When_getting_validation_messages_for_an_empty_value : concern_for_DataRepositoryDataPresenter
    {
       private List<string> _result;
 
       protected override void Because()
       {
          sut.EditObservedData(_dataRepository);
-         _result = sut.GetCellValidationErrorMessages(0, 0, "blah").ToList();
+         _result = sut.GetCellValidationErrorMessages(0, 1, "    ").ToList();
       }
 
       [Observation]
-      public void should_pass_validation()
+      public void should_return_validation_messages()
       {
-         _result.Count.ShouldBeEqualTo(0);
+         _result.Count.ShouldBeEqualTo(1);
+         _result[0].ShouldBeEqualTo(Error.ValueIsRequired);
       }
    }
 
@@ -196,7 +196,7 @@ namespace OSPSuite.Presentation
 
    public class When_adding_row_to_data_repository : concern_for_DataRepositoryDataPresenter
    {
-     protected override void Context()
+      protected override void Context()
       {
          base.Context();
          _dataTable.AddColumn<float>("base");
@@ -241,7 +241,7 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          sut.EditObservedData(_dataRepository);
-         _dto = new CellValueChangedDTO { ColumnIndex = 0, OldDisplayValue = 1, NewDisplayValue = 2, RowIndex = 3 };
+         _dto = new CellValueChangedDTO {ColumnIndex = 0, OldDisplayValue = 1, NewDisplayValue = 2, RowIndex = 3};
          _command = A.Fake<ICommand>();
 
          A.CallTo(() => _dim.UnitValueToBaseUnitValue(A<Unit>._, 1)).Returns(10);
@@ -408,22 +408,6 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_retrieving_the_display_value_for_a_given_string_value : concern_for_DataRepositoryDataPresenter
-   {
-      [Observation]
-      public void should_return_the_formatted_value_if_the_string_value_was_a_number()
-      {
-         NumericFormatterOptions.Instance.DecimalPlace = 2;
-         sut.NumericDisplayTextFor("1.3225").ShouldBeEqualTo("1.32");
-      }
-
-      [Observation]
-      public void should_return_the_original_string_otherwise()
-      {
-         sut.NumericDisplayTextFor("blah").ShouldBeEqualTo("blah");
-      }
-   }
-
    public class When_the_presenter_is_notified_that_the_unit_for_a_given_column_was_changed : concern_for_DataRepositoryDataPresenter
    {
       private ICommand _command;
@@ -466,7 +450,7 @@ namespace OSPSuite.Presentation
          base.Context();
          _unit1 = A.Fake<Unit>();
          _unit2 = A.Fake<Unit>();
-         A.CallTo(() => _dim.Units).Returns(new[] { _unit1, _unit2 });
+         A.CallTo(() => _dim.Units).Returns(new[] {_unit1, _unit2});
          sut.EditObservedData(_dataRepository);
       }
 

@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Windows.Forms;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -7,7 +8,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public static class CommonMenuBarButtons
    {
-
       public static IMenuBarButton SaveFavoritesToFile(MenuBarItemId menuBarItemId)
       {
          return CreateMenuButton.WithCaption(MenuNames.SaveFavoriteToFile)
@@ -26,7 +26,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.FavoritesLoad);
       }
 
- 
       public static IMenuBarButton ManageProjectDisplayUnits(MenuBarItemId menuBarItemId)
       {
          return CreateMenuButton.WithCaption(MenuNames.ManageProjectDisplayUnits)
@@ -61,6 +60,24 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithDescription(Captions.Journal.JournalDiagramDescription)
             .WithCommand<JournalDiagramVisibilityUICommand>()
             .WithIcon(ApplicationIcons.JournalDiagram);
+      }
+
+      public static IMenuBarItem ClearHistory(MenuBarItemId menuBarItemId)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.ClearHistory)
+            .WithId(menuBarItemId)
+            .WithDescription(ToolTips.ClearHistory)
+            .WithCommand<ClearHistoryUICommand>()
+            .WithIcon(ApplicationIcons.ClearHistory);
+      }
+
+      public static IMenuBarItem Help(MenuBarItemId menuBarItemId)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.Help)
+            .WithId(menuBarItemId)
+            .WithIcon(ApplicationIcons.Help)
+            .WithCommand<ShowHelpCommand>()
+            .WithShortcut(Keys.F1);
       }
    }
 }

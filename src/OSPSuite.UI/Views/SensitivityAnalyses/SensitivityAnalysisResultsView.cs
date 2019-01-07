@@ -4,7 +4,6 @@ using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraPivotGrid;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
 using OSPSuite.UI.Controls;
@@ -134,7 +133,5 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          base.InitializeBinding();
          btnExportToExcel.Click += (o, e) => OnEvent(_presenter.ExportToExcel);
       }
-
-      protected override int TopicId => HelpId.Tool_SensitivityAnalysis_Results;
    }
 }

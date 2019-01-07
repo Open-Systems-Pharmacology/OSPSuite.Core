@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Debug\OSPSuite.Assets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
@@ -539,9 +539,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\ObservedData.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Icons\ObservedDataCompound.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\ObservedDataFolder.ico" />
@@ -1088,6 +1085,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\SnapshotImport.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\AmountObservedData.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\AmountObservedDataForMolecule.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

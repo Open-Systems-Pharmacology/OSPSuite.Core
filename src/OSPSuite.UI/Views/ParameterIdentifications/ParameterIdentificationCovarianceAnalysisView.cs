@@ -1,5 +1,4 @@
-﻿using OSPSuite.Presentation;
-using OSPSuite.Presentation.Views;
+﻿using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -22,7 +21,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          panelConfidenceInterval.FillWith(view);
       }
-
-      protected override int TopicId => HelpId.Tool_PI_Analysis_CovarianceMatrix;
    }
 }

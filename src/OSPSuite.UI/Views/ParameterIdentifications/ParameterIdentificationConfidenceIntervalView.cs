@@ -2,7 +2,6 @@
 using OSPSuite.Assets;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -56,7 +55,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeResources();
          layoutItemConfidenceIntervals.TextVisible = false;
       }
-
-      protected override int TopicId => HelpId.Tool_PI_Analysis_CovarianceMatrix;
    }
 }

@@ -4,6 +4,8 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Events;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.Commands;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Commands;
@@ -24,6 +26,7 @@ namespace OSPSuite.Presentation
       protected IHistoryBrowserConfiguration _historyBrowserConfiguration;
       private IHistoryItemDTOEnumerableToHistoryItemDTOList _historyItemDTOListMapper;
       protected IHistoryItemDTOList _historyItemDTOList;
+      protected IHistoryTask _historyTask;
 
       protected override void Context()
       {
@@ -34,12 +37,13 @@ namespace OSPSuite.Presentation
          _labelTask = A.Fake<ILabelTask>();
          _mapper = A.Fake<IHistoryToHistoryDTOMapper>();
          _commentTask = A.Fake<ICommentTask>();
+         _historyTask = A.Fake<IHistoryTask>();
          _historyItemDTOListMapper = A.Fake<IHistoryItemDTOEnumerableToHistoryItemDTOList>();
          _historyItemDTOList = A.Fake<IHistoryItemDTOList>();
          A.CallTo(_historyItemDTOListMapper).WithReturnType<IHistoryItemDTOList>().Returns(_historyItemDTOList);
          _historyBrowserConfiguration = new HistoryBrowserConfiguration();
          A.CallTo(() => _historyManager.History).Returns(_historyList);
-         sut = new HistoryBrowserPresenter(_view, _labelTask, _commentTask, _mapper, _historyItemDTOListMapper);
+         sut = new HistoryBrowserPresenter(_view, _labelTask, _commentTask, _mapper, _historyItemDTOListMapper, _historyTask);
          sut.Initialize();
          sut.HistoryManager = _historyManager;
       }
@@ -86,6 +90,20 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_notified_that_the_history_was_cleared : concern_for_HistoryBrowserPresenter
+   {
+      protected override void Because()
+      {
+         sut.Handle(new HistoryClearedEvent());
+      }
+
+      [Observation]
+      public void should_refresh_the_view()
+      {
+         A.CallTo(() => _view.BindTo(A<IHistoryItemDTOList>._)).MustHaveHappened();
+      }
+   }
+
    public class When_performing_a_rollback_command : concern_for_HistoryBrowserPresenter
    {
       private int _stateToRollBackTo;
@@ -121,6 +139,20 @@ namespace OSPSuite.Presentation
       public void should_leverage_the_label_task_to_create_a_new_label_history()
       {
          A.CallTo(() => _labelTask.AddLabelTo(_historyManager)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_user_triggers_a_clear_history_action_from_the_history_browser : concern_for_HistoryBrowserPresenter
+   {
+      protected override void Because()
+      {
+         sut.ClearHistory();
+      }
+
+      [Observation]
+      public void should_leverage_the_history_task_to_clear_the_history()
+      {
+         A.CallTo(() => _historyTask.ClearHistory()).MustHaveHappened();
       }
    }
 

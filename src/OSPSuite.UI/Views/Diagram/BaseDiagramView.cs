@@ -6,7 +6,6 @@ using DevExpress.XtraBars;
 using Northwoods.Go;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters.Diagram;
 using OSPSuite.Presentation.Views.Diagram;
 using OSPSuite.UI.Controls;
@@ -65,8 +64,6 @@ namespace OSPSuite.UI.Views.Diagram
          _goView.NoFocusSelectionColor = _goView.SecondarySelectionColor;
          PopupBarManager.Images = imageListRetriever.AllImages16x16;
       }
-
-      protected override int TopicId => HelpId.MoBi_Diagrams;
 
       public IDiagramModel Model
       {

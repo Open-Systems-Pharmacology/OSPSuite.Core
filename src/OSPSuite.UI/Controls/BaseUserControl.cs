@@ -4,7 +4,6 @@ using OSPSuite.DataBinding;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -34,17 +33,13 @@ namespace OSPSuite.UI.Controls
 
       private void initializeHelp()
       {
-         var id = TopicId;
-         if (id == HelpId.Undefined) return;
          _helpProvider.Initialize(this);
-         _helpProvider.SetTopicId(this, id);
       }
 
-      protected virtual int TopicId => HelpId.Undefined;
 
       public virtual string Caption
       {
-         get { return Text; }
+         get => Text;
          set
          {
             Text = value;
@@ -52,10 +47,7 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      public virtual bool HasError
-      {
-         get { return false; }
-      }
+      public virtual bool HasError => false;
 
       public void AttachPresenter(IPresenter presenter)
       {

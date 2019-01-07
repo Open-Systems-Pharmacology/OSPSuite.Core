@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Charts
       private readonly RepositoryItemButtonEdit _deleteButtonRepository;
       private readonly RepositoryItemButtonEdit _addButtonRepository;
       private GridViewBinder<Axis> _gridBinderAxes;
-      private readonly RepositoryItem _disableRepositoryItem;
+      private readonly RepositoryItem _disableRepositoryItem = new RepositoryItem {ReadOnly = true, Enabled = false};
 
       public AxisSettingsView()
       {
@@ -52,7 +52,6 @@ namespace OSPSuite.UI.Views.Charts
          _gridLinesRepository = new UxRepositoryItemCheckEdit(gridView);
          _lineStyleRepository = new UxRepositoryItemComboBox(gridView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(gridView);
-         _disableRepositoryItem = new RepositoryItem {ReadOnly = true, Enabled = false};
 
          _deleteButtonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Delete);
          _deleteButtonRepository.ButtonClick += (o, e) => OnEvent(deleteButtonClick);
@@ -124,9 +123,14 @@ namespace OSPSuite.UI.Views.Charts
          return _colorRepository;
       }
 
-      private IGridViewColumn<Axis> createColumn<T>(Expression<Func<Axis, T>> propertyToBindTo, AxisOptionsColumns axisOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true, string toolTip = null, Action<Axis> beforeNotificationAction = null)
+      private IGridViewColumn<Axis> createColumn<T>(Expression<Func<Axis, T>> propertyToBindTo,
+         AxisOptionsColumns axisOptionsColumn,
+         RepositoryItem repositoryItem = null,
+         bool showInColumnChooser = true,
+         string toolTip = null,
+         Action<Axis> beforeNotificationAction = null)
       {
-         var column = _gridBinderAxes.AutoBind(propertyToBindTo)
+         var column = _gridBinderAxes.Bind(propertyToBindTo)
             .WithShowInColumnChooser(showInColumnChooser);
 
          if (beforeNotificationAction != null)
@@ -182,10 +186,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void BindTo(IEnumerable<Axis> axes)
       {
-         DoWithoutColumnSettingsUpdateNotification(() =>
-         {
-            _gridBinderAxes.BindToSource(axes.ToBindingList());
-         });
+         DoWithoutColumnSettingsUpdateNotification(() => { _gridBinderAxes.BindToSource(axes.ToBindingList()); });
       }
 
       public void DeleteBinding()

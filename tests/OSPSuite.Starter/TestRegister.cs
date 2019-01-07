@@ -48,6 +48,7 @@ namespace OSPSuite.Starter
             scan.ExcludeType<DimensionRetriever>();
             scan.ExcludeType<ProjectRetriever>();
             scan.ExcludeType<ApplicationSettings>();
+            scan.ExcludeType<HistoryManagerRetriever>();
          });
 
          container.Register<IToolTipCreator, ToolTipCreator>(LifeStyle.Singleton);
@@ -55,12 +56,13 @@ namespace OSPSuite.Starter
          container.Register<IWorkspace, Workspace>(LifeStyle.Singleton);
          container.Register<IFileLocker, FileLocker>(LifeStyle.Singleton);
          container.Register<IExceptionManager, ExceptionManager>(LifeStyle.Singleton);
+         container.Register<IHistoryManagerRetriever, HistoryManagerRetriever>(LifeStyle.Singleton);
          container.Register<IProgressManager, ProgressManager>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
          container.Register<IReactionDimensionRetriever, DimensionRetriever>(LifeStyle.Singleton);
          container.Register<ISimulationRepository, SimulationRepository>(LifeStyle.Singleton);
          container.Register<IShellPresenter, IMainViewPresenter, ShellPresenter>(LifeStyle.Singleton);
-         container.Register<IShell, IShellView, ShellView>(LifeStyle.Singleton);
+         container.Register<IShell, IShellView, IMainView, ShellView>(LifeStyle.Singleton);
          container.Register<IApplicationSettings, ApplicationSettings>(LifeStyle.Singleton); ;
 
          container.Register<IObjectIdResetter, ObjectIdResetter>();

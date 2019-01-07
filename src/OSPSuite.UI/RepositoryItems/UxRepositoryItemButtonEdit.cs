@@ -4,7 +4,7 @@ using DevExpress.XtraEditors.Repository;
 namespace OSPSuite.UI.RepositoryItems
 {
    /// <summary>
-   /// Button repository with an editor hidden by default
+   ///    Button repository with an editor hidden by default
    /// </summary>
    public class UxRepositoryItemButtonEdit : RepositoryItemButtonEdit
    {
@@ -13,22 +13,22 @@ namespace OSPSuite.UI.RepositoryItems
          TextEditStyle = TextEditStyles.HideTextEditor;
       }
 
-      public UxRepositoryItemButtonEdit(ButtonPredefines firstButtonKind): this()
+      public UxRepositoryItemButtonEdit(ButtonPredefines firstButtonKind, string toolTip = null, object tag = null) : this()
       {
          Buttons[0].Kind = firstButtonKind;
+         Buttons[0].ToolTip = toolTip;
+         Buttons[0].Tag = tag;
       }
 
       /// <summary>
-      /// add a button to the buttons list and returns the added editor button
+      ///    add a button to the buttons list and returns the added editor button
       /// </summary>
-      /// <param name="buttonStyle"></param>
-      /// <returns></returns>
-      public EditorButton AddButton(ButtonPredefines buttonStyle)
+      public EditorButton AddButton(ButtonPredefines buttonStyle, string toolTip = null, object tag = null)
       {
          int index = Buttons.Count;
-         Buttons.Add(new EditorButton(buttonStyle));
+         var newButton = new EditorButton(buttonStyle) {ToolTip = toolTip, Tag = tag};
+         Buttons.Add(newButton);
          return Buttons[index];
       }
-
    }
 }

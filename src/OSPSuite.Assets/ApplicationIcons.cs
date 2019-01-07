@@ -238,7 +238,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Next = AddNamedIcon(Icons.Next, "Next");
       public static readonly ApplicationIcon NonCompetitiveInhibition = AddNamedIcon(Icons.NonCompetitiveInhibition, "NonCompetitiveInhibition");
       public static readonly ApplicationIcon ObservedData = AddNamedIcon(Icons.ObservedData, IconNames.OBSERVED_DATA);
-      public static readonly ApplicationIcon ObservedDataCompound = AddNamedIcon(Icons.ObservedDataCompound, "ObservedDataCompound");
+      public static readonly ApplicationIcon ObservedDataCompound = AddNamedIcon(Icons.ObservedDataForMolecule, "ObservedDataCompound");
       public static readonly ApplicationIcon ObservedDataFolder = AddNamedIcon(Icons.ObservedDataFolder, "ObservedDataFolder");
       public static readonly ApplicationIcon Observer = AddNamedIcon(Icons.Observer, IconNames.OBSERVER);
       public static readonly ApplicationIcon ObserverFolder = AddNamedIcon(Icons.ObserverFolder, "ObserverFolder");
@@ -285,7 +285,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PopulationSimulationSettings = AddNamedIcon(Icons.SimulationSettings, "PopulationSimulationSettings");
       public static readonly ApplicationIcon PortalVein = AddNamedIcon(Icons.PortalVein, "PortalVein");
       public static readonly ApplicationIcon Previous = AddNamedIcon(Icons.Previous, "Previous");
-      public static readonly ApplicationIcon ProjectDescription = AddNamedIcon(Icons.ObservedData, "ProjectDescription");
+      public static readonly ApplicationIcon ProjectDescription = AddNamedIcon(Icons.Description, "ProjectDescription");
       public static readonly ApplicationIcon Protein = AddNamedIcon(Icons.Protein, "Protein");
       public static readonly ApplicationIcon ProteinExpression = AddNamedIcon(Icons.ProteinExpression, "ProteinExpression");
       public static readonly ApplicationIcon ProteinExpressionError = AddNamedIcon(Icons.ProteinExpressionError, "ProteinExpressionError");
@@ -478,6 +478,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon SnapshotImport = AddNamedIcon(Icons.SnapshotImport, "SnapshotImport");
       public static readonly ApplicationIcon File = AddNamedIcon(Icons.ProjectNew, "File");
       public static readonly ApplicationIcon Redo = AddNamedIcon(Icons.Redo, "Redo");
+      public static readonly ApplicationIcon ClearHistory = AddNamedIcon(Icons.Delete, "ClearHistory");
+      public static readonly ApplicationIcon AmountObservedData = AddNamedIcon(Icons.AmountObservedData, "AmountObservedData");
+      public static readonly ApplicationIcon AmountObservedDataForMolecule = AddNamedIcon(Icons.AmountObservedDataForMolecule, "AmountObservedDataForMolecule");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

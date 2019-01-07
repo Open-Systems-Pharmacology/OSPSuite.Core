@@ -6,7 +6,6 @@ using DevExpress.XtraBars;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Assets;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
@@ -111,6 +110,5 @@ namespace OSPSuite.UI.Views
 
       private IEditAnalyzablePresenter editAnalyzablePresenter => _presenter.DowncastTo<IEditAnalyzablePresenter>();
 
-      protected override int TopicId => HelpId.PKSim_Simulations;
    }
 }

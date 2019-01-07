@@ -25,7 +25,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public ParameterIdentificationResidualVsTimeChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext) :
          base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationResidualVsTimeChartPresenter)
       {
-         view.HelpId = HelpId.Tool_PI_Analysis_ResidualsVsTime;
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)

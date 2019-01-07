@@ -12,7 +12,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Journal;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Journal;
@@ -299,7 +298,5 @@ namespace OSPSuite.UI.Views.Journal
       {
          _presenter = presenter;
       }
-
-      protected override int TopicId => HelpId.Tool_Journal_Content;
    }
 }

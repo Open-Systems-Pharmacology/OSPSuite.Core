@@ -2,7 +2,6 @@
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
-using OSPSuite.Presentation;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
@@ -94,8 +93,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public override string Caption => Captions.ParameterIdentification.Configuration;
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.Settings;
-
-      protected override int TopicId => HelpId.Tool_ParameterIdentification_Configuration;
 
       public override void InitializeResources()
       {

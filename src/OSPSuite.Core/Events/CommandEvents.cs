@@ -7,4 +7,9 @@
    public class RollBackFinishedEvent
    {
    }
+
+   public class HistoryClearedEvent
+   {
+
+   }
 }

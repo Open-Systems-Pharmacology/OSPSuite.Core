@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Importer.Mappers
                column.ColumnNameOfRelatedColumn = columnInfo.RelatedColumnOf;
                //Add AuxiliaryType meta data category
                if (column.MetaData == null) column.MetaData = new MetaDataTable();
-               
+                  
                var listOfValues = new Dictionary<string, string>
                {
                   {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_ARITHMETIC},
