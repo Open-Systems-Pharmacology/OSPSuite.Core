@@ -269,7 +269,7 @@ namespace OSPSuite.Presentation
       public void should_not_update_the_view()
       {
          //once becasue of initial context
-         A.CallTo(() => _view.BindTo(A<IEnumerable<CurveDTO>>._)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.BindTo(A<IEnumerable<CurveDTO>>._)).MustHaveHappenedOnceExactly();
       }
 
    }

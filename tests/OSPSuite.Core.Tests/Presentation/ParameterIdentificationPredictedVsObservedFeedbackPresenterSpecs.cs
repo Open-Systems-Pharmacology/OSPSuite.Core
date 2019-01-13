@@ -208,7 +208,8 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_chart_service_should_have_been_used_to_replot_the_new_output_feedback()
       {
-         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>.That.Matches(chart => chart.DefaultYAxisScaling == Scalings.Log), A<Action<DataColumn, Curve>>._)).MustHaveHappened(Repeated.Exactly.Times(4));
+         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>.That.Matches(chart => chart.DefaultYAxisScaling == Scalings.Log), A<Action<DataColumn, Curve>>._))
+            .MustHaveHappened(4, Times.Exactly);
       }
    }
 
@@ -228,7 +229,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_plot_the_best_and_current_run_in_the_chart()
       {
-         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _predictedVsObservedChartService.AddCurvesFor(_observationColumns, A<DataColumn>._, A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappenedTwiceExactly();
       }
    }
 

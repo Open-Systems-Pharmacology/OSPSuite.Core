@@ -9,7 +9,7 @@ namespace OSPSuite.Helpers
    internal class TestObjectBaseFactory : IObjectBaseFactory
    {
       // other methods are not nessessary
-      public T Create<T>() where T : IObjectBase
+      public T Create<T>() where T : class,  IObjectBase
       {
 
          if (typeof(T).IsAnImplementationOf<IMoleculeAmount>())
@@ -21,7 +21,7 @@ namespace OSPSuite.Helpers
          return A.Fake<T>();
       }
 
-      public T Create<T>(string id) where T : IObjectBase
+      public T Create<T>(string id) where T : class, IObjectBase
       {
          throw new NotSupportedException();
       }
