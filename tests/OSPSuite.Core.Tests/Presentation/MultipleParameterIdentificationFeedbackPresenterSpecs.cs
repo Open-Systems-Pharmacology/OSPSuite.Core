@@ -56,13 +56,13 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_add_any_new_parameter_identification_run_that_is_not_monitored_yet_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(A<IEnumerable<MultiOptimizationRunResultDTO>>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(A<IEnumerable<MultiOptimizationRunResultDTO>>._)).MustHaveHappenedTwiceExactly();
       }
 
       [Observation]
       public void should_update_the_view_when_the_newly_updatedr_run_was_already_added()
       {
-         A.CallTo(() => _view.RefreshData()).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.RefreshData()).MustHaveHappenedOnceExactly();
       }
 
       [Observation]

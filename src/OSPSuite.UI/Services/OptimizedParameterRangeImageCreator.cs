@@ -62,7 +62,7 @@ namespace OSPSuite.UI.Services
             clonedChart.Legend.AlignmentHorizontal = LegendAlignmentHorizontal.LeftOutside;
             clonedChart.Legend.AlignmentVertical = LegendAlignmentVertical.TopOutside;
 
-            ((XYDiagram)clonedChart.Diagram).DefaultPane.Visible = false;
+            ((XYDiagram)clonedChart.Diagram).DefaultPane.Visibility =ChartElementVisibility.Hidden;
             clonedChart.DrawToBitmap(legendBitmap, new Rectangle(Point.Empty, legendBitmap.Size));
          }
          return legendBitmap;

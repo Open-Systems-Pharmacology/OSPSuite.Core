@@ -94,13 +94,13 @@ namespace OSPSuite.Converter.v5_2
       [Observation]
       public void should_convert_parameter_in_root()
       {
-         A.CallTo(() => _parameterConverter.Convert(_rootPara, true)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _parameterConverter.Convert(_rootPara, true)).MustHaveHappenedOnceExactly();
       }
 
       [Observation]
       public void should_convert_parameter_in_neighborhoods()
       {
-         A.CallTo(() => _parameterConverter.Convert(_neighborhoodParameter, true)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _parameterConverter.Convert(_neighborhoodParameter, true)).MustHaveHappenedOnceExactly();
       }
    }
 }

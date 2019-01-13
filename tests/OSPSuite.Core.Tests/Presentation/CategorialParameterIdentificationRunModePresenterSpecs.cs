@@ -110,7 +110,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_rebind_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappenedTwiceExactly();
       }
    }
 
@@ -138,7 +138,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_rebind_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappenedTwiceExactly();
       }
    }
 
@@ -158,7 +158,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_rebind_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(_dto)).MustHaveHappenedTwiceExactly();
       }
    }
 

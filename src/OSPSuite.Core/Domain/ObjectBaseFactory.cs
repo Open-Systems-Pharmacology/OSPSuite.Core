@@ -1,18 +1,18 @@
 using System;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
    public class ObjectBaseFactory : IObjectBaseFactory
    {
-      private readonly OSPSuite.Utility.Container.IContainer _container;
+      private readonly Utility.Container.IContainer _container;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IIdGenerator _idGenerator;
       private readonly ICreationMetaDataFactory _creationMetaDataFactory;
 
-      public ObjectBaseFactory(OSPSuite.Utility.Container.IContainer container, IDimensionFactory dimensionFactory,
+      public ObjectBaseFactory(Utility.Container.IContainer container, IDimensionFactory dimensionFactory,
          IIdGenerator idGenerator, ICreationMetaDataFactory creationMetaDataFactory)
       {
          _container = container;
@@ -21,12 +21,12 @@ namespace OSPSuite.Core.Domain
          _creationMetaDataFactory = creationMetaDataFactory;
       }
 
-      public virtual T Create<T>() where T : IObjectBase
+      public virtual T Create<T>() where T : class, IObjectBase
       {
          return Create<T>(GetId());
       }
 
-      public virtual T Create<T>(string id) where T : IObjectBase
+      public virtual T Create<T>(string id) where T : class, IObjectBase
       {
          var newObject = _container.Resolve<T>().WithId(id);
          updateDimension(newObject);

@@ -62,7 +62,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_bind_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(_axes)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(_axes)).MustHaveHappenedTwiceExactly();
       }
    }
 

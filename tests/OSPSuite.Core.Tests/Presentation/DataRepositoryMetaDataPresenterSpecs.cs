@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void rebinds_to_view_with_new_list()
       {
-         A.CallTo(() => _view.BindToMetaData(A<NotifyList<MetaDataDTO>>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.BindToMetaData(A<NotifyList<MetaDataDTO>>.Ignored)).MustHaveHappenedOnceExactly();
       }
    }
 
@@ -70,7 +70,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void rebinds_to_view_with_new_list()
       {
-         A.CallTo(() => _view.BindToMetaData(A<NotifyList<MetaDataDTO>>.Ignored)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindToMetaData(A<NotifyList<MetaDataDTO>>.Ignored)).MustHaveHappenedTwiceExactly();
       }
    }
 

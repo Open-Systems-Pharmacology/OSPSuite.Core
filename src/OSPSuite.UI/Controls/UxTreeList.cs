@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
-using DevExpress.XtraTreeList.Nodes;
+using DevExpress.XtraTreeList;
 using DevExpress.XtraTreeList.ViewInfo;
 
 namespace OSPSuite.UI.Controls
 {
-   public partial class UxTreeList : DevExpress.XtraTreeList.TreeList
+   public partial class UxTreeList : TreeList
    {
       public UxTreeList()
       {
@@ -17,33 +17,23 @@ namespace OSPSuite.UI.Controls
          return new TreeListViewInfoEmptyIcon(this);
       }
 
-      private class TreeListViewInfoEmptyIcon : TreeListViewInfo
+      public class TreeListViewInfoEmptyIcon : TreeListViewInfo
       {
-         public TreeListViewInfoEmptyIcon(DevExpress.XtraTreeList.TreeList treeList) : base(treeList)
+         public TreeListViewInfoEmptyIcon(TreeList treeList) : base(treeList)
          {
          }
 
-         protected override Point GetDataBoundsLocation(TreeListNode node, int top)
+         protected override void CalcSelectImageBounds(RowInfo rInfo, Rectangle indentBounds)
          {
-            Point result = base.GetDataBoundsLocation(node, top);
-            if (Size.Empty != RC.SelectImageSize && -1 == node.SelectImageIndex)
-               result.X -= RC.SelectImageSize.Width;
-            if (Size.Empty != RC.StateImageSize && -1 == node.StateImageIndex)
-               result.X -= RC.StateImageSize.Width;
-            return result;
+            base.CalcSelectImageBounds(rInfo, indentBounds);
+            if (-1 == rInfo.SelectImageIndex) rInfo.SelectImageBounds = Rectangle.Empty;
          }
 
-         protected override void CalcStateImage(RowInfo ri)
+         protected override void CalcStateImageBounds(RowInfo rInfo, Rectangle indentBounds)
          {
-            base.CalcStateImage(ri);
-            if (Size.Empty != RC.SelectImageSize && -1 == ri.Node.SelectImageIndex)
-               ri.StateImageLocation.X -= RC.SelectImageSize.Width;
-         }
-
-         protected override void CalcSelectImage(RowInfo ri)
-         {
-            base.CalcSelectImage(ri);
-            if (-1 == ri.Node.SelectImageIndex) ri.SelectImageLocation = Point.Empty;
+            base.CalcStateImageBounds(rInfo, indentBounds);
+            if (Size.Empty != RC.SelectImageSize && -1 == rInfo.StateImageIndex)
+               rInfo.StateImageBounds = Rectangle.Empty;
          }
       }
 

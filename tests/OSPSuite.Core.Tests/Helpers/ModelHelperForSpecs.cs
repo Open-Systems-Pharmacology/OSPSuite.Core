@@ -1081,7 +1081,7 @@ namespace OSPSuite.Helpers
          _dimensionFactory = dimensionFactory;
       }
 
-      public T Create<T>() where T : IObjectBase
+      public T Create<T>() where T : class, IObjectBase
       {
          throw new NotSupportedException();
       }
@@ -1126,7 +1126,7 @@ namespace OSPSuite.Helpers
          return default(T);
       }
 
-      public T Create<T>(string id) where T : IObjectBase
+      public T Create<T>(string id) where T : class, IObjectBase
       {
          throw new NotSupportedException();
       }

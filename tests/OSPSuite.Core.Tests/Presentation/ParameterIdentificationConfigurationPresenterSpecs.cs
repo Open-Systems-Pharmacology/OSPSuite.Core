@@ -137,7 +137,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_result_in_a_mapping_of_a_new_identification_algorithm()
       {
-         A.CallTo(() => _algorithmPropertiesMapper.MapFrom(_optimizationAlgorithm1)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _algorithmPropertiesMapper.MapFrom(_optimizationAlgorithm1)).MustHaveHappenedTwiceExactly();
       }
    }
 
@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_result_in_a_mapping_of_a_new_identification_algorithm()
       {
-         A.CallTo(() => _algorithmPropertiesMapper.MapFrom(_optimizationAlgorithm1)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _algorithmPropertiesMapper.MapFrom(_optimizationAlgorithm1)).MustHaveHappenedOnceExactly();
       }
    }
 

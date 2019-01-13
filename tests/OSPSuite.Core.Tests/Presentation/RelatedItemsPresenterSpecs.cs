@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation
       public void should_update_the_view()
       {
          //one for edit and one for add items
-         A.CallTo(() => _view.BindTo(_journalPage.RelatedItems)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(_journalPage.RelatedItems)).MustHaveHappenedTwiceExactly();
       }
    }
 

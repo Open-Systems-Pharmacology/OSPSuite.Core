@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_not_redraw_chart()
       {
-         A.CallTo(() => _simpleChartPresenter.PlotObservedData(A<DataRepository>._)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _simpleChartPresenter.PlotObservedData(A<DataRepository>._)).MustHaveHappenedOnceExactly();
       }
 
       protected override void Because()
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_redraw_chart_with_new_data()
       {
-         A.CallTo(() => _simpleChartPresenter.PlotObservedData(_repository)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _simpleChartPresenter.PlotObservedData(_repository)).MustHaveHappenedTwiceExactly();
       }
 
       protected override void Because()
@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_redraw_chart_with_new_data()
       {
-         A.CallTo(() => _simpleChartPresenter.PlotObservedData(_repository)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _simpleChartPresenter.PlotObservedData(_repository)).MustHaveHappenedTwiceExactly();
       }
 
       protected override void Because()
