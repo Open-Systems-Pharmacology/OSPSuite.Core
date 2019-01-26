@@ -45,6 +45,9 @@ namespace OSPSuite.UI.Views
 
       private void manageSelectedNodes(ITreeNode selectedNode = null, bool canClearSelection = true)
       {
+         if (_presenter == null)
+            return;
+
          this.DoWithinLatch(() =>
          {
             var multiSelectAllowed = _presenter.AllowMultiSelectFor(selectedNodes.Union(new[] {selectedNode}));
