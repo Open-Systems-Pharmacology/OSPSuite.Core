@@ -5,12 +5,15 @@ using DevExpress.XtraTreeList.ViewInfo;
 
 namespace OSPSuite.UI.Controls
 {
+   
    public partial class UxTreeList : TreeList
    {
       public UxTreeList()
       {
          InitializeComponent();
       }
+
+      // see https://github.com/DevExpress-Examples/how-to-get-rid-of-the-space-reserved-for-an-image-in-a-treelistnode-e2153
 
       protected override TreeListViewInfo CreateViewInfo()
       {
@@ -32,8 +35,7 @@ namespace OSPSuite.UI.Controls
          protected override void CalcStateImageBounds(RowInfo rInfo, Rectangle indentBounds)
          {
             base.CalcStateImageBounds(rInfo, indentBounds);
-            if (Size.Empty != RC.SelectImageSize && -1 == rInfo.StateImageIndex)
-               rInfo.StateImageBounds = Rectangle.Empty;
+            if ( -1 == rInfo.StateImageIndex) rInfo.StateImageBounds = Rectangle.Empty;
          }
       }
 
