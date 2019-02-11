@@ -90,11 +90,11 @@
     <Reference Include="OSPSuite.TeXReporting, Version=2.1.1.9, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.1.9\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.1\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="SX, Version=2.6.9.3, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.9.3\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.6.9.6, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.9.6\lib\net45\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
