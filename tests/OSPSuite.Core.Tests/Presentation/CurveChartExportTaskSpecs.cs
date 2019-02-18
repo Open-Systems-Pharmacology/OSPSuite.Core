@@ -56,12 +56,12 @@ namespace OSPSuite.Presentation
       {
          base.Context();
          A.CallTo(_dialogCreator).WithReturnType<string>().Returns(_fileName);
-         A.CallTo(() => _dataRepositoryTask.ExportToExcel(A<IEnumerable<DataColumn>>._, _fileName, A<Func<DataColumn, string>>._, A<Func<DataColumn, IDimension>>._, true))
+         A.CallTo(() => _dataRepositoryTask.ExportToExcel(A<IEnumerable<DataColumn>>._, _fileName, true, A<DataColumnExportOptions>._))
             .Invokes(x =>
             {
                _dataColumns = x.GetArgument<IEnumerable<DataColumn>>(0).ToList();
-               _namingFunc = x.GetArgument<Func<DataColumn, string>>(2);
-               _dimensionFunc = x.GetArgument<Func<DataColumn, IDimension>>(3);
+               _namingFunc = x.GetArgument<DataColumnExportOptions>(3).ColumnNameRetriever;
+               _dimensionFunc = x.GetArgument<DataColumnExportOptions>(3).DimensionRetriever;
             });
 
          _curveChart = new CurveChart {Name = "Chart"};

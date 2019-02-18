@@ -96,8 +96,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _col1 = new DataColumn("col1", _mass, _baseGrid1) { Values = new float[] { 10, 20, 30 } };
-         _col2 = new DataColumn("col2", _mass, _baseGrid1) { Values = new float[] { 100, 200, 300 } };
+         _col1 = new DataColumn("col1", _mass, _baseGrid1) {Values = new float[] {10, 20, 30}};
+         _col2 = new DataColumn("col2", _mass, _baseGrid1) {Values = new float[] {100, 200, 300}};
 
          _dataRepository.Add(_col1);
          _dataRepository.Add(_col2);
@@ -105,7 +105,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _results = sut.ToDataTable(_dataRepository,useDisplayUnit:false);
+         _results = sut.ToDataTable(_dataRepository, new DataColumnExportOptions {UseDisplayUnit = false});
       }
 
       [Observation]
@@ -139,7 +139,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    public class When_converting_a_data_repository_and_output_should_be_formated : concern_for_DataRepositoryTask
    {
       private DataColumn _col1;
@@ -156,7 +155,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _results = sut.ToDataTable(_dataRepository, true);
+         _results = sut.ToDataTable(_dataRepository, new DataColumnExportOptions {FormatOutput = true});
       }
 
       [Observation]

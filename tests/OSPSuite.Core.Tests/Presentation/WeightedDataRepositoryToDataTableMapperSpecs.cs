@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation
 
          _weightedObservedData = new WeightedObservedData(_dataRepository);
 
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<bool>._, A<bool>._, A<bool>._)).Returns(new[] {new DataTable() });
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<DataColumnExportOptions>._)).Returns(new[] {new DataTable() });
       }
    }
 
@@ -45,13 +45,13 @@ namespace OSPSuite.Presentation
       [Observation]
       public void the_output_table_must_include_columns_from_the_repository_and_additional_weight_column()
       {
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>.That.Matches(repo => repo.Count() == 3), false, true, true)).MustHaveHappened();
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>.That.Matches(repo => repo.Count() == 3), A<DataColumnExportOptions>._)).MustHaveHappened();
       }
 
       [Observation]
       public void should_convert_the_observed_data_to_a_data_table()
       {
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, false, true, true)).MustHaveHappened();
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<DataColumnExportOptions>._)).MustHaveHappened();
       }
    }
 }

@@ -1238,15 +1238,9 @@ namespace OSPSuite.Assets
 
       public const string OnlyLocalParametersInPassiveTransports = "Passive transport {0} contains parameters with BuildMode != LOCAL";
 
-      public static string BothNeighborsSatisfying(string neighborhood)
-      {
-         return $"Both neighbors of {neighborhood} satisfy the criteria";
-      }
+      public static string BothNeighborsSatisfying(string neighborhood) => $"Both neighbors of {neighborhood} satisfy the criteria";
 
-      public static string BothNeighborsSatisfyingForTransport(string message, string transporter)
-      {
-         return $"{message} for transport {transporter}";
-      }
+      public static string BothNeighborsSatisfyingForTransport(string message, string transporter) => $"{message} for transport {transporter}";
 
       public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
       public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
@@ -1361,6 +1355,8 @@ namespace OSPSuite.Assets
       {
          return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
       }
+
+      public static string ExportToCsvNotSupportedForDifferentBaseGrid = "Export to CSV is only supported for data columns sharing the same base grid.";
 
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
 

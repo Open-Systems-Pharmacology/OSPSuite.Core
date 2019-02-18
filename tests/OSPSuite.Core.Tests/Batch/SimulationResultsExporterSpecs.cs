@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -10,18 +8,18 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Utility;
-using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Batch
 {
    public abstract class concern_for_SimulationResultsExporter : ContextSpecification<ISimulationResultsExporter>
    {
       protected IDataRepositoryTask _dataRepositoryTask;
-      private IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
+      protected IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       protected ISimulationResultsToBatchSimulationExportMapper _batchSimulationExportMapper;
       protected ISimulation _simulation;
       protected DataRepository _results;
@@ -48,15 +46,20 @@ namespace OSPSuite.Batch
 
    public class When_exporting_simulation_results_to_csv : concern_for_SimulationResultsExporter
    {
-      private List<DataTable> _dataTables;
+      private DataColumnExportOptions _exportOptions;
+      private DataColumn _dataColumn;
 
       protected override void Context()
       {
          base.Context();
-         var dataTable = new DataTable("TEST");
 
-         _dataTables = new List<DataTable> {dataTable};
-         A.CallTo(_dataRepositoryTask).WithReturnType<IEnumerable<DataTable>>().Returns(_dataTables);
+         A.CallTo(() => _dataRepositoryTask.ExportToCsvAsync(A<IEnumerable<DataColumn>>._, _fileName, A<DataColumnExportOptions>._))
+            .Invokes(x => _exportOptions = x.GetArgument<DataColumnExportOptions>(2));
+
+         _dataColumn = DomainHelperForSpecs.ObservedData().FirstDataColumn();
+         _dataColumn.Name = "TOTO";
+
+         A.CallTo(() => _quantityDisplayPathMapper.DisplayPathAsStringFor(_simulation, _dataColumn,false)).Returns("NEW NAME");
       }
 
       protected override void Because()
@@ -65,15 +68,15 @@ namespace OSPSuite.Batch
       }
 
       [Observation]
-      public void should_create_a_data_table_with_all_results_from_the_simulation_and_export_it_to_the_file()
-      {
-         FileHelper.FileExists(_fileName).ShouldBeTrue();
-      }
-
-      [Observation]
       public void should_export_the_value_unformatted_and_in_core_unit()
       {
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(A<IEnumerable<DataColumn>>._, A<Func<DataColumn, string>>._, A<Func<DataColumn, IDimension>>._, false, false,false)).MustHaveHappened();
+         _exportOptions.UseDisplayUnit.ShouldBeFalse();
+      }
+      
+      [Observation]
+      public void should_use_the_quantity_display_path_mapper_to_create_the_name_of_the_column()
+      {
+         _exportOptions.ColumnNameRetriever(_dataColumn).ShouldBeEqualTo("NEW NAME");
       }
    }
 
