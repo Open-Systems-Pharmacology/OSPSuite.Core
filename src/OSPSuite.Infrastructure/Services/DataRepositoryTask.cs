@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -89,38 +91,49 @@ namespace OSPSuite.Infrastructure.Services
          return newColumn;
       }
 
-      private bool isAlreadyCloned(DataColumn column)
+      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
+         ExportToExcel(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
+
+      public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+         ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
+
+      public Task ExportToExcelAsync(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
+         ExportToExcelAsync(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
+
+      public Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+         Task.Run(() => ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel));
+
+      public Task ExportToCsvAsync(IEnumerable<DataColumn> dataColumns, string fileName, DataColumnExportOptions exportOptions = null)
       {
-         return _idMap.Contains(column.Id);
+         return Task.Run(() =>
+         {
+            var datables = ToDataTable(dataColumns, exportOptions);
+            if (datables.Count == 1)
+               datables[0].ExportToCSV(fileName);
+            else if (datables.Count > 1)
+               throw new ArgumentException(Error.ExportToCsvNotSupportedForDifferentBaseGrid);
+         });
       }
 
-      private string idOfCloneFor(DataColumn column)
-      {
-         return _idMap[column.Id];
-      }
+      private bool isAlreadyCloned(DataColumn column) => _idMap.Contains(column.Id);
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true, bool forceColumnTypeAsObject=false)
-      {
-         return ToDataTable(dataColumns, c => c.Name, c => c.Dimension, formatOutput, useDisplayUnit, forceColumnTypeAsObject);
-      }
+      private string idOfCloneFor(DataColumn column) => _idMap[column.Id];
 
-      public IEnumerable<DataTable> ToDataTable(
-         IEnumerable<DataColumn> dataColumns, 
-         Func<DataColumn, string> columnNameRetriever, 
-         Func<DataColumn, IDimension> dimensionRetrieverFunc, 
-         bool formatOutput = false, 
-         bool useDisplayUnit = true,
-         bool forceColumnTypeToObject = false
-         )
+      public IReadOnlyList<DataTable> ToDataTable(
+         IEnumerable<DataColumn> dataColumns,
+         DataColumnExportOptions exportOptions = null
+      )
       {
+         var options = exportOptions ?? new DataColumnExportOptions();
          var allColumns = allColumnsWithRelatedColumnsFrom(dataColumns);
          var cacheName = retrieveUniqueNamesForTables(allColumns);
-         var valueFormatter = valueFormatterFor(formatOutput);
-         var columnType = forceColumnTypeToObject ? typeof(object) : formatOutput ? typeof(string) : typeof(float);
-
-         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, dimensionRetrieverFunc, useDisplayUnit, columnType, valueFormatter));
+         var valueFormatter = valueFormatterFor(options.FormatOutput);
+         var columnType = options.ForceColumnTypeAsObject ? typeof(object) : options.FormatOutput ? typeof(string) : typeof(float);
+         var columnNameRetrieverFunc = options.ColumnNameRetriever;
+         var dimensionRetrieverFunc = options.DimensionRetriever;
+         var useDisplayUnit = options.UseDisplayUnit;
+         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetrieverFunc, dimensionRetrieverFunc, useDisplayUnit, columnType, valueFormatter)).ToList();
       }
-
 
       private Func<double, object> valueFormatterFor(bool formatOutput)
       {
@@ -155,6 +168,7 @@ namespace OSPSuite.Infrastructure.Services
             {
                currentName = $"{defaultName}_{index++}";
             }
+
             tableNameCache.Add(baseGrid, currentName);
          }
 
@@ -171,29 +185,14 @@ namespace OSPSuite.Infrastructure.Services
          return new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
       }
 
-      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel)
-      {
-         ExportToExcel(dataColumns, fileName, x => x.Name, x => x.Dimension, launchExcel);
-      }
-
-      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool launchExcel = true)
-      {
-         ExportToExcel(ToDataTable(dataColumns, columnNameRetriever, dimensionRetriever), fileName, launchExcel);
-      }
-
-      public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel)
-      {
-         ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
-      }
-
       private DataTable createTableFor(
-         string tableName, 
-         DataColumn baseGridColumn, 
-         IEnumerable<DataColumn> columnsToExport, 
-         Func<DataColumn, string> columnNameRetriever, 
+         string tableName,
+         DataColumn baseGridColumn,
+         IEnumerable<DataColumn> columnsToExport,
+         Func<DataColumn, string> columnNameRetriever,
          Func<DataColumn, IDimension> dimensionRetriever,
          bool useDisplayUnit,
-         Type columnType, 
+         Type columnType,
          Func<double, object> valueFunc)
       {
          var dataTable = new DataTable(tableName);
@@ -237,6 +236,7 @@ namespace OSPSuite.Infrastructure.Services
                var value = dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
                row[j] = valueFunc(value);
             }
+
             dataTable.Rows.Add(row);
          }
 
@@ -271,6 +271,7 @@ namespace OSPSuite.Infrastructure.Services
             {
                currentName = $"{defaultName}_{index++}";
             }
+
             cacheNameForColumns.Add(column, currentName);
          }
 

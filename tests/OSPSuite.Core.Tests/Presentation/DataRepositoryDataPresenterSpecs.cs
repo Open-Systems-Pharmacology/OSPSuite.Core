@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation
          //common setup
          _dataRepository = new DataRepository();
          _dataTable = new DataTable();
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, false, true, true)).Returns(new[] {_dataTable});
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, A<DataColumnExportOptions>._)).Returns(new[] {_dataTable});
 
          var col = _dataTable.AddColumn<float>("test");
          col.ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, "col");

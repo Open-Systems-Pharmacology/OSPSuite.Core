@@ -46,7 +46,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected override DataTable MapDataTableFromColumns()
       {
-         return _dataRepositoryTask.ToDataTable(_observedData, forceColumnTypeAsObject: true).First();
+         return _dataRepositoryTask.ToDataTable(_observedData, new DataColumnExportOptions { ForceColumnTypeAsObject = true }).First();
       }
 
       public void ValueIsSet(CellValueChangedDTO cellValueChangedDTO)

@@ -39,7 +39,13 @@ namespace OSPSuite.Core.Services
 
          var dataColumnCache = new Cache<DataColumn, Curve>(onMissingKey: x => null);
          visibleCurves.Each(curve => dataColumnCache[curve.yData] = curve);
-         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys, fileName, col => dataColumnCache[col]?.Name ?? col.Name, _dimensionFactory.MergedDimensionFor);
+
+         var exportOptions = new DataColumnExportOptions
+         {
+            ColumnNameRetriever = col => dataColumnCache[col]?.Name ?? col.Name,
+            DimensionRetriever = _dimensionFactory.MergedDimensionFor
+         };
+         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys, fileName, exportOptions: exportOptions);
       }
    }
 }

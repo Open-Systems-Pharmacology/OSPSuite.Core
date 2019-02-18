@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
          var dataColumn = createWeightColumn(weightedObservedData.ObservedData.BaseGrid, weightedObservedData);
 
          columns.Add(dataColumn);
-         return _dataRepositoryTask.ToDataTable(columns, forceColumnTypeAsObject: true).First();
+         return _dataRepositoryTask.ToDataTable(columns, new DataColumnExportOptions {ForceColumnTypeAsObject = true}).First();
       }
 
       private DataColumn createWeightColumn(BaseGrid baseGrid, WeightedObservedData weightedObservedData)
