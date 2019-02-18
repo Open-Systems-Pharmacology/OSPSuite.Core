@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Export the given data tables to excel
       /// </summary>
-      void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel);
+      void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true);
 
       BaseGrid CloneBaseGrid(DataColumn baseGridToClone);
 
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Export the given data tables to excel
       /// </summary>
-      Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel);
+      Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true);
 
       /// <summary>
       ///    Export the given data repository to excel using the ToDataTable function
