@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -51,7 +50,7 @@ namespace OSPSuite.Infrastructure.Configuration
       {
          var assemblyVersion = AssemblyVersion;
          MajorVersion = version(assemblyVersion.Minor);
-         Version = combineVersions(MajorVersion,assemblyVersion.Build);
+         Version = combineVersions(MajorVersion, assemblyVersion.Build);
          BuildVersion = assemblyVersion.Revision.ToString();
          FullVersion = combineVersions(Version, BuildVersion);
 

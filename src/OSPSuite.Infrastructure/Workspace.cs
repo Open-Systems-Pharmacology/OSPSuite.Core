@@ -46,7 +46,7 @@ namespace OSPSuite.Infrastructure
          if (Journal == null)
             return;
 
-         _project.JournalPath = FileHelper.CreateRelativePath(Journal.FullPath, projectFileFullPath);
+         _project.JournalPath = FileHelper.CreateRelativePath(Journal.FullPath, FileHelper.FolderFromFileFullPath(projectFileFullPath));
       }
 
       protected void ReleaseMemory()
@@ -76,7 +76,7 @@ namespace OSPSuite.Infrastructure
 
       public Core.Journal.Journal Journal
       {
-         get { return _journal; }
+         get => _journal;
          set
          {
             _journal = value;
