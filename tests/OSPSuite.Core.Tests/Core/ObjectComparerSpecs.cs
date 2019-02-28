@@ -12,8 +12,8 @@ namespace OSPSuite.Core
 {
    public abstract class concern_for_ObjectComparer : ContextForIntegration<IObjectComparer>
    {
-      protected IObjectBase _object1;
-      protected IObjectBase _object2;
+      protected object _object1;
+      protected object _object2;
       protected ComparerSettings _comparerSettings;
       protected DiffReport _report;
 
