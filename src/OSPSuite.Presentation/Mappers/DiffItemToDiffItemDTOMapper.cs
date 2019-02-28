@@ -1,13 +1,13 @@
 ﻿using System;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Presentation.Mappers
 {
@@ -71,6 +71,7 @@ namespace OSPSuite.Presentation.Mappers
             value1 = presentWithDetails(missingDiffItem.PresentObjectDetails);
             value2 = Captions.Comparisons.Absent;
          }
+
          updateDiffItem(value1, value2, missingDiffItem.MissingObjectType, missingDiffItem.MissingObjectName, missingDiffItem.CommonAncestor, itemIsMissing: true);
       }
 
@@ -94,7 +95,7 @@ namespace OSPSuite.Presentation.Mappers
             displayIf<IReactionPartner>(diffItem, x => x.Partner.Name) ??
             displayIf<IReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
             displayIf<UsedCalculationMethod>(diffItem, x => x.Category) ??
-            displayIf<CalculationMethod>(diffItem, x => x.Category) ??
+            displayIf<CalculationMethod>(diffItem, x => displayNameFor(new Category<CalculationMethod> {Name = x.Category})) ??
             displayIf<IObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<ValuePoint>(diffItem, x => ancestorDisplayName(diffItem)) ??
             _displayNameProvider.DisplayNameFor(diffItem.Object1);
@@ -106,16 +107,15 @@ namespace OSPSuite.Presentation.Mappers
          return castObject == null ? null : displayFunc(castObject);
       }
 
-      private string ancestorDisplayName(DiffItem propertyDiffItem)
-      {
-         return _displayNameProvider.DisplayNameFor(propertyDiffItem.CommonAncestor);
-      }
+      private string ancestorDisplayName(DiffItem propertyDiffItem) => displayNameFor(propertyDiffItem.CommonAncestor);
+
+      private string displayNameFor(object objecToDisplay) => _displayNameProvider.DisplayNameFor(objecToDisplay);
 
       public void Visit(MismatchDiffItem mismatchDiffItem)
       {
          var ancestor = mismatchDiffItem.CommonAncestor;
-         var ancestorName = _displayNameProvider.DisplayNameFor(ancestor);
-         updateDiffItem(_displayNameProvider.DisplayNameFor(mismatchDiffItem.Object1), _displayNameProvider.DisplayNameFor(mismatchDiffItem.Object2), mismatchDiffItem.Description, ancestorName, ancestor, itemIsMissing: false);
+         var ancestorName = displayNameFor(ancestor);
+         updateDiffItem(displayNameFor(mismatchDiffItem.Object1), displayNameFor(mismatchDiffItem.Object2), mismatchDiffItem.Description, ancestorName, ancestor, itemIsMissing: false);
       }
    }
 }
