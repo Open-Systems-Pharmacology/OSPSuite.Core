@@ -148,6 +148,8 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Comparison\CalculationMethodCacheDiffBuilder.cs" />
+    <Compile Include="Comparison\CalculationMethodDiffBuilder.cs" />
     <Compile Include="Comparison\WithValueOriginComparison.cs" />
     <Compile Include="Converter\v7_3\Converter710To730.cs" />
     <Compile Include="Domain\Formulas\TableFormulaWithXArgument.cs" />
