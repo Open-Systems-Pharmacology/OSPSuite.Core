@@ -19,8 +19,8 @@ namespace OSPSuite.Core.Domain
 
       public virtual TObject DefaultItem
       {
-         get { return _defaultItem ?? _allItems[0]; }
-         set { _defaultItem = value; }
+         get => _defaultItem ?? _allItems[0];
+         set => _defaultItem = value;
       }
 
       public virtual void Add(TObject item)

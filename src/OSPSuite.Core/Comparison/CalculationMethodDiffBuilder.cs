@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain;
+﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -7,7 +8,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<CalculationMethod> comparison)
       {
          //No need to compare name and display name as they will be correlated
-         CompareStringValues(x => x.DisplayName, x => x.DisplayName, comparison);
+         CompareStringValues(x => x.DisplayName, Captions.CalculationMethod, comparison);
          CompareStringValues(x => x.Category, x => x.Category, comparison);
       }
    }
