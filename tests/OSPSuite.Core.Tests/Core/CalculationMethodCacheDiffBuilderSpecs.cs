@@ -1,6 +1,8 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
@@ -51,8 +53,11 @@ namespace OSPSuite.Core
          _report[1].Object1.ShouldBeEqualTo(_calculationMethodCat2Item3);
          _report[1].Object2.ShouldBeEqualTo(_calculationMethodCat2Item4);
 
-         _report[2].Object1.ShouldBeEqualTo(_calculationMethodCat3Item5);
-         _report[2].Object1.ShouldBeNull();
+         var missingItem = _report[2].DowncastTo<MissingDiffItem>();
+         missingItem.Object1.ShouldBeEqualTo(_calculationMethodCache1);
+         missingItem.Object2.ShouldBeEqualTo(_calculationMethodCache2);
+         missingItem.MissingObject1.ShouldBeEqualTo(_calculationMethodCat3Item5);
+         missingItem.MissingObject2.ShouldBeNull();
       }
    }
 }
