@@ -12,6 +12,7 @@ namespace OSPSuite.Core
       protected CalculationMethod _calculationMethodCat1Item2;
       protected CalculationMethod _calculationMethodCat2Item3;
       protected CalculationMethod _calculationMethodCat2Item4;
+      protected CalculationMethod _calculationMethodCat3Item5;
 
       protected override void Context()
       {
@@ -25,9 +26,11 @@ namespace OSPSuite.Core
          _calculationMethodCat1Item2 = new CalculationMethod {Category = "Cat1", Name = "Item2", DisplayName = "Item2"};
          _calculationMethodCat2Item3 = new CalculationMethod {Category = "Cat2", Name = "Item3", DisplayName = "Item3"};
          _calculationMethodCat2Item4 = new CalculationMethod {Category = "Cat2", Name = "Item4", DisplayName = "Item4"};
+         _calculationMethodCat3Item5 = new CalculationMethod {Category = "Cat3", Name = "Item5", DisplayName = "Item5"};
 
          _calculationMethodCache1.AddCalculationMethod(_calculationMethodCat1Item1);
          _calculationMethodCache1.AddCalculationMethod(_calculationMethodCat2Item3);
+         _calculationMethodCache1.AddCalculationMethod(_calculationMethodCat3Item5);
          _calculationMethodCache2.AddCalculationMethod(_calculationMethodCat1Item2);
          _calculationMethodCache2.AddCalculationMethod(_calculationMethodCat2Item4);
 
@@ -41,9 +44,15 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_the_expected_difference()
       {
-         _report.Count.ShouldBeEqualTo(2);
+         _report.Count.ShouldBeEqualTo(3);
          _report[0].Object1.ShouldBeEqualTo(_calculationMethodCat1Item1);
          _report[0].Object2.ShouldBeEqualTo(_calculationMethodCat1Item2);
+
+         _report[1].Object1.ShouldBeEqualTo(_calculationMethodCat2Item3);
+         _report[1].Object2.ShouldBeEqualTo(_calculationMethodCat2Item4);
+
+         _report[2].Object1.ShouldBeEqualTo(_calculationMethodCat3Item5);
+         _report[2].Object1.ShouldBeNull();
       }
    }
 }
