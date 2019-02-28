@@ -23,7 +23,6 @@ namespace OSPSuite.Core
          _calculationMethodCache1 = new CalculationMethodCache();
          _calculationMethodCache2 = new CalculationMethodCache();
 
-
          _calculationMethodCat1Item1 = new CalculationMethod {Category = "Cat1", Name = "Item1", DisplayName = "Item1"};
          _calculationMethodCat1Item2 = new CalculationMethod {Category = "Cat1", Name = "Item2", DisplayName = "Item2"};
          _calculationMethodCat2Item3 = new CalculationMethod {Category = "Cat2", Name = "Item3", DisplayName = "Item3"};
