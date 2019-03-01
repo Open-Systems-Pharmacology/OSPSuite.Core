@@ -96,9 +96,9 @@ namespace OSPSuite.Core.Domain
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
       public const int MB_TO_BYTES = 1024 * 1024; //1 MB = 1024 * 1024 bytes
-      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5 * MB_TO_BYTES; 
-      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES; 
-      public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File"; 
+      public const int RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES = 5 * MB_TO_BYTES;
+      public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES;
+      public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File";
 
       public static class Files
       {
@@ -236,6 +236,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string JSON_EXTENSION = ".json";
          public static readonly string DOCX_EXTENSION = ".docx";
          public static readonly string DOC_EXTENSION = ".doc";
+         public static readonly string MARKDOWN_EXTENSION = ".md";
          public static readonly string ANY_EXTENSION = ".*";
 
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
@@ -256,24 +257,20 @@ namespace OSPSuite.Core.Domain
          public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
+         public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
 
-         public static readonly string JSON_FILTER = $"*{JSON_EXTENSION}";
-         public static readonly string XML_FILTER = $"*{XML_EXTENSION}";
+         public static readonly string JSON_FILTER = filter(JSON_EXTENSION);
 
-         public static string XmlFilter(string caption)
-         {
-            return FileFilter(caption, XML_EXTENSION);
-         }
+         public static readonly string XML_FILTER = filter(XML_EXTENSION);
+
+         public static string XmlFilter(string caption) => FileFilter(caption, XML_EXTENSION);
 
          public static string FileFilter(string caption, string extension)
          {
             return $"{caption} File ({filter(extension)})|{filter(extension)}";
          }
 
-         private static string filter(string extension)
-         {
-            return $"*{extension}";
-         }
+         private static string filter(string extension) => $"*{extension}";
       }
 
       public static class DirectoryKey
