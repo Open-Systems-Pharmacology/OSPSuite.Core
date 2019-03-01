@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Starter.Domain;
+using OSPSuite.Utility.Extensions;
 using ISimulation = OSPSuite.Core.Domain.ISimulation;
 
 namespace OSPSuite.Starter.Services
@@ -42,13 +43,13 @@ namespace OSPSuite.Starter.Services
          };
 
          var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable).ToList();
-         var firstAmount = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.AMOUNT);
-         simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(firstAmount), QuantityType.Molecule));
+         var amounts = allPersistable.Where(x => x.Dimension.Name == Constants.Dimension.AMOUNT).Take(3).ToList();
+         amounts.Each(x=>simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(x), QuantityType.Molecule)));
 
          var firstFraction = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.FRACTION);
          simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(firstFraction), QuantityType.Molecule));
 
-         _projectRetriever.CurrentProject.AddObservedData(observedDataFor(firstAmount));
+         amounts.Each(x=>_projectRetriever.CurrentProject.AddObservedData(observedDataFor(x)));
          _projectRetriever.CurrentProject.AddObservedData(observedDataFor(firstFraction));
          return simulation;
       }

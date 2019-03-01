@@ -222,11 +222,13 @@
     <Compile Include="Presenters\Journal\JournalDiagramPresenter.cs" />
     <Compile Include="Presenters\ParameterAnalysablesInExplorerPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\AbstractParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationConfidenceIntervalPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationMatrixPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfilePredictionIntervalChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileVPCIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\WeightedObservedDataFormatter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\EditSensitivityAnalysisPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\ISensitivityAnalysisItemPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisFeedbackEditorSettings.cs" />
@@ -257,7 +259,6 @@
     <Compile Include="Presenters\Nodes\RootNodeTypes.cs" />
     <Compile Include="Presenters\ObservedData\BaseDataRepositoryDataPresenter.cs" />
     <Compile Include="Presenters\ObservedData\DataRepositoryChartPresenter.cs" />
-    <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CategorialParameterIdentificationRunModePresenter.cs" />
     <Compile Include="Presenters\CloneObjectBasePresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\EditParameterIdentificationPresenter.cs" />

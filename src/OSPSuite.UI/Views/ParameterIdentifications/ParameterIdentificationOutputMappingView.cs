@@ -4,12 +4,14 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
+using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
@@ -54,6 +56,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
          _gridViewBinder.AutoBind(x => x.ObservedData)
             .WithRepository(allObservedDataRepository)
+            .WithFormat(observedDataDisplay)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithCaption(Captions.ParameterIdentification.ObservedData)
             .WithOnValueUpdating((dto, e) => OnEvent(() => _presenter.ObservedDataSelectionChanged(dto, e.NewValue, e.OldValue)));
@@ -79,6 +82,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.FocusedRowChanged += (o, e) => OnEvent(gridViewRowChanged, e);
 
       }
+
+      private IFormatter<DataRepository> observedDataDisplay(OutputMappingDTO outputMappingDTO) => new WeightedObservedDataFormatter(outputMappingDTO);
 
       private void gridViewRowChanged(FocusedRowChangedEventArgs e)
       {

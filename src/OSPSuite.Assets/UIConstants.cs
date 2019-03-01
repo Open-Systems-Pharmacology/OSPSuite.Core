@@ -1184,10 +1184,9 @@ namespace OSPSuite.Assets
       public static readonly string CovarianceMatrixCannotBeCalculated = "Covariance matrix cannot be calculated";
       public static readonly string CorrelationMatrixCannotBeCalculated = "Correlation matrix cannot be calculated";
 
-      public static string CannotSelectTheSamePartialProcessMoreThanOnce(string name)
-      {
-         return $"'{name}' cannot be selected more than once.";
-      }
+      public static string CannotSelectTheSamePartialProcessMoreThanOnce(string name) => $"'{name}' cannot be selected more than once.";
+
+      public static string CannotSelectTheObservedDataMoreThanOnce(string name) => $"'{name}' cannot be selected more than once for the same output.";
 
       public static string DimensionMismatchError(IEnumerable<string> dimensionNames)
       {
