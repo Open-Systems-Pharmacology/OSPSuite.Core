@@ -16,24 +16,17 @@ namespace OSPSuite.Core.Domain.Builder
       {
          Icon = IconNames.OBSERVER;
       }
-      public IEnumerable<IAmountObserverBuilder> AmountObserverBuilders
-      {
-         get { return getTypedObserverBuilder<IAmountObserverBuilder>(); }
-      }
 
-      public IEnumerable<IContainerObserverBuilder> ContainerObserverBuilders
-      {
-         get { return getTypedObserverBuilder<IContainerObserverBuilder>(); }
-      }
+      public IEnumerable<IAmountObserverBuilder> AmountObserverBuilders => getTypedObserverBuilder<IAmountObserverBuilder>();
+
+      public IEnumerable<IContainerObserverBuilder> ContainerObserverBuilders => getTypedObserverBuilder<IContainerObserverBuilder>();
 
       private IEnumerable<T> getTypedObserverBuilder<T>() where T : class, IObserverBuilder
       {
          return from observerBuilder in this
-                let amountObserverBuilder = observerBuilder as T
-                where amountObserverBuilder != null
-                select amountObserverBuilder;
+            let amountObserverBuilder = observerBuilder as T
+            where amountObserverBuilder != null
+            select amountObserverBuilder;
       }
-
-      
    }
 }
