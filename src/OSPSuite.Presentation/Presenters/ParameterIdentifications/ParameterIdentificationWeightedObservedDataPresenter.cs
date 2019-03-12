@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _chartPresenter.PlotObservedData(weightedObservedData);
          _chartPresenter.LogLinSelectionEnabled = true;
          _chartPresenter.HotTracked = hotTracked;
-         Caption = weightedObservedData.Name;
+         Caption = weightedObservedData.DisplayName;
          _alreadyEditing = true;
       }
 
