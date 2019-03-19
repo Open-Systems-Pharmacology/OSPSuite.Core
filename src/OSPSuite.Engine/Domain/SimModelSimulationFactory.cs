@@ -4,12 +4,12 @@ namespace OSPSuite.Engine.Domain
 {
    public interface ISimModelSimulationFactory
    {
-      SimModelNET.ISimulation Create();
+      ISimulation Create();
    }
 
    public class SimModelSimulationFactory : ISimModelSimulationFactory
    {
-      public SimModelNET.ISimulation Create()
+      public ISimulation Create()
       {
          return new Simulation();
       }

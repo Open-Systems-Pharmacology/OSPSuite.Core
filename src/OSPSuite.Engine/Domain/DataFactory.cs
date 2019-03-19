@@ -27,15 +27,6 @@ namespace OSPSuite.Engine.Domain
       /// <returns></returns>
       DataRepository CreateRepository(IModelCoreSimulation simulation, SimModelNET.ISimulation simModelSimulation, string repositoryName = null);
 
-      /// <summary>
-      ///    Update the molweight for the given datacolumn representing the quantity given as parameter.
-      ///    Molweight is at most available for observers and molecule amount. If the molecular weight is not found,
-      ///    the default value will be set as is (null)
-      /// </summary>
-      /// <param name="column">Column whose molweight should be updated</param>
-      /// <param name="quantity">Quantity whose values are saved in the column</param>
-      /// <param name="model">Model where the quantity belongs</param>
-      void UpdateMolWeight(DataColumn column, IQuantity quantity, IModel model);
    }
 
    /// <summary>
@@ -52,14 +43,21 @@ namespace OSPSuite.Engine.Domain
       private readonly IDataNamingService _dataNamingService;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
+      private readonly IDataRepositoryTask _dataRepositoryTask;
       private readonly IDimensionFactory _dimensionFactory;
 
-      public DataFactory(IDimensionFactory dimensionFactory, IDataNamingService dataNamingService, IObjectPathFactory objectPathFactory, IDisplayUnitRetriever displayUnitRetriever)
+      public DataFactory(
+         IDimensionFactory dimensionFactory, 
+         IDataNamingService dataNamingService, 
+         IObjectPathFactory objectPathFactory, 
+         IDisplayUnitRetriever displayUnitRetriever, 
+         IDataRepositoryTask dataRepositoryTask)
       {
          _dimensionFactory = dimensionFactory;
          _dataNamingService = dataNamingService;
          _objectPathFactory = objectPathFactory;
          _displayUnitRetriever = displayUnitRetriever;
+         _dataRepositoryTask = dataRepositoryTask;
       }
 
       public DataRepository CreateRepository(IModelCoreSimulation simulation, SimModelNET.ISimulation simModelSimulation, string repositoryName = null)
@@ -95,17 +93,11 @@ namespace OSPSuite.Engine.Domain
             DisplayUnit = _displayUnitRetriever.PreferredUnitFor(quantity)
          };
 
-         UpdateMolWeight(column, quantity, simulation.Model);
+         _dataRepositoryTask.UpdateMolWeight(column, quantity, simulation.Model);
 
          return column;
       }
-
-      public void UpdateMolWeight(DataColumn column, IQuantity quantity, IModel model)
-      {
-         var molWeight = model.MolWeightFor(quantity);
-         if (molWeight != null)
-            column.DataInfo.MolWeight = molWeight;
-      }
+      
 
       /// <summary>
       ///    Creates the time grid as <see cref="BaseGrid" /> from given values. <see cref="IDimension" /> is taken from

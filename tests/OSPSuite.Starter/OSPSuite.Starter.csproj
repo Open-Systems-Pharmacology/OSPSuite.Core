@@ -262,7 +262,6 @@
     <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
     <Compile Include="Services\CompoundCalculationMethodRepository.cs" />
     <Compile Include="Services\CoreUserSettings.cs" />
-    <Compile Include="Services\DataNamingService.cs" />
     <Compile Include="Services\FullPathDisplayResolver.cs" />
     <Compile Include="Services\LazyLoadTask.cs" />
     <Compile Include="Services\ParameterAnalysableParameterSelector.cs" />

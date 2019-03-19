@@ -5,4 +5,5 @@ namespace OSPSuite.Helpers
    internal class ARootContainer : Container, IRootContainer
    {
    }
+
 }

@@ -6,12 +6,10 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Starter.Bootstrapping;
 using OSPSuite.Starter.Presenters;
-using OSPSuite.Starter.Tasks;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter
 {
-
    internal static class Program
    {
       /// <summary>
@@ -24,7 +22,6 @@ namespace OSPSuite.Starter
          Application.SetCompatibleTextRenderingDefault(false);
          ApplicationStartup.Initialize();
 
-         var applicationConfugration = new ApplicationConfiguration();
          Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
       }
    }
@@ -80,13 +77,13 @@ namespace OSPSuite.Starter
          {
             // use (category, source, date, name) as key 
             key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category
-                   + ObjectPath.PATH_DELIMITER + col.DataInfo.Source
-                   + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortDateString()
-                   + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortTimeString()
-                   + ObjectPath.PATH_DELIMITER + col.Name;
+                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Source
+                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortDateString()
+                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortTimeString()
+                                             + ObjectPath.PATH_DELIMITER + col.Name;
          }
+
          return key;
       }
-
    }
 }
