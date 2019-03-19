@@ -8,6 +8,7 @@ using SimModelNET;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Engine.Domain;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core

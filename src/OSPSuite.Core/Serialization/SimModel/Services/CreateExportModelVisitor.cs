@@ -14,7 +14,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
-   internal interface ICreateExportModelVisitor
+   public interface ICreateExportModelVisitor
    {
       /// <summary>
       ///    Create the sim model export model using the Full mode
@@ -112,9 +112,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          if (stoichiometricCoefficient == 1.0)
             return;
 
-         rhsExport.Equation = stoichiometricCoefficient == -1.0 ? 
-            $"-({rhsExport.Equation})" : 
-            $"{stoichiometricCoefficient}*({rhsExport.Equation})";
+         rhsExport.Equation = stoichiometricCoefficient == -1.0 ? $"-({rhsExport.Equation})" : $"{stoichiometricCoefficient}*({rhsExport.Equation})";
       }
 
       private ExplicitFormulaExport createProcessRHS(IMoleculeAmount moleculeAmount, IProcess process)

@@ -46,7 +46,7 @@
     <DocumentationFile>bin\Debug\OSPSuite.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -69,14 +69,8 @@
     <Reference Include="MPFitLib, Version=1.1.1.0, Culture=neutral, PublicKeyToken=be1b3c0b5819660a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\csmpfit.1.1.1\lib\net20\MPFitLib.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.FuncParser, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\OSPSuite.FuncParser.3.0.1.14\lib\net45\OSPSuite.FuncParser.dll</HintPath>
-    </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.1.23\lib\net45\OSPSuite.SimModel.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.TeXReporting, Version=2.1.1.9, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.1.9\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
@@ -160,7 +154,12 @@
     <Compile Include="Domain\ParameterIdentifications\CategorialParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\MultipleParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\StandardParameterIdentificationRunMode.cs" />
+    <Compile Include="Domain\Services\IExplicitFormulaParser.cs" />
     <Compile Include="Domain\Services\IHistoryManagerRetriever.cs" />
+    <Compile Include="Domain\Services\IPopulationRunner.cs" />
+    <Compile Include="Domain\Services\ISimModelBatch.cs" />
+    <Compile Include="Domain\Services\ISimModelManager.cs" />
+    <Compile Include="Domain\SolverWarning.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
     <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />
     <Compile Include="Domain\ValueOriginSource.cs" />
@@ -226,6 +225,7 @@
     <Compile Include="Reporting\ReportTemplate.cs" />
     <Compile Include="Serialization\SimModel\DTO\TableFormulaWithXArgumentExport.cs" />
     <Compile Include="Serialization\SimModel\Serializer\TableFormulaWithXArgumentExportSerializer.cs" />
+    <Compile Include="Serialization\SimModel\Services\ISimModelExporter.cs" />
     <Compile Include="Serialization\Xml\ValueOriginDeterminationMethodXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginSourceXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginXmlSerializer.cs" />
@@ -395,8 +395,6 @@
     <Compile Include="Domain\Services\SensitivityAnalyses\SensitivityParameterFactory.cs" />
     <Compile Include="Domain\Services\SensitivityAnalyses\SensitivyAnalysisVariationDataCreator.cs" />
     <Compile Include="Domain\Services\SensitivityAnalysisValidator.cs" />
-    <Compile Include="Domain\Services\SimModelBatch.cs" />
-    <Compile Include="Domain\Services\SimModelSimulationFactory.cs" />
     <Compile Include="Domain\Services\SimulationAnalysisCreator.cs" />
     <Compile Include="Domain\Services\SimulationPersistableUpdater.cs" />
     <Compile Include="Domain\Services\SimulationQuantitySelectionFinder.cs" />
@@ -781,7 +779,6 @@
     <Compile Include="Domain\SimulationRunOptions.cs" />
     <Compile Include="Domain\ParameterBuildMode.cs" />
     <Compile Include="Domain\Services\FormulaTask.cs" />
-    <Compile Include="Domain\PopulationSimulationProgressEventArgs.cs" />
     <Compile Include="Domain\Event.cs" />
     <Compile Include="Domain\EventAssignment.cs" />
     <Compile Include="Domain\Builder\EventAssignmentBuilder.cs" />
@@ -867,7 +864,6 @@
     <Compile Include="Domain\CreationResult.cs" />
     <Compile Include="Domain\Services\CloneManagerStrategy.cs" />
     <Compile Include="Domain\Services\EventBuilderTask.cs" />
-    <Compile Include="Domain\Services\ExplicitFormulaParser.cs" />
     <Compile Include="Domain\Services\ICloneManager.cs" />
     <Compile Include="Domain\Services\IKeywordReplacer.cs" />
     <Compile Include="Domain\Services\KeywordReplacerTask.cs" />
@@ -966,13 +962,7 @@
     <Compile Include="Serialization\SimModel\Serializer\VariableExportSerializer.cs" />
     <Compile Include="Serialization\SimModel\Serializer\SimModelSerializerRepository.cs" />
     <Compile Include="Serialization\SimModel\Services\CreateExportModelVisitor.cs" />
-    <Compile Include="Domain\Services\DataFactory.cs" />
     <Compile Include="Domain\Services\DataNamingService.cs" />
-    <Compile Include="Domain\Services\PopulationDataSplitter.cs" />
-    <Compile Include="Domain\Services\PopulationRunner.cs" />
-    <Compile Include="Serialization\SimModel\Services\SimModelExporter.cs" />
-    <Compile Include="Domain\Services\SimModelManager.cs" />
-    <Compile Include="Domain\Services\SimModelManagerBase.cs" />
     <Compile Include="Domain\SimulationRunResults.cs" />
     <Compile Include="Serialization\SimModel\Services\TableFormulaToTableFormulaExportMapper.cs" />
     <Compile Include="Serialization\SimModel\SimModelSchemaConstants.cs" />

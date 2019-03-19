@@ -4,11 +4,18 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Engine;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_Parameter : ContextSpecification<IParameter>
    {
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         EngineRegister.InitFormulaParser();
+      }
+
       protected override void Context()
       {
          sut = new Parameter();

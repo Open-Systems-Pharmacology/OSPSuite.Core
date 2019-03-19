@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using SimModelNET;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
    /// <summary>
    ///    The Contract for a Factory creating a <see cref="DataRepository" /> from the results using SimModel

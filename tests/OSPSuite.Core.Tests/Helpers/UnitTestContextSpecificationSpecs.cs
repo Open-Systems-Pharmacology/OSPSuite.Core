@@ -7,6 +7,7 @@ using OSPSuite.Core;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Converter.v5_2;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Journal;
@@ -14,6 +15,8 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Engine;
+using OSPSuite.Engine.Domain;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Presentation.Services;
@@ -51,8 +54,8 @@ namespace OSPSuite.Helpers
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
 
          var stringCompression = A.Fake<IStringCompression>();
-         A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
-         A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
+         A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
+         A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
          container.RegisterImplementationOf(stringCompression);
 
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
@@ -79,6 +82,7 @@ namespace OSPSuite.Helpers
          using (container.OptimizeDependencyResolution())
          {
             container.AddRegister(x => x.FromType<CoreRegister>());
+            container.AddRegister(x => x.FromType<EngineRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
             var register = new CoreSerializerRegister();
             container.AddRegister(x => x.FromInstance(register));

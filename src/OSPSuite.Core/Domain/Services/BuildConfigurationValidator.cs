@@ -3,6 +3,7 @@ using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -51,7 +52,7 @@ namespace OSPSuite.Core.Domain.Services
             {
                formula.Validate();
             }
-            catch (FuncParserException e)
+            catch (OSPSuiteException e)
             {
                validationResult.AddMessage(NotificationType.Error, formula, Validation.FormulaIsNotValid(formula.Name, buildingBlockWithFormulaCache.Name, e.Message), buildingBlockWithFormulaCache);
             }

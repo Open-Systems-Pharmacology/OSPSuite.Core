@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Engine;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Services;
@@ -74,6 +75,7 @@ namespace OSPSuite.Starter.Bootstrapping
          container.AddRegister(x => x.FromType<PresenterRegister>());
          container.AddRegister(x => x.FromType<UIRegister>());
          container.AddRegister(x => x.FromType<CoreRegister>());
+         container.AddRegister(x => x.FromType<EngineRegister>());
          container.AddRegister(x => x.FromType<TestRegister>());
          container.AddRegister(x => x.FromType<InfrastructureRegister>());
 

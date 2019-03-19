@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.FuncParser;
 using OSPSuite.Utility.Exceptions;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
-   public interface IExplicitFormulaParser
-   {
-      string FormulaString { set; get; }
-      double Compute(double[] variableValues, double[] parameterValues);
-      void Parse();
-   }
-
    /// <summary>
-   /// 
-   /// 
    /// </summary>
    /// <remarks>
-   /// Errors in formula will only shown if parse or compute is called.
-   /// Not if any property(Variables, FormulaString) is changed. 
-   /// Therefore it would be useful, to call parse on every change.
+   ///    Errors in formula will only shown if parse or compute is called.
+   ///    Not if any property(Variables, FormulaString) is changed.
+   ///    Therefore it would be useful, to call parse on every change.
    /// </remarks>
    public class ExplicitFormulaParser : IExplicitFormulaParser
    {
@@ -43,8 +35,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public string FormulaString
       {
-         set { _parserFunc.StringToParse = value; }
-         get { return _parserFunc.StringToParse; }
+         set => _parserFunc.StringToParse = value;
+         get => _parserFunc.StringToParse;
       }
 
       public double Compute(double[] variableValues, double[] parameterValues)
