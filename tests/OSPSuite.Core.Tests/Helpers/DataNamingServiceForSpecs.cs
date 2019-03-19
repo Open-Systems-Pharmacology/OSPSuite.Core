@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility;
 
-namespace OSPSuite.Starter.Services
+namespace OSPSuite.Helpers
 {
-   public class DataNamingService : IDataNamingService
+   public class DataNamingServiceForSpecs : IDataNamingService
    {
       public string GetTimeName()
       {

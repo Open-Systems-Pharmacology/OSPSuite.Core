@@ -197,6 +197,7 @@
     <Compile Include="Core\ValueOriginSpecs.cs" />
     <Compile Include="Core\WatermakStatusCheckerSpecs.cs" />
     <Compile Include="Helpers\ClassifiableSimulation.cs" />
+    <Compile Include="Helpers\DataNamingServiceForSpecs.cs" />
     <Compile Include="Helpers\DiagramModelForSpecs.cs" />
     <Compile Include="Helpers\DimensionFactoryForIntegrationTests.cs" />
     <Compile Include="Helpers\SimulationNode.cs" />

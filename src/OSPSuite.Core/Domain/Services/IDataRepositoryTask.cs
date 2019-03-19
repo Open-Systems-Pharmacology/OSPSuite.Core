@@ -77,5 +77,15 @@ namespace OSPSuite.Core.Domain.Services
       ///    Export the given data repository to excel using the ToDataTable function
       /// </summary>
       Task ExportToCsvAsync(IEnumerable<DataColumn> dataColumns, string fileName, DataColumnExportOptions exportOptions = null);
+
+      /// <summary>
+      ///    Update the molweight for the given datacolumn representing the quantity given as parameter.
+      ///    Molweight is at most available for observers and molecule amount. If the molecular weight is not found,
+      ///    the default value will be set as is (null)
+      /// </summary>
+      /// <param name="column">Column whose molweight should be updated</param>
+      /// <param name="quantity">Quantity whose values are saved in the column</param>
+      /// <param name="model">Model where the quantity belongs</param>
+      void UpdateMolWeight(DataColumn column, IQuantity quantity, IModel model);
    }
 }

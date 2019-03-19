@@ -74,6 +74,7 @@ namespace OSPSuite.Starter
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
+         container.Register<IDataNamingService, DataNamingServiceForSpecs >();
 
          container.RegisterFactory<IHeavyWorkPresenterFactory>();
 

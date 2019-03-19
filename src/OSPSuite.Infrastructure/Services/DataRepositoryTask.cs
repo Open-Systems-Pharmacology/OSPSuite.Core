@@ -37,6 +37,13 @@ namespace OSPSuite.Infrastructure.Services
          return cloneRepository;
       }
 
+      public void UpdateMolWeight(DataColumn column, IQuantity quantity, IModel model)
+      {
+         var molWeight = model.MolWeightFor(quantity);
+         if (molWeight != null)
+            column.DataInfo.MolWeight = molWeight;
+      }
+
       private void addBaseGridToRepository(DataRepository dataRepository, DataColumn baseGrid)
       {
          if (isAlreadyCloned(baseGrid)) return;

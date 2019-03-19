@@ -7,7 +7,6 @@ using OSPSuite.Core;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Converter.v5_2;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Journal;
@@ -16,9 +15,9 @@ using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Engine;
-using OSPSuite.Engine.Domain;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
+using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Compression;
@@ -46,6 +45,8 @@ namespace OSPSuite.Helpers
          container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
+         container.Register<IDataRepositoryTask, DataRepositoryTask>();
+         container.Register<IDataNamingService, DataNamingServiceForSpecs>();
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
@@ -60,7 +61,6 @@ namespace OSPSuite.Helpers
 
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
          container.RegisterImplementationOf(A.Fake<IDisplayUnitRetriever>());
-         container.RegisterImplementationOf(A.Fake<IDataRepositoryTask>());
          container.RegisterImplementationOf(A.Fake<IOSPSuiteExecutionContext>());
          container.RegisterImplementationOf(A.Fake<IProjectRetriever>());
          container.RegisterImplementationOf(A.Fake<IApplicationDiscriminator>());

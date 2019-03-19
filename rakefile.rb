@@ -6,6 +6,7 @@ task :cover do
   filter << "+[OSPSuite.Core]*"
   filter << "+[OSPSuite.Infrastructure]*"
   filter << "+[OSPSuite.Presentation]*"
+  filter << "+[OSPSuite.Engine]*"
 
   #exclude namespaces that are tested from applications
   filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting*"
