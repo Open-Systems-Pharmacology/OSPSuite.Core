@@ -1,6 +1,6 @@
 ﻿using SimModelNET;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
    public interface ISimModelSimulationFactory
    {

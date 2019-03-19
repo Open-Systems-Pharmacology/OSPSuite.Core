@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Engine.Domain;
 using OSPSuite.FuncParser;
 
 namespace OSPSuite.Core

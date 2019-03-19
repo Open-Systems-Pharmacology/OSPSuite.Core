@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using SimModelNET;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
+using SimModelNET;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
    internal class PopulationDataSplitter
    {

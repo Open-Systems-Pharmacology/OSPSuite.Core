@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using OSPSuite.Core.Domain.Services;
@@ -170,7 +171,7 @@ namespace OSPSuite.Core.Domain.Formulas
             var usedObjects = GetUsedObjectsFrom(refObject);
             return CalculateFor(usedObjects, refObject);
          }
-         catch (FuncParserException ex)
+         catch (OSPSuiteException ex)
          {
             var errorMessage = ex.Message;
             if (refObject != null)
@@ -228,25 +229,25 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <param name="formulaString">
       ///    Formula string to validate for the current <see cref="Formula" /> object
       /// </param>
-      /// <exception cref="FuncParserException">
+      /// <exception cref="OSPSuiteException">
       ///    is thrown if the given <paramref name="formulaString" /> given cannot be successfully parsed
       /// </exception>
       public virtual void Validate(string formulaString)
       {
-         var formulaParser = new ExplicitFormulaParser(ObjectPaths.Select(path => path.Alias), new string[0])
-         {
-            FormulaString = formulaString ?? string.Empty
-         };
+         var formulaParser = ExplicitFormulaParserCreator(ObjectPaths.Select(path => path.Alias), new string[0]);
+         formulaParser.FormulaString = formulaString ?? string.Empty;
          formulaParser.Parse();
       }
 
       /// <summary>
       ///    Validates the current formulat string. Throws an
       /// </summary>
-      /// <exception cref="FuncParserException"> is thrown if the current FormulaString cannot be successfully parsed </exception>
+      /// <exception cref="OSPSuiteException"> is thrown if the current FormulaString cannot be successfully parsed </exception>
       public virtual void Validate()
       {
          Validate(FormulaString);
       }
+
+      public static Func<IEnumerable<string>, IEnumerable<string>,  IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (variableNames, parameterNames) => new NullExplicitFormulaParser();
    }
 }

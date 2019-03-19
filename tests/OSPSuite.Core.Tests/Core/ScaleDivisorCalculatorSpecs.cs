@@ -74,7 +74,7 @@ namespace OSPSuite.Core
          res2.QuantityInfo.Path = _objectPathFactory.CreateAbsoluteObjectPath(_moleculeAmount2);
          simResults.Add(res2);
 
-         var simulationRunResults = new SimulationRunResults(true, Enumerable.Empty<ISolverWarning>(), simResults);
+         var simulationRunResults = new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(), simResults);
          A.CallTo(() => _simModelManager.RunSimulation(_simulation)).Returns(simulationRunResults);
          sut = new ScaleDivisorCalculator(_simModelManager, _containerTask, _objectPathFactory);
       }

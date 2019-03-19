@@ -14,6 +14,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
+using OSPSuite.Engine.Domain;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core

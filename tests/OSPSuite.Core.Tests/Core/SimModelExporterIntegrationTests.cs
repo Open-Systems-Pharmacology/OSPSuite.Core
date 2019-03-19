@@ -13,6 +13,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel;
 using OSPSuite.Core.Serialization.SimModel.Serializer;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using OSPSuite.Engine.Serialization;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core

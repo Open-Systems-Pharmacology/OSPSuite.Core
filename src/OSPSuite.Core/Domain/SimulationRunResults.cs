@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using SimModelNET;
 using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Core.Domain
@@ -17,7 +16,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Contains a List of messages describing error or/and warnings from the solver
       /// </summary>
-      public IEnumerable<ISolverWarning> Warnings { get; }
+      public IEnumerable<SolverWarning> Warnings { get; }
 
       /// <summary>
       ///    Actual results of the simulation
@@ -29,7 +28,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string Error { get; }
 
-      public SimulationRunResults(bool success, IEnumerable<ISolverWarning> warnings, DataRepository results, string error = null)
+      public SimulationRunResults(bool success, IEnumerable<SolverWarning> warnings, DataRepository results, string error = null)
       {
          Success = success;
          Warnings = warnings;

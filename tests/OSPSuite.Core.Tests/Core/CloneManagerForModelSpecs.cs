@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Engine;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
@@ -18,6 +19,12 @@ namespace OSPSuite.Core
       private IDimensionFactory _dimensionRepository;
       private IDataRepositoryTask _dataRepositoryTask;
       private IModelFinalizer _modelFinalizer;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         EngineRegister.InitFormulaParser();
+      }
 
       protected override void Context()
       {

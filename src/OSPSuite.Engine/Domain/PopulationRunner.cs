@@ -3,72 +3,17 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SimModelNET;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Utility.Extensions;
+using SimModelNET;
+using ISimulation = SimModelNET.ISimulation;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
-   public interface IPopulationRunner
-   {
-      /// <summary>
-      ///    (Maximal) number of cores to be used (1 per default)
-      /// </summary>
-      int NumberOfCoresToUse { get; set; }
-
-      /// <summary>
-      ///    Runs population and returns the results.
-      /// </summary>
-      /// <param name="simulation"></param>
-      /// <param name="populationData">Data table with non-table parameter values for variation</param>
-      /// <param name="agingData">Data table with table parameter values for variation</param>
-      /// <param name="initialValues">Data table with (molecule) initial values</param>
-      /// <returns>
-      ///    Simulation results.
-      ///    <para></para>
-      ///    Only results for successfull individuals are stored.
-      ///    <para></para>
-      ///    For failed individuals, pairs {IndividualId, ErrorMessage} are stored
-      /// </returns>
-      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
-
-      /// <summary>
-      ///    Stops SimModelSimulation run
-      /// </summary>
-      void StopSimulation();
-
-      /// <summary>
-      ///    Progress event returns the percent reprensenting the progress of a simulation
-      /// </summary>
-      event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress;
-
-      /// <summary>
-      ///    Event raised when simulation is terminated (either after nornal termination or cancel)
-      /// </summary>
-      event EventHandler Terminated;
-   }
-
-   /// <summary>
-   ///    Information about the simulation progress
-   /// </summary>
-   public class PopulationSimulationProgressEventArgs : EventArgs
-   {
-      /// <summary>
-      ///    Actual Progress as a Integer between 0 and 100
-      /// </summary>
-      public int NumberOfCalculatedSimulation { get; private set; }
-
-      public int NumberOfSimulations { get; private set; }
-
-      public PopulationSimulationProgressEventArgs(int numberOfCalculatedSimulation, int numberOfSimulations)
-      {
-         NumberOfCalculatedSimulation = numberOfCalculatedSimulation;
-         NumberOfSimulations = numberOfSimulations;
-      }
-   }
-
    public class PopulationRunner : SimModelManagerBase, IPopulationRunner
    {
       private readonly IObjectPathFactory _objectPathFactory;
@@ -157,7 +102,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">SimModel simulation (loaded and finalized)</param>
       /// <param name="coreIndex">0..NumberOfCores-1</param>
       /// <param name="cancellationToken">Token used to cancel the action if required</param>
-      private void simulate(SimModelNET.ISimulation simulation, int coreIndex, CancellationToken cancellationToken)
+      private void simulate(ISimulation simulation, int coreIndex, CancellationToken cancellationToken)
       {
          var allIndividuals = _populationDataSplitter.GetIndividualIdsFor(coreIndex);
 
@@ -188,8 +133,7 @@ namespace OSPSuite.Core.Domain.Services
             }
             finally
             {
-               var warnings = simulation.SolverWarnings;
-               _populationRunResults.AddWarnings(individualId, warnings);
+               _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation.SolverWarnings));
 
                //Could lead to a wrong progress if two threads are accessing the value at the same time
                SimulationProgress(this, new PopulationSimulationProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
@@ -202,7 +146,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <param name="simulation">SimModel simulation</param>
       /// <param name="individualId">Individual id</param>
-      private IndividualResults individualResultsFrom(SimModelNET.ISimulation simulation, int individualId)
+      private IndividualResults individualResultsFrom(ISimulation simulation, int individualId)
       {
          var results = new IndividualResults {IndividualId = individualId};
          var simulationTimes = simulation.SimulationTimes;
@@ -242,7 +186,7 @@ namespace OSPSuite.Core.Domain.Services
          };
       }
 
-      private SimModelNET.ISimulation createAndFinalizeSimulation(string simulationExport, CancellationToken cancellationToken)
+      private ISimulation createAndFinalizeSimulation(string simulationExport, CancellationToken cancellationToken)
       {
          cancellationToken.ThrowIfCancellationRequested();
          var simulation = CreateSimulation(simulationExport);
@@ -256,7 +200,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Set parameters which will be varied into SimModel
       /// </summary>
       /// <param name="simulation">SimModel simulation</param>
-      private void setVariableParameters(SimModelNET.ISimulation simulation)
+      private void setVariableParameters(ISimulation simulation)
       {
          var parameterPathsToBeVaried = _populationDataSplitter.ParameterPathsToBeVaried();
          var allParameters = simulation.ParameterProperties;
@@ -268,7 +212,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Set variable initial values which will be varied into SimModel
       /// </summary>
       /// <param name="simulation">SimModel simulation</param>
-      private void setVariableInitialValues(SimModelNET.ISimulation simulation)
+      private void setVariableInitialValues(ISimulation simulation)
       {
          var initialValuesPathsToBeVaried = _populationDataSplitter.InitialValuesPathsToBeVaried();
          var allInitialValues = simulation.SpeciesProperties;

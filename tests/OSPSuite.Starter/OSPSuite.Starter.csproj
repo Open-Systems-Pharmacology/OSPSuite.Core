@@ -512,6 +512,10 @@
       <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
       <Name>OSPSuite.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Engine\OSPSuite.Engine.csproj">
+      <Project>{c08db78d-d281-4f32-86d3-a38868bef9d6}</Project>
+      <Name>OSPSuite.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj">
       <Project>{9545FA35-289D-4457-9461-C5F940694607}</Project>
       <Name>OSPSuite.Infrastructure</Name>

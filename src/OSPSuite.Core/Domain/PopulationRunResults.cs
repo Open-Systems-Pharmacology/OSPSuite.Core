@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Collections;
-using SimModelNET;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain
 {
@@ -13,7 +11,7 @@ namespace OSPSuite.Core.Domain
    /// </summary>
    public class IndividualRunInfo
    {
-      private readonly List<ISolverWarning> _solverWarnings;
+      private readonly List<SolverWarning> _solverWarnings;
 
       /// <summary>
       ///    Was the individual run ok or not
@@ -29,18 +27,15 @@ namespace OSPSuite.Core.Domain
       {
          Success = false;
          ErrorMessage = string.Empty;
-         _solverWarnings = new List<ISolverWarning>();
+         _solverWarnings = new List<SolverWarning>();
       }
 
       /// <summary>
       ///    May be nonempty even in case of Success=true
       /// </summary>
-      public IReadOnlyList<ISolverWarning> SolverWarnings
-      {
-         get { return _solverWarnings; }
-      }
+      public IReadOnlyList<SolverWarning> SolverWarnings => _solverWarnings;
 
-      public void AddWarnings(IEnumerable<ISolverWarning> warnings)
+      public void AddWarnings(IEnumerable<SolverWarning> warnings)
       {
          _solverWarnings.AddRange(warnings);
       }
@@ -68,10 +63,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Info for all individual runs
       /// </summary>
-      public IEnumerable<IndividualRunInfo> IndividualRunInfos
-      {
-         get { return _individualRunInfos; }
-      }
+      public IEnumerable<IndividualRunInfo> IndividualRunInfos => _individualRunInfos;
 
       /// <summary>
       ///    Info of an individual run
@@ -137,7 +129,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       /// <param name="individualId">Individual id</param>
       /// <param name="warnings">Solver warnings</param>
-      public void AddWarnings(int individualId, IEnumerable<ISolverWarning> warnings)
+      public void AddWarnings(int individualId, IEnumerable<SolverWarning> warnings)
       {
          if (!_individualRunInfos.Contains(individualId))
             return;

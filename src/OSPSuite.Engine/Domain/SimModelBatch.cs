@@ -1,31 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using SimModelNET;
-using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Serialization.SimModel.Services;
+using ISimulation = SimModelNET.ISimulation;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
-   public interface ISimModelBatch
-   {
-      void InitializeWith(IModelCoreSimulation modelCoreSimulation, IReadOnlyList<string> variableParameterPaths, bool calculateSensitivities = false, string simulationResultsName = null);
-      void InitializeForSensitivity();
-      SimulationRunResults RunSimulation();
-      void UpdateParameterValue(string path, double value);
-      void StopSimulation();
-      double[] SensitivityValuesFor(string outputPath, string parameterPath);
-      void Clear();
-   }
-
    public class SimModelBatch : SimModelManagerBase, ISimModelBatch
    {
       private readonly IDataFactory _dataFactory;
       private IModelCoreSimulation _modelCoreSimulation;
       private IReadOnlyList<string> _variableParameterPaths;
-      private SimModelNET.ISimulation _simModelSimulation;
+      private ISimulation _simModelSimulation;
       private readonly Cache<string, double> _parameterValueCache;
       private IList<IParameterProperties> _allVariableParameters;
       private string _simulationResultsName;
@@ -53,7 +45,7 @@ namespace OSPSuite.Core.Domain.Services
          InitializeWith(_modelCoreSimulation, _variableParameterPaths, calculateSensitivities: true, simulationResultsName: _simulationResultsName);
       }
 
-      private SimModelNET.ISimulation createAndFinalizeSimulation()
+      private ISimulation createAndFinalizeSimulation()
       {
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized);
          var simulation = CreateSimulation(simulationExport);
@@ -62,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          return simulation;
       }
 
-      private void setVariableParameters(SimModelNET.ISimulation simulation)
+      private void setVariableParameters(ISimulation simulation)
       {
          var allParameters = simulation.ParameterProperties;
          var parametersToBeVaried = allParameters.Where(p => _variableParameterPaths.Contains(p.Path)).ToList();
@@ -78,11 +70,11 @@ namespace OSPSuite.Core.Domain.Services
          {
             updateParameterValues();
             _simModelSimulation.RunSimulation();
-            return new SimulationRunResults(success:true,warnings: _simModelSimulation.SolverWarnings, results:getResults());
+            return new SimulationRunResults(success: true, warnings: WarningsFrom(_simModelSimulation.SolverWarnings), results: getResults());
          }
          catch (Exception e)
          {
-            return new SimulationRunResults(success: false, warnings: _simModelSimulation.SolverWarnings, results:new DataRepository(), error: e.FullMessage());
+            return new SimulationRunResults(success: false, warnings: WarningsFrom(_simModelSimulation.SolverWarnings), results: new DataRepository(), error: e.FullMessage());
          }
          finally
          {
@@ -124,6 +116,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             variableParameter.Value = _parameterValueCache[variableParameter.Path];
          }
+
          _simModelSimulation.SetParameterValues(_allVariableParameters);
       }
    }

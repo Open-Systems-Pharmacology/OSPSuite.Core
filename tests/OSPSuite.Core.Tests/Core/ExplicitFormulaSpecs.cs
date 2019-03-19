@@ -1,94 +1,96 @@
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Engine;
 
 namespace OSPSuite.Core
 {
-    public abstract class concern_for_ExplicitFormula : ContextSpecification<ExplicitFormula>
-    {
-        protected IFormulaUsable _x;
-        protected IFormulaUsable _y;
-        protected IUsingFormula _usingObj;
-        protected IFormulaUsablePath _pathX;
-        protected IFormulaUsablePath _pathY;
+   public abstract class concern_for_ExplicitFormula : ContextSpecification<ExplicitFormula>
+   {
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         EngineRegister.InitFormulaParser();
+      }
 
-        protected override void Context()
-        {
-            _x = A.Fake<IFormulaUsable>();
-            
-            A.CallTo(()=>_x.Value).Returns(2);
+      protected IFormulaUsable _x;
+      protected IFormulaUsable _y;
+      protected IUsingFormula _usingObj;
+      protected IFormulaUsablePath _pathX;
+      protected IFormulaUsablePath _pathY;
 
-            _y = A.Fake<IFormulaUsable>();
-            A.CallTo(()=>_y.Value).Returns(3);
+      protected override void Context()
+      {
+         _x = A.Fake<IFormulaUsable>();
 
-            _pathX = A.Fake<IFormulaUsablePath>();
-            A.CallTo(()=>_pathX.Alias).Returns("x");
-            A.CallTo(()=>_pathX.Resolve<IFormulaUsable>(_usingObj)).Returns(_x);
-            
+         A.CallTo(() => _x.Value).Returns(2);
 
-            _pathY = A.Fake<IFormulaUsablePath>();
-            A.CallTo(()=>_pathY.Alias).Returns("y");
-            A.CallTo(()=>_pathY.Resolve<IFormulaUsable>(_usingObj)).Returns(_y);
-            
+         _y = A.Fake<IFormulaUsable>();
+         A.CallTo(() => _y.Value).Returns(3);
 
-            sut = new ExplicitFormula();
+         _pathX = A.Fake<IFormulaUsablePath>();
+         A.CallTo(() => _pathX.Alias).Returns("x");
+         A.CallTo(() => _pathX.Resolve<IFormulaUsable>(_usingObj)).Returns(_x);
 
-            sut.AddObjectPath(_pathX);
-            sut.AddObjectPath(_pathY);
-        }
-    }
 
-    
-    public class when_calculating_value_with_unresolved_references : concern_for_ExplicitFormula
-    {
-        protected double _formulaValue;
+         _pathY = A.Fake<IFormulaUsablePath>();
+         A.CallTo(() => _pathY.Alias).Returns("y");
+         A.CallTo(() => _pathY.Resolve<IFormulaUsable>(_usingObj)).Returns(_y);
 
-        protected override void Context()
-        {
-            base.Context();
 
-            sut.FormulaString = "x*x+y-2";
-            _formulaValue = _x.Value*_x.Value + _y.Value - 2;
-        }
+         sut = new ExplicitFormula();
 
-        [Observation]
-        public void should_calculate_value_for_dependent_object()
-        {
-            sut.Calculate(_usingObj).ShouldBeEqualTo(_formulaValue);
-        }
+         sut.AddObjectPath(_pathX);
+         sut.AddObjectPath(_pathY);
+      }
+   }
 
-    }
+   public class when_calculating_value_with_unresolved_references : concern_for_ExplicitFormula
+   {
+      protected double _formulaValue;
 
-    
-    public class when_calculating_value_with_resolved_references : concern_for_ExplicitFormula
-    {
-        protected double _formulaValue;
+      protected override void Context()
+      {
+         base.Context();
 
-        protected override void Context()
-        {
-            base.Context();
+         sut.FormulaString = "x*x+y-2";
+         _formulaValue = _x.Value * _x.Value + _y.Value - 2;
+      }
 
-            sut.FormulaString = "x*x+y-2";
-            _formulaValue = _x.Value * _x.Value + _y.Value - 2;
+      [Observation]
+      public void should_calculate_value_for_dependent_object()
+      {
+         sut.Calculate(_usingObj).ShouldBeEqualTo(_formulaValue);
+      }
+   }
 
-            var root = A.Fake<IContainer>();
-            var model = A.Fake<IModel>();
-            A.CallTo(() => model.Root).Returns(root);
+   public class when_calculating_value_with_resolved_references : concern_for_ExplicitFormula
+   {
+      protected double _formulaValue;
 
-            A.CallTo(() => _pathX.Resolve<IFormulaUsable>(root)).Returns(_x);
-            A.CallTo(() => _pathY.Resolve<IFormulaUsable>(root)).Returns(_y);
+      protected override void Context()
+      {
+         base.Context();
 
-            sut.ResolveObjectPathsFor(root);
-        }
+         sut.FormulaString = "x*x+y-2";
+         _formulaValue = _x.Value * _x.Value + _y.Value - 2;
 
-        [Observation]
-        public void should_calculate_value_for_dependent_object()
-        {
-            sut.Calculate(_usingObj).ShouldBeEqualTo(_formulaValue);
-        }
+         var root = A.Fake<IContainer>();
+         var model = A.Fake<IModel>();
+         A.CallTo(() => model.Root).Returns(root);
 
-    }
+         A.CallTo(() => _pathX.Resolve<IFormulaUsable>(root)).Returns(_x);
+         A.CallTo(() => _pathY.Resolve<IFormulaUsable>(root)).Returns(_y);
 
-}	
+         sut.ResolveObjectPathsFor(root);
+      }
+
+      [Observation]
+      public void should_calculate_value_for_dependent_object()
+      {
+         sut.Calculate(_usingObj).ShouldBeEqualTo(_formulaValue);
+      }
+   }
+}

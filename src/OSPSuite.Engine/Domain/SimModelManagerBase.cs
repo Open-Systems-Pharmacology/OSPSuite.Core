@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using SimModelNET;
+using ISimulation = SimModelNET.ISimulation;
 
-namespace OSPSuite.Core.Domain.Services
+namespace OSPSuite.Engine.Domain
 {
    public abstract class SimModelManagerBase
    {
@@ -35,12 +40,12 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Performs any actions necessary to make the simulation run ready
       /// </summary>
-      protected void FinalizeSimulation(SimModelNET.ISimulation simModelSimulation)
+      protected void FinalizeSimulation(ISimulation simModelSimulation)
       {
          simModelSimulation.FinalizeSimulation();
       }
 
-      protected SimModelNET.ISimulation CreateSimulation(string simulationExport)
+      protected ISimulation CreateSimulation(string simulationExport)
       {
          var simulation = _simModelSimulationFactory.Create();
          simulation.LoadFromXMLString(simulationExport);
@@ -51,5 +56,8 @@ namespace OSPSuite.Core.Domain.Services
       {
          Terminated(sender, eventArgs);
       }
+
+      protected IEnumerable<SolverWarning> WarningsFrom(IEnumerable<ISolverWarning> warnings) =>
+         warnings.Select(x => new SolverWarning {Warning = x.Warning, OutputTime = x.OutputTime});
    }
 }
