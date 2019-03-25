@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OSPSuite.Infrastructure.Reporting.Items;
 using OSPSuite.TeXReporting.Builder;
 using OSPSuite.TeXReporting.Items;
@@ -7,11 +6,11 @@ using OSPSuite.TeXReporting.TeX.Converter;
 
 namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 {
-   public class FormulaTextBoxTEXBuilder : OSPSuiteTeXBuilder<FormulaTextBox>
+   public class FormulaTextBoxTeXBuilder : OSPSuiteTeXBuilder<FormulaTextBox>
    {
       private readonly ITeXBuilderRepository _builderRepository;
 
-      public FormulaTextBoxTEXBuilder(ITeXBuilderRepository builderRepository)
+      public FormulaTextBoxTeXBuilder(ITeXBuilderRepository builderRepository)
       {
          _builderRepository = builderRepository;
       }
@@ -19,7 +18,8 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
       public override void Build(FormulaTextBox formulaTextBox, OSPSuiteTracker buildTracker)
       {
          var formula = formulaTextBox.Formula;
-         if (String.IsNullOrEmpty(formula.Name)) return;
+         if (string.IsNullOrEmpty(formula.Name))
+            return;
 
          var listToReport = new List<object>();
          listToReport.AddRange(this.ReportDescription(formula, buildTracker));

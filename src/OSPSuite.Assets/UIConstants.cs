@@ -186,6 +186,8 @@ namespace OSPSuite.Assets
       public static readonly string ValueOriginDeterminationMethod = "Method";
       public static readonly string ValueOrigin = "Value Origin";
       public static readonly string CalculationMethod = "Calculation Method";
+      public static readonly string MoleculeObserver = "Molecule Observer";
+      public static readonly string ContainerObserver = "Container Observer";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {

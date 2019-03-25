@@ -176,6 +176,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reporting\BuilderExtensions.cs" />
     <Compile Include="Reporting\HistoryReporter.cs" />
+    <Compile Include="Reporting\Items\FormulaTextBox.cs" />
     <Compile Include="Reporting\OSPSuiteTeXBuilder.cs" />
     <Compile Include="Reporting\OSPSuiteTeXReporter.cs" />
     <Compile Include="Reporting\OSPSuiteTeXReporterRepository.cs" />
@@ -183,6 +184,11 @@
     <Compile Include="Reporting\ReportingRegister.cs" />
     <Compile Include="Reporting\ReportingTask.cs" />
     <Compile Include="Reporting\TeXBuilder\ChartTeXBuilder.cs" />
+    <Compile Include="Reporting\TeXBuilder\DescriptorCriteriaTeXBuilder.cs" />
+    <Compile Include="Reporting\TeXBuilder\FormulaTeXBuilder.cs" />
+    <Compile Include="Reporting\TeXBuilder\FormulaTextBoxTeXBuilder.cs" />
+    <Compile Include="Reporting\TeXBuilder\FormulaUsablePathsTeXBuilder.cs" />
+    <Compile Include="Reporting\TeXBuilder\ObserverBuilderTeXBuilder.cs" />
     <Compile Include="Serialization\DapperDatabase.cs" />
     <Compile Include="Serialization\ISessionPersistor.cs" />
     <Compile Include="Serialization\ORM\History\HistoryManagerPersistor.cs" />

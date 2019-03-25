@@ -100,6 +100,7 @@ namespace OSPSuite.Core.Domain
       public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES;
       public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File";
 
+   
       public static class Files
       {
          public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
@@ -31,8 +30,10 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 
          var amountObserver = observerBuilder as AmountObserverBuilder;
          var containerObserver = observerBuilder as ContainerObserverBuilder;
+
          if (amountObserver != null)
             listToReport.Add(string.Format(PROPERTY_PROMPT_FORMAT, TYPE, Captions.MoleculeObserver));
+
          if (containerObserver != null)
             listToReport.Add(string.Format(PROPERTY_PROMPT_FORMAT, TYPE, Captions.ContainerObserver));
 
