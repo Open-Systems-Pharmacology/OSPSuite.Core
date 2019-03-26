@@ -12,6 +12,7 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Container;
@@ -91,6 +92,7 @@ namespace OSPSuite.Core
          container.RegisterFactory<IParameterIdentificationRunInitializerFactory>();
          container.RegisterFactory<ISensitivityAnalysisEngineFactory>();
          container.RegisterFactory<IStartableProcessFactory>();
+         container.RegisterFactory<ISimulationExportCreatorFactory>();
 
          //Register Optimization algorithm explicitely
          container.Register<IOptimizationAlgorithm, NelderMeadOptimizer>(Constants.OptimizationAlgorithm.NELDER_MEAD_PKSIM);
