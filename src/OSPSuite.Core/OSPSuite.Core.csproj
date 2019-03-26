@@ -225,6 +225,7 @@
     <Compile Include="Reporting\ReportTemplate.cs" />
     <Compile Include="Serialization\SimModel\DTO\TableFormulaWithXArgumentExport.cs" />
     <Compile Include="Serialization\SimModel\Serializer\TableFormulaWithXArgumentExportSerializer.cs" />
+    <Compile Include="Serialization\SimModel\Services\ISimulationExportCreatorFactory.cs" />
     <Compile Include="Serialization\SimModel\Services\ISimModelExporter.cs" />
     <Compile Include="Serialization\Xml\ValueOriginDeterminationMethodXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginSourceXmlAttributeMapper.cs" />
@@ -961,7 +962,7 @@
     <Compile Include="Serialization\SimModel\Serializer\EventExportSerializer.cs" />
     <Compile Include="Serialization\SimModel\Serializer\VariableExportSerializer.cs" />
     <Compile Include="Serialization\SimModel\Serializer\SimModelSerializerRepository.cs" />
-    <Compile Include="Serialization\SimModel\Services\CreateExportModelVisitor.cs" />
+    <Compile Include="Serialization\SimModel\Services\SimulationExportCreator.cs" />
     <Compile Include="Domain\Services\DataNamingService.cs" />
     <Compile Include="Domain\SimulationRunResults.cs" />
     <Compile Include="Serialization\SimModel\Services\TableFormulaToTableFormulaExportMapper.cs" />

@@ -14,7 +14,7 @@ using OSPSuite.Helpers;
 namespace OSPSuite.Core
 {
   
-   public abstract class concern_for_CreateExportModelVisitor : ContextSpecification<CreateExportModelVisitor>
+   public abstract class concern_for_CreateExportModelVisitor : ContextSpecification<SimulationExportCreator>
    {
       protected IContainer _root;
       protected IModel _model;
@@ -41,7 +41,7 @@ namespace OSPSuite.Core
          _model = new Model().WithName("Model");
          _root = new Container().WithName("Root");
          _model.Root = _root;
-         sut = new CreateExportModelVisitor(_objectPathFactory, _tableFormulaToTableFormulaExportMapper, _concentrationBasedFormulaUpdater);
+         sut = new SimulationExportCreator(_objectPathFactory, _tableFormulaToTableFormulaExportMapper, _concentrationBasedFormulaUpdater);
       }
    }
 

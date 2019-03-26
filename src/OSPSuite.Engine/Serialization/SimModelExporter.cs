@@ -10,12 +10,12 @@ namespace OSPSuite.Engine.Serialization
 {
    internal class SimModelExporter : ISimModelExporter
    {
-      private readonly ICreateExportModelVisitor _createExportModelVisitor;
+      private readonly ISimulationExportCreatorFactory _simulationExportCreatorFactory;
       private readonly IExportSerializer _exportSerializer;
 
-      public SimModelExporter(ICreateExportModelVisitor createExportModelVisitor, IExportSerializer exportSerializer)
+      public SimModelExporter(ISimulationExportCreatorFactory simulationExportCreatorFactory, IExportSerializer exportSerializer)
       {
-         _createExportModelVisitor = createExportModelVisitor;
+         _simulationExportCreatorFactory = simulationExportCreatorFactory;
          _exportSerializer = exportSerializer;
       }
 
@@ -49,7 +49,8 @@ namespace OSPSuite.Engine.Serialization
 
       private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
-         var simulationExport = _createExportModelVisitor.CreateExportFor(simulation.Model, simModelExportMode);
+         var simulationExportCreator = _simulationExportCreatorFactory.Create();
+         var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode);
          simulationExport.AddSimulationConfiguration(simulation.BuildConfiguration.SimulationSettings);
          return simulationExport;
       }

@@ -14,7 +14,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
-   public interface ICreateExportModelVisitor
+   public interface ISimulationExportCreator
    {
       /// <summary>
       ///    Create the sim model export model using the Full mode
@@ -27,14 +27,14 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode);
    }
 
-   public class CreateExportModelVisitor :
+   public class SimulationExportCreator :
       IVisitor<IReaction>,
       IVisitor<IObserver>,
       IVisitor<IParameter>,
       IVisitor<IMoleculeAmount>,
       IVisitor<ITransport>,
       IVisitor<IEvent>,
-      ICreateExportModelVisitor
+      ISimulationExportCreator
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private ICache<string, int> _idMap;
@@ -44,7 +44,9 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private IReadOnlyList<IProcess> _allProcesses;
 
-      public CreateExportModelVisitor(IObjectPathFactory objectPathFactory, ITableFormulaToTableFormulaExportMapper tableFormulaExportMapper,
+      public SimulationExportCreator(
+         IObjectPathFactory objectPathFactory, 
+         ITableFormulaToTableFormulaExportMapper tableFormulaExportMapper,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater)
       {
          _objectPathFactory = objectPathFactory;

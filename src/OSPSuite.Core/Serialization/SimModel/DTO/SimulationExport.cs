@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
    public class SimulationExport
    {
       private int _currentId = 1;
-      public int Version { get; private set; }
+      public int Version { get; }
 
       public SimulationExport()
       {
