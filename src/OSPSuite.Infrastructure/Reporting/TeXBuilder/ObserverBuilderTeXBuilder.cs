@@ -14,9 +14,10 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
       private const string TYPE = "Type";
       private const string DIMENSION = "Dimension";
       private const string CALCULATED_FOR_ALL_MOLECULES = "Calculated for all molecules";
+      private const string CALCULATED_FOR_ALL_MOLECULES_EXCEPT = "Calculated for all molecules except:";
       private const string CALCULATED_FOR_FOLLOWING_MOLECULES = "Calculated for following molecules:";
       private const string IN_CONTAINERS_WITH = "In containers with:";
-      public const string MONITOR = "Monitor";
+      private const string MONITOR = "Monitor";
 
       public ObserverBuilderTeXBuilder(ITeXBuilderRepository builderRepository)
       {
@@ -39,10 +40,16 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 
          listToReport.Add(string.Format(PROPERTY_PROMPT_FORMAT, DIMENSION, observerBuilder.Dimension));
 
+         var hasExcludedMolecules = observerBuilder.MoleculeNamesToExclude().Any();
          if (observerBuilder.ForAll)
          {
-            listToReport.Add(string.Format(PROPERTY_PROMPT_FORMAT, CALCULATED_FOR_ALL_MOLECULES,
-               observerBuilder.ForAll));
+            if (hasExcludedMolecules)
+            {
+               listToReport.Add(new Paragraph(CALCULATED_FOR_ALL_MOLECULES_EXCEPT));
+               listToReport.Add(observerBuilder.MoleculeNamesToExclude().ToArray());
+            }
+            else
+               listToReport.Add(string.Format(PROPERTY_PROMPT_FORMAT, CALCULATED_FOR_ALL_MOLECULES, observerBuilder.ForAll));
          }
          else
          {
