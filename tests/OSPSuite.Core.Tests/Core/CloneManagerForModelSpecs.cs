@@ -1,12 +1,11 @@
 using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Engine;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
@@ -20,12 +19,6 @@ namespace OSPSuite.Core
       private IDataRepositoryTask _dataRepositoryTask;
       private IModelFinalizer _modelFinalizer;
 
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         EngineRegister.InitFormulaParser();
-      }
-
       protected override void Context()
       {
          _dimensionRepository = A.Fake<IDimensionFactory>();
@@ -33,8 +26,8 @@ namespace OSPSuite.Core
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionRepository);
          _objectToClone = createEntityToClone();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
-         _modelFinalizer= A.Fake<IModelFinalizer>();
-         sut = new CloneManagerForModel(_objectBaseFactory, _dataRepositoryTask,_modelFinalizer);
+         _modelFinalizer = A.Fake<IModelFinalizer>();
+         sut = new CloneManagerForModel(_objectBaseFactory, _dataRepositoryTask, _modelFinalizer);
       }
 
       protected override void Because()

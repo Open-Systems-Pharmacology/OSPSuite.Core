@@ -3,18 +3,11 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Engine;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_ExplicitFormula : ContextSpecification<ExplicitFormula>
    {
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         EngineRegister.InitFormulaParser();
-      }
-
       protected IFormulaUsable _x;
       protected IFormulaUsable _y;
       protected IUsingFormula _usingObj;
