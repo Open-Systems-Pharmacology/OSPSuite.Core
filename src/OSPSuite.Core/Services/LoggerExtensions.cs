@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Services
          if (exception.IsInfoException())
             logger.AddWarning(exception.ExceptionMessage(addContactSupportInfo: false), categoryName);
          // Not an info message but an exception thrown by the suite. Error without stack trace
-         else if (exception.IsAnImplementationOf<OSPSuiteException>())
+         else if (exception.IsOSPSuiteException())
             logger.AddError((exception.ExceptionMessage(addContactSupportInfo: false)), categoryName);
          // this is bad => Stack trace
          else
