@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Domain.Services
                   else
                   {
                      if (!formulasAreTheSameForParameter(parameter, formula, molecule.Name))
-                        throw new OSPSuiteException(Error.TwoDiffentFormulaForSameParameter(parameter.Name, _objectPathFactory.CreateAbsoluteObjectPath(parameter).ToPathString()));
+                        throw new OSPSuiteException(Error.TwoDifferentFormulaForSameParameter(parameter.Name, _objectPathFactory.CreateAbsoluteObjectPath(parameter).ToPathString()));
                   }
                }
             }

@@ -1111,8 +1111,8 @@ namespace OSPSuite.Assets
       public static readonly string JournalNotOpen = "Journal is not open";
       public static readonly string NoPagesToExport = "There are no pages to export";
       public static readonly string TemplateShouldContainAtLeastOneCurve = "Template should contain at least one curve.";
-      public static readonly string SessionFactoryNotInitalized = "Session factory is not initalized";
-      public static readonly string SessionNotInitalized = "Session not initialized";
+      public static readonly string SessionFactoryNotInitialized = "Session factory is not initialized";
+      public static readonly string SessionNotInitialized = "Session not initialized";
       public static readonly string SessionDisposed = "Session was disposed";
       public static readonly string OutputMappingHasInconsistentDimension = "Output mapping has inconsistent dimension";
       public static readonly string WeightValueCannotBeNegative = "Weights cannot be negative";
@@ -1267,10 +1267,10 @@ namespace OSPSuite.Assets
 
       public static string UndefinedFormulaInHelpParameter(string parameterName, string calculationMethod, string category)
       {
-         return $"Cannot add help parmaeter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
+         return $"Cannot add help parameter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
       }
 
-      public static string TwoDiffentFormulaForSameParameter(string parameter, string parameterPath)
+      public static string TwoDifferentFormulaForSameParameter(string parameter, string parameterPath)
       {
          return $"Formula in parameter '{parameter}' with path '{parameterPath}' was described inconsistently by more than one calculation.";
       }
@@ -1361,6 +1361,14 @@ namespace OSPSuite.Assets
       public static string ExportToCsvNotSupportedForDifferentBaseGrid = "Export to CSV is only supported for data columns sharing the same base grid.";
 
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
+
+      public const string QualificationOutputFolderNotDefined = "Qualification output folder not defined.";
+
+      public const string QualificationObservedDataFolderNotDefined = "Qualification observed data folder not defined.";
+
+      public const string QualificationMappingFileNotDefined = "Qualification mapping file not defined.";
+
+      public const string QualificationReportConfigurationFileNotDefined = "Qualification report configuration file not defined.";
 
 
       public static class SensitivityAnalysis
