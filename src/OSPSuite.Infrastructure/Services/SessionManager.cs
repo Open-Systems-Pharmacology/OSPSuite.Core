@@ -103,7 +103,7 @@ namespace OSPSuite.Infrastructure.Services
       public ISession OpenSession()
       {
          if (!sessionFactoryIsOpen())
-            throw new InvalidOperationException(Error.SessionFactoryNotInitalized);
+            throw new InvalidOperationException(Error.SessionFactoryNotInitialized);
 
          _session = _sessionFactory.OpenSession();
          return _session;
@@ -115,7 +115,7 @@ namespace OSPSuite.Infrastructure.Services
          get
          {
             if (_session == null)
-               throw new InvalidOperationException(Error.SessionNotInitalized);
+               throw new InvalidOperationException(Error.SessionNotInitialized);
             if (!_session.IsOpen)
                throw new InvalidOperationException(Error.SessionDisposed);
 
