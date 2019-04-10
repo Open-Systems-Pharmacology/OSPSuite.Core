@@ -40,5 +40,16 @@ namespace OSPSuite.Core.Extensions
 
          return ex.IsAnImplementationOf<OSPSuiteException>();
       }
+
+      public static bool IsOSPSuiteException(this Exception ex)
+      {
+         if (ex == null)
+            return false;
+
+         if (ex.IsWrapperException())
+            return IsOSPSuiteException(ex.InnerException);
+
+         return ex.IsAnImplementationOf<OSPSuiteException>();
+      }
    }
 }
