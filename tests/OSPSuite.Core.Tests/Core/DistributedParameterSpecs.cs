@@ -2,7 +2,6 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Engine;
 
 namespace OSPSuite.Core
 {
@@ -11,12 +10,6 @@ namespace OSPSuite.Core
       protected IParameter _percentileParameter;
       protected IParameter _meanParameter;
       protected IParameter _stdParameter;
-
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         EngineRegister.InitFormulaParser();
-      }
 
       protected override void Context()
       {

@@ -219,6 +219,7 @@
     <Compile Include="Journal\IJournalTask.cs" />
     <Compile Include="Journal\JournalPageData.cs" />
     <Compile Include="Journal\ReloadRelatedItemTask.cs" />
+    <Compile Include="Qualification\QualificationRunException.cs" />
     <Compile Include="RegisterTypeConvention.cs" />
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
