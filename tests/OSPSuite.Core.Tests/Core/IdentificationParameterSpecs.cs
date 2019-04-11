@@ -1,29 +1,26 @@
 ﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Validation;
-using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Format;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_IdentificationParameter : ContextSpecification<IdentificationParameter>
    {
       protected ParameterSelection _parameterSelection;
-      protected IDimension _dimension;
 
       protected override void Context()
       {
          sut = new IdentificationParameter();
 
          _parameterSelection = A.Fake<ParameterSelection>();
-         _dimension = A.Fake<IDimension>();
-         A.CallTo(() => _parameterSelection.Dimension).Returns(_dimension);
       }
    }
 
@@ -95,7 +92,7 @@ namespace OSPSuite.Core
       [Observation]
       public void the_dimension_of_the_identification_parameter_should_be_the_one_of_the_first_linked_parameter()
       {
-         sut.Dimension.ShouldBeEqualTo(_dimension);
+         sut.Dimension.ShouldBeEqualTo(_parameterSelection.Dimension);
       }
    }
 
@@ -124,7 +121,7 @@ namespace OSPSuite.Core
          A.CallTo(() => _parameterSelection.QuantitySelection.Path).Returns("A|B");
          _anotherLinkedParameter = A.Fake<ParameterSelection>();
          A.CallTo(() => _anotherLinkedParameter.QuantitySelection.Path).Returns("A|B");
-         A.CallTo(() => _anotherLinkedParameter.Dimension).Returns(_dimension);
+         A.CallTo(() => _anotherLinkedParameter.Dimension).Returns(_parameterSelection.Dimension);
          sut.AddLinkedParameter(_parameterSelection);
          sut.AddLinkedParameter(_anotherLinkedParameter);
       }
@@ -132,7 +129,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_their_path()
       {
-         sut.LinkedPath.ShouldBeEqualTo(new[] { "A", "B" }.ToPathString());
+         sut.LinkedPath.ShouldBeEqualTo(new[] {"A", "B"}.ToPathString());
       }
    }
 
@@ -146,7 +143,7 @@ namespace OSPSuite.Core
          A.CallTo(() => _parameterSelection.QuantitySelection.Path).Returns("A|B");
          _anotherLinkedParameter = A.Fake<ParameterSelection>();
          A.CallTo(() => _anotherLinkedParameter.QuantitySelection.Path).Returns("B|C");
-         A.CallTo(() => _anotherLinkedParameter.Dimension).Returns(_dimension);
+         A.CallTo(() => _anotherLinkedParameter.Dimension).Returns(_parameterSelection.Dimension);
          sut.AddLinkedParameter(_parameterSelection);
          sut.AddLinkedParameter(_anotherLinkedParameter);
       }
@@ -167,7 +164,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _cloneManager = A.Fake<ICloneManager>();
-         _sourceParameterIdentification = new IdentificationParameter { Name = "TOTO", IsFixed = true, UseAsFactor = false};
+         _sourceParameterIdentification = new IdentificationParameter {Name = "TOTO", IsFixed = true, UseAsFactor = false};
          _sourceParameterIdentification.AddLinkedParameter(_parameterSelection);
       }
 
@@ -215,7 +212,8 @@ namespace OSPSuite.Core
       {
          sut = DomainHelperForSpecs.IdentificationParameter(min: 0, max: 1, startValue: 0.5);
          _parameterSelection = A.Fake<ParameterSelection>();
-         _parameter = new Parameter();
+         _parameter = new Parameter {Dimension = DomainHelperForSpecs.TimeDimensionForSpecs()};
+         _parameter.DisplayUnit = _parameter.Dimension.Unit("h");
          A.CallTo(() => _parameterSelection.Parameter).Returns(_parameter);
          A.CallTo(() => _parameterSelection.IsValid).Returns(true);
 
@@ -259,14 +257,14 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_not_validate_because_minimum_should_be_greater_than()
+      public void should_not_validate_because_maximum_should_be_smaller_than_parameter_maximum()
       {
          _parameter.MaxIsAllowed = false;
          sut.IsValid().ShouldBeFalse();
       }
 
       [Observation]
-      public void should_validate_because_minimum_should_be_greater_than_or_equal_to()
+      public void should_validate_because_maximum_is_smaller_than_or_equal_to_parameter_maximum()
       {
          _parameter.MaxIsAllowed = true;
          sut.IsValid().ShouldBeTrue();
@@ -296,11 +294,12 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_validating_an_idenfitication_parameter_dto : concern_for_IdentificationParameter
+   public class When_validating_an_identification_parameter : concern_for_IdentificationParameter
    {
       protected override void Context()
       {
-         sut = DomainHelperForSpecs.IdentificationParameter(min: 5, max: 20, startValue: 10);
+         base.Context();
+         sut = DomainHelperForSpecs.IdentificationParameter(min: 20, max: 120, startValue: 60);
       }
 
       [Observation]
@@ -312,7 +311,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_invalid_if_value_is_bigger_than_max()
       {
-         sut.StartValueParameter.Value = 30;
+         sut.StartValueParameter.Value = 200;
          sut.IsValid().ShouldBeFalse();
       }
 
@@ -324,9 +323,9 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_return_invalid_if_value_if_min_is_bigger_or_equal_to_max()
+      public void should_return_invalid_if_value_of_min_is_bigger_or_equal_to_max()
       {
-         sut.MinValueParameter.Value = 100;
+         sut.MinValueParameter.Value = 200;
          sut.IsValid().ShouldBeFalse();
       }
 
@@ -342,12 +341,47 @@ namespace OSPSuite.Core
          sut.IsValid().ShouldBeFalse();
       }
 
-
       [Observation]
       public void should_return_valid_if_the_only_underlying_linked_parameter_is_null()
       {
          sut.AddLinkedParameter(new ParameterSelection(null, "A|B|C"));
          sut.IsValid().ShouldBeTrue();
+      }
+   }
+
+   public class When_validating_an_identification_parameter_with_a_parameter_selection_max_set_to_a_value_higher_than_the_underlying_parameter_max : concern_for_IdentificationParameter
+   {
+      public NumericFormatter<double> _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
+
+      protected override void Context()
+      {
+         base.Context();
+         var parameter = new Parameter
+         {
+            Dimension = DomainHelperForSpecs.TimeDimensionForSpecs(),
+            Value = 80,
+            MinValue = 20,
+            MinIsAllowed = true,
+            MaxValue = 120,
+            MaxIsAllowed = true
+         };
+
+         parameter.DisplayUnit = parameter.Dimension.Unit("h");
+         A.CallTo(() => _parameterSelection.Parameter).Returns(parameter);
+         A.CallTo(() => _parameterSelection.IsValid).Returns(true);
+         sut = DomainHelperForSpecs.IdentificationParameter(min: 20, max: 120, startValue: 60);
+         sut.AddLinkedParameter(_parameterSelection);
+
+         sut.MaxValueParameter.Value = 200;
+      }
+
+      [Observation]
+      public void should_return_invalid()
+      {
+         sut.IsValid().ShouldBeFalse();
+
+         var message = sut.Validate().Message;
+         message.Contains($"{_numericFormatter.Format(2)} h").ShouldBeTrue();
       }
    }
 

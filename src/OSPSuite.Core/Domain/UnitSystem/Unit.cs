@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public virtual double Factor { get; set; }
 
       /// <summary>
-      ///    Offset that will be added to a value in this unit to be converted in the base unit of a dimenion (default is 0)
+      ///    Offset that will be added to a value in this unit to be converted in the base unit of a dimension (default is 0)
       /// </summary>
       public virtual double Offset { get; }
 
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public virtual string Name { get; }
 
       /// <summary>
-      ///    Gets or sets if a unit should be displayed or not (some kernel unit are typcally hidden)
+      ///    Gets or sets if a unit should be displayed or not (some kernel unit are typically hidden)
       ///    Default is false
       /// </summary>
       public virtual bool Visible { get; set; }
