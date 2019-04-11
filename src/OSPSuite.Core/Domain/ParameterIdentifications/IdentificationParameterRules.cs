@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Format;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
    internal static class IdentificationParameterRules
    {
+      private static readonly NumericFormatter<double> _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
+
       public static IEnumerable<IBusinessRule> All
       {
          get
@@ -17,43 +20,28 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
             yield return minLessThanMax;
             yield return maxGreaterThanMin;
             yield return startValueBetweenMinAndMax;
-            yield return minStrictBiggerThanZeroForLogScalling;
+            yield return minStrictBiggerThanZeroForLogScaling;
             yield return nameUnique;
             yield return minimumConsistentWithLinkedParameters;
             yield return maximumConsistentWithLinkedParameters;
          }
       }
 
-      private static IBusinessRule nameNotEmpty
-      {
-         get { return GenericRules.NonEmptyRule<IdentificationParameter>(x => x.Name); }
-      }
+      private static IBusinessRule nameNotEmpty { get; } = GenericRules.NonEmptyRule<IdentificationParameter>(x => x.Name);
 
-      private static IBusinessRule minimumConsistentWithLinkedParameters
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.MinValue)
-               .WithRule((parameter, d) => isValidExtreme(parameter, d, isMinValueConsistent))
-               .WithError((param, value) => messagesForInconsistentExtremes(allInconsistentExtremesFor(param, value, isMinValueConsistent),
-                  Rules.Parameters.MinimumMustBeGreaterThanOrEqualTo, Rules.Parameters.MinimumMustBeGreaterThan,
-                  parameter => parameter.MinIsAllowed, parameter => parameter.MinValue));
-         }
-      }
+      private static IBusinessRule minimumConsistentWithLinkedParameters { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.MinValue)
+         .WithRule((parameter, value) => isValidExtreme(parameter, value, isMinValueConsistent))
+         .WithError((param, value) => messagesForInconsistentExtremes(allInconsistentExtremesFor(param, value, isMinValueConsistent),
+            Rules.Parameters.MinimumMustBeGreaterThanOrEqualTo, Rules.Parameters.MinimumMustBeGreaterThan,
+            x => x.MinIsAllowed, x => x.MinValue));
 
-      private static IBusinessRule maximumConsistentWithLinkedParameters
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.MaxValue)
-               .WithRule((parameter, d) => isValidExtreme(parameter, d, isMaxValueConsistent))
-               .WithError((param, value) => messagesForInconsistentExtremes(allInconsistentExtremesFor(param, value, isMaxValueConsistent),
-                  Rules.Parameters.MaximumMustBeLessThanOrEqualTo, Rules.Parameters.MaximumMustBeLessThan,
-                  parameter => parameter.MaxIsAllowed, parameter => parameter.MaxValue));
-         }
-      }
+      private static IBusinessRule maximumConsistentWithLinkedParameters { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.MaxValue)
+         .WithRule((parameter, value) => isValidExtreme(parameter, value, isMaxValueConsistent))
+         .WithError((param, value) => messagesForInconsistentExtremes(allInconsistentExtremesFor(param, value, isMaxValueConsistent),
+            Rules.Parameters.MaximumMustBeLessThanOrEqualTo, Rules.Parameters.MaximumMustBeLessThan,
+            x => x.MaxIsAllowed, parameter => parameter.MaxValue));
 
       private static bool isMaxValueConsistent(IParameter parameter, double newMaximum, bool useAsFactor)
       {
@@ -93,94 +81,60 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return identificationParameter.AllLinkedParameters.Where(x => x.IsValid && !consistencyChecker(x.Parameter, value, identificationParameter.UseAsFactor));
       }
 
-      private static string messagesForInconsistentExtremes(IEnumerable<ParameterSelection> allInconsistentExtremes,
-         Func<double, string, string> extremeAllowedFunc, Func<double, string, string> extremeNotAllowedFunc,
-         Func<IParameter, bool> extremeIsAllowed, Func<IParameter, double?> valueFunc)
+      private static string messagesForInconsistentExtremes(
+         IEnumerable<ParameterSelection> allInconsistentExtremes,
+         Func<string, string, string, string> extremeAllowedFunc,
+         Func<string, string, string, string> extremeNotAllowedFunc,
+         Func<IParameter, bool> extremeIsAllowed,
+         Func<IParameter, double?> valueFunc)
       {
          return allInconsistentExtremes.Select(x =>
          {
-            var value = valueFunc(x.Parameter);
-            if (value.HasValue)
-               return messageForInconsistentExtreme(extremeIsAllowed(x.Parameter), value.Value, x.FullQuantityPath, extremeAllowedFunc, extremeNotAllowedFunc);
+            var parameter = x.Parameter;
+            var value = valueFunc(parameter);
+            if (!value.HasValue)
+               return string.Empty;
 
-            return string.Empty;
+            var errorRetrieverFunc = extremeIsAllowed(parameter) ? extremeAllowedFunc : extremeNotAllowedFunc;
+            var formattedDisplayValue = _numericFormatter.Format(parameter.ConvertToDisplayUnit(value.Value));
+            return errorRetrieverFunc(formattedDisplayValue, parameter.DisplayUnit?.Name,  x.FullQuantityPath);
          }).Where(x => !string.IsNullOrEmpty(x)).ToString(Environment.NewLine);
       }
 
-      private static string messageForInconsistentExtreme(bool extremeIsAllowed, double extremeValue, string fullQuantityPath, Func<double, string, string> extremeAllowedFunc, Func<double, string, string> extremeNotAllowedFunc)
-      {
-         if (extremeIsAllowed)
-            return extremeAllowedFunc(extremeValue, fullQuantityPath);
-         return extremeNotAllowedFunc(extremeValue, fullQuantityPath);
-      }
+      private static IBusinessRule minLessThanMax { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.MinValue)
+         .WithRule((x, value) => value < x.MaxValue)
+         .WithError((param, value) => Rules.Parameters.MinLessThanMax);
 
-      private static IBusinessRule minLessThanMax
-      {
-         get
+      private static IBusinessRule maxGreaterThanMin { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.MaxValue)
+         .WithRule((x, value) => x.MinValue < value)
+         .WithError((param, value) => Rules.Parameters.MaxGreaterThanMin);
+
+      private static IBusinessRule startValueBetweenMinAndMax { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.StartValue)
+         .WithRule((x, value) => x.MinValue <= value && x.MaxValue >= value)
+         .WithError((param, value) => Rules.Parameters.ValueShouldBeBetweenMinAndMax);
+
+      private static IBusinessRule minStrictBiggerThanZeroForLogScaling { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(item => item.MinValue)
+         .WithRule((x, value) => validateScaling(value, x.Scaling))
+         .WithError((param, value) => Rules.Parameters.MinShouldBeStrictlyGreaterThanZeroForLogScale);
+
+      private static bool validateScaling(double minValue, Scalings scaling) => scaling != Scalings.Log || minValue > 0;
+
+      private static IBusinessRule nameUnique { get; } = CreateRule.For<IdentificationParameter>()
+         .Property(x => x.Name)
+         .WithRule((currentIdentificationParameter, name) =>
          {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.MinValue)
-               .WithRule((x, value) => value < x.MaxValue)
-               .WithError((param, value) => Rules.Parameters.MinLessThanMax);
-         }
-      }
+            var parameterIdentification = currentIdentificationParameter.ParameterIdentification;
 
-      private static IBusinessRule maxGreaterThanMin
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.MaxValue)
-               .WithRule((x, value) => x.MinValue < value)
-               .WithError((param, value) => Rules.Parameters.MaxGreaterThanMin);
-         }
-      }
+            var otherIdentificationParameter = parameterIdentification?.IdentificationParameterByName(name);
+            if (otherIdentificationParameter == null)
+               return true;
 
-      private static IBusinessRule startValueBetweenMinAndMax
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.StartValue)
-               .WithRule((x, value) => x.MinValue <= value && x.MaxValue >= value)
-               .WithError((param, value) => Rules.Parameters.ValueShouldBeBetweenMinAndMax);
-         }
-      }
-
-      private static IBusinessRule minStrictBiggerThanZeroForLogScalling
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(item => item.MinValue)
-               .WithRule((x, value) => validateScaling(value, x.Scaling))
-               .WithError((param, value) => Rules.Parameters.MinShouldBeStrictlyGreaterThanZeroForLogScale);
-         }
-      }
-
-      private static bool validateScaling(double minValue, Scalings scaling)
-      {
-         return scaling != Scalings.Log || minValue > 0;
-      }
-
-      private static IBusinessRule nameUnique
-      {
-         get
-         {
-            return CreateRule.For<IdentificationParameter>()
-               .Property(x => x.Name)
-               .WithRule((currentIdentificationParameter, name) =>
-               {
-                  var parameterIdentification = currentIdentificationParameter.ParameterIdentification;
-
-                  var otherIdentificationParameter = parameterIdentification?.IdentificationParameterByName(name);
-                  if (otherIdentificationParameter == null)
-                     return true;
-
-                  return ReferenceEquals(otherIdentificationParameter, currentIdentificationParameter);
-               })
-               .WithError((field, name) => Error.NameAlreadyExistsInContainerType(name, ObjectTypes.IdentificationParameter));
-         }
-      }
+            return ReferenceEquals(otherIdentificationParameter, currentIdentificationParameter);
+         })
+         .WithError((field, name) => Error.NameAlreadyExistsInContainerType(name, ObjectTypes.IdentificationParameter));
    }
 }

@@ -1546,25 +1546,27 @@ namespace OSPSuite.Assets
          public static readonly string ValueShouldBeBetweenMinAndMax = "Value should be greater than minimum value and smaller than maximum value.";
          public static readonly string MinShouldBeStrictlyGreaterThanZeroForLogScale = "Minimum value should be greater than zero or the scaling should be set to linear.";
 
-         public static string MinimumMustBeGreaterThanOrEqualTo(double minValue, string fullQuantityPath)
+         public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than or equal to {minValue} for parameter '{fullQuantityPath}";
+            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue,displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MinimumMustBeGreaterThan(double minValue, string fullQuantityPath)
+         public static string MinimumMustBeGreaterThan(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than {minValue} for parameter '{fullQuantityPath}'";
+            return $"The minimum value must be greater than {valueWithUnit(minDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MaximumMustBeLessThanOrEqualTo(double maxValue, string fullQuantityPath)
+         public static string MaximumMustBeLessThanOrEqualTo(string maxDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The maximum value must be less than or equal to {maxValue} for parameter '{fullQuantityPath}";
+            return $"The maximum value must be less than or equal to {valueWithUnit(maxDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MaximumMustBeLessThan(double maxValue, string fullQuantityPath)
+         public static string MaximumMustBeLessThan(string maxDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The maximum value must be less than {maxValue} for parameter '{fullQuantityPath}";
+            return $"The maximum value must be less than {valueWithUnit(maxDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
+
+         private static string valueWithUnit(string value, string unit) => string.IsNullOrEmpty(unit) ? value : $"{value} {unit}";
       }
    }
 
@@ -1577,7 +1579,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string OptimizedValueIsCloseToBoundary = "Identified value is close to boundary";
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
-      public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transfered.\nPlease set the calculation methods manually.";
+      public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
    }
 
@@ -1741,9 +1743,9 @@ namespace OSPSuite.Assets
 
       public static string CreateProjectDescription(string version) => $"Project started with version {version}";
 
-      public static string SetMetaDataAddedCommandDescripton(string name, string value) => $"New Meta Data added where {name} = {value}";
+      public static string SetMetaDataAddedCommandDescription(string name, string value) => $"New Meta Data added where {name} = {value}";
 
-      public static string SetMetaDataRemovedCommandDescripton(string name, string value) => $"Meta Data removed where {name} = {value}";
+      public static string SetMetaDataRemovedCommandDescription(string name, string value) => $"Meta Data removed where {name} = {value}";
 
       public static string SetMetaDataChangedCommandDescription(string oldName, string oldValue, string newName, string newValue)
       {

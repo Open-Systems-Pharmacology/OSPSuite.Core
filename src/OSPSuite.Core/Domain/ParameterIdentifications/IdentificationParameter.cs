@@ -71,9 +71,9 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
             if (_linkedPath != null)
                return _linkedPath;
 
-            var disinctPaths = AllLinkedParameters.Select(x => x.QuantitySelection.Path).Distinct().ToList();
-            if (disinctPaths.Count == 1)
-               _linkedPath = disinctPaths[0];
+            var distinctPaths = AllLinkedParameters.Select(x => x.QuantitySelection.Path).Distinct().ToList();
+            if (distinctPaths.Count == 1)
+               _linkedPath = distinctPaths[0];
 
             return _linkedPath;
          }
