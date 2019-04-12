@@ -1,6 +1,6 @@
-using OSPSuite.Serializer;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -27,11 +27,20 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Tag);
       }
    }
-   public class MatchAllConditionXmlSerializer  : OSPSuiteXmlSerializer<MatchAllCondition>
+
+   public class MatchAllConditionXmlSerializer : OSPSuiteXmlSerializer<MatchAllCondition>
    {
       public override void PerformMapping()
       {
          /*nothing to do*/
+      }
+   }
+
+   public class InContainerConditionXmlSerializer : OSPSuiteXmlSerializer<InContainerCondition>
+   {
+      public override void PerformMapping()
+      {
+         Map(x => x.Tag);
       }
    }
 

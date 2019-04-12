@@ -2,7 +2,10 @@
 {
    public class MatchAllCondition : ITagCondition
    {
-      public bool IsSatisfiedBy(Tags item)
+      public string Tag { get; } = Constants.ALL_TAG;
+      public string Condition {get;} =  Constants.ALL_TAG.ToUpper();
+
+      public bool IsSatisfiedBy(EntityDescriptor item)
       {
          return true;
       }
@@ -12,20 +15,13 @@
          return new MatchAllCondition();
       }
 
-      public override string ToString()
-      {
-         return Constants.ALL_TAG.ToUpper();
-      }
+      public override string ToString() => Condition;
 
       public void Replace(string keyword, string replacement)
       {
          /*nothing to do*/
       }
 
-      public string Tag
-      {
-         get { return Constants.ALL_TAG; }
-      }
 
       public override bool Equals(object otherObject)
       {
@@ -39,9 +35,6 @@
          return other != null;
       }
 
-      public override int GetHashCode()
-      {
-         return Tag.GetHashCode();
-      }
+      public override int GetHashCode() => Condition.GetHashCode();
    }
 }

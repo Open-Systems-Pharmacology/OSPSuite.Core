@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -122,6 +121,7 @@ namespace OSPSuite.Core.Domain.Services
 
             _report.Append(tag.Value);
          }
+
          _report.AppendLine();
          reportDescription(container);
          _report.AppendLine();
@@ -195,8 +195,8 @@ namespace OSPSuite.Core.Domain.Services
                reportFor(parameter.RHSFormula, "RHS_Formula", 1);
          }
 
-         if(parameter.Tags.Any())
-            _report.AppendFormat("\tTags: {0}", parameter.Tags.Select(x=>x.Value).ToString(", "));
+         if (parameter.Tags.Any())
+            _report.AppendFormat("\tTags: {0}", parameter.Tags.Select(x => x.Value).ToString(", "));
 
          reportDescription(parameter);
          _report.AppendLine();
@@ -218,6 +218,7 @@ namespace OSPSuite.Core.Domain.Services
             _report.AppendLine();
             reportFor(assignment.Formula, 3);
          }
+
          reportDescription(modelEvent);
          _report.AppendLine();
       }
@@ -230,7 +231,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var reactionPartner in reaction.Educts)
          {
             _report.AppendFormat("\t\t{0} * {1}", reactionPartner.StoichiometricCoefficient,
-                                 _objectPathFactory.CreateAbsoluteObjectPath(reactionPartner.Partner));
+               _objectPathFactory.CreateAbsoluteObjectPath(reactionPartner.Partner));
             _report.AppendLine();
          }
 
@@ -238,7 +239,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var reactionPartner in reaction.Products)
          {
             _report.AppendFormat("\t\t{0} * {1}", reactionPartner.StoichiometricCoefficient,
-                                 _objectPathFactory.CreateAbsoluteObjectPath(reactionPartner.Partner));
+               _objectPathFactory.CreateAbsoluteObjectPath(reactionPartner.Partner));
             _report.AppendLine();
          }
 
@@ -332,7 +333,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             string unit = getUnit(formulaRef.Object.Dimension);
             _report.AppendFormat("{0}{1}: {2}({3}{4})", tabs(noOfTabs), formulaRef.Alias,
-                                 _objectPathFactory.CreateAbsoluteObjectPath(formulaRef.Object), formulaRef.Object.Value, unit);
+               _objectPathFactory.CreateAbsoluteObjectPath(formulaRef.Object), formulaRef.Object.Value, unit);
 
             _report.AppendLine();
          }
@@ -430,39 +431,8 @@ namespace OSPSuite.Core.Domain.Services
       private IEnumerable<T> all<T>()
       {
          return from c in _allChildren
-                where c.IsAnImplementationOf<T>()
-                select c.DowncastTo<T>();
-      }
-
-      private void reportFor(IEnumerable<IDescriptorCondition> descriptorCriteria)
-      {
-         bool firstEntry = true;
-
-         foreach (var condition in descriptorCriteria)
-         {
-            if (firstEntry)
-               firstEntry = false;
-            else
-               _report.Append(" & ");
-
-            var matchCondition = condition as MatchTagCondition;
-
-            if (matchCondition != null)
-            {
-               _report.Append(matchCondition.Tag);
-               continue;
-            }
-
-            var notMatchCondition = condition as NotMatchTagCondition;
-
-            if (notMatchCondition != null)
-            {
-               _report.AppendFormat("~{0}", notMatchCondition.Tag);
-               continue;
-            }
-
-            throw new Exception("Unknown desciptor criterion");
-         }
+            where c.IsAnImplementationOf<T>()
+            select c.DowncastTo<T>();
       }
    }
 }

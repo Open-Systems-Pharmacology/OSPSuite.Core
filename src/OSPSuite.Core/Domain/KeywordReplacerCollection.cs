@@ -102,10 +102,7 @@ namespace OSPSuite.Core.Domain
 
       private void replaceInDynamicFormula(DynamicFormula dynamicFormula)
       {
-         if (dynamicFormula == null)
-            return;
-
-         dynamicFormula.Criteria.Each(ReplaceIn);
+         dynamicFormula?.Criteria.Each(ReplaceIn);
       }
 
       public void ReplaceIn(IObjectPath objectPath)

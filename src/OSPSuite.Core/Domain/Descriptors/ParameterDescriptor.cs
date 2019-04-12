@@ -3,22 +3,19 @@ using System;
 namespace OSPSuite.Core.Domain.Descriptors
 {
    /// <summary>
-   /// Describes a parameter location (criteria on container and parameter )
+   ///    Describes a parameter location (criteria on container and parameter )
    /// </summary>
    public class ParameterDescriptor
    {
+      /// <summary>
+      ///    Container criteria describing the container where the parameter resides
+      /// </summary>
+      public DescriptorCriteria ContainerCriteria { get; }
 
       /// <summary>
-      /// Container criteria decribing the container where the parameter resides
+      ///    Parameter criteria describing the parameter itself
       /// </summary>
-      public DescriptorCriteria ContainerCriteria { get; private set; }
-
-
-      /// <summary>
-      /// Parameter criteria describing the parameter itself
-      /// </summary>
-      public string ParameterName{ get; private set; }
-
+      public string ParameterName { get; }
 
       [Obsolete("For serialization")]
       public ParameterDescriptor()

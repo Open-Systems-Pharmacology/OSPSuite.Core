@@ -273,6 +273,15 @@ namespace OSPSuite.Helpers
          fractionObserver.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
          observers.Add(fractionObserver);
 
+
+         var observerInOrganism = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
+         observerInOrganism.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observerInOrganism.MoleculeList.ForAll = false;
+         observerInOrganism.AddMoleculeName("C");
+         observerInOrganism.Formula = InContainerObs(observers.FormulaCache);
+         observerInOrganism.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.InContainer(ConstantsForSpecs.Lung));
+         observers.Add(observerInOrganism);
+
          return observers;
       }
 
@@ -1048,6 +1057,22 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("ContainerObs");
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+
+         formulaCache.Add(formula);
+         return formula;
+      }
+
+
+      private IFormula InContainerObs(IFormulaCache formulaCache)
+      {
+         var formula = formulaCache.FirstOrDefault(x => string.Equals(x.Name, "InContainerObs"));
+         if (formula != null)
+            return formula;
+
+         formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("InContainerObs");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
