@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///   Pattern use to recognize a variable in the formula string
       /// </summary>
-      protected const string _iterationPattern = "#i";
+      protected const string ITERATION_PATTERN = "#i";
 
       /// <summary>
       ///   Condition to be fulfilled by any IFormulaUsable that will be used in the formula
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
-         //this formula cannot be evaluted 
+         //this formula cannot be evaluated 
          return double.NaN;
       }
 
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///   Returns the pattern representing the variable in the formula string. (e.g P_#i)
       /// </summary>
-      public string VariablePattern => $"{Variable}_{_iterationPattern}";
+      public string VariablePattern => $"{Variable}_{ITERATION_PATTERN}";
 
       /// <summary>
       ///   Expands the dynamic formula using the list of available object that can be used in the formula
@@ -92,14 +92,14 @@ namespace OSPSuite.Core.Domain.Formulas
             if (explicitFormula.ObjectPaths.Contains(objectPath))
                continue;
 
-            if (objectPath.Alias.Contains(_iterationPattern))
+            if (objectPath.Alias.Contains(ITERATION_PATTERN))
             {
                bool success;
                var referenceVariable = objectPath.TryResolve<IFormulaUsable>(formulaUsable, out success);
                if (!success)
                   throw new UnableToResolvePathException(objectPath, formulaUsable);
 
-               var referenceAlias = objectPath.Alias.Replace(_iterationPattern, index1);
+               var referenceAlias = objectPath.Alias.Replace(ITERATION_PATTERN, index1);
                formulaStringPart = formulaStringPart.Replace(objectPath.Alias, referenceAlias);
                explicitFormula.AddObjectPath(objectPathFactory.CreateAbsoluteFormulaUsablePath(referenceVariable).WithAlias(referenceAlias));
             }

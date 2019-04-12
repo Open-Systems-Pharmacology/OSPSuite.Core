@@ -6,24 +6,23 @@ namespace OSPSuite.Core.Domain.Descriptors
    {
       public string Tag { get; private set; }
 
+      public string Condition => Tag;
+
       [Obsolete("For serialization")]
       public MatchTagCondition()
       {
       }
 
-      public override string ToString()
+      public override string ToString() => Condition;
+
+      public MatchTagCondition(string tag)
       {
-         return Tag;
+         Tag = tag;
       }
 
-      public MatchTagCondition(string matchTag)
+      public bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {
-         Tag = matchTag;
-      }
-
-      public bool IsSatisfiedBy(Tags tags)
-      {
-         return tags.Contains(Tag);
+         return entityDescriptor.Tags.Contains(Tag);
       }
 
       public IDescriptorCondition CloneCondition()
@@ -33,7 +32,7 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       public void Replace(string keyword, string replacement)
       {
-         if(string.Equals(Tag,keyword))
+         if (string.Equals(Tag, keyword))
             Tag = replacement;
       }
 
@@ -47,16 +46,9 @@ namespace OSPSuite.Core.Domain.Descriptors
       public bool Equals(MatchTagCondition other)
       {
          if (other == null) return false;
-         return string.Equals(Tag,other.Tag);
+         return string.Equals(Tag, other.Tag);
       }
 
-      public override int GetHashCode()
-      {
-         //Match and NoMatch CANNOT return the same hash for the same tag
-         int hash = 29; //one prime number that should differ from the one in Not Match
-         if (Tag != null)
-            hash = hash + Tag.GetHashCode();
-         return hash;
-      }
+      public override int GetHashCode() => Condition?.GetHashCode() ?? 0;
    }
 }

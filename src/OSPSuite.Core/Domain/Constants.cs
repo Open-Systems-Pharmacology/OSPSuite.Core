@@ -512,6 +512,7 @@ namespace OSPSuite.Core.Domain
 
       public static readonly string NOT = "Not";
       public static readonly string AND = "and";
+      public static readonly string IN_CONTAINER = "In container";
       public static readonly string LLOQ = "LLOQ";
 
       public static string NameWithUnitFor(string name, IDimension dimension)

@@ -1,8 +1,8 @@
 ﻿using System;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain
 {
@@ -23,15 +23,16 @@ namespace OSPSuite.Core.Domain
       bool IsDescendant(IContainer container);
 
       /// <summary>
-      ///    Returns <c>true</c> if the current entity has an ancestor in its hierarchy named <paramref name="parentName" /> otherwise
+      ///    Returns <c>true</c> if the current entity has an ancestor in its hierarchy named <paramref name="parentName" />
+      ///    otherwise
       ///    <c>false</c>
       /// </summary>
       /// <remarks>This is not necessarily the direct parent. </remarks>
       bool HasAncestorNamed(string parentName);
 
-
       /// <summary>
-      /// Returns <c>true</c> of the current entity has an ancestor in its hierarchy fulfilling the <paramref name="criteria"/> otherwise <c>false</c>
+      ///    Returns <c>true</c> of the current entity has an ancestor in its hierarchy fulfilling the
+      ///    <paramref name="criteria" /> otherwise <c>false</c>
       /// </summary>
       /// <remarks>This is not necessarily the direct parent. </remarks>
       bool HasAncestorWith(Func<IContainer, bool> criteria);
@@ -39,15 +40,13 @@ namespace OSPSuite.Core.Domain
 
    public abstract class Entity : ObjectBase, IEntity
    {
-      private readonly Tags _tags;
-      private readonly IBusinessRuleSet _rules;
       public IContainer ParentContainer { get; set; }
 
       protected Entity()
       {
          ParentContainer = null;
-         _tags = new Tags();
-         _rules = DefaultRules();
+         Tags = new Tags();
+         Rules = DefaultRules();
       }
 
       protected virtual IBusinessRuleSet DefaultRules()
@@ -55,40 +54,37 @@ namespace OSPSuite.Core.Domain
          return new BusinessRuleSet(EntityRules.All());
       }
 
-      public Tags Tags => _tags;
+      public Tags Tags { get; }
 
       public void AddTag(Tag tag)
       {
-         _tags.Add(tag);
+         Tags.Add(tag);
       }
 
       public void RemoveTag(Tag tag)
       {
-         _tags.Remove(tag);
+         Tags.Remove(tag);
       }
 
       public void RemoveTag(string tag)
       {
-         _tags.Remove(tag);
+         Tags.Remove(tag);
       }
 
       public void AddTag(string tagValue)
       {
-         AddTag(new Tag {Value = tagValue});
+         AddTag(new Tag(tagValue));
       }
 
-      public bool HasAncestorNamed(string parentName)
-      {
-         return HasAncestorWith(x => string.Equals(x.Name, parentName));
-      }
+      public bool HasAncestorNamed(string parentName) => HasAncestorWith(x => string.Equals(x.Name, parentName));
 
-      public bool HasAncestorWith(Func<IContainer, bool> critieria)
+      public bool HasAncestorWith(Func<IContainer, bool> criteria)
       {
          if (ParentContainer == null) return false;
-         if (critieria(ParentContainer))
+         if (criteria(ParentContainer))
             return true;
 
-         return ParentContainer.HasAncestorWith(critieria);
+         return ParentContainer.HasAncestorWith(criteria);
       }
 
       public IContainer RootContainer
@@ -117,13 +113,9 @@ namespace OSPSuite.Core.Domain
       {
          base.UpdatePropertiesFrom(source, cloneManager);
          var sourceEntity = source as IEntity;
-         if (sourceEntity == null) return;
-         sourceEntity.Tags.Each(t => AddTag(t.Value));
+         sourceEntity?.Tags.Each(t => AddTag(t.Value));
       }
 
-      public virtual IBusinessRuleSet Rules
-      {
-         get { return _rules; }
-      }
+      public virtual IBusinessRuleSet Rules { get; }
    }
 }

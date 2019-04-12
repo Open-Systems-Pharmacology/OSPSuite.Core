@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Adds observers defined by buildConfiguration to the given model
       /// </summary>
       /// <param name="buildConfiguration">the build configuration</param>
-      /// <param name="model">the model where the obervers should be defined</param>
+      /// <param name="model">the model where the observers should be defined</param>
       void CreateObservers(IBuildConfiguration buildConfiguration, IModel model);
    }
 

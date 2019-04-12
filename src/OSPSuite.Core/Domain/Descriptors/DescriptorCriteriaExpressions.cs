@@ -21,10 +21,7 @@ namespace OSPSuite.Core.Domain.Descriptors
          _criteria = new DescriptorCriteria();
       }
 
-      public DescriptorCriteriaBuilder And
-      {
-         get { return this; }
-      }
+      public DescriptorCriteriaBuilder And => this;
 
       public DescriptorCriteriaBuilder With(string match)
       {
@@ -36,6 +33,13 @@ namespace OSPSuite.Core.Domain.Descriptors
          _criteria.Add(new NotMatchTagCondition(match));
          return this;
       }
+
+      public DescriptorCriteriaBuilder InContainer(string containerName)
+      {
+         _criteria.Add(new InContainerCondition(containerName));
+         return this;
+      }
+
       public DescriptorCriteria Build()
       {
          return _criteria;

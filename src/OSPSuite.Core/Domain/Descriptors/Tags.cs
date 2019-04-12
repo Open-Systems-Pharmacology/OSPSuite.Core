@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Descriptors
             if (!string.Equals(_allTagValues[i], keyword))
                continue;
 
-            _allTags[i].Value = replacement;
+            _allTags[i] = new Tag(replacement);
             _allTagValues[i] = replacement;
          }
       }

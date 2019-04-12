@@ -10,6 +10,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
       private readonly ITeXBuilderRepository _builderRepository;
       private const string TAGGED_WITH = "tagged with";
       private const string NOT_TAGGED_WITH = "not tagged with";
+      private const string IN_CONTAINER = "in container";
 
       public DescriptorCriteriaTeXBuilder(ITeXBuilderRepository builderRepository)
       {
@@ -42,6 +43,9 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
                   break;
                case MatchAllCondition allmatch:
                   strings.Add(allmatch.Tag);
+                  break;
+               case InContainerCondition inContainerCondition:
+                  strings.Add($"{IN_CONTAINER} {DefaultConverter.Instance.StringToTeX(inContainerCondition.Tag)}");
                   break;
             }
          }

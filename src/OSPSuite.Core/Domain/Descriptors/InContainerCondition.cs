@@ -2,33 +2,23 @@
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public class NotMatchTagCondition : ITagCondition
+   public class InContainerCondition : ITagCondition
    {
-      public string Tag { get; private set; }
-
-      public string Condition => $"{Constants.NOT.ToUpper()} {Tag}";
-
       [Obsolete("For serialization")]
-      public NotMatchTagCondition()
+      public InContainerCondition()
       {
       }
 
-      public override string ToString() => Condition;
-
-      public NotMatchTagCondition(string tag)
+      public InContainerCondition(string tag)
       {
          Tag = tag;
       }
 
-      public bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
-      {
-         return !entityDescriptor.Tags.Contains(Tag);
-      }
+      public string Tag { get; private set; }
 
-      public IDescriptorCondition CloneCondition()
-      {
-         return new NotMatchTagCondition(Tag);
-      }
+      public string Condition => $"{Constants.IN_CONTAINER.ToUpper()} {Tag}";
+
+      public IDescriptorCondition CloneCondition() => new InContainerCondition(Tag);
 
       public void Replace(string keyword, string replacement)
       {
@@ -36,7 +26,12 @@ namespace OSPSuite.Core.Domain.Descriptors
             Tag = replacement;
       }
 
-      protected bool Equals(NotMatchTagCondition other)
+      public bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
+      {
+         return string.Equals(entityDescriptor?.Container?.Value, Tag);
+      }
+
+      protected bool Equals(InContainerCondition other)
       {
          return string.Equals(Tag, other.Tag);
       }
@@ -46,9 +41,11 @@ namespace OSPSuite.Core.Domain.Descriptors
          if (ReferenceEquals(null, obj)) return false;
          if (ReferenceEquals(this, obj)) return true;
          if (obj.GetType() != this.GetType()) return false;
-         return Equals((NotMatchTagCondition) obj);
+         return Equals((InContainerCondition) obj);
       }
 
       public override int GetHashCode() => Condition.GetHashCode();
+
+      public override string ToString() => Condition;
    }
 }
