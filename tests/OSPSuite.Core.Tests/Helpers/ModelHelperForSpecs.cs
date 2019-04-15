@@ -274,13 +274,21 @@ namespace OSPSuite.Helpers
          observers.Add(fractionObserver);
 
 
-         var observerInOrganism = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
-         observerInOrganism.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
-         observerInOrganism.MoleculeList.ForAll = false;
-         observerInOrganism.AddMoleculeName("C");
-         observerInOrganism.Formula = InContainerObs(observers.FormulaCache);
-         observerInOrganism.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.InContainer(ConstantsForSpecs.Lung));
-         observers.Add(observerInOrganism);
+         var observedInOrganismLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
+         observedInOrganismLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismLungPlasma.MoleculeList.ForAll = false;
+         observedInOrganismLungPlasma.AddMoleculeName("C");
+         observedInOrganismLungPlasma.Formula = InContainerObs(observers.FormulaCache);
+         observedInOrganismLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.InContainer(ConstantsForSpecs.Lung));
+         observers.Add(observedInOrganismLungPlasma);
+
+         var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("NotInContainerObserver");
+         observedInOrganismNotLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismNotLungPlasma.MoleculeList.ForAll = false;
+         observedInOrganismNotLungPlasma.AddMoleculeName("C");
+         observedInOrganismNotLungPlasma.Formula = InContainerObs(observers.FormulaCache);
+         observedInOrganismNotLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.NotInContainer(ConstantsForSpecs.Lung));
+         observers.Add(observedInOrganismNotLungPlasma);
 
          return observers;
       }

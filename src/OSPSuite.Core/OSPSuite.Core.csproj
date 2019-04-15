@@ -147,7 +147,11 @@
     <Compile Include="Comparison\WithValueOriginComparison.cs" />
     <Compile Include="Converter\v7_3\Converter710To730.cs" />
     <Compile Include="Domain\Descriptors\EntityDescriptor.cs" />
+    <Compile Include="Domain\Descriptors\EntityDescriptorMap.cs" />
+    <Compile Include="Domain\Descriptors\EntityDescriptorMapList.cs" />
     <Compile Include="Domain\Descriptors\InContainerCondition.cs" />
+    <Compile Include="Domain\Descriptors\NotInContainerCondition.cs" />
+    <Compile Include="Domain\Descriptors\TagCondition.cs" />
     <Compile Include="Domain\Formulas\TableFormulaWithXArgument.cs" />
     <Compile Include="Domain\IWithDefaultState.cs" />
     <Compile Include="Domain\IWithValueOrigin.cs" />

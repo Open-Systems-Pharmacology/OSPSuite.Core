@@ -1,20 +1,23 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_MatchAllCondition : ContextSpecification<MatchAllCondition>
    {
-      protected Tags _tags;
       protected IDescriptorCondition _match;
       protected IDescriptorCondition _doNotMatch;
       protected EntityDescriptor _entityCriteria;
 
       protected override void Context()
       {
-         _tags = new Tags {new Tag("tag1"), new Tag("tag2")};
-         _entityCriteria = new EntityDescriptor {Tags = _tags};
+         var entity = new Parameter();
+         entity.AddTag("tag1");
+         entity.AddTag("tag2");
+
+         _entityCriteria = new EntityDescriptor(entity);
          sut = new MatchAllCondition();
       }
    }

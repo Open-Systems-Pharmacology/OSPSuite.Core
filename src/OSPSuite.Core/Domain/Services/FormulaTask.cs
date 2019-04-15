@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -50,7 +51,11 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IDimensionFactory _dimensionFactory;
       private readonly ICache<string, IList<ExplicitFormula>> _originIdToFormulaCache = new Cache<string, IList<ExplicitFormula>>();
 
-      public FormulaTask(IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory, IAliasCreator aliasCreator, IDimensionFactory dimensionFactory)
+      public FormulaTask(
+         IObjectPathFactory objectPathFactory, 
+         IObjectBaseFactory objectBaseFactory, 
+         IAliasCreator aliasCreator, 
+         IDimensionFactory dimensionFactory)
       {
          _objectPathFactory = objectPathFactory;
          _objectBaseFactory = objectBaseFactory;
@@ -135,7 +140,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandDynamicFormulaIn(IContainer container)
       {
-         var allFormulaUsable = container.GetAllChildren<IFormulaUsable>();
+         var allFormulaUsable = container.GetAllChildren<IFormulaUsable>().ToEntityDescriptorMapList();
          var allEntityUsingDynamicFormula = container.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
 
          foreach (var entityUsingFormula in allEntityUsingDynamicFormula)

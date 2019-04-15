@@ -5,7 +5,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>
+   public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
    {
       public override string ToString()
       {

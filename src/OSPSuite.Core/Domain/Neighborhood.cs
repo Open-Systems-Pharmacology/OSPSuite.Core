@@ -14,23 +14,23 @@ namespace OSPSuite.Core.Domain
       IContainer GetNeighborSatisfying(DescriptorCriteria criteria);
 
       /// <summary>
-      /// return true either if the first neighboor satatifies the <paramref name="criteriaForOneNeighbor"/> and the second neighboor satisfies the  <paramref name="criteriaForTheOtherNeighbor"/> 
-      /// or if the first neighboor satatifies the <paramref name="criteriaForTheOtherNeighbor"/> and the second neighboor satisfies the <paramref name="criteriaForOneNeighbor"/>.
+      /// return true either if the first neighbor satisfies the <paramref name="criteriaForOneNeighbor"/> and the second neighbor satisfies the  <paramref name="criteriaForTheOtherNeighbor"/> 
+      /// or if the first neighbor satisfies the <paramref name="criteriaForTheOtherNeighbor"/> and the second neighbor satisfies the <paramref name="criteriaForOneNeighbor"/>.
       /// Otherwise false
       /// </summary>
-      /// <param name="criteriaForOneNeighbor">One critieria to be satisfied by at least one neighbor</param>
+      /// <param name="criteriaForOneNeighbor">One criteria to be satisfied by at least one neighbor</param>
       /// <param name="criteriaForTheOtherNeighbor">Another criteria to be satisfied by at least one neighbor</param>
       /// <returns></returns>
       bool Satisfies(DescriptorCriteria criteriaForOneNeighbor, DescriptorCriteria criteriaForTheOtherNeighbor);
 
       /// <summary>
-      /// return true either if the first neighboor satatifies the <paramref name="criteriaFoFirstNeighbor"/> and the second neighboor satisfies the  <paramref name="criteriaForTheSecondNeighbor"/>.
+      /// return true either if the first neighbor satisfies the <paramref name="criteriaFoFirstNeighbor"/> and the second neighbor satisfies the  <paramref name="criteriaForTheSecondNeighbor"/>.
       /// Otherwise false
       /// </summary>
-      /// <param name="criteriaFoFirstNeighbor">The critieria to be satisfied by the first neighbor</param>
+      /// <param name="criteriaFoFirstNeighbor">The criteria to be satisfied by the first neighbor</param>
       /// <param name="criteriaForTheSecondNeighbor">The criteria to be satisfied by the second neighbor</param>
       /// <returns></returns>
-      bool StrictlyStatifies(DescriptorCriteria criteriaFoFirstNeighbor, DescriptorCriteria criteriaForTheSecondNeighbor);
+      bool StrictlySatisfies(DescriptorCriteria criteriaFoFirstNeighbor, DescriptorCriteria criteriaForTheSecondNeighbor);
    }
 
    public class Neighborhood : Container, INeighborhood
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain
                  criteriaForTheOtherNeighbor.IsSatisfiedBy(FirstNeighbor));
       }
 
-      public bool StrictlyStatifies(DescriptorCriteria criteriaFoFirstNeighbor, DescriptorCriteria criteriaForTheSecondNeighbor)
+      public bool StrictlySatisfies(DescriptorCriteria criteriaFoFirstNeighbor, DescriptorCriteria criteriaForTheSecondNeighbor)
       {
          return criteriaFoFirstNeighbor.IsSatisfiedBy(FirstNeighbor) &&
                 criteriaForTheSecondNeighbor.IsSatisfiedBy(SecondNeighbor);

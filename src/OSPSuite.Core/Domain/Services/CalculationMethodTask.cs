@@ -23,13 +23,17 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
       private readonly IObjectPathFactory _objectPathFactory;
-      private IList<IContainer> _allContainers;
+      private EntityDescriptorMapList<IContainer> _allContainers;
       private IList<IParameter> _allBlackBoxParameters;
       private IModel _model;
       private IBuildConfiguration _buildConfiguration;
 
-      public CalculationMethodTask(IFormulaTask formulaTask, IKeywordReplacerTask keywordReplacerTask, IFormulaBuilderToFormulaMapper formulaMapper,
-         IParameterBuilderToParameterMapper parameterMapper,  IObjectPathFactory objectPathFactory)
+      public CalculationMethodTask(
+         IFormulaTask formulaTask, 
+         IKeywordReplacerTask keywordReplacerTask, 
+         IFormulaBuilderToFormulaMapper formulaMapper,
+         IParameterBuilderToParameterMapper parameterMapper,  
+         IObjectPathFactory objectPathFactory)
       {
          _formulaTask = formulaTask;
          _keywordReplacerTask = keywordReplacerTask;
@@ -43,7 +47,7 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             _buildConfiguration = buildConfiguration;
-            _allContainers = model.Root.GetAllContainersAndSelf<IContainer>().ToList();
+            _allContainers = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
             _model = model;
             foreach (var calculationMethod in buildConfiguration.AllCalculationMethods())
@@ -170,7 +174,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<IContainer> allMoleculeContainersFor(DescriptorCriteria containerDescriptor, IMoleculeBuilder molecule)
       {
-         return from container in _allContainers.AllContainersFor(containerDescriptor)
+         return from container in _allContainers.AllSatisfiedBy(containerDescriptor)
                 let moleculeContainer = container.GetSingleChildByName<IContainer>(molecule.Name)
                 where moleculeContainer != null
                 select moleculeContainer;

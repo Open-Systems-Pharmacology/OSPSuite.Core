@@ -218,14 +218,31 @@ namespace OSPSuite.Core
 
 
       [Observation]
-      public void Observer_InContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_organism()
+      public void Observer_InContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_lung_plasma()
       {
          string observerName = "InContainerObserver";
 
-         var liver_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma);
-         var moleculeContainer = liver_plasma.GetSingleChildByName<IContainer>("C");
+         var lung_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma);
+         var moleculeContainer = lung_plasma.GetSingleChildByName<IContainer>("C");
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
       }
+
+      [Observation]
+      public void Observer_NotInContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_all_plasma_except_lung()
+      {
+         string observerName = "NotInContainerObserver";
+
+         var lung_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma);
+         var moleculeContainer = lung_plasma.GetSingleChildByName<IContainer>("C");
+         moleculeContainer.ContainsName(observerName).ShouldBeFalse();
+
+
+         var bone_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma);
+         moleculeContainer = bone_plasma.GetSingleChildByName<IContainer>("C");
+         moleculeContainer.ContainsName(observerName).ShouldBeTrue();
+
+      }
+
 
       [Observation]
       public void bolus_application_should_only_take_place_in_arterial_blood_plasma()

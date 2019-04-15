@@ -53,10 +53,10 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///   Expands the dynamic formula using the list of available object that can be used in the formula
       /// </summary>
-      public IFormula ExpandUsing(IReadOnlyList<IFormulaUsable> allFormulaUsable, IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
+      public IFormula ExpandUsing(EntityDescriptorMapList<IFormulaUsable> allFormulaUsable, IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
       {
          var explicitFormula = objectBaseFactory.Create<ExplicitFormula>().WithName(Name).WithFormulaString("0");
-         var allEntityToUse = allFormulaUsable.Where(Criteria.IsSatisfiedBy).ToList();
+         var allEntityToUse = allFormulaUsable.AllSatisfiedBy(Criteria);
 
          explicitFormula.Dimension = Dimension;
 

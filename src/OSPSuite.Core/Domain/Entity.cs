@@ -56,25 +56,13 @@ namespace OSPSuite.Core.Domain
 
       public Tags Tags { get; }
 
-      public void AddTag(Tag tag)
-      {
-         Tags.Add(tag);
-      }
+      public void AddTag(Tag tag) => Tags.Add(tag);
 
-      public void RemoveTag(Tag tag)
-      {
-         Tags.Remove(tag);
-      }
+      public void RemoveTag(Tag tag) => Tags.Remove(tag);
 
-      public void RemoveTag(string tag)
-      {
-         Tags.Remove(tag);
-      }
+      public void RemoveTag(string tag) => Tags.Remove(tag);
 
-      public void AddTag(string tagValue)
-      {
-         AddTag(new Tag(tagValue));
-      }
+      public void AddTag(string tagValue) => AddTag(new Tag(tagValue));
 
       public bool HasAncestorNamed(string parentName) => HasAncestorWith(x => string.Equals(x.Name, parentName));
 
