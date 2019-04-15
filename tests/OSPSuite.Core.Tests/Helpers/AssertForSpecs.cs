@@ -731,24 +731,28 @@ namespace OSPSuite.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualStrings(x1.Tag, x2.Tag);
+         AreEqualStrings(x1.Condition, x2.Condition);
       }
 
       public static void AreEqualNotMatchTagCondition(NotMatchTagCondition x1, NotMatchTagCondition x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualStrings(x1.Tag, x2.Tag);
+         AreEqualStrings(x1.Condition, x2.Condition);
       }
 
       public static void AreEqualInContainerCondition(InContainerCondition x1, InContainerCondition x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualStrings(x1.Tag, x2.Tag);
+         AreEqualStrings(x1.Condition, x2.Condition);
       }
 
       public static void AreEqualNotInContainerCondition(NotInContainerCondition x1, NotInContainerCondition x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualStrings(x1.Tag, x2.Tag);
+         AreEqualStrings(x1.Condition, x2.Condition);
       }
 
       public static void AreEqualFormulaCache(IFormulaCache x1, IFormulaCache x2)

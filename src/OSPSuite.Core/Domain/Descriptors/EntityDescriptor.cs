@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
       }
 
-      public EntityDescriptor(IEntity entity, Func<IEntity, EntityDescriptor> createDescriptor)
+      internal EntityDescriptor(IEntity entity, Func<IEntity, EntityDescriptor> createDescriptor)
       {
          Tags = new Tags(entity.Tags) {new Tag(entity.Name)};
          _lazyParentDescriptor = new Lazy<EntityDescriptor>(() => createDescriptor(entity.ParentContainer));

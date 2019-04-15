@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class NotMatchTagCondition : TagCondition
    {
       [Obsolete("For serialization")]
-      public NotMatchTagCondition()
+      public NotMatchTagCondition():base(Constants.NOT)
       {
       }
 

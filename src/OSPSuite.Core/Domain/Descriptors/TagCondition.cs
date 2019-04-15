@@ -1,5 +1,3 @@
-using System;
-
 namespace OSPSuite.Core.Domain.Descriptors
 {
    public interface ITagCondition : IDescriptorCondition
@@ -21,15 +19,14 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       public string Tag { get; private set; }
 
-      [Obsolete("For serialization")]
-      protected TagCondition()
+      protected TagCondition(string type)
       {
+         _type = type;
       }
 
-      protected TagCondition(string tag, string type)
+      protected TagCondition(string tag, string type) : this(type)
       {
          Tag = tag;
-         _type = type;
       }
 
       public virtual string Condition => $"{_type.ToUpper()} {Tag}";
