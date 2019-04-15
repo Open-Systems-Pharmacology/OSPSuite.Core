@@ -69,12 +69,7 @@ namespace OSPSuite.Core
       {
          AmountObserverBuilder x1 = CreateObject<AmountObserverBuilder>();
          x1.ForAll = true;
-         x1.ContainerCriteria = new DescriptorCriteria
-         {
-            new MatchTagCondition("Organ"),
-            new NotMatchTagCondition("Organ"),
-            new InContainerCondition("Liver")
-         };
+         x1.ContainerCriteria = Create.Criteria(x => x.With("Organ").And.Not("Compartment").And.InContainer("Liver").And.NotInContainer("Cell"));
          x1.Dimension = DimensionLength;
          IAmountObserverBuilder x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualAmountObserverBuilder(x2, x1);
@@ -106,7 +101,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    [TestFixture]
    public class InContainerConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
    {
@@ -117,6 +111,19 @@ namespace OSPSuite.Core
 
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualInContainerCondition(x2, x1);
+      }
+   }
+
+   [TestFixture]
+   public class NotInContainerConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   {
+      [Test]
+      public void TestSerialization()
+      {
+         var x1 = new NotInContainerCondition("Franz");
+
+         var x2 = SerializeAndDeserialize(x1);
+         AssertForSpecs.AreEqualNotInContainerCondition(x2, x1);
       }
    }
 }

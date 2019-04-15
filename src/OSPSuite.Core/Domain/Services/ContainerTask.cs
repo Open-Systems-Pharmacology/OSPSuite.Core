@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <param name="parentContainer">parent container</param>
       /// <param name="subContainerName">name of container to be retrieved (and created if necessary)</param>
-      /// <param name="containerMode">Mode of created contaienr</param>
+      /// <param name="containerMode">Mode of created container</param>
       IContainer CreateOrRetrieveSubContainerByName(IContainer parentContainer, string subContainerName, ContainerMode containerMode);
 
       /// <summary>
@@ -115,6 +115,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             spatialStructure.RemoveNeighborhood(neighborhoodBuilder);
          }
+
          containerToRemove.ParentContainer.RemoveChild(containerToRemove);
       }
 
@@ -152,6 +153,7 @@ namespace OSPSuite.Core.Domain.Services
             if (int.TryParse(suffix, out value))
                allValues.Add(value);
          }
+
          if (allValues.Count == 0)
             return 1;
 

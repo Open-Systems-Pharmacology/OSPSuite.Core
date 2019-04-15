@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
@@ -31,6 +32,8 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
          return GetEnumerator();
       }
+
+      public void Add(Tags tags) => tags?.Each(Add);
 
       public void Add(Tag tag)
       {

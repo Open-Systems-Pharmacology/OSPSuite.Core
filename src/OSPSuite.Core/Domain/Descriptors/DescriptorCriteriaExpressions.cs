@@ -28,6 +28,7 @@ namespace OSPSuite.Core.Domain.Descriptors
          _criteria.Add(new MatchTagCondition(match));
          return this;
       }
+
       public DescriptorCriteriaBuilder Not(string match)
       {
          _criteria.Add(new NotMatchTagCondition(match));
@@ -37,6 +38,12 @@ namespace OSPSuite.Core.Domain.Descriptors
       public DescriptorCriteriaBuilder InContainer(string containerName)
       {
          _criteria.Add(new InContainerCondition(containerName));
+         return this;
+      }
+
+      public DescriptorCriteriaBuilder NotInContainer(string containerName)
+      {
+         _criteria.Add(new NotInContainerCondition(containerName));
          return this;
       }
 

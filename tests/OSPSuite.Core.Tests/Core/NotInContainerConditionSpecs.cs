@@ -1,17 +1,16 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_InContainerCondition : ContextSpecification<InContainerCondition>
+   public abstract class concern_for_NotInContainerCondition : ContextSpecification<NotInContainerCondition>
    {
       protected EntityDescriptor _entityCriteria;
-      protected InContainerCondition _match;
-      protected InContainerCondition _doNotMatch;
-      protected InContainerCondition _alsoMatch;
+      protected NotInContainerCondition _match;
+      protected NotInContainerCondition _doNotMatch;
+      protected NotInContainerCondition _alsoMatch;
 
       protected override void Context()
       {
@@ -29,36 +28,36 @@ namespace OSPSuite.Core
          grandParentContainer.AddTag("DUDE");
          _entityCriteria = new EntityDescriptor(entity);
 
-         _match = new InContainerCondition("Liver");
-         _doNotMatch = new InContainerCondition("Kidney");
-         _alsoMatch = new InContainerCondition("DUDE");
+         _match = new NotInContainerCondition("Kidney");
+         _doNotMatch = new NotInContainerCondition("Liver");
+         _alsoMatch = new NotInContainerCondition("HELLO");
       }
    }
 
-   public class When_checking_if_a_in_container_condition_matches_a_given_tag_set : concern_for_InContainerCondition
+   public class When_checking_if_a_not_in_container_condition_matches_a_given_tag_set : concern_for_NotInContainerCondition
    {
       [Observation]
       public void check_that_string_representation_is_accurate()
       {
-         _match.ToString().ShouldBeEqualTo("IN CONTAINER Liver");
+         _match.ToString().ShouldBeEqualTo("NOT IN CONTAINER Kidney");
       }
 
       [Observation]
-      public void should_return_true_if_the_container_tag_contain_the_matching_element()
+      public void should_return_true_if_the_container_tag_does_not_contain_the_matching_element()
       {
          _match.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
       }
 
       [Observation]
-      public void should_return_true_if_the_grand_parent_container_tag_contain_the_matching_element()
+      public void should_return_true_if_the_grand_parent_container_tag_does_not_contain_the_matching_element()
       {
          _alsoMatch.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
       }
 
       [Observation]
-      public void should_return_false_if_the_container_tag_does_not_contain_the_matching_element()
+      public void should_return_false_if_the_container_tag_does_contain_the_matching_element()
       {
          _doNotMatch.IsSatisfiedBy(_entityCriteria).ShouldBeFalse();
       }
    }
-}	
+}

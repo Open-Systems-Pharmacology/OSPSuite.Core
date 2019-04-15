@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain
    public class PathCache<TEntity> : Cache<string, TEntity> where TEntity : class, IEntity
    {
       public PathCache(IEntityPathResolver entityPathResolver)
-         : base(x => entityPathResolver.PathFor(x), s => null)
+         : base(entityPathResolver.PathFor, s => null)
       {
       }
 

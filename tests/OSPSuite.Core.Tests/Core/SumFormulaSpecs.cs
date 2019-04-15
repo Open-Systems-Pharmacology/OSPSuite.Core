@@ -8,12 +8,13 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_SumFormula : ContextSpecification<SumFormula>
    {
-      protected List<IFormulaUsable> _allFormulaUsable;
+      protected EntityDescriptorMapList<IFormulaUsable> _allFormulaUsable;
       protected IObjectPathFactory _objectPathFactory;
       private IParameter _fuParameter;
       protected IObjectBaseFactory _objectBaseFactory;
@@ -27,13 +28,11 @@ namespace OSPSuite.Core
          organism.Add(_fuParameter);
          var liver = new Container().WithName("Liver").WithParentContainer(organism);
          var liverVolume = new Parameter().WithName("Volume").WithValue(10).WithParentContainer(liver);
-         liverVolume.AddTag("Volume");
          var f_vas_liver = new Parameter().WithName("f_vas").WithValue(0.1);
          liver.Add(f_vas_liver);
 
          var kidney= new Container().WithName("Kidney").WithParentContainer(organism);
          var kidneyVolume = new Parameter().WithName("Volume").WithValue(20).WithParentContainer(kidney);
-         kidneyVolume.AddTag("Volume");
          kidney.Add(new Parameter().WithName("f_vas").WithValue(0.2));
 
          sut = new SumFormula();
@@ -45,7 +44,7 @@ namespace OSPSuite.Core
 
          sut.Dimension=new Dimension(new BaseDimensionRepresentation(),"dim1","unit1" );
 
-         _allFormulaUsable = organism.GetAllChildren<IFormulaUsable>().ToList();
+         _allFormulaUsable = organism.GetAllChildren<IFormulaUsable>().ToEntityDescriptorMapList();
 
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _objectBaseFactory.Create<ExplicitFormula>()).Returns(new ExplicitFormula());

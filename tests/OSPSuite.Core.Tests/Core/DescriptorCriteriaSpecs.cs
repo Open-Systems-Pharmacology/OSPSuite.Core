@@ -11,10 +11,12 @@ namespace OSPSuite.Core
    public abstract class concern_for_DescriptorCriteria : ContextSpecification<DescriptorCriteria>
    {
       protected EntityDescriptor _entityCriteria;
+      private Parameter _entity;
 
       protected override void Context()
       {
-         _entityCriteria = new EntityDescriptor();
+         _entity = new Parameter();
+         _entityCriteria = new EntityDescriptor(_entity);
          sut = new DescriptorCriteria();
       }
    }

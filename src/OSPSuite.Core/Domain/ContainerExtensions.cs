@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -51,16 +51,6 @@ namespace OSPSuite.Core.Domain
          return container;
       }
 
-      internal static IEnumerable<IContainer> AllContainersFor(this IEnumerable<IContainer> containers, DescriptorCriteria containerCriteria)
-      {
-         return containers.Where(containerCriteria.IsSatisfiedBy);
-      }
-
-      internal static IEnumerable<IContainer> AllContainersFor(this IEnumerable<IContainer> containers, ParameterDescriptor parameterDescriptor)
-      {
-         return containers.AllContainersFor(parameterDescriptor.ContainerCriteria);
-      }
-
       /// <summary>
       ///    Return all the  neighborhoods defined in the given neighborhood container for which the
       ///    <paramref
@@ -72,7 +62,7 @@ namespace OSPSuite.Core.Domain
       /// <param name="criteriaForSecondContainer">criteria that should be met by the second container of the neighborhood</param>
       internal static IEnumerable<INeighborhood> AllNeighboorhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
       {
-         return neighborhood.GetChildren<INeighborhood>(n => n.StrictlyStatifies(criteriaForFirstContainer, criteriaForSecondContainer));
+         return neighborhood.GetChildren<INeighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
       }
 
       /// <summary>
@@ -86,7 +76,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Determines whether the Container contains all specified names.
       /// </summary>
-       /// <returns>
+      /// <returns>
       ///    <c>true</c> if the specified child names contains names; otherwise, <c>false</c>
       /// </returns>
       public static bool ContainsNames(this IContainer container, IEnumerable<string> childrenNames)
@@ -115,7 +105,6 @@ namespace OSPSuite.Core.Domain
       {
          return container.GetChildren(predicate).SingleOrDefault();
       }
-
 
       public static IContainer Container(this IContainer container, string containerName)
       {
@@ -147,7 +136,8 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Returns the name of all direct children defined in the container. If the container is null, an empty enumeration is returned
+      ///    Returns the name of all direct children defined in the container. If the container is null, an empty enumeration is
+      ///    returned
       /// </summary>
       public static IReadOnlyCollection<string> AllChildrenNames(this IContainer container)
       {
@@ -158,7 +148,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Adds each entity in the <paramref name="children"/> using the AddChild method
+      ///    Adds each entity in the <paramref name="children" /> using the AddChild method
       /// </summary>
       public static void AddChildren(this IContainer container, params IEntity[] children)
       {
@@ -178,7 +168,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Adds each entity in the <paramref name="children"/> using the AddChild method
+      ///    Adds each entity in the <paramref name="children" /> using the AddChild method
       /// </summary>
       public static void AddChildren(this IContainer container, IEnumerable<IEntity> children)
       {

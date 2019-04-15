@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -25,10 +27,13 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IKeywordReplacerTask _keywordReplacerTask;
 
       //cache only used to speed up task
-      private IList<IContainer> _allContainers;
+      private EntityDescriptorMapList<IContainer> _allContainerDescriptors;
       private IBuildConfiguration _buildConfiguration;
 
-      public ObserverBuilderTask(IObserverBuilderToObserverMapper observerMapper, IContainerTask containerTask, IKeywordReplacerTask keywordReplacerTask)
+      public ObserverBuilderTask(
+         IObserverBuilderToObserverMapper observerMapper, 
+         IContainerTask containerTask, 
+         IKeywordReplacerTask keywordReplacerTask)
       {
          _observerMapper = observerMapper;
          _containerTask = containerTask;
@@ -37,7 +42,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreateObservers(IBuildConfiguration buildConfiguration, IModel model)
       {
-         _allContainers = model.Root.GetAllChildren<IContainer>().ToList();
+         _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
          _buildConfiguration = buildConfiguration;
          var observers = buildConfiguration.Observers;
          var presentMolecules = buildConfiguration.AllPresentMolecules().ToList();
@@ -52,7 +57,7 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
-            _allContainers.Clear();
+              _allContainerDescriptors = null;
             _buildConfiguration = null;
          }
       }
@@ -78,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
          var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
             .Select(x => x.Name).ToList();
 
-         foreach (var container in _allContainers.Where(observerBuilder.ContainerCriteria.IsSatisfiedBy).ToList())
+         foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
             var amountsForObserver = container.GetChildren<IMoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
 
@@ -100,7 +105,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
-         foreach (var container in _allContainers.Where(observerBuilder.ContainerCriteria.IsSatisfiedBy).ToList())
+         foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
             foreach (var moleculeBuilder in moleculeBuildersForObserver)
             {
