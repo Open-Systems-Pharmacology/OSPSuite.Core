@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class NotInContainerCondition : TagCondition
    {
       [Obsolete("For serialization")]
-      public NotInContainerCondition()
+      public NotInContainerCondition():base(Constants.NOT_IN_CONTAINER)
       {
       }
 

@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class MatchTagCondition : TagCondition
    {
       [Obsolete("For serialization")]
-      public MatchTagCondition()
+      public MatchTagCondition():base(string.Empty)
       {
       }
 

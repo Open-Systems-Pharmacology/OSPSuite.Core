@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class InContainerCondition : TagCondition
    {
       [Obsolete("For serialization")]
-      public InContainerCondition()
+      public InContainerCondition() : base(Constants.IN_CONTAINER)
       {
       }
 
