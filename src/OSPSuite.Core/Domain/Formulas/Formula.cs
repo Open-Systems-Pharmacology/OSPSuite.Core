@@ -73,7 +73,6 @@ namespace OSPSuite.Core.Domain.Formulas
       private List<IFormulaUsablePath> _objectPaths = new List<IFormulaUsablePath>();
       public virtual IDimension Dimension { get; set; } = Constants.Dimension.NO_DIMENSION;
 
-
       public virtual IReadOnlyList<IObjectReference> ObjectReferences => _objectReferences;
 
       public virtual void ResolveObjectPathsFor(IEntity dependentEntity)
@@ -205,7 +204,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject)
       {
-         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias,alias)).Object;
+         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias, alias)).Object;
       }
    }
 
@@ -234,13 +233,13 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </exception>
       public virtual void Validate(string formulaString)
       {
-         var formulaParser = ExplicitFormulaParserCreator(ObjectPaths.Select(path => path.Alias), new string[0]);
+         var formulaParser = ExplicitFormulaParserCreator(UsedVariableNames, new string[0]);
          formulaParser.FormulaString = formulaString ?? string.Empty;
          formulaParser.Parse();
       }
 
       /// <summary>
-      ///    Validates the current formulat string. Throws an
+      ///    Validates the current formula string. Throws an
       /// </summary>
       /// <exception cref="OSPSuiteException"> is thrown if the current FormulaString cannot be successfully parsed </exception>
       public virtual void Validate()
@@ -248,6 +247,26 @@ namespace OSPSuite.Core.Domain.Formulas
          Validate(FormulaString);
       }
 
-      public static Func<IEnumerable<string>, IEnumerable<string>,  IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (variableNames, parameterNames) => new NullExplicitFormulaParser();
+      public virtual (bool valid, string validationMessage) IsValid()
+      {
+         return IsValid(FormulaString);
+      }
+
+      public virtual (bool valid, string validationMessage) IsValid(string formulaString)
+      {
+         try
+         {
+            Validate(formulaString);
+            return (true, string.Empty);
+         }
+         catch (OSPSuiteException e)
+         {
+            return (false, e.Message);
+         }
+      }
+
+      protected virtual IEnumerable<string> UsedVariableNames => ObjectPaths.Select(path => path.Alias);
+
+      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (variableNames, parameterNames) => new NullExplicitFormulaParser();
    }
 }
