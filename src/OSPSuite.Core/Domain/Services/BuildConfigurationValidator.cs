@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -17,19 +16,19 @@ namespace OSPSuite.Core.Domain.Services
       public ValidationResult Validate(IBuildConfiguration buildConfiguration)
       {
          var validationResult = new ValidationResult();
-         validateBuildingBlockWithFormulaCache(buildConfiguration.Molecules,validationResult);
+         validateBuildingBlockWithFormulaCache(buildConfiguration.Molecules, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.Reactions, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.SpatialStructure, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.PassiveTransports, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.Observers, validationResult);
-         validateEventGroupBuildingBlock(buildConfiguration.EventGroups,buildConfiguration.Molecules, validationResult);
+         validateEventGroupBuildingBlock(buildConfiguration.EventGroups, buildConfiguration.Molecules, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.MoleculeStartValues, validationResult);
          validateBuildingBlockWithFormulaCache(buildConfiguration.ParameterStartValues, validationResult);
-         buildConfiguration.AllCalculationMethods().Each(cm=>validateBuildingBlockWithFormulaCache(cm,validationResult));
+         buildConfiguration.AllCalculationMethods().Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          return validationResult;
       }
 
-      private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, IMoleculeBuildingBlock moleculeBuildingBlock,ValidationResult validationResult)
+      private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, IMoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
       {
          var allMolecules = moleculeBuildingBlock.Select(mb => mb.Name);
          foreach (var eventGroup in eventGroups)
@@ -41,21 +40,16 @@ namespace OSPSuite.Core.Domain.Services
             }
          }
 
-         validateBuildingBlockWithFormulaCache(eventGroups,validationResult);
+         validateBuildingBlockWithFormulaCache(eventGroups, validationResult);
       }
 
       private void validateBuildingBlockWithFormulaCache(IBuildingBlock buildingBlockWithFormulaCache, ValidationResult validationResult)
       {
          foreach (var formula in buildingBlockWithFormulaCache.FormulaCache.Where(f => f.IsExplicit()).Cast<ExplicitFormula>())
          {
-            try
-            {
-               formula.Validate();
-            }
-            catch (OSPSuiteException e)
-            {
-               validationResult.AddMessage(NotificationType.Error, formula, Validation.FormulaIsNotValid(formula.Name, buildingBlockWithFormulaCache.Name, e.Message), buildingBlockWithFormulaCache);
-            }
+            var (valid, message) = formula.IsValid();
+            if (!valid)
+               validationResult.AddMessage(NotificationType.Error, formula, Validation.FormulaIsNotValid(formula.Name, buildingBlockWithFormulaCache.Name, message), buildingBlockWithFormulaCache);
          }
       }
    }

@@ -7,24 +7,24 @@ using OSPSuite.Core.Domain.Services;
 namespace OSPSuite.Core.Domain.Formulas
 {
    /// <summary>
-   ///   Base clas for dynamic formula. It defines a condition that should be met by some IFormulaUsable objects
-   ///   Default value of the formula string is set to the variable used for expansion
+   ///    Base class for dynamic formula. It defines a condition that should be met by some IFormulaUsable objects
+   ///    Default value of the formula string is set to the variable used for expansion
    /// </summary>
    public abstract class DynamicFormula : FormulaWithFormulaString
    {
       /// <summary>
-      ///   Pattern use to recognize a variable in the formula string
+      ///    Pattern use to recognize a variable in the formula string
       /// </summary>
       protected const string ITERATION_PATTERN = "#i";
 
       /// <summary>
-      ///   Condition to be fulfilled by any IFormulaUsable that will be used in the formula
+      ///    Condition to be fulfilled by any IFormulaUsable that will be used in the formula
       /// </summary>
       public DescriptorCriteria Criteria { get; set; }
 
       /// <summary>
-      ///   Name of the variable used when expanding the formula. By default, variable is set to P
-      /// </summary> 
+      ///    Name of the variable used when expanding the formula. By default, variable is set to P
+      /// </summary>
       public string Variable { get; set; }
 
       protected DynamicFormula()
@@ -41,17 +41,17 @@ namespace OSPSuite.Core.Domain.Formulas
       }
 
       /// <summary>
-      ///   Operation performed bu the Dynamic Formula (Typically + or *)
+      ///    Operation performed bu the Dynamic Formula (Typically + or *)
       /// </summary>
       protected abstract string Operation { get; }
 
       /// <summary>
-      ///   Returns the pattern representing the variable in the formula string. (e.g P_#i)
+      ///    Returns the pattern representing the variable in the formula string. (e.g P_#i)
       /// </summary>
       public string VariablePattern => $"{Variable}_{ITERATION_PATTERN}";
 
       /// <summary>
-      ///   Expands the dynamic formula using the list of available object that can be used in the formula
+      ///    Expands the dynamic formula using the list of available object that can be used in the formula
       /// </summary>
       public IFormula ExpandUsing(EntityDescriptorMapList<IFormulaUsable> allFormulaUsable, IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
       {
@@ -94,8 +94,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
             if (objectPath.Alias.Contains(ITERATION_PATTERN))
             {
-               bool success;
-               var referenceVariable = objectPath.TryResolve<IFormulaUsable>(formulaUsable, out success);
+               var referenceVariable = objectPath.TryResolve<IFormulaUsable>(formulaUsable, out var success);
                if (!success)
                   throw new UnableToResolvePathException(objectPath, formulaUsable);
 
@@ -120,5 +119,7 @@ namespace OSPSuite.Core.Domain.Formulas
          Variable = sourceDynamicFormula.Variable;
          FormulaString = sourceDynamicFormula.FormulaString;
       }
+
+      protected override IEnumerable<string> UsedVariableNames => base.UsedVariableNames.Union(new[] {VariablePattern});
    }
 }
