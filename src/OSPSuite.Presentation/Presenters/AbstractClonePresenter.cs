@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Presenters
    {
       private readonly IRenameObjectDTOFactory _renameObjectBaseDTOFactory;
       private readonly IObjectTypeResolver _objectTypeResolver;
-      private ObjectBaseDTO _objectBaseDTO;
+      private RenameObjectDTO _renameObjectBaseDTO;
 
       protected AbstractClonePresenter(IObjectBaseView view, IObjectTypeResolver objectTypeResolver, IRenameObjectDTOFactory renameObjectDTOFactory) : base(view)
       {
@@ -26,17 +26,18 @@ namespace OSPSuite.Presentation.Presenters
          _view.Caption = Captions.ParameterIdentification.Clone;
          _view.NameDescription = Captions.CloneObjectBase(entityType, objectToClone.Name);
          _view.Icon = ApplicationIcons.Clone;
-         _objectBaseDTO = _renameObjectBaseDTOFactory.CreateFor(objectToClone);
-         _objectBaseDTO.Description = objectToClone.Description;
-         _view.BindTo(_objectBaseDTO);
+         _renameObjectBaseDTO = _renameObjectBaseDTOFactory.CreateFor(objectToClone);
+         _renameObjectBaseDTO.AllowSameNameAsOriginalInDifferentCase = false;
+         _renameObjectBaseDTO.Description = objectToClone.Description;
+         _view.BindTo(_renameObjectBaseDTO);
          _view.Display();
 
          if (_view.Canceled)
             return null;
 
          var clonedObject = Clone(objectToClone);
-         clonedObject.Name = _objectBaseDTO.Name;
-         clonedObject.Description = _objectBaseDTO.Description;
+         clonedObject.Name = _renameObjectBaseDTO.Name;
+         clonedObject.Description = _renameObjectBaseDTO.Description;
 
          return clonedObject;
       }
