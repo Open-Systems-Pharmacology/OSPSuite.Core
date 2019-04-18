@@ -10,14 +10,14 @@ namespace OSPSuite.Presentation
    public abstract class concern_for_RenameObjectDTO : ContextSpecification<RenameObjectDTO>
    {
       protected IBuildingBlock _buildingBlock;
-      private IBuildingBlock _exisistingBuildingBlock;
+      private IBuildingBlock _existingBuildingBlock;
 
       protected override void Context()
       {
          _buildingBlock = A.Fake<IBuildingBlock>();
-         _exisistingBuildingBlock = A.Fake<IBuildingBlock>();
+         _existingBuildingBlock = A.Fake<IBuildingBlock>();
          _buildingBlock.Name = "TOTO";
-         _exisistingBuildingBlock.Name = "exisiting";
+         _existingBuildingBlock.Name = "existing";
          sut = new RenameObjectDTO(_buildingBlock.Name);
          sut.AddUsedNames(new[] { _buildingBlock.Name });
       }

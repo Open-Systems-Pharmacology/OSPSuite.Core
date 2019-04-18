@@ -364,7 +364,7 @@
     <Compile Include="DTO\DxValidatableDTO.cs" />
     <Compile Include="DTO\ImportFileSelectionDTO.cs" />
     <Compile Include="DTO\IParameterDTO.cs" />
-    <Compile Include="DTO\IRenameObjectDTOFactory.cs" />
+    <Compile Include="DTO\RenameObjectDTOFactory.cs" />
     <Compile Include="DTO\IWithDisplayUnitDTO.cs" />
     <Compile Include="DTO\Journal\JournalDTO.cs" />
     <Compile Include="DTO\Journal\JournalPageDTO.cs" />

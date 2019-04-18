@@ -1,15 +1,14 @@
 ﻿using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO
 {
    public class NonEmptyNameDTO : ValidatableDTO
    {
       private string _name;
-      public string OriginalName { get; set; }
 
       public virtual string Name
       {
@@ -43,11 +42,6 @@ namespace OSPSuite.Presentation.DTO
             .Property(item => item.Name)
             .WithRule((dto, name) => nameDoesNotContainerIllegalCharacters(name))
             .WithError(Error.NameCannotContainIllegalCharacters(Constants.ILLEGAL_CHARACTERS));
-
-         public static IBusinessRule NameShouldNotBeTheSame { get; } = CreateRule.For<NonEmptyNameDTO>()
-            .Property(x => x.Name)
-            .WithRule((dto, name) => (string.IsNullOrEmpty(dto.OriginalName) || !string.Equals(dto.OriginalName, name.Trim())))
-            .WithError(Error.RenameSameNameError);
       }
    }
 }
