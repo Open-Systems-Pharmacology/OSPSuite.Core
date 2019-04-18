@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<EditParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification);
       }
 
-      public static IMenuBarItem RenameParameterIdentiifcation(ParameterIdentification simulation)
+      public static IMenuBarItem RenameParameterIdentification(ParameterIdentification simulation)
       {
          return CreateMenuButton.WithCaption(MenuNames.Rename)
             .WithCommandFor<RenameParameterIdentificationUICommand, ParameterIdentification>(simulation)
@@ -79,7 +79,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       {
          yield return EditParameterIdentification(parameterIdentification);
 
-         yield return RenameParameterIdentiifcation(parameterIdentification);
+         yield return RenameParameterIdentification(parameterIdentification);
 
          yield return CloneParameterIdentification(parameterIdentification)
             .AsGroupStarter();

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -27,6 +27,8 @@ namespace OSPSuite.Presentation.DTO
          _usedNames.AddRange(usedNames.Select(x => x.ToLower()));
       }
 
+      public IReadOnlyList<string> UsedNames => _usedNames;
+
       protected virtual string NameAlreadyExistsError(string newName)
       {
          return Error.NameAlreadyExistsInContainerType(newName, ContainerType);
@@ -42,35 +44,20 @@ namespace OSPSuite.Presentation.DTO
 
       protected bool IsDescriptionDefined(string description)
       {
-         if (!DescriptionRequired)
-            return true;
-
-         return description.StringIsNotEmpty();
+         return !DescriptionRequired || description.StringIsNotEmpty();
       }
 
       private static class ObjectBaseDTORules
       {
-         public static IBusinessRule UniqueName
-         {
-            get
-            {
-               return CreateRule.For<ObjectBaseDTO>()
-                  .Property(item => item.Name)
-                  .WithRule((dto, newName) => dto.IsNameUnique(newName))
-                  .WithError((dto, newName) => dto.NameAlreadyExistsError(newName));
-            }
-         }
+         public static IBusinessRule UniqueName { get; } = CreateRule.For<ObjectBaseDTO>()
+            .Property(item => item.Name)
+            .WithRule((dto, newName) => dto.IsNameUnique(newName))
+            .WithError((dto, newName) => dto.NameAlreadyExistsError(newName));
 
-         public static IBusinessRule DescriptionNotEmpty
-         {
-            get
-            {
-               return CreateRule.For<ObjectBaseDTO>()
-                  .Property(item => item.Description)
-                  .WithRule((dto, desc) => dto.IsDescriptionDefined(desc))
-                  .WithError((dto, newName) => Error.DescriptionIsRequired);
-            }
-         }
+         public static IBusinessRule DescriptionNotEmpty { get; } = CreateRule.For<ObjectBaseDTO>()
+            .Property(item => item.Description)
+            .WithRule((dto, desc) => dto.IsDescriptionDefined(desc))
+            .WithError((dto, newName) => Error.DescriptionIsRequired);
       }
    }
 
