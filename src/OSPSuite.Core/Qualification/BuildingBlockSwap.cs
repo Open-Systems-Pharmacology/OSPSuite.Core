@@ -6,6 +6,10 @@ namespace OSPSuite.Core.Qualification
    {
       public PKSimBuildingBlockType Type { get; set; }
       public string Name { get; set; }
+
+      /// <summary>
+      /// Absolute full path of snapshot file
+      /// </summary>
       public string SnapshotFile { get; set; }
 
       public void Deconstruct(out PKSimBuildingBlockType type, out string name, out string snapshotFile)
