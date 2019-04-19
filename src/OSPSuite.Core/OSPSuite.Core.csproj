@@ -225,7 +225,6 @@
     <Compile Include="Journal\IJournalTask.cs" />
     <Compile Include="Journal\JournalPageData.cs" />
     <Compile Include="Journal\ReloadRelatedItemTask.cs" />
-    <Compile Include="Qualification\BuildingBlockRef.cs" />
     <Compile Include="Qualification\BuildingBlockSwap.cs" />
     <Compile Include="Qualification\Input.cs" />
     <Compile Include="Qualification\InputMapping.cs" />
@@ -238,7 +237,6 @@
     <Compile Include="Qualification\QualificationMapping.cs" />
     <Compile Include="Qualification\QualificationRunException.cs" />
     <Compile Include="Qualification\SimulationMapping.cs" />
-    <Compile Include="Qualification\SimulationParameterRef.cs" />
     <Compile Include="Qualification\SimulationParameterSwap.cs" />
     <Compile Include="Qualification\SimulationPlot.cs" />
     <Compile Include="RegisterTypeConvention.cs" />
