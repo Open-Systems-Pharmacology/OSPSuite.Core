@@ -41,8 +41,8 @@ branches:
     - develop
 test:
   assemblies:
-    - **\OSPSuite.Core.Tests\bin\$(configuration)\OSPSuite.Core.Tests.dll
-    - **\OSPSuite.UI.Tests\bin\$(configuration)\OSPSuite.UI.Tests.dll
+    **\OSPSuite.Core.Tests\bin\$(configuration)\OSPSuite.Core.Tests.dll
+    **\OSPSuite.UI.Tests\bin\$(configuration)\OSPSuite.UI.Tests.dll
 
 install:
  - git submodule update --init --recursive
