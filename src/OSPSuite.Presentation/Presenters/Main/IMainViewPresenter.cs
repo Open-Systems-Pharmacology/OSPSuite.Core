@@ -1,5 +1,4 @@
-﻿using OSPSuite.TeXReporting.Events;
-using OSPSuite.Utility.Events;
+﻿using OSPSuite.Utility.Events;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Events;
@@ -13,9 +12,7 @@ namespace OSPSuite.Presentation.Presenters.Main
       IListener<HeavyWorkFinishedEvent>,
       IListener<HeavyWorkStartedEvent>,
       IListener<RollBackStartedEvent>,
-      IListener<RollBackFinishedEvent>,
-      IListener<ReportCreationStartedEvent>,
-      IListener<ReportCreationFinishedEvent>
+      IListener<RollBackFinishedEvent>
    {
       ISingleStartPresenter ActivePresenter { get; }
       void Activate(IMdiChildView view);

@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Reporting
 {
-   public class ReportTemplate:IWithDescription
+   public class ReportTemplate : IWithDescription
    {
       public string DisplayName { get; set; }
       public string Description { get; set; }

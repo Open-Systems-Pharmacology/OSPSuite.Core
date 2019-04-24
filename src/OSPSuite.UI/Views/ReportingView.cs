@@ -1,12 +1,11 @@
 ﻿using System;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.TeXReporting;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Reporting;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
@@ -41,7 +40,7 @@ namespace OSPSuite.UI.Views
 
       public bool IsDeveloperMode
       {
-         set { layoutItemDeleteWorkingFolder.Visibility = LayoutVisibilityConvertor.FromBoolean(value); }
+         set => layoutItemDeleteWorkingFolder.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
       }
 
       public override void InitializeBinding()
@@ -90,12 +89,11 @@ namespace OSPSuite.UI.Views
          RegisterValidationFor(_screenBinder, NotifyViewChanged);
       }
 
-
       private void colorChanged(object sender, EventArgs e)
       {
          var radioGroup = sender as RadioGroup;
          if (radioGroup == null) return;
-         _reportConfiguration.ColorStyle = (ReportSettings.ReportColorStyles) radioGroup.Properties.Items[radioGroup.SelectedIndex].Value;
+         _reportConfiguration.ColorStyle = (ReportColorStyles) radioGroup.Properties.Items[radioGroup.SelectedIndex].Value;
       }
 
       private void updateTemplateDescription(ReportTemplate template)
@@ -124,8 +122,8 @@ namespace OSPSuite.UI.Views
 
          rgColor.Properties.Items.AddRange(new[]
          {
-            new RadioGroupItem(ReportSettings.ReportColorStyles.Color, Captions.Reporting.Color),
-            new RadioGroupItem(ReportSettings.ReportColorStyles.GrayScale, Captions.Reporting.GrayScale),
+            new RadioGroupItem(ReportColorStyles.Color, Captions.Reporting.Color),
+            new RadioGroupItem(ReportColorStyles.GrayScale, Captions.Reporting.GrayScale),
          });
       }
    }

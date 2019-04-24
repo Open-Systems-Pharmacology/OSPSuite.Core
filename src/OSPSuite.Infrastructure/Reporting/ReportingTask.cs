@@ -58,15 +58,15 @@ namespace OSPSuite.Infrastructure.Reporting
                ContentFileName = "Content",
                Software = _applicationConfiguration.ProductNameWithTrademark,
                SoftwareVersion = _applicationConfiguration.FullVersion,
-               Keywords = reportConfiguration.Keywords,
+//               Keywords = reportConfiguration.Keywords,
                SubTitle = reportConfiguration.SubTitle,
                TemplateFolder = reportConfiguration.Template.Path,
                Title = reportConfiguration.Title,
-               DeleteWorkingDir = reportConfiguration.DeleteWorkingDir,
-               SaveArtifacts = reportConfiguration.SaveArtifacts,
-               ColorStyle = reportConfiguration.ColorStyle,
+//               DeleteWorkingDir = reportConfiguration.DeleteWorkingDir,
+//               SaveArtifacts = reportConfiguration.SaveArtifacts,
+//               ColorStyle = reportConfiguration.ColorStyle,
                Draft = reportConfiguration.Draft,
-               Font = reportConfiguration.Font,
+//               Font = reportConfiguration.Font,
             };
       }
 
