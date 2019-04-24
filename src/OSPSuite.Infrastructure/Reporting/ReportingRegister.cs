@@ -26,9 +26,9 @@ namespace OSPSuite.Infrastructure.Reporting
    }
 
    /// <summary>
-   ///    This registration will only apply for component implementing either <c>IOSPSuiteTEXReporter</c> or <c>ITEXBuilder</c>
-   ///    or both.  It registers a component matching this condition with all implemented intefaces derived from either
-   ///    <c>IOSPSuiteTEXReporter</c> or <c>ITEXBuilder</c>.
+   ///    This registration will only apply for component implementing either  <c>IOSPSuiteTEXReporter</c> or <c>ITexBuilder</c>
+   ///    or both.  It registers a component matching this condition with all implemented interfaces derived from either
+   ///    <c>IOSPSuiteTEXReporter</c> or <c>ITexBuilder</c>.
    ///    The component will also be registered as itself, using the concreteType for resolution.
    /// </summary>
    public class ReporterRegistrationConvention : IRegistrationConvention
