@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Reporting
 
       public string ReportFile
       {
-         get { return _reportFile; }
+         get => _reportFile;
          set
          {
             _reportFile = value;
