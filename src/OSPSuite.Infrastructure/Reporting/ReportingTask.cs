@@ -50,32 +50,27 @@ namespace OSPSuite.Infrastructure.Reporting
          await _reportCreator.ReportToPDF(tracker, reportSettingsFrom(reportConfiguration), reporter.Report(objectToReport, tracker));
       }
 
-      private ReportSettings reportSettingsFrom(ReportConfiguration reportConfiguration)
-      {
-         return new ReportSettings
-            {
-               Author = reportConfiguration.Author,
-               ContentFileName = "Content",
-               Software = _applicationConfiguration.ProductNameWithTrademark,
-               SoftwareVersion = _applicationConfiguration.FullVersion,
-               Keywords = reportConfiguration.Keywords,
-               SubTitle = reportConfiguration.SubTitle,
-               TemplateFolder = reportConfiguration.Template.Path,
-               Title = reportConfiguration.Title,
-               DeleteWorkingDir = reportConfiguration.DeleteWorkingDir,
-               SaveArtifacts = reportConfiguration.SaveArtifacts,
-               ColorStyle = reportConfiguration.ColorStyle,
-               Draft = reportConfiguration.Draft,
-               Font = reportConfiguration.Font,
-            };
-      }
+      private ReportSettings reportSettingsFrom(ReportConfiguration reportConfiguration) =>
+         new ReportSettings
+         {
+            Author = reportConfiguration.Author,
+            ContentFileName = "Content",
+            Software = _applicationConfiguration.ProductNameWithTrademark,
+            SoftwareVersion = _applicationConfiguration.FullVersion,
+            SubTitle = reportConfiguration.SubTitle,
+            TemplateFolder = reportConfiguration.Template.Path,
+            Title = reportConfiguration.Title,
+            DeleteWorkingDir = reportConfiguration.DeleteWorkingDir,
+            SaveArtifacts = reportConfiguration.SaveArtifacts,
+            ColorStyle = EnumHelper.ParseValue<ReportSettings.ReportColorStyles>(reportConfiguration.ColorStyle.ToString()),
+            Draft = reportConfiguration.Draft,
+            Font =  EnumHelper.ParseValue<ReportSettings.ReportFont>(reportConfiguration.Font.ToString())
+         };
 
-      private OSPSuiteBuildSettings buildSettingsFrom(ReportConfiguration reportConfiguration)
-      {
-         return new OSPSuiteBuildSettings
-            {
-               Verbose = reportConfiguration.Verbose,
-            };
-      }
+      private OSPSuiteBuildSettings buildSettingsFrom(ReportConfiguration reportConfiguration) =>
+         new OSPSuiteBuildSettings
+         {
+            Verbose = reportConfiguration.Verbose,
+         };
    }
 }

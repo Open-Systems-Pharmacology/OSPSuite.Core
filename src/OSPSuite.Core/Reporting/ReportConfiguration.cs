@@ -3,19 +3,45 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.TeXReporting;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Reporting
 {
-   public class ReportConfiguration : ReportSettings, IValidatable
+   public enum ReportColorStyles
+   {
+      Color,
+      GrayScale,
+      BlackAndWhite,
+   }
+
+   public enum ReportFont
+   {
+      Default,
+      Helvetica,
+      Optima,
+      ComputerModernTeletype,
+      Courier,
+      Bookman,
+      Inconsolata,
+      LatinModern,
+   }
+
+   public class ReportConfiguration : Notifier,  IValidatable
    {
       public ReportTemplate Template { get; set; }
       private string _reportFile;
       public bool Verbose { get; set; }
       public bool OpenReportAfterCreation { get; set; }
-      public IBusinessRuleSet Rules { get; private set; }
+      public IBusinessRuleSet Rules { get; }
+      public string Author { get; set; }
+      public string Title { get; set; }
+      public string SubTitle { get; set; }
+      public bool Draft { get; set; }
+      public bool SaveArtifacts { get; set; }
+      public bool DeleteWorkingDir { get; set; }
+      public ReportFont Font { get; set; }
 
       public ReportConfiguration()
       {
@@ -28,26 +54,18 @@ namespace OSPSuite.Core.Reporting
 
       public string ReportFile
       {
-         get { return _reportFile; }
-         set
-         {
-            _reportFile = value;
-            OnPropertyChanged(() => ReportFile);
-         }
+         get => _reportFile;
+         set => SetProperty(ref _reportFile, value);
       }
+
+      public ReportColorStyles ColorStyle { get; set; }
 
       private static class AllRules
       {
-         private static IBusinessRule templateDefined
-         {
-            get
-            {
-               return CreateRule.For<ReportConfiguration>()
-                  .Property(item => item.Template)
-                  .WithRule((dto, template) => dto.Template != null)
-                  .WithError(Validation.ValueIsRequired);
-            }
-         }
+         private static IBusinessRule templateDefined { get; } = CreateRule.For<ReportConfiguration>()
+            .Property(item => item.Template)
+            .WithRule((dto, template) => dto.Template != null)
+            .WithError(Validation.ValueIsRequired);
 
          public static IEnumerable<IBusinessRule> All()
          {

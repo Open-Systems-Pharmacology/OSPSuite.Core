@@ -244,10 +244,6 @@
       <Project>{10AD6F46-ACA2-4005-91E6-CE84FEEE9419}</Project>
       <Name>OSPSuite.Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
-      <Project>{2f8b2246-4458-494a-9a62-3f6e6f62082a}</Project>
-      <Name>OSPSuite.Presentation</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
