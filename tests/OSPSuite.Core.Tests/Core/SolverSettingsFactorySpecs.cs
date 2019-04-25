@@ -41,7 +41,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_solver_setting_object_having_the_epxected_solver_name()
       {
-         _solverSettings.Name.ShouldBeEqualTo(Constants.CVODES_282);
+         _solverSettings.Name.ShouldBeEqualTo(Constants.CVODES);
       }
 
       [Observation]

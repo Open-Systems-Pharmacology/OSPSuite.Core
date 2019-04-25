@@ -41,7 +41,7 @@
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.1.25\lib\net45\OSPSuite.SimModel.dll</HintPath>
+      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.1.27\lib\net45\OSPSuite.SimModel.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Utility, Version=3.0.1.7, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.7\lib\net462\OSPSuite.Utility.dll</HintPath>
