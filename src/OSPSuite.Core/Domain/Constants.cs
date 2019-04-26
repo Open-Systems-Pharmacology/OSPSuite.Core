@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Domain
    {
       public static readonly int PKML_VERSION = PKMLVersion.Current;
       public const string CVODES = "CVODES";
-      public const int SIM_MODEL_VERSION = 4;
+      public const int SIM_MODEL_VERSION = 5;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;

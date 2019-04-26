@@ -42,6 +42,7 @@ namespace OSPSuite.Core.Reporting
       public bool SaveArtifacts { get; set; }
       public bool DeleteWorkingDir { get; set; }
       public ReportFont Font { get; set; }
+      public int NumberOfCompilations { get; set; }
 
       public ReportConfiguration()
       {
@@ -50,6 +51,7 @@ namespace OSPSuite.Core.Reporting
          Author = EnvironmentHelper.UserName();
          Font = ReportFont.Default;
          OpenReportAfterCreation = true;
+         NumberOfCompilations = 3;
       }
 
       public string ReportFile
