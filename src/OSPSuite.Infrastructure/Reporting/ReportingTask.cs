@@ -64,7 +64,8 @@ namespace OSPSuite.Infrastructure.Reporting
             SaveArtifacts = reportConfiguration.SaveArtifacts,
             ColorStyle = EnumHelper.ParseValue<ReportSettings.ReportColorStyles>(reportConfiguration.ColorStyle.ToString()),
             Draft = reportConfiguration.Draft,
-            Font =  EnumHelper.ParseValue<ReportSettings.ReportFont>(reportConfiguration.Font.ToString())
+            Font =  EnumHelper.ParseValue<ReportSettings.ReportFont>(reportConfiguration.Font.ToString()),
+            NumberOfCompilations = reportConfiguration.NumberOfCompilations
          };
 
       private OSPSuiteBuildSettings buildSettingsFrom(ReportConfiguration reportConfiguration) =>
