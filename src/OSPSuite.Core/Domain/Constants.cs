@@ -110,7 +110,6 @@ namespace OSPSuite.Core.Domain
          public const string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
          public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
-         public const string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
       }
 
       public static class Parameters

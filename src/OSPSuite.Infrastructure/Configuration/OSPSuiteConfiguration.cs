@@ -40,7 +40,6 @@ namespace OSPSuite.Infrastructure.Configuration
       public string UserSettingsFilePath { get; }
       public string ApplicationSettingsFilePath { get; }
       public string OSPSuiteNameWithVersion { get; }
-      public string LogConfigurationFile { get; }
       public abstract string WatermarkOptionLocation { get; }
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
@@ -67,7 +66,6 @@ namespace OSPSuite.Infrastructure.Configuration
          TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
          ChartLayoutTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
          DimensionFilePath = LocalOrAllUsersPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
-         LogConfigurationFile = LocalOrAllUsersPathForFile(Constants.Files.LOG_4_NET_CONFIG_FILE);
          UserSettingsFilePath = CurrentUserFile(UserSettingsFileName);
          ApplicationSettingsFilePath = AllUsersFile(ApplicationSettingsFileName);
       }

@@ -92,7 +92,7 @@ namespace OSPSuite.Core
       string UserSettingsFilePath { get; }
 
       /// <summary>
-      ///    Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent
+      ///    Returns a possible enumeration containing the path of user settings that can be loaded. (Starting from the most recent
       ///    one down to the first available one)
       /// </summary>
       IEnumerable<string> UserSettingsFilePaths { get; }
@@ -103,7 +103,7 @@ namespace OSPSuite.Core
       string ApplicationSettingsFilePath { get; }
 
       /// <summary>
-      /// Returns a possible enumeration containg the path of application settings that can be loaded. (Starting from the most recent one down to the first available one)
+      /// Returns a possible enumeration containing the path of application settings that can be loaded. (Starting from the most recent one down to the first available one)
       /// </summary>
       IEnumerable<string> ApplicationSettingsFilePaths { get; }
       
@@ -136,11 +136,6 @@ namespace OSPSuite.Core
       ///    Path of the dimension file
       /// </summary>
       string DimensionFilePath { get; }
-
-      /// <summary>
-      ///    Returns the path where the configuration file for the logger resides
-      /// </summary>
-      string LogConfigurationFile { get; }
 
       /// <summary>
       /// Where can the user change the watermark option in the user interface. Location is application specific
