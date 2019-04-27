@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
          ObserverList = new List<QuantityExport>();
          EventList = new List<EventExport>();
          FormulaList = new List<FormulaExport>();
-         Version = Constants.SIM_MODEL_VERSION;
+         Version = Constants.SIM_MODEL_XML_VERSION;
       }
 
       /// <summary>
