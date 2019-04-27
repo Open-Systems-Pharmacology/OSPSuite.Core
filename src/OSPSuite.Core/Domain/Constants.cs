@@ -8,9 +8,9 @@ namespace OSPSuite.Core.Domain
 {
    public static class Constants
    {
-      public static readonly int PKML_VERSION = PKMLVersion.Current;
+      public const int PKML_VERSION = PKMLVersion.Current;
       public const string CVODES = "CVODES";
-      public const int SIM_MODEL_VERSION = 5;
+      public const int SIM_MODEL_XML_VERSION = 4;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
 
       public const string MOL_WEIGHT_EXTENDED_PROPERTY = "MolWeight";
 
-      //tolerated precision to relativtely compare to double values 
+      //tolerated precision to relatively compare to double values 
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
       public const double DOUBLE_PERCENTILE_RELATIVE_TOLERANCE = 1e-2;
 
@@ -64,13 +64,13 @@ namespace OSPSuite.Core.Domain
       public static readonly string ProjectUndefined = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";
       public const string NAN = "<NaN>";
-      public static readonly string CHILD = "Child";
+      public const string CHILD = "Child";
 
-      public static readonly string PRODUCT_SITE = "www.open-systems-pharmacology.org";
-      public static readonly string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
-      public static readonly string HELP_NAMESPACE = "http://docs.open-systems-pharmacology.org";
-      public static readonly string FORUM_SITE = "forum.open-systems-pharmacology.org";
-      public static readonly string SUITE_NAME = "Open Systems Pharmacology Suite";
+      public const string PRODUCT_SITE = "www.open-systems-pharmacology.org";
+      public const string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
+      public const string HELP_NAMESPACE = "http://docs.open-systems-pharmacology.org";
+      public const string FORUM_SITE = "forum.open-systems-pharmacology.org";
+      public const string SUITE_NAME = "Open Systems Pharmacology Suite";
 
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
@@ -103,14 +103,14 @@ namespace OSPSuite.Core.Domain
    
       public static class Files
       {
-         public static readonly string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
-         public static readonly string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
-         public static readonly string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
-         public static readonly string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
-         public static readonly string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
-         public static readonly string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
-         public static readonly string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
-         public static readonly string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
+         public const string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
+         public const string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
+         public const string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
+         public const string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
+         public const string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
+         public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
+         public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
+         public const string LOG_4_NET_CONFIG_FILE = "log4net.config.xml";
       }
 
       public static class Parameters
@@ -140,28 +140,26 @@ namespace OSPSuite.Core.Domain
 
          //todo delete when flag is categorial is defined in core for parameter
          public const string HAS_HALOGENS = "Has halogens";
-
          public const string EHC_ENABLED = "Gallbladder emptying enabled";
          public const string USE_PENALTY_FACTOR = "Use pH- and pKa-dependent penalty factor for charged molecule fraction";
          public const string IS_SMALL_MOLECULE = "Is small molecule";
          public const string IS_LIVER_ZONATED = "Is liver zonated";
          public const string USE_AS_SUSPENSION = "Use as suspension";
+         public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
+
          public const string ParameterCompoundTypeBase = "Compound type ";
 
-         public static string ParameterCompoundType(int index)
-         {
-            return $"{ParameterCompoundTypeBase}{index}";
-         }
+         public static string ParameterCompoundType(int index) => $"{ParameterCompoundTypeBase}{index}";
 
          public static readonly string COMPOUND_TYPE1 = ParameterCompoundType(0);
          public static readonly string COMPOUND_TYPE2 = ParameterCompoundType(1);
          public static readonly string COMPOUND_TYPE3 = ParameterCompoundType(2);
          public const string PARTICLE_DISPERSE_SYSTEM = "Type of particle size distribution";
          public const string PRECIPITATED_DRUG_SOLUBLE = "Treat precipitated drug as";
-         public const string PARA_ABSORBTION_SINK = "Paracellular absorption sink condition";
-         public const string TRANS_ABSORBTION_SINK = "Transcellular absorption sink condition";
+         public const string PARA_ABSORPTION_SINK = "Paracellular absorption sink condition";
+         public const string TRANS_ABSORPTION_SINK = "Transcellular absorption sink condition";
          public const string GESTATIONAL_AGE = "Gestational age";
          public const string PLASMA_PROTEIN_BINDING_PARTNER = "Plasma protein binding partner";
          public const string BR = "Br";
@@ -178,7 +176,8 @@ namespace OSPSuite.Core.Domain
             USE_PENALTY_FACTOR,
             IS_SMALL_MOLECULE,
             IS_LIVER_ZONATED,
-            USE_AS_SUSPENSION
+            USE_AS_SUSPENSION,
+            ENABLE_SUPERSATURATION
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
@@ -190,8 +189,8 @@ namespace OSPSuite.Core.Domain
             COMPOUND_TYPE3,
             PARTICLE_DISPERSE_SYSTEM,
             PRECIPITATED_DRUG_SOLUBLE,
-            TRANS_ABSORBTION_SINK,
-            PARA_ABSORBTION_SINK,
+            TRANS_ABSORPTION_SINK,
+            PARA_ABSORPTION_SINK,
             GESTATIONAL_AGE,
             PLASMA_PROTEIN_BINDING_PARTNER
          };
@@ -220,25 +219,25 @@ namespace OSPSuite.Core.Domain
 
       public static class Filter
       {
-         public static readonly string PNG_EXTENSION = ".png";
-         public static readonly string MATLAB_EXTENSION = ".m";
-         public static readonly string MAT_EXTENSION = ".mat";
-         public static readonly string FIG_EXTENSION = ".fig";
-         public static readonly string R_EXTENSION = ".r";
-         public static readonly string RD_EXTENSION = ".rd";
-         public static readonly string XML_EXTENSION = ".xml";
-         public static readonly string JOURNAL_EXTENSION = ".sbj";
-         public static readonly string CSV_EXTENSION = ".csv";
-         public static readonly string PDF_EXTENSION = ".pdf";
-         public static readonly string PKML_EXTENSION = ".pkml";
-         public static readonly string XLS_EXTENSION = ".xls";
-         public static readonly string XLSX_EXTENSION = ".xlsx";
-         public static readonly string TEXT_EXTENSION = ".txt";
-         public static readonly string JSON_EXTENSION = ".json";
-         public static readonly string DOCX_EXTENSION = ".docx";
-         public static readonly string DOC_EXTENSION = ".doc";
-         public static readonly string MARKDOWN_EXTENSION = ".md";
-         public static readonly string ANY_EXTENSION = ".*";
+         public const string PNG_EXTENSION = ".png";
+         public const string MATLAB_EXTENSION = ".m";
+         public const string MAT_EXTENSION = ".mat";
+         public const string FIG_EXTENSION = ".fig";
+         public const string R_EXTENSION = ".r";
+         public const string RD_EXTENSION = ".rd";
+         public const string XML_EXTENSION = ".xml";
+         public const string JOURNAL_EXTENSION = ".sbj";
+         public const string CSV_EXTENSION = ".csv";
+         public const string PDF_EXTENSION = ".pdf";
+         public const string PKML_EXTENSION = ".pkml";
+         public const string XLS_EXTENSION = ".xls";
+         public const string XLSX_EXTENSION = ".xlsx";
+         public const string TEXT_EXTENSION = ".txt";
+         public const string JSON_EXTENSION = ".json";
+         public const string DOCX_EXTENSION = ".docx";
+         public const string DOC_EXTENSION = ".doc";
+         public const string MARKDOWN_EXTENSION = ".md";
+         public const string ANY_EXTENSION = ".*";
 
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
          public static readonly string UNITS_FILE_FILTER = XmlFilter("Units");
@@ -259,11 +258,8 @@ namespace OSPSuite.Core.Domain
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
-
          public static readonly string JSON_FILTER = filter(JSON_EXTENSION);
-
          public static readonly string XML_FILTER = filter(XML_EXTENSION);
-
          public static string XmlFilter(string caption) => FileFilter(caption, XML_EXTENSION);
 
          public static string FileFilter(string caption, string extension)
@@ -276,14 +272,14 @@ namespace OSPSuite.Core.Domain
 
       public static class DirectoryKey
       {
-         public static readonly string PROJECT = "Project";
-         public static readonly string MODEL_PART = "ModelPart";
-         public static readonly string OBSERVED_DATA = "ObservedData";
-         public static readonly string SIM_MODEL_XML = "SimModelXml";
-         public static readonly string XLS_IMPORT = "xlsImport";
-         public static readonly string POPULATION = "Population";
-         public static readonly string REPORT = "Report";
-         public static readonly string TEMPLATE = "Template";
+         public const string PROJECT = "Project";
+         public const string MODEL_PART = "ModelPart";
+         public const string OBSERVED_DATA = "ObservedData";
+         public const string SIM_MODEL_XML = "SimModelXml";
+         public const string XLS_IMPORT = "xlsImport";
+         public const string POPULATION = "Population";
+         public const string REPORT = "Report";
+         public const string TEMPLATE = "Template";
       }
 
       public static class Dimension
@@ -549,13 +545,13 @@ namespace OSPSuite.Core.Domain
 
          public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
 
-         public static readonly int DEFAULT_FONT_SIZE_LEGEND = 8;
-         public static readonly int DEFAULT_FONT_SIZE_AXIS = 10;
-         public static readonly int DEFAULT_FONT_SIZE_TITLE = 16;
-         public static readonly int DEFAULT_FONT_SIZE_DESCRIPTION = 12;
-         public static readonly int DEFAULT_FONT_SIZE_ORIGIN = 8;
-         public static readonly int DEFAULT_FONT_SIZE_WATERMARK = 32;
-         public static readonly int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
+         public const int DEFAULT_FONT_SIZE_LEGEND = 8;
+         public const int DEFAULT_FONT_SIZE_AXIS = 10;
+         public const int DEFAULT_FONT_SIZE_TITLE = 16;
+         public const int DEFAULT_FONT_SIZE_DESCRIPTION = 12;
+         public const int DEFAULT_FONT_SIZE_ORIGIN = 8;
+         public const int DEFAULT_FONT_SIZE_WATERMARK = 32;
+         public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
          public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
