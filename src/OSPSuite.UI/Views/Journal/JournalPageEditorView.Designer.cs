@@ -202,7 +202,7 @@ namespace OSPSuite.UI.Views.Journal
          this.headerFooterRibbonPageGroup = new DevExpress.XtraRichEdit.UI.HeaderFooterRibbonPageGroup();
          this.textRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.TextRibbonPageGroup();
          this.symbolsRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.SymbolsRibbonPageGroup();
-         this.cbSource = new DevExpress.XtraEditors.ImageComboBoxEdit();
+         this.cbOrigin = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.tagEdit = new DevExpress.XtraEditors.TokenEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.richEditControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -223,7 +223,7 @@ namespace OSPSuite.UI.Views.Journal
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineWeight1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRichEditFontSizeEdit1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbOrigin.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tagEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.richEditControlItem)).BeginInit();
@@ -257,7 +257,7 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.layoutControl1.AllowCustomization = false;
          this.layoutControl1.Controls.Add(this.tbTitle);
-         this.layoutControl1.Controls.Add(this.cbSource);
+         this.layoutControl1.Controls.Add(this.cbOrigin);
          this.layoutControl1.Controls.Add(this.tagEdit);
          this.layoutControl1.Controls.Add(this.uxRichEditControl);
          this.layoutControl1.Controls.Add(this.buttonNextPage);
@@ -1432,16 +1432,16 @@ namespace OSPSuite.UI.Views.Journal
          this.symbolsRibbonPageGroup1.ItemLinks.Add(this.insertSymbolItem1, "U");
          this.symbolsRibbonPageGroup1.Name = "symbolsRibbonPageGroup1";
          // 
-         // cbSource
+         // cbOrigin
          // 
-         this.cbSource.Location = new System.Drawing.Point(837, 2);
-         this.cbSource.MenuManager = this.ribbonControl;
-         this.cbSource.Name = "cbSource";
-         this.cbSource.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+         this.cbOrigin.Location = new System.Drawing.Point(837, 2);
+         this.cbOrigin.MenuManager = this.ribbonControl;
+         this.cbOrigin.Name = "cbOrigin";
+         this.cbOrigin.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.cbSource.Size = new System.Drawing.Size(101, 20);
-         this.cbSource.StyleController = this.layoutControl1;
-         this.cbSource.TabIndex = 7;
+         this.cbOrigin.Size = new System.Drawing.Size(101, 20);
+         this.cbOrigin.StyleController = this.layoutControl1;
+         this.cbOrigin.TabIndex = 7;
          // 
          // tagEdit
          // 
@@ -1496,7 +1496,7 @@ namespace OSPSuite.UI.Views.Journal
          // 
          // layoutItemSource
          // 
-         this.layoutItemSource.Control = this.cbSource;
+         this.layoutItemSource.Control = this.cbOrigin;
          this.layoutItemSource.Location = new System.Drawing.Point(745, 0);
          this.layoutItemSource.MaxSize = new System.Drawing.Size(195, 0);
          this.layoutItemSource.MinSize = new System.Drawing.Size(195, 24);
@@ -1697,7 +1697,7 @@ namespace OSPSuite.UI.Views.Journal
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineWeight1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRichEditFontSizeEdit1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.cbSource.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.cbOrigin.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tagEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.richEditControlItem)).EndInit();
@@ -1881,7 +1881,7 @@ namespace OSPSuite.UI.Views.Journal
       private DevExpress.XtraRichEdit.UI.EditingRibbonPageGroup editingRibbonPageGroup1;
       private TokenEdit tagEdit;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTokenEdit;
-      private ImageComboBoxEdit cbSource;
+      private ImageComboBoxEdit cbOrigin;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemSource;
       private TextEdit tbTitle;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTitle;

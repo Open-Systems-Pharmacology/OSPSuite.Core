@@ -10,13 +10,13 @@ namespace OSPSuite.Presentation.Views.Journal
       void BindTo(IEnumerable<JournalPageDTO> allWorkingJournalItemDTOs);
 
       /// <summary>
-      /// Redraw the view content to ensure that rendering is uptodate
+      /// Redraw the view content to ensure that rendering is updated
       /// </summary>
       void UpdateLayout();
 
       void AddPreviewView(IView view);
 
-      void AddSeachView(IView view);
+      void AddSearchView(IView view);
 
       /// <summary>
       /// Returns/set the selected <see cref="JournalPageDTO"/> 
