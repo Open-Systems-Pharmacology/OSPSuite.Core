@@ -91,6 +91,9 @@ namespace OSPSuite.UI.Views.Journal
 
          _screenBinder.BindToSource(journalPageDTO);
 
+         //Ensure that the control is not marked as modified after binding. 
+         uxRichEditControl.Modified = false;
+
          ActiveControl = uxRichEditControl;
       }
 
@@ -184,11 +187,11 @@ namespace OSPSuite.UI.Views.Journal
             .WithKnownTokens(workingJournalItem => _presenter.AllKnownTags);
 
          _screenBinder.Bind(x => x.Origin)
-            .To(cbSource)
+            .To(cbOrigin)
             .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
             .WithValues(dto => _presenter.AllOrigins)
             .AndDisplays(x => x.DisplayName)
-            .Changed += () => OnEvent(sourceChanged);
+            .Changed += () => OnEvent(originChanged);
 
          buttonPreviousPage.Click += (o, e) => OnEvent(_presenter.NavigateToPreviousPage);
          buttonNextPage.Click += (o, e) => OnEvent(_presenter.NavigateToNextPage);
@@ -223,7 +226,7 @@ namespace OSPSuite.UI.Views.Journal
          layoutItemTitle.Text = Captions.Journal.Title.FormatForLabel();
          layoutItemSource.Text = Captions.Journal.Source.FormatForLabel();
 
-         cbSource.SetImages(_imageListRetriever);
+         cbOrigin.SetImages(_imageListRetriever);
 
          ribbonControl.ShowToolbarCustomizeItem = false;
          ribbonControl.ToolbarLocation = RibbonQuickAccessToolbarLocation.Hidden;
@@ -267,25 +270,13 @@ namespace OSPSuite.UI.Views.Journal
          }
       }
 
-      private void changeTitle()
-      {
-         _presenter.TitleChanged(tbTitle.Text);
-      }
+      private void changeTitle() => _presenter.TitleChanged(tbTitle.Text);
 
-      private void sourceChanged()
-      {
-         _presenter.SourceChanged();
-      }
+      private void originChanged() => _presenter.SourceChanged();
 
-      public void EnableSaveButton()
-      {
-         uxRichEditControl.Modified = true;
-      }
+      public void EnableSaveButton() => uxRichEditControl.Modified = true;
 
-      public void RefreshTags()
-      {
-         _tokenBinder.Update();
-      }
+      public void RefreshTags() => _tokenBinder.Update();
 
       public void DeleteBinding()
       {

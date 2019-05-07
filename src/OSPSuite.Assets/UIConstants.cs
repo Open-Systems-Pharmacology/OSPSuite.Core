@@ -359,7 +359,7 @@ namespace OSPSuite.Assets
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
-            public static readonly string RnageSelect = "Override the default range by selecting a new range and pressing OK.\nTo revert to the default range click OK without a new range selected.";
+            public static readonly string RangeSelect = "Override the default range by selecting a new range and pressing OK.\nTo revert to the default range click OK without a new range selected.";
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
