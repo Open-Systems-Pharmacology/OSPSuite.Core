@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views.Importer
          setGridViewOptions();
          Caption = Captions.Importer.OriginalDataPreviewView;
          
-         lblRangeSelectHint.Text = Captions.Importer.ToolTips.RnageSelect;
+         lblRangeSelectHint.Text = Captions.Importer.ToolTips.RangeSelect;
       }
 
       private void setGridViewOptions()
