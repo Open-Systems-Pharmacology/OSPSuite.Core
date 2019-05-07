@@ -215,4 +215,31 @@ namespace OSPSuite.Core
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
       }
    }
+
+
+   internal class When_validating_the_references_used_in_a_parameter_with_sum_formula_: concern_for_ModelValidator
+   {
+      private ValidationResult _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         var sumFormula = new SumFormula();
+         sumFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("..", "..", "f_vas").WithAlias("f_vas_#i"));
+         _validContainer.Add(new Parameter().WithName("DynamicParam").WithFormula(sumFormula));
+
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory); ;
+      }
+
+      protected override void Because()
+      {
+         _results = sut.Validate(_validContainer, _buildConfiguration);
+      }
+
+      [Observation]
+      public void should_return_a_valid_state()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+   }
 }
