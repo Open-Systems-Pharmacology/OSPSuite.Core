@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -114,10 +115,11 @@ namespace OSPSuite.Infrastructure.Services
       {
          return Task.Run(() =>
          {
-            var datables = ToDataTable(dataColumns, exportOptions);
-            if (datables.Count == 1)
-               datables[0].ExportToCSV(fileName);
-            else if (datables.Count > 1)
+            var dataTables = ToDataTable(dataColumns, exportOptions);
+            if (dataTables.Count == 1)
+               dataTables[0].ExportToCSV(fileName);
+
+            else if (dataTables.Count > 1)
                throw new ArgumentException(Error.ExportToCsvNotSupportedForDifferentBaseGrid);
          });
       }
@@ -204,12 +206,9 @@ namespace OSPSuite.Infrastructure.Services
       {
          var dataTable = new DataTable(tableName);
 
-         //user string because we want to export the unit
-         var allColumns = columnsToExport.Where(col => !col.IsBaseGrid())
-            .Where(x => x.BaseGrid == baseGridColumn).ToList();
+         var allColumns = sortColumnsForExport(columnsToExport.Where(x => !x.IsBaseGrid() && x.BaseGrid == baseGridColumn));
 
-         moveDrugColumnsFirst(allColumns);
-
+       
          allColumns.Insert(0, baseGridColumn);
          var cacheName = retrieveUniqueNameForColumns(allColumns, columnNameRetriever);
          var cacheDimensions = retrieveDimensionsFor(allColumns, dimensionRetriever);
@@ -250,20 +249,32 @@ namespace OSPSuite.Infrastructure.Services
          return dataTable;
       }
 
-      private Cache<DataColumn, IDimension> retrieveDimensionsFor(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, IDimension> dimensionRetriever)
+      private Cache<DataColumn, IDimension> retrieveDimensionsFor(IEnumerable<DataColumn> allColumns, Func<DataColumn, IDimension> dimensionRetriever)
       {
          var cacheDimensionsForColumns = new Cache<DataColumn, IDimension>();
          allColumns.Each(x => cacheDimensionsForColumns.Add(x, dimensionRetriever(x)));
          return cacheDimensionsForColumns;
       }
 
-      private void moveDrugColumnsFirst(List<DataColumn> allColumns)
+      private List<DataColumn> sortColumnsForExport(IEnumerable<DataColumn> allColumns)
       {
-         var allColumnsNotDrug = allColumns.Where(x => !x.QuantityInfo.Type.Is(QuantityType.Drug)).ToList();
-         allColumnsNotDrug.Each(c => allColumns.Remove(c));
 
-         //add them add them again at the end at the beginning
-         allColumnsNotDrug.Each(allColumns.Add);
+         var allDrugColumns = new List<DataColumn>(allColumns);
+
+         var allColumnsNotDrug = allDrugColumns
+            .Where(x => !x.QuantityInfo.Type.Is(QuantityType.Drug))
+            .ToList();
+
+         allColumnsNotDrug.Each(x => allDrugColumns.Remove(x));
+
+         var allAuxiliariesColumns = allColumnsNotDrug
+            .Where(x => x.DataInfo.Origin.IsOneOf(ColumnOrigins.CalculationAuxiliary, ColumnOrigins.ObservationAuxiliary))
+            .ToList();
+
+         allAuxiliariesColumns.Each(x => allColumnsNotDrug.Remove(x));
+
+         //First return the Drug column, then non drug columns that are not auxiliary columns then auxiliary columns as last implementation
+         return allDrugColumns.Union(allColumnsNotDrug).Union(allAuxiliariesColumns).ToList();
       }
 
       private Cache<DataColumn, string> retrieveUniqueNameForColumns(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, string> columnNameRetriever)
