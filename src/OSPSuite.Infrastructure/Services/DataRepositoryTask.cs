@@ -273,7 +273,7 @@ namespace OSPSuite.Infrastructure.Services
 
          allAuxiliariesColumns.Each(x => allColumnsNotDrug.Remove(x));
 
-         //First return the Drug column, then non drug columns that are not auxiliary columns then auxiliary columns as last implementation
+         //First return the drug columns, then non drug columns that are not auxiliary columns and last auxiliary columns
          return allDrugColumns.Union(allColumnsNotDrug).Union(allAuxiliariesColumns).ToList();
       }
 
