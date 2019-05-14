@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Services
    public class DataColumnExportOptions
    {
       /// <summary>
-      ///    Defined the column headerto use when exporting the column. If not defined, the name of the column will be used.
+      ///    Defined the column header to use when exporting the column. If not defined, the name of the column will be used.
       /// </summary>
       public Func<DataColumn, string> ColumnNameRetriever { get; set; } = x => x.Name;
 

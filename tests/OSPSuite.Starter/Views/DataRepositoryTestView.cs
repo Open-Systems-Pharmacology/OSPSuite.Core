@@ -14,24 +14,26 @@ namespace OSPSuite.Starter.Views
          InitializeComponent();
       }
 
-      public void AttachPresenter(IDataRepositoryTestPresenter presenter)
+      public void AttachPresenter(IDataRepositoryTestPresenter presenter) => _presenter = presenter;
+
+      public void AddChartView(IView baseView) => chartPanel.FillWith(baseView);
+
+      public void AddDataView(IView baseView) => dataPanel.FillWith(baseView);
+
+      public void AddMetaDataView(IView baseView) => metaDataPanel.FillWith(baseView);
+
+      public override void InitializeBinding()
       {
-         _presenter = presenter;
+         base.InitializeBinding();
+         btnExportToCSV.Click += (o, e) => OnEvent(()=>_presenter.ExportToCSV());
       }
 
-      public void AddChartView(IView baseView)
+      public override void InitializeResources()
       {
-         chartPanel.FillWith(baseView);
-      }
-
-      public void AddDataView(IView baseView)
-      {
-         dataPanel.FillWith(baseView);
-      }
-
-      public void AddMetaDataView(IView baseView)
-      {
-         metaDataPanel.FillWith(baseView);
+         base.InitializeResources();
+         btnExportToCSV.Text = "Export to CSV";
       }
    }
+
+
 }

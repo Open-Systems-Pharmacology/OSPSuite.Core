@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OSPSuite.Core.Commands;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Starter.Tasks;
@@ -14,6 +17,7 @@ namespace OSPSuite.Starter.Presenters
    public interface IDataRepositoryTestPresenter : IPresenter<IDataRepositoryTestView>
    {
       void Edit(DataRepository repository);
+      Task ExportToCSV();
    }
 
    public class DataRepositoryTestPresenter : AbstractCommandCollectorPresenter<IDataRepositoryTestView, IDataRepositoryTestPresenter>, IDataRepositoryTestPresenter
@@ -21,12 +25,24 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryMetaDataPresenter _metaDataPresenter;
+      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDialogCreator _dialogCreator;
+      private DataRepository _repository;
 
-      public DataRepositoryTestPresenter(IDataRepositoryTestView view, IDataRepositoryDataPresenter dataPresenter, IDataRepositoryChartPresenter chartPresenter, IDataRepositoryMetaDataPresenter metaDataPresenter, IImportObservedDataTask importObservedDataTask) : base(view)
+      public DataRepositoryTestPresenter(
+         IDataRepositoryTestView view,
+         IDataRepositoryDataPresenter dataPresenter,
+         IDataRepositoryChartPresenter chartPresenter,
+         IDataRepositoryMetaDataPresenter metaDataPresenter,
+         IImportObservedDataTask importObservedDataTask,
+         IDataRepositoryTask dataRepositoryTask,
+         IDialogCreator dialogCreator) : base(view)
       {
          _dataPresenter = dataPresenter;
          _chartPresenter = chartPresenter;
          _metaDataPresenter = metaDataPresenter;
+         _dataRepositoryTask = dataRepositoryTask;
+         _dialogCreator = dialogCreator;
 
          _subPresenterManager.Add(_dataPresenter);
          _subPresenterManager.Add(_chartPresenter);
@@ -42,9 +58,19 @@ namespace OSPSuite.Starter.Presenters
 
       public void Edit(DataRepository repository)
       {
+         _repository = repository;
          _chartPresenter.EditObservedData(repository);
          _dataPresenter.EditObservedData(repository);
          _metaDataPresenter.EditObservedData(repository);
+      }
+
+      public Task ExportToCSV()
+      {
+         var fileName = _dialogCreator.AskForFileToSave("Export file", Constants.Filter.CSV_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
+         if (string.IsNullOrEmpty(fileName))
+            return Task.CompletedTask;
+
+         return _dataRepositoryTask.ExportToCsvAsync(_repository, fileName);
       }
    }
 

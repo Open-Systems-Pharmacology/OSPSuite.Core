@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.Services
       public T Active<T>() where T : class
       {
          var activePresenter = _mainViewPresenter.ActivePresenter;
-         return activePresenter == null ? null : activePresenter.Subject as T;
+         return activePresenter?.Subject as T;
       }
    }
 }
