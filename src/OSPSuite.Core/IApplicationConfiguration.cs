@@ -30,17 +30,17 @@ namespace OSPSuite.Core
       string LicenseAgreementFilePath { get; }
 
       /// <summary>
-      ///    Returns the full version of the software in a format 1.2.3.4
+      ///    Returns the full version of the software in a format 1.2.3
       /// </summary>
       string FullVersion { get; }
 
       /// <summary>
-      ///    Returns the full version of the software in a format 1.2.3 - Build 123
+      ///    Returns the full version of the software in a format 1.2 - Build 123
       /// </summary>
       string FullVersionDisplay { get; }
 
       /// <summary>
-      ///    Returns the version of the software in the format 1.2.3
+      ///    Returns the version of the software in the format 1.2
       /// </summary>
       string Version { get; }
 
@@ -50,17 +50,22 @@ namespace OSPSuite.Core
       int InternalVersion { get; }
 
       /// <summary>
-      ///    Returns the version of the software in the format 1.2
+      ///    Returns the version of the software (one digit)
       /// </summary>
-      string MajorVersion { get; }
+      int Major { get; }
 
       /// <summary>
-      ///    Returns the build version
+      ///    Returns the version of the software (one digit)
       /// </summary>
-      string BuildVersion { get; }
+      int Minor { get; }
 
       /// <summary>
-      /// Release description. Typically empty for a release product. Could be 1.2.3 alpha, 1.2 beta, 1.2.3.4 EAP during dvelopment
+      ///    Returns the build version (typically set by CI)
+      /// </summary>
+      int Build { get; }
+
+      /// <summary>
+      /// Release description. Typically empty for a release product. Could be 1.2 alpha, 1.2 beta, 1.2. EAP during development
       /// </summary>
       string ReleaseDescription { get; }
 
