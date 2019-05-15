@@ -588,6 +588,7 @@
     <Compile Include="Infrastructure\JournalPageIdsFromSearchQuerySpecs.cs" />
     <Compile Include="Infrastructure\NextAvailableWorkingJournalIndexQuerySpecs.cs" />
     <Compile Include="Infrastructure\ObservedDataMetaDataSpecs.cs" />
+    <Compile Include="Infrastructure\OSPSuiteConfigurationSpecs.cs" />
     <Compile Include="Infrastructure\SessionManagerSpecs.cs" />
     <Compile Include="Infrastructure\SharpLibCompressionSpecs.cs" />
     <Compile Include="Infrastructure\UpdateJournalDiagramCommandSpecs.cs" />

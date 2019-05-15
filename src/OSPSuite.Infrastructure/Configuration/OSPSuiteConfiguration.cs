@@ -31,8 +31,9 @@ namespace OSPSuite.Infrastructure.Configuration
       public string ReleaseDescription { get; }
       public string AllUsersFolderPath { get; }
       public string CurrentUserFolderPath { get; }
-      public string BuildVersion { get; }
-      public string MajorVersion { get; }
+      public int Build { get; }
+      public int Major { get; }
+      public int Minor { get; }
       public string ProductDisplayName { get; }
       public string FullVersion { get; }
       public string FullVersionDisplay { get; }
@@ -44,23 +45,25 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
       private readonly bool _isReleasedVersion;
+      private readonly Version _assemblyVersion;
 
-      protected OSPSuiteConfiguration()
+      protected OSPSuiteConfiguration(Version assemblyVersion = null)
       {
-         var assemblyVersion = AssemblyVersion;
-         MajorVersion = version(assemblyVersion.Minor);
-         Version = combineVersions(MajorVersion, assemblyVersion.Build);
-         BuildVersion = assemblyVersion.Revision.ToString();
-         FullVersion = combineVersions(Version, BuildVersion);
+         _assemblyVersion = assemblyVersion ?? AssemblyVersion;
+         Major = _assemblyVersion.Major;
+         Minor = _assemblyVersion.Minor;
+         Version = combineVersions(Major, Minor);
+         Build = _assemblyVersion.Build;
+         FullVersion = combineVersions(Version, Build);
 
          ReleaseDescription = retrieveReleaseDescription();
          _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
 
          FullVersionDisplay = retrieveFullVersionDisplay();
-         OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Version}";
+         OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Major}";
          ProductDisplayName = retrieveProductDisplayName();
-         CurrentUserFolderPath = CurrentUserFolderPathFor(MajorVersion);
-         AllUsersFolderPath = AllUserFolderPathFor(MajorVersion);
+         CurrentUserFolderPath = CurrentUserFolderPathFor(Version);
+         AllUsersFolderPath = AllUserFolderPathFor(Version);
          PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
          SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
          TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
@@ -72,12 +75,15 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string retrieveProductDisplayName()
       {
-         return _isReleasedVersion ? $"{ProductNameWithTrademark} {MajorVersion}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
+         return _isReleasedVersion ? $"{ProductNameWithTrademark} {Major}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
       }
 
       private string retrieveFullVersionDisplay()
       {
-         return _isReleasedVersion ? $"{Version} - Build {BuildVersion}" : ReleaseDescription;
+         if (!_isReleasedVersion)
+            return ReleaseDescription;
+
+         return Minor == 0 ? $"{Major}" : $"{Major} Update {Minor}";
       }
 
       private string retrieveReleaseDescription()
@@ -90,7 +96,7 @@ namespace OSPSuite.Infrastructure.Configuration
          return string.IsNullOrEmpty(informationalVersionAttribute?.InformationalVersion) ? FullVersion : informationalVersionAttribute.InformationalVersion;
       }
 
-      private string version(int minor) => combineVersions(AssemblyVersion.Major, minor);
+      private string version(int minor) => combineVersions(_assemblyVersion.Major, minor);
 
       private string combineVersions(params object[] items) => items.ToString(".");
 
@@ -102,7 +108,7 @@ namespace OSPSuite.Infrastructure.Configuration
       {
          //starts with the latest one 
          yield return newerSettingFile;
-         int minor = AssemblyVersion.Minor;
+         int minor = _assemblyVersion.Minor;
          //add revision with the same major until reaching 0
          while (--minor >= 0)
          {
@@ -117,19 +123,19 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public Version AssemblyVersion => Assembly.GetAssembly(GetType()).GetName().Version;
 
-      protected string ApplicationFolderPathWithRevision(string revision) => Path.Combine(ApplicationFolderPathName, revision);
+      protected string ApplicationFolderPathWithVersion(string versionXY) => Path.Combine(ApplicationFolderPathName, versionXY);
 
-      private string userSettingsFilePathFor(string version) => Path.Combine(CurrentUserFolderPathFor(version), UserSettingsFileName);
+      private string userSettingsFilePathFor(string versionXY) => Path.Combine(CurrentUserFolderPathFor(versionXY), UserSettingsFileName);
 
-      private string applicationSettingsFilePathFor(string version) => Path.Combine(AllUserFolderPathFor(version), ApplicationSettingsFileName);
+      private string applicationSettingsFilePathFor(string versionXY) => Path.Combine(AllUserFolderPathFor(versionXY), ApplicationSettingsFileName);
 
       protected string AllUsersFile(string fileName) => Path.Combine(AllUsersFolderPath, fileName);
 
       protected string CurrentUserFile(string fileName) => Path.Combine(CurrentUserFolderPath, fileName);
 
-      protected string AllUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+      protected string AllUserFolderPathFor(string versionXY) => Path.Combine(EnvironmentHelper.ApplicationDataFolder(), ApplicationFolderPathWithVersion(versionXY));
 
-      protected string CurrentUserFolderPathFor(string version) => Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithRevision(version));
+      protected string CurrentUserFolderPathFor(string versionXY) => Path.Combine(EnvironmentHelper.UserApplicationDataFolder(), ApplicationFolderPathWithVersion(versionXY));
 
       /// <summary>
       ///    Returns a local full path for the file with name <paramref name="fileName" />
