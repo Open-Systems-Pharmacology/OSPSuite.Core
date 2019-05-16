@@ -75,7 +75,11 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string retrieveProductDisplayName()
       {
-         return _isReleasedVersion ? $"{ProductNameWithTrademark} {Major}" : $"{ProductNameWithTrademark} {ReleaseDescription}";
+         if(!_isReleasedVersion)
+            return $"{ProductNameWithTrademark} {ReleaseDescription}";
+
+         var displayName = $"{ProductNameWithTrademark} {Major}";
+         return Minor == 0 ? displayName : $"{displayName} Update {Minor}";
       }
 
       private string retrieveFullVersionDisplay()
@@ -83,7 +87,8 @@ namespace OSPSuite.Infrastructure.Configuration
          if (!_isReleasedVersion)
             return ReleaseDescription;
 
-         return Minor == 0 ? $"{Major}" : $"{Major} Update {Minor}";
+         var displayName =   Minor == 0 ? $"{Major}" : $"{Major}.{Minor}";
+         return $"{displayName} - Build {Build}";
       }
 
       private string retrieveReleaseDescription()
