@@ -154,7 +154,7 @@ namespace OSPSuite.Presentation
       }
 
       [Observation]
-      public void should_only_export_data_of_visible_curves()
+      public void should_export_x_data_and_y_data()
       {
          _dataColumns.ShouldOnlyContain(_curve.yData, _curve.xData);
       }
