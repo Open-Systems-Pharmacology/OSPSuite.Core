@@ -115,4 +115,73 @@ namespace OSPSuite.Presentation
          A.CallTo(() => _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _curveChart.Name, null)).MustHaveHappened();
       }
    }
+
+   public class When_the_curve_chart_export_task_is_exporting_the_displayed_chart_to_excel_and_the_underlying_data_are_using_a_real_curve_as_x_axis : concern_for_CurveChartExportTask
+   {
+      private readonly string _fileName = "AAA";
+      private List<DataColumn> _dataColumns;
+      private Func<DataColumn, string> _namingFunc;
+      private CurveChart _curveChart;
+      private Func<DataColumn, IDimension> _dimensionFunc;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(_dialogCreator).WithReturnType<string>().Returns(_fileName);
+         A.CallTo(() => _dataRepositoryTask.ExportToExcel(A<IEnumerable<DataColumn>>._, _fileName, true, A<DataColumnExportOptions>._))
+            .Invokes(x =>
+            {
+               _dataColumns = x.GetArgument<IEnumerable<DataColumn>>(0).ToList();
+               _namingFunc = x.GetArgument<DataColumnExportOptions>(3).ColumnNameRetriever;
+               _dimensionFunc = x.GetArgument<DataColumnExportOptions>(3).DimensionRetriever;
+            });
+
+         _curveChart = new CurveChart {Name = "Chart"};
+         _curve.Visible = true;
+         _curve.Name = "CurveName";
+
+         var anotherRepo = DomainHelperForSpecs.ObservedData("OBS_DATA");
+         var dataColumn = anotherRepo.AllButBaseGrid().First();
+         _curve.SetxData(dataColumn, _dimensionFactory);
+         A.CallTo(() => _dimensionFactory.MergedDimensionFor(dataColumn)).Returns(_mergedDimensionDataColum);
+
+         _curveChart.AddCurve(_curve);
+      }
+
+      protected override void Because()
+      {
+         sut.ExportToExcel(_curveChart);
+      }
+
+      [Observation]
+      public void should_only_export_data_of_visible_curves()
+      {
+         _dataColumns.ShouldOnlyContain(_curve.yData, _curve.xData);
+      }
+
+      [Observation]
+      public void should_use_the_name_of_the_curve_as_column_name_for_the_excel_table()
+      {
+         _namingFunc(_curve.yData).ShouldBeEqualTo(_curve.Name);
+      }
+
+      [Observation]
+      public void should_use_the_name_of_the_column_for_the_x_data()
+      {
+         _namingFunc(_curve.xData).ShouldBeEqualTo(_curve.xData.Name);
+      }
+
+      [Observation]
+      public void should_use_the_merge_dimension_for_column_dimension()
+      {
+         _dimensionFunc(_curve.yData).ShouldBeEqualTo(_mergedDimensionDataColum);
+         _dimensionFunc(_curve.xData).ShouldBeEqualTo(_mergedDimensionDataColum);
+      }
+
+      [Observation]
+      public void should_ask_the_user_for_the_location_of_the_file_to_export()
+      {
+         A.CallTo(() => _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _curveChart.Name, null)).MustHaveHappened();
+      }
+   }
 }
