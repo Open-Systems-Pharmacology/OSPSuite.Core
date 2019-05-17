@@ -30,22 +30,30 @@ namespace OSPSuite.Core.Services
 
       public void ExportToExcel(CurveChart chart)
       {
-         if (chart == null) return;
+         if (chart == null)
+            return;
+
          var visibleCurves = chart.Curves.Where(x => x.Visible).ToList();
-         if (!visibleCurves.Any()) return;
+         if (!visibleCurves.Any())
+            return;
 
          var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, chart.Name);
-         if (string.IsNullOrEmpty(fileName)) return;
+         if (string.IsNullOrEmpty(fileName))
+            return;
 
+         // Goal is to use the curve name if it's defined instead of the data column name
          var dataColumnCache = new Cache<DataColumn, Curve>(onMissingKey: x => null);
          visibleCurves.Each(curve => dataColumnCache[curve.yData] = curve);
+
+         //Base grid are added by default to the export unless the data represents an amount vs obs data. In that case, the base grid might be another column
+         var otherColumnsToExport = visibleCurves.Select(x => x.xData).Where(x => !x.IsBaseGrid());
 
          var exportOptions = new DataColumnExportOptions
          {
             ColumnNameRetriever = col => dataColumnCache[col]?.Name ?? col.Name,
             DimensionRetriever = _dimensionFactory.MergedDimensionFor
          };
-         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys, fileName, exportOptions: exportOptions);
+         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys.Union(otherColumnsToExport), fileName, exportOptions: exportOptions);
       }
    }
 }
