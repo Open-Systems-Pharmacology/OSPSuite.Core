@@ -228,12 +228,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.UsedChanged += (o, e) => onDataBrowserUsedChanged(e);
          _dataBrowserPresenter.SelectionChanged += (o, e) => onSelectionChanged(e.Columns);
 
-         _chartExportSettingsPresenter.ChartExportSettingsChanged += (o,e)=> onChartPropertiesChanged();
+         _chartExportSettingsPresenter.ChartExportSettingsChanged += (o, e) => onChartPropertiesChanged();
          _chartSettingsPresenter.ChartSettingsChanged += (o, e) => updateChart();
 
-         _curveSettingsPresenter.AddCurves += (o,e) => addCurvesForColumns(e.Columns);
-         _curveSettingsPresenter.RemoveCurve += (o,e)=> removeCurve(e.Curve);
-         _curveSettingsPresenter.CurvePropertyChanged += (o,e) => updateChart();
+         _curveSettingsPresenter.AddCurves += (o, e) => addCurvesForColumns(e.Columns);
+         _curveSettingsPresenter.RemoveCurve += (o, e) => removeCurve(e.Curve);
+         _curveSettingsPresenter.CurvePropertyChanged += (o, e) => updateChart();
 
          _axisSettingsPresenter.AxisRemoved += (o, e) => onAxisRemoved(e.Axis);
          _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
@@ -381,10 +381,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
 
-      public void RemoveAllDataRepositories()
-      {
-         _dataBrowserPresenter.Clear();
-      }
+      public void RemoveAllDataRepositories() => _dataBrowserPresenter.Clear();
 
       public void RemoveUnusedColumns() => removeColumns(unusedColumns);
 
@@ -408,7 +405,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void removeColumns(IEnumerable<DataColumn> dataColumns)
       {
-         _dataBrowserPresenter.RemoveDataColumns(dataColumns);
+         var columnsToRemove = dataColumns.ToList();
+         _dataBrowserPresenter.RemoveDataColumns(columnsToRemove);
+         Chart.RemoveCurvesForColumns(columnsToRemove);
       }
 
       public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
@@ -418,7 +417,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          CopySettingsFrom(settings, loadEditorLayout: true, loadColumnSettings: true);
       }
 
-      private void copyColumSettings(IEnumerable<GridColumnSettings> settings, Func<string, GridColumnSettings> columnSettingsInPresenterByName)
+      private void copyColumnSettings(IEnumerable<GridColumnSettings> settings, Func<string, GridColumnSettings> columnSettingsInPresenterByName)
       {
          foreach (var layoutColumnSettings in settings)
          {
@@ -431,10 +430,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          if (loadColumnSettings)
          {
-            copyColumSettings(settings.DataBrowserColumnSettings, _dataBrowserPresenter.ColumnSettings);
-            copyColumSettings(settings.CurveOptionsColumnSettings, _curveSettingsPresenter.ColumnSettings);
-            copyColumSettings(settings.AxisOptionsColumnSettings, _axisSettingsPresenter.ColumnSettings);
+            copyColumnSettings(settings.DataBrowserColumnSettings, _dataBrowserPresenter.ColumnSettings);
+            copyColumnSettings(settings.CurveOptionsColumnSettings, _curveSettingsPresenter.ColumnSettings);
+            copyColumnSettings(settings.AxisOptionsColumnSettings, _axisSettingsPresenter.ColumnSettings);
          }
+
          if (loadEditorLayout)
             _view.LoadLayoutFromString(settings.DockingLayout);
       }
@@ -552,7 +552,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          Refresh();
 
-         if (chartUpdatedEvent.PropogateChartChangeEvent)
+         if (chartUpdatedEvent.PropagateChartChangeEvent)
             ChartChanged();
       }
    }

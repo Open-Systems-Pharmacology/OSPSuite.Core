@@ -12,11 +12,11 @@
 
    public class ChartUpdatedEvent : ChartEvent
    {
-      public bool PropogateChartChangeEvent { get; }
+      public bool PropagateChartChangeEvent { get; }
 
-      public ChartUpdatedEvent(IChart chart, bool propogateChartChangeEvent) : base(chart)
+      public ChartUpdatedEvent(IChart chart, bool propagateChartChangeEvent) : base(chart)
       {
-         PropogateChartChangeEvent = propogateChartChangeEvent;
+         PropagateChartChangeEvent = propagateChartChangeEvent;
       }
    }
 
