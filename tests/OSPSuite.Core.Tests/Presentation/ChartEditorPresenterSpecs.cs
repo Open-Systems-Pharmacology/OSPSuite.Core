@@ -307,7 +307,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_curveChart, propogateChartChangeEvent: true));
+         sut.Handle(new ChartUpdatedEvent(_curveChart, propagateChartChangeEvent: true));
       }
 
       [Observation]
@@ -338,7 +338,7 @@ namespace OSPSuite.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_curveChart, propogateChartChangeEvent: false));
+         sut.Handle(new ChartUpdatedEvent(_curveChart, propagateChartChangeEvent: false));
       }
 
       [Observation]

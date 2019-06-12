@@ -182,10 +182,6 @@ namespace OSPSuite.Starter.Presenters
          using (_chartUpdater.UpdateTransaction(Chart))
          {
             ChartEditorPresenter.RemoveDataRepositories(_dataRepositories);
-            _dataRepositories.Each(repository =>
-            {
-               Chart.RemoveCurvesForDataRepository(repository);
-            });
             _dataRepositories.Clear();
          }
       }
