@@ -381,18 +381,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
 
-      public void RemoveAllDataRepositories()
-      {
-         _dataBrowserPresenter.Clear();
-      }
+      public void RemoveAllDataRepositories() => _dataBrowserPresenter.Clear();
 
-      public void RemoveUnusedColumns()
-      {
-         using (_chartUpdater.UpdateTransaction(Chart))
-         {
-            removeColumns(unusedColumns);
-         }
-      }
+      public void RemoveUnusedColumns() => removeColumns(unusedColumns);
 
       private IReadOnlyList<DataColumn> unusedColumns
       {
