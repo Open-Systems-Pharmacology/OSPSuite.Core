@@ -15,9 +15,9 @@ namespace OSPSuite.Core
       {
          sut = new DistributedParameter();
          var pathFactory = new ObjectPathFactory(new AliasCreator());
-         _meanParameter = new Parameter { Name = Constants.Distribution.MEAN }.WithFormula(new ExplicitFormula("0"));
-         _stdParameter = new Parameter { Name = Constants.Distribution.DEVIATION }.WithFormula(new ExplicitFormula("1"));
-         _percentileParameter = new Parameter { Name = Constants.Distribution.PERCENTILE}.WithFormula(new ExplicitFormula("0.5"));
+         _meanParameter = new Parameter {Name = Constants.Distribution.MEAN}.WithFormula(new ExplicitFormula("0"));
+         _stdParameter = new Parameter {Name = Constants.Distribution.DEVIATION}.WithFormula(new ExplicitFormula("1"));
+         _percentileParameter = new Parameter {Name = Constants.Distribution.PERCENTILE}.WithFormula(new ExplicitFormula("0.5"));
          sut.Add(_meanParameter);
          sut.Add(_stdParameter);
          sut.Add(_percentileParameter);
@@ -28,7 +28,6 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_adding_a_parameter_to_a_distributed_parameter : concern_for_DistributedParameter
    {
       protected override void Because()
@@ -43,9 +42,6 @@ namespace OSPSuite.Core
       }
    }
 
-
-
-   
    public class When_the_percentile_of_a_distribued_parameter_is_set : concern_for_DistributedParameter
    {
       private double _percentileValue;
@@ -69,7 +65,6 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_the_value_of_a_distributed_parameter_is_set : concern_for_DistributedParameter
    {
       private double _valueToSet;
@@ -98,7 +93,6 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_a_percentile_is_set_an_then_a_value_is_set : concern_for_DistributedParameter
    {
       private double _valueToSet;
@@ -122,7 +116,6 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_a_percentile_value_is_set_twice : concern_for_DistributedParameter
    {
       private double _valueBeforeSet;
@@ -146,7 +139,6 @@ namespace OSPSuite.Core
       }
    }
 
-   
    public class When_a_distributed_parameter_is_set_to_not_fixed : concern_for_DistributedParameter
    {
       protected override void Context()
@@ -164,7 +156,7 @@ namespace OSPSuite.Core
       [Observation]
       public void the_value_of_the_percentile_should_be_the_original_value()
       {
-          sut.Percentile.ShouldBeEqualTo(0.5);
+         sut.Percentile.ShouldBeEqualTo(0.5);
       }
    }
 }

@@ -1,7 +1,7 @@
 using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
@@ -26,8 +26,8 @@ namespace OSPSuite.Core
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionRepository);
          _objectToClone = createEntityToClone();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
-         _modelFinalizer= A.Fake<IModelFinalizer>();
-         sut = new CloneManagerForModel(_objectBaseFactory, _dataRepositoryTask,_modelFinalizer);
+         _modelFinalizer = A.Fake<IModelFinalizer>();
+         sut = new CloneManagerForModel(_objectBaseFactory, _dataRepositoryTask, _modelFinalizer);
       }
 
       protected override void Because()

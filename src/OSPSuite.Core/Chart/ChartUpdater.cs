@@ -4,7 +4,7 @@ namespace OSPSuite.Core.Chart
 {
    public interface IChartUpdater
    {
-      ChartUpdate UpdateTransaction(IChart chart, bool propogateChartChangeEvent =true);
+      ChartUpdate UpdateTransaction(IChart chart, bool propagateChartChangeEvent =true);
       void Update(IChart chart);
    }
 
@@ -17,9 +17,9 @@ namespace OSPSuite.Core.Chart
          _eventPublisher = eventPublisher;
       }
 
-      public ChartUpdate UpdateTransaction(IChart chart, bool propogateChartChangeEvent = true)
+      public ChartUpdate UpdateTransaction(IChart chart, bool propagateChartChangeEvent = true)
       {
-         return new ChartUpdate(_eventPublisher, chart, propogateChartChangeEvent);
+         return new ChartUpdate(_eventPublisher, chart, propagateChartChangeEvent);
       }
 
       public void Update(IChart chart)

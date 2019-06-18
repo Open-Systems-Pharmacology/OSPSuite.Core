@@ -4,7 +4,7 @@ using DevExpress.LookAndFeel;
 using DevExpress.Skins;
 using DevExpress.UserSkins;
 using OSPSuite.Presentation;
-using OSPSuite.Presentation.Services;
+using ISkinManager = OSPSuite.Presentation.Services.ISkinManager;
 
 namespace OSPSuite.UI.Services
 {

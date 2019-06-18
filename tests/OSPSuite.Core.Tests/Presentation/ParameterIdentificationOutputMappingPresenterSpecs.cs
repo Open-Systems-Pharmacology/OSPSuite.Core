@@ -287,7 +287,7 @@ namespace OSPSuite.Presentation
       }
    }
 
-   public class When_the_user_is_mapping_an_output_with_observed_data_already_used : concern_for_ParameterIdentificationOutputMappingPresenter
+   public class When_the_user_is_mapping_an_output_with_observed_data_already_used_by_another_output : concern_for_ParameterIdentificationOutputMappingPresenter
    {
       private DataRepository _eventObservedData;
       private bool _unmappedRaised;
@@ -301,6 +301,50 @@ namespace OSPSuite.Presentation
          _parameterIdentification.AddOutputMapping(_outputMapping2);
          sut.EditParameterIdentification(_parameterIdentification);
 
+         //mimic binding behavior. Object is set and then method is called
+         _outputMappingDTO1.ObservedData = _observedData1;
+         _outputMappingDTO2.ObservedData = _observedData1;
+
+         sut.ObservedDataMapped += (o, e) => { _eventObservedData = e.WeightedObservedData; };
+         sut.ObservedDataUnmapped += (o, e) => { _unmappedRaised = true; };
+      }
+
+      protected override void Because()
+      {
+         sut.ObservedDataSelectionChanged(_outputMappingDTO2, _observedData1, _weightedObservedData2.ObservedData);
+      }
+
+      [Observation]
+      public void should_have_updated_the_observed_data()
+      {
+         _outputMappingDTO2.ObservedData.ShouldBeEqualTo(_observedData1);
+         _eventObservedData.ShouldNotBeNull();
+         _unmappedRaised.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_set_a_unique_mapping_id_to_ensure_display_unicity()
+      {
+         _outputMappingDTO2.WeightedObservedData.Id.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_the_user_is_mapping_an_output_with_observed_data_already_used_by_the_same_output : concern_for_ParameterIdentificationOutputMappingPresenter
+   {
+      private DataRepository _eventObservedData;
+      private bool _unmappedRaised;
+
+      protected override void Context()
+      {
+         base.Context();
+         _outputMapping1.WeightedObservedData = _weightedObservedData1;
+         _outputMapping2.WeightedObservedData = _weightedObservedData2;
+         _parameterIdentification.AddOutputMapping(_outputMapping1);
+         _parameterIdentification.AddOutputMapping(_outputMapping2);
+         sut.EditParameterIdentification(_parameterIdentification);
+
+         _outputMappingDTO1.Output = _output1;
+         _outputMappingDTO2.Output = _output1;
          //mimic binding behavior. Object is set and then method is called
          _outputMappingDTO1.ObservedData = _observedData1;
          _outputMappingDTO2.ObservedData = _observedData1;

@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Commands
       {
          setMetaDataInRepository();
 
-         Description = Command.SetMetaDataAddedCommandDescripton(_metaDataKeyValue.Key, _metaDataKeyValue.Value);
+         Description = Command.SetMetaDataAddedCommandDescription(_metaDataKeyValue.Key, _metaDataKeyValue.Value);
          SetBuildingBlockParameters(context);
          context.PublishEvent(new ObservedDataMetaDataAddedEvent(_observedData));
       }

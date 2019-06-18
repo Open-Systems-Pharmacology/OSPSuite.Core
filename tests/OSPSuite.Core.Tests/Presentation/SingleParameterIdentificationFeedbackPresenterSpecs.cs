@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_tell_the_paramters_feedback_presenter_to_update_the_parameters_only_once()
       {
-         A.CallTo(() => _parametersFeedbackPresenter.UpdateFeedback(_runState)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _parametersFeedbackPresenter.UpdateFeedback(_runState)).MustHaveHappenedOnceExactly();
       }
    }
 

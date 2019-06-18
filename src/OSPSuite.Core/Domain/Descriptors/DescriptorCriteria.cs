@@ -5,21 +5,21 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>
+   public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
    {
       public override string ToString()
       {
          return this.ToString(Constants.AND.ToUpper(), " ").Trim(' ');
       }
 
-      public bool IsSatisfiedBy(Tags tags)
+      public bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {
-         return this.Any() && this.All(condition => condition.IsSatisfiedBy(tags));
+         return this.Any() && this.All(condition => condition.IsSatisfiedBy(entityDescriptor));
       }
 
       public virtual bool IsSatisfiedBy(IEntity entity)
       {
-         return IsSatisfiedBy(new Tags(entity.Tags) {new Tag(entity.Name)});
+         return IsSatisfiedBy(new EntityDescriptor(entity));
       }
 
       public bool Equals(DescriptorCriteria other)
@@ -49,14 +49,14 @@ namespace OSPSuite.Core.Domain.Descriptors
       /// <param name="tag">Tag to remove</param>
       public void RemoveByTag<T>(string tag) where T : class, ITagCondition
       {
-         var conditionsToremove = (from conditions in this
+         var conditionsToRemove = (from conditions in this
                                    let tagConditions = conditions as T
                                    where tagConditions != null
                                    where tagConditions.Tag.Equals(tag)
                                    select conditions)
             .ToList();
 
-         conditionsToremove.Each(condition => Remove(condition));
+         conditionsToRemove.Each(condition => Remove(condition));
       }
 
       public DescriptorCriteria Clone()

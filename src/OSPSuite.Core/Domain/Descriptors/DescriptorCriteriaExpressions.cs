@@ -21,21 +21,32 @@ namespace OSPSuite.Core.Domain.Descriptors
          _criteria = new DescriptorCriteria();
       }
 
-      public DescriptorCriteriaBuilder And
-      {
-         get { return this; }
-      }
+      public DescriptorCriteriaBuilder And => this;
 
       public DescriptorCriteriaBuilder With(string match)
       {
          _criteria.Add(new MatchTagCondition(match));
          return this;
       }
+
       public DescriptorCriteriaBuilder Not(string match)
       {
          _criteria.Add(new NotMatchTagCondition(match));
          return this;
       }
+
+      public DescriptorCriteriaBuilder InContainer(string containerName)
+      {
+         _criteria.Add(new InContainerCondition(containerName));
+         return this;
+      }
+
+      public DescriptorCriteriaBuilder NotInContainer(string containerName)
+      {
+         _criteria.Add(new NotInContainerCondition(containerName));
+         return this;
+      }
+
       public DescriptorCriteria Build()
       {
          return _criteria;

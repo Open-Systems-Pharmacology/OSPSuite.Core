@@ -1,26 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public interface IKeywordReplacerTask
    {
       /// <summary>
-      ///    Replace the keywords used in the reaction (parameters and kinetic) with the appropriate names from the root container
+      ///    Replace the keywords used in the reaction (parameters and kinetic) with the appropriate names from the root
+      ///    container
       /// </summary>
       void ReplaceInReactionContainer(IContainer reactionContainer, IContainer rootContainer);
 
       /// <summary>
-      ///    Replace the keywords used in the observer formula with the appropriate names from the root container
-      /// </summary>
-      void ReplaceIn(IObserver observer, IContainer rootContainer);
-
-      /// <summary>
       ///    Replace the keywords used in the observer formula with the appropriate names from the root container.
-      ///    The Molecule keyword will also be repalced with the moleculeName
+      ///    The Molecule keyword will also be replaced with the moleculeName
       /// </summary>
       void ReplaceIn(IObserver observer, IContainer rootContainer, string moleculeName);
 
@@ -115,11 +111,6 @@ namespace OSPSuite.Core.Domain.Services
             keywordReplacer.ReplaceIn(reaction);
 
          replaceInContainer(reactionContainer, rootContainer);
-      }
-
-      public void ReplaceIn(IObserver observer, IContainer rootContainer)
-      {
-         ReplaceIn(observer, rootContainer, null, null);
       }
 
       public void ReplaceIn(IObserver observer, IContainer rootContainer, string moleculeName)

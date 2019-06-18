@@ -86,6 +86,49 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_converting_a_data_repository_with_auxiliary_columns_to_datatable : concern_for_DataRepositoryTask
+   {
+      private DataColumn _col1;
+      private DataColumn _col2;
+      private DataTable _dataTable;
+      private IEnumerable<DataTable> _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _col1 = new DataColumn("col1", _mass, _baseGrid1)
+         {
+            Values = new float[] {10, 20, 30},
+            DataInfo = {Origin = ColumnOrigins.Observation}
+         };
+         _col2 = new DataColumn("col2", _mass, _baseGrid1)
+         {
+            Values = new float[] {100, 200, 300},
+            DataInfo = {AuxiliaryType = AuxiliaryType.ArithmeticStdDev, Origin = ColumnOrigins.ObservationAuxiliary}
+         };
+
+         _col1.AddRelatedColumn(_col2);
+         _dataRepository.Add(_col2);
+         _dataRepository.Add(_col1);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.ToDataTable(_dataRepository);
+      }
+
+      [Observation]
+      public void should_add_the_auxiliary_columns_at_the_end()
+      {
+         _results.Count().ShouldBeEqualTo(1);
+         _dataTable = _results.ElementAt(0);
+         _dataTable.Columns.Count.ShouldBeEqualTo(3);
+         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [s]");
+         _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(_col1.Name + " [mg]");
+         _dataTable.Columns[2].ColumnName.ShouldBeEqualTo(_col2.Name + " [mg]");
+      }
+   }
+
    public class When_converting_a_data_repository_with_only_one_base_grid_to_a_datatable_and_the_value_should_be_exported_in_base_unit : concern_for_DataRepositoryTask
    {
       private DataColumn _col1;
@@ -96,8 +139,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _col1 = new DataColumn("col1", _mass, _baseGrid1) { Values = new float[] { 10, 20, 30 } };
-         _col2 = new DataColumn("col2", _mass, _baseGrid1) { Values = new float[] { 100, 200, 300 } };
+         _col1 = new DataColumn("col1", _mass, _baseGrid1) {Values = new float[] {10, 20, 30}};
+         _col2 = new DataColumn("col2", _mass, _baseGrid1) {Values = new float[] {100, 200, 300}};
 
          _dataRepository.Add(_col1);
          _dataRepository.Add(_col2);
@@ -105,7 +148,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _results = sut.ToDataTable(_dataRepository,useDisplayUnit:false);
+         _results = sut.ToDataTable(_dataRepository, new DataColumnExportOptions {UseDisplayUnit = false});
       }
 
       [Observation]
@@ -139,7 +182,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    public class When_converting_a_data_repository_and_output_should_be_formated : concern_for_DataRepositoryTask
    {
       private DataColumn _col1;
@@ -156,7 +198,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _results = sut.ToDataTable(_dataRepository, true);
+         _results = sut.ToDataTable(_dataRepository, new DataColumnExportOptions {FormatOutput = true});
       }
 
       [Observation]

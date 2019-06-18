@@ -30,17 +30,17 @@ namespace OSPSuite.Core
       string LicenseAgreementFilePath { get; }
 
       /// <summary>
-      ///    Returns the full version of the software in a format 1.2.3.4
+      ///    Returns the full version of the software in a format 1.2.3 (Version, Update, Build)
       /// </summary>
       string FullVersion { get; }
 
       /// <summary>
-      ///    Returns the full version of the software in a format 1.2.3 - Build 123
+      ///    Returns the full version of the software in a format 1.2 - Build 123
       /// </summary>
       string FullVersionDisplay { get; }
 
       /// <summary>
-      ///    Returns the version of the software in the format 1.2.3
+      ///    Returns the version of the software in the format 1.2
       /// </summary>
       string Version { get; }
 
@@ -50,17 +50,22 @@ namespace OSPSuite.Core
       int InternalVersion { get; }
 
       /// <summary>
-      ///    Returns the version of the software in the format 1.2
+      ///    Returns the version of the software (one digit)
       /// </summary>
-      string MajorVersion { get; }
+      int Major { get; }
 
       /// <summary>
-      ///    Returns the build version
+      ///    Returns the version of the software (one digit)
       /// </summary>
-      string BuildVersion { get; }
+      int Minor { get; }
 
       /// <summary>
-      /// Release description. Typically empty for a release product. Could be 1.2.3 alpha, 1.2 beta, 1.2.3.4 EAP during dvelopment
+      ///    Returns the build version (typically set by CI)
+      /// </summary>
+      int Build { get; }
+
+      /// <summary>
+      /// Release description. Typically empty for a release product. Could be 1.2 alpha, 1.2 beta, 1.2. EAP during development
       /// </summary>
       string ReleaseDescription { get; }
 
@@ -92,7 +97,7 @@ namespace OSPSuite.Core
       string UserSettingsFilePath { get; }
 
       /// <summary>
-      ///    Returns a possible enumeration containg the path of user settings that can be loaded. (Starting from the most recent
+      ///    Returns a possible enumeration containing the path of user settings that can be loaded. (Starting from the most recent
       ///    one down to the first available one)
       /// </summary>
       IEnumerable<string> UserSettingsFilePaths { get; }
@@ -103,7 +108,7 @@ namespace OSPSuite.Core
       string ApplicationSettingsFilePath { get; }
 
       /// <summary>
-      /// Returns a possible enumeration containg the path of application settings that can be loaded. (Starting from the most recent one down to the first available one)
+      /// Returns a possible enumeration containing the path of application settings that can be loaded. (Starting from the most recent one down to the first available one)
       /// </summary>
       IEnumerable<string> ApplicationSettingsFilePaths { get; }
       
@@ -136,11 +141,6 @@ namespace OSPSuite.Core
       ///    Path of the dimension file
       /// </summary>
       string DimensionFilePath { get; }
-
-      /// <summary>
-      ///    Returns the path where the configuration file for the logger resides
-      /// </summary>
-      string LogConfigurationFile { get; }
 
       /// <summary>
       /// Where can the user change the watermark option in the user interface. Location is application specific

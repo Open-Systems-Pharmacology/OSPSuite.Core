@@ -8,10 +8,7 @@ namespace OSPSuite.Presentation.DTO
       {
       }
 
-      public ISimulation Simulation
-      {
-         get { return Object; }
-      }
+      public ISimulation Simulation => Object;
    }
 
 }

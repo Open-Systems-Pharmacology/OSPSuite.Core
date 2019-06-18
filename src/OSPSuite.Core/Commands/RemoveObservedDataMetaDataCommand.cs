@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Commands
       {
          removeMetaDataInRepository();
 
-         Description = Command.SetMetaDataRemovedCommandDescripton(_metaDataKeyValue.Key, _metaDataKeyValue.Value);
+         Description = Command.SetMetaDataRemovedCommandDescription(_metaDataKeyValue.Key, _metaDataKeyValue.Value);
 
          SetBuildingBlockParameters(context);
          context.PublishEvent(new ObservedDataMetaDataRemovedEvent(_observedData));

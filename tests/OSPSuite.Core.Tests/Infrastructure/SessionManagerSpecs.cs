@@ -66,7 +66,7 @@ namespace OSPSuite.Infrastructure
       public void should_throw_an_exception()
       {
          _exceptionRaised.ShouldBeTrue();
-         _error.ShouldBeEqualTo(Error.SessionFactoryNotInitalized);
+         _error.ShouldBeEqualTo(Error.SessionFactoryNotInitialized);
       }
    }
 

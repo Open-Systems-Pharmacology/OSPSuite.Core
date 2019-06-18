@@ -98,7 +98,7 @@ namespace OSPSuite.Presentation.Presenters.Journal
          _region = regionResolver.RegionWithName(regionName);
          _allJournalPageDTOs = new NotifyList<JournalPageDTO>();
          View.AddPreviewView(_previewPresenter.BaseView);
-         View.AddSeachView(_searchPresenter.BaseView);
+         View.AddSearchView(_searchPresenter.BaseView);
          AddSubPresenters(_previewPresenter, _searchPresenter);
          View.BindTo(_allJournalPageDTOs);
          View.SearchVisible = false;

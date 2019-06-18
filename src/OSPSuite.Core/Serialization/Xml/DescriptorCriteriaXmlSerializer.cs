@@ -1,6 +1,6 @@
-using OSPSuite.Serializer;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class MatchTagConditionXmlSerializer : OSPSuiteXmlSerializer<MatchTagCondition>
+   public abstract class TagConditionXmlSerializer<T> : OSPSuiteXmlSerializer<T> where T : ITagCondition
    {
       public override void PerformMapping()
       {
@@ -20,19 +20,28 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class NotMatchTagConditionXmlSerializer : OSPSuiteXmlSerializer<NotMatchTagCondition>
+   public class MatchTagConditionXmlSerializer : TagConditionXmlSerializer<MatchTagCondition>
    {
-      public override void PerformMapping()
-      {
-         Map(x => x.Tag);
-      }
    }
-   public class MatchAllConditionXmlSerializer  : OSPSuiteXmlSerializer<MatchAllCondition>
+
+   public class NotMatchTagConditionXmlSerializer : TagConditionXmlSerializer<NotMatchTagCondition>
+   {
+   }
+
+   public class MatchAllConditionXmlSerializer : TagConditionXmlSerializer<MatchAllCondition>
    {
       public override void PerformMapping()
       {
          /*nothing to do*/
       }
+   }
+
+   public class InContainerConditionXmlSerializer : TagConditionXmlSerializer<InContainerCondition>
+   {
+   }
+
+   public class NotInContainerConditionXmlSerializer : TagConditionXmlSerializer<NotInContainerCondition>
+   {
    }
 
    public class ParameterDescriptorXmlSerializer : OSPSuiteXmlSerializer<ParameterDescriptor>

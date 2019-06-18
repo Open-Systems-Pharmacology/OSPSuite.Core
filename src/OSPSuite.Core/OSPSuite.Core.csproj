@@ -46,7 +46,7 @@
     <DocumentationFile>bin\Debug\OSPSuite.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -59,30 +59,21 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MathNet.Numerics.4.5.1\lib\net461\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MathNet.Numerics.4.7.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="MPFitLib, Version=1.1.1.0, Culture=neutral, PublicKeyToken=be1b3c0b5819660a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\csmpfit.1.1.1\lib\net20\MPFitLib.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.FuncParser, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\OSPSuite.FuncParser.3.0.1.9\lib\net45\OSPSuite.FuncParser.dll</HintPath>
-    </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.SimModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\packages\OSPSuite.SimModel.3.0.1.17\lib\net45\OSPSuite.SimModel.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.1.1.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.1.9\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.1.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.7\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -93,8 +84,9 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -147,8 +139,16 @@
     <Compile Include="Commands\Core\NullHistoryManager.cs" />
     <Compile Include="Commands\Core\RollBackCommand.cs" />
     <Compile Include="Commands\Core\RollBackCommandFactory.cs" />
+    <Compile Include="Comparison\CalculationMethodCacheDiffBuilder.cs" />
+    <Compile Include="Comparison\CalculationMethodDiffBuilder.cs" />
     <Compile Include="Comparison\WithValueOriginComparison.cs" />
     <Compile Include="Converter\v7_3\Converter710To730.cs" />
+    <Compile Include="Domain\Descriptors\EntityDescriptor.cs" />
+    <Compile Include="Domain\Descriptors\EntityDescriptorMap.cs" />
+    <Compile Include="Domain\Descriptors\EntityDescriptorMapList.cs" />
+    <Compile Include="Domain\Descriptors\InContainerCondition.cs" />
+    <Compile Include="Domain\Descriptors\NotInContainerCondition.cs" />
+    <Compile Include="Domain\Descriptors\TagCondition.cs" />
     <Compile Include="Domain\Formulas\TableFormulaWithXArgument.cs" />
     <Compile Include="Domain\IWithDefaultState.cs" />
     <Compile Include="Domain\IWithValueOrigin.cs" />
@@ -157,7 +157,12 @@
     <Compile Include="Domain\ParameterIdentifications\CategorialParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\MultipleParameterIdentificationRunMode.cs" />
     <Compile Include="Domain\ParameterIdentifications\StandardParameterIdentificationRunMode.cs" />
+    <Compile Include="Domain\Services\IExplicitFormulaParser.cs" />
     <Compile Include="Domain\Services\IHistoryManagerRetriever.cs" />
+    <Compile Include="Domain\Services\IPopulationRunner.cs" />
+    <Compile Include="Domain\Services\ISimModelBatch.cs" />
+    <Compile Include="Domain\Services\ISimModelManager.cs" />
+    <Compile Include="Domain\SolverWarning.cs" />
     <Compile Include="Domain\ValueOrigin.cs" />
     <Compile Include="Domain\ValueOriginDeterminationMethod.cs" />
     <Compile Include="Domain\ValueOriginSource.cs" />
@@ -217,12 +222,28 @@
     <Compile Include="Journal\IJournalTask.cs" />
     <Compile Include="Journal\JournalPageData.cs" />
     <Compile Include="Journal\ReloadRelatedItemTask.cs" />
+    <Compile Include="Qualification\BuildingBlockSwap.cs" />
+    <Compile Include="Qualification\Input.cs" />
+    <Compile Include="Qualification\InputMapping.cs" />
+    <Compile Include="Qualification\IReferencingProject.cs" />
+    <Compile Include="Qualification\IReferencingSimulation.cs" />
+    <Compile Include="Qualification\ObservedDataMapping.cs" />
+    <Compile Include="Qualification\PlotMapping.cs" />
+    <Compile Include="Qualification\QualifcationConfiguration.cs" />
+    <Compile Include="Qualification\QualificationExtensions.cs" />
+    <Compile Include="Qualification\QualificationMapping.cs" />
+    <Compile Include="Qualification\QualificationRunException.cs" />
+    <Compile Include="Qualification\SimulationMapping.cs" />
+    <Compile Include="Qualification\SimulationParameterSwap.cs" />
+    <Compile Include="Qualification\SimulationPlot.cs" />
     <Compile Include="RegisterTypeConvention.cs" />
     <Compile Include="Reporting\IReportTemplateRepository.cs" />
     <Compile Include="Reporting\ReportConfiguration.cs" />
     <Compile Include="Reporting\ReportTemplate.cs" />
     <Compile Include="Serialization\SimModel\DTO\TableFormulaWithXArgumentExport.cs" />
     <Compile Include="Serialization\SimModel\Serializer\TableFormulaWithXArgumentExportSerializer.cs" />
+    <Compile Include="Serialization\SimModel\Services\ISimulationExportCreatorFactory.cs" />
+    <Compile Include="Serialization\SimModel\Services\ISimModelExporter.cs" />
     <Compile Include="Serialization\Xml\ValueOriginDeterminationMethodXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginSourceXmlAttributeMapper.cs" />
     <Compile Include="Serialization\Xml\ValueOriginXmlSerializer.cs" />
@@ -392,8 +413,6 @@
     <Compile Include="Domain\Services\SensitivityAnalyses\SensitivityParameterFactory.cs" />
     <Compile Include="Domain\Services\SensitivityAnalyses\SensitivyAnalysisVariationDataCreator.cs" />
     <Compile Include="Domain\Services\SensitivityAnalysisValidator.cs" />
-    <Compile Include="Domain\Services\SimModelBatch.cs" />
-    <Compile Include="Domain\Services\SimModelSimulationFactory.cs" />
     <Compile Include="Domain\Services\SimulationAnalysisCreator.cs" />
     <Compile Include="Domain\Services\SimulationPersistableUpdater.cs" />
     <Compile Include="Domain\Services\SimulationQuantitySelectionFinder.cs" />
@@ -778,7 +797,6 @@
     <Compile Include="Domain\SimulationRunOptions.cs" />
     <Compile Include="Domain\ParameterBuildMode.cs" />
     <Compile Include="Domain\Services\FormulaTask.cs" />
-    <Compile Include="Domain\PopulationSimulationProgressEventArgs.cs" />
     <Compile Include="Domain\Event.cs" />
     <Compile Include="Domain\EventAssignment.cs" />
     <Compile Include="Domain\Builder\EventAssignmentBuilder.cs" />
@@ -864,7 +882,6 @@
     <Compile Include="Domain\CreationResult.cs" />
     <Compile Include="Domain\Services\CloneManagerStrategy.cs" />
     <Compile Include="Domain\Services\EventBuilderTask.cs" />
-    <Compile Include="Domain\Services\ExplicitFormulaParser.cs" />
     <Compile Include="Domain\Services\ICloneManager.cs" />
     <Compile Include="Domain\Services\IKeywordReplacer.cs" />
     <Compile Include="Domain\Services\KeywordReplacerTask.cs" />
@@ -962,14 +979,8 @@
     <Compile Include="Serialization\SimModel\Serializer\EventExportSerializer.cs" />
     <Compile Include="Serialization\SimModel\Serializer\VariableExportSerializer.cs" />
     <Compile Include="Serialization\SimModel\Serializer\SimModelSerializerRepository.cs" />
-    <Compile Include="Serialization\SimModel\Services\CreateExportModelVisitor.cs" />
-    <Compile Include="Domain\Services\DataFactory.cs" />
+    <Compile Include="Serialization\SimModel\Services\SimulationExportCreator.cs" />
     <Compile Include="Domain\Services\DataNamingService.cs" />
-    <Compile Include="Domain\Services\PopulationDataSplitter.cs" />
-    <Compile Include="Domain\Services\PopulationRunner.cs" />
-    <Compile Include="Serialization\SimModel\Services\SimModelExporter.cs" />
-    <Compile Include="Domain\Services\SimModelManager.cs" />
-    <Compile Include="Domain\Services\SimModelManagerBase.cs" />
     <Compile Include="Domain\SimulationRunResults.cs" />
     <Compile Include="Serialization\SimModel\Services\TableFormulaToTableFormulaExportMapper.cs" />
     <Compile Include="Serialization\SimModel\SimModelSchemaConstants.cs" />

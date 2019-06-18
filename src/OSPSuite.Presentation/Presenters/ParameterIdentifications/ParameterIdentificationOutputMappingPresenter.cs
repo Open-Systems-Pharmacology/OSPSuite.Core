@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -15,12 +12,15 @@ using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public class ObservedDataEventArgs : EventArgs
    {
-      public WeightedObservedData WeightedObservedData { get; private set; }
+      public WeightedObservedData WeightedObservedData { get; }
 
       public ObservedDataEventArgs(WeightedObservedData weightedObservedData)
       {
@@ -69,8 +69,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public event EventHandler<ObservedDataEventArgs> ObservedDataSelected = delegate { };
       public bool IsLatched { get; set; }
 
-      public ParameterIdentificationOutputMappingPresenter(IParameterIdentificationOutputMappingView view, IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
-         IObservedDataRepository observedDataRepository, IOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper, IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
+      public ParameterIdentificationOutputMappingPresenter(
+         IParameterIdentificationOutputMappingView view,
+         IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
+         IObservedDataRepository observedDataRepository,
+         IOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
+         IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IParameterIdentificationTask parameterIdentificationTask) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
@@ -128,6 +132,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
                   _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(sim, x)).OrderBy(x => x.DisplayString));
                });
             }
+
             return _allAvailableOutputs;
          }
       }
@@ -154,38 +159,63 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          return _observedDataRepository.AllObservedDataUsedBy(outputSelectionDTO.Simulation)
             .Distinct()
-            .OrderBy(x => x.Name);        
+            .OrderBy(x => x.Name);
       }
 
       public void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData)
       {
-         if (observedDataAlreadySelected(newObservedData))
+         var allOutputsUsingObservedData = _allOutputMappingDTOs.Where(x => Equals(x.ObservedData, newObservedData)).Except(new[] {dto}).ToList();
+
+         if (observedDataAlreadySelectedForSameOutput(dto.Output, newObservedData))
          {
             dto.ObservedData = oldObservedData;
             View.CloseEditor();
             throw new CannotSelectTheObservedDataMoreThanOnceException(newObservedData);
          }
 
+         var weightedObservedData = new WeightedObservedData(newObservedData)
+         {
+            Id = nextUniqueIdFor(allOutputsUsingObservedData)
+         };
+
          raiseObservedDataUnmappedFor(dto.WeightedObservedData);
+         dto.Mapping.WeightedObservedData = weightedObservedData;
+         View.CloseEditor();
+         raiseObservedDataMappedFor(dto.WeightedObservedData);
+      }
 
-         dto.Mapping.WeightedObservedData = new WeightedObservedData(newObservedData);
+      public int? nextUniqueIdFor(List<OutputMappingDTO> outputMappings)
+      {
+         if (!outputMappings.Any())
+            return null;
 
-         raiseObservedDataMappedFor(dto.Mapping.WeightedObservedData);
+         var allIds = outputMappings.Select(x => x.WeightedObservedData?.Id).Where(id => id.HasValue).Select(id => id.Value).ToList();
+         if (!allIds.Any())
+            return 1;
+
+         return allIds.Max() + 1;
+      }
+
+      private bool observedDataAlreadySelectedForSameOutput(SimulationQuantitySelectionDTO outputDTO, DataRepository observedData)
+      {
+         return _allOutputMappingDTOs.Count(x => Equals(x.Output, outputDTO) && Equals(x.ObservedData, observedData)) > 1;
       }
 
       public void OutputSelectionChanged(OutputMappingDTO dto, SimulationQuantitySelectionDTO newOutput, SimulationQuantitySelectionDTO oldOutput)
       {
+         if (observedDataAlreadySelectedForSameOutput(newOutput, dto.ObservedData))
+         {
+            dto.Output = oldOutput;
+            View.CloseEditor();
+            throw new CannotSelectTheObservedDataMoreThanOnceException(dto.ObservedData);
+         }
+
          dto.Scaling = _parameterIdentificationTask.DefaultScalingFor(newOutput.Quantity);
       }
 
       public void Select(OutputMappingDTO outputMappingDTO)
       {
          this.DoWithinLatch(() => ObservedDataSelected(this, new ObservedDataEventArgs(outputMappingDTO.WeightedObservedData)));
-      }
-
-      private bool observedDataAlreadySelected(DataRepository observedData)
-      {
-         return _allOutputMappingDTOs.Count(x => Equals(x.ObservedData, observedData)) > 1;
       }
 
       public void RemoveOutputMapping(OutputMappingDTO outputMappingDTO)

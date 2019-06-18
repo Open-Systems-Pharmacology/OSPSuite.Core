@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
    public class SimulationExport
    {
       private int _currentId = 1;
-      public int Version { get; private set; }
+      public int Version { get; }
 
       public SimulationExport()
       {
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
          ObserverList = new List<QuantityExport>();
          EventList = new List<EventExport>();
          FormulaList = new List<FormulaExport>();
-         Version = Constants.SIM_MODEL_VERSION;
+         Version = Constants.SIM_MODEL_XML_VERSION;
       }
 
       /// <summary>

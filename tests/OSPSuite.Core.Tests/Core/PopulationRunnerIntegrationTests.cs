@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using OSPSuite.Engine.Domain;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 

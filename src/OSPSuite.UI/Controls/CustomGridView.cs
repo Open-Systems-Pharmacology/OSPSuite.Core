@@ -16,6 +16,7 @@ using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 
 namespace OSPSuite.UI.Controls
 {
+   //SEE CODE https://github.com/DevExpress-Examples/gridview-descendant-allows-using-repositoryitems-to-display-edit-row-preview-e2002
    public class CustomGridView : UxGridView
    {
       protected RepositoryItem fRowPreviewEdit;
@@ -134,6 +135,9 @@ namespace OSPSuite.UI.Controls
 
    public class CustomGridViewInfo : GridViewInfo
    {
+      internal const int PreviewTextIndentNotScaled = 2;
+      internal const int PreviewTextVIndentNotScaled = 1;
+
       private BaseEditViewInfo fRowPreviewViewInfo;
 
       public CustomGridViewInfo(GridView gridView)
@@ -171,6 +175,15 @@ namespace OSPSuite.UI.Controls
          return info;
       }
 
+      public int GetPreviewTextIndent()
+      {
+         return ScaleHorizontal(PreviewTextIndentNotScaled);
+      }
+      public int GetPreviewTextVIndent()
+      {
+         return ScaleVertical(PreviewTextVIndentNotScaled);
+      }
+
       public virtual BaseEditViewInfo GetRowPreviewViewInfo(GridViewDrawArgs e, GridDataRowInfo ri)
       {
          fRowPreviewViewInfo.Bounds = GetRowPreviewEditBounds(ri);
@@ -179,11 +192,10 @@ namespace OSPSuite.UI.Controls
          fRowPreviewViewInfo.CalcViewInfo(e.Graphics);
          return fRowPreviewViewInfo;
       }
-
       public virtual Rectangle GetRowPreviewEditBounds(GridDataRowInfo ri)
       {
          Rectangle r = new Rectangle(new Point(0, 0), ri.PreviewBounds.Size);
-         r.Inflate(-GridRowPreviewPainter.PreviewTextIndent, -GridRowPreviewPainter.PreviewTextVIndent);
+         r.Inflate(-GetPreviewTextIndent(), -GetPreviewTextVIndent());
          r.X += ri.PreviewIndent;
          r.Width -= ri.PreviewIndent;
          return r;

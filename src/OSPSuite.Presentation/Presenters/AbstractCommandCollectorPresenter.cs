@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Utility.Events;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -28,6 +29,8 @@ namespace OSPSuite.Presentation.Presenters
          base.ReleaseFrom(eventPublisher);
          CommandCollector = null;
       }
+
+      public virtual void AddCommand(Func<ICommand> commandFunc) => AddCommand(commandFunc());
 
       public virtual void AddCommand(ICommand command)
       {

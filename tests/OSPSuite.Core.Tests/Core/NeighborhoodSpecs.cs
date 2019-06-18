@@ -139,21 +139,21 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_true_if_the_first_neighbor_satisfies_the_first_criteria_and_the_second_neighboor_the_second_criteria()
       {
-         sut.StrictlyStatifies(_criteriaForFirstNeighbor, _criteriaForSecondNeighbor).ShouldBeTrue();
+         sut.StrictlySatisfies(_criteriaForFirstNeighbor, _criteriaForSecondNeighbor).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_false_if_the_first_neighbor_satisfies_the_second_criteria_and_the_second_neighbor_satisfies_the_first_criteria()
       {
-         sut.StrictlyStatifies(_criteriaForSecondNeighbor, _criteriaForFirstNeighbor).ShouldBeFalse();
+         sut.StrictlySatisfies(_criteriaForSecondNeighbor, _criteriaForFirstNeighbor).ShouldBeFalse();
 
       }
 
       [Observation]
       public void should_return_false_if_one_neighbor_does_not_match_any_criteria()
       {
-         sut.StrictlyStatifies(_criteriaForFirstNeighbor, _aNonExistingCriteria).ShouldBeFalse();
-         sut.StrictlyStatifies(_aNonExistingCriteria, _criteriaForSecondNeighbor).ShouldBeFalse();
+         sut.StrictlySatisfies(_criteriaForFirstNeighbor, _aNonExistingCriteria).ShouldBeFalse();
+         sut.StrictlySatisfies(_aNonExistingCriteria, _criteriaForSecondNeighbor).ShouldBeFalse();
       }
 
    }

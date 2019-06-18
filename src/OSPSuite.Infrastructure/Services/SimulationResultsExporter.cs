@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OSPSuite.Core.Batch.Mappers;
@@ -8,7 +7,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Services
 {
@@ -27,8 +25,12 @@ namespace OSPSuite.Infrastructure.Services
 
       public Task ExportToCsvAsync(ISimulation simulation, DataRepository results, string fileName)
       {
-         var dataTable = _dataRepositoryTask.ToDataTable(results, x => _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, x), x => x.Dimension, useDisplayUnit: false).First();
-         return Task.Run(() => dataTable.ExportToCSV(fileName));
+         var options = new DataColumnExportOptions
+         {
+            ColumnNameRetriever = x => _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, x),
+            UseDisplayUnit = false
+         };
+         return _dataRepositoryTask.ExportToCsvAsync(results, fileName, options);
       }
 
       public Task ExportToJsonAsync(ISimulation simulation, DataRepository results, string fileName)

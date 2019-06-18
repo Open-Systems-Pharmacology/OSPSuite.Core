@@ -214,7 +214,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_rebind_to_the_parameter_identification()
       {
-         A.CallTo(() => _view.AddNode(A<ITreeNode>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.AddNode(A<ITreeNode>._)).MustHaveHappenedTwiceExactly();
       }
    }
 

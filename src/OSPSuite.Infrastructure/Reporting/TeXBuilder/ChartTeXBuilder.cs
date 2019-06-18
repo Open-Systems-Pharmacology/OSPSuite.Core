@@ -114,7 +114,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
       private void addOrdinateToLegendEntry(IEnumerable<Plot> plots, AxisTypes ordinate)
       {
          foreach (var plot in plots) 
-            plot.LegendEntry = string.Format("({0}) {1}", ordinate, plot.LegendEntry);
+            plot.LegendEntry = $"({ordinate}) {plot.LegendEntry}";
       } 
 
       private ChartTypes checkChartType(CurveChart chart, out AxisTypes firstOrdinate, out AxisTypes secondOrdinate, out AxisTypes thirdOrdinate)
@@ -218,11 +218,8 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
       private string getAxisLabel(Axis axis)
       {
          var axisLabel = string.IsNullOrEmpty(axis.Caption)
-                   ? string.Format("{0}{1}", axis.Dimension,
-                                   string.IsNullOrEmpty(axis.UnitName)
-                                      ? string.Empty
-                                      : string.Format(" [{0}]", axis.UnitName))
-                   : axis.Caption;
+                   ? $"{axis.Dimension}{(string.IsNullOrEmpty(axis.UnitName) ? string.Empty : $" [{axis.UnitName}]")}"
+            : axis.Caption;
          if (axis.NumberMode == NumberModes.Relative)
             axisLabel += " in percentage";
          return axisLabel;

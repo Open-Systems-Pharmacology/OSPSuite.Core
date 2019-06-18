@@ -4,7 +4,6 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Starter.Views;
-using OSPSuite.TeXReporting.Events;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Starter.Presenters
@@ -20,9 +19,9 @@ namespace OSPSuite.Starter.Presenters
       private readonly IWatermarkStatusChecker _watermarkStatusChecker;
       private readonly IApplicationSettings _applicationSettings;
 
-      public ShellPresenter(IShellView view, IEventPublisher eventPublisher, ITabbedMdiChildViewContextMenuFactory contextMenuFactory, 
-         IMenuAndToolBarPresenter menuAndToolBarPresenter, 
-         IWatermarkStatusChecker watermarkStatusChecker, IApplicationSettings applicationSettings) : base(view,eventPublisher, contextMenuFactory)
+      public ShellPresenter(IShellView view, IEventPublisher eventPublisher, ITabbedMdiChildViewContextMenuFactory contextMenuFactory,
+         IMenuAndToolBarPresenter menuAndToolBarPresenter,
+         IWatermarkStatusChecker watermarkStatusChecker, IApplicationSettings applicationSettings) : base(view, eventPublisher, contextMenuFactory)
       {
          _menuAndToolBarPresenter = menuAndToolBarPresenter;
          _watermarkStatusChecker = watermarkStatusChecker;
@@ -43,22 +42,10 @@ namespace OSPSuite.Starter.Presenters
 
       public override void RemoveAlert()
       {
-         
       }
 
       public override void OpenFile(string fileName)
       {
-         
-      }
-
-      public override void Handle(ReportCreationStartedEvent eventToHandle)
-      {
-         
-      }
-
-      public override void Handle(ReportCreationFinishedEvent eventToHandle)
-      {
-         
       }
    }
 }

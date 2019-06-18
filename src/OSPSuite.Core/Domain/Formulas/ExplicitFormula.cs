@@ -35,11 +35,13 @@ namespace OSPSuite.Core.Domain.Formulas
          return formulaParser.Compute(variableValues, parameterValues);
       }
 
-      private ExplicitFormulaParser createFormulaParser(IEnumerable<IObjectReference> references)
+      private IExplicitFormulaParser createFormulaParser(IEnumerable<IObjectReference> references)
       {
          IEnumerable<string> parameterNames = new Collection<string>();
          var variableNames = references.Select(x => x.Alias);
-         return new ExplicitFormulaParser(variableNames, parameterNames) {FormulaString = FormulaString};
+         var formulaParser = ExplicitFormulaParserCreator(variableNames, parameterNames);
+         formulaParser.FormulaString = FormulaString;
+         return formulaParser;
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

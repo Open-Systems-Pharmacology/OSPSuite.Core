@@ -19,7 +19,7 @@
 
       public SolverSettings CreateCVODE()
       {
-         return Create(Constants.CVODES_282);
+         return Create(Constants.CVODES);
       }
 
       public SolverSettings Create(string solverName)

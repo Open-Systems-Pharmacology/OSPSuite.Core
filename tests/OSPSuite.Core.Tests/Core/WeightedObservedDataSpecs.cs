@@ -14,7 +14,7 @@ namespace OSPSuite.Core
 
       protected override void Context()
       {
-         _observedData = DomainHelperForSpecs.ObservedData();   
+         _observedData = DomainHelperForSpecs.ObservedData();
          sut = new WeightedObservedData(_observedData);
       }
    }
@@ -28,4 +28,20 @@ namespace OSPSuite.Core
          sut.Weights.Distinct().ShouldOnlyContain(Constants.DEFAULT_WEIGHT);
       }
    }
-}	
+
+   public class When_returning_the_display_name_of_a_weighted_observed_data : concern_for_WeightedObservedData
+   {
+      [Observation]
+      public void should_return_the_name_if_the_observed_data_if_the_id_is_not_set()
+      {
+         sut.DisplayName.ShouldBeEqualTo(_observedData.Name);
+      }
+
+      [Observation]
+      public void should_return_the_name_with_id_if_the_id_is_set()
+      {
+         sut.Id = 5;
+         sut.DisplayName.ShouldBeEqualTo($"{_observedData.Name} - {sut.Id}");
+      }
+   }
+}

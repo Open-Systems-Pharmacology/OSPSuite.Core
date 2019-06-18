@@ -209,7 +209,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_initialize_a_new_instance_per_simulation_of_a_sim_model_batch()
       {
-         A.CallTo(() => _simModelBatchFactory.Create()).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _simModelBatchFactory.Create()).MustHaveHappenedTwiceExactly();
       }
    }
 

@@ -273,6 +273,23 @@ namespace OSPSuite.Helpers
          fractionObserver.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
          observers.Add(fractionObserver);
 
+
+         var observedInOrganismLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
+         observedInOrganismLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismLungPlasma.MoleculeList.ForAll = false;
+         observedInOrganismLungPlasma.AddMoleculeName("C");
+         observedInOrganismLungPlasma.Formula = InContainerObs(observers.FormulaCache);
+         observedInOrganismLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.InContainer(ConstantsForSpecs.Lung));
+         observers.Add(observedInOrganismLungPlasma);
+
+         var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("NotInContainerObserver");
+         observedInOrganismNotLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismNotLungPlasma.MoleculeList.ForAll = false;
+         observedInOrganismNotLungPlasma.AddMoleculeName("C");
+         observedInOrganismNotLungPlasma.Formula = InContainerObs(observers.FormulaCache);
+         observedInOrganismNotLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.NotInContainer(ConstantsForSpecs.Lung));
+         observers.Add(observedInOrganismNotLungPlasma);
+
          return observers;
       }
 
@@ -1055,6 +1072,22 @@ namespace OSPSuite.Helpers
          formulaCache.Add(formula);
          return formula;
       }
+
+
+      private IFormula InContainerObs(IFormulaCache formulaCache)
+      {
+         var formula = formulaCache.FirstOrDefault(x => string.Equals(x.Name, "InContainerObs"));
+         if (formula != null)
+            return formula;
+
+         formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("InContainerObs");
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+
+         formulaCache.Add(formula);
+         return formula;
+      }
    }
 
    internal class EntityPathResolverForSpecs : EntityPathResolver
@@ -1081,7 +1114,7 @@ namespace OSPSuite.Helpers
          _dimensionFactory = dimensionFactory;
       }
 
-      public T Create<T>() where T : IObjectBase
+      public T Create<T>() where T : class, IObjectBase
       {
          throw new NotSupportedException();
       }
@@ -1126,7 +1159,7 @@ namespace OSPSuite.Helpers
          return default(T);
       }
 
-      public T Create<T>(string id) where T : IObjectBase
+      public T Create<T>(string id) where T : class, IObjectBase
       {
          throw new NotSupportedException();
       }

@@ -5,44 +5,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
-using FakeItEasy;
-using SimModelNET;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Serialization.SimModel.Services;
-using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
+using SimModelNET;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_SimModelManager : ContextForIntegration<ISimModelManager>
    {
-      private ISimModelExporter _simModelExporter;
-      private IDimensionFactory _dimensionFactory;
       private IWithIdRepository _withIdRepository;
-      private IDataNamingService _namingFactory;
       protected IModelCoreSimulation _simulation;
-      private IObjectPathFactory _objectPathFactory;
-      private IDisplayUnitRetriever _displayUnitRetriever;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _simModelExporter = IoC.Resolve<ISimModelExporter>();
          _withIdRepository = IoC.Resolve<IWithIdRepository>();
-         _namingFactory = A.Fake<IDataNamingService>();
-         _dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
-         _displayUnitRetriever = IoC.Resolve<IDisplayUnitRetriever>();
-         
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
          var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.SimModel.xsd");
          XMLSchemaCache.InitializeFromFile(schemaPath);
-         sut = new SimModelManager(_simModelExporter, new SimModelSimulationFactory(), new DataFactory(_dimensionFactory, _namingFactory, _objectPathFactory,_displayUnitRetriever));
+         sut = IoC.Resolve<ISimModelManager>();
       }
    }
 
@@ -104,7 +89,7 @@ namespace OSPSuite.Core
       {
          foreach (var dataColumn in _results.AllButBaseGrid())
          {
-           dataColumn.DataInfo.ComparisonThreshold.ShouldNotBeNull();
+            dataColumn.DataInfo.ComparisonThreshold.ShouldNotBeNull();
          }
       }
 

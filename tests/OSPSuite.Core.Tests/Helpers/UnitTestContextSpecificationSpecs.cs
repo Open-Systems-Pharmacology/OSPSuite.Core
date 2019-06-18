@@ -14,8 +14,10 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Engine;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
+using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Compression;
@@ -43,6 +45,8 @@ namespace OSPSuite.Helpers
          container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
+         container.Register<IDataRepositoryTask, DataRepositoryTask>();
+         container.Register<IDataNamingService, DataNamingServiceForSpecs>();
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
@@ -51,13 +55,12 @@ namespace OSPSuite.Helpers
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
 
          var stringCompression = A.Fake<IStringCompression>();
-         A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
-         A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x=>x.GetArgument<string>(0));
+         A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
+         A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
          container.RegisterImplementationOf(stringCompression);
 
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
          container.RegisterImplementationOf(A.Fake<IDisplayUnitRetriever>());
-         container.RegisterImplementationOf(A.Fake<IDataRepositoryTask>());
          container.RegisterImplementationOf(A.Fake<IOSPSuiteExecutionContext>());
          container.RegisterImplementationOf(A.Fake<IProjectRetriever>());
          container.RegisterImplementationOf(A.Fake<IApplicationDiscriminator>());
@@ -79,6 +82,7 @@ namespace OSPSuite.Helpers
          using (container.OptimizeDependencyResolution())
          {
             container.AddRegister(x => x.FromType<CoreRegister>());
+            container.AddRegister(x => x.FromType<EngineRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
             var register = new CoreSerializerRegister();
             container.AddRegister(x => x.FromInstance(register));

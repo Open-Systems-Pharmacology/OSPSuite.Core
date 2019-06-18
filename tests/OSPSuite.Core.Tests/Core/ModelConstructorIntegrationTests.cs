@@ -216,8 +216,36 @@ namespace OSPSuite.Core
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
       }
 
+
       [Observation]
-      public void boulus_application_should_only_take_place_in_aterial_blood_plasma()
+      public void Observer_InContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_lung_plasma()
+      {
+         string observerName = "InContainerObserver";
+
+         var lung_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma);
+         var moleculeContainer = lung_plasma.GetSingleChildByName<IContainer>("C");
+         moleculeContainer.ContainsName(observerName).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void Observer_NotInContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_all_plasma_except_lung()
+      {
+         string observerName = "NotInContainerObserver";
+
+         var lung_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma);
+         var moleculeContainer = lung_plasma.GetSingleChildByName<IContainer>("C");
+         moleculeContainer.ContainsName(observerName).ShouldBeFalse();
+
+
+         var bone_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma);
+         moleculeContainer = bone_plasma.GetSingleChildByName<IContainer>("C");
+         moleculeContainer.ContainsName(observerName).ShouldBeTrue();
+
+      }
+
+
+      [Observation]
+      public void bolus_application_should_only_take_place_in_arterial_blood_plasma()
       {
          var bolusApplication = _model.ModelOrganCompartment(ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma);
          var allContainingBolusApplication = _model.Root.GetAllChildren<IContainer>().Where(c => c.ContainsName("Bolus Application"));
@@ -225,7 +253,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void distirbuted_parameter_should_not_be_fixed()
+      public void distributed_parameter_should_not_be_fixed()
       {
          var distributedParameter =
             _model.Root.GetAllChildren<IDistributedParameter>(child => child.Name.Equals("Distributed")).Single();

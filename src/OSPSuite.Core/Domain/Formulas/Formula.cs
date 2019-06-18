@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using OSPSuite.Core.Domain.Services;
@@ -71,7 +72,6 @@ namespace OSPSuite.Core.Domain.Formulas
       private readonly List<IObjectReference> _objectReferences = new List<IObjectReference>();
       private List<IFormulaUsablePath> _objectPaths = new List<IFormulaUsablePath>();
       public virtual IDimension Dimension { get; set; } = Constants.Dimension.NO_DIMENSION;
-
 
       public virtual IReadOnlyList<IObjectReference> ObjectReferences => _objectReferences;
 
@@ -170,7 +170,7 @@ namespace OSPSuite.Core.Domain.Formulas
             var usedObjects = GetUsedObjectsFrom(refObject);
             return CalculateFor(usedObjects, refObject);
          }
-         catch (FuncParserException ex)
+         catch (OSPSuiteException ex)
          {
             var errorMessage = ex.Message;
             if (refObject != null)
@@ -204,7 +204,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject)
       {
-         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias,alias)).Object;
+         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias, alias)).Object;
       }
    }
 
@@ -228,25 +228,45 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <param name="formulaString">
       ///    Formula string to validate for the current <see cref="Formula" /> object
       /// </param>
-      /// <exception cref="FuncParserException">
+      /// <exception cref="OSPSuiteException">
       ///    is thrown if the given <paramref name="formulaString" /> given cannot be successfully parsed
       /// </exception>
       public virtual void Validate(string formulaString)
       {
-         var formulaParser = new ExplicitFormulaParser(ObjectPaths.Select(path => path.Alias), new string[0])
-         {
-            FormulaString = formulaString ?? string.Empty
-         };
+         var formulaParser = ExplicitFormulaParserCreator(UsedVariableNames, new string[0]);
+         formulaParser.FormulaString = formulaString ?? string.Empty;
          formulaParser.Parse();
       }
 
       /// <summary>
-      ///    Validates the current formulat string. Throws an
+      ///    Validates the current formula string. Throws an
       /// </summary>
-      /// <exception cref="FuncParserException"> is thrown if the current FormulaString cannot be successfully parsed </exception>
+      /// <exception cref="OSPSuiteException"> is thrown if the current FormulaString cannot be successfully parsed </exception>
       public virtual void Validate()
       {
          Validate(FormulaString);
       }
+
+      public virtual (bool valid, string validationMessage) IsValid()
+      {
+         return IsValid(FormulaString);
+      }
+
+      public virtual (bool valid, string validationMessage) IsValid(string formulaString)
+      {
+         try
+         {
+            Validate(formulaString);
+            return (true, string.Empty);
+         }
+         catch (OSPSuiteException e)
+         {
+            return (false, e.Message);
+         }
+      }
+
+      protected virtual IEnumerable<string> UsedVariableNames => ObjectPaths.Select(path => path.Alias);
+
+      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (variableNames, parameterNames) => new NullExplicitFormulaParser();
    }
 }

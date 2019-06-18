@@ -1,10 +1,8 @@
 ﻿using System.Linq;
+using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using FakeItEasy;
-using NHibernate.Util;
-using NUnit.Framework;
-using OSPSuite.Assets;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -145,6 +143,25 @@ namespace OSPSuite.Presentation
       }
    }
 
+   public class When_mapping_a_property_diff_item_for_a_calculation_method_to_a_diff_item_dto : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _diffItem = new PropertyValueDiffItem
+         {
+            Object1 = new CalculationMethod {Category = "Cat", Name = "PKSim"},
+            Object2 = new CalculationMethod {Category = "Cat", Name = "RR"},
+            CommonAncestor = _container,
+         };
+      }
+
+      [Observation]
+      public void should_use_the_name_of_the_category()
+      {
+         _dto.ObjectName.ShouldBeEqualTo("Cat");
+      }
+   }
 
    public class When_mapping_a_property_diff_item_for_an_object_path_to_a_diff_item_dto : concern_for_DiffItemToDiffItemDTOMapper
    {
@@ -194,7 +211,6 @@ namespace OSPSuite.Presentation
          _dto.ItemIsMissing.ShouldBeTrue();
       }
    }
-
 
    public class When_mapping_a_missing_left_item_to_a_diff_item_dto_with_present_object_details : concern_for_DiffItemToDiffItemDTOMapper
    {

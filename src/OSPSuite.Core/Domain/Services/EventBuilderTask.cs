@@ -7,6 +7,7 @@ using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -28,18 +29,24 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
+      private readonly IContainerTask _containerTask;
       private IModel _model;
-      private IList<IContainer> _allModelContainers;
+      private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
       private IBuildConfiguration _buildConfiguration;
       private IList<IEventGroup> _eventGroupsWhichAreNotApplications;
 
-      public EventBuilderTask(IKeywordReplacerTask keywordReplacerTask, ITransportBuilderToTransportMapper transportMapper, IEventGroupBuilderToEventGroupMapper eventGroupMapper)
+      public EventBuilderTask(
+         IKeywordReplacerTask keywordReplacerTask, 
+         ITransportBuilderToTransportMapper transportMapper, 
+         IEventGroupBuilderToEventGroupMapper eventGroupMapper,
+         IContainerTask containerTask)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _transportMapper = transportMapper;
          _eventGroupMapper = eventGroupMapper;
+         _containerTask = containerTask;
       }
 
       public void CreateEvents(IBuildConfiguration buildConfiguration, IModel model)
@@ -48,7 +55,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             _model = model;
             _buildConfiguration = buildConfiguration;
-            _allModelContainers = model.Root.GetAllContainersAndSelf<IContainer>().ToList();
+            _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
@@ -61,12 +68,12 @@ namespace OSPSuite.Core.Domain.Services
                if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                   continue;
 
-               _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainers.Where(eventGroupBuilder.SourceCriteria.IsSatisfiedBy));
+               _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
             }
 
-            foreach (var eventGroupBilder in _buildConfiguration.EventGroups)
+            foreach (var eventGroupBuilder in _buildConfiguration.EventGroups)
             {
-               createEventGroupFrom(eventGroupBilder, buildConfiguration.Molecules);
+               createEventGroupFrom(eventGroupBuilder, buildConfiguration.Molecules);
             }
 
             //---- Replace the keyword MOLECULE in the event groups which are not applications with
@@ -86,7 +93,7 @@ namespace OSPSuite.Core.Domain.Services
          finally
          {
             _model = null;
-            _allModelContainers = null;
+            _allModelContainerDescriptors = null;
             _sourceCriteriaTargetContainerCache.Clear();
             _sourceCriteriaTargetContainerCache = null;
             _applicationTransportTargetContainerCache.Clear();
@@ -134,18 +141,18 @@ namespace OSPSuite.Core.Domain.Services
 
       private void addApplicationTransports(IApplicationBuilder applicationBuilder, IEventGroup eventGroup)
       {
-         var allEventGroupParentChildContainers = eventGroup.GetAllContainersAndSelf<IContainer>().ToList();
+         var allEventGroupParentChildContainers = eventGroup.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
          foreach (var appTransport in applicationBuilder.Transports)
          {
             var transportBuilder = appTransport;
             if (!_applicationTransportTargetContainerCache.Contains(transportBuilder.TargetCriteria))
-               _applicationTransportTargetContainerCache.Add(appTransport.TargetCriteria, _allModelContainers.Where(c => transportBuilder.TargetCriteria.IsSatisfiedBy(c)).ToList());
+               _applicationTransportTargetContainerCache.Add(appTransport.TargetCriteria, _allModelContainerDescriptors.AllSatisfiedBy(transportBuilder.TargetCriteria));
 
             addApplicationTransportToModel(transportBuilder, allEventGroupParentChildContainers, applicationBuilder.MoleculeName);
          }
       }
 
-      private void addApplicationTransportToModel(ITransportBuilder appTransport, IEnumerable<IContainer> allEventGroupParentChildContainers, string moleculeName)
+      private void addApplicationTransportToModel(ITransportBuilder appTransport, EntityDescriptorMapList<IContainer> allEventGroupParentChildContainers, string moleculeName)
       {
          var appTransportSourceContainers = sourceContainersFor(appTransport, allEventGroupParentChildContainers);
          var appTransportTargetContainers = _applicationTransportTargetContainerCache[appTransport.TargetCriteria].ToList();
@@ -169,8 +176,8 @@ namespace OSPSuite.Core.Domain.Services
 
                _keywordReplacerTask.ReplaceIn(transport, _model.Root, moleculeName);
 
-               //At the moment, no neighborhoods between application subcontainers and
-               //spatial structure subcontainers are defined. Application transports are
+               //At the moment, no neighborhoods between application sub-containers and
+               //spatial structure sub-containers are defined. Application transports are
                //added as direct children of the source molecule amount
                if (!sourceAmount.ContainsName(transport.Name))
                   sourceAmount.Add(transport);
@@ -180,9 +187,9 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<IContainer> sourceContainersFor(ITransportBuilder transport, IEnumerable<IContainer> allEventGroupParentChildContainers)
+      private IEnumerable<IContainer> sourceContainersFor(ITransportBuilder transport, EntityDescriptorMapList<IContainer> allEventGroupParentChildContainers)
       {
-         return allEventGroupParentChildContainers.Where(c => transport.SourceCriteria.IsSatisfiedBy(c));
+         return allEventGroupParentChildContainers.AllSatisfiedBy(transport.SourceCriteria);
       }
    }
 }

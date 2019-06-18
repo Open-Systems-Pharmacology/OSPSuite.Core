@@ -261,10 +261,9 @@ namespace OSPSuite.Core.Chart
          removeCurves(curve => curve.xData == dataColumn || curve.yData == dataColumn);
       }
 
-      public void RemoveCurvesForDataRepository(DataRepository dataRepository)
-      {
-         removeCurves(curve => dataRepository.Contains(curve.xData.Id) || dataRepository.Contains(curve.yData.Id));
-      }
+      public void RemoveCurvesForColumns(IEnumerable<DataColumn> dataColumns) => dataColumns.Each(RemoveCurvesForColumn);
+
+      public void RemoveCurvesForDataRepository(DataRepository dataRepository) => RemoveCurvesForColumns(dataRepository);
 
       private void removeCurves(Func<Curve, bool> shouldRemoveCurveFunc)
       {

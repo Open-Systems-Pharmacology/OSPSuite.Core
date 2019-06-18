@@ -1,10 +1,10 @@
-﻿using OSPSuite.Assets;
+﻿using DevExpress.XtraEditors;
+using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Controls
 {
-   public partial class UxHintPanel : DevExpress.XtraEditors.XtraUserControl
+   public partial class UxHintPanel : XtraUserControl
    {
-
       public UxHintPanel()
       {
          InitializeComponent();
@@ -12,17 +12,19 @@ namespace OSPSuite.UI.Controls
 
       public string NoteText
       {
-         get { return panelNote.Text; }
-         set { panelNote.Text = value; }
+         get => panelNote.Text;
+         set => panelNote.Text = value;
       }
 
       public ApplicationIcon Image
       {
-         set
-         {
-            panelNote.ArrowImage = value.ToImage(IconSizes.Size32x32);
-         }
+         set => panelNote.ArrowImage = value.ToImage(IconSizes.Size32x32);
       }
 
+      public int MaxLines
+      {
+         get => panelNote.MaxRows;
+         set => panelNote.MaxRows = value;
+      }
    }
 }

@@ -7,24 +7,24 @@ using OSPSuite.Core.Domain.Services;
 namespace OSPSuite.Core.Domain.Formulas
 {
    /// <summary>
-   ///   Base clas for dynamic formula. It defines a condition that should be met by some IFormulaUsable objects
-   ///   Default value of the formula string is set to the variable used for expansion
+   ///    Base class for dynamic formula. It defines a condition that should be met by some IFormulaUsable objects
+   ///    Default value of the formula string is set to the variable used for expansion
    /// </summary>
    public abstract class DynamicFormula : FormulaWithFormulaString
    {
       /// <summary>
-      ///   Pattern use to recognize a variable in the formula string
+      ///    Pattern use to recognize a variable in the formula string
       /// </summary>
-      protected const string _iterationPattern = "#i";
+      protected const string ITERATION_PATTERN = "#i";
 
       /// <summary>
-      ///   Condition to be fulfilled by any IFormulaUsable that will be used in the formula
+      ///    Condition to be fulfilled by any IFormulaUsable that will be used in the formula
       /// </summary>
       public DescriptorCriteria Criteria { get; set; }
 
       /// <summary>
-      ///   Name of the variable used when expanding the formula. By default, variable is set to P
-      /// </summary> 
+      ///    Name of the variable used when expanding the formula. By default, variable is set to P
+      /// </summary>
       public string Variable { get; set; }
 
       protected DynamicFormula()
@@ -36,27 +36,27 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
-         //this formula cannot be evaluted 
+         //this formula cannot be evaluated 
          return double.NaN;
       }
 
       /// <summary>
-      ///   Operation performed bu the Dynamic Formula (Typically + or *)
+      ///    Operation performed bu the Dynamic Formula (Typically + or *)
       /// </summary>
       protected abstract string Operation { get; }
 
       /// <summary>
-      ///   Returns the pattern representing the variable in the formula string. (e.g P_#i)
+      ///    Returns the pattern representing the variable in the formula string. (e.g P_#i)
       /// </summary>
-      public string VariablePattern => $"{Variable}_{_iterationPattern}";
+      public string VariablePattern => $"{Variable}_{ITERATION_PATTERN}";
 
       /// <summary>
-      ///   Expands the dynamic formula using the list of available object that can be used in the formula
+      ///    Expands the dynamic formula using the list of available object that can be used in the formula
       /// </summary>
-      public IFormula ExpandUsing(IReadOnlyList<IFormulaUsable> allFormulaUsable, IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
+      public IFormula ExpandUsing(EntityDescriptorMapList<IFormulaUsable> allFormulaUsable, IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
       {
          var explicitFormula = objectBaseFactory.Create<ExplicitFormula>().WithName(Name).WithFormulaString("0");
-         var allEntityToUse = allFormulaUsable.Where(Criteria.IsSatisfiedBy).ToList();
+         var allEntityToUse = allFormulaUsable.AllSatisfiedBy(Criteria);
 
          explicitFormula.Dimension = Dimension;
 
@@ -92,14 +92,13 @@ namespace OSPSuite.Core.Domain.Formulas
             if (explicitFormula.ObjectPaths.Contains(objectPath))
                continue;
 
-            if (objectPath.Alias.Contains(_iterationPattern))
+            if (objectPath.Alias.Contains(ITERATION_PATTERN))
             {
-               bool success;
-               var referenceVariable = objectPath.TryResolve<IFormulaUsable>(formulaUsable, out success);
+               var referenceVariable = objectPath.TryResolve<IFormulaUsable>(formulaUsable, out var success);
                if (!success)
                   throw new UnableToResolvePathException(objectPath, formulaUsable);
 
-               var referenceAlias = objectPath.Alias.Replace(_iterationPattern, index1);
+               var referenceAlias = objectPath.Alias.Replace(ITERATION_PATTERN, index1);
                formulaStringPart = formulaStringPart.Replace(objectPath.Alias, referenceAlias);
                explicitFormula.AddObjectPath(objectPathFactory.CreateAbsoluteFormulaUsablePath(referenceVariable).WithAlias(referenceAlias));
             }
@@ -120,5 +119,7 @@ namespace OSPSuite.Core.Domain.Formulas
          Variable = sourceDynamicFormula.Variable;
          FormulaString = sourceDynamicFormula.FormulaString;
       }
+
+      protected override IEnumerable<string> UsedVariableNames => base.UsedVariableNames.Union(new[] {VariablePattern});
    }
 }

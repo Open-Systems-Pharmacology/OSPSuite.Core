@@ -244,7 +244,7 @@ namespace OSPSuite.UI.Views.Journal
          AddViewTo(layoutItemPreview, view);
       }
 
-      public void AddSeachView(IView view)
+      public void AddSearchView(IView view)
       {
          AddViewTo(layoutitemSearch, view);
       }

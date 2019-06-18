@@ -185,6 +185,9 @@ namespace OSPSuite.Assets
       public static readonly string ValueOriginSource = "Source";
       public static readonly string ValueOriginDeterminationMethod = "Method";
       public static readonly string ValueOrigin = "Value Origin";
+      public static readonly string CalculationMethod = "Calculation Method";
+      public static readonly string MoleculeObserver = "Molecule Observer";
+      public static readonly string ContainerObserver = "Container Observer";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -356,7 +359,7 @@ namespace OSPSuite.Assets
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
-            public static readonly string RnageSelect = "Override the default range by selecting a new range and pressing OK.\nTo revert to the default range click OK without a new range selected.";
+            public static readonly string RangeSelect = "Override the default range by selecting a new range and pressing OK.\nTo revert to the default range click OK without a new range selected.";
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
@@ -1108,8 +1111,8 @@ namespace OSPSuite.Assets
       public static readonly string JournalNotOpen = "Journal is not open";
       public static readonly string NoPagesToExport = "There are no pages to export";
       public static readonly string TemplateShouldContainAtLeastOneCurve = "Template should contain at least one curve.";
-      public static readonly string SessionFactoryNotInitalized = "Session factory is not initalized";
-      public static readonly string SessionNotInitalized = "Session not initialized";
+      public static readonly string SessionFactoryNotInitialized = "Session factory is not initialized";
+      public static readonly string SessionNotInitialized = "Session not initialized";
       public static readonly string SessionDisposed = "Session was disposed";
       public static readonly string OutputMappingHasInconsistentDimension = "Output mapping has inconsistent dimension";
       public static readonly string WeightValueCannotBeNegative = "Weights cannot be negative";
@@ -1183,10 +1186,9 @@ namespace OSPSuite.Assets
       public static readonly string CovarianceMatrixCannotBeCalculated = "Covariance matrix cannot be calculated";
       public static readonly string CorrelationMatrixCannotBeCalculated = "Correlation matrix cannot be calculated";
 
-      public static string CannotSelectTheSamePartialProcessMoreThanOnce(string name)
-      {
-         return $"'{name}' cannot be selected more than once.";
-      }
+      public static string CannotSelectTheSamePartialProcessMoreThanOnce(string name) => $"'{name}' cannot be selected more than once.";
+
+      public static string CannotSelectTheObservedDataMoreThanOnce(string name) => $"'{name}' cannot be selected more than once for the same output.";
 
       public static string DimensionMismatchError(IEnumerable<string> dimensionNames)
       {
@@ -1238,15 +1240,9 @@ namespace OSPSuite.Assets
 
       public const string OnlyLocalParametersInPassiveTransports = "Passive transport {0} contains parameters with BuildMode != LOCAL";
 
-      public static string BothNeighborsSatisfying(string neighborhood)
-      {
-         return $"Both neighbors of {neighborhood} satisfy the criteria";
-      }
+      public static string BothNeighborsSatisfying(string neighborhood) => $"Both neighbors of {neighborhood} satisfy the criteria";
 
-      public static string BothNeighborsSatisfyingForTransport(string message, string transporter)
-      {
-         return $"{message} for transport {transporter}";
-      }
+      public static string BothNeighborsSatisfyingForTransport(string message, string transporter) => $"{message} for transport {transporter}";
 
       public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
       public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
@@ -1271,10 +1267,10 @@ namespace OSPSuite.Assets
 
       public static string UndefinedFormulaInHelpParameter(string parameterName, string calculationMethod, string category)
       {
-         return $"Cannot add help parmaeter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
+         return $"Cannot add help parameter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
       }
 
-      public static string TwoDiffentFormulaForSameParameter(string parameter, string parameterPath)
+      public static string TwoDifferentFormulaForSameParameter(string parameter, string parameterPath)
       {
          return $"Formula in parameter '{parameter}' with path '{parameterPath}' was described inconsistently by more than one calculation.";
       }
@@ -1362,7 +1358,17 @@ namespace OSPSuite.Assets
          return $"Cannot import data from {sheetName} worksheet.{Environment.NewLine}The first data row index is greater than the last data row index";
       }
 
+      public static string ExportToCsvNotSupportedForDifferentBaseGrid = "Export to CSV is only supported for data columns sharing the same base grid.";
+
       public const string MESSAGE_ERROR_NAN = "Error information has been truncated because invalid values have been replaced by NaN.\n\n An arithmetic error must be at least 0.\n A geometric error must be at least 1.\n";
+
+      public const string QualificationOutputFolderNotDefined = "Qualification output folder not defined.";
+
+      public const string QualificationObservedDataFolderNotDefined = "Qualification observed data folder not defined.";
+
+      public const string QualificationMappingFileNotDefined = "Qualification mapping file not defined.";
+
+      public const string QualificationReportConfigurationFileNotDefined = "Qualification report configuration file not defined.";
 
 
       public static class SensitivityAnalysis
@@ -1540,25 +1546,27 @@ namespace OSPSuite.Assets
          public static readonly string ValueShouldBeBetweenMinAndMax = "Value should be greater than minimum value and smaller than maximum value.";
          public static readonly string MinShouldBeStrictlyGreaterThanZeroForLogScale = "Minimum value should be greater than zero or the scaling should be set to linear.";
 
-         public static string MinimumMustBeGreaterThanOrEqualTo(double minValue, string fullQuantityPath)
+         public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than or equal to {minValue} for parameter '{fullQuantityPath}";
+            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue,displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MinimumMustBeGreaterThan(double minValue, string fullQuantityPath)
+         public static string MinimumMustBeGreaterThan(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than {minValue} for parameter '{fullQuantityPath}'";
+            return $"The minimum value must be greater than {valueWithUnit(minDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MaximumMustBeLessThanOrEqualTo(double maxValue, string fullQuantityPath)
+         public static string MaximumMustBeLessThanOrEqualTo(string maxDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The maximum value must be less than or equal to {maxValue} for parameter '{fullQuantityPath}";
+            return $"The maximum value must be less than or equal to {valueWithUnit(maxDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
-         public static string MaximumMustBeLessThan(double maxValue, string fullQuantityPath)
+         public static string MaximumMustBeLessThan(string maxDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The maximum value must be less than {maxValue} for parameter '{fullQuantityPath}";
+            return $"The maximum value must be less than {valueWithUnit(maxDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
+
+         private static string valueWithUnit(string value, string unit) => string.IsNullOrEmpty(unit) ? value : $"{value} {unit}";
       }
    }
 
@@ -1571,7 +1579,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string OptimizedValueIsCloseToBoundary = "Identified value is close to boundary";
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
-      public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transfered.\nPlease set the calculation methods manually.";
+      public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
    }
 
@@ -1735,9 +1743,9 @@ namespace OSPSuite.Assets
 
       public static string CreateProjectDescription(string version) => $"Project started with version {version}";
 
-      public static string SetMetaDataAddedCommandDescripton(string name, string value) => $"New Meta Data added where {name} = {value}";
+      public static string SetMetaDataAddedCommandDescription(string name, string value) => $"New Meta Data added where {name} = {value}";
 
-      public static string SetMetaDataRemovedCommandDescripton(string name, string value) => $"Meta Data removed where {name} = {value}";
+      public static string SetMetaDataRemovedCommandDescription(string name, string value) => $"Meta Data removed where {name} = {value}";
 
       public static string SetMetaDataChangedCommandDescription(string oldName, string oldValue, string newName, string newValue)
       {

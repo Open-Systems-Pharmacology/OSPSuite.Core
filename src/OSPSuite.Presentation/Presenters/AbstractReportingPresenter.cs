@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Reporting;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Views;
-using OSPSuite.TeXReporting;
 using OSPSuite.Utility;
 
 namespace OSPSuite.Presentation.Presenters
@@ -27,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    Returns all available fonts
       /// </summary>
-      IEnumerable<ReportSettings.ReportFont> AvailableFonts();
+      IEnumerable<ReportFont> AvailableFonts();
    }
 
    public abstract class AbstractReportingPresenter : AbstractDisposablePresenter<IReportingView, IReportingPresenter>, IReportingPresenter
@@ -68,10 +67,7 @@ namespace OSPSuite.Presentation.Presenters
          startCreationProcess();
       }
 
-      public IEnumerable<ReportSettings.ReportFont> AvailableFonts()
-      {
-         return EnumHelper.AllValuesFor<ReportSettings.ReportFont>();
-      }
+      public IEnumerable<ReportFont> AvailableFonts() => EnumHelper.AllValuesFor<ReportFont>();
 
       private void startCreationProcess()
       {

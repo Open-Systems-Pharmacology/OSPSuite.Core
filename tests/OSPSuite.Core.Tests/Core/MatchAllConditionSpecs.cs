@@ -1,25 +1,27 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_MatchAllCondition : ContextSpecification<MatchAllCondition>
    {
-      protected Tags _tags;
       protected IDescriptorCondition _match;
       protected IDescriptorCondition _doNotMatch;
+      protected EntityDescriptor _entityCriteria;
 
       protected override void Context()
       {
-         _tags = new Tags();
-         _tags.Add(new Tag { Value = "tag1" });
-         _tags.Add(new Tag { Value = "tag2" });
+         var entity = new Parameter();
+         entity.AddTag("tag1");
+         entity.AddTag("tag2");
+
+         _entityCriteria = new EntityDescriptor(entity);
          sut = new MatchAllCondition();
       }
    }
 
-   
    public class When_checking_if_a_match_all_matches_a_given_tag_set : concern_for_MatchAllCondition
    {
       [Observation]
@@ -31,8 +33,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_always_return_true_if_the_tags_contain_the_matching_element()
       {
-         sut.IsSatisfiedBy(_tags).ShouldBeTrue();
+         sut.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
       }
-     
    }
-}	
+}

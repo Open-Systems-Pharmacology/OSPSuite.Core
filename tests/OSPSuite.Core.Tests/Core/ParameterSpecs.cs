@@ -29,10 +29,10 @@ namespace OSPSuite.Core
          sut.IsFixedValue = false;
 
          sut.PropertyChanged += (o, e) =>
-            {
-               if (e.PropertyName.Equals("Value"))
-                  _valueChangedEventRaised = true;
-            };
+         {
+            if (e.PropertyName.Equals("Value"))
+               _valueChangedEventRaised = true;
+         };
       }
 
       protected override void Because()
@@ -62,10 +62,10 @@ namespace OSPSuite.Core
          sut.IsFixedValue = false;
 
          sut.PropertyChanged += (o, e) =>
-            {
-               if (e.PropertyName.Equals("Value"))
-                  _raisedValue = sut.Value;
-            };
+         {
+            if (e.PropertyName.Equals("Value"))
+               _raisedValue = sut.Value;
+         };
       }
 
       protected override void Because()

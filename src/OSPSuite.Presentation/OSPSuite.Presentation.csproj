@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\OSPSuite.Presentation.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,28 +35,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.17.1.5\lib\net45\DevExpress.Data.v17.1.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Data.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Data.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Utils.v17.1, Version=17.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.17.1.5\lib\net45\DevExpress.Utils.v17.1.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DevExpress.Utils.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Utils.v18.2.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Serializer, Version=2.0.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.2.0.1.4\lib\net45\OSPSuite.Serializer.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.1.1.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.1.9\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
+    <Reference Include="OSPSuite.Utility, Version=3.0.1.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.7\lib\net462\OSPSuite.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="OSPSuite.Utility, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.3.0.0.3\lib\net462\OSPSuite.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="SX, Version=2.6.9.0, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.6.9\lib\net45\SX.dll</HintPath>
+    <Reference Include="SX, Version=2.7.0.9, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.7.0.9\lib\net45\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -224,11 +219,13 @@
     <Compile Include="Presenters\Journal\JournalDiagramPresenter.cs" />
     <Compile Include="Presenters\ParameterAnalysablesInExplorerPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\AbstractParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationConfidenceIntervalPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationMatrixPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfilePredictionIntervalChartPresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\ParameterIdentificationTimeProfileVPCIntervalChartPresenter.cs" />
+    <Compile Include="Presenters\ParameterIdentifications\WeightedObservedDataFormatter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\EditSensitivityAnalysisPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\ISensitivityAnalysisItemPresenter.cs" />
     <Compile Include="Presenters\SensitivityAnalyses\SensitivityAnalysisFeedbackEditorSettings.cs" />
@@ -259,7 +256,6 @@
     <Compile Include="Presenters\Nodes\RootNodeTypes.cs" />
     <Compile Include="Presenters\ObservedData\BaseDataRepositoryDataPresenter.cs" />
     <Compile Include="Presenters\ObservedData\DataRepositoryChartPresenter.cs" />
-    <Compile Include="Presenters\ParameterIdentifications\CannotSelectTheObservedDataMoreThanOnceException.cs" />
     <Compile Include="Presenters\ParameterIdentifications\CategorialParameterIdentificationRunModePresenter.cs" />
     <Compile Include="Presenters\CloneObjectBasePresenter.cs" />
     <Compile Include="Presenters\ParameterIdentifications\EditParameterIdentificationPresenter.cs" />
@@ -365,7 +361,7 @@
     <Compile Include="DTO\DxValidatableDTO.cs" />
     <Compile Include="DTO\ImportFileSelectionDTO.cs" />
     <Compile Include="DTO\IParameterDTO.cs" />
-    <Compile Include="DTO\IRenameObjectDTOFactory.cs" />
+    <Compile Include="DTO\RenameObjectDTOFactory.cs" />
     <Compile Include="DTO\IWithDisplayUnitDTO.cs" />
     <Compile Include="DTO\Journal\JournalDTO.cs" />
     <Compile Include="DTO\Journal\JournalPageDTO.cs" />
@@ -708,7 +704,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="OSPSuite.Presentation.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

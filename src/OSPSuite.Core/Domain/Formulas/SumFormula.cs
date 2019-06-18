@@ -5,9 +5,6 @@
    /// </summary>
    public class SumFormula : DynamicFormula
    {
-      protected override string Operation
-      {
-         get { return "+"; }
-      }
+      protected override string Operation => "+";
    }
 }

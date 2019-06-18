@@ -7,7 +7,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public class CannotSelectTheObservedDataMoreThanOnceException : OSPSuiteException
    {
-      public CannotSelectTheObservedDataMoreThanOnceException(DataRepository obsservedData) : base(Error.CannotSelectTheSamePartialProcessMoreThanOnce(obsservedData.Name))
+      public CannotSelectTheObservedDataMoreThanOnceException(DataRepository obsservedData) : base(Error.CannotSelectTheObservedDataMoreThanOnce(obsservedData.Name))
       {
       }
    }

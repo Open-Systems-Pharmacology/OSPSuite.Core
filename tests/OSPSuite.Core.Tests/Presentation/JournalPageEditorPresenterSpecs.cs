@@ -172,13 +172,13 @@ namespace OSPSuite.Presentation
       [Observation]
       public void a_call_to_load_content_must_not_have_happened()
       {
-         A.CallTo(() => _contentLoader.Load(_journalPage)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _contentLoader.Load(_journalPage)).MustHaveHappenedOnceExactly();
       }
 
       [Observation]
       public void the_presenter_should_not_edit_the_item_contained_in_the_event()
       {
-         A.CallTo(() => _view.BindTo(_journalPageDTO)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.BindTo(_journalPageDTO)).MustHaveHappenedOnceExactly();
       }
    }
 

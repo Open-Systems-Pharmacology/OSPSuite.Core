@@ -1,21 +1,20 @@
 ﻿using System.Drawing;
-using OSPSuite.TeXReporting.Events;
-using OSPSuite.Utility.Events;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Events;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.Main
 {
    public abstract class AbstractMainViewPresenter<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IMainViewPresenter
-      where TView : IMainView, IView<TPresenter> 
+      where TView : IMainView, IView<TPresenter>
       where TPresenter : IMainViewPresenter
    {
       protected readonly IEventPublisher _eventPublisher;
       private readonly ITabbedMdiChildViewContextMenuFactory _contextMenuFactory;
 
-      protected AbstractMainViewPresenter(TView view, IEventPublisher eventPublisher,ITabbedMdiChildViewContextMenuFactory contextMenuFactory)
+      protected AbstractMainViewPresenter(TView view, IEventPublisher eventPublisher, ITabbedMdiChildViewContextMenuFactory contextMenuFactory)
          : base(view)
       {
          _eventPublisher = eventPublisher;
@@ -31,8 +30,7 @@ namespace OSPSuite.Presentation.Presenters.Main
 
       public virtual void SaveChanges()
       {
-         if (ActivePresenter == null) return;
-         ActivePresenter.SaveChanges();
+         ActivePresenter?.SaveChanges();
       }
 
       public abstract void Run();
@@ -44,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Main
          get
          {
             var activeView = View.ActiveView;
-            return activeView != null ? activeView.Presenter : null;
+            return activeView?.Presenter;
          }
       }
 
@@ -80,12 +78,9 @@ namespace OSPSuite.Presentation.Presenters.Main
          View.InWaitCursor(true, true);
       }
 
-      public virtual  void Handle(RollBackFinishedEvent eventToHandle)
+      public virtual void Handle(RollBackFinishedEvent eventToHandle)
       {
          View.InWaitCursor(false, true);
       }
-
-      public abstract void Handle(ReportCreationStartedEvent eventToHandle);
-      public abstract void Handle(ReportCreationFinishedEvent eventToHandle);
    }
 }

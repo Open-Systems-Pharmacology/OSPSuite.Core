@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          var presenter = _applicationController.Start<IParameterIdentificationWeightedObservedDataPresenter>();
          _allObservedDataPresenters.Add(weightedObservedData, presenter);
-         presenter.Caption = weightedObservedData.Name;
+         edit(weightedObservedData);
          _view.AddObservedDataView(presenter.View);
          SelectObservedData(weightedObservedData);
       }

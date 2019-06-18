@@ -2,14 +2,10 @@ using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public interface IDescriptorCondition : ISpecification<Tags>
+   public interface IDescriptorCondition : ISpecification<EntityDescriptor>
    {
       IDescriptorCondition CloneCondition();
       void Replace(string keyword, string replacement);
    }
 
-   public interface ITagCondition : IDescriptorCondition
-   {
-      string Tag { get; }
-   }
 }

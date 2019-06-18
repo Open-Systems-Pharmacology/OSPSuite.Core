@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Domain
 
       public TimeParameter()
       {
-         Tags = new Tags {new Tag {Value = Constants.TIME}};
+         Tags = new Tags {new Tag(Constants.TIME)};
          Info = new ParameterInfo();
          Origin = new ParameterOrigin();
          ValueOrigin = new ValueOrigin();

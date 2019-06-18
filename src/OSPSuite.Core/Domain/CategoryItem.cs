@@ -4,14 +4,20 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class CategoryItem : ObjectBase
    {
+      private string _displayName;
       public string Category { get; set; }
-      public string DisplayName { get; set; }
+
+      public string DisplayName
+      {
+         set => _displayName = value;
+         get => _displayName ?? Name;
+      }
 
       public override bool Equals(object obj)
       {
          var categoryItem = obj as CategoryItem;
          return categoryItem != null && string.Equals(categoryItem.Name, Name)
-                && Equals(categoryItem.Category, Category);
+                                     && Equals(categoryItem.Category, Category);
       }
 
       public override int GetHashCode()

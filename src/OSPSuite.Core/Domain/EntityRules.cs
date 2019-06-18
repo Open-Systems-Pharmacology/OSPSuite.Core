@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Validation;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -26,12 +26,12 @@ namespace OSPSuite.Core.Domain
             .WithError((item, file) => Validation.FileDoesNotExist(file));
       }
 
-      public static IBusinessRule NotNull<T, U>(Expression<Func<T, U>> property) where U : class
+      public static IBusinessRule NotNull<T, U>(Expression<Func<T, U>> property, string error = Validation.ValueIsRequired) where U : class
       {
          return CreateRule.For<T>()
             .Property(property)
             .WithRule((o, u) => u != null)
-            .WithError(Validation.ValueIsRequired);
+            .WithError(error);
       }
    }
 
@@ -47,7 +47,6 @@ namespace OSPSuite.Core.Domain
                .WithError(Error.ScaleFactorShouldBeGreaterThanZero);
          }
       }
-   
    }
 
    public static class EntityRules

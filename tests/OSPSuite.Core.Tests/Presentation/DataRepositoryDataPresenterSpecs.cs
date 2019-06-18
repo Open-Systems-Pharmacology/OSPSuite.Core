@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation
          //common setup
          _dataRepository = new DataRepository();
          _dataTable = new DataTable();
-         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, false, true, true)).Returns(new[] {_dataTable});
+         A.CallTo(() => _dataRepositoryTask.ToDataTable(_dataRepository, A<DataColumnExportOptions>._)).Returns(new[] {_dataTable});
 
          var col = _dataTable.AddColumn<float>("test");
          col.ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, "col");
@@ -267,7 +267,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void should_not_rebind_the_data_to_the_view()
       {
-         A.CallTo(() => _view.BindTo(_dataTable)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.BindTo(_dataTable)).MustHaveHappenedOnceExactly();
       }
 
       [Observation]
@@ -288,7 +288,7 @@ namespace OSPSuite.Presentation
       [Observation]
       public void view_must_have_been_bound_to_table()
       {
-         A.CallTo(() => _view.BindTo(A<DataTable>.Ignored)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(A<DataTable>.Ignored)).MustHaveHappenedTwiceExactly();
       }
    }
 
@@ -360,7 +360,7 @@ namespace OSPSuite.Presentation
       public void should_not_rebind_the_values()
       {
          //once for the edit
-         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappenedOnceExactly();
       }
    }
 
@@ -382,7 +382,7 @@ namespace OSPSuite.Presentation
       public void should_rebind_the_values()
       {
          //once for the edit and one for the value changed
-         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappenedTwiceExactly();
       }
    }
 
@@ -404,7 +404,7 @@ namespace OSPSuite.Presentation
       public void should_rebind_the_values_nonetheless()
       {
          //once for the edit
-         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappened(Repeated.Exactly.Twice);
+         A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappenedTwiceExactly();
       }
    }
 

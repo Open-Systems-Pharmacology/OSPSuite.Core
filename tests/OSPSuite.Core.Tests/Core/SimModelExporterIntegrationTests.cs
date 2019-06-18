@@ -13,6 +13,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel;
 using OSPSuite.Core.Serialization.SimModel.Serializer;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using OSPSuite.Engine.Serialization;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
@@ -23,8 +24,7 @@ namespace OSPSuite.Core
       protected SolverSettings _solverSettings;
       protected IXmlValidator _xmlValidator;
       protected IObjectPathFactory _objectPathFactory;
-      private ITableFormulaToTableFormulaExportMapper _tableFormulaToTableFormulaExportMapper;
-      private IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
+      private ISimulationExportCreatorFactory _simulationExporterCreatorFactory;
 
       public override void GlobalContext()
       {
@@ -39,9 +39,8 @@ namespace OSPSuite.Core
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          var solverSettingsFactory = IoC.Resolve<ISolverSettingsFactory>();
          _solverSettings = solverSettingsFactory.CreateCVODE();
-         _tableFormulaToTableFormulaExportMapper = IoC.Resolve<ITableFormulaToTableFormulaExportMapper>();
-         _concentrationBasedFormulaUpdater = IoC.Resolve<IConcentrationBasedFormulaUpdater>();
-         sut = new SimModelExporter(new CreateExportModelVisitor(_objectPathFactory, _tableFormulaToTableFormulaExportMapper,_concentrationBasedFormulaUpdater), new ExportSerializer(_simModelXmlSerializerRepository));
+         _simulationExporterCreatorFactory = IoC.Resolve<ISimulationExportCreatorFactory>();
+         sut = new SimModelExporter(_simulationExporterCreatorFactory, new ExportSerializer(_simModelXmlSerializerRepository));
       }
    }
 

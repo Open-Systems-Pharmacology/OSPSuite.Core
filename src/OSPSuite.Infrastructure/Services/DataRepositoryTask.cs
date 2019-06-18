@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -33,6 +36,13 @@ namespace OSPSuite.Infrastructure.Services
          cloneRepository.ExtendedProperties.UpdateFrom(dataRepositoryToClone.ExtendedProperties);
 
          return cloneRepository;
+      }
+
+      public void UpdateMolWeight(DataColumn column, IQuantity quantity, IModel model)
+      {
+         var molWeight = model.MolWeightFor(quantity);
+         if (molWeight != null)
+            column.DataInfo.MolWeight = molWeight;
       }
 
       private void addBaseGridToRepository(DataRepository dataRepository, DataColumn baseGrid)
@@ -89,38 +99,50 @@ namespace OSPSuite.Infrastructure.Services
          return newColumn;
       }
 
-      private bool isAlreadyCloned(DataColumn column)
+      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
+         ExportToExcel(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
+
+      public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+         ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
+
+      public Task ExportToExcelAsync(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
+         ExportToExcelAsync(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
+
+      public Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+         Task.Run(() => ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel));
+
+      public Task ExportToCsvAsync(IEnumerable<DataColumn> dataColumns, string fileName, DataColumnExportOptions exportOptions = null)
       {
-         return _idMap.Contains(column.Id);
+         return Task.Run(() =>
+         {
+            var dataTables = ToDataTable(dataColumns, exportOptions);
+            if (dataTables.Count == 1)
+               dataTables[0].ExportToCSV(fileName);
+
+            else if (dataTables.Count > 1)
+               throw new ArgumentException(Error.ExportToCsvNotSupportedForDifferentBaseGrid);
+         });
       }
 
-      private string idOfCloneFor(DataColumn column)
-      {
-         return _idMap[column.Id];
-      }
+      private bool isAlreadyCloned(DataColumn column) => _idMap.Contains(column.Id);
 
-      public IEnumerable<DataTable> ToDataTable(IEnumerable<DataColumn> dataColumns, bool formatOutput = false, bool useDisplayUnit = true, bool forceColumnTypeAsObject=false)
-      {
-         return ToDataTable(dataColumns, c => c.Name, c => c.Dimension, formatOutput, useDisplayUnit, forceColumnTypeAsObject);
-      }
+      private string idOfCloneFor(DataColumn column) => _idMap[column.Id];
 
-      public IEnumerable<DataTable> ToDataTable(
-         IEnumerable<DataColumn> dataColumns, 
-         Func<DataColumn, string> columnNameRetriever, 
-         Func<DataColumn, IDimension> dimensionRetrieverFunc, 
-         bool formatOutput = false, 
-         bool useDisplayUnit = true,
-         bool forceColumnTypeToObject = false
-         )
+      public IReadOnlyList<DataTable> ToDataTable(
+         IEnumerable<DataColumn> dataColumns,
+         DataColumnExportOptions exportOptions = null
+      )
       {
+         var options = exportOptions ?? new DataColumnExportOptions();
          var allColumns = allColumnsWithRelatedColumnsFrom(dataColumns);
          var cacheName = retrieveUniqueNamesForTables(allColumns);
-         var valueFormatter = valueFormatterFor(formatOutput);
-         var columnType = forceColumnTypeToObject ? typeof(object) : formatOutput ? typeof(string) : typeof(float);
-
-         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetriever, dimensionRetrieverFunc, useDisplayUnit, columnType, valueFormatter));
+         var valueFormatter = valueFormatterFor(options.FormatOutput);
+         var columnType = options.ForceColumnTypeAsObject ? typeof(object) : options.FormatOutput ? typeof(string) : typeof(float);
+         var columnNameRetrieverFunc = options.ColumnNameRetriever;
+         var dimensionRetrieverFunc = options.DimensionRetriever;
+         var useDisplayUnit = options.UseDisplayUnit;
+         return cacheName.KeyValues.Select(keyValuePair => createTableFor(keyValuePair.Value, keyValuePair.Key, allColumns, columnNameRetrieverFunc, dimensionRetrieverFunc, useDisplayUnit, columnType, valueFormatter)).ToList();
       }
-
 
       private Func<double, object> valueFormatterFor(bool formatOutput)
       {
@@ -155,6 +177,7 @@ namespace OSPSuite.Infrastructure.Services
             {
                currentName = $"{defaultName}_{index++}";
             }
+
             tableNameCache.Add(baseGrid, currentName);
          }
 
@@ -171,39 +194,21 @@ namespace OSPSuite.Infrastructure.Services
          return new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
       }
 
-      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel)
-      {
-         ExportToExcel(dataColumns, fileName, x => x.Name, x => x.Dimension, launchExcel);
-      }
-
-      public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, Func<DataColumn, string> columnNameRetriever, Func<DataColumn, IDimension> dimensionRetriever, bool launchExcel = true)
-      {
-         ExportToExcel(ToDataTable(dataColumns, columnNameRetriever, dimensionRetriever), fileName, launchExcel);
-      }
-
-      public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel)
-      {
-         ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
-      }
-
       private DataTable createTableFor(
-         string tableName, 
-         DataColumn baseGridColumn, 
-         IEnumerable<DataColumn> columnsToExport, 
-         Func<DataColumn, string> columnNameRetriever, 
+         string tableName,
+         DataColumn baseGridColumn,
+         IEnumerable<DataColumn> columnsToExport,
+         Func<DataColumn, string> columnNameRetriever,
          Func<DataColumn, IDimension> dimensionRetriever,
          bool useDisplayUnit,
-         Type columnType, 
+         Type columnType,
          Func<double, object> valueFunc)
       {
          var dataTable = new DataTable(tableName);
 
-         //user string because we want to export the unit
-         var allColumns = columnsToExport.Where(col => !col.IsBaseGrid())
-            .Where(x => x.BaseGrid == baseGridColumn).ToList();
+         var allColumns = sortColumnsForExport(columnsToExport.Where(x => !x.IsBaseGrid() && x.BaseGrid == baseGridColumn));
 
-         moveDrugColumnsFirst(allColumns);
-
+       
          allColumns.Insert(0, baseGridColumn);
          var cacheName = retrieveUniqueNameForColumns(allColumns, columnNameRetriever);
          var cacheDimensions = retrieveDimensionsFor(allColumns, dimensionRetriever);
@@ -237,26 +242,39 @@ namespace OSPSuite.Infrastructure.Services
                var value = dimension.BaseUnitValueToUnitValue(unit, columnToExport.Values[i]);
                row[j] = valueFunc(value);
             }
+
             dataTable.Rows.Add(row);
          }
 
          return dataTable;
       }
 
-      private Cache<DataColumn, IDimension> retrieveDimensionsFor(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, IDimension> dimensionRetriever)
+      private Cache<DataColumn, IDimension> retrieveDimensionsFor(IEnumerable<DataColumn> allColumns, Func<DataColumn, IDimension> dimensionRetriever)
       {
          var cacheDimensionsForColumns = new Cache<DataColumn, IDimension>();
          allColumns.Each(x => cacheDimensionsForColumns.Add(x, dimensionRetriever(x)));
          return cacheDimensionsForColumns;
       }
 
-      private void moveDrugColumnsFirst(List<DataColumn> allColumns)
+      private List<DataColumn> sortColumnsForExport(IEnumerable<DataColumn> allColumns)
       {
-         var allColumnsNotDrug = allColumns.Where(x => !x.QuantityInfo.Type.Is(QuantityType.Drug)).ToList();
-         allColumnsNotDrug.Each(c => allColumns.Remove(c));
 
-         //add them add them again at the end at the beginning
-         allColumnsNotDrug.Each(allColumns.Add);
+         var allDrugColumns = new List<DataColumn>(allColumns);
+
+         var allColumnsNotDrug = allDrugColumns
+            .Where(x => !x.QuantityInfo.Type.Is(QuantityType.Drug))
+            .ToList();
+
+         allColumnsNotDrug.Each(x => allDrugColumns.Remove(x));
+
+         var allAuxiliariesColumns = allColumnsNotDrug
+            .Where(x => x.DataInfo.Origin.IsOneOf(ColumnOrigins.CalculationAuxiliary, ColumnOrigins.ObservationAuxiliary))
+            .ToList();
+
+         allAuxiliariesColumns.Each(x => allColumnsNotDrug.Remove(x));
+
+         //First return the drug columns, then non drug columns that are not auxiliary columns and last auxiliary columns
+         return allDrugColumns.Union(allColumnsNotDrug).Union(allAuxiliariesColumns).ToList();
       }
 
       private Cache<DataColumn, string> retrieveUniqueNameForColumns(IReadOnlyList<DataColumn> allColumns, Func<DataColumn, string> columnNameRetriever)
@@ -271,6 +289,7 @@ namespace OSPSuite.Infrastructure.Services
             {
                currentName = $"{defaultName}_{index++}";
             }
+
             cacheNameForColumns.Add(column, currentName);
          }
 

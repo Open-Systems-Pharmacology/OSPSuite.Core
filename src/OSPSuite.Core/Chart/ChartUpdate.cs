@@ -7,18 +7,18 @@ namespace OSPSuite.Core.Chart
    {
       private readonly IEventPublisher _eventPublisher;
       private readonly IChart _chart;
-      private readonly bool _propogateChartChangeEvent;
+      private readonly bool _propagateChartChangeEvent;
 
-      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propogateChartChangeEvent)
+      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propagateChartChangeEvent)
       {
          _eventPublisher = eventPublisher;
          _chart = chart;
-         _propogateChartChangeEvent = propogateChartChangeEvent;
+         _propagateChartChangeEvent = propagateChartChangeEvent;
       }
 
       public void Dispose()
       {
-         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart,_propogateChartChangeEvent));
+         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart,_propagateChartChangeEvent));
       }
    }
 }

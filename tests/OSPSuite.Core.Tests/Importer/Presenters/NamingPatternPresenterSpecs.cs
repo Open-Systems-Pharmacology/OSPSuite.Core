@@ -28,7 +28,7 @@ namespace OSPSuite.Importer.Presenters
       [Observation]
       public void a_call_to_view_setter_must_result()
       {
-         A.CallTo(() => _view.UpdateNamingPatterns(A<List<string>>.That.Contains(""))).MustHaveHappened(Repeated.Exactly.Once);
+         A.CallTo(() => _view.UpdateNamingPatterns(A<List<string>>.That.Contains(""))).MustHaveHappenedOnceExactly();
       }
    }
 }
