@@ -44,12 +44,6 @@ skip_branch_with_pr: true
 branches:
   only:
     - develop
-
-#test:
-#  assemblies:
-#    only:
-#      - '**\*.tests.dll'
-#      - OSPSuite.Core.IntegrationsTests.dll
   
 install:
  - git submodule update --init --recursive
