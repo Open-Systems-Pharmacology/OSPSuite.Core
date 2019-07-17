@@ -42,6 +42,7 @@ before_build:
 build:
   publish_nuget: true
   verbosity: minimal
+  publish_nuget_symbols: true
   include_nuget_references: true
   project: OSPSuite.Core.sln
 
