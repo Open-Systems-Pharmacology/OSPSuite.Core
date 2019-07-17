@@ -1,5 +1,5 @@
 ﻿using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Core.Services.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.UICommands
 {

@@ -1,4 +1,5 @@
-﻿using OSPSuite.Helpers;
+﻿using OSPSuite.Core;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Journal;
 using OSPSuite.Presentation.Core;
@@ -11,7 +12,7 @@ namespace OSPSuite.Starter.Tasks
    public class Workspace : Workspace<TestProject>
    {
       public Workspace(IEventPublisher eventPublisher, IJournalSession journalSession, IFileLocker fileLocker)
-         : base(eventPublisher, journalSession, fileLocker)
+         : base(eventPublisher,  fileLocker)
       {
          _project = new TestProject();
       }

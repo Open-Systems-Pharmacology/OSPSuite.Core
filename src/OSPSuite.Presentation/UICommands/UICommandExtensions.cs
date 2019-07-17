@@ -3,8 +3,8 @@ using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Events;
 using OSPSuite.Presentation.MenuAndBars;
+using OSPSuite.Presentation.Presenters.Events;
 
 namespace OSPSuite.Presentation.UICommands
 {

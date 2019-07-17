@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.DTO;
@@ -35,9 +34,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       event EventHandler<UsedColumnsEventArgs> UsedChanged;
 
-      event DragEventHandler DragOver;
-      event DragEventHandler DragDrop;
-
       /// <summary>
       ///    Event raised when the user has changed the selected data
       /// </summary>
@@ -58,28 +54,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used);
 
       /// <summary>
-      /// Returns all <see cref="DataColumn"/> currently selected by the user
+      ///    Returns all <see cref="DataColumn" /> currently selected by the user
       /// </summary>
       IReadOnlyList<DataColumn> SelectedDataColumns { get; }
 
       /// <summary>
-      /// Returns all <see cref="DataColumn"/> available
+      ///    Returns all <see cref="DataColumn" /> available
       /// </summary>
       IReadOnlyList<DataColumn> AllDataColumns { get; }
 
       /// <summary>
-      /// Is called from the view when the <paramref name="used"/> state is changed for the <paramref name="dataColumnDTO"/>
+      ///    Is called from the view when the <paramref name="used" /> state is changed for the <paramref name="dataColumnDTO" />
       /// </summary>
       void UsedChangedFor(DataColumnDTO dataColumnDTO, bool used);
 
       /// <summary>
-      /// Update the used state for all selected column to <paramref name="used"/>
+      ///    Update the used state for all selected column to <paramref name="used" />
       /// </summary>
       /// <param name="used"></param>
       void UpdateUsedStateForSelection(bool used);
 
       /// <summary>
-      /// Is called from the view when the column selection is changed by the user
+      ///    Is called from the view when the column selection is changed by the user
       /// </summary>
       void SelectedDataColumnsChanged();
    }
@@ -182,18 +178,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void updateUsedStateForColumns(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)
       {
          dataColumnDTOs.Each(dto => dto.Used = used);
-      }
-
-      public event DragEventHandler DragOver
-      {
-         add => _view.DragOver += value;
-         remove => _view.DragOver -= value;
-      }
-
-      public event DragEventHandler DragDrop
-      {
-         add => _view.DragDrop += value;
-         remove => _view.DragDrop -= value;
       }
 
       private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used)

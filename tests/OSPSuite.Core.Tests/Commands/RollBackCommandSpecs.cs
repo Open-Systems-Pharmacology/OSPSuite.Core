@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Helpers;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_roll_back_command : ContextSpecification<IMacroCommand<MyContext>>
    {

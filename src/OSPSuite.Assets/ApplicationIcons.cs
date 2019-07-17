@@ -151,7 +151,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ScaleIndividual = AddNamedIcon(Icons.ScaleIndividual, "ScaleIndividual");
       public static readonly ApplicationIcon Induction = AddNamedIcon(Icons.Induction, "Induction");
       public static readonly ApplicationIcon Influx = AddNamedIcon(Icons.Influx, "Influx");
-      public static readonly ApplicationIcon Info = AddNamedIcon(Icons.Info, "Info");
+      public static readonly ApplicationIcon Info = AddNamedIcon(Icons.About, "Info");
       public static readonly ApplicationIcon Inhibition = AddNamedIcon(Icons.Inhibition, "Inhibition");
       public static readonly ApplicationIcon Interstitial = AddNamedIcon(Icons.Interstitial, "Interstitial");
       public static readonly ApplicationIcon Intracellular = AddNamedIcon(Icons.Intracellular, "Intracellular");
@@ -394,7 +394,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PKMLSave = AddNamedIcon(Icons.PKMLSave, "PKMLSave");
       public static readonly ApplicationIcon Administration = AddNamedIcon(Icons.Administration, "Administration");
       public static readonly ApplicationIcon ComparisonFolder = AddNamedIcon(Icons.ComparisonFolder, "ComparisonFolder");
-      public static readonly ApplicationIcon About = AddNamedIcon(Icons.Info, "About");
+      public static readonly ApplicationIcon About = AddNamedIcon(Icons.About, "About");
       public static readonly ApplicationIcon ContainerSave = AddNamedIcon(Icons.ContainerSave, "ContainerSave");
       public static readonly ApplicationIcon EventSave = AddNamedIcon(Icons.EventSave, "EventSave");
       public static readonly ApplicationIcon AddFormulation = AddNamedIcon(Icons.FormulationAdd, "FormulationAdd");
@@ -484,7 +484,7 @@ namespace OSPSuite.Assets
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      public static readonly ApplicationIcon EmptyIcon = new ApplicationIcon(null);
+      public static readonly ApplicationIcon EmptyIcon = new ApplicationIcon((Icon)null);
 
       //This icon should be set in the application
       public static ApplicationIcon DefaultIcon = EmptyIcon;
@@ -513,7 +513,7 @@ namespace OSPSuite.Assets
             : defaultIconToUse;
       }
 
-      public static ApplicationIcon AddNamedIcon(Icon icon, string iconName)
+      public static ApplicationIcon AddNamedIcon(byte[] icon, string iconName)
       {
          var name = iconName.ToUpperInvariant();
          var appIcon = new ApplicationIcon(icon)

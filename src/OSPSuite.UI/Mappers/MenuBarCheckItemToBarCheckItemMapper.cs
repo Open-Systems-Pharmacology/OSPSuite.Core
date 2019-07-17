@@ -14,7 +14,7 @@ namespace OSPSuite.UI.Mappers
    {
       private readonly BarManager _barManager;
 
-      public MenuBarCheckItemToBarCheckItemMapper(BarManager barManager, IStartOptions startOptions): base(startOptions)
+      public MenuBarCheckItemToBarCheckItemMapper(BarManager barManager, IStartOptions startOptions, IKeysToWindowsKeysMapper keysMapper) : base(startOptions, keysMapper)
       {
          _barManager = barManager;
       }

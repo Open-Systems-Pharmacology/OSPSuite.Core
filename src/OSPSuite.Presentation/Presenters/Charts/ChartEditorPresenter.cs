@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
@@ -128,16 +128,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ClearButtons();
 
       /// <summary>
-      ///    Event when something is dragged to Control. EventHandler should set Effect to Move if Drag is allowed.
-      /// </summary>
-      event DragEventHandler DragOver;
-
-      /// <summary>
-      ///    Event when something is dropped onto Control. EventHandler should set Effect.
-      /// </summary>
-      event DragEventHandler DragDrop;
-
-      /// <summary>
       ///    Event when ColumnSettings for data browser, curve options or axis options has changed.
       /// </summary>
       event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged;
@@ -153,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ApplyColumnSettings(GridColumnSettings columnSettings);
 
       /// <summary>
-      ///    Show the customaization form (for internal user only)
+      ///    Show the customization form (for internal user only)
       /// </summary>
       void ShowCustomizationForm();
 
@@ -163,7 +153,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddUsedInMenuItem();
 
       /// <summary>
-      ///    Updates the UsedIn menu item checkbox checkstate.
+      ///    Updates the UsedIn menu item checkbox check state.
       /// </summary>
       /// <param name="isUsed">true for checked, false for unchecked and null for indeterminate</param>
       void UpdateUsedForSelection(bool? isUsed);
@@ -174,7 +164,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor);
 
       /// <summary>
-      ///    Event is thrown everytime a property of the chart is changed (either direct property or indirect such as axes or
+      ///    Event is thrown every time a property of the chart is changed (either direct property or indirect such as axes or
       ///    curves modification)
       /// </summary>
       event Action ChartChanged;
@@ -183,6 +173,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
+
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -203,6 +194,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public CurveChart Chart { get; private set; }
       public event Action ChartChanged = delegate { };
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
+      public event EventHandler<IDragEvent> DragOver = delegate { };
+      public event EventHandler<IDragEvent> DragDrop = delegate { };
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
@@ -304,6 +297,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
       public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
+
+      public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
+
+      public void OnDragOver(IDragEvent dragEvent) => DragOver(this, dragEvent);
 
       public void UpdateUsedForSelection(bool? isUsed)
       {
@@ -518,18 +515,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void ClearButtons()
       {
          _view.ClearButtons();
-      }
-
-      public event DragEventHandler DragOver
-      {
-         add => _dataBrowserPresenter.DragOver += value;
-         remove => _dataBrowserPresenter.DragOver -= value;
-      }
-
-      public event DragEventHandler DragDrop
-      {
-         add => _dataBrowserPresenter.DragDrop += value;
-         remove => _dataBrowserPresenter.DragDrop -= value;
       }
 
       public void Refresh()

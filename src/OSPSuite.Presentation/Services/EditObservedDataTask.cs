@@ -82,7 +82,7 @@ namespace OSPSuite.Presentation.Services
 
       public ICommand RemoveValue(DataRepository observedData, int dataRowIndex)
       {
-         var identificationsUsingDataRepository = ParamterIdentificationsUsingDataRepository(observedData);
+         var identificationsUsingDataRepository = ParameterIdentificationsUsingDataRepository(observedData);
 
          if (!identificationsUsingDataRepository.Any())
             return new RemoveObservedDataRowCommand(observedData, dataRowIndex).Run(_executionContext);
@@ -90,14 +90,14 @@ namespace OSPSuite.Presentation.Services
          throw new OSPSuiteException(Captions.ParameterIdentification.CannotDeleteObservedDataPointBeingUsedByParameterIdentification(observedData.Name, identificationsUsingDataRepository));
       }
 
-      public IReadOnlyList<string> ParamterIdentificationsUsingDataRepository(DataRepository observedData)
+      public IReadOnlyList<string> ParameterIdentificationsUsingDataRepository(DataRepository observedData)
       {
          return _parameterIdentificationTask.ParameterIdentificationsUsingObservedData(observedData).Select(x => x.Name).ToList();
       }
 
       public ICommand AddValue(DataRepository observedData, DataRowData dataRowAdded)
       {
-         var identificationsUsingDataRepository = ParamterIdentificationsUsingDataRepository(observedData);
+         var identificationsUsingDataRepository = ParameterIdentificationsUsingDataRepository(observedData);
 
          if (!identificationsUsingDataRepository.Any())
             return new AddObservedDataRowCommand(observedData, dataRowAdded).Run(_executionContext);

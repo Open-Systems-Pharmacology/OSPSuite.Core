@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       /// Synchronizes the new name <paramref name="newName"/> of <paramref name="sensitivityAnalysis"/> with all results and analysis from <paramref name="sensitivityAnalysis"/>
       /// </summary>
       /// <param name="sensitivityAnalysis">Sensitivity analysis whose results and analyses should be synchronized</param>
-      /// <param name="sensitivityParameter">Sensitivy parameter that will be renamed</param>
+      /// <param name="sensitivityParameter">Sensitivity parameter that will be renamed</param>
       /// <param name="newName">New name for the sensitivity parameter</param>
       void UpdateSensitivityParameterName(SensitivityAnalysis sensitivityAnalysis, SensitivityParameter sensitivityParameter, string newName);
    }

@@ -7,4 +7,5 @@
       /// </summary>
       string DisplayNameFor(object objectToDisplay);
    }
+
 }

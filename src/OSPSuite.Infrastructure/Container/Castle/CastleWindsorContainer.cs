@@ -43,9 +43,9 @@ namespace OSPSuite.Infrastructure.Container.Castle
 
          catch (ComponentNotFoundException)
          {
-            var allImplentations = WindsorContainer.ResolveAll<TInterface>();
-            if (allImplentations != null && allImplentations.GetLength(0) > 0)
-               return allImplentations[0];
+            var allImplementations = WindsorContainer.ResolveAll<TInterface>();
+            if (allImplementations != null && allImplementations.GetLength(0) > 0)
+               return allImplementations[0];
 
             //not found rethrow
             throw;
@@ -79,7 +79,7 @@ namespace OSPSuite.Infrastructure.Container.Castle
 
       public void Register<TInterface, TImplementation>(LifeStyle lifeStyle, string key)
       {
-         register(new[] {typeof(TInterface)}, typeof(TImplementation), lifeStyle, key);
+         register(new[] { typeof(TInterface) }, typeof(TImplementation), lifeStyle, key);
       }
 
       public void Register(Type serviceType, Type concreteType)
@@ -89,12 +89,12 @@ namespace OSPSuite.Infrastructure.Container.Castle
 
       public void Register(Type serviceType, Type concreteType, LifeStyle lifeStyle)
       {
-         Register(new[] {serviceType}, concreteType, lifeStyle);
+         Register(new[] { serviceType }, concreteType, lifeStyle);
       }
 
       public void Register(Type serviceType, Type concreteType, LifeStyle lifeStyle, string key)
       {
-         register(new[] {serviceType}, concreteType, lifeStyle, key);
+         register(new[] { serviceType }, concreteType, lifeStyle, key);
       }
 
       public void Register(IReadOnlyCollection<Type> serviceTypes, Type concreteType, LifeStyle lifeStyle)
@@ -113,22 +113,22 @@ namespace OSPSuite.Infrastructure.Container.Castle
 
       public void Register<TService1, TConcreteType>(LifeStyle lifeStyle)
       {
-         Register(new[] {typeof(TService1)}, typeof(TConcreteType), lifeStyle);
+         Register(new[] { typeof(TService1) }, typeof(TConcreteType), lifeStyle);
       }
 
       public void Register<TService1, TService2, TConcreteType>(LifeStyle lifeStyle)
       {
-         Register(new[] {typeof(TService1), typeof(TService2)}, typeof(TConcreteType), lifeStyle);
+         Register(new[] { typeof(TService1), typeof(TService2) }, typeof(TConcreteType), lifeStyle);
       }
 
       public void Register<TService1, TService2, TService3, TConcreteType>(LifeStyle lifeStyle)
       {
-         Register(new[] {typeof(TService1), typeof(TService2), typeof(TService3)}, typeof(TConcreteType), lifeStyle);
+         Register(new[] { typeof(TService1), typeof(TService2), typeof(TService3) }, typeof(TConcreteType), lifeStyle);
       }
 
       public void Register<TService1, TService2, TService3, TService4, TConcreteType>(LifeStyle lifeStyle)
       {
-         Register(new[] {typeof(TService1), typeof(TService2), typeof(TService3), typeof(TService4)}, typeof(TConcreteType), lifeStyle);
+         Register(new[] { typeof(TService1), typeof(TService2), typeof(TService3), typeof(TService4) }, typeof(TConcreteType), lifeStyle);
       }
 
       public void RegisterFactory<TFactory>() where TFactory : class

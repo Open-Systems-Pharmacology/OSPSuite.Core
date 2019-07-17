@@ -42,15 +42,15 @@ namespace OSPSuite.Core.Domain.Services
    {
       protected readonly IDialogCreator _dialogCreator;
       private readonly IOSPSuiteExecutionContext _executionContext;
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
 
-      protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
+      protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
       {
          _dialogCreator = dialogCreator;
          _executionContext = executionContext;
-         _dataRepositoryTask = dataRepositoryTask;
+         _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
       }
@@ -134,7 +134,7 @@ namespace OSPSuite.Core.Domain.Services
          var file = _dialogCreator.AskForFileToSave(Captions.ExportObservedDataToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
          if (string.IsNullOrEmpty(file)) return;
 
-         _dataRepositoryTask.ExportToExcel(observedData, file, launchExcel: true);
+         _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
       }
 
       private bool observedDataAlreadyExistsInProject(DataRepository observedData)

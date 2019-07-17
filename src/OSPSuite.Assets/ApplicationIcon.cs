@@ -20,12 +20,24 @@ namespace OSPSuite.Assets
       public IconSize IconSize { get; set; }
       public int Index { get; set; }
 
+      public ApplicationIcon(byte[] bytes): this(bytesToIcon(bytes))
+      {
+      }
+
       public ApplicationIcon(Icon icon)
       {
          _masterIcon = icon;
          Index = -1;
          IconSize = IconSizes.Size16x16;
          createMultipleIconList();
+      }
+
+      private static Icon bytesToIcon(byte[] bytes)
+      {
+         using (MemoryStream ms = new MemoryStream(bytes))
+         {
+            return new Icon(ms);
+         }
       }
 
       private void createMultipleIconList()

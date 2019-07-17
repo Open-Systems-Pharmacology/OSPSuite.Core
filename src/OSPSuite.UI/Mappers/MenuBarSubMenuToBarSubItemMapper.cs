@@ -14,7 +14,7 @@ namespace OSPSuite.UI.Mappers
    {
       private readonly IMenuBarButtonToBarItemMapper _mapper;
 
-      public MenuBarSubMenuToBarSubItemMapper(IMenuBarButtonToBarItemMapper mapper, IStartOptions startOptions) : base(startOptions)
+      public MenuBarSubMenuToBarSubItemMapper(IMenuBarButtonToBarItemMapper mapper, IStartOptions startOptions, IKeysToWindowsKeysMapper keysMapper) : base(startOptions, keysMapper)
       {
          _mapper = mapper;
       }

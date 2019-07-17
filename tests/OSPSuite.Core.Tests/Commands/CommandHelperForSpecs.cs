@@ -1,7 +1,6 @@
-﻿using OSPSuite.Core.Commands;
-using OSPSuite.Core.Commands.Core;
+﻿using OSPSuite.Core.Commands.Core;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public static class CommandHelperForSpecs
    {

@@ -1,10 +1,9 @@
 ﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Commands;
 using OSPSuite.Core.Extensions;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public class concern_for_OSPSuiteCommandExtensions : StaticContextSpecification
    {

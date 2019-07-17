@@ -45,7 +45,7 @@ namespace OSPSuite.UI
       /// </summary>
       public static string GoDiagramKey
       {
-         set { GoView.LicenseKey = value; }
+         set => GoView.LicenseKey = value;
       }
    }
 }

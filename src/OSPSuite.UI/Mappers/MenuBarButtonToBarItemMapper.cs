@@ -5,7 +5,7 @@ using OSPSuite.Presentation.MenuAndBars;
 namespace OSPSuite.UI.Mappers
 {
    /// <summary>
-   /// Convert a menu bar item to a bar item
+   ///    Convert a menu bar item to a bar item
    /// </summary>
    public interface IMenuBarButtonToBarItemMapper
    {
@@ -16,7 +16,7 @@ namespace OSPSuite.UI.Mappers
    {
       private readonly IMenuBarCheckItemToBarCheckItemMapper _mapper;
 
-      public MenuBarButtonToBarItemMapper(IMenuBarCheckItemToBarCheckItemMapper mapper, IStartOptions startOptions): base(startOptions)
+      public MenuBarButtonToBarItemMapper(IMenuBarCheckItemToBarCheckItemMapper mapper, IStartOptions startOptions, IKeysToWindowsKeysMapper keysMapper) : base(startOptions, keysMapper)
       {
          _mapper = mapper;
       }
@@ -24,7 +24,7 @@ namespace OSPSuite.UI.Mappers
       public BarItem MapFrom(BarManager barManager, IMenuBarButton menuBarItem)
       {
          if (menuBarItem.IsForDeveloper && !_startOptions.IsDeveloperMode)
-            return new BarButtonItem { Visibility = BarItemVisibility.Never };
+            return new BarButtonItem {Visibility = BarItemVisibility.Never};
 
          var existingItem = barManager.Items[menuBarItem.Name];
          if (existingItem != null)

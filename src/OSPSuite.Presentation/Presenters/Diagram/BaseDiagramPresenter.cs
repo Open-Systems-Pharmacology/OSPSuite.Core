@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Diagram.Extensions;
@@ -451,7 +450,7 @@ namespace OSPSuite.Presentation.Presenters.Diagram
             ms.Seek(0, SeekOrigin.Begin);
 
             Image image = Image.FromStream(ms);
-            Clipboard.SetImage(image);
+            _view.CopyToClipboard(image);
          }
       }
 

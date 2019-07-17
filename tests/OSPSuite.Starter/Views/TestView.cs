@@ -27,7 +27,7 @@ namespace OSPSuite.Starter.Views
          startCommandBrowserTestButton.Click += (sender, args) => OnEvent(_presenter.StartCommandBrowserTest);
          startSimpleUITestButton.Click += (sender, args) => OnEvent(_presenter.StartSimpleUITest);
          startExceptionViewButton.Click += (sender, args) => OnEvent(_presenter.StartExceptionView);
-         startSensitivityAnalysisTestButton.Click += (sender, args) => OnEvent(_presenter.StartSentitivityAnalysisTest);
+         startSensitivityAnalysisTestButton.Click += (sender, args) => OnEvent(_presenter.StartSensitivityAnalysisTest);
          startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
          startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
       }

@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -22,8 +21,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithId(menuBarItemId)
             .WithDescription(MenuDescriptions.RunParameterIdentification)
             .WithIcon(ApplicationIcons.Run)
-            .WithShortcut(Keys.F6)
-            .WithCommand<RunParameterIdentificationUICommand>();
+            .WithCommand<RunParameterIdentificationUICommand>()
+            .WithShortcut(Keys.F6);
+
       }
 
       public static IMenuBarItem StopParameterIdentification(MenuBarItemId menuBarItemId)
@@ -32,8 +32,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithId(menuBarItemId)
             .WithDescription(MenuDescriptions.StopParameterIdentification)
             .WithIcon(ApplicationIcons.Stop)
-            .WithShortcut(Keys.Shift | Keys.F6)
-            .WithCommand<StopParameterIdentificationUICommand>();
+            .WithCommand<StopParameterIdentificationUICommand>()
+            .WithShortcut(Keys.Shift | Keys.F6);
+
       }
 
       public static IMenuBarItem TimeProfileParameterIdentification(MenuBarItemId menuBarItemId)
@@ -54,7 +55,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.PredictedVsObservedAnalysis);
       }
 
-      public static IMenuBarItem ResidualsVsTimeParameterIdentifcation(MenuBarItemId menuBarItemId)
+      public static IMenuBarItem ResidualsVsTimeParameterIdentification(MenuBarItemId menuBarItemId)
       {
          return CreateMenuButton.WithCaption(Captions.ParameterIdentification.ResidualsVsTimeAnalysis)
             .WithId(menuBarItemId)

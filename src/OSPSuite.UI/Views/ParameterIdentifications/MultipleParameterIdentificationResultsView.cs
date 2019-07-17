@@ -13,6 +13,7 @@ using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -35,7 +36,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private readonly Cache<DevExpress.XtraGrid.Views.Base.BaseView, OptimizedParametersBinder> _optimizedParametersBinderCache = new Cache<DevExpress.XtraGrid.Views.Base.BaseView, OptimizedParametersBinder>();
       private readonly UxRepositoryItemButtonEdit _repositoryItemTransferToSimulations;
       private readonly RepositoryItemMemoEdit _repositoryItemDescription;
-      private IGridViewColumn _colTranfer;
+      private IGridViewColumn _colTransfer;
       private readonly TimeSpanFormatter _timeSpanFormatter;
 
       public MultipleParameterIdentificationResultsView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
@@ -99,7 +100,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private void showingEditor(CancelEventArgs e)
       {
          //prevent editor from being shown except for tranfer column
-         if (mainView.FocusedColumn == _colTranfer.XtraColumn)
+         if (mainView.FocusedColumn == _colTransfer.XtraColumn)
             return;
 
          e.Cancel = true;
@@ -220,7 +221,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .WithRepository(statusRepositoryFor)
             .AsReadOnly();
 
-         _colTranfer = _gridViewBinder.AddUnboundColumn()
+         _colTransfer = _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH)
             .WithRepository(x => _repositoryItemTransferToSimulations)

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Presentation.Extensions;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
 using OSPSuite.Utility.Extensions;
@@ -15,19 +14,19 @@ namespace OSPSuite.Presentation.Binders
    {
       private readonly Type[] _conditionalDraggableTypes = {typeof(IEnumerable<ITreeNode>)};
 
-      public void PrepareDrag(DragEventArgs e)
+      public void PrepareDrag(IDragEvent e)
       {
-         e.Effect = _conditionalDraggableTypes.Any(e.TypeBeingDraggedIs) ? dragEffectForConditionalType(e) : DragDropEffects.None;
+         e.Effect = _conditionalDraggableTypes.Any(e.TypeBeingDraggedIs) ? dragEffectForConditionalType(e) : DragEffect.None;
       }
 
-      public IReadOnlyList<DataRepository> DroppedObservedDataFrom(DragEventArgs e)
+      public IReadOnlyList<DataRepository> DroppedObservedDataFrom(IDragEvent e)
       {
          return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject).ToList();
       }
 
-      private DragDropEffects dragEffectForConditionalType(DragEventArgs e)
+      private DragEffect dragEffectForConditionalType(IDragEvent e)
       {
-         return isDraggedTypeObservedDataRelated(e.Data<IEnumerable<ITreeNode>>()) ? DragDropEffects.Move : DragDropEffects.None;
+         return isDraggedTypeObservedDataRelated(e.Data<IEnumerable<ITreeNode>>()) ? DragEffect.Move : DragEffect.None;
       }
 
       private bool isDraggedTypeObservedDataRelated(IEnumerable<ITreeNode> multipleNodes)
@@ -53,7 +52,7 @@ namespace OSPSuite.Presentation.Binders
          return treeNodes.OfType<ClassificationNode>().Count(classificationNode => (classificationNode).Tag.ClassificationType == ClassificationType.ObservedData) == treeNodes.Count();
       }
 
-      private IReadOnlyList<ObservedDataNode> getObservedDataNodesFrom(DragEventArgs e)
+      private IReadOnlyList<ObservedDataNode> getObservedDataNodesFrom(IDragEvent e)
       {
          var dataNodes = e.Data<IEnumerable<ITreeNode>>();
          if (dataNodes == null)
