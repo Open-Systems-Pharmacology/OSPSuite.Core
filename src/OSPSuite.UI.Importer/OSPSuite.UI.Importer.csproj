@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>OSPSuite.UI</RootNamespace>
     <AssemblyName>OSPSuite.UI.Importer</AssemblyName>
     <Version>1.0.0</Version>
