@@ -10,12 +10,6 @@ environment:
 
 version: '$(app_version).{build}'
 
-assembly_info:
-  patch: true
-  file: SolutionInfo.*
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"  
-
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -50,14 +44,13 @@ skip_branch_with_pr: true
 branches:
   only:
     - develop
-test:
-  assemblies:
-    - OSPSuite.Core.Tests.dll
-    - OSPSuite.Core.IntegrationsTests.dll
-    - OSPSuite.Presentation.Tests.dll
-    - OSPSuite.Infrastructure.Tests.dll
-    - OSPSuite.UI.Tests.dll
 
+#test:
+#  assemblies:
+#    only:
+#      - '**\*.tests.dll'
+#      - OSPSuite.Core.IntegrationsTests.dll
+  
 install:
  - git submodule update --init --recursive
 
