@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -54,7 +55,7 @@ namespace OSPSuite.Infrastructure.Export
          _results = sut.ToDataTable(_dataRepository);
       }
 
-      [Observation]
+      [Test]
       public void should_return_a_data_table_containing_one_column_for_each_available_column_in_the_repository()
       {
          _results.Count().ShouldBeEqualTo(1);

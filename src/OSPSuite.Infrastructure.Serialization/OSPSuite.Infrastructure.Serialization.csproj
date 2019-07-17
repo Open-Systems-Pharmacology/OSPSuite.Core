@@ -17,7 +17,11 @@
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
     <Description>External Serialization functionalities (e.g. Journal, SQLite etc...) for the Open Systems Pharmacology Suite</Description>
     <Authors>Open-Systems-Pharmacology</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile> </PropertyGroup>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\OSPSuite.Assets.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
