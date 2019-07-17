@@ -27,7 +27,7 @@ module Coverage
     testProjects.unshift("test")
     targetArgs = testProjects.join(" ")
 
-    Utils.run_cmd(openCover, ["-register:user", "-target:c:/program files/dotnet/dotnet.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs", "-oldstyle"])
+    Utils.run_cmd(openCover, ["-register:user", "-target:dotnet.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs", "-oldstyle"])
     Utils.run_cmd("codecov", ["-f", "OpenCover.xml"])
   end
 end
