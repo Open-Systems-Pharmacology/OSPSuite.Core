@@ -6,15 +6,21 @@ task :cover do
   filter << "+[OSPSuite.Core]*"
   filter << "+[OSPSuite.Infrastructure]*"
   filter << "+[OSPSuite.Presentation]*"
-  filter << "+[OSPSuite.Engine]*"
-
+  
   #exclude namespaces that are tested from applications
-  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting*"
-  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM*"
+  filter << "-[OSPSuite.Infrastructure.Serialization]OSPSuite.Infrastructure.Serialization.ORM*"
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars*"
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
-  Coverage.cover(filter, "OSPSuite.Core.Tests.csproj")
+  targetProjects = [
+	"OSPSuite.Core.Tests.csproj", 
+	"OSPSuite.Core.IntegrationTests.csproj", 
+	"OSPSuite.Presentation.Tests.csproj", 
+	"OSPSuite.Infrastructure.Tests.csproj",
+	"OSPSuite.UI.Tests.csproj",
+	];
+
+  Coverage.cover(filter, targetProjects)
 end
 
 task :copy_to_pksim do
