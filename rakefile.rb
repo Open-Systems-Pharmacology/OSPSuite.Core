@@ -1,4 +1,5 @@
-require_relative 'scripts/coverage'
+# require_relative 'scripts/coverage'
+require_relative 'scripts/utils'
 require_relative 'scripts/copy-dependencies'
 
 task :cover do 
@@ -13,14 +14,22 @@ task :cover do
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
   targetProjects = [
-	"OSPSuite.Core.Tests.csproj", 
-	"OSPSuite.Core.IntegrationTests.csproj", 
-	"OSPSuite.Presentation.Tests.csproj", 
-	"OSPSuite.Infrastructure.Tests.csproj",
-	"OSPSuite.UI.Tests.csproj",
+	"OSPSuite.Core.Tests.csproj"
 	];
 
   Coverage.cover(filter, targetProjects)
+end
+
+module Coverage
+  def self.cover(filter_array, targetProjects)
+    testProjects = Dir.glob("tests/**/*.csproj").select{|path| targetProjects.include?(File.basename path)}
+    openCover = Dir.glob("packages/OpenCover.*/tools/OpenCover.Console.exe").first
+    testProjects.unshift("test")
+    targetArgs = testProjects.join(" ")
+
+    Utils.run_cmd(openCover, ["-register:user", "-target:c:/program files/dotnet/dotnet.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs", "-oldstyle"])
+    Utils.run_cmd("codecov", ["-f", "OpenCover.xml"])
+  end
 end
 
 task :copy_to_pksim do

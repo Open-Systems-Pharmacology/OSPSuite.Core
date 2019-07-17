@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
 
     <RootNamespace>OSPSuite.Core</RootNamespace>
+    <DebugType>Full</DebugType>
+
   </PropertyGroup>
 
   <ItemGroup>
