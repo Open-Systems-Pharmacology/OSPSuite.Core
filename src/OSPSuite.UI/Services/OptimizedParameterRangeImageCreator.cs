@@ -6,7 +6,7 @@ using DevExpress.XtraCharts;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
-using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Services

@@ -42,7 +42,6 @@ namespace OSPSuite.Presentation
             //Exclude these implementations that are specific to each application
             scan.ExcludeType<PathToPathElementsMapper>();
             scan.ExcludeType<QuantityPathToQuantityDisplayPathMapper>();
-            scan.ExcludeType<DisplayNameProvider>();
 
             scan.ExcludeType<ExceptionManager>();
 

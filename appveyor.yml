@@ -1,8 +1,12 @@
 configuration: Debug
 image: Visual Studio 2017
 
+# hack until donet patching works with PR
+init: 
+  - cmd: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
+
 environment:
-  app_version: '8.0'
+  app_version: '9.0'
 
 version: '$(app_version).{build}'
 
@@ -12,8 +16,15 @@ assembly_info:
   assembly_version: "{version}"
   assembly_file_version: "{version}"  
 
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  assembly_version: '$(app_version).$(build_number)'
+  file_version: '$(app_version).$(build_number)'
+  informational_version: '$(app_version).$(build_number)'
+
 cache:
-  packages -> **\packages.config  
+  packages -> **\*.csproj  # preserve "packages" directory in the root of build folder but will reset it if a project file is modified
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -41,8 +52,11 @@ branches:
     - develop
 test:
   assemblies:
-    - '**\OSPSuite.Core.Tests\bin\$(configuration)\OSPSuite.Core.Tests.dll'
-    - '**\OSPSuite.UI.Tests\bin\$(configuration)\OSPSuite.UI.Tests.dll'
+    - OSPSuite.Core.Tests.dll
+    - OSPSuite.Core.IntegrationsTests.dll
+    - OSPSuite.Presentation.Tests.dll
+    - OSPSuite.Infrastructure.Tests.dll
+    - OSPSuite.UI.Tests.dll
 
 install:
  - git submodule update --init --recursive

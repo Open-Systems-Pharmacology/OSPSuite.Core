@@ -1,13 +1,12 @@
 using System;
 using System.Windows.Forms;
-using OSPSuite.Utility.Container;
 using DevExpress.XtraEditors;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation.Presenters.Commands;
 using OSPSuite.Starter.Tasks;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Views
 {
@@ -16,16 +15,14 @@ namespace OSPSuite.Starter.Views
       private readonly IHistoryBrowserPresenter _historyBrowserPresenter;
       private readonly IHistoryManager _historyManager;
       private readonly MyContext _myContext;
-      private readonly ReportTask _reportTask;
 
       public StaticCommandList()
       {
          InitializeComponent();
          _myContext = new MyContext();
-         _reportTask = new ReportTask();
          IoC.Container.Register<IHistoryManager, HistoryManager<MyContext>>();
          IoC.Container.Register<MyContext, MyContext>();
-         
+
          var historyBrowserConfiguation = IoC.Resolve<IHistoryBrowserConfiguration>();
          var historyManagerRetriever = IoC.Resolve<IHistoryManagerRetriever>();
          historyBrowserConfiguation.AddDynamicColumn("p1", "A wonderful p1");
@@ -73,15 +70,6 @@ namespace OSPSuite.Starter.Views
       private void simpleButton2_Click(object sender, EventArgs e)
       {
          _historyManager.Undo();
-      }
-
-      private void btnCreateReport_Click(object sender, EventArgs e)
-      {
-         var frmDialog = new SaveFileDialog() {Filter = "(*.xls)|*.xls"};
-
-         var excelFile = frmDialog.ShowDialog() == DialogResult.OK ? frmDialog.FileName : string.Empty;
-         if (string.IsNullOrEmpty(excelFile)) return;
-         _reportTask.CreateReport(_historyManager, new ReportOptions {ReportFullPath = excelFile, SheetName = "toto", OpenReport = true});
       }
    }
 }

@@ -4,8 +4,10 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Helpers;
+using MacroCommandExtensions = OSPSuite.Core.Commands.Core.MacroCommandExtensions;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_MacroCommand : ContextSpecification<IMacroCommand<MyContext>>
    {
@@ -59,7 +61,7 @@ namespace OSPSuite.Commands
          base.Context();
          _commandToAdd1 = A.Fake<ICommand<MyContext>>();
          _commandToAdd2 = A.Fake<ICommand<MyContext>>();
-         sut.Add(_commandToAdd1, _commandToAdd2);
+         MacroCommandExtensions.Add(sut, _commandToAdd1, _commandToAdd2);
       }
 
       protected override void Because()
@@ -89,7 +91,7 @@ namespace OSPSuite.Commands
          _reversibleCommand2 = new MyReversibleCommand();
          _reversibleCommand3 = new MyReversibleCommand();
 
-         sut.Add(_reversibleCommand1, _reversibleCommand2, _reversibleCommand3);
+         MacroCommandExtensions.Add(sut, _reversibleCommand1, _reversibleCommand2, _reversibleCommand3);
       }
 
       protected override void Because()
@@ -119,7 +121,7 @@ namespace OSPSuite.Commands
       protected override void Context()
       {
          base.Context();
-         sut.Add(A.Fake<IReversibleCommand<MyContext>>(), A.Fake<ICommand<MyContext>>());
+         MacroCommandExtensions.Add(sut, A.Fake<IReversibleCommand<MyContext>>(), A.Fake<ICommand<MyContext>>());
       }
 
       [Observation]
@@ -155,7 +157,7 @@ namespace OSPSuite.Commands
          _commandToExecute2 = A.Fake<ICommand<MyContext>>();
          _commandToExecute3 = A.Fake<ICommand<MyContext>>();
 
-         sut.Add(_commandToExecute1, _commandToExecute2, _commandToExecute3);
+         MacroCommandExtensions.Add(sut, _commandToExecute1, _commandToExecute2, _commandToExecute3);
 
          A.CallTo(() => _commandToExecute1.Id).Returns(new CommandId());
          A.CallTo(() => _commandToExecute2.Id).Returns(new CommandId());
@@ -176,7 +178,7 @@ namespace OSPSuite.Commands
          _commandToExecute2 = A.Fake<IReversibleCommand<MyContext>>();
          _commandToExecute3 = A.Fake<IReversibleCommand<MyContext>>();
 
-         sut.Add(_commandToExecute1, _commandToExecute2, _commandToExecute3);
+         MacroCommandExtensions.Add(sut, _commandToExecute1, _commandToExecute2, _commandToExecute3);
          A.CallTo(() => _commandToExecute1.Id).Returns(new CommandId());
          A.CallTo(() => _commandToExecute2.Id).Returns(new CommandId());
          A.CallTo(() => _commandToExecute3.Id).Returns(new CommandId());
@@ -201,10 +203,10 @@ namespace OSPSuite.Commands
       protected override void Context()
       {
          base.Context();
-         sut.Add(new MySimpleCommand());
-         sut.Add(new MySimpleCommand());
-         sut.Add(new MySimpleCommand());
-         sut.Add(new MySimpleCommand());
+         sut.Add((ICommand) new MySimpleCommand());
+         sut.Add((ICommand) new MySimpleCommand());
+         sut.Add((ICommand) new MySimpleCommand());
+         sut.Add((ICommand) new MySimpleCommand());
       }
 
       protected override void Because()
@@ -247,45 +249,6 @@ namespace OSPSuite.Commands
       public void the_comamnd_should_not_have_been_registered_into_the_list_of_sub_commands()
       {
          _listOfAvailableCommands.Count.ShouldBeEqualTo(0);
-      }
-   }
-
-   public class MyContext
-   {
-   }
-
-   public class MyReversibleCommand : Command, IReversibleCommand<MyContext>
-   {
-      public MyReversibleCommand()
-      {
-      }
-
-      public MyReversibleCommand(CommandId id) : base(id)
-      {
-      }
-
-      public void Execute(MyContext context)
-      {
-      }
-
-      public void RestoreExecutionData(MyContext context)
-      {
-      }
-
-      public IReversibleCommand<MyContext> InverseCommand(MyContext context)
-      {
-         return new MyReversibleCommand().AsInverseFor(this);
-      }
-   }
-
-   public class MySimpleCommand : Command, ICommand<MyContext>
-   {
-      public void Execute(MyContext context)
-      {
-      }
-
-      public void RestoreExecutionData(MyContext context)
-      {
       }
    }
 }

@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -24,8 +23,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithId(menuBarItemId)
             .WithDescription(Captions.Journal.ToolTip.CreateJournalPage)
             .WithIcon(ApplicationIcons.PageAdd)
-            .WithShortcut(Keys.Control | Keys.Alt | Keys.J)
-            .WithCommand<CreateJournalPageUICommand>();
+            .WithCommand<CreateJournalPageUICommand>()
+            .WithShortcut(Keys.Control | Keys.Alt | Keys.J);
+
       }
 
       public static IMenuBarItem SelectJournal(MenuBarItemId menuBarItemId)

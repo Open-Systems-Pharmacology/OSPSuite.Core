@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {

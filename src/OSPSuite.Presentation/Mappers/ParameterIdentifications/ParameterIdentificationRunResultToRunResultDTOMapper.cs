@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
-using OSPSuite.Presentation.Services.ParameterIdentifications;
+using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Mappers.ParameterIdentifications

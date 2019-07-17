@@ -14,13 +14,13 @@ namespace OSPSuite.Starter.Tasks
 {
    internal class OSPSuiteExecutionContext : IOSPSuiteExecutionContext
    {
-      private readonly IOSPSuiteXmlSerializerRepository _modellingXmlSerializerRepository;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly ICompression _compress;
       private readonly IEventPublisher _eventPublisher;
 
-      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository, ICompression compress, IEventPublisher eventPublisher)
+      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, ICompression compress, IEventPublisher eventPublisher)
       {
-         _modellingXmlSerializerRepository = modellingXmlSerializerRepository;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _compress = compress;
          _eventPublisher = eventPublisher;
          Project = new TestProject();
@@ -65,7 +65,7 @@ namespace OSPSuite.Starter.Tasks
          if (typeof (TObject) != typeof (IDiagramModel))
             return new byte[0];
 
-         var serializer = _modellingXmlSerializerRepository.SerializerFor<IDiagramModel>();
+         var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
          using (var serializationContext = SerializationTransaction.Create())
             return _compress.Compress(XmlHelper.XmlContentToByte(serializer.Serialize(objectToSerialize, serializationContext)));
 
@@ -76,7 +76,7 @@ namespace OSPSuite.Starter.Tasks
          if (typeof (TObject) != typeof (IDiagramModel))
             return default(TObject);
 
-         var serializer = _modellingXmlSerializerRepository.SerializerFor<IDiagramModel>();
+         var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
          using (var serializationContext = SerializationTransaction.Create())
          {
             var outputToDeserialize = XmlHelper.ElementFromBytes(_compress.Decompress(serializationByte));

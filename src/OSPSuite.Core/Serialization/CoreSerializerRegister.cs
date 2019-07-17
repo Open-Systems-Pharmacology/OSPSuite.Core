@@ -19,11 +19,12 @@ namespace OSPSuite.Core.Serialization
          container.Register<IParameterIdentificationExportSerializerRepository, ParameterIdentificationExportSerializerRepository>(LifeStyle.Singleton);
 
          container.Register<IPKMLPersistor, PKMLPersistor>();
+         container.Register<IDataPersistor, DataPersistor>();
          container.Register<ISimulationPersistor, SimulationPersistor>();
          container.Register<IDimensionFactoryPersistor, DimensionFactoryPersistor>();
          container.Register<IGroupRepositoryPersistor, GroupRepositoryPersistor>();
 
-         //REGISTSTER DOMAIN OBJECTS
+         //REGISTER DOMAIN OBJECTS
          container.AddScanner(scan =>
          {
             scan.AssemblyContainingType<CoreSerializerRegister>();

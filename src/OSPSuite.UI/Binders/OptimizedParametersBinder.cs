@@ -13,6 +13,7 @@ using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Presentation.Formatters;
 
 namespace OSPSuite.UI.Binders
 {

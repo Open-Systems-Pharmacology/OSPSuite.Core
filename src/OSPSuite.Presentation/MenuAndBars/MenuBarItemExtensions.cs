@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
+using OSPSuite.Presentation.Core;
 
 namespace OSPSuite.Presentation.MenuAndBars
 {
@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.MenuAndBars
          return uiElement;
       }
 
-      static public T WithCaption<T>(this T uiElement, string caption) where T : IMenuBarItem
+      public static T WithCaption<T>(this T uiElement, string caption) where T : IMenuBarItem
       {
          uiElement.Caption = caption;
          return uiElement;
