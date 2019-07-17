@@ -50,6 +50,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="OSPSuite.FuncParser">
       <HintPath>..\..\lib\OSPSuite.FuncParser.dll</HintPath>
     </Reference>
