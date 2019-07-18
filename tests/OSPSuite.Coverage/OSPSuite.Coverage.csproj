@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nunit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="FakeItEasy" Version="5.1.1" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.1.4" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
+    <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\lib\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\OSPSuite.Core.Tests\**\*.cs" />
+    <Compile Remove="..\OSPSuite.Core.Tests\**\obj\**\*.cs" />
+    
+    <Compile Include="..\OSPSuite.Core.IntegrationTests\**\*.cs" />
+    <Compile Remove="..\OSPSuite.Core.IntegrationTests\**\obj\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OSPSuite.FuncParser">
+      <HintPath>..\..\lib\OSPSuite.FuncParser.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml" Link="OSPSuite.Dimensions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\EventsAppKeywordReplacement.pkml" Link="Data\EventsAppKeywordReplacement.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\MultipleDosing_0_8_16.xls" Link="Data\MultipleDosing_0_8_16.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\multi_admin_oral.pkml" Link="Data\multi_admin_oral.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\simple_IV_53.pkml" Link="Data\simple_IV_53.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\simple_IV_56.pkml" Link="Data\simple_IV_56.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\SingleDosing.xls" Link="Data\SingleDosing.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\SingleDosing_CL.xls" Link="Data\SingleDosing_CL.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\SingleDosing_IV_30.xls" Link="Data\SingleDosing_IV_30.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\Test1.xls" Link="Data\Test1.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\Test2.xls" Link="Data\Test2.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\Test3.xls" Link="Data\Test3.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\Test4.xls" Link="Data\Test4.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\Test5.xlsx" Link="Data\Test5.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OSPSuite.Core.IntegrationTests\Data\warnings.pkml" Link="Data\warnings.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

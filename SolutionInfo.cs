@@ -8,4 +8,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("OSPSuite.Core.Tests")]
 [assembly: InternalsVisibleTo("OSPSuite.UI.Tests")]
 [assembly: InternalsVisibleTo("OSPSuite.Presentation.Tests")]
+[assembly: InternalsVisibleTo("OSPSuite.Coverage")]
 [assembly: InternalsVisibleTo("OSPSuite.Core.IntegrationTests")]
