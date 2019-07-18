@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
   </ItemGroup>

@@ -359,8 +359,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
-      <Project>{c74efa9f-8da4-4722-9bb1-70e9664f1ed4}</Project>
+      <Project>{debf0532-3317-4ecf-9877-8efe90ff7372}</Project>
       <Name>OSPSuite.Assets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj">
+      <Project>{c74efa9f-8da4-4722-9bb1-70e9664f1ed4}</Project>
+      <Name>OSPSuite.Assets.Images</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
       <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>

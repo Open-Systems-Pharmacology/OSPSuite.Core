@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Media;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
@@ -8,6 +10,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Extensions;
+using Color = System.Drawing.Color;
 
 namespace OSPSuite.UI.Extensions
 {
@@ -175,5 +178,10 @@ namespace OSPSuite.UI.Extensions
       {
          return chartControl.Titles.OfType<ChartTitle>().ToArray();
       }
+
+      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, Func<ChartFonts, int> fontSizeFunc) => FontFor( chartFontAndSizeSettings, fontSizeFunc(chartFontAndSizeSettings.Fonts));
+
+      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, int fontSize) => new Font(chartFontAndSizeSettings.Fonts.FontFamilyName, fontSize);
+
    }
 }

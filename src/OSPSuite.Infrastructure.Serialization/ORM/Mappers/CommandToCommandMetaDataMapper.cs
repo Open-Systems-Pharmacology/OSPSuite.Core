@@ -1,6 +1,7 @@
 using System;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.ORM.MetaData;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -47,18 +48,18 @@ namespace OSPSuite.Infrastructure.ORM.Mappers
       private string descriminatorFor(ICommand command)
       {
          if (command.IsAnImplementationOf<ILabelCommand>())
-            return SerializationConstants.LabelCommand;
+            return Constants.Serialization.LABEL_COMMAND;
          if (command.IsAnImplementationOf<IInfoCommand>())
-            return SerializationConstants.InfoCommand;
+            return Constants.Serialization.INFO_COMMAND;
          if (command.IsAnImplementationOf<IMacroCommand>())
-            return SerializationConstants.MacroCommand;
+            return Constants.Serialization.MACRO_COMMAND;
 
-         return SerializationConstants.SimpleCommand;
+         return Constants.Serialization.SIMPLE_COMMAND;
       }
 
       private CommandMetaData metaDataCommandFrom(IMacroCommand macroCommand)
       {
-         var commandMetaData = new CommandMetaData { Discriminator = SerializationConstants.MacroCommand };
+         var commandMetaData = new CommandMetaData { Discriminator = Constants.Serialization.MACRO_COMMAND };
          macroCommand.All().Each(childCommand => commandMetaData.AddCommand(MapFrom(childCommand)));
          return commandMetaData;
       }

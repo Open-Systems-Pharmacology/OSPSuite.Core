@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_creating_a_new_realated_item_for_a_given_object : concern_for_RelatedItemFactory
+   public class When_creating_a_new_related_item_for_a_given_object : concern_for_RelatedItemFactory
    {
       private IObjectBase _relatedObject;
       private byte[] _data;
@@ -151,7 +151,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         A.CallTo(_iconMapper).WithReturnType<ApplicationIcon>().Returns(ApplicationIcons.Excel);
+         A.CallTo(_iconMapper).WithReturnType<string>().Returns(IconNames.EXCEL);
       }
 
       protected override void Because()
@@ -174,7 +174,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_save_the_expected_meta_data_of_file_into_the_related_item()
       {
-         _relatedItem.IconName.ShouldBeEqualTo(ApplicationIcons.Excel.IconName);
+         _relatedItem.IconName.ShouldBeEqualTo(IconNames.EXCEL);
          _relatedItem.Name.ShouldBeEqualTo(_fileNameWithExtension);
          _relatedItem.ItemType.ShouldBeEqualTo(Constants.RELATIVE_ITEM_FILE_ITEM_TYPE);
          _relatedItem.FullPath.ShouldBeEqualTo(_fileFullPath);

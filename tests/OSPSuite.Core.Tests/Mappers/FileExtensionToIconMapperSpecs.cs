@@ -19,26 +19,25 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_return_the_expected_icons_for_known_extensions()
       {
-         sut.MapFrom(Constants.Filter.XLSX_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Excel);
-         sut.MapFrom(Constants.Filter.XLS_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Excel);
-         sut.MapFrom(Constants.Filter.DOCX_EXTENSION).ShouldBeEqualTo(ApplicationIcons.JournalExportToWord);
-         sut.MapFrom(Constants.Filter.DOC_EXTENSION).ShouldBeEqualTo(ApplicationIcons.JournalExportToWord);
-         sut.MapFrom(Constants.Filter.PDF_EXTENSION).ShouldBeEqualTo(ApplicationIcons.PDF);
-         sut.MapFrom(Constants.Filter.MATLAB_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Matlab);
-         sut.MapFrom(Constants.Filter.FIG_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Matlab);
-         sut.MapFrom(Constants.Filter.MAT_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Matlab);
-         sut.MapFrom(Constants.Filter.R_EXTENSION).ShouldBeEqualTo(ApplicationIcons.R);
-         sut.MapFrom(Constants.Filter.RD_EXTENSION).ShouldBeEqualTo(ApplicationIcons.R);
-         sut.MapFrom(Constants.Filter.PKML_EXTENSION).ShouldBeEqualTo(ApplicationIcons.PKML);
-         sut.MapFrom(Constants.Filter.CSV_EXTENSION).ShouldBeEqualTo(ApplicationIcons.ResultsImportFromCSV);
-         sut.MapFrom(Constants.Filter.TEXT_EXTENSION).ShouldBeEqualTo(ApplicationIcons.Report);
+         sut.MapFrom(Constants.Filter.XLSX_EXTENSION).ShouldBeEqualTo(IconNames.EXCEL);
+         sut.MapFrom(Constants.Filter.XLS_EXTENSION).ShouldBeEqualTo(IconNames.EXCEL);
+         sut.MapFrom(Constants.Filter.DOCX_EXTENSION).ShouldBeEqualTo(IconNames.JOURNAL_EXPORT_TO_WORD);
+         sut.MapFrom(Constants.Filter.DOC_EXTENSION).ShouldBeEqualTo(IconNames.JOURNAL_EXPORT_TO_WORD);
+         sut.MapFrom(Constants.Filter.PDF_EXTENSION).ShouldBeEqualTo(IconNames.PDF);
+         sut.MapFrom(Constants.Filter.MATLAB_EXTENSION).ShouldBeEqualTo(IconNames.MATLAB);
+         sut.MapFrom(Constants.Filter.FIG_EXTENSION).ShouldBeEqualTo(IconNames.MATLAB);
+         sut.MapFrom(Constants.Filter.MAT_EXTENSION).ShouldBeEqualTo(IconNames.MATLAB);
+         sut.MapFrom(Constants.Filter.R_EXTENSION).ShouldBeEqualTo(IconNames.R);
+         sut.MapFrom(Constants.Filter.RD_EXTENSION).ShouldBeEqualTo(IconNames.R);
+         sut.MapFrom(Constants.Filter.PKML_EXTENSION).ShouldBeEqualTo(IconNames.PKML);
+         sut.MapFrom(Constants.Filter.CSV_EXTENSION).ShouldBeEqualTo(IconNames.RESULTS_IMPORT_FROM_CSV);
+         sut.MapFrom(Constants.Filter.TEXT_EXTENSION).ShouldBeEqualTo(IconNames.REPORT);
       }
 
       [Observation]
       public void should_return_file_icon_for_unknown_and_undefined_extension()
       {
-         sut.MapFrom(null).ShouldBeEqualTo(ApplicationIcons.File);
-         sut.MapFrom("*.unknown").ShouldBeEqualTo(ApplicationIcons.File);
+         sut.MapFrom(null).ShouldBeEqualTo(IconNames.FILE);
+         sut.MapFrom("*.unknown").ShouldBeEqualTo(IconNames.FILE);
       }
-   }
-}	
+   }}	

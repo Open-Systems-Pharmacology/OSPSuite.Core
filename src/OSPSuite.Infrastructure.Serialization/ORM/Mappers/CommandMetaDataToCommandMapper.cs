@@ -1,6 +1,7 @@
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.ORM.MetaData;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -37,16 +38,16 @@ namespace OSPSuite.Infrastructure.ORM.Mappers
          return command;
       }
 
-      private IOSPSuiteCommmand<IOSPSuiteExecutionContext> commandFrom(string descrimiator)
+      private IOSPSuiteCommmand<IOSPSuiteExecutionContext> commandFrom(string descriminator)
       {
-         //This commands are create from the command manager and needs to be casted to pksim types afterwards
-         if (string.Equals(descrimiator, SerializationConstants.MacroCommand))
+         //This commands are create from the command manager and needs to be cast to pksim types afterwards
+         if (string.Equals(descriminator, Constants.Serialization.MACRO_COMMAND))
             return new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>();
 
-         if (string.Equals(descrimiator, SerializationConstants.LabelCommand))
+         if (string.Equals(descriminator, Constants.Serialization.LABEL_COMMAND))
             return new OSPSuiteLabelCommand();
 
-         if (string.Equals(descrimiator, SerializationConstants.InfoCommand))
+         if (string.Equals(descriminator, Constants.Serialization.INFO_COMMAND))
             return new OSPSuiteInfoCommand();
 
          return new ReadOnlyCommand();

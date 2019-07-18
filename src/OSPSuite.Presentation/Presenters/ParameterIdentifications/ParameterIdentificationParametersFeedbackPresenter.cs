@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          parameterIdentification.AllIdentificationParameters.Each(x => _parametersDTO.Add(createFeedbackDTOFor(x)));
 
-         _runStatusProperty = new RunPropertyDTO<RunStatus>(Captions.ParameterIdentification.Status, RunStatus.Created, icon: RunStatus.Created.Icon);
+         _runStatusProperty = new RunPropertyDTO<RunStatus>(Captions.ParameterIdentification.Status, RunStatus.Created, icon: iconFor(RunStatus.Created));
 
          _allProperties.Add(_runStatusProperty);
 
@@ -64,12 +64,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.CanExportParametersHistory = (_parametersHistory != null);
       }
 
+      private ApplicationIcon iconFor(RunStatus status) => ApplicationIcons.IconByName(status.IconName);
+
       public void UpdateFeedback(ParameterIdentificationRunState runState)
       {
          _parametersHistory = runState.ParametersHistory;
          _totalErrorHistory  = runState.ErrorHistory;
          _runStatusProperty.Value = runState.Status;
-         _runStatusProperty.Icon = runState.Status.Icon;
+         _runStatusProperty.Icon = iconFor(runState.Status);
 
          updateParameter(Captions.ParameterIdentification.TotalError, runState.BestResult.TotalError, runState.CurrentResult.TotalError);
 

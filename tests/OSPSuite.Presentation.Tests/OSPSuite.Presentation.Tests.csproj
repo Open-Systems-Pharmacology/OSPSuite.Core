@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />

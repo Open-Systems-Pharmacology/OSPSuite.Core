@@ -33,13 +33,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void mapProperties(ParameterIdentificationRunResult runResult)
       {
+         var icon = ApplicationIcons.IconFor(runResult.Status);
          _allProperties.Add(new RunPropertyDTO<double>(Captions.ParameterIdentification.TotalError, runResult.TotalError, new DoubleFormatter()));
          _allProperties.Add(new RunPropertyDTO<int>(Captions.ParameterIdentification.NumberOfEvaluations, runResult.NumberOfEvaluations, new IntFormatter()));
          _allProperties.Add(new RunPropertyDTO<TimeSpan>(Captions.ParameterIdentification.Duration, runResult.Duration, new TimeSpanFormatter()));
-         _allProperties.Add(new RunPropertyDTO<RunStatus>(Captions.ParameterIdentification.Status, runResult.Status, icon: runResult.Status.Icon));
+         _allProperties.Add(new RunPropertyDTO<RunStatus>(Captions.ParameterIdentification.Status, runResult.Status, icon: icon));
 
          if (!string.IsNullOrEmpty(runResult.Message))
-            _allProperties.Add(new RunPropertyDTO<string>(Captions.ParameterIdentification.RunMessage, runResult.Message, icon: runResult.Status.Icon));
+            _allProperties.Add(new RunPropertyDTO<string>(Captions.ParameterIdentification.RunMessage, runResult.Message, icon: icon));
       }
    }
 }

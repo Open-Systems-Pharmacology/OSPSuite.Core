@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Converter.v6_0
          parameterElement.AddAttribute(Constants.Serialization.Attribute.NAME, parameterName);
          parameterElement.AddAttribute("quantityType", QuantityType.Parameter.ToString());
          parameterElement.AddAttribute(Constants.Serialization.Attribute.VALUE, parameterValue);
-         parameterElement.AddAttribute("icon", ApplicationIcons.Parameter.IconName);
+         parameterElement.AddAttribute("icon", IconNames.PARAMETER);
          var parameterInfoElement = new XElement("Info");
          parameterInfoElement.AddAttribute("group", _groupRepository.GroupByName(Constants.Groups.SOLVER_SETTINGS).Id);
          parameterElement.Add(parameterInfoElement);

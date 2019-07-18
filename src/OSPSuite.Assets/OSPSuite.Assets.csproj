@@ -20,34 +20,26 @@
     <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\OSPSuite.Assets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <RootNamespace>OSPSuite.Assets</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Icons\*.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Icons\*.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <None Include="..\..\LICENSE" Link="LICENSE">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
   </ItemGroup>
 
 </Project>

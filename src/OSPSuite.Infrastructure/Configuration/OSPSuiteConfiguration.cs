@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
@@ -24,7 +23,7 @@ namespace OSPSuite.Infrastructure.Configuration
       public abstract int InternalVersion { get; }
       public abstract Origin Product { get; }
       public abstract string ProductNameWithTrademark { get; }
-      public abstract ApplicationIcon Icon { get; }
+      public abstract string IconName { get; }
       public abstract string UserSettingsFileName { get; }
       public abstract string ApplicationSettingsFileName { get; }
       public abstract string IssueTrackerUrl { get; }
@@ -75,7 +74,7 @@ namespace OSPSuite.Infrastructure.Configuration
 
       private string retrieveProductDisplayName()
       {
-         if(!_isReleasedVersion)
+         if (!_isReleasedVersion)
             return $"{ProductNameWithTrademark} {ReleaseDescription}";
 
          var displayName = $"{ProductNameWithTrademark} {Major}";
@@ -87,7 +86,7 @@ namespace OSPSuite.Infrastructure.Configuration
          if (!_isReleasedVersion)
             return ReleaseDescription;
 
-         var displayName =   Minor == 0 ? $"{Major}" : $"{Major}.{Minor}";
+         var displayName = Minor == 0 ? $"{Major}" : $"{Major}.{Minor}";
          return $"{displayName} - Build {Build}";
       }
 

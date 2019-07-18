@@ -6,9 +6,9 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Importer
 {
-   public class DataImporterSettings
+   public class DataImporterSettings : IWithIcon
    {
-      public ApplicationIcon Icon { get; set; }
+      public string IconName { get; set; }
       public string Caption { get; set; }
       private readonly List<List<string>> _metaDataConventionsForNaming = new List<List<string>>();
       private const string TOKEN = "{{{0}}}";
@@ -40,8 +40,8 @@ namespace OSPSuite.Core.Importer
       /// </summary>
       public string Token
       {
-         get { return string.IsNullOrEmpty(_token) ? TOKEN : _token; }
-         set { _token = value; }
+         get => string.IsNullOrEmpty(_token) ? TOKEN : _token;
+         set => _token = value;
       }
 
       /// <summary>
@@ -49,8 +49,8 @@ namespace OSPSuite.Core.Importer
       /// </summary>
       public string Delimiter
       {
-         get { return string.IsNullOrEmpty(_delimiter) ? DELIMITER : _delimiter; }
-         set { _delimiter = value; }
+         get => string.IsNullOrEmpty(_delimiter) ? DELIMITER : _delimiter;
+         set => _delimiter = value;
       }
 
       /// <summary>
@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Importer
 
       public void ClearMetaDataNamingPatterns()
       {
-         _metaDataConventionsForNaming.Clear();  
+         _metaDataConventionsForNaming.Clear();
       }
    }
 }

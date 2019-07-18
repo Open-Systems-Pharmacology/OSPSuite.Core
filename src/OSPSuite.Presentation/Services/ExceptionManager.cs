@@ -1,4 +1,5 @@
 ﻿using System;
+using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
@@ -21,7 +22,7 @@ namespace OSPSuite.Presentation.Services
          _exceptionView = exceptionView;
          _logger = logger;
          _productInfo = $"{configuration.ProductNameWithTrademark} {configuration.FullVersion}";
-         _exceptionView.Initialize($"{_productInfo} - Error", configuration.Icon, configuration.IssueTrackerUrl, configuration.ProductName);
+         _exceptionView.Initialize($"{_productInfo} - Error", ApplicationIcons.IconFor(configuration), configuration.IssueTrackerUrl, configuration.ProductName);
       }
 
       public override void LogException(Exception ex)

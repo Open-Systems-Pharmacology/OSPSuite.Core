@@ -33,13 +33,13 @@ namespace OSPSuite.UI.Views
 
          _screenBinder.Bind(x => x.Source)
             .To(imageComboBoxValueOriginSource)
-            .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
+            .WithImages(x => _imageListRetriever.ImageIndex(x.IconName))
             .WithValues( x=> _presenter.AllValueOriginSources)
             .AndDisplays(x => x.Display);
 
          _screenBinder.Bind(x => x.Method)
             .To(imageComboBoxValueOriginDeterminationMethod)
-            .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
+            .WithImages(x => _imageListRetriever.ImageIndex(x.IconName))
             .WithValues( x=> _presenter.AllValueOriginDeterminationMethods)
             .AndDisplays(x => x.Display);
 

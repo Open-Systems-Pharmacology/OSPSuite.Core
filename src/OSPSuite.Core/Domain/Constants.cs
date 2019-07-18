@@ -424,6 +424,10 @@ namespace OSPSuite.Core.Domain
 
       public static class Serialization
       {
+         public const string MACRO_COMMAND = "MacroCommand";
+         public const string SIMPLE_COMMAND = "SimpleCommand";
+         public const string LABEL_COMMAND = "LabelCommand";
+         public const string INFO_COMMAND = "InfoCommand";
          public const string SIMULATION = "Simulation";
          public const string SIMULATION_LIST = "SimulationList";
          public const string TIME_POINT = "TimePoint";
@@ -540,10 +544,9 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
-
+         public const string DEFAULT_FONT_FAMILY_NAME = "Microsoft Sans Serif";
+         
          public const int DEFAULT_FONT_SIZE_LEGEND = 8;
          public const int DEFAULT_FONT_SIZE_AXIS = 10;
          public const int DEFAULT_FONT_SIZE_TITLE = 16;
@@ -553,7 +556,10 @@ namespace OSPSuite.Core.Domain
          public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] { DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME };
+
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }

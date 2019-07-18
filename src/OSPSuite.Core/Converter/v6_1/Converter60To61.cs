@@ -48,9 +48,6 @@ namespace OSPSuite.Core.Converter.v6_1
          if (string.IsNullOrEmpty(buildingBlock.Icon))
             return;
 
-         if (ApplicationIcons.HasIconNamed(buildingBlock.Icon))
-            return;
-
          buildingBlock.Icon = buildingBlock.Icon.Replace(" ", "");
          _converted = true;
       }

@@ -89,7 +89,7 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_reutrn_the_available_fonts()
+      public void should_return_the_available_fonts()
       {
          sut.DefaultSansSerifFontName.ShouldBeEqualTo(FontFamily.GenericSansSerif.Name);
       }
