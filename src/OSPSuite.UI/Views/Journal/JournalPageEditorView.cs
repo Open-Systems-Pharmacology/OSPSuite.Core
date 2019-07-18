@@ -188,7 +188,7 @@ namespace OSPSuite.UI.Views.Journal
 
          _screenBinder.Bind(x => x.Origin)
             .To(cbOrigin)
-            .WithImages(x => _imageListRetriever.ImageIndex(x.Icon))
+            .WithImages(x => _imageListRetriever.ImageIndex(x.IconName))
             .WithValues(dto => _presenter.AllOrigins)
             .AndDisplays(x => x.DisplayName)
             .Changed += () => OnEvent(originChanged);

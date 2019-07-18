@@ -7,7 +7,7 @@ namespace OSPSuite.Core
    /// <summary>
    ///    Standard interface defining common properties for all application in the suite
    /// </summary>
-   public interface IApplicationConfiguration
+   public interface IApplicationConfiguration : IWithIcon
    {
       /// <summary>
       ///    Folder path where template layouts are being saved (for all users, installed by setup)
@@ -89,8 +89,6 @@ namespace OSPSuite.Core
       /// </summary>
       string ProductDisplayName { get; }
 
-      ApplicationIcon Icon { get; }
-      
       /// <summary>
       ///    Paths of the current user specific settings file (current user only)
       /// </summary>

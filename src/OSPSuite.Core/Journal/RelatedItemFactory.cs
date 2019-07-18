@@ -12,12 +12,12 @@ namespace OSPSuite.Core.Journal
    public interface IRelatedItemFactory
    {
       /// <summary>
-      ///    Creates and reaturns a related item containing the given <paramref name="relatedObject" /> as data.
+      ///    Creates and returns a related item containing the given <paramref name="relatedObject" /> as data.
       /// </summary>
       RelatedItem Create<T>(T relatedObject) where T : class, IObjectBase;
 
       /// <summary>
-      ///    Creates and reaturns a related item containing the content of the file located at <paramref name="fileFullPath" />
+      ///    Creates and returns a related item containing the content of the file located at <paramref name="fileFullPath" />
       ///    as data.
       /// </summary>
       RelatedItem CreateFromFile(string fileFullPath);
@@ -81,7 +81,7 @@ namespace OSPSuite.Core.Journal
          return createRelatedItem(name, itemType, data, x =>
          {
             x.Origin = Origins.Other;
-            x.IconName = _iconMapper.MapFrom(fileInfo.Extension).IconName;
+            x.IconName = _iconMapper.MapFrom(fileInfo.Extension);
             x.FullPath = fileFullPath;
             x.Discriminator = itemType;
          });

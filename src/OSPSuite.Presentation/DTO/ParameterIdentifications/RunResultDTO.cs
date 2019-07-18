@@ -6,6 +6,6 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
    public class RunResultDTO
    {
       public virtual RunStatus Status { get; set; }
-      public ApplicationIcon StatusIcon => Status.Icon;
+      public ApplicationIcon StatusIcon => ApplicationIcons.IconFor(Status);
    }
 }

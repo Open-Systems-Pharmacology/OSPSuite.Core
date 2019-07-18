@@ -84,7 +84,7 @@ namespace OSPSuite.Presentation.Presenter
          _namingPatternPresenter.WithToken(dataImporterSettings.Token);
          _namingTask.CreateNamingPatternsBasedOn(metaDataCategories, dataImporterSettings).Each((_namingPatternPresenter.AddPresetNamingPatterns));
          _view.Caption = dataImporterSettings.Caption;
-         _view.SetIcon(dataImporterSettings.Icon);
+         _view.SetIcon(ApplicationIcons.IconFor(dataImporterSettings));
          _view.StartImport(sourceFile, new ImportTableConfiguration {MetaDataCategories = metaDataCategories, ColumnInfos = columnInfos}, mode);
 
          _view.Display();

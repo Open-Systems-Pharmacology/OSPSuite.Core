@@ -212,7 +212,7 @@ namespace OSPSuite.UI.Views.Journal
             return _titleRepository;
 
          var titleWithImageRepository = new UxRepositoryItemImageComboBox(gridView, _imageListRetriever);
-         return titleWithImageRepository.AddItem(dto.Title, dto.Origin.Icon);
+         return titleWithImageRepository.AddItem(dto.Title, dto.Origin.IconName);
       }
 
       private IGridViewAutoBindColumn<JournalPageDTO, T> bind<T>(Expression<Func<JournalPageDTO, T>> expression)

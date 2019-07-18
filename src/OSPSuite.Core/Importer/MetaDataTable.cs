@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Importer
             if (col.ListOfValues != null)
                cloneColumn.ListOfValues = new Dictionary<string, string>(col.ListOfValues);
             if (col.ListOfImages != null)
-               cloneColumn.ListOfImages = new Dictionary<string, ApplicationIcon>(col.ListOfImages);
+               cloneColumn.ListOfImages = new Dictionary<string, string>(col.ListOfImages);
             cloneColumn.IsListOfValuesFixed = col.IsListOfValuesFixed;
             cloneColumn.MinValue = col.MinValue;
             cloneColumn.MinValueAllowed = col.MinValueAllowed;

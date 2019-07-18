@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq.Expressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -66,15 +65,6 @@ namespace OSPSuite.Core.Chart
          Fonts.UpdateSettingsFrom(sourceChartFontAndSizeSettings.Fonts);
       }
 
-      public Font FontFor(Func<ChartFonts, int> fontSizeFunc)
-      {
-         return FontFor(fontSizeFunc(Fonts));
-      }
-
-      public Font FontFor(int fontSize)
-      {
-         return new Font(Fonts.FontFamilyName, fontSize);
-      }
 
       private static class ValidationRules
       {
@@ -84,11 +74,11 @@ namespace OSPSuite.Core.Chart
          internal static IEnumerable<IBusinessRule> AllRules()
          {
             yield return chartHeightIsValid;
-            yield return chartWitdhIsValid;
+            yield return chartWidthIsValid;
          }
 
          private static IBusinessRule chartHeightIsValid { get; } = emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartHeight);
-         private static IBusinessRule chartWitdhIsValid { get; } = emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartWidth);
+         private static IBusinessRule chartWidthIsValid { get; } = emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<ChartFontAndSizeSettings>(x => x.ChartWidth);
 
          private static IBusinessRule emptyOrGreaterThanMinSizeAndLessThanMaxSizePixels<T>(Expression<Func<T, int?>> property)
          {

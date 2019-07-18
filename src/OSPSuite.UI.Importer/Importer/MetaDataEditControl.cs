@@ -53,12 +53,12 @@ namespace OSPSuite.UI.Importer
          if (IsDataValid) AcceptDataChanges();
       }
 
-      private ImageList getImageList(Dictionary<string, ApplicationIcon> icons, IconSize iconSize)
+      private ImageList getImageList(Dictionary<string, string> icons, IconSize iconSize)
       {
          if (icons == null || icons.Count == 0) return null;
          var imageList = new ImageList { ImageSize = iconSize };
-         foreach (var image in icons)
-            imageList.Images.Add(image.Key, image.Value.WithSize(iconSize));
+         foreach (var icon in icons)
+            imageList.Images.Add(icon.Key, ApplicationIcons.IconByName(icon.Value).WithSize(iconSize));
          return imageList;
       }
 
