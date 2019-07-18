@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using OSPSuite.Utility.Collections;
@@ -485,9 +483,10 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon AmountObservedData = AddNamedIcon("AmountObservedData", "AmountObservedData");
       public static readonly ApplicationIcon AmountObservedDataForMolecule = AddNamedIcon("AmountObservedDataForMolecule", "AmountObservedDataForMolecule");
 
-
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      public static readonly ApplicationIcon EmptyIcon = new ApplicationIcon((Icon)null);
+      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
+
+      public static readonly ApplicationIcon EmptyIcon = createEmptyIcon();
 
       //This icon should be set in the application
       public static ApplicationIcon DefaultIcon = EmptyIcon;
@@ -519,8 +518,11 @@ namespace OSPSuite.Assets
       public static ApplicationIcon AddNamedIcon(string resName, string iconName)
       {
          var name = iconName.ToUpperInvariant();
-         var icon = getIcon(resName);
-         var appIcon = new ApplicationIcon(icon)
+         var iconAsBytes = getIcon(resName);
+         if (iconAsBytes == null)
+            return createEmptyIcon();
+
+         var appIcon = new ApplicationIcon(iconAsBytes)
          {
             IconName = name,
             Index = _allIcons.Count
@@ -550,7 +552,10 @@ namespace OSPSuite.Assets
          var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".ico";
          using (var stream = assembly.GetManifestResourceStream(resourceName))
          {
-            byte[] buffer = new byte[stream.Length];
+            if (stream == null)
+               return null;
+
+            var buffer = new byte[stream.Length];
             stream.Read(buffer, 0, buffer.Length);
             return buffer;
          }
