@@ -14,7 +14,10 @@ task :cover do
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
   targetProjects = [
-	"OSPSuite.Coverage.csproj"
+	"OSPSuite.Core.Tests.dll",
+	"OSPSuite.Core.IntegrationTests.dll",
+	"OSPSuite.Presentation.Tests.dll",
+
 	];
 
   Coverage.cover(filter, targetProjects)
@@ -22,9 +25,9 @@ end
 
 module Coverage
   def self.cover(filter_array, targetProjects)
-    testProjects = Dir.glob("tests/**/*.csproj").select{|path| targetProjects.include?(File.basename path)}
+    testProjects = Dir.glob("tests/**/*.dll").select{|path| targetProjects.include?(File.basename path)}
     openCover = Dir.glob("packages/OpenCover.*/tools/OpenCover.Console.exe").first
-    testProjects.unshift("test")
+    testProjects.unshift("vstest")
     targetArgs = testProjects.join(" ")
 
     Utils.run_cmd(openCover, ["-register:user", "-target:dotnet.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs", "-oldstyle"])
