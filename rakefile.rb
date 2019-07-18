@@ -14,7 +14,7 @@ task :cover do
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
   targetProjects = [
-	"OSPSuite.Core.Tests.csproj"
+	"OSPSuite.Coverage.csproj"
 	];
 
   Coverage.cover(filter, targetProjects)
