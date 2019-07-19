@@ -1,4 +1,3 @@
-using OSPSuite.Core.Chart;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Converter.v5_2;
@@ -15,6 +14,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -85,6 +85,8 @@ namespace OSPSuite.Core
 
          registerParameterIdentificationRunFactories(container);
 
+         registerThirdPartyComponents(container);
+
          //FACTORIES
          container.RegisterFactory<IDiagramModelFactory>();
          container.RegisterFactory<IModelValidatorFactory>();
@@ -137,6 +139,11 @@ namespace OSPSuite.Core
          container.Register<IParameterIdentificationRunSpecificationFactory, CategorialParameterIdentificationRunFactory>();
          container.Register<IParameterIdentificationRunSpecificationFactory, MultipleParameterIdentificationRunFactory>();
          container.Register<IParameterIdentificationRunSpecificationFactory, StandardParameterIdentificationRunFactory>();
+      }
+
+      private static void registerThirdPartyComponents(IContainer container)
+      {
+         container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
       }
    }
 }

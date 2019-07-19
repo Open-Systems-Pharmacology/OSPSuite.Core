@@ -48,13 +48,7 @@ namespace OSPSuite.Core
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
-         container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
-
-         var stringCompression = A.Fake<IStringCompression>();
-         A.CallTo(() => stringCompression.Compress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
-         A.CallTo(() => stringCompression.Decompress(A<string>._)).ReturnsLazily(x => x.GetArgument<string>(0));
-         container.RegisterImplementationOf(stringCompression);
 
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
          container.RegisterImplementationOf(A.Fake<IDisplayUnitRetriever>());

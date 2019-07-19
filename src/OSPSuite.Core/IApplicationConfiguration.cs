@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the pk analyses file
       /// </summary>
-      string PKParametersFilePath { get; }
+      string PKParametersFilePath { get; set; }
 
       /// <summary>
       ///    Path of the license agreement file
@@ -138,7 +138,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the dimension file
       /// </summary>
-      string DimensionFilePath { get; }
+      string DimensionFilePath { get; set; }
 
       /// <summary>
       /// Where can the user change the watermark option in the user interface. Location is application specific
