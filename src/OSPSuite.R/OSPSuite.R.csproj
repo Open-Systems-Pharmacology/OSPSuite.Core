@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>OSPSuite.Infrastructure</AssemblyName>
+    <AssemblyName>OSPSuite.R</AssemblyName>
     <Version>1.0.0</Version>
     <PackageVersion>1.0.0</PackageVersion>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -15,13 +14,12 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
-    <Description>Infrastructure functionality for the Open Systems Pharmacology Suite</Description>
+    <Description>R Interface for the Open Systems Pharmacology Suite</Description>
     <Authors>Open-Systems-Pharmacology</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,25 +27,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Castle.Windsor" Version="5.0.0" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
-    <PackageReference Include="SharpZipLib" Version="1.1.0" />
-  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
+    <None Include="..\..\LICENSE" Link="LICENSE">
       <PackagePath></PackagePath>
+      <Pack>True</Pack>
     </None>
   </ItemGroup>
-
 </Project>

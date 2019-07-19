@@ -1,5 +1,5 @@
-﻿using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
+﻿using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.Repositories
 {
@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Repositories
 
    public class OptimizationAlgorithmRepository : ImplementationRepository<IOptimizationAlgorithm>, IOptimizationAlgorithmRepository
    {
-      public OptimizationAlgorithmRepository(OSPSuite.Utility.Container.IContainer container) : base(container)
+      public OptimizationAlgorithmRepository(Utility.Container.IContainer container) : base(container)
       {
       }
    }
