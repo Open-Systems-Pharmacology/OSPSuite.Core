@@ -47,6 +47,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Assets", "src\OSPSuite.Assets\OSPSuite.Assets.csproj", "{DEBF0532-3317-4ECF-9877-8EFE90FF7372}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.R", "src\OSPSuite.R\OSPSuite.R.csproj", "{6835EC69-97A9-4376-9935-CBE0E1C7EC7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.R.Tests", "tests\OSPSuite.R.Tests\OSPSuite.R.Tests.csproj", "{484DD737-1609-4492-B9B0-D1E4B3665CC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +129,14 @@ Global
 		{DEBF0532-3317-4ECF-9877-8EFE90FF7372}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEBF0532-3317-4ECF-9877-8EFE90FF7372}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEBF0532-3317-4ECF-9877-8EFE90FF7372}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6835EC69-97A9-4376-9935-CBE0E1C7EC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6835EC69-97A9-4376-9935-CBE0E1C7EC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6835EC69-97A9-4376-9935-CBE0E1C7EC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6835EC69-97A9-4376-9935-CBE0E1C7EC7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{484DD737-1609-4492-B9B0-D1E4B3665CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{484DD737-1609-4492-B9B0-D1E4B3665CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{484DD737-1609-4492-B9B0-D1E4B3665CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{484DD737-1609-4492-B9B0-D1E4B3665CC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

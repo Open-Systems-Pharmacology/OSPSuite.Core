@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Serialization.Exchange
 {
@@ -19,13 +18,13 @@ namespace OSPSuite.Core.Serialization.Exchange
 
    public class SimulationPersistor : ISimulationPersistor
    {
-      private readonly IOSPSuiteXmlSerializerRepository _modellingXmlSerializerRepository;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IObjectConverterFinder _objectConverterFinder;
       private readonly IReferencesResolver _refResolver;
 
-      public SimulationPersistor(IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository, IObjectConverterFinder objectConverterFinder, IReferencesResolver refResolver)
+      public SimulationPersistor(IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, IObjectConverterFinder objectConverterFinder, IReferencesResolver refResolver)
       {
-         _modellingXmlSerializerRepository = modellingXmlSerializerRepository;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _objectConverterFinder = objectConverterFinder;
          _refResolver = refResolver;
       }
@@ -34,7 +33,7 @@ namespace OSPSuite.Core.Serialization.Exchange
       {
          using (var serializationContext = SerializationTransaction.Create())
          {
-            var serializer = _modellingXmlSerializerRepository.SerializerFor(simulationTransfer);
+            var serializer = _modelingXmlSerializerRepository.SerializerFor(simulationTransfer);
             var element = serializer.Serialize(simulationTransfer, serializationContext);
             element.Save(fileName);
          }
@@ -57,7 +56,7 @@ namespace OSPSuite.Core.Serialization.Exchange
          while (version != Constants.PKML_VERSION)
          {
             var converter = _objectConverterFinder.FindConverterFor(version);
-            var (convertedVersion, _)= converterAction(converter).Invoke(objectToConvert);
+            var (convertedVersion, _) = converterAction(converter).Invoke(objectToConvert);
             version = convertedVersion;
          }
       }
@@ -66,14 +65,14 @@ namespace OSPSuite.Core.Serialization.Exchange
       {
          SimulationTransfer simulationTransfer;
          int version;
-         using (var serializationContext = SerializationTransaction.Create(dimensionFactory, objectBaseFactory, withIdRepository,cloneManagerForModel))
+         using (var serializationContext = SerializationTransaction.Create(dimensionFactory, objectBaseFactory, withIdRepository, cloneManagerForModel))
          {
             var element = XElement.Load(pkmlFileFullPath);
             version = element.GetPKMLVersion();
 
             convertXml(element, version);
 
-            var serializer = _modellingXmlSerializerRepository.SerializerFor<SimulationTransfer>();
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<SimulationTransfer>();
             if (!string.Equals(serializer.ElementName, element.Name.LocalName))
                throw new OSPSuiteException(Error.CouldNotLoadSimulationFromFile(pkmlFileFullPath));
 

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.Configuration
+namespace OSPSuite.Core
 {
    public abstract class OSPSuiteConfiguration : IApplicationConfiguration
    {
@@ -16,9 +15,9 @@ namespace OSPSuite.Infrastructure.Configuration
 
       public string ChartLayoutTemplateFolderPath { get; }
       public string TeXTemplateFolderPath { get; }
-      public string PKParametersFilePath { get; }
+      public string PKParametersFilePath { get; set; }
       public string SimModelSchemaFilePath { get; }
-      public string DimensionFilePath { get; }
+      public string DimensionFilePath { get; set; }
       public abstract string ProductName { get; }
       public abstract int InternalVersion { get; }
       public abstract Origin Product { get; }
