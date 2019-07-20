@@ -147,6 +147,7 @@ namespace OSPSuite.R
          sut.AllParametersMatching(_organism, WILD_CARD_REC).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_liver, WILD_CARD_REC).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
+         sut.AllParametersMatching(_organism, WILD_CARD_REC, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
       }
    }
 
