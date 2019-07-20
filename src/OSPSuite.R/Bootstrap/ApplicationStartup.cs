@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -20,7 +21,13 @@ namespace OSPSuite.R.Bootstrap
       {
          if (_initialized) return;
 
+         //TODO remove when logger implemented
+         Console.WriteLine("OSPSuite R API Initializing...");
          new ApplicationStartup().performInitialization(apiConfig);
+
+         //TODO remove when logger implemented
+         Console.WriteLine("OSPSuite R API Initialized.");
+
          _initialized = true;
       }
 
