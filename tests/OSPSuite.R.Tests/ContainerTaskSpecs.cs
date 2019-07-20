@@ -136,6 +136,7 @@ namespace OSPSuite.R
 
          sut.AllParametersMatching(_organism, WILD_CARD_REC, WILD_CARD).ShouldOnlyContain(_volumeLiver, _volumeKidney, _gfr, _volumeKidneyCell, _volumeLiverCell, _clearance);
          sut.AllParametersMatching(_organism, $"Liv{WILD_CARD}", $"{WILD_CARD}INTR{WILD_CARD}", $"{WILD_CARD}ol{WILD_CARD}").ShouldOnlyContain(_volumeLiverCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_REC, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
       }
    }
 
@@ -147,7 +148,6 @@ namespace OSPSuite.R
          sut.AllParametersMatching(_organism, WILD_CARD_REC).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_liver, WILD_CARD_REC).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
       }
    }
 
