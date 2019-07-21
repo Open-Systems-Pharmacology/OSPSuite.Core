@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
@@ -11,40 +12,43 @@ namespace OSPSuite.R.Services
 {
    public interface IContainerTask
    {
-      IReadOnlyCollection<IParameter> AllParametersMatching(IModelCoreSimulation simulation, params string[] path);
-      IReadOnlyCollection<IContainer> AllContainersMatching(IModelCoreSimulation simulation, params string[] path);
+      IParameter[] AllParametersMatching(IModelCoreSimulation simulation, params string[] path);
+      IContainer[] AllContainersMatching(IModelCoreSimulation simulation, params string[] path);
 
-      IReadOnlyCollection<IParameter> AllParametersMatching(IContainer container, params string[] path);
-      IReadOnlyCollection<IContainer> AllContainersMatching(IContainer container, params string[] path);
+      IParameter[] AllParametersMatching(IContainer container, params string[] path);
+      IContainer[] AllContainersMatching(IContainer container, params string[] path);
    }
 
    public class ContainerTask : IContainerTask
    {
       private readonly IEntityPathResolver _entityPathResolver;
+      private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
 
       public ContainerTask(IEntityPathResolver entityPathResolver)
       {
          _entityPathResolver = entityPathResolver;
       }
 
-      public IReadOnlyCollection<IParameter> AllParametersMatching(IModelCoreSimulation simulation, params string[] path) =>
-         AllParametersMatching(simulation?.Model?.Root);
+      public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, params string[] path) =>
+         AllParametersMatching(simulation?.Model?.Root, path);
 
-      public IReadOnlyCollection<IContainer> AllContainersMatching(IModelCoreSimulation simulation, params string[] path) =>
-         AllContainersMatching(simulation?.Model?.Root);
+      public IContainer[] AllContainersMatching(IModelCoreSimulation simulation, params string[] path) =>
+         AllContainersMatching(simulation?.Model?.Root, path);
 
-      public IReadOnlyCollection<IContainer> AllContainersMatching(IContainer container, params string[] path) =>
+      public IContainer[] AllContainersMatching(IContainer container, params string[] path) =>
          allEntitiesMatching<IContainer>(container, path);
 
-      public IReadOnlyCollection<IParameter> AllParametersMatching(IContainer container, params string[] path) =>
+      public IParameter[] AllParametersMatching(IContainer container, params string[] path) =>
          allEntitiesMatching<IParameter>(container, path);
 
-      private IReadOnlyCollection<T> allEntitiesMatching<T>(IContainer container, string[] path) where T : class, IEntity
+      private T[] allEntitiesMatching<T>(IContainer container, string[] path) where T : class, IEntity
       {
          if (path == null || path.Length == 0)
             return Array.Empty<T>();
 
          var pathAsString = path.ToPathString();
+
+         
          // no wild cards => it's a single path and do not need to inspect 
          if (!pathAsString.Contains(WILD_CARD))
          {
@@ -54,7 +58,8 @@ namespace OSPSuite.R.Services
 
          var regex = new Regex(createSearchPattern(path), RegexOptions.IgnoreCase);
          var parentContainerPath = $"{_entityPathResolver.FullPathFor(container)}{ObjectPath.PATH_DELIMITER}";
-         return container.GetAllChildren<T>(x => pathMatches(regex, parentContainerPath, x));
+
+         return container.GetAllChildren<T>(x => pathMatches(regex, parentContainerPath, x)).ToArray();
       }
 
       private string createSearchPattern(string[] path)
@@ -63,11 +68,11 @@ namespace OSPSuite.R.Services
          foreach (var entry in path)
          {
             if (string.Equals(entry, WILD_CARD))
-               pattern.Add($"([^{ObjectPath.PATH_DELIMITER}]*)?"); // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
-            else if (string.Equals(entry, WILD_CARD_REC))
+               pattern.Add($"{ALL_BUT_PATH_DELIMITER}?"); // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
+            else if (string.Equals(entry, WILD_CARD_RECURSIF))
                pattern.Add(".*"); //Match anything
             else
-               pattern.Add(entry.Replace(WILD_CARD, ".*"));
+               pattern.Add(entry.Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER));
          }
 
          var searchPattern = pattern.ToString($"\\{ObjectPath.PATH_DELIMITER}");

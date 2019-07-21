@@ -120,9 +120,9 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, INTRACELLULAR, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, VOLUME).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, _clearance.Name).ShouldOnlyContain(_clearance);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, INTRACELLULAR, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, VOLUME).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, _clearance.Name).ShouldOnlyContain(_clearance);
       }
    }
 
@@ -131,12 +131,13 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, WILD_CARD, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, INTRACELLULAR, WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, INTRACELLULAR, WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr);
 
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, WILD_CARD).ShouldOnlyContain(_volumeLiver, _volumeKidney, _gfr, _volumeKidneyCell, _volumeLiverCell, _clearance);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD).ShouldOnlyContain(_volumeLiver, _volumeKidney, _gfr, _volumeKidneyCell, _volumeLiverCell, _clearance);
          sut.AllParametersMatching(_organism, $"Liv{WILD_CARD}", $"{WILD_CARD}INTR{WILD_CARD}", $"{WILD_CARD}ol{WILD_CARD}").ShouldOnlyContain(_volumeLiverCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_REC, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
+         sut.AllParametersMatching(_organism, $"Liv{WILD_CARD}", $"INTRA{WILD_CARD}", $"{WILD_CARD}o*").ShouldOnlyContain(_volumeLiverCell);
       }
    }
 
@@ -145,8 +146,8 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_REC).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
-         sut.AllParametersMatching(_liver, WILD_CARD_REC).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_liver, WILD_CARD_RECURSIF).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
       }
    }
@@ -160,7 +161,7 @@ namespace OSPSuite.R
          sut.AllContainersMatching(_organism, "Liver").ShouldOnlyContain(_liver);
          sut.AllContainersMatching(_organism, WILD_CARD).ShouldOnlyContain(_liver,_kidney);
          sut.AllContainersMatching(_organism, WILD_CARD, WILD_CARD).ShouldOnlyContain(_liverIntracellular,_kidneyIntracellular);
-         sut.AllContainersMatching(_organism, WILD_CARD_REC, WILD_CARD).ShouldOnlyContain(_liverIntracellular,_kidneyIntracellular, _liverIntracellularSubContainer);
+         sut.AllContainersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD).ShouldOnlyContain(_liverIntracellular,_kidneyIntracellular, _liverIntracellularSubContainer);
       }
    }
 }
