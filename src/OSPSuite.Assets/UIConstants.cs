@@ -1406,6 +1406,15 @@ namespace OSPSuite.Assets
       {
          return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the maximum supported size of '{maxSizeInMegaBytes} MB'.";
       }
+
+      public static string WildCardRecursiveCannotBePartOfPath(string wildCardRec, IReadOnlyList<string> invalidEntries, IReadOnlyList<string> correctedEntries)
+      {
+         var sb = new StringBuilder($"The '{wildCardRec}' search pattern cannot be used as part of a path entry:");
+         sb.AppendLine();
+         sb.AppendLine($"Instead of '{invalidEntries.ToString(", ")}'");
+         sb.AppendLine($"use '{correctedEntries.ToString(", ")}'");
+         return sb.ToString();
+      }
    }
 
    public static class Validation

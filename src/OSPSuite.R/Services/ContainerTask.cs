@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
 
@@ -46,9 +48,9 @@ namespace OSPSuite.R.Services
          if (path == null || path.Length == 0)
             return Array.Empty<T>();
 
+         validate(path);
          var pathAsString = path.ToPathString();
 
-         
          // no wild cards => it's a single path and do not need to inspect 
          if (!pathAsString.Contains(WILD_CARD))
          {
@@ -62,6 +64,16 @@ namespace OSPSuite.R.Services
          return container.GetAllChildren<T>(x => pathMatches(regex, parentContainerPath, x)).ToArray();
       }
 
+      private void validate(string[] path)
+      {
+         var invalidEntries =  path.Where(x => !string.Equals(x, WILD_CARD_RECURSIVE)).Where(x => x.Contains(WILD_CARD_RECURSIVE)).ToList();
+         if (!invalidEntries.Any())
+            return;
+
+         var correctedEntries = invalidEntries.Select(x => x.Replace(WILD_CARD_RECURSIVE, WILD_CARD)).ToList();
+         throw new OSPSuiteException(Error.WildCardRecursiveCannotBePartOfPath(WILD_CARD_RECURSIVE,  invalidEntries, correctedEntries));
+      }
+
       private string createSearchPattern(string[] path)
       {
          var pattern = new List<string>();
@@ -69,7 +81,7 @@ namespace OSPSuite.R.Services
          {
             if (string.Equals(entry, WILD_CARD))
                pattern.Add($"{ALL_BUT_PATH_DELIMITER}?"); // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
-            else if (string.Equals(entry, WILD_CARD_RECURSIF))
+            else if (string.Equals(entry, WILD_CARD_RECURSIVE))
                pattern.Add(".*"); //Match anything
             else
                pattern.Add(entry.Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER));

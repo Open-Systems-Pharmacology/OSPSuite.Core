@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Exceptions;
 using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Core.Domain.Constants.Parameters;
 using ContainerTask = OSPSuite.R.Services.ContainerTask;
@@ -120,9 +121,9 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, INTRACELLULAR, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, VOLUME).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, _clearance.Name).ShouldOnlyContain(_clearance);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, INTRACELLULAR, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, VOLUME).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, _clearance.Name).ShouldOnlyContain(_clearance);
       }
    }
 
@@ -131,12 +132,12 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, INTRACELLULAR, WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, WILD_CARD, VOLUME).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, INTRACELLULAR, WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr);
 
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD).ShouldOnlyContain(_volumeLiver, _volumeKidney, _gfr, _volumeKidneyCell, _volumeLiverCell, _clearance);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, WILD_CARD).ShouldOnlyContain(_volumeLiver, _volumeKidney, _gfr, _volumeKidneyCell, _volumeLiverCell, _clearance);
          sut.AllParametersMatching(_organism, $"Liv{WILD_CARD}", $"{WILD_CARD}INTR{WILD_CARD}", $"{WILD_CARD}ol{WILD_CARD}").ShouldOnlyContain(_volumeLiverCell);
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE, $"INTR{WILD_CARD}", WILD_CARD).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
          sut.AllParametersMatching(_organism, $"Liv{WILD_CARD}", $"INTRA{WILD_CARD}", $"{WILD_CARD}o*").ShouldOnlyContain(_volumeLiverCell);
       }
    }
@@ -146,22 +147,30 @@ namespace OSPSuite.R
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIF).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
-         sut.AllParametersMatching(_liver, WILD_CARD_RECURSIF).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_organism, WILD_CARD_RECURSIVE).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_liver, WILD_CARD_RECURSIVE).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
       }
    }
 
-
    public class When_retrieving_all_containers_matching_a_given_path : concern_for_ContainerTask
    {
       [Observation]
-      public void should_return_the_expected_containers ()
+      public void should_return_the_expected_containers()
       {
          sut.AllContainersMatching(_organism, "Liver").ShouldOnlyContain(_liver);
-         sut.AllContainersMatching(_organism, WILD_CARD).ShouldOnlyContain(_liver,_kidney);
-         sut.AllContainersMatching(_organism, WILD_CARD, WILD_CARD).ShouldOnlyContain(_liverIntracellular,_kidneyIntracellular);
-         sut.AllContainersMatching(_organism, WILD_CARD_RECURSIF, WILD_CARD).ShouldOnlyContain(_liverIntracellular,_kidneyIntracellular, _liverIntracellularSubContainer);
+         sut.AllContainersMatching(_organism, WILD_CARD).ShouldOnlyContain(_liver, _kidney);
+         sut.AllContainersMatching(_organism, WILD_CARD, WILD_CARD).ShouldOnlyContain(_liverIntracellular, _kidneyIntracellular);
+         sut.AllContainersMatching(_organism, WILD_CARD_RECURSIVE, WILD_CARD).ShouldOnlyContain(_liverIntracellular, _kidneyIntracellular, _liverIntracellularSubContainer);
+      }
+   }
+
+   public class When_retrieving_all_parameters_using_a_path_not_formatted_properly : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.AllParametersMatching(_organism, _liver.Name, $"INTR{WILD_CARD_RECURSIVE}")).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }
