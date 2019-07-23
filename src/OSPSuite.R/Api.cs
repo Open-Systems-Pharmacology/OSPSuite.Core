@@ -1,4 +1,6 @@
 ﻿using OSPSuite.R.Bootstrap;
+using OSPSuite.R.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R
 {
@@ -14,5 +16,7 @@ namespace OSPSuite.R
       {
          ApplicationStartup.Initialize(apiConfig);
       }
+
+      public static IContainerTask GetContainerTask() => IoC.Resolve<IContainerTask>();
    }
 }

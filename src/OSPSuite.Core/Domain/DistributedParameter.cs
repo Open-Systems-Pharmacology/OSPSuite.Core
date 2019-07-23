@@ -48,6 +48,8 @@ namespace OSPSuite.Core.Domain
 
       public override double Value
       {
+         //This is required to ensure that R can read the value
+         get => base.Value;
          set
          {
             _cachedValue = value;

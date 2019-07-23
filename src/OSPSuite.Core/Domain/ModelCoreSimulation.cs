@@ -28,11 +28,9 @@ namespace OSPSuite.Core.Domain
       {
          base.AcceptVisitor(visitor);
 
-         if (Model != null)
-            Model.AcceptVisitor(visitor);
+         Model?.AcceptVisitor(visitor);
 
-         if (BuildConfiguration != null)
-            BuildConfiguration.AcceptVisitor(visitor);
+         BuildConfiguration?.AcceptVisitor(visitor);
 
          if (!Results.IsNull())
             Results.AcceptVisitor(visitor);

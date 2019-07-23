@@ -14,6 +14,8 @@ namespace OSPSuite.Core.Domain
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
+      public const string WILD_CARD = "*";
+      public const string WILD_CARD_RECURSIVE = "**";
       public static readonly IReadOnlyList<string> ILLEGAL_CHARACTERS = new List<string> {ObjectPath.PATH_DELIMITER, ":", "*", "?", "<", ">", "|", "{", "}", "\""}.Distinct().ToList();
 
       public const string DRUG_MASS = "DrugMass";
