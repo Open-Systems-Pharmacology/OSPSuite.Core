@@ -8,6 +8,7 @@ namespace OSPSuite.R
       public override void RegisterInContainer(IContainer container)
       {
          container.Register<ISimulationLoader, SimulationLoader>();
+         container.Register<IContainerTask, ContainerTask>();
       }
    }
 }
