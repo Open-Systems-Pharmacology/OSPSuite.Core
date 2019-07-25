@@ -11,7 +11,7 @@ namespace OSPSuite.R.Services
       IModelCoreSimulation LoadSimulation(string fileName);
    }
 
-   internal class SimulationLoader : ISimulationLoader
+   public class SimulationLoader : ISimulationLoader
    {
       private readonly ISimulationPersistor _simulationPersistor;
       private readonly IDimensionFactory _dimensionFactory;
@@ -27,7 +27,7 @@ namespace OSPSuite.R.Services
       {
       }
 
-      public SimulationLoader(
+      internal SimulationLoader(
          ISimulationPersistor simulationPersistor,
          IDimensionFactory dimensionFactory,
          IObjectBaseFactory objectBaseFactory,
