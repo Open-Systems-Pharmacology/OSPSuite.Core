@@ -25,6 +25,9 @@ namespace OSPSuite.R.Services
    {
       private readonly IEntityPathResolver _entityPathResolver;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
+      private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
+      private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
+
 
       public ContainerTask(IEntityPathResolver entityPathResolver)
       {
@@ -79,15 +82,25 @@ namespace OSPSuite.R.Services
          var pattern = new List<string>();
          foreach (var entry in path)
          {
-            if (string.Equals(entry, WILD_CARD))
-               pattern.Add($"{ALL_BUT_PATH_DELIMITER}?"); // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
+            if (string.Equals(entry, WILD_CARD)) { 
+               // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
+               pattern.Add($"{ALL_BUT_PATH_DELIMITER}?");
+               pattern.Add(PATH_DELIMITER);
+            }
             else if (string.Equals(entry, WILD_CARD_RECURSIVE))
+            {
                pattern.Add(".*"); //Match anything
+               pattern.Add(OPTIONAL_PATH_DELIMITER);
+            }
             else
+            {
                pattern.Add(entry.Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER));
+               pattern.Add(PATH_DELIMITER);
+            }
          }
 
-         var searchPattern = pattern.ToString($"\\{ObjectPath.PATH_DELIMITER}");
+         pattern.RemoveAt(pattern.Count-1);
+         var searchPattern = pattern.ToString("");
          return $"^{searchPattern}$";
       }
 
