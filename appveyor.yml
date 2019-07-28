@@ -44,6 +44,7 @@ skip_branch_with_pr: true
 branches:
   only:
     - develop
+    - net-standard
 
 test:
   assemblies:
