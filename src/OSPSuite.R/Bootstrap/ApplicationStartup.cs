@@ -21,12 +21,7 @@ namespace OSPSuite.R.Bootstrap
       {
          if (_initialized) return;
 
-         //TODO remove when logger implemented
-         Console.WriteLine("OSPSuite R API Initializing...");
          new ApplicationStartup().performInitialization(apiConfig);
-
-         //TODO remove when logger implemented
-         Console.WriteLine("OSPSuite R API Initialized.");
 
          _initialized = true;
       }
