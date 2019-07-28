@@ -327,10 +327,10 @@
     <Compile Include="TestProgramButton.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\lib\OSPSuite.FuncParserNative.dll">
+    <Content Include="..\..\packages\OSPSuite.FuncParser.4.0.0.39\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll">
       <Link>OSPSuite.FuncParserNative.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\x64\SQLite.Interop.dll">
       <Link>SQLite.Interop.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -497,6 +497,9 @@
     </Reference>
     <Reference Include="OSPSuite.DataBinding.DevExpress, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.3.0.0.3\lib\net462\OSPSuite.DataBinding.DevExpress.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.FuncParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.FuncParser.4.0.0.39\lib\netstandard2.0\OSPSuite.FuncParser.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Serializer, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.3.0.0.1\lib\netstandard2.0\OSPSuite.Serializer.dll</HintPath>

@@ -120,9 +120,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\lib\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
+    <Content Include="..\..\packages\OSPSuite.FuncParser.4.0.0.39\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
