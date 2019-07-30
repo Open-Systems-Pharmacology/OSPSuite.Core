@@ -61,6 +61,31 @@ namespace OSPSuite.Helpers
          return parameter;
       }
 
+      public static IDistributedParameter NormalDistributedParameter(double defaultMean = 0, double defaultDeviation = 1, double defaultPercentile = 0.5, bool isDefault = false, bool distributionParameterIsDefault = true)
+      {
+         var parameter = new DistributedParameter().WithId("P1");
+         parameter.IsDefault = isDefault;
+         var pathFactory = new ObjectPathFactoryForSpecs();
+         var meanParameter = new Parameter { Name = Constants.Distribution.MEAN }.WithFormula(new ConstantFormula(defaultMean).WithId("MeanFormula")).WithId("Mean");
+         meanParameter.IsDefault = distributionParameterIsDefault;
+         addDimensionTo(meanParameter);
+         var stdParameter = new Parameter { Name = Constants.Distribution.DEVIATION }.WithFormula(new ConstantFormula(defaultDeviation).WithId("DeviationFormula")).WithId("Deviation");
+         stdParameter.IsDefault = distributionParameterIsDefault;
+         addDimensionTo(stdParameter);
+         var percentileParameter = new Parameter { Name = Constants.Distribution.PERCENTILE }.WithFormula(new ConstantFormula(defaultPercentile).WithId("PercentileFormula")).WithId("Percentile");
+         percentileParameter.IsDefault = distributionParameterIsDefault;
+         addDimensionTo(percentileParameter);
+         parameter.Add(meanParameter);
+         parameter.Add(stdParameter);
+         parameter.Add(percentileParameter);
+         parameter.Formula = new NormalDistributionFormula().WithId("NormalDistributionFormula");
+         parameter.Formula.AddObjectPath(pathFactory.CreateRelativeFormulaUsablePath(parameter, meanParameter));
+         parameter.Formula.AddObjectPath(pathFactory.CreateRelativeFormulaUsablePath(parameter, stdParameter));
+         addDimensionTo(parameter);
+         return parameter;
+      }
+
+
       public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5, bool isFixed = false)
       {
          var identificationParameter=  new IdentificationParameter

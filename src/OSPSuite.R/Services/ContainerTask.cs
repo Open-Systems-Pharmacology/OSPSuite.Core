@@ -41,7 +41,8 @@ namespace OSPSuite.R.Services
          AllContainersMatching(simulation?.Model?.Root, path);
 
       public IContainer[] AllContainersMatching(IContainer container, params string[] path) =>
-         allEntitiesMatching<IContainer>(container, path);
+         // Distributed parameters are also containers but should not be returned from the following method
+         allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<DistributedParameter>()).ToArray();
 
       public IParameter[] AllParametersMatching(IContainer container, params string[] path) =>
          allEntitiesMatching<IParameter>(container, path);
