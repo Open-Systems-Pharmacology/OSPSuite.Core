@@ -1,7 +1,6 @@
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 
-namespace OSPSuite.Core.Extensions
+namespace OSPSuite.Core.Domain
 {
    public static class UnitExtensions
    {

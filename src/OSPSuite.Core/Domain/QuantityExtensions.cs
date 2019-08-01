@@ -10,14 +10,8 @@ namespace OSPSuite.Core.Domain
          return quantity;
       }
 
-      public static double ConvertToUnit<T>(this T quantity, Unit unit) where T : IQuantity
-      {
-         return quantity.ConvertToUnit(quantity.Value, unit);
-      }
+      public static double ConvertToUnit(this IQuantity quantity, Unit unit) => quantity.ConvertToUnit(quantity.Value, unit);
 
-      public static double ConvertToUnit<T>(this T quantity, string unit) where T : IQuantity
-      {
-         return quantity.ConvertToUnit(quantity.Value, unit);
-      }
+      public static double ConvertToUnit(this IQuantity quantity, string unit) => quantity.ConvertToUnit(quantity.Value, unit);
    }
 }
