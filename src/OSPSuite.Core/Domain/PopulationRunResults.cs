@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain
    }
 
    /// <summary>
-   ///    Results of the population run. Contains individual results for sucessfull individuals.
+   ///    Results of the population run. Contains individual results for successful individuals.
    ///    Contains individual run info for all individuals
    /// </summary>
    public class PopulationRunResults
@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Results for successfull individuals only
+      ///    Results for successful individuals only
       /// </summary>
       public SimulationResults Results { get; internal set; }
 
@@ -74,7 +74,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Add results for successfull individual
+      ///    Add results for successful individual
       /// </summary>
       /// <param name="individualResults"></param>
       public void Add(IndividualResults individualResults)

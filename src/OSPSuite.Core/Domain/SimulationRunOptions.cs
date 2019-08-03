@@ -2,19 +2,18 @@
 
 namespace OSPSuite.Core.Domain
 {
-   
    /// <summary>
-   /// Options used for simulation run
+   ///    Options used for simulation run
    /// </summary>
-   public class SimulationRunOptions 
+   public class SimulationRunOptions
    {
       /// <summary>
-      /// Mode used to create the model for the SimModel kernel. Default is Full
+      ///    Mode used to create the model for the SimModel kernel. Default is Full
       /// </summary>
       public SimModelExportMode SimModelExportMode { get; set; }
 
       /// <summary>
-      /// Specifies whether negative values check is on or off. Default is <c>true</c>
+      ///    Specifies whether negative values check is on or off. Default is <c>true</c>
       /// </summary>
       public bool CheckForNegativeValues { get; set; }
 
@@ -23,6 +22,5 @@ namespace OSPSuite.Core.Domain
          SimModelExportMode = SimModelExportMode.Full;
          CheckForNegativeValues = true;
       }
-
    }
 }

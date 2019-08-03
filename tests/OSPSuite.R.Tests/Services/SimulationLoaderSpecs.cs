@@ -3,10 +3,9 @@ using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
 
-namespace OSPSuite.R
+namespace OSPSuite.R.Services
 {
    public abstract class concern_for_SimulationLoader : ContextSpecification<ISimulationLoader>
    {
