@@ -2,7 +2,6 @@
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Exchange;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
@@ -18,16 +17,7 @@ namespace OSPSuite.R.Services
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly ICloneManagerForModel _cloneManagerForModel;
 
-      public SimulationLoader() : this(
-         IoC.Resolve<ISimulationPersistor>(),
-         IoC.Resolve<IDimensionFactory>(),
-         IoC.Resolve<IObjectBaseFactory>(),
-         IoC.Resolve<ICloneManagerForModel>()
-      )
-      {
-      }
-
-      internal SimulationLoader(
+      public SimulationLoader(
          ISimulationPersistor simulationPersistor,
          IDimensionFactory dimensionFactory,
          IObjectBaseFactory objectBaseFactory,

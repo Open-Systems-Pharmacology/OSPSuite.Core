@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <returns>
       ///    Simulation results.
       ///    <para></para>
-      ///    Only results for successfull individuals are stored.
+      ///    Only results for successful individuals are stored.
       ///    <para></para>
       ///    For failed individuals, pairs {IndividualId, ErrorMessage} are stored
       /// </returns>
@@ -52,12 +52,12 @@ namespace OSPSuite.Core.Domain.Services
       void StopSimulation();
 
       /// <summary>
-      ///    Progress event returns the percent reprensenting the progress of a simulation
+      ///    Progress event returns the percent representing the progress of a simulation
       /// </summary>
       event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress;
 
       /// <summary>
-      ///    Event raised when simulation is terminated (either after nornal termination or cancel)
+      ///    Event raised when simulation is terminated (either after normal termination or cancel)
       /// </summary>
       event EventHandler Terminated;
    }

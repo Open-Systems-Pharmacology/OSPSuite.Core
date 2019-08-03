@@ -18,7 +18,9 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual QuantityValues Time { get; set; }
 
-      //We need to add the objects in a thread safe manner to the list that is intrinsicly not thread safe
+      public virtual IndividualResults[] IndividualResultsAsArray() => AllIndividualResults?.ToArray();
+
+      //We need to add the objects in a thread safe manner to the list that is intrinsically not thread safe
       private readonly object _locker = new object();
 
       public SimulationResults()
@@ -44,7 +46,7 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    Returns wether values were calculated for the individual with id <paramref name="individualId" /> or not
+      ///    Returns whether values were calculated for the individual with id <paramref name="individualId" /> or not
       /// </summary>
       public virtual bool HasResultsFor(int individualId)
       {

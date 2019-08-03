@@ -18,5 +18,9 @@ namespace OSPSuite.R
       }
 
       public static IContainerTask GetContainerTask() => IoC.Resolve<IContainerTask>();
+
+      public static ISimulationLoader GetSimulationLoader() => IoC.Resolve<ISimulationLoader>();
+
+      public static ISimulationRunner GetSimulationRunner() => IoC.Resolve<ISimulationRunner>();
    }
 }
