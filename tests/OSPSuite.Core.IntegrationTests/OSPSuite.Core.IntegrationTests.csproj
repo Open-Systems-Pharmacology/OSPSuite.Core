@@ -26,7 +26,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
-    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.1.4" />
+    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.1.7" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
   </ItemGroup>
 
