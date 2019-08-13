@@ -14,11 +14,11 @@ namespace OSPSuite.R.Services
 {
    public interface IContainerTask
    {
-      IParameter[] AllParametersMatching(IModelCoreSimulation simulation, params string[] path);
-      IContainer[] AllContainersMatching(IModelCoreSimulation simulation, params string[] path);
+      IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path);
+      IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path);
 
-      IParameter[] AllParametersMatching(IContainer container, params string[] path);
-      IContainer[] AllContainersMatching(IContainer container, params string[] path);
+      IParameter[] AllParametersMatching(IContainer container, string path);
+      IContainer[] AllContainersMatching(IContainer container, string path);
    }
 
    public class ContainerTask : IContainerTask
@@ -34,35 +34,35 @@ namespace OSPSuite.R.Services
          _entityPathResolver = entityPathResolver;
       }
 
-      public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, params string[] path) =>
+      public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path) =>
          AllParametersMatching(simulation?.Model?.Root, path);
 
-      public IContainer[] AllContainersMatching(IModelCoreSimulation simulation, params string[] path) =>
+      public IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path) =>
          AllContainersMatching(simulation?.Model?.Root, path);
 
-      public IContainer[] AllContainersMatching(IContainer container, params string[] path) =>
+      public IContainer[] AllContainersMatching(IContainer container, string path) =>
          // Distributed parameters are also containers but should not be returned from the following method
          allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<DistributedParameter>()).ToArray();
 
-      public IParameter[] AllParametersMatching(IContainer container, params string[] path) =>
+      public IParameter[] AllParametersMatching(IContainer container, string path) =>
          allEntitiesMatching<IParameter>(container, path);
 
-      private T[] allEntitiesMatching<T>(IContainer container, string[] path) where T : class, IEntity
+      private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
-         if (path == null || path.Length == 0)
+         if (string.IsNullOrEmpty(path))
             return Array.Empty<T>();
 
-         validate(path);
-         var pathAsString = path.ToPathString();
-
+         var pathArray = path.ToPathArray();
+         validate(pathArray);
+         
          // no wild cards => it's a single path and do not need to inspect 
-         if (!pathAsString.Contains(WILD_CARD))
+         if (!path.Contains(WILD_CARD))
          {
-            var entity = container.EntityAt<T>(path);
+            var entity = container.EntityAt<T>(pathArray);
             return entity == null ? Array.Empty<T>() : new[] {entity};
          }
 
-         var regex = new Regex(createSearchPattern(path), RegexOptions.IgnoreCase);
+         var regex = new Regex(createSearchPattern(pathArray), RegexOptions.IgnoreCase);
          var parentContainerPath = $"{_entityPathResolver.FullPathFor(container)}{ObjectPath.PATH_DELIMITER}";
 
          return container.GetAllChildren<T>(x => pathMatches(regex, parentContainerPath, x)).ToArray();
@@ -75,7 +75,7 @@ namespace OSPSuite.R.Services
             return;
 
          var correctedEntries = invalidEntries.Select(x => x.Replace(WILD_CARD_RECURSIVE, WILD_CARD)).ToList();
-         throw new OSPSuiteException(Error.WildCardRecursiveCannotBePartOfPath(WILD_CARD_RECURSIVE,  invalidEntries, correctedEntries));
+         throw new OSPSuiteException(Error.WildCardRecursiveCannotBePartOfPath(WILD_CARD_RECURSIVE,  invalidEntries.ToPathString(), correctedEntries.ToPathString()));
       }
 
       private string createSearchPattern(string[] path)
