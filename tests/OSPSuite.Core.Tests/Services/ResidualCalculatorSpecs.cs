@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.SimModel;
 
 namespace OSPSuite.Core.Services
 {
@@ -32,7 +33,6 @@ namespace OSPSuite.Core.Services
       protected override void Context()
       {
          //Only testing the common behavior of Residual Calculator. Specific tests needs to be written for each calculator implementation
-         //sut = new ResidualCalculatorForOnlyObservedData(_timeGridRestrictor, _dimensionFactory);
 
          _simulationResults = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
          _simulationDataColumn = _simulationResults.AllButBaseGrid().First();

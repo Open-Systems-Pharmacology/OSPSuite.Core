@@ -2,6 +2,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain

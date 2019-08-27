@@ -61,4 +61,10 @@
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="OSPSuite.SimModel">
+      <HintPath>..\..\lib\OSPSuite.SimModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

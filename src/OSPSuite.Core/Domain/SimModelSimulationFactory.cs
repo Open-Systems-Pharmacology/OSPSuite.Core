@@ -1,18 +1,17 @@
-﻿//TODO SIMMODEL
+﻿using OSPSuite.SimModel;
 
+namespace OSPSuite.Core.Domain
+{
+   public interface ISimModelSimulationFactory
+   {
+      Simulation Create();
+   }
 
-//namespace OSPSuite.Core.Domain
-//{
-//   public interface ISimModelSimulationFactory
-//   {
-//      ISimulation Create();
-//   }
-//
-//   public class SimModelSimulationFactory : ISimModelSimulationFactory
-//   {
-//      public ISimulation Create()
-//      {
-//         return new Simulation();
-//      }
-//   }
-//}
+   public class SimModelSimulationFactory : ISimModelSimulationFactory
+   {
+      public Simulation Create()
+      {
+         return new Simulation();
+      }
+   }
+}

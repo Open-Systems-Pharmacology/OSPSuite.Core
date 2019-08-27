@@ -87,4 +87,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="OSPSuite.SimModel">
+      <HintPath>..\..\lib\OSPSuite.SimModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

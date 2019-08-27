@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
