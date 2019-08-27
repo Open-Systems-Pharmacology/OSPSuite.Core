@@ -1,19 +1,12 @@
-using System;
-using System.IO;
 using System.Xml;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Xml;
-using NUnit.Framework;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Serialization.SimModel;
 using OSPSuite.Core.Serialization.SimModel.Serializer;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
-using OSPSuite.SimModel;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
@@ -21,7 +14,6 @@ namespace OSPSuite.Core
    {
       private SimModelSerializerRepository _simModelXmlSerializerRepository;
       protected SolverSettings _solverSettings;
-      protected IXmlValidator _xmlValidator;
       protected IObjectPathFactory _objectPathFactory;
       private ISimulationExportCreatorFactory _simulationExporterCreatorFactory;
 
@@ -29,8 +21,6 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simModelXmlSerializerRepository = new SimModelSerializerRepository();
-         var schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.SimModel.xsd");
-         _xmlValidator = new XmlValidator(schemaPath, SimModelSchemaConstants.Namespace);
       }
 
       protected override void Context()
@@ -63,8 +53,6 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_valid_xml_string_that_is_valid_according_the_the_sim_model_schema()
       {
-         var result = _xmlValidator.Validate(_xmlString);
-         Assert.IsTrue(result.Success, result.FullMessageLog);
          var doc = new XmlDocument();
          doc.LoadXml(_xmlString);
          doc.Save("SimModelExample.xml");
@@ -112,6 +100,7 @@ namespace OSPSuite.Core
          FileHelper.DeleteFile(_tempFile);
       }
    }
+
 //TODO
 //   public class When_exporting_a_simulation_as_ode_system : concern_for_SimModelExporter
 //   {
