@@ -10,7 +10,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
-using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
@@ -75,7 +74,7 @@ namespace OSPSuite.Core.Services
          simResults.Add(res2);
 
          var simulationRunResults = new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(), simResults);
-         A.CallTo(() => _simModelManager.RunSimulation(_simulation)).Returns(simulationRunResults);
+         A.CallTo(() => _simModelManager.RunSimulation(_simulation, null)).Returns(simulationRunResults);
          sut = new ScaleDivisorCalculator(_simModelManager, _containerTask, _objectPathFactory);
       }
    }

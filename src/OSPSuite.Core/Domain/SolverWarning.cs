@@ -1,5 +1,5 @@
 ﻿//TODO DELETE
-namespace OSPSuite.SimModel
+namespace OSPSuite.Core.Domain
 {
    public class SolverWarning
    {

@@ -1,5 +1,5 @@
-﻿using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Helpers
 {

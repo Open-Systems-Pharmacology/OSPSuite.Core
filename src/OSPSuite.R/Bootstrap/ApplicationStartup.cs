@@ -1,5 +1,5 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
+using Castle.Facilities.TypedFactory;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -35,6 +35,7 @@ namespace OSPSuite.R.Bootstrap
 
          IoC.InitializeWith(container);
          IoC.RegisterImplementationOf(IoC.Container);
+         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
 
 
          using (container.OptimizeDependencyResolution())
@@ -89,7 +90,6 @@ namespace OSPSuite.R.Bootstrap
 
       private static void initializeGroups(IContainer container)
       {
-         container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
          var groupRepository = container.Resolve<IGroupRepository>();
          var undefinedGroup = new Group {Name = Constants.Groups.UNDEFINED, Id = "0"};
          groupRepository.AddGroup(undefinedGroup);

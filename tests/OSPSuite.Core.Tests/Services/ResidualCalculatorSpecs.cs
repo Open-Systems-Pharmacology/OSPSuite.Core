@@ -10,7 +10,6 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
-using OSPSuite.SimModel;
 
 namespace OSPSuite.Core.Services
 {

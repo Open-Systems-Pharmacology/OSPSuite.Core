@@ -28,7 +28,6 @@ namespace OSPSuite.Starter.Bootstrapping
       public static void Initialize()
       {
          initializeDependency();
-         //TODO XMLSchemaCache.InitializeFromFile("./OSPSuite.SimModel.xsd");
          fillDimensions(IoC.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
 

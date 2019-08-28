@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
 
-namespace OSPSuite.Core.Domain
+namespace OSPSuite.Core.Domain.Services
 {
    public abstract class SimModelManagerBase
    {
@@ -22,6 +22,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
+         _simModelExporter.Export(simulation, @"C:\temp\exportSimModel.xml");
          return _simModelExporter.Export(simulation, simModelExportMode);
       }
 

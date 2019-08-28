@@ -756,7 +756,7 @@ namespace OSPSuite.Helpers
          var someGlobalMoleculeDepParam = _objectBaseFactory.Create<IParameter>().WithName("XYZ").WithFormula(GlobalMoleculeDepParamFormula_1(spatialStructure.FormulaCache));
          spatialStructure.GlobalMoleculeDependentProperties.Add(someGlobalMoleculeDepParam);
 
-         //Create a parameter woth formula in Organism with absolut pfad
+         //Create a parameter with formula in Organism with absolute path
          var bw = newConstantParameter(ConstantsForSpecs.BW, 20);
          organism.Add(bw);
 

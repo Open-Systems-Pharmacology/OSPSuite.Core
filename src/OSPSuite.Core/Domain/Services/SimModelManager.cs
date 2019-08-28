@@ -2,11 +2,10 @@ using System;
 using System.Linq;
 using System.Timers;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
 
-namespace OSPSuite.Core.Domain
+namespace OSPSuite.Core.Domain.Services
 {
    public class SimModelManager : SimModelManagerBase, ISimModelManager
    {
@@ -47,19 +46,11 @@ namespace OSPSuite.Core.Domain
          SimulationProgress(this, new SimulationProgressEventArgs(progress));
       }
 
-      /// <summary>
-      ///    Simulates the active simulation
-      /// </summary>
-      public SimulationRunResults RunSimulation(IModelCoreSimulation simulation)
-      {
-         return RunSimulation(simulation, new SimulationRunOptions());
-      }
-
-      public SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
+      public SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
          try
          {
-            _simulationRunOptions = simulationRunOptions;
+            _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
             _canceled = false;
             doIfNotCanceled(() => loadSimulation(simulation));
             doIfNotCanceled(() => FinalizeSimulation(_simModelSimulation));

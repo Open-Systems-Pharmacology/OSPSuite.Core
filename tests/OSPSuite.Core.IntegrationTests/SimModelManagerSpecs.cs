@@ -35,6 +35,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
+
          _res = sut.RunSimulation(_simulation);
       }
 
