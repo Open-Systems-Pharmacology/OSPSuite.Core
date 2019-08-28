@@ -22,7 +22,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
-         _simModelExporter.Export(simulation, @"C:\temp\exportSimModel.xml");
          return _simModelExporter.Export(simulation, simModelExportMode);
       }
 
