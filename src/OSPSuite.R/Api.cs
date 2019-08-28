@@ -21,7 +21,7 @@ namespace OSPSuite.R
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
 
-      public static ISimulationLoader GetSimulationLoader() => resolveTask<ISimulationLoader>();
+      public static ISimulationPersister GetSimulationPersister() => resolveTask<ISimulationPersister>();
 
       public static ISimulationRunner GetSimulationRunner() => resolveTask<ISimulationRunner>();
 
