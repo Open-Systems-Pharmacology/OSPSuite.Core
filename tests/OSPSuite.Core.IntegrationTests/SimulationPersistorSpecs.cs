@@ -1,10 +1,6 @@
-using System.Collections.Generic;
 using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -12,7 +8,9 @@ using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Serializers;
-using OSPSuite.Helpers;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
@@ -20,13 +18,13 @@ namespace OSPSuite.Core
    {
       protected ISimulationPersistor _simulationPersistor;
       protected string _filePath;
-      protected IPKMLPersistor _pkmkPersistor;
+      protected IPKMLPersistor _pkmlPersistor;
 
       protected override void Context()
       {
          base.Context();
          _simulationPersistor = IoC.Resolve<ISimulationPersistor>();
-         _pkmkPersistor = IoC.Resolve<IPKMLPersistor>();
+         _pkmlPersistor = IoC.Resolve<IPKMLPersistor>();
          _filePath = FileHelper.GenerateTemporaryFileName();
       }
 
@@ -66,7 +64,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_throw_an_exception()
       {
-         _pkmkPersistor.SaveToPKML(_simulation.BuildConfiguration.MoleculeStartValues, _filePath);
+         _pkmlPersistor.SaveToPKML(_simulation.BuildConfiguration.MoleculeStartValues, _filePath);
          File.Exists(_filePath).ShouldBeTrue();
 
          var deserializationDimensionFactory = IoC.Resolve<IDimensionFactory>();

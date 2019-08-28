@@ -1,4 +1,5 @@
-﻿namespace OSPSuite.Core.Domain
+﻿//TODO DELETE
+namespace OSPSuite.Core.Domain
 {
    public class SolverWarning
    {

@@ -1,6 +1,8 @@
-﻿using OSPSuite.R.Bootstrap;
+﻿using System;
+using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R
 {
@@ -17,10 +19,23 @@ namespace OSPSuite.R
          ApplicationStartup.Initialize(apiConfig);
       }
 
-      public static IContainerTask GetContainerTask() => IoC.Resolve<IContainerTask>();
+      public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
 
-      public static ISimulationLoader GetSimulationLoader() => IoC.Resolve<ISimulationLoader>();
+      public static ISimulationLoader GetSimulationLoader() => resolveTask<ISimulationLoader>();
 
-      public static ISimulationRunner GetSimulationRunner() => IoC.Resolve<ISimulationRunner>();
+      public static ISimulationRunner GetSimulationRunner() => resolveTask<ISimulationRunner>();
+
+      private static T resolveTask<T>()
+      {
+         try
+         {
+            return IoC.Resolve<T>();
+         }
+         catch (Exception e)
+         {
+            Console.WriteLine(e.FullMessage());
+            throw;
+         }
+      }
    }
 }

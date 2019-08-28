@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.SimModel;
 
 namespace OSPSuite.Core.Domain
 {

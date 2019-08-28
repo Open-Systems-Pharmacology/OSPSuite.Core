@@ -1,6 +1,9 @@
 ﻿using OSPSuite.Core;
+using OSPSuite.Core.Domain;
+using OSPSuite.R.MinimalImplementations;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.R
 {
@@ -14,8 +17,14 @@ namespace OSPSuite.R
 
             //REGISTER Services
             scan.IncludeNamespaceContainingType<ISimulationRunner>();
+            scan.IncludeNamespaceContainingType<DisplayUnitRetriever>();
+
+            // This will be registered as singleton
+            scan.ExcludeType<GroupRepository>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
+
+         container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
       }
    }
 }

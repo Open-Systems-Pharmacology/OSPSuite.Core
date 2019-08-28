@@ -74,7 +74,7 @@ namespace OSPSuite.Core.Services
          simResults.Add(res2);
 
          var simulationRunResults = new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(), simResults);
-         A.CallTo(() => _simModelManager.RunSimulation(_simulation)).Returns(simulationRunResults);
+         A.CallTo(() => _simModelManager.RunSimulation(_simulation, null)).Returns(simulationRunResults);
          sut = new ScaleDivisorCalculator(_simModelManager, _containerTask, _objectPathFactory);
       }
    }
