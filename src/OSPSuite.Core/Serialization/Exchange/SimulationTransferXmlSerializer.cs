@@ -10,7 +10,6 @@ namespace OSPSuite.Core.Serialization.Exchange
       {
          Map(x => x.Id);
          Map(x => x.Simulation);
-         Map(x => x.ReactionDimensionMode);
          Map(x => x.JournalPath);
          Map(x => x.Favorites);
          MapEnumerable(x => x.AllObservedData, x => x.AllObservedData.Add);
