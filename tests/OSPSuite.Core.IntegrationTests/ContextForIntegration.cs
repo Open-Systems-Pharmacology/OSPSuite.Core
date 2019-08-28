@@ -16,8 +16,6 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Compression;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
@@ -42,7 +40,6 @@ namespace OSPSuite.Core
          container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
          container.Register<IDataRepositoryTask, DataRepositoryTask>();
-         container.Register<IDataNamingService, DataNamingServiceForSpecs>();
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
          container.Register<IDisplayNameProvider, DisplayNameProvider>();

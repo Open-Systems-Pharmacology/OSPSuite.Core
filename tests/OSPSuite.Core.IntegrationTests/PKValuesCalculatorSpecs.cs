@@ -22,7 +22,7 @@ namespace OSPSuite.Core
 
    }
 
-   public class When_calculating_the_pk_parameters_for_a_multipe_dosing_application : concern_for_PKValuesCalculator
+   public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application : concern_for_PKValuesCalculator
    {
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;

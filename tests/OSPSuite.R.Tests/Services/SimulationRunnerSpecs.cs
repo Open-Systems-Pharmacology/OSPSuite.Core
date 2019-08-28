@@ -11,41 +11,41 @@ namespace OSPSuite.R.Services
 {
    public abstract class concern_for_SimulationRunner : ContextSpecification<ISimulationRunner>
    {
-      protected IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
+      protected ISimModelManager _simModelManager;
+      protected ISimulationResultsCreator _simulationResultsCreator;
 
       protected override void Context()
       {
-         _entitiesInSimulationRetriever= A.Fake<IEntitiesInSimulationRetriever>();  
-         sut = new SimulationRunner(_entitiesInSimulationRetriever);
+         _simModelManager= A.Fake<ISimModelManager>();   
+         _simulationResultsCreator = new SimulationResultsCreator();
+         sut = new SimulationRunner(_simModelManager,_simulationResultsCreator);
       }
    }
 
    public class When_running_a_simulation : concern_for_SimulationRunner
    {
       private IModelCoreSimulation _simulation;
-      private PathCache<IQuantity> _quantityPathCache;
       private SimulationResults _results;
+      private SimulationRunResults _simulationRunResults;
 
       protected override void Context()
       {
          base.Context();
-         _quantityPathCache = new PathCacheForSpecs<IQuantity>();
-
-         _quantityPathCache.Add("S1|Organism|Liver|Concentration", new Parameter{Persistable = true});
-         _quantityPathCache.Add("S1|Organism|Kidney|Concentration", new Parameter { Persistable = true });
+         _simulationRunResults=new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(), DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("Sim"));
          _simulation = new ModelCoreSimulation();
-         A.CallTo(_entitiesInSimulationRetriever).WithReturnType<PathCache<IQuantity>>().Returns(_quantityPathCache);
+         A.CallTo(_simModelManager).WithReturnType<SimulationRunResults>().Returns(_simulationRunResults);
       }
 
       protected override void Because()
       {
          _results = sut.RunSimulation(_simulation);
       }
+
       [Observation]
       public void should_return_results_for_the_expected_outputs()
       {
          _results.AllIndividualResults.Count.ShouldBeEqualTo(1);
-         _results.AllIndividualResults.ElementAt(0).AllValues.Count.ShouldBeEqualTo(2);
+         _results.AllIndividualResults.ElementAt(0).AllValues.Count.ShouldBeEqualTo(1);
       }
    }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain
@@ -87,7 +88,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    This methods ensure that the time arrays in all <see cref="IndividualResults" /> are using the reference defined in
       ///    the parent <see cref="SimulationResults" />.
-      ///    Also results will be reorderd by Individual Id
+      ///    Also results will be reordered by Individual Id
       /// </summary>
       public void SynchronizeResults()
       {

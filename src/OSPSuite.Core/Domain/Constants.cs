@@ -49,6 +49,7 @@ namespace OSPSuite.Core.Domain
       public const double DEFAULT_SCALE_DIVISOR = 1;
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
       public const string DEFAULT_CHART_LAYOUT = "Standard View";
+      public const string DEFAULT_SIMULATION_RESULTS_NAME = "Simulation Results";
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
