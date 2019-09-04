@@ -13,6 +13,19 @@ namespace OSPSuite.Core.Domain
 
       public static string EntityPath(this IEntity entity)
       {
+         return entityPathAsListFor(entity).ToPathString();
+      }
+
+      public static string ConsolidatedPath(this IEntity entity)
+      {
+         var path = entityPathAsListFor(entity);
+         if (path.Count > 1)
+            path.RemoveAt(0);
+         return path.ToPathString();
+      }
+
+      private static List<string> entityPathAsListFor(IEntity entity)
+      {
          var list = new List<string> {entity.Name};
          var parent = entity.ParentContainer;
          while (parent != null)
@@ -21,7 +34,7 @@ namespace OSPSuite.Core.Domain
             parent = parent.ParentContainer;
          }
 
-         return list.ToPathString();
+         return list;
       }
    }
 }

@@ -9,6 +9,13 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IPKAnalysesTask
    {
+      /// <summary>
+      /// Calculates the PK-Analyses based on the given <paramref name="simulation"/> and corresponding <paramref name="runResults"/>.
+      /// Note: If simulation for a specific individual failed, the length of <paramref name="runResults"/> might be less than the number of overall individuals.
+      /// </summary>
+      /// <param name="simulation">Simulation used to perform the population run</param>
+      /// <param name="numberOfIndividuals">Number of individuals in the population run</param>
+      /// <param name="runResults">Results for the simulation run</param>
       PopulationSimulationPKAnalyses CalculateFor(ISimulation simulation, int numberOfIndividuals, SimulationResults runResults);
    }
 
@@ -29,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public virtual PopulationSimulationPKAnalyses CalculateFor(ISimulation simulation, int numberOfIndividuals, SimulationResults runResults)
       {
-         return CalculateFor(simulation, numberOfIndividuals, runResults, id => { });
+         return CalculateFor(simulation,numberOfIndividuals, runResults, id => { });
       }
 
       protected virtual PopulationSimulationPKAnalyses CalculateFor(ISimulation simulation, int numberOfIndividuals, SimulationResults runResults, Action<int> performIndividualScalingAction)

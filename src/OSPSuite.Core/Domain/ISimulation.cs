@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain
       IEnumerable<T> All<T>() where T : class, IEntity;
 
       /// <summary>
-      ///    Returns the endtime of the simulation in kernel unit
+      ///    Returns the end time of the simulation in kernel unit
       /// </summary>
       double? EndTime { get; }
 

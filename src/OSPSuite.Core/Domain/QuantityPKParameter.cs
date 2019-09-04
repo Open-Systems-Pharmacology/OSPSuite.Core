@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       public virtual List<float> Values { get; private set; }
 
       /// <summary>
-      ///    Path of underlying quantity for which pkanalyses were performed
+      ///    Path of underlying quantity for which pk-analyses were performed
       /// </summary>
       public virtual string QuantityPath { get; set; }
 
@@ -39,19 +39,19 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Set the pkValue for the individual with id <paramref name="indiviudalId" />
+      ///    Set the pkValue for the individual with id <paramref name="individualId" />
       /// </summary>
-      public virtual void SetValue(int indiviudalId, float pkValue)
+      public virtual void SetValue(int individualId, float pkValue)
       {
-         if (Values.Count <= indiviudalId)
-            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(indiviudalId, Values.Count));
+         if (Values.Count <= individualId)
+            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(individualId, Values.Count));
 
-         Values[indiviudalId] = pkValue;
+         Values[individualId] = pkValue;
       }
 
-      public virtual void SetNumberOfIndividuals(int numberOfIndividal)
+      public virtual void SetNumberOfIndividuals(int numberOfIndividual)
       {
-         Values = new List<float>(new float[numberOfIndividal].InitializeWith(float.NaN));
+         Values = new List<float>(new float[numberOfIndividual].InitializeWith(float.NaN));
       }
 
       /// <summary>

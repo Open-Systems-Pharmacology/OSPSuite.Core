@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_default_variation_id_should_be_set_to_the_number_of_parmaeter_variations()
+      public void the_default_variation_id_should_be_set_to_the_number_of_parameter_variations()
       {
          sut.DefaultVariationId.ShouldBeEqualTo(3);
       }
