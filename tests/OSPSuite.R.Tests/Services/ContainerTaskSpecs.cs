@@ -176,4 +176,16 @@ namespace OSPSuite.R.Services
          The.Action(() => sut.AllParametersMatching(_organism, pathFrom(_liver.Name, $"INTR{Constants.WILD_CARD_RECURSIVE}"))).ShouldThrowAn<OSPSuiteException>();
       }
    }
+
+
+
+   public class When_resolving_all_quantities_of_a_container_with_a_quantity_name_using_wildcards : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_return_the_matching_quantities()
+      {
+         sut.AllQuantitiesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
+         sut.AllQuantitiesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}Vol")).ShouldBeEmpty();
+      }
+   }
 }

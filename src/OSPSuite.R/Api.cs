@@ -1,8 +1,10 @@
 ﻿using System;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using IContainerTask = OSPSuite.R.Services.IContainerTask;
 
 namespace OSPSuite.R
 {
@@ -24,6 +26,10 @@ namespace OSPSuite.R
       public static ISimulationPersister GetSimulationPersister() => resolveTask<ISimulationPersister>();
 
       public static ISimulationRunner GetSimulationRunner() => resolveTask<ISimulationRunner>();
+
+      public static IPKAnalysesTask GetPKAnalysesTask() => resolveTask<IPKAnalysesTask>();
+
+      public static ISimulationExporter GetSimulationExporter() => resolveTask<ISimulationExporter>();
 
       private static T resolveTask<T>()
       {

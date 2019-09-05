@@ -38,6 +38,9 @@
     <None Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml" Link="OSPSuite.Dimensions.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml" Link="OSPSuite.PKParameters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
