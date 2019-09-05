@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Returns all <see cref="IQuantity" /> that were selected when calculating the <paramref name="simulation" />  (e.g.
       ///    Persistable=true)
       /// </summary>
-      PathCache<IQuantity> OutputsFrom(ISimulation simulation);
+      PathCache<IQuantity> OutputsFrom(IModelCoreSimulation simulation);
 
       /// <summary>
       ///    Returns all <see cref="IQuantity" /> defined under the <paramref name="simulation" />  (search performed using
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Services
          _containerTask = containerTask;
       }
 
-      public PathCache<IQuantity> OutputsFrom(ISimulation simulation)
+      public PathCache<IQuantity> OutputsFrom(IModelCoreSimulation simulation)
       {
          var allQuantities = QuantitiesFrom(simulation);
          var outputs = new PathCache<IQuantity>(_entityPathResolver);

@@ -5,7 +5,6 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface ISimulationPersistableUpdater
    {
-      void UpdateSimulationPersistable(ISimulation simulation);
       void UpdateSimulationPersistable(IModelCoreSimulation simulation);
       void SetPersistable(IEnumerable<IQuantity> quantities, bool persistable);
    }
@@ -19,16 +18,10 @@ namespace OSPSuite.Core.Domain.Services
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
 
-      public void UpdateSimulationPersistable(ISimulation simulation)
-      {
-         var allQuantities = _entitiesInSimulationRetriever.QuantitiesFrom(simulation);
-         updatePersitable(allQuantities, simulation.OutputSelections);
-      }
-
       public void UpdateSimulationPersistable(IModelCoreSimulation simulation)
       {
          var allQuantities = _entitiesInSimulationRetriever.QuantitiesFrom(simulation);
-         updatePersitable(allQuantities, simulation.BuildConfiguration.SimulationSettings.OutputSelections);
+         updatePersitable(allQuantities, simulation.OutputSelections);
       }
 
       private void updatePersitable(PathCache<IQuantity> allQuantities, OutputSelections outputSelections)

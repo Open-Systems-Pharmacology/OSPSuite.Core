@@ -2,6 +2,7 @@
 using Castle.Facilities.TypedFactory;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
@@ -57,6 +58,8 @@ namespace OSPSuite.R.Bootstrap
          initializeConfiguration(container, apiConfig);
 
          initializeDimensions(container);
+
+         loadPKParameterRepository(container);
       }
 
       private void initializeConfiguration(IContainer container, ApiConfig apiConfig)
@@ -94,5 +97,14 @@ namespace OSPSuite.R.Bootstrap
          var undefinedGroup = new Group {Name = Constants.Groups.UNDEFINED, Id = "0"};
          groupRepository.AddGroup(undefinedGroup);
       }
+
+      private static void loadPKParameterRepository(IContainer container)
+      {
+         var pkParameterRepository = container.Resolve<IPKParameterRepository>();
+         var pKParameterLoader = container.Resolve<IPKParameterRepositoryLoader>();
+         var configuration = container.Resolve<IApplicationConfiguration>();
+         pKParameterLoader.Load(pkParameterRepository, configuration.PKParametersFilePath);
+      }
+
    }
 }

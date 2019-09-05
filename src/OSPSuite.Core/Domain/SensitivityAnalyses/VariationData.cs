@@ -2,7 +2,6 @@
 using System.Data;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
@@ -14,7 +13,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public int DefaultVariationId => _variationValues.Count;
 
       /// <summary>
-      /// Number of total variations (parameter variations + default variation)
+      ///    Number of total variations (parameter variations + default variation)
       /// </summary>
       //+1 because of default variation
       public int NumberOfVariations => _variationValues.Count + 1;

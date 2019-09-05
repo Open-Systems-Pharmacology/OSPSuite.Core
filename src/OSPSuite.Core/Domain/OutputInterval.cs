@@ -12,5 +12,6 @@ namespace OSPSuite.Core.Domain
       public virtual IParameter EndTime => this.Parameter(Constants.Parameters.END_TIME);
 
       public virtual IParameter Resolution => this.Parameter(Constants.Parameters.RESOLUTION);
+
    }
 }

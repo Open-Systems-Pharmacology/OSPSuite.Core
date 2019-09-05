@@ -13,12 +13,14 @@ namespace OSPSuite.R.Services
    {
       protected ISimModelManager _simModelManager;
       protected ISimulationResultsCreator _simulationResultsCreator;
+      protected ISimulationPersistableUpdater _simulationPersitableUpdater;
 
       protected override void Context()
       {
-         _simModelManager= A.Fake<ISimModelManager>();   
+         _simModelManager= A.Fake<ISimModelManager>();
+         _simulationPersitableUpdater= A.Fake<ISimulationPersistableUpdater>();  
          _simulationResultsCreator = new SimulationResultsCreator();
-         sut = new SimulationRunner(_simModelManager,_simulationResultsCreator);
+         sut = new SimulationRunner(_simModelManager,_simulationResultsCreator, _simulationPersitableUpdater);
       }
    }
 
@@ -39,6 +41,12 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          _results = sut.RunSimulation(_simulation);
+      }
+
+      [Observation]
+      public void should_update_the_persistable_flag_in_the_simulation_based_on_the_simulation_settings()
+      {
+         A.CallTo(() => _simulationPersitableUpdater.UpdateSimulationPersistable(_simulation)).MustHaveHappened();
       }
 
       [Observation]

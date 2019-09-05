@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Batch.Mappers
 {
    public interface ISimulationResultsToBatchSimulationExportMapper
    {
-      BatchSimulationExport MapFrom(ISimulation simulation, DataRepository results);
+      BatchSimulationExport MapFrom(IModelCoreSimulation simulation, DataRepository results);
    }
 
    public class SimulationResultsToBatchSimulationExportMapper : ISimulationResultsToBatchSimulationExportMapper
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Batch.Mappers
          _entityPathResolver = entityPathResolver;
       }
 
-      public BatchSimulationExport MapFrom(ISimulation simulation, DataRepository results)
+      public BatchSimulationExport MapFrom(IModelCoreSimulation simulation, DataRepository results)
       {
          var simulationExport = new BatchSimulationExport
          {
