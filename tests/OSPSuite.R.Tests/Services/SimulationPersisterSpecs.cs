@@ -13,7 +13,11 @@ namespace OSPSuite.R.Services
       public override void GlobalContext()
       {
          base.GlobalContext();
-         Api.InitializeOnce(new ApiConfig {DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME)});
+         Api.InitializeOnce(new ApiConfig
+         {
+            DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME),
+            PKParametersFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME),
+         });
       }
 
       protected override void Context()
@@ -44,7 +48,6 @@ namespace OSPSuite.R.Services
          _simulation.ShouldNotBeNull();
       }
    }
-
 
    public class When_saving_a_simulation_to_file : concern_for_SimulationPersister
    {

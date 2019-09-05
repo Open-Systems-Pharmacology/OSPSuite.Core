@@ -150,7 +150,7 @@ namespace OSPSuite.Core.Domain
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
-
+         public const string TOTAL_DRUG_MASS = "Total drug mass";
          public const string ParameterCompoundTypeBase = "Compound type ";
 
          public static string ParameterCompoundType(int index) => $"{ParameterCompoundTypeBase}{index}";
@@ -313,6 +313,16 @@ namespace OSPSuite.Core.Domain
             public const string Months = "month(s)";
             public const string Years = "year(s)";
          }
+      }
+
+      public static class SimulationResults
+      {
+         public const string INDIVIDUAL_ID = "IndividualId";
+         public const string TIME = "Time";
+         public const string QUANTITY_PATH = "Quantity Path";
+         public const string PARAMETER = "Parameter";
+         public const string VALUE = "Value";
+         public const string UNIT = "Unit";
       }
 
       public static class Distribution

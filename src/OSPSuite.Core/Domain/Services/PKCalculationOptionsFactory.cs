@@ -7,14 +7,14 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IPKCalculationOptionsFactory
    {
-      PKCalculationOptions CreateFor(ISimulation simulation, string moleculeName);
-      void UpdateAppliedDose(ISimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
-      IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(ISimulation simulation, string moleculeName);
+      PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName);
+      void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
+      IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation, string moleculeName);
    }
 
    public class PKCalculationOptionsFactory : IPKCalculationOptionsFactory
    {
-      public PKCalculationOptions CreateFor(ISimulation simulation, string moleculeName)
+      public PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName)
       {
          var options = new PKCalculationOptions();
          var endTime = simulation.EndTime ?? 0;
@@ -47,12 +47,12 @@ namespace OSPSuite.Core.Domain.Services
          return options;
       }
 
-      public virtual void UpdateAppliedDose(ISimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
+      public virtual void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
       {
          options.Dose = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
       }
 
-      private IReadOnlyList<IContainer> allApplicationsForMolecule(ISimulation simulation, string moleculeName)
+      private IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
       {
          var applicationEventGroup = simulation.Model.Root.GetChildren<IEventGroup>().ToList();
          if (!applicationEventGroup.Any())
@@ -62,12 +62,12 @@ namespace OSPSuite.Core.Domain.Services
          return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications);
       }
 
-      public IReadOnlyList<ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(ISimulation simulation, string moleculeName)
+      public IReadOnlyList<ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation, string moleculeName)
       {
          var endTime = simulation.EndTime ?? 0;
          var allApplications = allApplicationsForMolecule(simulation, moleculeName).ToList();
 
-         return allApplicationParamtersIn(allApplications, Constants.Parameters.START_TIME)
+         return allApplicationParametersIn(allApplications, Constants.Parameters.START_TIME)
             .Where(x => x.Value <= endTime)
             .OrderBy(x => x.Value)
             .Select(x => new ApplicationParameters(x)).ToList();
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain.Services
          return reactions.Where(reaction => reaction.Products.Count() == 1 && string.Equals(reaction.Products.First().MoleculeName, moleculeName)).ToList();
       }
 
-      private IEnumerable<IParameter> allApplicationParamtersIn(IEnumerable<IContainer> allApplicationContainers, string parameterName)
+      private IEnumerable<IParameter> allApplicationParametersIn(IEnumerable<IContainer> allApplicationContainers, string parameterName)
       {
          return allApplicationContainers.SelectMany(x => x.GetAllChildren<IParameter>())
             .Where(x => x.IsNamed(parameterName));
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<double> allOrderedApplicationParameterValues(IEnumerable<IContainer> allApplicationContainers, string parameterName)
       {
-         return allApplicationParamtersIn(allApplicationContainers, parameterName)
+         return allApplicationParametersIn(allApplicationContainers, parameterName)
             .Select(x => x.Value).OrderBy(t => t);
       }
 

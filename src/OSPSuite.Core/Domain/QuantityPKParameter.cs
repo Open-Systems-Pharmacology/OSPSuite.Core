@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -11,7 +12,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    The values. One item for each individual
       /// </summary>
-      public virtual List<float> Values { get; private set; }
+      public virtual float[] Values { get; private set; }
 
       /// <summary>
       ///    Path of underlying quantity for which pk-analyses were performed
@@ -30,7 +31,7 @@ namespace OSPSuite.Core.Domain
 
       public QuantityPKParameter()
       {
-         Values = new List<float>();
+         Values = Array.Empty<float>();
       }
 
       public override string ToString()
@@ -43,15 +44,15 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual void SetValue(int individualId, float pkValue)
       {
-         if (Values.Count <= individualId)
-            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(individualId, Values.Count));
+         if (Count <= individualId)
+            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(individualId, Count));
 
          Values[individualId] = pkValue;
       }
 
       public virtual void SetNumberOfIndividuals(int numberOfIndividual)
       {
-         Values = new List<float>(new float[numberOfIndividual].InitializeWith(float.NaN));
+         Values = new float[numberOfIndividual].InitializeWith(float.NaN);
       }
 
       /// <summary>
@@ -59,7 +60,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual string Id => CreateId(QuantityPath, Name);
 
-      public virtual int Count => Values.Count;
+      public virtual int Count => Values.Length;
 
       public static string CreateId(string quantityPath, string pkParameterName)
       {

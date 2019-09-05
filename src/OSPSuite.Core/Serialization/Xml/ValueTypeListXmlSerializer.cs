@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
 
       protected ValueTypeListXmlSerializer(Func<string, T[]> converter)
-         : this(converter, string.Format("{0}List", typeof(T).Name))
+         : this(converter, $"{typeof(T).Name}List")
       {
       }
 
