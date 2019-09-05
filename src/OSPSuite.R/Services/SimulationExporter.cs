@@ -26,13 +26,13 @@ namespace OSPSuite.R.Services
 
       public void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string fileName)
       {
-         var dataTable = _simulationResultsToDataTableConverter.ResultsToDataTable(simulationResults, simulation).Result;
+         var dataTable = _simulationResultsToDataTableConverter.ResultsToDataTable(simulationResults, simulation);
          dataTable.ExportToCSV(fileName);
       }
 
       public void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName)
       {
-         var dataTable = _simulationResultsToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation).Result;
+         var dataTable = _simulationResultsToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
          dataTable.ExportToCSV(fileName);
       }
    }

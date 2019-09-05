@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -64,7 +63,7 @@ namespace OSPSuite.Core.Domain
 
       public static string CreateId(string quantityPath, string pkParameterName)
       {
-         return new[] { quantityPath, pkParameterName }.ToPathString();
+         return new[] {quantityPath, pkParameterName}.ToPathString();
       }
    }
 }

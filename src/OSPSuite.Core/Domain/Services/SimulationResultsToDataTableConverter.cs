@@ -18,7 +18,15 @@ namespace OSPSuite.Core.Domain.Services
       /// <remarks>The format of the table will be one column per output and one row per individual</remarks>
       /// <param name="simulation">Simulation used to create the results</param>
       /// <param name="simulationResults">Actual results to convert to <see cref="DataTable" /></param>
-      Task<DataTable> ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation);
+      Task<DataTable> ResultsToDataTableAsync(SimulationResults simulationResults, IModelCoreSimulation simulation);
+
+      /// <summary>
+      ///    Creates a <see cref="DataTable" /> containing  the results of the simulation.
+      /// </summary>
+      /// <remarks>The format of the table will be one column per output and one row per individual</remarks>
+      /// <param name="simulation">Simulation used to create the results</param>
+      /// <param name="simulationResults">Actual results to convert to <see cref="DataTable" /></param>
+      DataTable ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation);
 
       /// <summary>
       ///    Creates a <see cref="DataTable" /> containing the PK-Analyses of the populationSimulation.
@@ -26,7 +34,15 @@ namespace OSPSuite.Core.Domain.Services
       /// <remarks>The format of the table will be IndividualId, QuantityPath, ParameterName, Value, Unit</remarks>
       /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
       /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
-      Task<DataTable> PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
+      Task<DataTable> PKAnalysesToDataTableAsync(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
+ 
+      /// <summary>
+      ///    Creates a <see cref="DataTable" /> containing the PK-Analyses of the populationSimulation.
+      /// </summary>
+      /// <remarks>The format of the table will be IndividualId, QuantityPath, ParameterName, Value, Unit</remarks>
+      /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
+      /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
+      DataTable PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
    }
 
    public class SimulationResultsToDataTableConverter : ISimulationResultsToDataTableConverter
@@ -42,17 +58,17 @@ namespace OSPSuite.Core.Domain.Services
          _timeDimension = dimensionFactory.Dimension(Constants.Dimension.TIME);
       }
 
-      public Task<DataTable> ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation)
+      public Task<DataTable> ResultsToDataTableAsync(SimulationResults simulationResults, IModelCoreSimulation simulation)
       {
-         return Task.Run(() => createResultDataToExport(simulationResults, simulation));
+         return Task.Run(() => ResultsToDataTable(simulationResults, simulation));
       }
 
-      public Task<DataTable> PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      public Task<DataTable> PKAnalysesToDataTableAsync(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {
-         return Task.Run(() => createPKAnalysesDataToExport(pkAnalyses, simulation));
+         return Task.Run(() => PKAnalysesToDataTable(pkAnalyses, simulation));
       }
 
-      private DataTable createResultDataToExport(SimulationResults simulationResults, IModelCoreSimulation simulation)
+      public DataTable ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation)
       {
          //Id	Time	Output1	Output2	...	OutputN
          var dataTable = new DataTable();
@@ -104,7 +120,7 @@ namespace OSPSuite.Core.Domain.Services
          return dataTable;
       }
 
-      private DataTable createPKAnalysesDataToExport(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      public DataTable PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {
          var dataTable = new DataTable(simulation.Name);
 
