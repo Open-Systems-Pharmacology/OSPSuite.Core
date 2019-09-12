@@ -1372,7 +1372,7 @@ namespace OSPSuite.Assets
 
       public static string ParameterValuesDoNotHaveTheExpectedCount(string parameterPath, int expectedCount, int actualCount)
       {
-         return $"Parameter values for '{parameterPath}' does not have the expected number of elements. (Expected {expectedCount} vs Actual {actualCount}";
+         return $"Parameter values for '{parameterPath}' does not have the expected number of elements. (Expected {expectedCount} vs Actual {actualCount})";
       }
 
       public static class SensitivityAnalysis
