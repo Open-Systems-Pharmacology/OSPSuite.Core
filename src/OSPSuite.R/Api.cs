@@ -31,6 +31,8 @@ namespace OSPSuite.R
 
       public static ISimulationExporter GetSimulationExporter() => resolveTask<ISimulationExporter>();
 
+      public static IPopulationImporter GetPopulationImporter() => resolveTask<IPopulationImporter>();
+
       private static T resolveTask<T>()
       {
          try

@@ -45,9 +45,9 @@ namespace OSPSuite.Core.Domain
       [TestCase("C\\A\\B", "C/A/B")]
       [TestCase("C/A/B", "C/A/B")]
       [TestCase("C\\\\A\\B", "C//A/B")]
-      public void should_return_the_expected_converted_path(string orinalPath, string convertedPath)
+      public void should_return_the_expected_converted_path(string originalPath, string convertedPath)
       {
-         orinalPath.ToUNCPath().ShouldBeEqualTo(convertedPath);
+         originalPath.ToUNCPath().ShouldBeEqualTo(convertedPath);
       }
    }
 
@@ -72,6 +72,21 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_expected_string(string input, string result)
       {
          input.Pluralize().ShouldBeEqualTo(result);
+      }
+   }
+
+
+   public class Striping_unit_from_a_given_string : StaticContextSpecification
+   {
+      [TestCase("ScaleDenominator", "ScaleDenominator")]
+      [TestCase("scale []", "scale")]
+      [TestCase("", "")]
+      [TestCase(null, null)]
+      [TestCase("ABC [HELLO]", "ABC")]
+      [TestCase("ABC [HELLO] CDE", "ABC [HELLO] CDE")]
+      public void should_return_the_expected_string(string input, string result)
+      {
+         input.StripUnit().ShouldBeEqualTo(result);
       }
    }
 }	

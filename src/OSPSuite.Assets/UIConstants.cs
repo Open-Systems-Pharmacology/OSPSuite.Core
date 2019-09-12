@@ -1370,6 +1370,10 @@ namespace OSPSuite.Assets
 
       public const string QualificationReportConfigurationFileNotDefined = "Qualification report configuration file not defined.";
 
+      public static string ParameterValuesDoNotHaveTheExpectedCount(string parameterPath, int expectedCount, int actualCount)
+      {
+         return $"Parameter values for '{parameterPath}' does not have the expected number of elements. (Expected {expectedCount} vs Actual {actualCount}";
+      }
 
       public static class SensitivityAnalysis
       {
@@ -1590,6 +1594,9 @@ namespace OSPSuite.Assets
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
+      public static readonly string PopulationFileFormatIsNotSupported = "Population file format is not supported.";
+
+      public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
    }
 
    public static class RibbonCategories
