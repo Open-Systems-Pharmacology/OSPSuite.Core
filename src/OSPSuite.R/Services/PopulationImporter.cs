@@ -1,10 +1,6 @@
-﻿using System;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Populations;
-using OSPSuite.Core.Domain.Services;
+﻿using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.R.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -26,15 +22,7 @@ namespace OSPSuite.R.Services
       {
          var importLogger = new ImportLogger();
          var parameterValuesCache = _individualValuesCacheImporter.ImportFrom(fileFullPath, importLogger);
-         if (importLogger.Status.Is(NotificationType.Error))
-            throw new OSPSuiteException(importLogger.LogString);
-
-         if (importLogger.Status.Is(NotificationType.Warning))
-         {
-            importLogger.Log.Each(Console.WriteLine);
-         }
-
-
+         importLogger.LogToR();
          return parameterValuesCache;
       }
    }

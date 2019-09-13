@@ -14,10 +14,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       IEnumerable<string> Log { get; }
       string LogString { get; }
       NotificationType Status { get; }
+      string FilePath { get; }
    }
 
    public class ImportLogger : IImportLogger
    {
+      public virtual string FilePath { get; set; }
+
       private readonly List<LogEntry> _entries;
 
       public ImportLogger()
