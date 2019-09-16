@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
       /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
       Task<DataTable> PKAnalysesToDataTableAsync(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
- 
+
       /// <summary>
       ///    Creates a <see cref="DataTable" /> containing the PK-Analyses of the populationSimulation.
       /// </summary>
@@ -78,6 +78,9 @@ namespace OSPSuite.Core.Domain.Services
          var quantityPathCache = new Cache<string, string>();
          dataTable.AddColumn<int>(INDIVIDUAL_ID);
          dataTable.AddColumn<string>(timeColumnName);
+
+         if (simulationResults.IsNull())
+            return dataTable;
 
          var allQuantityPaths = simulationResults.AllQuantityPaths();
          foreach (var quantityPath in allQuantityPaths)

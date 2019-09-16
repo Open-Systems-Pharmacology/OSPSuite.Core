@@ -11,13 +11,14 @@ namespace OSPSuite.R.Services
    public abstract class concern_for_SimulationResultsTask : ContextForIntegration<ISimulationResultsTask>
    {
       protected IModelCoreSimulation _simulation;
+      protected ISimulationPersister _simulationPersister;
 
       protected override void Context()
       {
          sut = IoC.Resolve<ISimulationResultsTask>();
-         var simulationPersister = IoC.Resolve<ISimulationPersister>();
+         _simulationPersister = IoC.Resolve<ISimulationPersister>();
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
-         _simulation = simulationPersister.LoadSimulation(simulationFile);
+         _simulation = _simulationPersister.LoadSimulation(simulationFile);
       }
    }
 
@@ -69,6 +70,41 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
+         var simulationRunner = IoC.Resolve<ISimulationRunner>();
+         _results = simulationRunner.RunSimulation(_simulation);
+         _csvFile = FileHelper.GenerateTemporaryFileName();
+      }
+
+      protected override void Because()
+      {
+         sut.ExportResultsToCSV(_results, _simulation, _csvFile);
+      }
+
+      [Observation]
+      public void should_have_crated_a_file_with_the_exported_results()
+      {
+         FileHelper.FileExists(_csvFile).ShouldBeTrue();
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         FileHelper.DeleteFile(_csvFile);
+      }
+   }
+
+
+   public class When_exporting_simulation_results_to_file_for_a_simulation_without_outputs : concern_for_SimulationResultsTask
+   {
+      private SimulationResults _results;
+      private string _csvFile;
+
+      protected override void Context()
+      {
+         base.Context();
+         var simulationFile = HelperForSpecs.DataFile("Simple.pkml");
+         _simulation = _simulationPersister.LoadSimulation(simulationFile);
+
          var simulationRunner = IoC.Resolve<ISimulationRunner>();
          _results = simulationRunner.RunSimulation(_simulation);
          _csvFile = FileHelper.GenerateTemporaryFileName();
