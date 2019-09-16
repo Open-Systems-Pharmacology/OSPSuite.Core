@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\lib\OSPSuite.SimModelNative.dll" Link="OSPSuite.SimModelNative.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\lib\OSPSuite.SimModelSolver_CVODES.dll" Link="OSPSuite.SimModelSolver_CVODES.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\packages\OSPSuite.FuncParser.4.0.0.39\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

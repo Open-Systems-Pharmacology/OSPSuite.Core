@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Extensions;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
@@ -18,9 +16,8 @@ namespace OSPSuite.R.Services
       void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string csvFile);
 
       /// <summary>
-      ///    Import simulation results from one or more csv files defined in <paramref name="csvFiles"/>
+      ///    Import simulation results from one or more csv files defined in <paramref name="csvFiles" />
       /// </summary>
-      /// 
       SimulationResults ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles);
    }
 
