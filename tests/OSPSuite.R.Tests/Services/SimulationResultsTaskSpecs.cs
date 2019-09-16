@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -40,6 +41,23 @@ namespace OSPSuite.R.Services
       public void should_return_the_expected_simulation_results()
       {
          _results.Count.ShouldBeEqualTo(10);
+      }
+   }
+
+   public class When_importing_simulation_results_from_an_invalid_results_file : concern_for_SimulationResultsTask
+   {
+      private string _junkFile;
+
+      protected override void Context()
+      {
+         base.Context();
+         _junkFile = HelperForSpecs.DataFile("pop_10.csv");
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ImportResultsFromCSV(_simulation, _junkFile)).ShouldThrowAn<Exception>();
       }
    }
 
