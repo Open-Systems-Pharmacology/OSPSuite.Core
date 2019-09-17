@@ -105,6 +105,14 @@ namespace OSPSuite.Core.Domain.Data
          }
       }
 
+      public virtual IReadOnlyList<int> AllIndividualId()
+      {
+         lock (_locker)
+         {
+            return AllIndividualResults.Select(x => x.IndividualId).ToArray();
+         }
+      }
+
       protected internal virtual void ReorderByIndividualId()
       {
          lock (_locker)
