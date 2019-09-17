@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns the sorted time points without duplicate
       /// </summary>
-      public IReadOnlyList<double> TimePoints => _timePoints.OrderBy(x => x).ToList();
+      public IReadOnlyList<double> TimePoints => _timePoints.OrderBy(x => x).ToArray();
 
       /// <summary>
       ///    Returns the end time of the simulation in kernel unit
@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Domain
          {
             if (!Intervals.Any())
                return null;
+
             return Intervals.Select(x => x.EndTime.Value).Max();
          }
       }
