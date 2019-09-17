@@ -33,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
   </ItemGroup>
 

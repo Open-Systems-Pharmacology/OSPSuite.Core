@@ -7,10 +7,6 @@ namespace OSPSuite.R.Services
 {
    public interface ISimulationExporter
    {
-      /// <summary>
-      ///    Exports simulation results to the csv file with path <paramref name="fileName" />
-      /// </summary>
-      void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string fileName);
 
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
    }
@@ -24,11 +20,6 @@ namespace OSPSuite.R.Services
          _simulationResultsToDataTableConverter = simulationResultsToDataTableConverter;
       }
 
-      public void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string fileName)
-      {
-         var dataTable = _simulationResultsToDataTableConverter.ResultsToDataTable(simulationResults, simulation);
-         dataTable.ExportToCSV(fileName);
-      }
 
       public void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName)
       {

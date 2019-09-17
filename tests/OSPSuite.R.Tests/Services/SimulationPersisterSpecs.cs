@@ -34,7 +34,7 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1_concentrBased.pkml");
+         _simulationFile = HelperForSpecs.DataFile("S1.pkml");
       }
 
       protected override void Because()
@@ -58,7 +58,7 @@ namespace OSPSuite.R.Services
       {
          base.Context();
          _simulationFile = FileHelper.GenerateTemporaryFileName();
-         var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1_concentrBased.pkml");
+         var fileName = HelperForSpecs.DataFile("S1.pkml");
          _simulation = sut.LoadSimulation(fileName);
       }
 

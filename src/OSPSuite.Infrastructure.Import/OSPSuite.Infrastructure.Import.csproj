@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+    <PackageReference Include="LumenWorksCsvReader" Version="4.0.0" />
+  </ItemGroup>
+
+
+</Project>

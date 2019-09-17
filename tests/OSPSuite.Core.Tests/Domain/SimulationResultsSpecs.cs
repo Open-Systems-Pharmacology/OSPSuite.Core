@@ -71,9 +71,32 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_reutnr_an_empty_list_if_the_results_are_empty()
+      public void should_return_an_empty_list_if_the_results_are_empty()
       {
          new SimulationResults().AllQuantityPaths().ShouldBeEmpty();
+      }
+   }
+
+   public class When_return_the_list_of_all_individual_ids_defined_in_the_results : concern_for_SimulationResults
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         sut.Add(new IndividualResults { IndividualId = 1 });
+         sut.Add(new IndividualResults { IndividualId = 3 });
+      }
+
+      [Observation]
+      public void should_return_the_expected_paths()
+      {
+         sut.AllIndividualId().ShouldOnlyContain(1, 3);
+      }
+
+      [Observation]
+      public void should_return_an_empty_list_if_the_results_are_empty()
+      {
+         new SimulationResults().AllIndividualId().ShouldBeEmpty();
       }
    }
 
