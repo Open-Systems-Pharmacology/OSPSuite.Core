@@ -72,6 +72,65 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+
+   public class When_adding_a_parameter_value_with_similar_path_to_a_parameter_value_cache : concern_for_ParameterValuesCache
+   {
+      private ParameterValue _parameterValue1;
+      private ParameterValue _parameterValue2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterValue1 = new ParameterValue("PATH_P1", 11, 0.1);
+         _parameterValue2 = new ParameterValue("PATH_P [mg]", 21, 0.2);
+      }
+
+      protected override void Because()
+      {
+         sut.Add(new[] { _parameterValue1, _parameterValue2 });
+         sut.Add(new[] { new ParameterValue(_parameterValue1.ParameterPath, 12, 0.3), new ParameterValue(_parameterValue2.ParameterPath, 22, 0.5) });
+      }
+
+      [Observation]
+      public void should_store_the_value_for_the_given_parameter_path_and_be_able_to_retrieve_the_parameter_paths_afterwards()
+      {
+         sut.AllParameterPaths().ShouldOnlyContainInOrder(_parameterValue1.ParameterPath, _parameterValue2.ParameterPath);
+      }
+
+      [Observation]
+      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path()
+      {
+         sut.Has(_parameterValue1.ParameterPath).ShouldBeTrue();
+         sut.Has(_parameterValue2.ParameterPath).ShouldBeTrue();
+      }
+
+
+      [Observation]
+      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path_without_unit()
+      {
+         sut.Has("PATH_P").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_the_values_for_the_individual_path()
+      {
+         sut.ValuesFor(_parameterValue1.ParameterPath).ShouldOnlyContainInOrder(11, 12);
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_the_values_for_the_individual_path_as_array()
+      {
+         sut.GetValues(_parameterValue1.ParameterPath).ShouldOnlyContainInOrder(11, 12);
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_the_values_for_the_individual_path_without_unit()
+      {
+         sut.GetValues("PATH_P").ShouldOnlyContainInOrder(21, 22);
+      }
+   }
+
+
    public class When_removing_a_parameter_by_path_from_the_parameter_cache : concern_for_ParameterValuesCache
    {
       protected override void Context()

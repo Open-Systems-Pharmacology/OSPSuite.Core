@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_reutnr_an_empty_list_if_the_results_are_empty()
+      public void should_return_an_empty_list_if_the_results_are_empty()
       {
          new SimulationResults().AllQuantityPaths().ShouldBeEmpty();
       }

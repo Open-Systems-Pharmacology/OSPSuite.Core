@@ -55,28 +55,17 @@ namespace OSPSuite.Core.Domain.Populations
          _parameterValuesCache.Add(newPath, values);
       }
 
-      public virtual int Count
-      {
-         get
-         {
-            if (!_parameterValuesCache.Any())
-               return 0;
-            return _parameterValuesCache.First().Count;
-         }
-      }
+      public virtual int Count => !_parameterValuesCache.Any() ? 0 : _parameterValuesCache.First().Count;
 
       private string internalKeyFor(string parameterPath)
       {
          if (_parameterValuesCache.Contains(parameterPath))
             return parameterPath;
 
-         var allSupportedPath = AllParameterPaths();
-         var index = Array.FindIndex(allSupportedPath, x => x.StartsWith(parameterPath));
-         //try to strip the unit and see if it's possible to find a key exactly equal to the parameterPath without the unit
-         if (index >= 0 && string.Equals(allSupportedPath[index].StripUnit(), parameterPath))
-            return allSupportedPath[index];
+         var matchingPath = Array.FindAll(AllParameterPaths(), x => x.StartsWith(parameterPath))
+            .FirstOrDefault(p => string.Equals(p.StripUnit(), parameterPath));
 
-         return string.Empty;
+         return matchingPath ?? string.Empty;
       }
 
       public virtual ParameterValues ParameterValuesFor(string parameterPath)
