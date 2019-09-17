@@ -78,6 +78,7 @@ namespace OSPSuite.Core.Domain
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
       public const double DEFAULT_PARAMETER_RANGE_FACTOR = 10;
+      public const double DEFAULT_PERCENTILE = 0.5;
       public const int DEFAULT_NUMBER_OF_RUNS_FOR_MULTIPLE_MODE = 10;
       public const string X = "X";
       public const string Y = "Y";
@@ -401,6 +402,8 @@ namespace OSPSuite.Core.Domain
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
+         public const string RACE_INDEX = "RaceIndex";
+         public const string GENDER = "GENDER";
       }
 
       public static class OptimizationAlgorithm
@@ -469,6 +472,7 @@ namespace OSPSuite.Core.Domain
          public const string DESCRIPTOR_CONDITIONS = "DescriptorConditions";
          public const string KEYS = "Keys";
          public const string VALUE_ORIGIN = "ValueOrigin";
+         public const string PERCENTILES = "Percentiles";
 
          public static class Attribute
          {

@@ -8,6 +8,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
+using OSPSuite.Infrastructure.Import;
 using OSPSuite.R.MinimalImplementations;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -44,6 +45,7 @@ namespace OSPSuite.R.Bootstrap
             container.RegisterImplementationOf(new SynchronizationContext());
             container.AddRegister(x => x.FromType<CoreRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
             container.AddRegister(x => x.FromType<RRegister>());
 
             initializeGroups(container);

@@ -263,7 +263,7 @@ namespace OSPSuite.Assets
 
       public static void AppendListItem(StringBuilder sb, bool html, string listItem, int index)
       {
-         if(html)
+         if (html)
             sb.Append($"<li>{listItem}</li>");
          else
             sb.AppendLine($"   {index}: {listItem}");
@@ -277,10 +277,9 @@ namespace OSPSuite.Assets
             sb.AppendLine(lineToAppend);
       }
 
-
-      public static void AddOrderedList(StringBuilder sb, bool html, params string [] list)
+      public static void AddOrderedList(StringBuilder sb, bool html, params string[] list)
       {
-         if(html)
+         if (html)
             sb.Append("<ol>");
 
          list.Each((item, i) =>
@@ -293,13 +292,13 @@ namespace OSPSuite.Assets
             sb.Append("</ol>");
       }
 
-      public static string ExceptionViewDescription(string issueTrackerUrl, bool html=true)
+      public static string ExceptionViewDescription(string issueTrackerUrl, bool html = true)
       {
          var sb = new StringBuilder();
          AppendLine(sb, html, "oops...something went terribly wrong.");
          AppendLine(sb, html, string.Empty);
          AppendLine(sb, html, "To best address the error, please enter an issue in our issue tracker:");
-         AddOrderedList(sb, html, 
+         AddOrderedList(sb, html,
             $"Visit <b>{issueTrackerUrl}</b> or click on the link below",
             "Click on the <b>New Issue</b> button",
             "Describe the steps you took prior to the problem emerging",
@@ -325,9 +324,9 @@ namespace OSPSuite.Assets
       {
          return $"Really delete observed data '{observedDataName}' from project";
       }
-      
-      public static string ReallyClearHistory= "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
-      
+
+      public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
+
       public static class Importer
       {
          public static readonly string ImportAll = "Import All";
@@ -354,7 +353,6 @@ namespace OSPSuite.Assets
          public static readonly string UnitInformation = "Unit Information";
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
-
 
          public class ToolTips
          {
@@ -1028,7 +1026,7 @@ namespace OSPSuite.Assets
          {
             return $"Number of selected parameters: {numberOfParameters}";
          }
-      }   
+      }
 
       public static class Chart
       {
@@ -1124,9 +1122,7 @@ namespace OSPSuite.Assets
 
       public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
-         var content = usersOfBuildingBlock.Count > 1 ? 
-            $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : 
-            $"{usersOfBuildingBlock.ToString(""," ")}"; 
+         var content = usersOfBuildingBlock.Count > 1 ? $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : $"{usersOfBuildingBlock.ToString("", " ")}";
 
          return $"{buildingBlockType} '{buildingBlockName}' is used by{content}and cannot be deleted.";
       }
@@ -1211,7 +1207,7 @@ namespace OSPSuite.Assets
       }
 
       public static string EntityIsInvalid(string entityType, string name)
-      {  
+      {
          return $"{entityType} '{name}' is invalid";
       }
 
@@ -1370,6 +1366,63 @@ namespace OSPSuite.Assets
 
       public const string QualificationReportConfigurationFileNotDefined = "Qualification report configuration file not defined.";
 
+      public static string ParameterValuesDoNotHaveTheExpectedCount(string parameterPath, int expectedCount, int actualCount)
+      {
+         return $"Parameter values for '{parameterPath}' does not have the expected number of elements. (Expected {expectedCount} vs Actual {actualCount})";
+      }
+
+      public static string SimulationResultsFileDoesNotHaveTheExpectedFormat
+      {
+         get
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("Simulation result files does not have the expected format:");
+            sb.AppendLine(" - Column headers are required (e.g. IndividualId;Time;....)");
+            sb.AppendLine(" - The 1st column represents the individual id");
+            sb.AppendLine(" - The 2nd column represents the time values");
+            return sb.ToString();
+         }
+      }
+
+      public static string SimulationPKAnalysesFileDoesNotHaveTheExpectedFormat
+      {
+         get
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("Simulation pk-Analyses files does not have the expected format:");
+            sb.AppendLine(" - Column headers are required (e.g. IndividualId;Output;Parameter;Value;Unit)");
+            sb.AppendLine(" - The 1st column represents the individual id");
+            sb.AppendLine(" - The 2nd column represents the output for which the PK-Parameter was calculated");
+            sb.AppendLine(" - The 3rd column represents the Name of the PK-Parameter");
+            sb.AppendLine(" - The 4th column represents the Value of the PK-Parameter");
+            sb.AppendLine(" - The 5th column represents the Unit in which the value in the 4th column is saved");
+            return sb.ToString();
+         }
+      }
+
+     
+      public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
+
+      public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
+
+      public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"Individual results for individual '{individualId}' does not have the expected results:");
+         sb.AppendLine($"Expected: {expectedQuantities.ToString(",")}");
+         sb.AppendLine($"Found: {foundQuantities.ToString(",")}");
+         return sb.ToString();
+      }
+
+      public static string TimeArrayLengthDoesNotMatchFirstIndividual(int id, int expectedLength, int currentLength)
+      {
+         return $"Time array for individual '{id}' does not have the expected length ({expectedLength} vs {currentLength}).";
+      }
+
+      public static string TimeArrayValuesDoesNotMatchFirstIndividual(int id, int index, float expectedValue, float currentValue)
+      {
+         return $"Time array for individual '{id}' does not have the expected value in row '{index}' ({expectedValue} vs {currentValue}).";
+      }
 
       public static class SensitivityAnalysis
       {
@@ -1557,7 +1610,7 @@ namespace OSPSuite.Assets
 
          public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue,displayUnit)} for parameter '{fullQuantityPath}'";
+            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
          public static string MinimumMustBeGreaterThan(string minDisplayValue, string displayUnit, string fullQuantityPath)
@@ -1582,6 +1635,12 @@ namespace OSPSuite.Assets
    public static class Messages
    {
       public static readonly string CreatingModel = "Creating Model...";
+      public static readonly string ImportingResults = "Importing results...";
+
+      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals)
+      {
+         return $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
+      }
    }
 
    public static class Warning
@@ -1590,6 +1649,9 @@ namespace OSPSuite.Assets
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
+      public static readonly string PopulationFileFormatIsNotSupported = "Population file format is not supported.";
+
+      public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
    }
 
    public static class RibbonCategories
@@ -1850,10 +1912,10 @@ namespace OSPSuite.Assets
       {
          string withObjectTypeInfo = $"for {withValueOriginType} '{withValueOriginDisplay}' in {containerType} '{containerDisplay}'";
 
-         if(string.IsNullOrEmpty(oldValueOrigin))
+         if (string.IsNullOrEmpty(oldValueOrigin))
             return $"Value origin set to '{newValueOrigin}' {withObjectTypeInfo}";
 
-         if(string.IsNullOrEmpty(newValueOrigin))
+         if (string.IsNullOrEmpty(newValueOrigin))
             return $"Value origin set to '{oldValueOrigin}' {withObjectTypeInfo}";
 
          return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}' {withObjectTypeInfo}";

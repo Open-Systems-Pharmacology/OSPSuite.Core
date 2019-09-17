@@ -9,38 +9,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    <paramref name="predicate" />
       ///    (search performed using complete hierarchy)
       /// </summary>
-      PathCache<IParameter> ParametersFrom(ISimulation simulation, Func<IParameter, bool> predicate);
-
-      /// <summary>
-      ///    Returns all <see cref="IQuantity" /> defined under the <paramref name="simulation" />  (search performed using
-      ///    complete hierarchy)
-      /// </summary>
-      PathCache<IQuantity> QuantitiesFrom(ISimulation simulation);
-
-      /// <summary>
-      ///    Returns all <typeparamref name="TEntity" /> defined in the <paramref name="simulation" />  (search performed using
-      ///    complete hierarchy)
-      /// </summary>
-      PathCache<TEntity> EntitiesFrom<TEntity>(ISimulation simulation) where TEntity : class, IEntity;
-
-      /// <summary>
-      ///    Returns all  <typeparamref name="TEntity" /> defined in the <paramref name="simulation" /> fulfilling the given
-      ///    <paramref name="predicate" />
-      ///    (search performed using complete hierarchy)
-      /// </summary>
-      PathCache<TEntity> EntitiesFrom<TEntity>(ISimulation simulation, Func<TEntity, bool> predicate) where TEntity : class, IEntity;
-
-      /// <summary>
-      ///    Returns all <see cref="IParameter" /> defined in the <paramref name="simulation" /> (search performed using
-      ///    complete hierarchy)
-      /// </summary>
-      PathCache<IParameter> ParametersFrom(ISimulation simulation);
-
-      /// <summary>
-      ///    Returns all <see cref="IQuantity" /> that were selected when calculating the <paramref name="simulation" />  (e.g.
-      ///    Persistable=true)
-      /// </summary>
-      PathCache<IQuantity> OutputsFrom(IModelCoreSimulation simulation);
+      PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation, Func<IParameter, bool> predicate);
 
       /// <summary>
       ///    Returns all <see cref="IQuantity" /> defined under the <paramref name="simulation" />  (search performed using
@@ -48,6 +17,33 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation);
 
+      /// <summary>
+      ///    Returns all <typeparamref name="TEntity" /> defined in the <paramref name="simulation" />  (search performed using
+      ///    complete hierarchy)
+      /// </summary>
+      PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation) where TEntity : class, IEntity;
+
+      /// <summary>
+      ///    Returns all  <typeparamref name="TEntity" /> defined in the <paramref name="simulation" /> fulfilling the given
+      ///    <paramref name="predicate" />
+      ///    (search performed using complete hierarchy)
+      /// </summary>
+      PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation, Func<TEntity, bool> predicate) where TEntity : class, IEntity;
+
+      /// <summary>
+      ///    Returns all <see cref="IParameter" /> defined in the <paramref name="simulation" /> (search performed using
+      ///    complete hierarchy)
+      /// </summary>
+      PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation);
+
+     
+      /// <summary>
+      ///    Returns all <see cref="IQuantity" /> that were selected when calculating the <paramref name="simulation" />  (e.g.
+      ///    Persistable=true)
+      /// </summary>
+      PathCache<IQuantity> OutputsFrom(IModelCoreSimulation simulation);
+
+     
       /// <summary>
       ///    Returns all <see cref="IQuantity" /> defined under the <paramref name="simulation" />  (search performed using
       ///    complete hierarchy) fulfilling the given    <paramref name="predicate" />
@@ -81,23 +77,18 @@ namespace OSPSuite.Core.Domain.Services
          return outputs;
       }
 
-      public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation)
-      {
-         return EntitiesFrom<IQuantity>(simulation.Model.Root);
-      }
+      public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation) => EntitiesFrom<IQuantity>(simulation.Model.Root);
 
       public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation, Func<IQuantity, bool> predicate) =>
-         EntitiesFrom<IQuantity>(simulation.Model.Root, predicate);
+         EntitiesFrom(simulation.Model.Root, predicate);
 
-      public PathCache<IQuantity> QuantitiesFrom(ISimulation simulation) => EntitiesFrom<IQuantity>(simulation);
+      public PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation) => EntitiesFrom<IParameter>(simulation);
 
-      public PathCache<IParameter> ParametersFrom(ISimulation simulation) => EntitiesFrom<IParameter>(simulation);
+      public PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation, Func<IParameter, bool> predicate) => EntitiesFrom(simulation, predicate);
 
-      public PathCache<IParameter> ParametersFrom(ISimulation simulation, Func<IParameter, bool> predicate) => EntitiesFrom(simulation, predicate);
+      public PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation) where TEntity : class, IEntity => EntitiesFrom<TEntity>(simulation, x => true);
 
-      public PathCache<TEntity> EntitiesFrom<TEntity>(ISimulation simulation) where TEntity : class, IEntity => EntitiesFrom<TEntity>(simulation, x => true);
-
-      public PathCache<TEntity> EntitiesFrom<TEntity>(ISimulation simulation, Func<TEntity, bool> predicate) where TEntity : class, IEntity =>
+      public PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation, Func<TEntity, bool> predicate) where TEntity : class, IEntity =>
          EntitiesFrom(simulation.Model.Root, predicate);
 
       public PathCache<TEntity> EntitiesFrom<TEntity>(IContainer container) where TEntity : class, IEntity => EntitiesFrom<TEntity>(container, x => true);
