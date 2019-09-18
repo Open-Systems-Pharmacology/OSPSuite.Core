@@ -90,13 +90,13 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_paths()
       {
-         sut.AllIndividualId().ShouldOnlyContain(1, 3);
+         sut.AllIndividualIds().ShouldOnlyContain(1, 3);
       }
 
       [Observation]
       public void should_return_an_empty_list_if_the_results_are_empty()
       {
-         new SimulationResults().AllIndividualId().ShouldBeEmpty();
+         new SimulationResults().AllIndividualIds().ShouldBeEmpty();
       }
    }
 
