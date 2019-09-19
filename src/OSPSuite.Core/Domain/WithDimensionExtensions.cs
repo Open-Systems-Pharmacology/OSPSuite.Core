@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.Core.Domain.Services;
+﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 
@@ -7,14 +6,14 @@ namespace OSPSuite.Core.Domain
 {
    public static class WithDimensionExtensions
    {
-      public static double ConvertToUnit(this IWithDimension withDimension, double value, Unit unit) 
+      public static double ConvertToUnit(this IWithDimension withDimension, double value, Unit unit)
       {
          return withDimension.Dimension?.BaseUnitValueToUnitValue(unit, value) ?? value;
       }
 
       public static double ConvertToUnit(this IWithDimension withDimension, double value, string unit)
       {
-         if (withDimension.Dimension == null || !withDimension.Dimension.HasUnit(unit))
+         if (!HasUnit(withDimension, unit))
             return value;
 
          return ConvertToUnit(withDimension, value, withDimension.Dimension.Unit(unit));
@@ -40,5 +39,7 @@ namespace OSPSuite.Core.Domain
       public static string DimensionName(this IWithDimension withDimension) => withDimension?.Dimension == null ? string.Empty : withDimension.Dimension.Name;
 
       public static string BaseUnitName(this IWithDimension withDimension) => withDimension?.Dimension?.BaseUnit.Name ?? string.Empty;
+
+      public static bool HasUnit(this IWithDimension withDimension, string unit) => withDimension?.Dimension != null && !withDimension.Dimension.HasUnit(unit);
    }
 }
