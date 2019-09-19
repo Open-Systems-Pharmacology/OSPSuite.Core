@@ -1,4 +1,5 @@
 ﻿using System;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
@@ -34,6 +35,8 @@ namespace OSPSuite.R
       public static IPopulationImporter GetPopulationImporter() => resolveTask<IPopulationImporter>();
 
       public static ISimulationResultsTask GetSimulationResultsTask() => resolveTask<ISimulationResultsTask>();
+
+      public static IOutputIntervalFactory GetOutputIntervalFactory() => resolveTask<IOutputIntervalFactory>();
 
       private static T resolveTask<T>()
       {
