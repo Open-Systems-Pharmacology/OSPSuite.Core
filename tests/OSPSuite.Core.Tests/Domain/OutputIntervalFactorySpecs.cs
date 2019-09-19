@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
@@ -10,6 +11,7 @@ namespace OSPSuite.Core.Domain
    {
       protected IObjectBaseFactory _objectBaseFactory;
       private IDimensionFactory _dimensionFactory;
+      protected IContainerTask _containerTask;
 
       protected override void Context()
       {
@@ -17,7 +19,8 @@ namespace OSPSuite.Core.Domain
          _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).ReturnsLazily(x=>new Parameter());
          A.CallTo(() => _dimensionFactory.Dimension(A<string>._)).Returns(new Dimension());
-         sut = new OutputIntervalFactory(_objectBaseFactory, _dimensionFactory);
+         _containerTask = A.Fake<IContainerTask>();
+         sut = new OutputIntervalFactory(_objectBaseFactory, _dimensionFactory, _containerTask);
       }
    }
 
@@ -91,6 +94,37 @@ namespace OSPSuite.Core.Domain
          _interval.StartTime.CanBeVaried.ShouldBeFalse();
          _interval.EndTime.CanBeVaried.ShouldBeFalse();
          _interval.Resolution.CanBeVaried.ShouldBeFalse();
+      }
+   }
+
+   public class When_creating_an_interval_for_a_given_output_schema : concern_for_OutputIntervalFactory
+   {
+      private OutputSchema _schema;
+      private OutputInterval _interval;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _objectBaseFactory.Create<OutputInterval>()).Returns(new OutputInterval());
+         A.CallTo(() => _objectBaseFactory.Create<ConstantFormula>()).ReturnsLazily(x => new ConstantFormula());
+         _schema = new OutputSchema();
+         _schema.AddInterval(new OutputInterval());
+      }
+      protected override void Because()
+      {
+         _interval = sut.CreateFor(_schema, 10, 20, 1);
+      }
+
+      [Observation]
+      public void should_have_generated_a_unique_name_based_on_the_schema()
+      {
+         _interval.Name.ShouldNotBeEqualTo(Constants.OUTPUT_INTERVAL);
+      }
+
+      [Observation]
+      public void should_not_have_added_the_interval_to_the_output()
+      {
+         _schema.Intervals.ShouldNotContain(_interval);
       }
    }
 }

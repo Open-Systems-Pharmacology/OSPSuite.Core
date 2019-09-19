@@ -51,7 +51,6 @@ namespace OSPSuite.Core.Domain
       {
          sut.EndTime.ShouldBeNull();
       }
-
    }
 
    public class When_retrieving_the_end_time_for_an_output_schema_with_one_or_more_intervals : concern_for_OutputSchema
@@ -64,9 +63,31 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_the_maximum_endtime_for_an_output_schema_with_multiple_intervals()
+      public void should_return_the_maximum_end_time_for_an_output_schema_with_multiple_intervals()
       {
          sut.EndTime.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_clearing_an_output_schema : concern_for_OutputSchema
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddInterval(new OutputInterval {DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(Constants.Parameters.END_TIME)}.WithName("Int1"));
+         sut.AddTimePoint(5);
+      }
+
+      protected override void Because()
+      {
+         sut.Clear();
+      }
+
+      [Observation]
+      public void should_have_removed_all_intervals_and_single_time_points()
+      {
+         sut.Intervals.ShouldBeEmpty();
+         sut.TimePoints.ShouldBeEmpty();
       }
    }
 }

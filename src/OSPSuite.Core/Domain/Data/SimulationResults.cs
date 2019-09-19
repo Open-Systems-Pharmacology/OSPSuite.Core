@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain.Data
          }
       }
 
-      public virtual IReadOnlyList<int> AllIndividualId()
+      public virtual IReadOnlyList<int> AllIndividualIds()
       {
          lock (_locker)
          {

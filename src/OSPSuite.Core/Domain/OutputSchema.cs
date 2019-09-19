@@ -15,6 +15,8 @@ namespace OSPSuite.Core.Domain
 
       public virtual IEnumerable<OutputInterval> Intervals => GetChildren<OutputInterval>();
 
+      public virtual OutputInterval[] IntervalsAsArray => Intervals.ToArray();
+
       public virtual void AddInterval(OutputInterval outputInterval) => Add(outputInterval);
 
       public virtual void RemoveInterval(OutputInterval outputInterval) => RemoveChild(outputInterval);
@@ -32,7 +34,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns the sorted time points without duplicate
       /// </summary>
-      public IReadOnlyList<double> TimePoints => _timePoints.OrderBy(x => x).ToList();
+      public IReadOnlyList<double> TimePoints => _timePoints.OrderBy(x => x).ToArray();
 
       /// <summary>
       ///    Returns the end time of the simulation in kernel unit
@@ -43,8 +45,18 @@ namespace OSPSuite.Core.Domain
          {
             if (!Intervals.Any())
                return null;
+
             return Intervals.Select(x => x.EndTime.Value).Max();
          }
+      }
+
+      /// <summary>
+      ///    Clears the intervals and the list of predefined time points
+      /// </summary>
+      public virtual void Clear()
+      {
+         RemoveChildren();
+         _timePoints.Clear();
       }
    }
 }
