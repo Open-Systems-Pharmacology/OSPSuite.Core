@@ -13,11 +13,22 @@ namespace OSPSuite.Core.Domain
 
       protected override void Context()
       {
-         _timeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "s");
-         _timeDimension.AddUnit("min", 60, 0);
-         _timeDimension.AddUnit("h", 3600, 0);
+         _timeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "min");
+         _timeDimension.AddUnit("s", 1.0/60, 0);
+         _timeDimension.AddUnit("h", 60, 0);
 
          _parameter = new Parameter().WithDimension(_timeDimension);
+      }
+   }
+
+   public class When_converting_values_for_a_with_dimension_object_in_base_unit_to_a_given_unit : concern_for_WithDimensionExtensions
+   {
+      [Observation]
+      public void should_return_the_given_value_in_base_unit_converted_to_the_unit()
+      {
+         _parameter.ConvertToUnit(60, "min").ShouldBeEqualTo(60);
+         _parameter.ConvertToUnit(60, "s").ShouldBeEqualTo(3600);
+         _parameter.ConvertToUnit(60, "h").ShouldBeEqualTo(1);
       }
    }
 
@@ -26,10 +37,12 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_given_value_converted_in_the_unit()
       {
-         _parameter.ConvertToUnit(60, "min").ShouldBeEqualTo(1);
-         _parameter.ConvertToUnit(3600, "min").ShouldBeEqualTo(60);
+         _parameter.ConvertToBaseUnit(60, "min").ShouldBeEqualTo(60);
+         _parameter.ConvertToBaseUnit(60, "s").ShouldBeEqualTo(1);
+         _parameter.ConvertToBaseUnit(1, "h").ShouldBeEqualTo(60);
       }
    }
+
 
    public class When_converting_values_for_a_with_dimension_object_to_a_given_unit_that_is_not_defined_in_the_dimension : concern_for_WithDimensionExtensions
    {
@@ -46,11 +59,11 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_expected_value()
       {
          _parameter.DisplayUnit = _timeDimension.Unit("h");
-         _parameter.ConvertToBaseUnit(1).ShouldBeEqualTo(3600);
-
-
-         _parameter.DisplayUnit = _timeDimension.Unit("min");
          _parameter.ConvertToBaseUnit(1).ShouldBeEqualTo(60);
+
+
+         _parameter.DisplayUnit = _timeDimension.Unit("s");
+         _parameter.ConvertToBaseUnit(60).ShouldBeEqualTo(1);
       }
    }
 
@@ -60,10 +73,10 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_expected_value()
       {
          _parameter.DisplayUnit = _timeDimension.Unit("h");
-         _parameter.ConvertToDisplayUnit(3600).ShouldBeEqualTo(1);
-
-         _parameter.DisplayUnit = _timeDimension.Unit("min");
          _parameter.ConvertToDisplayUnit(60).ShouldBeEqualTo(1);
+
+         _parameter.DisplayUnit = _timeDimension.Unit("s");
+         _parameter.ConvertToDisplayUnit(60).ShouldBeEqualTo(3600);
       }
    }
 
@@ -88,7 +101,7 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_expected_value()
       {
          _parameter.DisplayUnit = _timeDimension.Unit("h");
-         _parameter.ConvertToDisplayValues(new[] {3600d, 7200}).ShouldOnlyContainInOrder(1, 2);
+         _parameter.ConvertToDisplayValues(new[] {60d, 120}).ShouldOnlyContainInOrder(1, 2);
       }
    }
 
@@ -98,7 +111,7 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_expected_value()
       {
          _parameter.DisplayUnit = _timeDimension.Unit("h");
-         _parameter.ConvertToBaseValues(new[] {1d, 2d}).ShouldOnlyContainInOrder(3600d, 7200d);
+         _parameter.ConvertToBaseValues(new[] {1d, 2d}).ShouldOnlyContainInOrder(60, 120d);
       }
    }
 

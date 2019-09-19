@@ -13,10 +13,17 @@ namespace OSPSuite.Core.Domain
 
       public static double ConvertToUnit(this IWithDimension withDimension, double value, string unit)
       {
-         if (!HasUnit(withDimension, unit))
-            return value;
+         return HasUnit(withDimension, unit) ? ConvertToUnit(withDimension, value, withDimension.Dimension.Unit(unit)) : value;
+      }
 
-         return ConvertToUnit(withDimension, value, withDimension.Dimension.Unit(unit));
+      public static double ConvertToBaseUnit(this IWithDimension withDimension, double value, Unit unit)
+      {
+         return withDimension.Dimension?.UnitValueToBaseUnitValue(unit, value) ?? value;
+      }
+
+      public static double ConvertToBaseUnit(this IWithDimension withDimension, double value, string unit)
+      {
+         return HasUnit(withDimension, unit) ? ConvertToBaseUnit(withDimension, value, withDimension.Dimension.Unit(unit)) : value;
       }
 
       public static bool IsConcentrationBased(this IWithDimension withDimension) => ReactionDimension(withDimension) == ReactionDimensionMode.ConcentrationBased;
@@ -40,6 +47,6 @@ namespace OSPSuite.Core.Domain
 
       public static string BaseUnitName(this IWithDimension withDimension) => withDimension?.Dimension?.BaseUnit.Name ?? string.Empty;
 
-      public static bool HasUnit(this IWithDimension withDimension, string unit) => withDimension?.Dimension != null && !withDimension.Dimension.HasUnit(unit);
+      public static bool HasUnit(this IWithDimension withDimension, string unit) => withDimension?.Dimension != null && withDimension.Dimension.HasUnit(unit);
    }
 }
