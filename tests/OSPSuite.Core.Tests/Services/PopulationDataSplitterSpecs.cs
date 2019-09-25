@@ -1,18 +1,17 @@
-﻿//TODO SIMMODEL
+﻿//TODO Simmodel
 //using System.Collections.Generic;
 //using System.Data;
 //using System.Linq;
+//using FakeItEasy;
 //using OSPSuite.BDDHelper;
 //using OSPSuite.BDDHelper.Extensions;
-//using FakeItEasy;
-//using SimModelNET;
 //using OSPSuite.Core.Domain;
 //using OSPSuite.Core.Domain.Services;
 //using OSPSuite.Core.Extensions;
-//using OSPSuite.Engine.Domain;
 //using OSPSuite.Helpers;
+//using OSPSuite.SimModel;
 //
-//namespace OSPSuite.Core
+//namespace OSPSuite.Core.Services
 //{
 //   internal abstract class concern_for_PopulationDataSplitterSpecs : ContextSpecification<PopulationDataSplitter>
 //   {
@@ -102,37 +101,37 @@
 //
 //   internal class When_filling_parameters_and_initial_values_for_the_first_individual : concern_for_PopulationDataSplitterSpecs
 //   {
-//      private IList<IParameterProperties> _variableParameters;
-//      private IList<ISpeciesProperties> _variableInitialValues;
+//      private IList<ParameterProperties> _variableParameters;
+//      //TODO  private IList<ISpeciesProperties> _variableInitialValues;
 //
 //      protected override void Context()
 //      {
 //         base.Context();
 //
-//         _variableParameters = new List<IParameterProperties>();
+//         _variableParameters = new List<ParameterProperties>();
 //
-//         var parameterInfo1 = A.Fake<IParameterProperties>();
-//         A.CallTo(()=>parameterInfo1.IsTable).Returns(false);
+//         var parameterInfo1 = A.Fake<ParameterProperties>();
+//    //TODO     A.CallTo(()=>parameterInfo1.IsTable).Returns(false);
 //         A.CallTo(() => parameterInfo1.Path).Returns(_nonAgingPath);
 //
-//         var parameterInfo2 = A.Fake<IParameterProperties>();
-//         A.CallTo(() => parameterInfo2.IsTable).Returns(true);
+//         var parameterInfo2 = A.Fake<ParameterProperties>();
+//         //TODO     A.CallTo(() => parameterInfo2.IsTable).Returns(true);
 //         A.CallTo(() => parameterInfo2.Path).Returns(_agingPath1);
 //
-//         var parameterInfo3 = A.Fake<IParameterProperties>();
-//         A.CallTo(() => parameterInfo3.IsTable).Returns(true);
+//         var parameterInfo3 = A.Fake<ParameterProperties>();
+//         //TODO    A.CallTo(() => parameterInfo3.IsTable).Returns(true);
 //         A.CallTo(() => parameterInfo3.Path).Returns(_agingPath2);
 //
 //         //setting non aging parameter (=no table points), while
 //         //the corresponding parameter is marked as a table
-//         var parameterInfo4 = A.Fake<IParameterProperties>();
-//         A.CallTo(() => parameterInfo4.IsTable).Returns(true);
+//         var parameterInfo4 = A.Fake<ParameterProperties>();
+//         //TODO    A.CallTo(() => parameterInfo4.IsTable).Returns(true);
 //         A.CallTo(() => parameterInfo4.Path).Returns(_nonAgingPath2);
 //
 //         //setting aging parameter (table points available),
 //         //while the corresponding parameter is NOT marked as a table
-//         var parameterInfo5 = A.Fake<IParameterProperties>();
-//         A.CallTo(() => parameterInfo5.IsTable).Returns(false);
+//         var parameterInfo5 = A.Fake<ParameterProperties>();
+//         //TODO     A.CallTo(() => parameterInfo5.IsTable).Returns(false);
 //         A.CallTo(() => parameterInfo5.Path).Returns(_agingPath3);
 //
 //         _variableParameters.Add(parameterInfo1);
@@ -141,30 +140,31 @@
 //         _variableParameters.Add(parameterInfo4);
 //         _variableParameters.Add(parameterInfo5);
 //
-//         _variableInitialValues = new List<ISpeciesProperties>();
+//         //TODO     _variableInitialValues = new List<ISpeciesProperties>();
 //
-//         var initialValueInfo1 = A.Fake<ISpeciesProperties>();
-//         A.CallTo(() => initialValueInfo1.Path).Returns(_initialValuePath1);
+//         //TODO    var initialValueInfo1 = A.Fake<ISpeciesProperties>();
+//         //TODO    A.CallTo(() => initialValueInfo1.Path).Returns(_initialValuePath1);
 //
-//         var initialValueInfo2 = A.Fake<ISpeciesProperties>();
-//         A.CallTo(() => initialValueInfo2.Path).Returns(_initialValuePath2);
+//         //TODO    var initialValueInfo2 = A.Fake<ISpeciesProperties>();
+//         //TODO    A.CallTo(() => initialValueInfo2.Path).Returns(_initialValuePath2);
 //
-//         _variableInitialValues.Add(initialValueInfo1);
-//         _variableInitialValues.Add(initialValueInfo2);
+//         //TODO    _variableInitialValues.Add(initialValueInfo1);
+//         //TODO     _variableInitialValues.Add(initialValueInfo2);
 //      }
 //
 //      protected override void Because()
 //      {
-//         sut.UpdateParametersAndInitialValuesForIndividual(0, _variableParameters,_variableInitialValues);
+//         //TODO    sut.UpdateParametersAndInitialValuesForIndividual(0, _variableParameters,_variableInitialValues);
+//         sut.UpdateParametersAndInitialValuesForIndividual(0, _variableParameters);
 //      }
 //
 //      [Observation]
 //      public void should_fill_correct_value_for_variable_initial_values()
 //      {
-//         _variableInitialValues.Count.ShouldBeEqualTo(2);
+//         //TODO    _variableInitialValues.Count.ShouldBeEqualTo(2);
 //
-//         _variableInitialValues[0].Value.ShouldBeEqualTo(2);
-//         _variableInitialValues[1].Value.ShouldBeEqualTo(22);
+//         //TODO   _variableInitialValues[0].Value.ShouldBeEqualTo(2);
+//         //TODO    _variableInitialValues[1].Value.ShouldBeEqualTo(22);
 //      }
 //
 //      [Observation]
@@ -183,77 +183,80 @@
 //         var nonTableParameters = _variableParameters.Where(x => x.Path.Equals(_nonAgingPath2)).ToList();
 //         nonTableParameters.Count.ShouldBeEqualTo(1);
 //
-//         nonTableParameters[0].TablePoints.Count.ShouldBeEqualTo(0);
+//         nonTableParameters[0].TablePoints.Count().ShouldBeEqualTo(0);
 //         nonTableParameters[0].Value.ShouldBeEqualTo(666);         
 //      }
 //
-//      [Observation]
-//      public void should_fill_correct_values_for_table_parameters()
-//      {
-//         var tableParameter1 = _variableParameters.First(x => x.IsTable && x.Path.Equals(_agingPath1));
-//         var tablePoints1 = tableParameter1.TablePoints;
-//
-//         tablePoints1.Count.ShouldBeEqualTo(2);
-//         tablePoints1[0].X.ShouldBeEqualTo(1);
-//         tablePoints1[0].Y.ShouldBeEqualTo(1);
-//         tablePoints1[1].X.ShouldBeEqualTo(2);
-//         tablePoints1[1].Y.ShouldBeEqualTo(2);
-//
-//         var tableParameter2 = _variableParameters.First(x => x.IsTable && x.Path.Equals(_agingPath2));
-//         var tablePoints2 = tableParameter2.TablePoints;
-//
-//         tablePoints2.Count.ShouldBeEqualTo(3);
-//         tablePoints2[0].X.ShouldBeEqualTo(11);
-//         tablePoints2[0].Y.ShouldBeEqualTo(11);
-//         tablePoints2[1].X.ShouldBeEqualTo(22);
-//         tablePoints2[1].Y.ShouldBeEqualTo(22);
-//         tablePoints2[2].X.ShouldBeEqualTo(33);
-//         tablePoints2[2].Y.ShouldBeEqualTo(33);
-//
-//         var tableParameter3 = _variableParameters.First(x=>x.Path.Equals(_agingPath3));
-//         var tablePoints3 = tableParameter3.TablePoints;
-//
-//         tablePoints3.Count.ShouldBeEqualTo(1);
-//         tablePoints3[0].X.ShouldBeEqualTo(6.66);
-//      }
+//      //TODO
+////
+////      [Observation]
+////      public void should_fill_correct_values_for_table_parameters()
+////      {
+////         var tableParameter1 = _variableParameters.First(x => x.IsTable && x.Path.Equals(_agingPath1));
+////         var tablePoints1 = tableParameter1.TablePoints;
+////
+////         tablePoints1.Count().ShouldBeEqualTo(2);
+////         tablePoints1.ElementAt(0).X.ShouldBeEqualTo(1);
+////         tablePoints1.ElementAt(0).Y.ShouldBeEqualTo(1);
+////         tablePoints1.ElementAt(1).X.ShouldBeEqualTo(2);
+////         tablePoints1.ElementAt(1).Y.ShouldBeEqualTo(2);
+////
+////         var tableParameter2 = _variableParameters.First(x => x.IsTable && x.Path.Equals(_agingPath2));
+////         var tablePoints2 = tableParameter2.TablePoints;
+////
+////         tablePoints2.Count().ShouldBeEqualTo(3);
+////         tablePoints2.ElementAt(0).X.ShouldBeEqualTo(11);
+////         tablePoints2.ElementAt(0).Y.ShouldBeEqualTo(11);
+////         tablePoints2.ElementAt(1).X.ShouldBeEqualTo(22);
+////         tablePoints2.ElementAt(1).Y.ShouldBeEqualTo(22);
+////         tablePoints2.ElementAt(2).X.ShouldBeEqualTo(33);
+////         tablePoints2.ElementAt(2).Y.ShouldBeEqualTo(33);
+////
+////         var tableParameter3 = _variableParameters.First(x=>x.Path.Equals(_agingPath3));
+////         var tablePoints3 = tableParameter3.TablePoints;
+////
+////         tablePoints3.Count().ShouldBeEqualTo(1);
+////         tablePoints3.ElementAt(0).X.ShouldBeEqualTo(6.66);
+////      }
 //   }
+//   //TODO
 //
-//   internal class When_filling_initial_values_from_empty_table : concern_for_PopulationDataSplitterSpecs
-//   {
-//      private IList<ISpeciesProperties> _variableInitialValues;
-//
-//      protected override void Context()
-//      {
-//         base.Context();
-//
-//         _initialValuesData = createEmptyInitialValuesData();
-//         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData, _numberOfCores);
-//      }
-//
-//      protected override void Because()
-//      {
-//         _variableInitialValues = new List<ISpeciesProperties>();
-//         var initialValueInfo1 = A.Fake<ISpeciesProperties>();
-//         A.CallTo(() => initialValueInfo1.Path).Returns("Trululu");
-//         _variableInitialValues.Add(initialValueInfo1);
-//
-//         sut.UpdateParametersAndInitialValuesForIndividual(0, new List<IParameterProperties>(), _variableInitialValues);
-//      }
-//
-//      private DataTable createEmptyInitialValuesData()
-//      {
-//         var dt = new DataTable("InitialValues");
-//         dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
-//         dt.Columns.Add("Trululu");
-//         return dt;
-//      }
-//
-//      [Observation]
-//      public void should_not_crash_with_empty_table()
-//      {
-//
-//      }
-//   }
+////   internal class When_filling_initial_values_from_empty_table : concern_for_PopulationDataSplitterSpecs
+////   {
+////      private IList<ISpeciesProperties> _variableInitialValues;
+////
+////      protected override void Context()
+////      {
+////         base.Context();
+////
+////         _initialValuesData = createEmptyInitialValuesData();
+////         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData, _numberOfCores);
+////      }
+////
+////      protected override void Because()
+////      {
+////         _variableInitialValues = new List<ISpeciesProperties>();
+////         var initialValueInfo1 = A.Fake<ISpeciesProperties>();
+////         A.CallTo(() => initialValueInfo1.Path).Returns("Trululu");
+////         _variableInitialValues.Add(initialValueInfo1);
+////
+////         sut.UpdateParametersAndInitialValuesForIndividual(0, new List<IParameterProperties>(), _variableInitialValues);
+////      }
+////
+////      private DataTable createEmptyInitialValuesData()
+////      {
+////         var dt = new DataTable("InitialValues");
+////         dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
+////         dt.Columns.Add("Trululu");
+////         return dt;
+////      }
+////
+////      [Observation]
+////      public void should_not_crash_with_empty_table()
+////      {
+////
+////      }
+////   }
 //
 //   internal class When_geting_Individual_id_s_for_first_core : concern_for_PopulationDataSplitterSpecs
 //   {
