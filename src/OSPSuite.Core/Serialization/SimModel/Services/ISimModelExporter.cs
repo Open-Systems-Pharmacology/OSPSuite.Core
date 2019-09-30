@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       Full,
 
       /// <summary>
-      ///    Only required information for SimModel will be genrated.
+      ///    Only required information for SimModel will be generated.
       /// </summary>
       Optimized
    }

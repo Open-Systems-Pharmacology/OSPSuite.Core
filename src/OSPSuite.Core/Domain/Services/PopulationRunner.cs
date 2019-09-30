@@ -162,11 +162,11 @@ namespace OSPSuite.Core.Domain.Services
          return results;
       }
 
-      private QuantityValues quantityValuesFor(string quantityPath, VariableValues quantitValues, int expectedLength)
+      private QuantityValues quantityValuesFor(string quantityPath, VariableValues quantityValues, int expectedLength)
       {
          //this is required since SimModel is only returning array of length one for constant 
-         double[] values = quantitValues.Values;
-         if (quantitValues.IsConstant)
+         double[] values = quantityValues.Values;
+         if (quantityValues.IsConstant)
          {
             double defaultValue = values.Length == 1 ? values[0] : double.NaN;
             values = new double[expectedLength].InitializeWith(defaultValue);

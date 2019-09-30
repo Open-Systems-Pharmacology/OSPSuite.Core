@@ -18,5 +18,10 @@ namespace OSPSuite.Core.Domain.Populations
       {
          Attributes[attributeName] = attributeValue.ToString();
       }
+
+      public string Covariate(string covariateName)
+      {
+         return Attributes[covariateName];
+      }
    }
 }

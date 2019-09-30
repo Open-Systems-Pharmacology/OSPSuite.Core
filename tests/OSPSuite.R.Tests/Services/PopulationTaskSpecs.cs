@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -9,7 +8,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
-   public abstract class concern_for_PopulationImporter : ContextSpecification<IPopulationImporter>
+   public abstract class concern_for_PopulationTask : ContextSpecification<IPopulationTask>
    {
       public override void GlobalContext()
       {
@@ -23,11 +22,11 @@ namespace OSPSuite.R.Services
 
       protected override void Context()
       {
-         sut = IoC.Resolve<IPopulationImporter>();
+         sut = IoC.Resolve<IPopulationTask>();
       }
    }
 
-   public class When_importing_a_population_from_file_that_matches_a_simulation_structure : concern_for_PopulationImporter
+   public class When_importing_a_population_from_file_that_matches_a_simulation_structure : concern_for_PopulationTask
    {
       private string _populationFile;
       private IndividualValuesCache _individualValuesCache;
@@ -37,7 +36,6 @@ namespace OSPSuite.R.Services
          base.Context();
          var simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");
          _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
-
       }
 
       protected override void Because()

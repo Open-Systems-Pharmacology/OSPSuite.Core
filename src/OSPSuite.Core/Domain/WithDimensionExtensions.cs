@@ -1,4 +1,6 @@
-﻿using OSPSuite.Core.Domain.Services;
+﻿using System;
+using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 
@@ -48,5 +50,9 @@ namespace OSPSuite.Core.Domain
       public static string BaseUnitName(this IWithDimension withDimension) => withDimension?.Dimension?.BaseUnit.Name ?? string.Empty;
 
       public static bool HasUnit(this IWithDimension withDimension, string unit) => withDimension?.Dimension != null && withDimension.Dimension.HasUnit(unit);
+
+      public static string[] AllUnitNames(this IWithDimension withDimension) => withDimension?.Dimension?.GetUnitNames().ToArray() ?? Array.Empty<string>();
+
+      public static Unit[] AllUnits(this IWithDimension withDimension) => withDimension?.Dimension?.Units.ToArray() ?? Array.Empty<Unit>();
    }
 }
