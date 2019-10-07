@@ -24,11 +24,9 @@ namespace OSPSuite.Core.Domain.Services
          _numberOfSimulationsPerCore = getNumberOfSimulationsPerCore();
       }
 
-      public void UpdateParametersAndInitialValuesForIndividual(int individualId, IEnumerable<ParameterProperties> variableParameters) // , IList<SpeciesProperties> variableProperties)
+      public void UpdateParametersAndInitialValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> variableParameters, IReadOnlyList<SpeciesProperties> speciesProperties)
       {
-         //TODO 
-//         fillParameterAndInitialValuesFor(individualId, variableParameters, variableProperties);
-         fillParameterAndInitialValuesFor(individualId, variableParameters);
+         fillParameterAndInitialValuesFor(individualId, variableParameters, speciesProperties);
       }
 
       public IEnumerable<int> GetIndividualIdsFor(int coreIndex)
@@ -91,7 +89,7 @@ namespace OSPSuite.Core.Domain.Services
          return dataTable.Rows.Cast<DataRow>().FirstOrDefault(r => individualIdFrom(r) == individualId);
       }
 
-      private void fillParameterAndInitialValuesFor(int individualId, IEnumerable<ParameterProperties> parameters) //, IEnumerable<SpeciesProperties> initialValueProperties)
+      private void fillParameterAndInitialValuesFor(int individualId, IReadOnlyList<ParameterProperties> parameters, IReadOnlyList<SpeciesProperties> speciesProperties)
       {
          var nonTableParameterValues = parameterDataRowFromIndividualId(individualId);
 
@@ -109,11 +107,11 @@ namespace OSPSuite.Core.Domain.Services
          var initialValues = initialValuesDataRowFromIndividualId(individualId);
          if (initialValues == null)
             return;
-         //TODO
-//         foreach (var initialValue in initialValueProperties)
-//         {
-//            initialValue.Value = initialValues[initialValue.Path].ConvertedTo<double>();
-//         }
+
+         foreach (var initialValue in speciesProperties)
+         {
+            initialValue.InitialValue = initialValues[initialValue.Path].ConvertedTo<double>();
+         }
       }
 
       private void fillTableParameterValuesFor(ParameterProperties parameterProperties, int individualId)
@@ -141,7 +139,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Get all parameter paths of parameters to be varied from PopulationData and AgingData.
       ///    Parameter paths DO NOT contain root element (e.g. "Organism|Age")
       /// </summary>
-      public IEnumerable<string> ParameterPathsToBeVaried()
+      public IReadOnlyList<string> ParameterPathsToBeVaried()
       {
          var nonTableParametersToBeVaried = from DataColumn dc in _populationData.Columns
             where !dc.ColumnName.Equals(Constants.Population.INDIVIDUAL_ID_COLUMN)
@@ -150,17 +148,19 @@ namespace OSPSuite.Core.Domain.Services
          var tableParametersToBeVaried = (from DataRow dr in _agingData.Rows
             select dr[Constants.Population.PARAMETER_PATH_COLUMN].ToString()).Distinct();
 
-         return nonTableParametersToBeVaried.Union(tableParametersToBeVaried);
+         return nonTableParametersToBeVaried.Union(tableParametersToBeVaried).ToList();
       }
 
       /// <summary>
       ///    Get all variable paths of molecules to be varied from InitialValues.
       /// </summary>
-      public IEnumerable<string> InitialValuesPathsToBeVaried()
+      public IReadOnlyList<string> InitialValuesPathsToBeVaried()
       {
-         return from DataColumn dc in _initialValues.Columns
+         var speciesToBeVaried =  from DataColumn dc in _initialValues.Columns
             where !dc.ColumnName.Equals(Constants.Population.INDIVIDUAL_ID_COLUMN)
             select dc.ColumnName;
+
+         return speciesToBeVaried.ToList();
       }
    }
 }

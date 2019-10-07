@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
@@ -103,22 +104,22 @@ namespace OSPSuite.Core.Domain.Services
       {
          var allIndividuals = _populationDataSplitter.GetIndividualIdsFor(coreIndex);
 
-         var variableParameters = simulation.VariableParameters;
-        // TODO var initialValues = simulation.VariableSpecies;
+         var variableParameters = simulation.VariableParameters.ToList();
+         var variableSpecies = simulation.VariableSpecies.ToList();
 
          foreach (var individualId in allIndividuals)
          {
             cancellationToken.ThrowIfCancellationRequested();
 
             //get row indices for the simulations on current core
-            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters); //, initialValues);
+            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies); 
 
 
             //set new parameter values into SimModel
             simulation.SetParameterValues();
 
             //set new initial values into SimModel
-// TODO            simulation.SetSpeciesProperties(initialValues);
+            simulation.SetSpeciesValues();
 
             try
             {
@@ -131,7 +132,7 @@ namespace OSPSuite.Core.Domain.Services
             }
             finally
             {
-             // TODO  _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation.SolverWarnings));
+             _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
 
                //Could lead to a wrong progress if two threads are accessing the value at the same time
                SimulationProgress(this, new PopulationSimulationProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
@@ -189,7 +190,7 @@ namespace OSPSuite.Core.Domain.Services
          cancellationToken.ThrowIfCancellationRequested();
          var simulation = CreateSimulation(simulationExport);
          setVariableParameters(simulation);
-         // TODO setVariableInitialValues(simulation);
+         setVariableInitialValues(simulation);
          FinalizeSimulation(simulation);
          return simulation;
       }
@@ -200,28 +201,18 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">SimModel simulation</param>
       private void setVariableParameters(Simulation simulation)
       {
-         var parameterPathsToBeVaried = _populationDataSplitter.ParameterPathsToBeVaried();
-         var allParameters = simulation.ParameterProperties;
-         var parametersToBeVaried = allParameters.Where(p => parameterPathsToBeVaried.Contains(p.Path));
-         simulation.VariableParameters = parametersToBeVaried.ToList();
+         SetVariableParameters(simulation, _populationDataSplitter.ParameterPathsToBeVaried(), calculateSensitivities: false);  
       }
 
-      // TODO
       /// <summary>
       ///    Set variable initial values which will be varied into SimModel
       /// </summary>
       /// <param name="simulation">SimModel simulation</param>
-//      private void setVariableInitialValues(Simulation simulation)
-//      {
-//         var initialValuesPathsToBeVaried = _populationDataSplitter.InitialValuesPathsToBeVaried();
-//         var allInitialValues = simulation.SpeciesProperties;
-//         var initialValuesToBeVaried = allInitialValues.Where(p => initialValuesPathsToBeVaried.Contains(p.Path));
-//         simulation.VariableSpecies = initialValuesToBeVaried.ToList();
-//      }
-
-      public void StopSimulation()
+      private void setVariableInitialValues(Simulation simulation)
       {
-         _cancellationTokenSource.Cancel();
+         SetVariableSpecies(simulation, _populationDataSplitter.InitialValuesPathsToBeVaried());
       }
+
+      public void StopSimulation() => _cancellationTokenSource.Cancel();
    }
 }

@@ -56,9 +56,7 @@ namespace OSPSuite.Core.Domain.Services
             doIfNotCanceled(() => FinalizeSimulation(_simModelSimulation));
             doIfNotCanceled(simulate);
 
-            //TODO 
-//            return new SimulationRunResults(!_canceled, _simModelSimulation.SolverWarnings, getResults(simulation));
-            return new SimulationRunResults(!_canceled, Enumerable.Empty<SolverWarning>(), getResults(simulation));
+            return new SimulationRunResults(!_canceled, WarningsFrom( _simModelSimulation), getResults(simulation));
          }
          finally
          {
