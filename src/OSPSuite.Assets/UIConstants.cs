@@ -1641,6 +1641,9 @@ namespace OSPSuite.Assets
       {
          return $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
       }
+
+
+      public static string CalculationPopulationSimulation(int number, int total) => $"Simulation {number}/{total}...";
    }
 
    public static class Warning

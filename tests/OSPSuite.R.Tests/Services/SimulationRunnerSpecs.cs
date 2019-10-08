@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.R.Services
 {
@@ -18,6 +19,7 @@ namespace OSPSuite.R.Services
       protected ISimulationPersistableUpdater _simulationPersitableUpdater;
       protected IPopulationRunner _populationRunner;
       protected IPopulationTask _populationTask;
+      protected IProgressManager _progressManager;
 
       protected override void Context()
       {
@@ -25,8 +27,9 @@ namespace OSPSuite.R.Services
          _simulationPersitableUpdater = A.Fake<ISimulationPersistableUpdater>();
          _populationRunner = A.Fake<IPopulationRunner>();
          _populationTask = A.Fake<IPopulationTask>();
+         _progressManager= A.Fake<IProgressManager>(); 
          _simulationResultsCreator = new SimulationResultsCreator();
-         sut = new SimulationRunner(_simModelManager, _populationRunner, _simulationResultsCreator, _simulationPersitableUpdater, _populationTask);
+         sut = new SimulationRunner(_simModelManager, _populationRunner, _simulationResultsCreator, _simulationPersitableUpdater, _populationTask, _progressManager);
       }
    }
 

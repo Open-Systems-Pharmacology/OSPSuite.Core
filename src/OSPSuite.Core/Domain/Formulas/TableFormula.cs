@@ -88,10 +88,9 @@ namespace OSPSuite.Core.Domain.Formulas
          UseDerivedValues = true;
       }
 
-      public virtual IEnumerable<ValuePoint> AllPoints()
-      {
-         return _allPoints;
-      }
+      public virtual IEnumerable<ValuePoint> AllPoints() => _allPoints;
+
+      public virtual ValuePoint[] AllPointsAsArray() => AllPoints().ToArray();
 
       /// <summary>
       ///    Returns the yValue defined for the xValue in base unit given as parameter. If the table contains no point, 0 is
