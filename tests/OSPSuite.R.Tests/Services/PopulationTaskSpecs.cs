@@ -48,5 +48,18 @@ namespace OSPSuite.R.Services
       {
          _individualValuesCache.Count.ShouldBeEqualTo(10);
       }
+
+      [Observation]
+      public void should_have_loaded_the_covariates_as_expected()
+      {
+         _individualValuesCache.AllCovariatesNames().ShouldOnlyContain("Gender", "RaceIndex", "Population Name");
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_covariates_by_index()
+      {
+         var cov = _individualValuesCache.CovariatesAt(7);
+         cov.Covariate("Gender").ShouldBeEqualTo("2");
+      }
    }
 }
