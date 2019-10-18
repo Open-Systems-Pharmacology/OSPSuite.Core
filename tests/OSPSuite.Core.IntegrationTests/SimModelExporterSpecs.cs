@@ -1,3 +1,4 @@
+using System.IO;
 using System.Xml;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -101,56 +102,55 @@ namespace OSPSuite.Core
       }
    }
 
-//TODO
-//   public class When_exporting_a_simulation_as_ode_system : concern_for_SimModelExporter
-//   {
-//      private IModelCoreSimulation _simulation;
-//      private string _tempFolderFormulas;
-//      private string _tempFolderValues;
-//
-//      protected override void Context()
-//      {
-//         base.Context();
-//         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
-//         _tempFolderFormulas = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-//         _tempFolderValues = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-////      }
-//
-//      private void checkMatlabFiles(string path)
-//      {
-//         var matlabFileNames = new[]
-//            {
-//               "ODEoptions.m",
-//               "ODEInitialValues.m",
-//               "ODERHSFunction.m",
-//               "ODEMain.m",
-//               "PerformSwitches.m"
-//            };
-//
-//         foreach (var matlabFileName in matlabFileNames)
-//         {
-//            FileHelper.FileExists(Path.Combine(path, matlabFileName)).ShouldBeTrue();
-//         }
-//      }
-//
-//      protected override void Because()
-//      {
-//         sut.ExportODEForMatlab(_simulation, _tempFolderFormulas, MatlabFormulaExportMode.Formula);
-//         sut.ExportODEForMatlab(_simulation, _tempFolderValues, MatlabFormulaExportMode.Values);
-//      }
-//
-//      [Observation]
-//      public void should_export_ode_to_matlab_in_formula_mode_and_in_value_mode()
-//      {
-//         checkMatlabFiles(_tempFolderFormulas);
-//         checkMatlabFiles(_tempFolderValues);
-//      }
-//
-//      public override void Cleanup()
-//      {
-//         base.Cleanup();
-//         Directory.Delete(_tempFolderFormulas, true);
-//         Directory.Delete(_tempFolderValues, true);
-//      }
-//   }
+   public class When_exporting_a_simulation_as_ode_system : concern_for_SimModelExporter
+   {
+      private IModelCoreSimulation _simulation;
+      private string _tempFolderFormulas;
+      private string _tempFolderValues;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         _tempFolderFormulas = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+         _tempFolderValues = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      }
+
+      private void checkMatlabFiles(string path)
+      {
+         var matlabFileNames = new[]
+            {
+               "ODEoptions.m",
+               "ODEInitialValues.m",
+               "ODERHSFunction.m",
+               "ODEMain.m",
+               "PerformSwitches.m"
+            };
+
+         foreach (var matlabFileName in matlabFileNames)
+         {
+            FileHelper.FileExists(Path.Combine(path, matlabFileName)).ShouldBeTrue();
+         }
+      }
+
+      protected override void Because()
+      {
+         sut.ExportODEForMatlab(_simulation, _tempFolderFormulas, MatlabFormulaExportMode.Formula);
+         sut.ExportODEForMatlab(_simulation, _tempFolderValues, MatlabFormulaExportMode.Values);
+      }
+
+      [Observation]
+      public void should_export_ode_to_matlab_in_formula_mode_and_in_value_mode()
+      {
+         checkMatlabFiles(_tempFolderFormulas);
+         checkMatlabFiles(_tempFolderValues);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         Directory.Delete(_tempFolderFormulas, true);
+         Directory.Delete(_tempFolderValues, true);
+      }
+   }
 }

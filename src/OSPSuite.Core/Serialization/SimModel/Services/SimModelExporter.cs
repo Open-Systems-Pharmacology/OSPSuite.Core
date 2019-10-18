@@ -3,6 +3,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.SimModel.DTO;
 using OSPSuite.Serializer.Xml;
 using OSPSuite.SimModel;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
@@ -37,13 +38,13 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          var simModelSimulation = new Simulation();
 
          simModelSimulation.LoadFromXMLString(simModelXml);
-//         simModelSimulation.WriteMatlabCode(outputFolder, writeModeFrom(formulaExportMode), ParameterNamesWriteMode.FullyQualified);
+         simModelSimulation.ExportToCode(outputFolder, CodeExportLanguage.Matlab, writeModeFrom(formulaExportMode));
       }
 
-//      private MatlabCodeWriteMode writeModeFrom(MatlabFormulaExportMode formulaExportMode)
-//      {
-//         return EnumHelper.ParseValue<MatlabCodeWriteMode>(formulaExportMode.ToString());
-//      }
+      private CodeExportMode writeModeFrom(MatlabFormulaExportMode formulaExportMode)
+      {
+         return EnumHelper.ParseValue<CodeExportMode>(formulaExportMode.ToString());
+      }
 
       private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {

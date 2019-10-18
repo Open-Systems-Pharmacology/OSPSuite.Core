@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.1.9" />
+    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.2.3" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
   </ItemGroup>
 

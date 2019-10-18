@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -52,5 +55,27 @@ namespace OSPSuite.Core.Domain.Services
       {
          Terminated(sender, eventArgs);
       }
+
+      protected IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variableParameterPaths, bool calculateSensitivities)
+      {
+         var allParameters = simulation.ParameterProperties;
+         var parametersToBeVaried = allParameters.Where(p => variableParameterPaths.Contains(p.Path)).ToList();
+
+         parametersToBeVaried.Each(p => p.CalculateSensitivity = calculateSensitivities);
+
+         simulation.VariableParameters = parametersToBeVaried;
+         return parametersToBeVaried;
+      }
+
+      protected IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variableSpeciesPaths)
+      {
+         var allSpecies = simulation.SpeciesProperties;
+         var speciesToBeVaried = allSpecies.Where(p => variableSpeciesPaths.Contains(p.Path)).ToList();
+         simulation.VariableSpecies = speciesToBeVaried;
+         return speciesToBeVaried;
+      }
+
+      protected IEnumerable<SolverWarning> WarningsFrom(Simulation simModelSimulation) => simModelSimulation.SolverWarnings;
+
    }
 }

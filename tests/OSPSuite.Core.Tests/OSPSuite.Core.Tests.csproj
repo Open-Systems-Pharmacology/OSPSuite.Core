@@ -123,6 +123,9 @@
     <None Include="..\..\packages\OSPSuite.FuncParser.4.0.0.39\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\packages\OSPSuite.SimModel.4.0.0.28\OSPSuite.SimModelNative\bin\native\x64\Release\OSPSuite.SimModelNative.dll" Link="OSPSuite.SimModelNative.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -132,6 +135,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.28" />
   </ItemGroup>
 
   <ItemGroup>

@@ -135,4 +135,20 @@ namespace OSPSuite.Core.Domain
          _parameter.BaseUnitName().ShouldBeEqualTo(string.Empty);
       }
    }
+
+   public class When_retrieving_all_unit_names_defined_in_a_quantity : concern_for_WithDimensionExtensions
+   {
+      [Observation]
+      public void should_return_all_expected_values()
+      {
+         _parameter.AllUnitNames().ShouldOnlyContain("h", "min", "s");
+      }
+
+      [Observation]
+      public void should_return_an_empty_if_the_parameter_has_no_dimension()
+      {
+         _parameter.Dimension = null;
+         _parameter.AllUnitNames().ShouldBeEmpty();
+      }
+   }
 }

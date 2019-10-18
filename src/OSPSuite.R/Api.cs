@@ -32,7 +32,7 @@ namespace OSPSuite.R
 
       public static ISimulationExporter GetSimulationExporter() => resolveTask<ISimulationExporter>();
 
-      public static IPopulationImporter GetPopulationImporter() => resolveTask<IPopulationImporter>();
+      public static IPopulationTask GetPopulationTask() => resolveTask<IPopulationTask>();
 
       public static ISimulationResultsTask GetSimulationResultsTask() => resolveTask<ISimulationResultsTask>();
 

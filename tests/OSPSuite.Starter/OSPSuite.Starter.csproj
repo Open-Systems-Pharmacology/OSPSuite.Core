@@ -326,8 +326,12 @@
       <Link>OSPSuite.FuncParserNative.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\lib\OSPSuite.SimModelSolver_CVODES.dll">
+    <None Include="..\..\packages\OSPSuite.SimModelSolver_CVODES.4.0.0.5\lib\net45\OSPSuite.SimModelSolver_CVODES.dll">
       <Link>OSPSuite.SimModelSolver_CVODES.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\packages\OSPSuite.SimModel.4.0.0.28\OSPSuite.SimModelNative\bin\native\x64\Release\OSPSuite.SimModelNative.dll">
+      <Link>OSPSuite.SimModelNative.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\x64\SQLite.Interop.dll">
@@ -502,6 +506,9 @@
     </Reference>
     <Reference Include="OSPSuite.Serializer, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Serializer.3.0.0.1\lib\netstandard2.0\OSPSuite.Serializer.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.SimModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\OSPSuite.SimModel.4.0.0.28\lib\netstandard2.0\OSPSuite.SimModel.dll</HintPath>
     </Reference>
     <Reference Include="OSPSuite.Utility, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OSPSuite.Utility.4.0.0.1\lib\netstandard2.0\OSPSuite.Utility.dll</HintPath>

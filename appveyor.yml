@@ -1,5 +1,5 @@
 configuration: Debug
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 # hack until donet patching works with PR
 init: 
@@ -17,8 +17,8 @@ dotnet_csproj:
   file_version: '$(app_version).$(build_number)'
   informational_version: '$(app_version).$(build_number)'
 
-cache:
-  packages -> **\*.csproj  # preserve "packages" directory in the root of build folder but will reset it if a project file is modified
+#cache:
+#  packages -> **\*.csproj  # preserve "packages" directory in the root of build folder but will reset it if a project file is modified
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -30,7 +30,6 @@ before_build:
   - nuget sources add -name funcparser -source https://ci.appveyor.com/nuget/ospsuite-funcparser 
   - nuget sources add -name simmodel -source https://ci.appveyor.com/nuget/ospsuite-simmodel
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
-  - nuget sources add -name smartxls -source https://ci.appveyor.com/nuget/ospsuite-smartxls
   - nuget restore
 
 build:
@@ -48,9 +47,13 @@ branches:
 
 test:
   assemblies:
-    except:
-      - OSPSuite.Coverage.dll
-  
+    - OSPSuite.Core.Tests.dll
+    - OSPSuite.Core.IntegrationTests.dll
+    - OSPSuite.Presentation.Tests.dll
+    - OSPSuite.Infrastructure.Tests.dll
+    - OSPSuite.R.Tests.dll
+    - OSPSuite.UI.Tests.dll
+   
 install:
  - git submodule update --init --recursive
 

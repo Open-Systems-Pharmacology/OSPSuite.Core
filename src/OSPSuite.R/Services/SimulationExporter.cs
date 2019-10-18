@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 
@@ -7,7 +6,6 @@ namespace OSPSuite.R.Services
 {
    public interface ISimulationExporter
    {
-
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
    }
 
@@ -19,7 +17,6 @@ namespace OSPSuite.R.Services
       {
          _simulationResultsToDataTableConverter = simulationResultsToDataTableConverter;
       }
-
 
       public void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName)
       {

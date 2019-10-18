@@ -5,8 +5,7 @@ namespace OSPSuite.Core.Domain.Populations
 {
    public class IndividualValuesCache : IParameterValueCache
    {
-      //covariates names
-      //gender, race, populationName 
+      // One entry per individual. Each Covariate item contains all the covariates defined for one individual such as gender, race, populationName 
       public List<Covariates> AllCovariates { get; }
 
       public ParameterValuesCache ParameterValuesCache { get; }
@@ -83,6 +82,11 @@ namespace OSPSuite.Core.Domain.Populations
          var covariates = new List<string>();
          covariates.AddRange(AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct());
          return covariates;
+      }
+
+      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName)
+      {
+         return AllCovariates.Select(x => x.Covariate(covariateName)).ToList();
       }
    }
 }
