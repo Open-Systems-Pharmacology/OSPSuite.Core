@@ -77,16 +77,13 @@ namespace OSPSuite.Core.Domain.Populations
          }
       }
 
-      public IReadOnlyList<string> AllCovariatesNames()
-      {
-         var covariates = new List<string>();
-         covariates.AddRange(AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct());
-         return covariates;
-      }
+      public IReadOnlyList<string> AllCovariatesNames() => AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct().ToArray();
+
+      public Covariates CovariatesAt(int index) => AllCovariates[index];
 
       public IReadOnlyList<string> AllCovariateValuesFor(string covariateName)
       {
-         return AllCovariates.Select(x => x.Covariate(covariateName)).ToList();
+         return AllCovariates.Select(x => x.Covariate(covariateName)).ToArray();
       }
    }
 }
