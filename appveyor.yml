@@ -1,5 +1,5 @@
 configuration: Debug
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 # hack until donet patching works with PR
 init: 
