@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Journal
       public virtual string TagId { get; set; }
    }
 
-   public class RelatedItem : ItemWithContent, IWithName
+   public class RelatedItem : ItemWithContent, IWithName, IWithIcon
    {
       public string Name { get; set; }
       public string Version { get; set; }

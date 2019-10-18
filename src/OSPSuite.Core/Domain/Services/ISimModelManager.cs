@@ -21,14 +21,9 @@ namespace OSPSuite.Core.Domain.Services
    public interface ISimModelManager
    {
       /// <summary>
-      ///    Simulates the active simulation using default run options
+      ///    Run simulation using given options or the default if not specified
       /// </summary>
-      SimulationRunResults RunSimulation(IModelCoreSimulation simulation);
-
-      /// <summary>
-      ///    Run simulation using given options
-      /// </summary>
-      SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions);
+      SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
 
       /// <summary>
       ///    Stops SimModelSimulation run
@@ -36,12 +31,12 @@ namespace OSPSuite.Core.Domain.Services
       void StopSimulation();
 
       /// <summary>
-      ///    Progress event returns the percent reprensenting the progress of a simulation
+      ///    Progress event returns the percent representing the progress of a simulation
       /// </summary>
       event EventHandler<SimulationProgressEventArgs> SimulationProgress;
 
       /// <summary>
-      ///    Event raised when simulation is terminated (either after nornal termination or cancel)
+      ///    Event raised when simulation is terminated (either after normal termination or cancel)
       /// </summary>
       event EventHandler Terminated;
    }

@@ -14,8 +14,10 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Core;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -46,7 +48,7 @@ namespace OSPSuite.UI.Views.Charts
          _hintControl = new LabelControl();
          _toolTipController = new ToolTipController();
          PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
-         SetDockStyle(DockStyle.Fill);
+         SetDockStyle(Presentation.Views.Dock.Fill);
       }
 
       public override Color BackColor
@@ -155,17 +157,20 @@ namespace OSPSuite.UI.Views.Charts
       protected override void OnDragDrop(DragEventArgs dragDropEventArgs)
       {
          base.OnDragDrop(dragDropEventArgs);
+         _presenter.OnDragDrop(new DragEvent(dragDropEventArgs));
          var hitInfo = _chartControl.CalcHitInfo(chartControlPointFromDragDropEventArgs(dragDropEventArgs));
          if (!canDropMovingLegendHere(hitInfo)) return;
 
          var seriesBeingMoved = dragDropEventArgs.Data.GetData(typeof(Series)).DowncastTo<Series>();
          if (seriesBeingMoved != null)
             dropLegendHere(hitInfo.Series.DowncastTo<Series>(), seriesBeingMoved);
+
       }
 
       protected override void OnDragOver(DragEventArgs dragOverEventArgs)
       {
          base.OnDragOver(dragOverEventArgs);
+         _presenter.OnDragOver(new DragEvent(dragOverEventArgs));
 
          if (inLegendSeries(_chartControl.CalcHitInfo(chartControlPointFromDragDropEventArgs(dragOverEventArgs))))
          {
@@ -335,9 +340,19 @@ namespace OSPSuite.UI.Views.Charts
 
       private (float min, float max) rangeFrom(RangeInfo rangeInfo) => (Convert.ToSingle(rangeInfo.MinValue), Convert.ToSingle(rangeInfo.MaxValue));
 
-      public void SetDockStyle(DockStyle dockStyle)
+      public void SetDockStyle(Dock dockStyle)
       {
-         _chartControl.Dock = dockStyle;
+         switch (dockStyle)
+         {
+            case Presentation.Views.Dock.Fill:
+               _chartControl.Dock = DockStyle.Fill;
+               break;
+            case Presentation.Views.Dock.None:
+               _chartControl.Dock = DockStyle.None;
+               break;
+            default:
+               throw new ArgumentOutOfRangeException(nameof(dockStyle), dockStyle, null);
+         }
       }
 
       private void onScroll(ChartScrollEventArgs e)
@@ -520,6 +535,7 @@ namespace OSPSuite.UI.Views.Charts
                 < Math.Abs(nextPoint.NumericalArgument - hitPointCoord.NumericalArgument))
                nextPoint = point;
          }
+
          return nextPoint;
       }
 
@@ -565,10 +581,9 @@ namespace OSPSuite.UI.Views.Charts
          diagramBackColor = chart.ChartSettings.DiagramBackColor;
       }
 
-
       public void ShowWatermark(string watermark)
       {
-         _chartControl.AddWatermark( watermark, _presenter.Chart);
+         _chartControl.AddWatermark(watermark, _presenter.Chart);
       }
 
       public bool ShowOriginText
@@ -576,11 +591,11 @@ namespace OSPSuite.UI.Views.Charts
          set
          {
             clearOriginText();
-            if(value)
+            if (value)
                _previewChartOrigin = _chartControl.AddOriginData(_presenter.Chart);
          }
       }
-   
+
       private void clearOriginText()
       {
          if (_chartControl.Titles.Contains(_previewChartOrigin))
@@ -651,7 +666,6 @@ namespace OSPSuite.UI.Views.Charts
 
          this.FillWith(_chartControl);
       }
-
 
       public void ShowHint()
       {

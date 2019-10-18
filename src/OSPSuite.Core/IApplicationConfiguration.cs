@@ -7,7 +7,7 @@ namespace OSPSuite.Core
    /// <summary>
    ///    Standard interface defining common properties for all application in the suite
    /// </summary>
-   public interface IApplicationConfiguration
+   public interface IApplicationConfiguration : IWithIcon
    {
       /// <summary>
       ///    Folder path where template layouts are being saved (for all users, installed by setup)
@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the pk analyses file
       /// </summary>
-      string PKParametersFilePath { get; }
+      string PKParametersFilePath { get; set; }
 
       /// <summary>
       ///    Path of the license agreement file
@@ -89,8 +89,6 @@ namespace OSPSuite.Core
       /// </summary>
       string ProductDisplayName { get; }
 
-      ApplicationIcon Icon { get; }
-      
       /// <summary>
       ///    Paths of the current user specific settings file (current user only)
       /// </summary>
@@ -140,7 +138,7 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Path of the dimension file
       /// </summary>
-      string DimensionFilePath { get; }
+      string DimensionFilePath { get; set; }
 
       /// <summary>
       /// Where can the user change the watermark option in the user interface. Location is application specific

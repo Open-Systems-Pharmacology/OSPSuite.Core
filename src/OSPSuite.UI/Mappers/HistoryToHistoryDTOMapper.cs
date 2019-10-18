@@ -4,7 +4,7 @@ using OSPSuite.Core.Commands.Core;
 using OSPSuite.Presentation.DTO.Commands;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Commands;
-using OSPSuite.UI.DTO.Commands;
+using OSPSuite.UI.DTO;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Mappers

@@ -1,5 +1,5 @@
-﻿using OSPSuite.Utility.Validation;
-using DevExpress.XtraEditors.DXErrorProvider;
+﻿using DevExpress.XtraEditors.DXErrorProvider;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO
 {

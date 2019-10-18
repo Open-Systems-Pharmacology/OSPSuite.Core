@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Extensions
 {
@@ -14,7 +15,7 @@ namespace OSPSuite.Core.Extensions
       public static string[] ToPathArray(this string pathString)
       {
          if (string.IsNullOrEmpty(pathString))
-            return new string[] {};
+            return new string[] { };
 
          return pathString.Split(ObjectPath.PATH_DELIMITER.ToCharArray());
       }
@@ -44,7 +45,7 @@ namespace OSPSuite.Core.Extensions
       }
 
       /// <summary>
-      /// Returns a path that has been converted to UNC Path
+      ///    Returns a path that has been converted to UNC Path
       /// </summary>
       /// <param name="pathToConvert">Path that should be converted</param>
       /// <returns></returns>
@@ -57,7 +58,7 @@ namespace OSPSuite.Core.Extensions
       }
 
       /// <summary>
-      /// Converts CamelCase string into human-readable names. 
+      ///    Converts CamelCase string into human-readable names.
       /// </summary>
       /// <example> CamelCase returns Camel Case</example>
       public static string SplitToUpperCase(this string stringToSplit)
@@ -72,8 +73,8 @@ namespace OSPSuite.Core.Extensions
       }
 
       /// <summary>
-      /// Returns the molecule name in the given <paramref name="moleculePath"/>. We assume that the molecule name is 
-      /// always the one before last item in the path
+      ///    Returns the molecule name in the given <paramref name="moleculePath" />. We assume that the molecule name is
+      ///    always the one before last item in the path
       /// </summary>
       public static string MoleculeName(this IReadOnlyList<string> moleculePath)
       {
@@ -87,5 +88,25 @@ namespace OSPSuite.Core.Extensions
          return moleculePath[moleculePath.Count - 2];
       }
 
+      /// <summary>
+      ///    Returns a string where the occurence of a unit in bracket has been removed (only if the unit was the very last item
+      ///    of the string)
+      ///    <example>
+      ///       "Organism|Volume [ml]".StripUnit() => "Organism|Volume
+      ///       "AnotherStringWith [xx] not at the end".StripUnit() => "AnotherStringWith [xx] not at the end"
+      ///    </example>
+      /// </summary>
+      public static string StripUnit(this string stringToStrip)
+      {
+         if (string.IsNullOrEmpty(stringToStrip))
+            return stringToStrip;
+
+         if (!stringToStrip.TrimEnd().EndsWith("]"))
+            return stringToStrip;
+
+         var indexOfUnitStart = stringToStrip.LastIndexOf("[", StringComparison.Ordinal);
+
+         return indexOfUnitStart == -1 ? stringToStrip : stringToStrip.Remove(indexOfUnitStart, stringToStrip.Length - indexOfUnitStart).TrimEnd();
+      }
    }
 }

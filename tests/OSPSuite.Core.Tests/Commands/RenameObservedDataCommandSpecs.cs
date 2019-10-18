@@ -1,13 +1,12 @@
 ﻿using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
-using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_RenameObservedDataCommand : ContextSpecification<RenameObservedDataCommand>
    {

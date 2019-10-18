@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
@@ -172,7 +173,7 @@ namespace OSPSuite.Core.Domain.Formulas
          }
          catch (OSPSuiteException ex)
          {
-            var errorMessage = ex.Message;
+            var errorMessage = ex.FullMessage();
             if (refObject != null)
                errorMessage = $"Cannot evaluate formula for {refObject.Name}\n{errorMessage}";
 
@@ -267,6 +268,5 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected virtual IEnumerable<string> UsedVariableNames => ObjectPaths.Select(path => path.Alias);
 
-      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (variableNames, parameterNames) => new NullExplicitFormulaParser();
-   }
+      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (v, p) => new ExplicitFormulaParser(v, p); }
 }

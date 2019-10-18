@@ -1,270 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9545FA35-289D-4457-9461-C5F940694607}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OSPSuite.Infrastructure</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>OSPSuite.Infrastructure</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\OSPSuite.Infrastructure.xml</DocumentationFile>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
+    <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
+    <Description>Infrastructure functionality for the Open Systems Pharmacology Suite</Description>
+    <Authors>Open-Systems-Pharmacology</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentNHibernate, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FluentNHibernate.2.1.2\lib\net461\FluentNHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Logging.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate, Version=5.2.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NHibernate.5.2.5\lib\net461\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.TeXReporting, Version=2.1.1.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.TeXReporting.2.1.1.9\lib\net45\OSPSuite.TeXReporting.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.Utility, Version=3.0.1.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.7\lib\net462\OSPSuite.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq.EagerFetching, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
-    </Reference>
-    <Reference Include="SX, Version=2.7.1.9, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SmartXLS.2.7.1.9\lib\net45\SX.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.109.2\lib\net46\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Configuration\OSPSuiteConfiguration.cs" />
-    <Compile Include="Container\Castle\CastleWindsorContainer.cs" />
-    <Compile Include="Container\Castle\EventRegisterFacility.cs" />
-    <Compile Include="Container\Castle\WindsorLifeStyleMapper.cs" />
-    <Compile Include="InfrastructureRegister.cs" />
-    <Compile Include="Journal\Commands\AddItemContentCommand.cs" />
-    <Compile Include="Journal\Commands\AddRelatedItemToJournalItemCommand.cs" />
-    <Compile Include="Journal\Commands\CreateJournalDiagramCommand.cs" />
-    <Compile Include="Journal\Commands\CreateJournalItemCommand.cs" />
-    <Compile Include="Journal\Commands\DeleteItemContentCommand.cs" />
-    <Compile Include="Journal\Commands\DeleteJournalPageCommand.cs" />
-    <Compile Include="Journal\Commands\DeleteRelatedItemFromJournalItemCommand.cs" />
-    <Compile Include="Journal\Commands\JournalDatabaseCommand.cs" />
-    <Compile Include="Journal\Commands\UpdateItemContentCommand.cs" />
-    <Compile Include="Journal\Commands\UpdateJournalDiagramCommand.cs" />
-    <Compile Include="Journal\Commands\UpdateJournalItemCommand.cs" />
-    <Compile Include="Journal\Commands\UpdateJournalItemTagsCommand.cs" />
-    <Compile Include="Journal\ContentLoader.cs" />
-    <Compile Include="Journal\DatabaseMediator.cs" />
-    <Compile Include="Journal\IConnectionProvider.cs" />
-    <Compile Include="Journal\JournalDatabase.cs" />
-    <Compile Include="Journal\JournalDatabaseAction.cs" />
-    <Compile Include="Journal\JournalLoader.cs" />
-    <Compile Include="Journal\JournalPageTask.cs" />
-    <Compile Include="Journal\JournalSearchTask.cs" />
-    <Compile Include="Journal\JournalSession.cs" />
-    <Compile Include="Journal\JournalSessionConnector.cs" />
-    <Compile Include="Journal\JournalTask.cs" />
-    <Compile Include="Journal\Queries\AllJournalDiagramsQuery.cs" />
-    <Compile Include="Journal\Queries\AllJournalPagesQuery.cs" />
-    <Compile Include="Journal\Queries\AllKnownTagsQuery.cs" />
-    <Compile Include="Journal\Queries\JournalDatabaseQuery.cs" />
-    <Compile Include="Journal\Queries\JournalDatabaseCommandAndQueryConvention.cs" />
-    <Compile Include="Journal\Queries\JournalPageByIdQuery.cs" />
-    <Compile Include="Journal\Queries\JournalPageIdsFromSearchQuery.cs" />
-    <Compile Include="Journal\Queries\JournalPageRelatedDataQuery.cs" />
-    <Compile Include="Journal\Queries\NextAvailableJournalPageIndexQuery.cs" />
-    <Compile Include="Logging\FileLogger.cs" />
-    <Compile Include="Logging\FileLoggerExtensions.cs" />
-    <Compile Include="Logging\FileLoggerProvider.cs" />
-    <Compile Include="Logging\OSPSuiteLogger.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reporting\BuilderExtensions.cs" />
-    <Compile Include="Reporting\HistoryReporter.cs" />
-    <Compile Include="Reporting\Items\FormulaTextBox.cs" />
-    <Compile Include="Reporting\OSPSuiteTeXBuilder.cs" />
-    <Compile Include="Reporting\OSPSuiteTeXReporter.cs" />
-    <Compile Include="Reporting\OSPSuiteTeXReporterRepository.cs" />
-    <Compile Include="Reporting\OSPSuiteTracker.cs" />
-    <Compile Include="Reporting\ReportingRegister.cs" />
-    <Compile Include="Reporting\ReportingTask.cs" />
-    <Compile Include="Reporting\TeXBuilder\ChartTeXBuilder.cs" />
-    <Compile Include="Reporting\TeXBuilder\DescriptorCriteriaTeXBuilder.cs" />
-    <Compile Include="Reporting\TeXBuilder\FormulaTeXBuilder.cs" />
-    <Compile Include="Reporting\TeXBuilder\FormulaTextBoxTeXBuilder.cs" />
-    <Compile Include="Reporting\TeXBuilder\FormulaUsablePathsTeXBuilder.cs" />
-    <Compile Include="Reporting\TeXBuilder\ObserverBuilderTeXBuilder.cs" />
-    <Compile Include="Serialization\DapperDatabase.cs" />
-    <Compile Include="Serialization\ISessionPersistor.cs" />
-    <Compile Include="Serialization\ORM\History\HistoryManagerPersistor.cs" />
-    <Compile Include="Serialization\ORM\History\HistoryItemMetaData.cs" />
-    <Compile Include="Serialization\ORM\History\IHistoryManagerFactory.cs" />
-    <Compile Include="Serialization\ORM\Mappers\CommandMetaDataToCommandMapper.cs" />
-    <Compile Include="Serialization\ORM\Mappers\CommandToCommandMetaDataMapper.cs" />
-    <Compile Include="Serialization\ORM\Mappers\HistoryItemMetaDataToHistoryItemMapper.cs" />
-    <Compile Include="Serialization\ORM\Mappers\HistoryItemToHistoryItemMetaDataMapper.cs" />
-    <Compile Include="Serialization\ORM\MetaData\CommandMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\CommandMetaDataRepository.cs" />
-    <Compile Include="Serialization\ORM\MetaData\CommandPropertyMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\DataRepositoryMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\HistoryItemMetaDataRepository.cs" />
-    <Compile Include="Serialization\ORM\MetaData\IUpdatableFrom.cs" />
-    <Compile Include="Serialization\ORM\MetaData\MetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\MetaDataContent.cs" />
-    <Compile Include="Serialization\ORM\MetaData\MetaDataWithContent.cs" />
-    <Compile Include="Serialization\ORM\MetaData\ObjectBaseMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\ObjectBaseMetaDataWithProperties.cs" />
-    <Compile Include="Serialization\ORM\MetaData\ObservedDataMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\ParameterIdentificationMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\SensitivityAnalysisMetaData.cs" />
-    <Compile Include="Serialization\ORM\MetaData\UpdatableCollectionExtensions.cs" />
-    <Compile Include="Services\DataRepositoryTask.cs" />
-    <Compile Include="Services\ExportDataTableToExcelTask.cs" />
-    <Compile Include="Services\ExportToExcelTask.cs" />
-    <Compile Include="Services\HistoryTask.cs" />
-    <Compile Include="Services\ISessionFactoryProvider.cs" />
-    <Compile Include="Services\SQLiteProjectCommandExecuter.cs" />
-    <Compile Include="Services\ReportTask.cs" />
-    <Compile Include="Services\ReportTemplateRepository.cs" />
-    <Compile Include="Services\SessionManager.cs" />
-    <Compile Include="Services\SharpLibCompression.cs" />
-    <Compile Include="Services\SimulationResultsExporter.cs" />
-    <Compile Include="Workspace.cs" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj">
-      <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
-      <Name>OSPSuite.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj">
-      <Project>{10AD6F46-ACA2-4005-91E6-CE84FEEE9419}</Project>
-      <Name>OSPSuite.Resources</Name>
-    </ProjectReference>
+    <PackageReference Include="Castle.Windsor" Version="5.0.0" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
-    <None Include="OSPSuite.Infrastructure.nuspec" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

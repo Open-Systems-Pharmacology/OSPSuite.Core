@@ -1,4 +1,5 @@
-require_relative 'scripts/coverage'
+# require_relative 'scripts/coverage'
+require_relative 'scripts/utils'
 require_relative 'scripts/copy-dependencies'
 
 task :cover do 
@@ -6,15 +7,33 @@ task :cover do
   filter << "+[OSPSuite.Core]*"
   filter << "+[OSPSuite.Infrastructure]*"
   filter << "+[OSPSuite.Presentation]*"
-  filter << "+[OSPSuite.Engine]*"
-
+  
   #exclude namespaces that are tested from applications
-  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Reporting*"
-  filter << "-[OSPSuite.Infrastructure]OSPSuite.Infrastructure.Serialization.ORM*"
+  filter << "-[OSPSuite.Infrastructure.Serialization]OSPSuite.Infrastructure.Serialization.ORM*"
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.MenuAndBars*"
   filter << "-[OSPSuite.Presentation]OSPSuite.Presentation.Presenters.ContextMenus*"
 
-  Coverage.cover(filter, "OSPSuite.Core.Tests.csproj")
+  targetProjects = [
+	"OSPSuite.Core.Tests.dll",
+	"OSPSuite.Core.IntegrationTests.dll",
+	"OSPSuite.Infrastructure.Tests.dll",
+	"OSPSuite.UI.Tests.dll",
+	"OSPSuite.Presentation.Tests.dll",
+	];
+
+  Coverage.cover(filter, targetProjects)
+end
+
+module Coverage
+  def self.cover(filter_array, targetProjects)
+    testProjects = Dir.glob("tests/**/*.dll").select{|path| targetProjects.include?(File.basename path)}
+    openCover = Dir.glob("packages/OpenCover.*/tools/OpenCover.Console.exe").first
+    testProjects.unshift("vstest")
+    targetArgs = testProjects.join(" ")
+
+    Utils.run_cmd(openCover, ["-register:user", "-target:dotnet.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs", "-oldstyle"])
+    Utils.run_cmd("codecov", ["-f", "OpenCover.xml"])
+  end
 end
 
 task :copy_to_pksim do

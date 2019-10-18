@@ -1,4 +1,3 @@
-using OSPSuite.Core.Chart;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Converter.v5_2;
@@ -15,6 +14,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -35,7 +35,7 @@ namespace OSPSuite.Core
 
       public override void RegisterInContainer(IContainer container)
       {
-         //REGISTSTER DOMAIN OBJECTS
+         //REGISTER DOMAIN OBJECTS
          container.AddScanner(scan =>
          {
             scan.AssemblyContainingType<CoreRegister>();
@@ -43,11 +43,11 @@ namespace OSPSuite.Core
             scan.ExcludeNamespaceContainingType<IDiffBuilder>();
             scan.ExcludeNamespaceContainingType<IObjectConverter>();
 
-            //sepcial registration handled by other registers or conventions
+            //special registration handled by other registers or conventions
             scan.ExcludeNamespaceContainingType<CoreSerializerRegister>();
             scan.ExcludeNamespaceContainingType<IOptimizationAlgorithm>();
 
-            //should be registered as singleton explicitely
+            //should be registered as singleton explicitly
             scan.ExcludeType<ObjectBaseFactory>();
             scan.ExcludeType<WithIdRepository>();
             scan.ExcludeType<DimensionFactory>();
@@ -59,6 +59,7 @@ namespace OSPSuite.Core
 
             //PK-Sim registers its own implementation
             scan.ExcludeType<ObjectIdResetter>();
+            scan.ExcludeType<DisplayNameProvider>();
 
             if (!RegisterParameter)
             {
@@ -80,9 +81,11 @@ namespace OSPSuite.Core
 
          registerComparers(container);
 
-         reigsterConverters(container);
+         registerConverters(container);
 
          registerParameterIdentificationRunFactories(container);
+
+         registerThirdPartyComponents(container);
 
          //FACTORIES
          container.RegisterFactory<IDiagramModelFactory>();
@@ -94,13 +97,13 @@ namespace OSPSuite.Core
          container.RegisterFactory<IStartableProcessFactory>();
          container.RegisterFactory<ISimulationExportCreatorFactory>();
 
-         //Register Optimization algorithm explicitely
+         //Register Optimization algorithm explicitly
          container.Register<IOptimizationAlgorithm, NelderMeadOptimizer>(Constants.OptimizationAlgorithm.NELDER_MEAD_PKSIM);
          container.Register<IOptimizationAlgorithm, MPFitLevenbergMarquardtOptimizer>(Constants.OptimizationAlgorithm.MPFIT);
          container.Register<IOptimizationAlgorithm, MonteCarloOptimizer>(Constants.OptimizationAlgorithm.MONTE_CARLO);
       }
 
-      private static void reigsterConverters(IContainer container)
+      private static void registerConverters(IContainer container)
       {
          container.AddScanner(scan =>
          {
@@ -136,6 +139,11 @@ namespace OSPSuite.Core
          container.Register<IParameterIdentificationRunSpecificationFactory, CategorialParameterIdentificationRunFactory>();
          container.Register<IParameterIdentificationRunSpecificationFactory, MultipleParameterIdentificationRunFactory>();
          container.Register<IParameterIdentificationRunSpecificationFactory, StandardParameterIdentificationRunFactory>();
+      }
+
+      private static void registerThirdPartyComponents(IContainer container)
+      {
+         container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
       }
    }
 }

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <RootNamespace>OSPSuite.Presentation</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
+    <PackageReference Include="FakeItEasy" Version="5.1.1" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core.Tests\OSPSuite.Core.Tests.csproj" />
+    <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v18.2">
+      <HintPath>..\..\lib\DevExpress.Data.v18.2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

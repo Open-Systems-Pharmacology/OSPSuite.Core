@@ -2,8 +2,9 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Helpers;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public class When_adding_commands_to_a_macro_command : StaticContextSpecification
    {

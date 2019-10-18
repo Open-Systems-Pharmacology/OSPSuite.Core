@@ -1,7 +1,7 @@
 using System.IO;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Domain;
-using OSPSuite.Infrastructure.Configuration;
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -14,7 +14,7 @@ namespace OSPSuite.Starter.Tasks
       public override int InternalVersion { get; } = 25;
       public override Origin Product { get; } = Origins.PKSim;
       public override string ProductNameWithTrademark { get; } = "OSPSuite";
-      public override ApplicationIcon Icon { get; } = ApplicationIcons.PKSim;
+      public override string IconName { get; } = ApplicationIcons.PKSim.IconName;
       public override string UserSettingsFileName { get; } = "UserSettings.xml";
       public override string ApplicationSettingsFileName { get; } = "ApplicationSettings.xml";
       public override string IssueTrackerUrl { get; } = "url";

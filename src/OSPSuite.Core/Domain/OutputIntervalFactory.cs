@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
@@ -7,17 +8,23 @@ namespace OSPSuite.Core.Domain
    {
       OutputInterval CreateDefault();
       OutputInterval Create(double startTimeInMinute, double endTimeInMinute, double resolutionInPtsPerMin);
+      OutputInterval CreateFor(OutputSchema outputSchema, double startTimeInMinute, double endTimeInMinute, double resolutionInPtsPerMin);
    }
 
    public class OutputIntervalFactory : IOutputIntervalFactory
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly IContainerTask _containerTask;
 
-      public OutputIntervalFactory(IObjectBaseFactory objectBaseFactory, IDimensionFactory dimensionFactory)
+      public OutputIntervalFactory(
+         IObjectBaseFactory objectBaseFactory,
+         IDimensionFactory dimensionFactory,
+         IContainerTask containerTask)
       {
          _objectBaseFactory = objectBaseFactory;
          _dimensionFactory = dimensionFactory;
+         _containerTask = containerTask;
       }
 
       public OutputInterval CreateDefault()
@@ -34,6 +41,12 @@ namespace OSPSuite.Core.Domain
          interval.Resolution.MinIsAllowed = false;
 
          return interval;
+      }
+
+      public OutputInterval CreateFor(OutputSchema outputSchema, double startTimeInMinute, double endTimeInMinute, double resolutionInPtsPerMin)
+      {
+         return Create(startTimeInMinute, endTimeInMinute, resolutionInPtsPerMin)
+            .WithName(_containerTask.CreateUniqueName(outputSchema, Constants.OUTPUT_INTERVAL, canUseBaseName: true));
       }
 
       private IParameter createParameter(string name, string dimension, double value)

@@ -38,6 +38,7 @@ namespace OSPSuite.Core
       protected virtual bool Register(Type concreteType, IContainer container, LifeStyle lifeStyle)
       {
          var interfaceName = "I" + concreteType.Name;
+
          var serviceTypes = concreteType.GetInterfaces().Where(t => t.Name == interfaceName).ToList();
 
          if (_registerConcreteType)

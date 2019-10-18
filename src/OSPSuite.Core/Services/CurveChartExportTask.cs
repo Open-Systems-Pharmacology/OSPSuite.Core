@@ -18,13 +18,13 @@ namespace OSPSuite.Core.Services
    public class CurveChartExportTask : ICurveChartExportTask
    {
       private readonly IDialogCreator _dialogCreator;
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IDimensionFactory _dimensionFactory;
 
-      public CurveChartExportTask(IDialogCreator dialogCreator, IDataRepositoryTask dataRepositoryTask, IDimensionFactory dimensionFactory)
+      public CurveChartExportTask(IDialogCreator dialogCreator, IDataRepositoryExportTask dataRepositoryExportTask, IDimensionFactory dimensionFactory)
       {
          _dialogCreator = dialogCreator;
-         _dataRepositoryTask = dataRepositoryTask;
+         _dataRepositoryExportTask = dataRepositoryExportTask;
          _dimensionFactory = dimensionFactory;
       }
 
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Services
             ColumnNameRetriever = col => dataColumnCache[col]?.Name ?? col.Name,
             DimensionRetriever = _dimensionFactory.MergedDimensionFor
          };
-         _dataRepositoryTask.ExportToExcel(dataColumnCache.Keys.Union(otherColumnsToExport), fileName, exportOptions: exportOptions);
+         _dataRepositoryExportTask.ExportToExcel(dataColumnCache.Keys.Union(otherColumnsToExport), fileName, exportOptions: exportOptions);
       }
    }
 }

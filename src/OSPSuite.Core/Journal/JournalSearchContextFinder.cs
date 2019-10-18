@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Journal
             return findContextFor(journalPage, journalSearch.Search, journalSearch.MatchCase);
 
          return multipleLinesContext(searchTerms.Select(term => findContextFor(journalPage, term, journalSearch.MatchCase))
-            .Where(conxtext => !string.IsNullOrEmpty(conxtext)));
+            .Where(context => !string.IsNullOrEmpty(context)));
       }
 
       private string findContextFor(JournalPage journalPage, string searchPattern, bool matchCase)
@@ -47,6 +47,7 @@ namespace OSPSuite.Core.Journal
 
             contextBuilder.Add(context.Trim());
          }
+
          return multipleLinesContext(contextBuilder);
       }
 
@@ -64,24 +65,12 @@ namespace OSPSuite.Core.Journal
       {
          var escapedPattern = Regex.Escape(searchPattern);
          return "(?<before>(?:\\S+\\s){0," + CONTEXT_WORD_COUNT + "}\\S*)?" + //up to CONTEXT_WORD_COUNT words BEFORE the match
-                $"(?<search>{escapedPattern})"+ //actual match
+                $"(?<search>{escapedPattern})" + //actual match
                 "(?<after>\\S*(?:\\s\\S+){0," + CONTEXT_WORD_COUNT + "})?"; //up to CONTEXT_WORD_COUNT words AFTER the match
       }
 
-      private string lastFewWordsFrom(string match)
-      {
-         if (string.IsNullOrEmpty(match))
-            return match;
+      private string lastFewWordsFrom(string match) => string.IsNullOrEmpty(match) ? match : $"...{match}";
 
-         return string.Format("...{0}", match);
-      }
-
-      private string firstFewWordsFrom(string match)
-      {
-         if (string.IsNullOrEmpty(match))
-            return match;
-
-         return string.Format("{0}...", match);
-      }
+      private string firstFewWordsFrom(string match) => string.IsNullOrEmpty(match) ? match : $"{match}...";
    }
 }

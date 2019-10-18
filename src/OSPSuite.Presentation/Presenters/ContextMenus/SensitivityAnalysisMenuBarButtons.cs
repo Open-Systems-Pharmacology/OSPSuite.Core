@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -41,8 +40,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithId(menuBarItemId)
             .WithDescription(MenuDescriptions.StopSensitivityanalysis)
             .WithIcon(ApplicationIcons.Stop)
-            .WithShortcut(Keys.Shift | Keys.F7)
-            .WithCommand<StopSensitivityAnalysisUICommand>();
+            .WithCommand<StopSensitivityAnalysisUICommand>()
+            .WithShortcut(Keys.Shift | Keys.F7);
+
       }
 
       public static IMenuBarItem SensitivityAnalysisPKParameterAnalysis(MenuBarItemId menuBarItemId)

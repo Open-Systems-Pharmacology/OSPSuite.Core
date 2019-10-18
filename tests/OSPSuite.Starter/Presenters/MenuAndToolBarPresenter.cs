@@ -120,7 +120,7 @@ namespace OSPSuite.Starter.Presenters
 
       private IMenuBarItem createResidualsVsTimeButton()
       {
-         return ParameterIdentificationMenuBarButtons.ResidualsVsTimeParameterIdentifcation(new MenuBarItemId("Residual Vs. Time", _menuId++));
+         return ParameterIdentificationMenuBarButtons.ResidualsVsTimeParameterIdentification(new MenuBarItemId("Residual Vs. Time", _menuId++));
       }
 
       private IMenuBarItem createPredictedVsObservedButton()

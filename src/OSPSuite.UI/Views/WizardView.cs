@@ -10,6 +10,7 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using Keys = System.Windows.Forms.Keys;
 
 namespace OSPSuite.UI.Views
 {

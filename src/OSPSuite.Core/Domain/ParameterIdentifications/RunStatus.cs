@@ -15,16 +15,16 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       CalculatingSensitivity
    }
 
-   public class RunStatus
+   public class RunStatus: IWithIcon
    {
-      public virtual RunStatusId Id { get; }
-      public virtual ApplicationIcon Icon { get; }
-      public virtual string DisplayName { get; }
+      public RunStatusId Id { get; }
+      public string IconName { get; }
+      public string DisplayName { get; }
 
-      private RunStatus(RunStatusId id, ApplicationIcon icon, string displayName)
+      private RunStatus(RunStatusId id, string iconName, string displayName)
       {
          Id = id;
-         Icon = icon;
+         IconName = iconName;
          DisplayName = displayName;
       }
 
@@ -35,15 +35,15 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       private static readonly Cache<RunStatusId, RunStatus> _allRunStatus = new Cache<RunStatusId, RunStatus>(x => x.Id);
 
-      public static RunStatus Created = create(RunStatusId.Created, ApplicationIcons.Add);
-      public static RunStatus WaitingToRun = create(RunStatusId.WaitingToRun, ApplicationIcons.Warning);
-      public static RunStatus Running = create(RunStatusId.Running, ApplicationIcons.Run);
-      public static RunStatus RanToCompletion = create(RunStatusId.RanToCompletion, ApplicationIcons.OK);
-      public static RunStatus Canceled = create(RunStatusId.Canceled, ApplicationIcons.Stop);
-      public static RunStatus Faulted = create(RunStatusId.Faulted, ApplicationIcons.Error);
-      public static RunStatus CalculatingSensitivity = create(RunStatusId.CalculatingSensitivity, ApplicationIcons.Solver);
+      public static RunStatus Created = create(RunStatusId.Created, IconNames.ADD);
+      public static RunStatus WaitingToRun = create(RunStatusId.WaitingToRun, IconNames.WARNING);
+      public static RunStatus Running = create(RunStatusId.Running, IconNames.RUN);
+      public static RunStatus RanToCompletion = create(RunStatusId.RanToCompletion, IconNames.OK);
+      public static RunStatus Canceled = create(RunStatusId.Canceled, IconNames.STOP);
+      public static RunStatus Faulted = create(RunStatusId.Faulted, IconNames.ERROR);
+      public static RunStatus CalculatingSensitivity = create(RunStatusId.CalculatingSensitivity, IconNames.SOLVER);
 
-      private static RunStatus create(RunStatusId id, ApplicationIcon icon, string displayName = null)
+      private static RunStatus create(RunStatusId id, string icon, string displayName = null)
       {
          var runStatus = new RunStatus(id, icon, displayName ?? id.ToString().SplitToUpperCase());
          _allRunStatus.Add(runStatus);

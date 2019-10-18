@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Importer
       ///    List of images, if available
       /// </summary>
       /// <remarks>The images should be added with a key equal to the value key in <see cref="ListOfValues" />.</remarks>
-      public Dictionary<string, ApplicationIcon> ListOfImages { get; set; }
+      public Dictionary<string, string> ListOfImages { get; set; }
 
       /// <summary>
       ///    Is the list of values fixed or can the user enter values not in the list and the list is just a suggestion.

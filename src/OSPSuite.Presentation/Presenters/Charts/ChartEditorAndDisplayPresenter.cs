@@ -40,8 +40,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IChartDisplayPresenter DisplayPresenter { get; }
       public IChartEditorPresenter EditorPresenter { get; }
 
-      public ChartEditorAndDisplayPresenter(IChartEditorAndDisplayView chartEditorAndDisplayView, IChartDisplayPresenter chartDisplayPresenter,
-         IChartEditorPresenter chartEditorPresenter, IChartEditorLayoutTask chartEditorLayoutTask, IStartOptions startOptions,
+      public ChartEditorAndDisplayPresenter(
+         IChartEditorAndDisplayView chartEditorAndDisplayView, 
+         IChartDisplayPresenter chartDisplayPresenter,
+         IChartEditorPresenter chartEditorPresenter, 
+         IChartEditorLayoutTask chartEditorLayoutTask, 
+         IStartOptions startOptions,
          IPresentationUserSettings presentationUserSettings)
          : base(chartEditorAndDisplayView)
       {

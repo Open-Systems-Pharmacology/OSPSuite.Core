@@ -2,7 +2,7 @@
 using System.Linq;
 using OSPSuite.Presentation.DTO.Commands;
 using OSPSuite.Presentation.Mappers;
-using OSPSuite.UI.DTO.Commands;
+using OSPSuite.UI.DTO;
 
 namespace OSPSuite.UI.Mappers
 {

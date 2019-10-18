@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
 
       /// <summary>
-      ///    Returns the underying mapped output (Molecule Amount or Observer)
+      ///    Returns the underlying mapped output (Molecule Amount or Observer)
       /// </summary>
       public virtual IQuantity Output => OutputSelection?.Quantity;
 

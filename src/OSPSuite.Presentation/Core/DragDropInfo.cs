@@ -11,9 +11,6 @@ namespace OSPSuite.Presentation.Core
          _reference = new WeakReference(subject);
       }
 
-      public object Subject
-      {
-         get { return _reference.Target; }
-      }
+      public object Subject => _reference.Target;
    }
 }

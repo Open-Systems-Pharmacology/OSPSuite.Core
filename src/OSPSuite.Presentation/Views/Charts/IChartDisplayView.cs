@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
@@ -20,11 +19,8 @@ namespace OSPSuite.Presentation.Views.Charts
 
       Size GetDiagramSize();
 
-      void SetDockStyle(DockStyle dockStyle);
+      void SetDockStyle(Dock dockStyle);
       void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings);
-
-      event DragEventHandler DragOver;
-      event DragEventHandler DragDrop;
 
       /// <summary>
       ///    Re orders the legend according to given index
@@ -40,7 +36,7 @@ namespace OSPSuite.Presentation.Views.Charts
       void UpdateSettings(CurveChart chart);
 
       /// <summary>
-      /// Specifies wheter origin text should be displayed
+      /// Specifies whether origin text should be displayed
       /// </summary>
       bool ShowOriginText { set; }
 

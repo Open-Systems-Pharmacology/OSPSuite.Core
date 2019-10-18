@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;

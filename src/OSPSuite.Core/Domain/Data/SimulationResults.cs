@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,17 +15,14 @@ namespace OSPSuite.Core.Domain.Data
       [EditorBrowsable(EditorBrowsableState.Never)]
       public virtual int Id { get; set; }
 
-      public virtual ISet<IndividualResults> AllIndividualResults { get; set; }
+      public virtual ISet<IndividualResults> AllIndividualResults { get; set; } = new HashSet<IndividualResults>();
 
       public virtual QuantityValues Time { get; set; }
 
-      //We need to add the objects in a thread safe manner to the list that is intrinsicly not thread safe
-      private readonly object _locker = new object();
+      public virtual IndividualResults[] IndividualResultsAsArray() => AllIndividualResults?.ToArray();
 
-      public SimulationResults()
-      {
-         AllIndividualResults = new HashSet<IndividualResults>();
-      }
+      //We need to add the objects in a thread safe manner to the list that is intrinsically not thread safe
+      private readonly object _locker = new object();
 
       public virtual void Add(IndividualResults individualResults)
       {
@@ -44,12 +42,9 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    Returns wether values were calculated for the individual with id <paramref name="individualId" /> or not
+      ///    Returns whether values were calculated for the individual with id <paramref name="individualId" /> or not
       /// </summary>
-      public virtual bool HasResultsFor(int individualId)
-      {
-         return ResultsFor(individualId) != null;
-      }
+      public virtual bool HasResultsFor(int individualId) => ResultsFor(individualId) != null;
 
       public virtual int Count
       {
@@ -82,7 +77,7 @@ namespace OSPSuite.Core.Domain.Data
       {
          lock (_locker)
          {
-            return AllIndividualResults.Select(x => x.ValuesFor(quantityPath)).ToList();
+            return AllIndividualResults.Select(x => x.ValuesFor(quantityPath)).ToArray();
          }
       }
 
@@ -104,14 +99,18 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual IReadOnlyList<string> AllQuantityPaths()
       {
-         var list = new List<string>();
          lock (_locker)
          {
-            if (AllIndividualResults.Count != 0)
-               list.AddRange(AllIndividualResults.First().Select(x => x.QuantityPath));
+            return AllIndividualResults.Any() ? AllIndividualResults.First().Select(x => x.QuantityPath).ToArray() : Array.Empty<string>();
          }
+      }
 
-         return list;
+      public virtual IReadOnlyList<int> AllIndividualIds()
+      {
+         lock (_locker)
+         {
+            return AllIndividualResults.Select(x => x.IndividualId).ToArray();
+         }
       }
 
       protected internal virtual void ReorderByIndividualId()

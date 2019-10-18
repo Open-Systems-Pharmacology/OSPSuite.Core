@@ -14,7 +14,7 @@ namespace OSPSuite.UI.Services
 {
    public interface IToolTipCreator
    {
-      SuperToolTip CreateToolTip(string content, string title = null, Image image = null);
+      SuperToolTip CreateToolTip(string content, string title = null, Image image = null, IWithIcon withIcon = null);
       SuperToolTip ToolTipFor(JournalPageDTO journalPageDTO);
       SuperToolTip ToolTipFor(ValueOrigin valueOrigin);
       SuperToolTip ToolTipFor(RelatedItem relatedItem);
@@ -23,13 +23,13 @@ namespace OSPSuite.UI.Services
       ToolTipControlInfo ToolTipControlInfoFor(object objectWithToolTip, SuperToolTip superToolTip);
       SuperToolTip ToolTipFor(Image tooltipImage);
       SuperToolTip AddSubItemTo(SuperToolTip toolTip, string title, string text);
-
    }
 
    public class ToolTipCreator : IToolTipCreator
    {
-      public SuperToolTip CreateToolTip(string content, string title = null, Image image = null)
+      public SuperToolTip CreateToolTip(string content, string title = null, Image image = null, IWithIcon withIcon = null)
       {
+         var imageToUse = image ?? (withIcon == null ? null : ApplicationIcons.IconFor(withIcon).ToImage());
          // Create an object to initialize the SuperToolTip.
          var superToolTip = CreateToolTip();
          var setupArgs = new SuperToolTipSetupArgs();
@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Services
             setupArgs.Title.Text = title;
 
          setupArgs.Contents.Text = convertHtml(content);
-         setupArgs.Contents.Image = image;
+         setupArgs.Contents.Image = imageToUse;
          superToolTip.Setup(setupArgs);
          return superToolTip;
       }
@@ -50,7 +50,7 @@ namespace OSPSuite.UI.Services
       public SuperToolTip ToolTipFor(ValidationMessageDTO validationMessage)
       {
          var toolTip = CreateToolTip(validationMessage.Message, validationMessage.Status.ToString(),
-            validationMessage.Icon);
+            image: validationMessage.Icon);
 
          if (!validationMessage.Details.Any())
             return toolTip;
@@ -68,6 +68,7 @@ namespace OSPSuite.UI.Services
          {
             toolTip.WithText(linkedParameter.FullQuantityPath);
          }
+
          return toolTip;
       }
 
@@ -121,21 +122,21 @@ namespace OSPSuite.UI.Services
          if (valueOrigin.Source == ValueOriginSources.Undefined)
             return null;
 
-         var title =  new[]
+         var title = new[]
          {
             valueOrigin.Source.Display, valueOrigin.Method.Display
          }.Where(x => !string.IsNullOrWhiteSpace(x)).ToString(" - ");
 
          if (string.IsNullOrEmpty(valueOrigin.Description))
-            return CreateToolTip(title, image: valueOrigin.Source.Icon);
+            return CreateToolTip(title, withIcon: valueOrigin.Source);
 
-         return CreateToolTip(valueOrigin.Description, title, valueOrigin.Source.Icon);
+         return CreateToolTip(valueOrigin.Description, title, withIcon: valueOrigin.Source);
       }
 
       public SuperToolTip ToolTipFor(RelatedItem relatedItem)
       {
-         var toolTip = CreateToolTip(relatedItem.Display, Captions.Journal.RelatedItem, ApplicationIcons.IconByName(relatedItem.IconName));
-         if(relatedItem.IsFile)
+         var toolTip = CreateToolTip(relatedItem.Display, Captions.Journal.RelatedItem, withIcon: relatedItem);
+         if (relatedItem.IsFile)
             return toolTip;
 
          return AddSubItemTo(toolTip, Captions.Journal.Project, relatedItem.FullPath);

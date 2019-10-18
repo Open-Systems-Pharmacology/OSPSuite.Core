@@ -16,26 +16,25 @@ namespace OSPSuite.Presentation.Presenters
       void DeselectAll();
 
       /// <summary>
-      ///    Start the selection for all <c>persistable</c> quantities definied in the given container. The
+      ///    Start the selection for all <c>persistable</c> quantities defined in the given container. The
       ///    <paramref name="selectedQuantities" />
-      ///    is used to pre select the quantities that should be pre selected
+      ///    is used to pre select the quantities that should be preselected
       /// </summary>
       void Edit(IContainer container, IEnumerable<QuantitySelection> selectedQuantities);
 
       /// <summary>
-      ///    Start the selection for all quantities definied. The <paramref name="selectedQuantities" />
-      ///    is used to pre select the quantities that should be pre selected
+      ///    Start the selection for all quantities defined. The <paramref name="selectedQuantities" />
+      ///    is used to pre select the quantities that should be preselected
       /// </summary>
       void Edit(IEnumerable<IQuantity> quantities, IEnumerable<QuantitySelection> selectedQuantities);
 
       /// <summary>
-      ///    Start the selection for all <c>persistable</c> quantities definied in the given container.No quantitites pre
-      ///    selected
+      ///    Start the selection for all <c>persistable</c> quantities defined in the given container.No quantity is preselected
       /// </summary>
       void Edit(IContainer container);
 
       /// <summary>
-      ///    Start the selection for all quantities definied.No quantitites pre selected
+      ///    Start the selection for all quantities defined. No quantity is preselected
       /// </summary>
       void Edit(IEnumerable<IQuantity> quantities);
 

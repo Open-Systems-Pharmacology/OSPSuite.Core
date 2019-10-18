@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -11,10 +11,10 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    The values. One item for each individual
       /// </summary>
-      public virtual List<float> Values { get; private set; }
+      public virtual float[] Values { get; private set; }
 
       /// <summary>
-      ///    Path of underlying quantity for which pkanalyses were performed
+      ///    Path of underlying quantity for which pk-analyses were performed
       /// </summary>
       public virtual string QuantityPath { get; set; }
 
@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain
 
       public QuantityPKParameter()
       {
-         Values = new List<float>();
+         Values = Array.Empty<float>();
       }
 
       public override string ToString()
@@ -39,19 +39,19 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Set the pkValue for the individual with id <paramref name="indiviudalId" />
+      ///    Set the pkValue for the individual with id <paramref name="individualId" />
       /// </summary>
-      public virtual void SetValue(int indiviudalId, float pkValue)
+      public virtual void SetValue(int individualId, float pkValue)
       {
-         if (Values.Count <= indiviudalId)
-            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(indiviudalId, Values.Count));
+         if (Count <= individualId)
+            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(individualId, Count));
 
-         Values[indiviudalId] = pkValue;
+         Values[individualId] = pkValue;
       }
 
-      public virtual void SetNumberOfIndividuals(int numberOfIndividal)
+      public virtual void SetNumberOfIndividuals(int numberOfIndividual)
       {
-         Values = new List<float>(new float[numberOfIndividal].InitializeWith(float.NaN));
+         Values = new float[numberOfIndividual].InitializeWith(float.NaN);
       }
 
       /// <summary>
@@ -59,11 +59,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual string Id => CreateId(QuantityPath, Name);
 
-      public virtual int Count => Values.Count;
+      public virtual int Count => Values.Length;
 
       public static string CreateId(string quantityPath, string pkParameterName)
       {
-         return new[] { quantityPath, pkParameterName }.ToPathString();
+         return new[] {quantityPath, pkParameterName}.ToPathString();
       }
    }
 }

@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Utility.Events;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Events;
+using OSPSuite.Presentation.Presenters.Events;
 using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presenters.Main

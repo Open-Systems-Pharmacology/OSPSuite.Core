@@ -60,15 +60,6 @@ namespace OSPSuite.Starter.Views
            this.simpleButton2.Text = "Undo";
            this.simpleButton2.Click += new System.EventHandler(this.simpleButton2_Click);
            // 
-           // btnCreateReport
-           // 
-           this.btnCreateReport.Location = new System.Drawing.Point(255, 22);
-           this.btnCreateReport.Name = "btnCreateReport";
-           this.btnCreateReport.Size = new System.Drawing.Size(75, 23);
-           this.btnCreateReport.TabIndex = 3;
-           this.btnCreateReport.Text = "Create Report";
-           this.btnCreateReport.Click += new System.EventHandler(this.btnCreateReport_Click);
-           // 
            // StaticCommandList
            // 
            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

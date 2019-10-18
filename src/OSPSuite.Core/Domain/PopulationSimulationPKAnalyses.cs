@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual IReadOnlyList<QuantityPKParameter> AllPKParametersFor(string quantityPath)
       {
-         return _pkAnalyses.Where(x => string.Equals(x.QuantityPath, quantityPath)).ToList();
+         return _pkAnalyses.Where(x => string.Equals(x.QuantityPath, quantityPath)).ToArray();
       }
 
       /// <summary>
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain
       /// <returns></returns>
       public virtual IReadOnlyList<string> AllPKParameterNamesFor(string quantityPath)
       {
-         return AllPKParametersFor(quantityPath).Select(x => x.Name).ToList();
+         return AllPKParametersFor(quantityPath).Select(x => x.Name).ToArray();
       }
 
       public virtual IEnumerable<QuantityPKParameter> All()

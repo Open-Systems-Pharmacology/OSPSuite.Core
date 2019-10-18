@@ -14,6 +14,8 @@ namespace OSPSuite.Core.Domain
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
+      public const string WILD_CARD = "*";
+      public const string WILD_CARD_RECURSIVE = "**";
       public static readonly IReadOnlyList<string> ILLEGAL_CHARACTERS = new List<string> {ObjectPath.PATH_DELIMITER, ":", "*", "?", "<", ">", "|", "{", "}", "\""}.Distinct().ToList();
 
       public const string DRUG_MASS = "DrugMass";
@@ -47,6 +49,7 @@ namespace OSPSuite.Core.Domain
       public const double DEFAULT_SCALE_DIVISOR = 1;
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
       public const string DEFAULT_CHART_LAYOUT = "Standard View";
+      public const string DEFAULT_SIMULATION_RESULTS_NAME = "Simulation Results";
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
@@ -75,6 +78,7 @@ namespace OSPSuite.Core.Domain
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
       public const double DEFAULT_PARAMETER_RANGE_FACTOR = 10;
+      public const double DEFAULT_PERCENTILE = 0.5;
       public const int DEFAULT_NUMBER_OF_RUNS_FOR_MULTIPLE_MODE = 10;
       public const string X = "X";
       public const string Y = "Y";
@@ -147,7 +151,7 @@ namespace OSPSuite.Core.Domain
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
-
+         public const string TOTAL_DRUG_MASS = "Total drug mass";
          public const string ParameterCompoundTypeBase = "Compound type ";
 
          public static string ParameterCompoundType(int index) => $"{ParameterCompoundTypeBase}{index}";
@@ -312,6 +316,16 @@ namespace OSPSuite.Core.Domain
          }
       }
 
+      public static class SimulationResults
+      {
+         public const string INDIVIDUAL_ID = "IndividualId";
+         public const string TIME = "Time";
+         public const string QUANTITY_PATH = "Quantity Path";
+         public const string PARAMETER = "Parameter";
+         public const string VALUE = "Value";
+         public const string UNIT = "Unit";
+      }
+
       public static class Distribution
       {
          public const string DEVIATION = "Deviation";
@@ -388,6 +402,8 @@ namespace OSPSuite.Core.Domain
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
+         public const string RACE_INDEX = "RaceIndex";
+         public const string GENDER = "GENDER";
       }
 
       public static class OptimizationAlgorithm
@@ -424,6 +440,10 @@ namespace OSPSuite.Core.Domain
 
       public static class Serialization
       {
+         public const string MACRO_COMMAND = "MacroCommand";
+         public const string SIMPLE_COMMAND = "SimpleCommand";
+         public const string LABEL_COMMAND = "LabelCommand";
+         public const string INFO_COMMAND = "InfoCommand";
          public const string SIMULATION = "Simulation";
          public const string SIMULATION_LIST = "SimulationList";
          public const string TIME_POINT = "TimePoint";
@@ -452,6 +472,7 @@ namespace OSPSuite.Core.Domain
          public const string DESCRIPTOR_CONDITIONS = "DescriptorConditions";
          public const string KEYS = "Keys";
          public const string VALUE_ORIGIN = "ValueOrigin";
+         public const string PERCENTILES = "Percentiles";
 
          public static class Attribute
          {
@@ -540,10 +561,9 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
-
+         public const string DEFAULT_FONT_FAMILY_NAME = "Microsoft Sans Serif";
+         
          public const int DEFAULT_FONT_SIZE_LEGEND = 8;
          public const int DEFAULT_FONT_SIZE_AXIS = 10;
          public const int DEFAULT_FONT_SIZE_TITLE = 16;
@@ -553,7 +573,10 @@ namespace OSPSuite.Core.Domain
          public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] { DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME };
+
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }

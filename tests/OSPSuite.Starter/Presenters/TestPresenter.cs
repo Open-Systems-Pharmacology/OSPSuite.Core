@@ -18,7 +18,7 @@ namespace OSPSuite.Starter.Presenters
       void StartDataRepositoryTest();
       void StartPivotGridTest();
       void StartParameterIdentificationTest();
-      void StartSentitivityAnalysisTest();
+      void StartSensitivityAnalysisTest();
       void StartCommandBrowserTest();
       void StartSimpleUITest();
       void StartExceptionView();
@@ -79,7 +79,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartParameterIdentificationTest() => _optimizationStarter.Start();
 
-      public void StartSentitivityAnalysisTest() => _sensitivityAnalysisStarter.Start();
+      public void StartSensitivityAnalysisTest() => _sensitivityAnalysisStarter.Start();
 
       public void StartCommandBrowserTest() => _commandBrowserStarter.Start();
 

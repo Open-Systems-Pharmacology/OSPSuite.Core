@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using OSPSuite.Core.Extensions;
+
 namespace OSPSuite.Core.Domain
 {
    public static class EntityExtensions
@@ -10,14 +13,28 @@ namespace OSPSuite.Core.Domain
 
       public static string EntityPath(this IEntity entity)
       {
-         string longName = entity.Name;
+         return entityPathAsListFor(entity).ToPathString();
+      }
+
+      public static string ConsolidatedPath(this IEntity entity)
+      {
+         var path = entityPathAsListFor(entity);
+         if (path.Count > 1)
+            path.RemoveAt(0);
+         return path.ToPathString();
+      }
+
+      private static List<string> entityPathAsListFor(IEntity entity)
+      {
+         var list = new List<string> {entity.Name};
          var parent = entity.ParentContainer;
          while (parent != null)
          {
-            longName = parent.Name + ObjectPath.PATH_DELIMITER + longName;
+            list.Insert(0, parent.Name);
             parent = parent.ParentContainer;
          }
-         return longName;
+
+         return list;
       }
    }
 }

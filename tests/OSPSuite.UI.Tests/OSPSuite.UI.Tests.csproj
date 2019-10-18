@@ -1,211 +1,46 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\..\packages\NUnit.3.12.0\build\NUnit.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A3DF5E6B-9EC5-4F19-9240-8050B23459B4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net472</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
     <RootNamespace>OSPSuite.UI</RootNamespace>
-    <AssemblyName>OSPSuite.UI.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="DevExpress.BonusSkins.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.BonusSkins.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Charts.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Charts.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Data.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Data.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Images.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Images.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Office.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Office.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.PivotGrid.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.PivotGrid.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Printing.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Printing.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.RichEdit.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.RichEdit.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.RichEdit.v18.2.Export, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.RichEdit.v18.2.Export.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Utils.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Utils.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraBars.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraBars.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2.UI, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2.Wizard, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.Wizard.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraEditors.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraEditors.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraLayout.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraLayout.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraNavBar.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraNavBar.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraPivotGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraPrinting.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraRichEdit.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v18.2.Extensions, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraRichEdit.v18.2.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraTreeList.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraVerticalGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="FakeItEasy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FakeItEasy.5.1.1\lib\net45\FakeItEasy.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.BDDHelper, Version=3.1.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.BDDHelper.3.1.0.1\lib\netstandard2.0\OSPSuite.BDDHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.Utility, Version=3.0.1.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.3.0.1.7\lib\net462\OSPSuite.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="FakeItEasy" Version="5.1.1" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Binders\AxisBinderSpecs.cs" />
-    <Compile Include="ClipboardTaskSpecs.cs" />
-    <Compile Include="ColumnMappingControlSpecs.cs" />
-    <Compile Include="FormExtensionsSpecs.cs" />
-    <Compile Include="HistoryItemDTOListSpecs.cs" />
-    <Compile Include="HistoryToHistoryDTOMapperSpecs.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UxTreeViewSpecs.cs" />
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
+    <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\..\src\OSPSuite.SimModel.Schema\OSPSuite.SimModel.xsd">
-      <Link>OSPSuite.SimModel.xsd</Link>
-      <SubType>Designer</SubType>
+    <None Update="Data\Test1.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="app.config" />
-    <None Include="Data\Test1.xls">
+    <None Update="Data\Test2.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Test2.xls">
+    <None Update="Data\Test3.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Test3.xls">
+    <None Update="Data\Test4.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Test4.xls">
+    <None Update="Data\Test5.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Test5.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
-      <Project>{46cb3fbc-88b4-4016-aec9-91c165ea5671}</Project>
-      <Name>OSPSuite.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
-      <Project>{2f8b2246-4458-494a-9a62-3f6e6f62082a}</Project>
-      <Name>OSPSuite.Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
-      <Project>{10ad6f46-aca2-4005-91e6-ce84feee9419}</Project>
-      <Name>OSPSuite.Resources</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj">
-      <Project>{956bdd93-1426-4527-9797-f9c479bd6bc5}</Project>
-      <Name>OSPSuite.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OSPSuite.Core.Tests\OSPSuite.Core.Tests.csproj">
-      <Project>{8389E18C-5B97-412D-A2CA-2269AF687F03}</Project>
-      <Name>OSPSuite.Core.Tests</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\NUnit.3.12.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\NUnit.3.12.0\build\NUnit.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

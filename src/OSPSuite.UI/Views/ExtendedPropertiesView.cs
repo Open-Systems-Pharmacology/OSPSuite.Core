@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Linq;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
@@ -44,14 +44,14 @@ namespace OSPSuite.UI.Views
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _repositoryCache[typeof (bool)] = createBoolEditRepositoryItem();
+         _repositoryCache[typeof(bool)] = createBoolEditRepositoryItem();
 
-         _repositoryCache[typeof (int)] = createIntegerEditRepositoryItem();
+         _repositoryCache[typeof(int)] = createIntegerEditRepositoryItem();
          var decimalEditRepositoryItem = createDecimalEditRepositoryItem();
-         _repositoryCache[typeof (float)] = decimalEditRepositoryItem;
-         _repositoryCache[typeof (double)] = decimalEditRepositoryItem;
+         _repositoryCache[typeof(float)] = decimalEditRepositoryItem;
+         _repositoryCache[typeof(double)] = decimalEditRepositoryItem;
          _repositoryItemTextEdit = new RepositoryItemTextEdit();
-         _repositoryCache[typeof (string)] = _repositoryItemTextEdit;
+         _repositoryCache[typeof(string)] = _repositoryItemTextEdit;
 
          _gridBinder = new GridViewBinder<IExtendedProperty>(gridView);
 
@@ -91,7 +91,7 @@ namespace OSPSuite.UI.Views
       private RepositoryItem createRepositoryItemFor<T>()
       {
          var repositoryItem = new RepositoryItemTextEdit();
-         repositoryItem.ConfigureWith(typeof (T));
+         repositoryItem.ConfigureWith(typeof(T));
          return repositoryItem;
       }
 

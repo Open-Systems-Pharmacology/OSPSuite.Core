@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          var sensitivityAnalysis = _objectBaseFactory.Create<SensitivityAnalysis>();
          var project = _executionContext.Project;
          sensitivityAnalysis.Name = _containerTask.CreateUniqueName(project.AllSensitivityAnalyses, Captions.SensitivityAnalysis.SensitivityAnalysisDefaultName);
-         sensitivityAnalysis.Icon = ApplicationIcons.SensitivityAnalysis.IconName;
+         sensitivityAnalysis.Icon = IconNames.SENSITIVITY_ANALYSIS;
          sensitivityAnalysis.IsLoaded = true;
          return sensitivityAnalysis;
       }

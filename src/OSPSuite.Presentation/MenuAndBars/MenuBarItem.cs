@@ -1,6 +1,6 @@
 using System;
-using System.Windows.Forms;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Core;
 
 namespace OSPSuite.Presentation.MenuAndBars
 {
@@ -84,7 +84,7 @@ namespace OSPSuite.Presentation.MenuAndBars
 
       public event Action<bool> EnabledChanged = delegate { };
       public event Action<bool> VisibilityChanged = delegate { };
-      public Keys Shortcut { get; set; }
+      public Keys Shortcut { get; set; } = Keys.None;
       public ApplicationIcon Icon { get; set; }
       public bool IsForDeveloper { get; set; }
       public int Id { get; set; }
@@ -102,7 +102,7 @@ namespace OSPSuite.Presentation.MenuAndBars
 
       public bool Enabled
       {
-         get { return _enabled; }
+         get => _enabled;
          set
          {
             _enabled = value;
@@ -112,7 +112,7 @@ namespace OSPSuite.Presentation.MenuAndBars
 
       public bool Visible
       {
-         get { return _visible; }
+         get => _visible;
          set
          {
             _visible = value;

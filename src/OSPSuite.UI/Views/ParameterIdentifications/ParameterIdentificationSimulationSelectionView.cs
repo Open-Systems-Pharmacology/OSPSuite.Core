@@ -26,7 +26,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public ParameterIdentificationSimulationSelectionView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
-         PopupBarManager = new BarManager { Form = this, Images = imageListRetriever.AllImagesForContextMenu };
+         PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
          treeView.AllowDrop = true;
          treeView.StateImageList = imageListRetriever.AllImagesForTreeView;
          treeView.DataColumn.SortMode = ColumnSortMode.DisplayText;
@@ -101,9 +101,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private IReadOnlyList<ITreeNode> selectedNodes => treeView.Selection.ToList().Select(treeView.NodeFrom).ToList();
 
-      private bool canAcceptData(IReadOnlyList<ISimulation> simulations) => 
-         simulations != null && 
-         simulations.Any() && 
+      private bool canAcceptData(IReadOnlyList<ISimulation> simulations) =>
+         simulations != null &&
+         simulations.Any() &&
          _presenter.CanUseAllSimulations(simulations);
 
       public void BeginUpdate()

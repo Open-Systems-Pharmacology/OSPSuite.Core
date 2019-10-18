@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
+using System.Linq;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -14,22 +15,39 @@ namespace OSPSuite.Core.Domain
          _allOutputs = new HashSet<QuantitySelection>();
       }
 
-      public virtual void AddOutput(QuantitySelection quantitySelection)
+      public virtual void AddOutput(QuantitySelection quantitySelection) => _allOutputs.Add(quantitySelection);
+
+      public virtual void RemoveOutput(QuantitySelection quantitySelection) => _allOutputs.Remove(quantitySelection);
+
+      /// <summary>
+      ///    Adds an output corresponding to the <paramref name="quantity" />. The corresponding <see cref="QuantitySelection" />
+      ///    will be added using a consolidated path
+      /// </summary>
+      public virtual void AddQuantity(IQuantity quantity)
       {
-         _allOutputs.Add(quantitySelection);
+         if (quantity == null)
+            return;
+
+         _allOutputs.Add(new QuantitySelection(quantity.ConsolidatedPath(), quantity.QuantityType));
       }
 
-      public virtual void RemoveOutput(QuantitySelection quantitySelection)
+      /// <summary>
+      ///    Removes the <see cref="QuantitySelection" /> whose path is equal to the consolidated path of
+      ///    <paramref name="quantity" />
+      /// </summary>
+      public virtual void RemoveQuantity(IQuantity quantity)
       {
-         _allOutputs.Remove(quantitySelection);
+         if (quantity == null)
+            return;
+
+         RemoveOutput(new QuantitySelection(quantity.ConsolidatedPath(), quantity.QuantityType));
       }
 
       public virtual IEnumerable<QuantitySelection> AllOutputs => _allOutputs;
 
-      public virtual void Clear()
-      {
-         _allOutputs.Clear();
-      }
+      public virtual QuantitySelection[] OutputsAsArray => AllOutputs?.ToArray();
+
+      public virtual void Clear() => _allOutputs.Clear();
 
       public virtual bool HasSelection => _allOutputs.Count > 0;
 
