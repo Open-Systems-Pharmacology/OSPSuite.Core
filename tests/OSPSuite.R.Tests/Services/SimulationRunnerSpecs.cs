@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.R.Services

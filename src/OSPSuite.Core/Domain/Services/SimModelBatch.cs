@@ -83,8 +83,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public double[] SensitivityValuesFor(string outputPath, string parameterPath)
       {
-         return Array.Empty<double>();
-// TODO         return _simModelSimulation.SensitivityValuesByPathFor(outputPath, parameterPath);
+         return _simModelSimulation.SensitivityValuesByPathFor(outputPath, parameterPath);
       }
 
       public void Clear()

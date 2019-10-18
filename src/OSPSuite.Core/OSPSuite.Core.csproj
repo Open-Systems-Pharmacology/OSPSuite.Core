@@ -47,6 +47,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.39" />
     <PackageReference Include="OSPSuite.Serializer" Version="3.0.0.1" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.28" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
   </ItemGroup>
 
@@ -55,16 +56,13 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="..\..\packages\OSPSuite.SimModelSolver_CVODES.4.0.0.5\lib\net45\OSPSuite.SimModelSolver_CVODES.dll" Link="OSPSuite.SimModelSolver_CVODES.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="OSPSuite.SimModel">
-      <HintPath>..\..\lib\OSPSuite.SimModel.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

@@ -75,11 +75,7 @@ namespace OSPSuite.Core.Domain.Services
          return speciesToBeVaried;
       }
 
-      protected IEnumerable<SolverWarning> WarningsFrom(Simulation simModelSimulation) =>
-         Enumerable.Empty<SolverWarning>();
+      protected IEnumerable<SolverWarning> WarningsFrom(Simulation simModelSimulation) => simModelSimulation.SolverWarnings;
 
-      //TODO 
-
-//         warnings.Select(x => new SolverWarning { Warning = x.Warning, OutputTime = x.OutputTime });
    }
 }
