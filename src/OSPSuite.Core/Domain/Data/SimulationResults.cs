@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
@@ -73,11 +74,29 @@ namespace OSPSuite.Core.Domain.Data
       ///    Returns all values calculated for the quantity with path <paramref name="quantityPath" /> and ordered by individual
       ///    id.
       /// </summary>
-      public virtual IReadOnlyList<QuantityValues> AllValuesFor(string quantityPath)
+      public virtual IReadOnlyList<QuantityValues> AllQuantityValuesFor(string quantityPath)
       {
          lock (_locker)
          {
-            return AllIndividualResults.Select(x => x.ValuesFor(quantityPath)).ToArray();
+            return AllIndividualResults.Select(x => x.QuantityValuesFor(quantityPath)).ToArray();
+         }
+      }
+
+      public virtual float[] AllValuesFor(string quantityPath, params int[] individualIds)
+      {
+         lock (_locker)
+         {
+            var individualIdsSpecified = individualIds?.Any() ?? false;
+            var ids = individualIdsSpecified ? individualIds : AllIndividualIds();
+            var values = new List<float>();
+            var numberOfValuesPerIndividual = Time?.Length ?? 0;
+            foreach (var id in ids)
+            {
+               var individualResults = ResultsFor(id);
+               values.AddRange(individualResults?.ValuesFor(quantityPath)?? new float[numberOfValuesPerIndividual].InitializeWith(float.NaN));
+            }
+
+            return values.ToArray();
          }
       }
 

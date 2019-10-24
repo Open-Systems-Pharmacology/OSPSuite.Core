@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
             performIndividualScalingAction(individualResult.IndividualId);
             _pkCalculationOptionsFactory.UpdateAppliedDose(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
             
-            var values = individualResult.ValuesFor(selectedQuantity.Path);
+            var values = individualResult.QuantityValuesFor(selectedQuantity.Path);
             //This can happen is the results do not match the simulation
             if (values == null)
                continue;
