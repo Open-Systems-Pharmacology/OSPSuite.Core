@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.R.Services
@@ -93,12 +94,9 @@ namespace OSPSuite.R.Services
 
       private void initializeProgress(IndividualValuesCache population, SimulationRunOptions options)
       {
-         if (!options.ShowProgress)
-            return;
-
          _populationRunner.Terminated += terminated;
          _populationRunner.SimulationProgress += simulationProgress;
-         _progressUpdater = _progressManager.Create();
+         _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
          _progressUpdater.Initialize(population.Count);
       }
 

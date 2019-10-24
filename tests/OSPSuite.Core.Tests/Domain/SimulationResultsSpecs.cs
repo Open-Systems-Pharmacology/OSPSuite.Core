@@ -12,18 +12,20 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_returning_all_the_values_defined_for_a_given_path : concern_for_SimulationResults
+   public class When_querying_values_defined_for_a_simulation_results : concern_for_SimulationResults
    {
       private QuantityValues _quantityValue1;
       private QuantityValues _quantityValue2;
       private QuantityValues _anotherQuantityValue;
+      private QuantityValues _timeValues;
 
       protected override void Context()
       {
          base.Context();
-         _quantityValue1 = new QuantityValues {QuantityPath = "Path1"};
-         _quantityValue2 = new QuantityValues {QuantityPath = "Path1"};
-         _anotherQuantityValue = new QuantityValues {QuantityPath = "Path2"};
+         _quantityValue1 = new QuantityValues {QuantityPath = "Path1",Values = new []{1f,2f,3f}};
+         _quantityValue2 = new QuantityValues {QuantityPath = "Path1", Values = new[] { 4f, 5f, 6f } };
+         _anotherQuantityValue = new QuantityValues {QuantityPath = "Path2", Values = new[] { 7f, 8f, 9f } };
+         _timeValues = new QuantityValues {QuantityPath = "Time", Values = new[] { 10f, 20f, 30f } };
 
          var individualResults1 = new IndividualResults {IndividualId = 3};
          individualResults1.Add(_quantityValue1);
@@ -34,6 +36,7 @@ namespace OSPSuite.Core.Domain
 
          sut.Add(individualResults1);
          sut.Add(individualResults2);
+         sut.Time = _timeValues;
 
          //reorder results before accessing them
          sut.ReorderByIndividualId();
@@ -42,7 +45,23 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_all_quantity_values_for_the_path_defined_in_all_individuals_ordered_by_individual_id()
       {
-         sut.AllValuesFor("Path1").ShouldOnlyContainInOrder(_quantityValue2, _quantityValue1);
+         sut.AllQuantityValuesFor("Path1").ShouldOnlyContainInOrder(_quantityValue2, _quantityValue1);
+      }
+
+      [Observation]
+      public void should_return_all_values_for_the_path_defined_if_not_id_is_specified()
+      {
+         sut.AllValuesFor("Path1", null).ShouldOnlyContainInOrder(new []{ 4f, 5f, 6f, 1f, 2f, 3f, });
+         sut.AllValuesFor("Path1").ShouldOnlyContainInOrder(new []{ 4f, 5f, 6f, 1f, 2f, 3f, });
+      }
+
+      [Observation]
+      public void should_return_all_values_for_the_specified_id_and_path()
+      {
+         sut.AllValuesFor("Path1", 2).ShouldOnlyContainInOrder(new[] { 4f, 5f, 6f});
+         sut.AllValuesFor("Path1", 3).ShouldOnlyContainInOrder(new[] { 1f, 2f, 3f});
+         sut.AllValuesFor("Path1", 3, 4).ShouldOnlyContainInOrder(new[] { 1f, 2f, 3f, float.NaN, float.NaN, float.NaN});
+         sut.AllValuesFor("unknown", 3, 4).ShouldOnlyContainInOrder(new[] { float.NaN, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN});
       }
    }
 

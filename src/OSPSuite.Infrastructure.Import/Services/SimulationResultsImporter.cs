@@ -14,7 +14,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface ISimulationResultsImportTask
    {
-      Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files, CancellationToken cancellationToken);
+      Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files,CancellationToken cancellationToken, bool showImportProgress = true);
    }
 
    public class SimulationResultsImportTask : ISimulationResultsImportTask
@@ -31,11 +31,11 @@ namespace OSPSuite.Infrastructure.Import.Services
          _progressManager = progressManager;
       }
 
-      public async Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files, CancellationToken cancellationToken)
+      public async Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files, CancellationToken cancellationToken, bool showImportProgress = true)
       {
          try
          {
-            using (var progressUpdater = _progressManager.Create())
+            using (var progressUpdater = showImportProgress ? _progressManager.Create() : new NoneProgressUpdater())
             {
                progressUpdater.Initialize(files.Count, Messages.ImportingResults);
                _allQuantities = _quantitiesRetriever.QuantitiesFrom(simulation);

@@ -40,7 +40,7 @@ namespace OSPSuite.R.Services
 
       public SimulationResults ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles)
       {
-         var simulationResultsImport = _simulationResultsImportTask.ImportResults(simulation, csvFiles, CancellationToken.None).Result;
+         var simulationResultsImport = _simulationResultsImportTask.ImportResults(simulation, csvFiles, CancellationToken.None, showImportProgress: false).Result;
          simulationResultsImport.LogToR();
          return simulationResultsImport.SimulationResults;
       }

@@ -53,16 +53,21 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public virtual bool HasValuesFor(string quantityPath)
       {
-         return ValuesFor(quantityPath) != null;
+         return QuantityValuesFor(quantityPath) != null;
+      }
+
+      /// <summary>
+      ///    Returns the QuantityValues defined for the quantity with path <paramref name="quantityPath" /> or null it they do not exist
+      /// </summary>
+      public virtual QuantityValues QuantityValuesFor(string quantityPath)
+      {
+         return AllValues.FirstOrDefault(x => Equals(x.QuantityPath, quantityPath));
       }
 
       /// <summary>
       ///    Returns the values defined for the quantity with path <paramref name="quantityPath" /> or null it they do not exist
       /// </summary>
-      public virtual QuantityValues ValuesFor(string quantityPath)
-      {
-         return AllValues.FirstOrDefault(x => Equals(x.QuantityPath, quantityPath));
-      }
+      public float[] ValuesFor(string quantityPath) => QuantityValuesFor(quantityPath)?.Values;
 
       public virtual IEnumerator<QuantityValues> GetEnumerator()
       {

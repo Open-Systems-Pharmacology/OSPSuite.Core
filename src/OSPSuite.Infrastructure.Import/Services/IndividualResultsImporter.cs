@@ -130,16 +130,16 @@ namespace OSPSuite.Infrastructure.Import.Services
          for (int i = 0; i < allPaths.Length; i++)
          {
             var path = allPaths[i];
-            var quantity = quantityPathFor(individualResult, path, cacheQuantitiesValues);
+            var quantity = quantityValuesFor(individualResult, path, cacheQuantitiesValues);
             cacheQuantitiesValues[quantity].Add(csv.FloatAt(FIRST_QUANTITY + i));
          }
 
          cacheTimeValues[individualResult].Add(time);
       }
 
-      private QuantityValues quantityPathFor(IndividualResults individualResult, string path, Cache<QuantityValues, List<float>> cacheQuantitiesValues)
+      private QuantityValues quantityValuesFor(IndividualResults individualResult, string path, Cache<QuantityValues, List<float>> cacheQuantitiesValues)
       {
-         var quantity = individualResult.ValuesFor(path);
+         var quantity = individualResult.QuantityValuesFor(path);
          if (quantity == null)
          {
             quantity = new QuantityValues {QuantityPath = path};
