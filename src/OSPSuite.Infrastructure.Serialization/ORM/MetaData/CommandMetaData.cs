@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OSPSuite.Infrastructure.ORM.MetaData
+namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
 {
    public class CommandMetaData : MetaData<string>
    {

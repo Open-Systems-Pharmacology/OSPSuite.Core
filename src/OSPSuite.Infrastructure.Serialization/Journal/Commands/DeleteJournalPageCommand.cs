@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core.Journal;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.Journal.Commands
+namespace OSPSuite.Infrastructure.Serialization.Journal.Commands
 {
    public class DeleteJournalPage : JournalPagePayload
    {

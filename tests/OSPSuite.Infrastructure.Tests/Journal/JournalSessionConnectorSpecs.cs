@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure.Serialization.Journal;
 
 namespace OSPSuite.Infrastructure.Journal
 {

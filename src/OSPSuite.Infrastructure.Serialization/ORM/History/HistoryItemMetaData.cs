@@ -1,7 +1,7 @@
 ﻿using System;
-using OSPSuite.Infrastructure.ORM.MetaData;
+using OSPSuite.Infrastructure.Serialization.ORM.MetaData;
 
-namespace OSPSuite.Infrastructure.ORM.History
+namespace OSPSuite.Infrastructure.Serialization.ORM.History
 {
    public class HistoryItemMetaData : MetaData<string>
    {

@@ -1,11 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using OSPSuite.Core.Journal;
-using OSPSuite.Infrastructure.Journal.Commands;
-using OSPSuite.Infrastructure.Journal.Queries;
+using OSPSuite.Infrastructure.Serialization.Journal.Commands;
+using OSPSuite.Infrastructure.Serialization.Journal.Queries;
 using OSPSuite.Utility;
 
-namespace OSPSuite.Infrastructure.Journal
+namespace OSPSuite.Infrastructure.Serialization.Journal
 {
    public class JournalLoader : IJournalLoader
    {

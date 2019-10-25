@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using OSPSuite.Infrastructure.Journal.Commands;
+using OSPSuite.Infrastructure.Serialization.Journal.Commands;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Container.Conventions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.Journal.Queries
+namespace OSPSuite.Infrastructure.Serialization.Journal.Queries
 {
    public class JournalDatabaseCommandAndQueryConvention : IRegistrationConvention
    {

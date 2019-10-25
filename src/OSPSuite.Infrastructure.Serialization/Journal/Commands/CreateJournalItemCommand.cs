@@ -1,8 +1,8 @@
 ﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Journal;
-using OSPSuite.Infrastructure.Journal.Queries;
+using OSPSuite.Infrastructure.Serialization.Journal.Queries;
 
-namespace OSPSuite.Infrastructure.Journal.Commands
+namespace OSPSuite.Infrastructure.Serialization.Journal.Commands
 {
    public class CreateJournalPage : JournalPagePayload
    {

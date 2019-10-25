@@ -1,7 +1,7 @@
 ﻿using System;
 using OSPSuite.Assets;
 
-namespace OSPSuite.Infrastructure.Journal
+namespace OSPSuite.Infrastructure.Serialization.Journal
 {
    public abstract class JournalDatabaseAction
    {

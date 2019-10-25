@@ -1,12 +1,12 @@
 ﻿using OSPSuite.Core;
-using OSPSuite.Infrastructure.Journal;
-using OSPSuite.Infrastructure.Journal.Commands;
-using OSPSuite.Infrastructure.Journal.Queries;
-using OSPSuite.Infrastructure.ORM.MetaData;
-using OSPSuite.Infrastructure.Services;
+using OSPSuite.Infrastructure.Serialization.Journal;
+using OSPSuite.Infrastructure.Serialization.Journal.Commands;
+using OSPSuite.Infrastructure.Serialization.Journal.Queries;
+using OSPSuite.Infrastructure.Serialization.ORM.MetaData;
+using OSPSuite.Infrastructure.Serialization.Services;
 using OSPSuite.Utility.Container;
 
-namespace OSPSuite.Infrastructure
+namespace OSPSuite.Infrastructure.Serialization
 {
    public class InfrastructureSerializationRegister : Register
    {

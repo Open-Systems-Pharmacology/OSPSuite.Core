@@ -4,7 +4,8 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Journal;
-using OSPSuite.Infrastructure.Journal.Queries;
+using OSPSuite.Infrastructure.Serialization.Journal;
+using OSPSuite.Infrastructure.Serialization.Journal.Queries;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Infrastructure.Journal

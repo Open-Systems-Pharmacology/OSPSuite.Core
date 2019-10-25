@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using OSPSuite.Core.Journal;
-using OSPSuite.Infrastructure.Journal.Queries;
+using OSPSuite.Infrastructure.Serialization.Journal.Queries;
 using OSPSuite.Utility.Events;
 
-namespace OSPSuite.Infrastructure.Journal
+namespace OSPSuite.Infrastructure.Serialization.Journal
 {
    public class JournalSearchTask : IJournalSearchTask
    {

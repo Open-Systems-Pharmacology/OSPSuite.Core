@@ -8,9 +8,9 @@ using System.Reflection;
 using System.Text;
 using Dapper;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Infrastructure.Journal;
+using OSPSuite.Infrastructure.Serialization.Journal;
 
-namespace OSPSuite.Infrastructure
+namespace OSPSuite.Infrastructure.Serialization
 {
    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
    public class IgnorePropertyAttribute : Attribute
