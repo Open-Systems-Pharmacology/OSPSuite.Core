@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Presenter;
+using OSPSuite.Presentation.Importer.Presenter;
 using OSPSuite.Presentation.Views;
 
-namespace OSPSuite.Presentation.View
+namespace OSPSuite.Presentation.Importer.View
 {
    public interface IImportDataTableGridView : IView<IImportDataTableGridPresenter>
    {

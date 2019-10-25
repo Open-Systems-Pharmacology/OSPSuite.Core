@@ -6,7 +6,7 @@ using System.Linq;
 using OSPSuite.Core.Importer;
 using SmartXLS;
 
-namespace OSPSuite.Presentation.Services
+namespace OSPSuite.Presentation.Importer.Services
 {
    static class SmartXLS
    {

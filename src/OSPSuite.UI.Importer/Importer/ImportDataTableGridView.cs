@@ -11,8 +11,8 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Presenter;
-using OSPSuite.Presentation.View;
+using OSPSuite.Presentation.Importer.Presenter;
+using OSPSuite.Presentation.Importer.View;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
 

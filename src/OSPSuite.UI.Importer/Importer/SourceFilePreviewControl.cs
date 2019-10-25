@@ -14,9 +14,9 @@ namespace OSPSuite.UI.Importer
       private readonly string _fileName;
       private DataSet _data;
       private readonly Cache<string, Rectangle> _rangesCache;
-      private readonly Presentation.Services.Importer _importer;
+      private readonly Presentation.Importer.Services.Importer _importer;
 
-      public SourceFilePreviewControl(string fileName, Cache<string, Rectangle> rangeCache, Presentation.Services.Importer importer)
+      public SourceFilePreviewControl(string fileName, Cache<string, Rectangle> rangeCache, Presentation.Importer.Services.Importer importer)
       {
          InitializeComponent();
          _rangesCache = rangeCache;

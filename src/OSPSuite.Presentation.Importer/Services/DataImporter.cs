@@ -2,10 +2,10 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Presenter;
+using OSPSuite.Presentation.Importer.Presenter;
 using OSPSuite.Utility.Container;
 
-namespace OSPSuite.Presentation.Services
+namespace OSPSuite.Presentation.Importer.Services
 {
    public class DataImporter : IDataImporter
    {

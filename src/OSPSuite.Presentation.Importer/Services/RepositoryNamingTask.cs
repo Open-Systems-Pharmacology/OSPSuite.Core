@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 
-namespace OSPSuite.Presentation.Services
+namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IRepositoryNamingTask
    {

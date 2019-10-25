@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 
-namespace OSPSuite.Presentation
+namespace OSPSuite.Presentation.Importer
 {
    public class PresentationImporterRegister : Register
    {
