@@ -2,9 +2,9 @@
 using System.Linq;
 using NHibernate;
 using NHibernate.Transform;
-using OSPSuite.Infrastructure.ORM.History;
+using OSPSuite.Infrastructure.Serialization.ORM.History;
 
-namespace OSPSuite.Infrastructure.ORM.MetaData
+namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
 {
    public interface IHistoryItemMetaDataRepository
    {

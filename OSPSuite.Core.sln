@@ -51,7 +51,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R", "src\OSPSuite.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R.Tests", "tests\OSPSuite.R.Tests\OSPSuite.R.Tests.csproj", "{484DD737-1609-4492-B9B0-D1E4B3665CC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Infrastructure.Import", "src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj", "{39AF5149-C3FC-4555-9DA1-F62206CEB111}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Import", "src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj", "{39AF5149-C3FC-4555-9DA1-F62206CEB111}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Serialization", "src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj", "{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +145,10 @@ Global
 		{39AF5149-C3FC-4555-9DA1-F62206CEB111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39AF5149-C3FC-4555-9DA1-F62206CEB111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39AF5149-C3FC-4555-9DA1-F62206CEB111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

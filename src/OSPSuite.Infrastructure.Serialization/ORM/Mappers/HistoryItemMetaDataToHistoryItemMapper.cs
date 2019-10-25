@@ -1,8 +1,8 @@
 ﻿using OSPSuite.Core.Commands.Core;
-using OSPSuite.Infrastructure.ORM.History;
+using OSPSuite.Infrastructure.Serialization.ORM.History;
 using OSPSuite.Utility;
 
-namespace OSPSuite.Infrastructure.ORM.Mappers
+namespace OSPSuite.Infrastructure.Serialization.ORM.Mappers
 {
 
    public interface IHistoryItemMetaDataToHistoryItemMapper : IMapper<HistoryItemMetaData, IHistoryItem>

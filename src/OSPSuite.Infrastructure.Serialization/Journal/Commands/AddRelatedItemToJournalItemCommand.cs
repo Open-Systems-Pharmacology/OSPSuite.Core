@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Journal;
 
-namespace OSPSuite.Infrastructure.Journal.Commands
+namespace OSPSuite.Infrastructure.Serialization.Journal.Commands
 {
    public class AddRelatedPageToJournalPage : JournalPagePayload
    {

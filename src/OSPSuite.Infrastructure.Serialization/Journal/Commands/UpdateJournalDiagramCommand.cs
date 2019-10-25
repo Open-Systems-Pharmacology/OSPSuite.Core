@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core.Commands;
 using OSPSuite.Core.Journal;
 
-namespace OSPSuite.Infrastructure.Journal.Commands
+namespace OSPSuite.Infrastructure.Serialization.Journal.Commands
 {
    public class UpdateJournalDiagram
    {

@@ -3,7 +3,7 @@ using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.Journal.Commands
+namespace OSPSuite.Infrastructure.Serialization.Journal.Commands
 {
    public class UpdateJournalPageTags : JournalPagePayload
    {

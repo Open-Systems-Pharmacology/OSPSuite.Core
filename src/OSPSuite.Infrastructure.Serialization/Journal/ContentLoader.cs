@@ -1,6 +1,6 @@
 ﻿using OSPSuite.Core.Journal;
 
-namespace OSPSuite.Infrastructure.Journal
+namespace OSPSuite.Infrastructure.Serialization.Journal
 {
    public class ContentLoader : IContentLoader
    {

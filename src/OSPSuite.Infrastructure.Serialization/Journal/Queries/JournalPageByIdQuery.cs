@@ -1,6 +1,6 @@
 ﻿using OSPSuite.Core.Journal;
 
-namespace OSPSuite.Infrastructure.Journal.Queries
+namespace OSPSuite.Infrastructure.Serialization.Journal.Queries
 {
    public class JournalPageById : IQuery<JournalPage>
    {

@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Infrastructure.ORM.MetaData
+﻿namespace OSPSuite.Infrastructure.Serialization.ORM.MetaData
 {
    /// <summary>
    /// base class for all entity that should be serialized in a pksim project

@@ -1,6 +1,6 @@
 ﻿using NHibernate;
 
-namespace OSPSuite.Infrastructure
+namespace OSPSuite.Infrastructure.Serialization
 {
    public interface ISessionPersistor<T>
    {

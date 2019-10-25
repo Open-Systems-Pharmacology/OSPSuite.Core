@@ -2,12 +2,12 @@
 using System.Linq;
 using NHibernate;
 using OSPSuite.Core.Commands.Core;
-using OSPSuite.Infrastructure.ORM.Mappers;
-using OSPSuite.Infrastructure.ORM.MetaData;
+using OSPSuite.Infrastructure.Serialization.ORM.Mappers;
+using OSPSuite.Infrastructure.Serialization.ORM.MetaData;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.ORM.History
+namespace OSPSuite.Infrastructure.Serialization.ORM.History
 {
    public interface IHistoryManagerPersistor : ISessionPersistor<IHistoryManager>
    {

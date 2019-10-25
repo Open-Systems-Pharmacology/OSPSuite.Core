@@ -6,13 +6,13 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
-using OSPSuite.Infrastructure.Journal.Commands;
+using OSPSuite.Infrastructure.Serialization.Journal.Commands;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
 
-namespace OSPSuite.Infrastructure.Journal
+namespace OSPSuite.Infrastructure.Serialization.Journal
 {
    public class JournalPageTask : IJournalPageTask
    {
