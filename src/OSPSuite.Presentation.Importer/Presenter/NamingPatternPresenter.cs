@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Importer.View;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.View;
 
-namespace OSPSuite.Presentation.Presenter
+namespace OSPSuite.Presentation.Importer.Presenter
 {
    public interface INamingPatternPresenter : IPresenter<INamingPatternView>
    {

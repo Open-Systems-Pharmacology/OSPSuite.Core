@@ -8,12 +8,12 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.Importer.View;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Services;
-using OSPSuite.Presentation.View;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Presenter
+namespace OSPSuite.Presentation.Importer.Presenter
 {
    public interface IImporterPresenter : IDisposablePresenter
    {
