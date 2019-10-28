@@ -88,7 +88,6 @@ namespace OSPSuite.Core.Converter.v5_5
       {
          Visit(simulation.BuildConfiguration);
          UpdateQuantityTypeForObservers(simulation);
-         UpdateQuantityTypeForDataRepository(simulation.Results);
       }
 
       public void Visit(IBuildConfiguration buildConfiguration)
@@ -97,6 +96,7 @@ namespace OSPSuite.Core.Converter.v5_5
          Visit(buildConfiguration.MoleculeStartValues);
          Visit(buildConfiguration.Molecules);
       }
+
       public void UpdateQuantityTypeForDataRepository(DataRepository dataRepository)
       {
          if (dataRepository == null)

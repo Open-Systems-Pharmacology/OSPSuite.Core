@@ -83,18 +83,11 @@ namespace OSPSuite.Core.Domain
 
    public class When_adding_the_results_of_a_simulation_that_was_not_simulated : concern_for_SerializationContext
    {
-      private IModelCoreSimulation _simulation;
 
-      protected override void Context()
-      {
-         base.Context();
-         _simulation = A.Fake<IModelCoreSimulation>();
-         _simulation.Results = null;
-      }
-
+   
       protected override void Because()
       {
-         sut.AddRepository(_simulation.Results);
+         sut.AddRepository(null);
       }
 
       [Observation]
