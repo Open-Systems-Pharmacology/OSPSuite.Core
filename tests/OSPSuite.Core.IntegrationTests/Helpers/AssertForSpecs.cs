@@ -1117,7 +1117,6 @@ namespace OSPSuite.Core.Helpers
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualBuildConfiguration(x1.BuildConfiguration, x2.BuildConfiguration);
          AreEqualModel(x1.Model, x2.Model);
-         AreEqualMcDataRepository(x1.Results, x2.Results);
       }
 
       public static void AreEqualFloatArray(IReadOnlyList<float> x1, IReadOnlyList<float> x2)

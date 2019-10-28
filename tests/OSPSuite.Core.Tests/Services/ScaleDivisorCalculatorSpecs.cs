@@ -56,7 +56,6 @@ namespace OSPSuite.Core.Services
          _molecule2Path = entityPathFactory.PathFor(_moleculeAmount2);
 
          _originalResults = new DataRepository();
-         _simulation.Results = _originalResults;
 
          var baseGrid = new BaseGrid("Time", Constants.Dimension.NO_DIMENSION) {Values = new[] {0f, 1f, 2f, 3f}};
          _originalDataColumn = new DataColumn("M1", Constants.Dimension.NO_DIMENSION, baseGrid) {Values = new[] {0f, 10f, 20f, 30f}};
@@ -102,14 +101,6 @@ namespace OSPSuite.Core.Services
          var scaleFactor = scaleFactors.Find(x => x.QuantityPath == moleculePath);
          scaleFactor.ShouldNotBeNull();
          scaleFactor.Value.ShouldBeEqualTo(value);
-      }
-
-      [Observation]
-      public async Task should_not_override_the_previous_results_and_selected_output()
-      {
-         var results = await sut.CalculateScaleDivisorsAsync(_simulation, _options);
-         _simulation.Results.ShouldBeEqualTo(_originalResults);
-         _simulation.Results.AllButBaseGrid().ShouldOnlyContain(_originalDataColumn);
       }
    }
 

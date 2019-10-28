@@ -9,8 +9,6 @@ namespace OSPSuite.Core.Domain
    {
       IBuildConfiguration BuildConfiguration { get; }
 
-      DataRepository Results { get; set; }
-
       OutputSelections OutputSelections { get; }
 
       /// <summary>
