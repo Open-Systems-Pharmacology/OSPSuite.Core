@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       {
          var simulationExportCreator = _simulationExportCreatorFactory.Create();
          var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode);
-         simulationExport.AddSimulationConfiguration(simulation.BuildConfiguration.SimulationSettings);
+         simulationExport.AddSimulationConfiguration(simulation.SimulationSettings);
          return simulationExport;
       }
    }

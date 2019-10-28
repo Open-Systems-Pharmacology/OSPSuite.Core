@@ -136,8 +136,8 @@ namespace OSPSuite.Core.Converter.v5_2
       {
          convertDimensionIn(simulation.Model.Root, convertFormulasAtParameter: true);
 
-         if (simulation.BuildConfiguration.SimulationSettings == null) return;
-         convertDimensionIn(simulation.BuildConfiguration.SimulationSettings.OutputSchema, convertFormulasAtParameter: true);
+         if (simulation.SimulationSettings == null) return;
+         convertDimensionIn(simulation.SimulationSettings.OutputSchema, convertFormulasAtParameter: true);
       }
 
       public void ConvertDimensionIn(IUsingFormula usingFormula)

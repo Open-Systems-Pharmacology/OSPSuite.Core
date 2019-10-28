@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    Simple reference to corresponding time
       /// </summary>
-      public virtual QuantityValues Time { get; internal set; }
+      public virtual QuantityValues Time { get; set; }
 
       public QuantityValues()
       {

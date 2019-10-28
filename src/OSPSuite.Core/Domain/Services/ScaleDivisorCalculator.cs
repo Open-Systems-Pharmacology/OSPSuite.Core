@@ -208,7 +208,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ISimulationSettings settingsFor(IModelCoreSimulation simulation)
       {
-         return simulation.BuildConfiguration.SimulationSettings;
+         return simulation.SimulationSettings;
       }
 
       private OutputSelections outputSelectionsFor(IModelCoreSimulation simulation)

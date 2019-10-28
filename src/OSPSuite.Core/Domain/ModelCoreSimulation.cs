@@ -7,6 +7,10 @@ namespace OSPSuite.Core.Domain
 {
    public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel
    {
+
+      /// <summary>
+      /// Build configuration used to create the simulation. May be null
+      /// </summary>
       IBuildConfiguration BuildConfiguration { get; }
 
       OutputSelections OutputSelections { get; }
