@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _view = A.Fake<IDataBrowserView>();
          sut = new DataBrowserPresenter(_view);
-         sut.SetDisplayQuantityPathDefinition(x => new PathElements {{PathElement.Name, new PathElementDTO {DisplayName = x.Name}}});
+         sut.SetDisplayQuantityPathDefinition(x => new PathElements {{PathElementId.Name, new PathElement {DisplayName = x.Name}}});
 
          A.CallTo(() => _view.BindTo(A<IEnumerable<DataColumnDTO>>._))
             .Invokes(x => _allDataColumnDTOs = x.GetArgument<IEnumerable<DataColumnDTO>>(0).ToList());

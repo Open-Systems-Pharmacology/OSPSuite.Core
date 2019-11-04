@@ -9,6 +9,7 @@ using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;

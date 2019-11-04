@@ -91,9 +91,9 @@ namespace OSPSuite.UI.Views.Comparisons
          }
       }
 
-      public void SetVisibility(PathElement pathElement, bool visible)
+      public void SetVisibility(PathElementId pathElementId, bool visible)
       {
-         _pathElementsBinder.SetVisibility(pathElement, visible);
+         _pathElementsBinder.SetVisibility(pathElementId, visible);
       }
 
       public void ClearBinding()

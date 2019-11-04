@@ -166,10 +166,10 @@ namespace OSPSuite.Presentation.Presenters
          set { View.Description = value; }
       }
 
-      public void GroupBy(PathElement pathElement)
+      public void GroupBy(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.GroupBy(pathElement);
-         _selectedQuantityListPresenter.GroupBy(pathElement);
+         _allQuantityListPresenter.GroupBy(pathElementId);
+         _selectedQuantityListPresenter.GroupBy(pathElementId);
       }
 
       public bool ExpandAllGroups
@@ -188,28 +188,28 @@ namespace OSPSuite.Presentation.Presenters
          }
       }
 
-      public void SortColumn(PathElement pathElement)
+      public void SortColumn(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.SortColumn(pathElement);
-         _selectedQuantityListPresenter.SortColumn(pathElement);
+         _allQuantityListPresenter.SortColumn(pathElementId);
+         _selectedQuantityListPresenter.SortColumn(pathElementId);
       }
 
-      public void Show(PathElement pathElement)
+      public void Show(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.Show(pathElement);
-         _selectedQuantityListPresenter.Show(pathElement);
+         _allQuantityListPresenter.Show(pathElementId);
+         _selectedQuantityListPresenter.Show(pathElementId);
       }
 
-      public void Hide(PathElement pathElement)
+      public void Hide(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.Hide(pathElement);
-         _selectedQuantityListPresenter.Hide(pathElement);
+         _allQuantityListPresenter.Hide(pathElementId);
+         _selectedQuantityListPresenter.Hide(pathElementId);
       }
 
-      public void SetCaption(PathElement pathElement, string caption)
+      public void SetCaption(PathElementId pathElementId, string caption)
       {
-         _allQuantityListPresenter.SetCaption(pathElement, caption);
-         _selectedQuantityListPresenter.SetCaption(pathElement, caption);
+         _allQuantityListPresenter.SetCaption(pathElementId, caption);
+         _selectedQuantityListPresenter.SetCaption(pathElementId, caption);
       }
 
       public void Show(QuantityColumn column)

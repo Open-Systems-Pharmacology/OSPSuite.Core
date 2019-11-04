@@ -1,14 +1,11 @@
 ﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.Mappers;
 
-namespace OSPSuite.Presentation.Presentation
+namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_QuantityPathToQuantityDisplayPathMapper : ContextSpecification<IQuantityPathToQuantityDisplayPathMapper>
    {
@@ -44,9 +41,9 @@ namespace OSPSuite.Presentation.Presentation
          _repository = new DataRepository().WithName("Rep");
          A.CallTo(() => _dataColumnToPathElementsMapper.MapFrom(_column, A<IContainer>._)).Returns(_pathElements);
 
-         _pathElements[PathElement.Simulation] = new PathElementDTO { DisplayName = "Sim" };
-         _pathElements[PathElement.Container] = new PathElementDTO { DisplayName = "Cont" };
-         _pathElements[PathElement.Molecule] = new PathElementDTO { DisplayName = "Drug" };
+         _pathElements[PathElementId.Simulation] = new PathElement { DisplayName = "Sim" };
+         _pathElements[PathElementId.Container] = new PathElement { DisplayName = "Cont" };
+         _pathElements[PathElementId.Molecule] = new PathElement { DisplayName = "Drug" };
       }
    }
 

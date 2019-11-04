@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Views.Comparisons
       string LeftCaption { get; set; }
       string RightCaption { get; set; }
       bool DifferenceTableVisible { get;set; }
-      void SetVisibility(PathElement pathElement, bool visible);
+      void SetVisibility(PathElementId pathElementId, bool visible);
       void ClearBinding();
    }
 }

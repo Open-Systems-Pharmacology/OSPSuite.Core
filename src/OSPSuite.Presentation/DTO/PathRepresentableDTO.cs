@@ -7,12 +7,12 @@ namespace OSPSuite.Presentation.DTO
    public interface IPathRepresentableDTO : IValidatableDTO
    {
       PathElements PathElements { get; set; }
-      PathElementDTO SimulationPathElement { get; }
-      PathElementDTO TopContainerPathElement { get; }
-      PathElementDTO ContainerPathElement { get; }
-      PathElementDTO BottomCompartmentPathElement { get; }
-      PathElementDTO MoleculePathElement { get; }
-      PathElementDTO NamePathElement { get; }
+      PathElement SimulationPathElement { get; }
+      PathElement TopContainerPathElement { get; }
+      PathElement ContainerPathElement { get; }
+      PathElement BottomCompartmentPathElement { get; }
+      PathElement MoleculePathElement { get; }
+      PathElement NamePathElement { get; }
       string Category { get; }
 
       /// <summary>
@@ -30,17 +30,17 @@ namespace OSPSuite.Presentation.DTO
          PathElements = new PathElements();
       }
 
-      public PathElementDTO SimulationPathElement => PathElements[PathElement.Simulation];
+      public PathElement SimulationPathElement => PathElements[PathElementId.Simulation];
 
-      public PathElementDTO TopContainerPathElement => PathElements[PathElement.TopContainer];
+      public PathElement TopContainerPathElement => PathElements[PathElementId.TopContainer];
 
-      public PathElementDTO ContainerPathElement => PathElements[PathElement.Container];
+      public PathElement ContainerPathElement => PathElements[PathElementId.Container];
 
-      public PathElementDTO BottomCompartmentPathElement => PathElements[PathElement.BottomCompartment];
+      public PathElement BottomCompartmentPathElement => PathElements[PathElementId.BottomCompartment];
 
-      public PathElementDTO MoleculePathElement => PathElements[PathElement.Molecule];
+      public PathElement MoleculePathElement => PathElements[PathElementId.Molecule];
 
-      public PathElementDTO NamePathElement => PathElements[PathElement.Name];
+      public PathElement NamePathElement => PathElements[PathElementId.Name];
 
       public string Category => PathElements.Category;
 
