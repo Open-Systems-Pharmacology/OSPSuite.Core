@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Presentation.DTO;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Mappers
+namespace OSPSuite.Core.Domain.Mappers
 {
    public interface IDataColumnToPathElementsMapper
    {
@@ -47,7 +45,7 @@ namespace OSPSuite.Presentation.Mappers
       private static PathElements pathElementsForBaseGrid(DataColumn dataColumn)
       {
          var pathColumnValues = new PathElements();
-         pathColumnValues[PathElement.Name] = new PathElementDTO {DisplayName = dataColumn.Name};
+         pathColumnValues[PathElementId.Name] = new PathElement {DisplayName = dataColumn.Name};
          return pathColumnValues;
       }
 
@@ -60,14 +58,14 @@ namespace OSPSuite.Presentation.Mappers
       {
          var pathColumnValues = new PathElements();
 
-         // extract first pathElement to TopContainer, remaining pathElements to Container
+         // extract first pathElementId to TopContainer, remaining pathElements to Container
          if (quantityPath.Count > 0)
          {
-            pathColumnValues[PathElement.TopContainer] = new PathElementDTO {DisplayName = quantityPath[0]};
+            pathColumnValues[PathElementId.TopContainer] = new PathElement {DisplayName = quantityPath[0]};
             quantityPath.RemoveAt(0);
          }
 
-         pathColumnValues[PathElement.Container] = new PathElementDTO {DisplayName = quantityPath.ToString(Constants.DISPLAY_PATH_SEPARATOR)};
+         pathColumnValues[PathElementId.Container] = new PathElement {DisplayName = quantityPath.ToString(Constants.DISPLAY_PATH_SEPARATOR)};
 
          return pathColumnValues;
       }

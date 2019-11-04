@@ -33,12 +33,12 @@ namespace OSPSuite.Presentation.DTO
          }
       }
 
-      public virtual PathElementDTO SimulationPathElement => QuantitySelectionDTO?.SimulationPathElement;
-      public virtual PathElementDTO TopContainerPathElement => QuantitySelectionDTO?.TopContainerPathElement;
-      public virtual PathElementDTO ContainerPathElement => QuantitySelectionDTO?.ContainerPathElement;
-      public virtual PathElementDTO BottomCompartmentPathElement => QuantitySelectionDTO?.BottomCompartmentPathElement;
-      public virtual PathElementDTO MoleculePathElement => QuantitySelectionDTO?.MoleculePathElement;
-      public virtual PathElementDTO NamePathElement => QuantitySelectionDTO?.NamePathElement;
+      public virtual PathElement SimulationPathElement => QuantitySelectionDTO?.SimulationPathElement;
+      public virtual PathElement TopContainerPathElement => QuantitySelectionDTO?.TopContainerPathElement;
+      public virtual PathElement ContainerPathElement => QuantitySelectionDTO?.ContainerPathElement;
+      public virtual PathElement BottomCompartmentPathElement => QuantitySelectionDTO?.BottomCompartmentPathElement;
+      public virtual PathElement MoleculePathElement => QuantitySelectionDTO?.MoleculePathElement;
+      public virtual PathElement NamePathElement => QuantitySelectionDTO?.NamePathElement;
 
       public string Category => QuantitySelectionDTO?.Category;
       public string DisplayPathAsString => QuantitySelectionDTO?.DisplayPathAsString;
@@ -48,8 +48,8 @@ namespace OSPSuite.Presentation.DTO
    {
       public NullSimulationQuantitySelectionDTO() : base(null, new QuantitySelectionDTO(), string.Empty)
       {
-         QuantitySelectionDTO.PathElements[PathElement.Simulation] = new InvalidPathElementDTO();
-         QuantitySelectionDTO.PathElements[PathElement.Name] = new InvalidPathElementDTO();
+         QuantitySelectionDTO.PathElements[PathElementId.Simulation] = new InvalidPathElement();
+         QuantitySelectionDTO.PathElements[PathElementId.Name] = new InvalidPathElement();
       }
    }
 }

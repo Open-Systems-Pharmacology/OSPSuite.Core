@@ -66,15 +66,15 @@ namespace OSPSuite.Presentation.Presentation
          var  q1 = A.Fake<IQuantity>();
          var q2 = A.Fake<IQuantity>();
          var dto1  = new QuantitySelectionDTO { QuantityPath = "A|B|C" };
-         dto1.PathElements[PathElement.Simulation] = new PathElementDTO();
-         dto1.PathElements[PathElement.TopContainer] = new PathElementDTO();
-         dto1.PathElements[PathElement.Container] = new PathElementDTO();
+         dto1.PathElements[PathElementId.Simulation] = new PathElement();
+         dto1.PathElements[PathElementId.TopContainer] = new PathElement();
+         dto1.PathElements[PathElementId.Container] = new PathElement();
          dto1.SimulationPathElement.DisplayName = "A";
          dto1.TopContainerPathElement.DisplayName = "B";
          dto1.ContainerPathElement.DisplayName = "C";
          var dto2  = new QuantitySelectionDTO { QuantityPath = "A|D" };
-         dto2.PathElements[PathElement.Simulation] = new PathElementDTO();
-         dto2.PathElements[PathElement.TopContainer] = new PathElementDTO();
+         dto2.PathElements[PathElementId.Simulation] = new PathElement();
+         dto2.PathElements[PathElementId.TopContainer] = new PathElement();
          dto2.SimulationPathElement.DisplayName = "A";
          dto2.TopContainerPathElement.DisplayName = "D";
          A.CallTo(() => _mapper.MapFrom(q1, A<int>._)).Returns(dto1);
@@ -86,20 +86,20 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_return_true_if_the_column_only_contains_empty_string()
       {
-         sut.PathElementIsEmpty(PathElement.Molecule).ShouldBeTrue();
+         sut.PathElementIsEmpty(PathElementId.Molecule).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_false_if_the_column_only_contains_one_non_empty_string()
       {
-         sut.PathElementIsEmpty(PathElement.Container).ShouldBeFalse();
+         sut.PathElementIsEmpty(PathElementId.Container).ShouldBeFalse();
 
       }
 
       [Observation]
       public void should_return_false_if_the_column_contains_more_than_one_value()
       {
-         sut.PathElementIsEmpty(PathElement.TopContainer).ShouldBeFalse();
+         sut.PathElementIsEmpty(PathElementId.TopContainer).ShouldBeFalse();
       }
    }
 

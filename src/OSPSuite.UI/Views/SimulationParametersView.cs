@@ -91,9 +91,9 @@ namespace OSPSuite.UI.Views
          layoutItemModeSelection.TextVisible = false;
       }
 
-      public void GroupBy(PathElement pathElement, int groupIndex = 0)
+      public void GroupBy(PathElementId pathElementId, int groupIndex = 0)
       {
-         groupByColumn(_pathElementsBinder.ColumnAt(pathElement), groupIndex);
+         groupByColumn(_pathElementsBinder.ColumnAt(pathElementId), groupIndex);
       }
 
       private void groupByColumn(IGridViewColumn gridViewColumn, int groupIndex = 0)

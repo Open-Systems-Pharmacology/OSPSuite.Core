@@ -2,14 +2,12 @@
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.Mappers;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Presentation
+namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_PathToPathElementsMapper : ContextSpecification<IPathToPathElementsMapper>
    {
@@ -42,12 +40,12 @@ namespace OSPSuite.Presentation.Presentation
 
       protected void ShouldReturnPathElementValues(string simulation, string topContainer, string container, string compartment, string molecule, string name)
       {
-         _result[PathElement.Simulation].DisplayName.ShouldBeEqualTo(simulation);
-         _result[PathElement.TopContainer].DisplayName.ShouldBeEqualTo(topContainer);
-         _result[PathElement.Container].DisplayName.ShouldBeEqualTo(container);
-         _result[PathElement.BottomCompartment].DisplayName.ShouldBeEqualTo(compartment);
-         _result[PathElement.Molecule].DisplayName.ShouldBeEqualTo(molecule);
-         _result[PathElement.Name].DisplayName.ShouldBeEqualTo(name);
+         _result[PathElementId.Simulation].DisplayName.ShouldBeEqualTo(simulation);
+         _result[PathElementId.TopContainer].DisplayName.ShouldBeEqualTo(topContainer);
+         _result[PathElementId.Container].DisplayName.ShouldBeEqualTo(container);
+         _result[PathElementId.BottomCompartment].DisplayName.ShouldBeEqualTo(compartment);
+         _result[PathElementId.Molecule].DisplayName.ShouldBeEqualTo(molecule);
+         _result[PathElementId.Name].DisplayName.ShouldBeEqualTo(name);
       }
    }
 

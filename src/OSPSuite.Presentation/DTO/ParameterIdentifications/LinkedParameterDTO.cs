@@ -18,16 +18,16 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public PathElements PathElements
       {
-         get { return SimulationQuantitySelectionDTO.PathElements; }
-         set { SimulationQuantitySelectionDTO.PathElements = value; }
+         get => SimulationQuantitySelectionDTO.PathElements;
+         set => SimulationQuantitySelectionDTO.PathElements = value;
       }
 
-      public virtual PathElementDTO SimulationPathElement => SimulationQuantitySelectionDTO.SimulationPathElement;
-      public virtual PathElementDTO TopContainerPathElement => SimulationQuantitySelectionDTO.TopContainerPathElement;
-      public virtual PathElementDTO ContainerPathElement => SimulationQuantitySelectionDTO.ContainerPathElement;
-      public virtual PathElementDTO BottomCompartmentPathElement => SimulationQuantitySelectionDTO.BottomCompartmentPathElement;
-      public virtual PathElementDTO MoleculePathElement => SimulationQuantitySelectionDTO.MoleculePathElement;
-      public virtual PathElementDTO NamePathElement => SimulationQuantitySelectionDTO.NamePathElement;
+      public virtual PathElement SimulationPathElement => SimulationQuantitySelectionDTO.SimulationPathElement;
+      public virtual PathElement TopContainerPathElement => SimulationQuantitySelectionDTO.TopContainerPathElement;
+      public virtual PathElement ContainerPathElement => SimulationQuantitySelectionDTO.ContainerPathElement;
+      public virtual PathElement BottomCompartmentPathElement => SimulationQuantitySelectionDTO.BottomCompartmentPathElement;
+      public virtual PathElement MoleculePathElement => SimulationQuantitySelectionDTO.MoleculePathElement;
+      public virtual PathElement NamePathElement => SimulationQuantitySelectionDTO.NamePathElement;
       public virtual string Category => SimulationQuantitySelectionDTO.Category;
       public virtual string DisplayPathAsString => SimulationQuantitySelectionDTO.DisplayPathAsString;
    }

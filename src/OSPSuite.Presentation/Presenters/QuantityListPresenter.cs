@@ -71,9 +71,9 @@ namespace OSPSuite.Presentation.Presenters
       bool AutomaticallyHideEmptyColumns { get; set; }
 
       /// <summary>
-      ///    Returns true if the column for the path with element <paramref name="pathElement" /> contains only empty value
+      ///    Returns true if the column for the path with element <paramref name="pathElementId" /> contains only empty value
       /// </summary>
-      bool PathElementIsEmpty(PathElement pathElement);
+      bool PathElementIsEmpty(PathElementId pathElementId);
 
       /// <summary>
       ///    If <see cref="AutomaticallyHideEmptyColumns" /> is set to true, hide or show the column automatically based on the
@@ -141,20 +141,20 @@ namespace OSPSuite.Presentation.Presenters
          UpdatePathColumnsVisibility();
       }
 
-      public bool PathElementIsEmpty(PathElement pathElement)
+      public bool PathElementIsEmpty(PathElementId pathElementId)
       {
-         return _quantitySelectionDTOList.HasOnlyEmptyValuesAt(pathElement);
+         return _quantitySelectionDTOList.HasOnlyEmptyValuesAt(pathElementId);
       }
 
       public void UpdatePathColumnsVisibility()
       {
          if (!AutomaticallyHideEmptyColumns) return;
-         EnumHelper.AllValuesFor<PathElement>().Each(updateColumnVisibility);
+         EnumHelper.AllValuesFor<PathElementId>().Each(updateColumnVisibility);
       }
 
-      private void updateColumnVisibility(PathElement pathElement)
+      private void updateColumnVisibility(PathElementId pathElementId)
       {
-         _view.SetVisibility(pathElement, !PathElementIsEmpty(pathElement));
+         _view.SetVisibility(pathElementId, !PathElementIsEmpty(pathElementId));
       }
 
       public QuantitySelectionDTO QuantityDTOByPath(string quantityPath)
@@ -177,29 +177,29 @@ namespace OSPSuite.Presentation.Presenters
          _quantitySelectionDTOList.Remove(quantitySelectionDTO);
       }
 
-      public void GroupBy(PathElement pathElement)
+      public void GroupBy(PathElementId pathElementId)
       {
-         View.GroupPathElement = pathElement;
+         View.GroupPathElementId = pathElementId;
       }
 
-      public void SortColumn(PathElement pathElement)
+      public void SortColumn(PathElementId pathElementId)
       {
-         View.SortedPathElement = pathElement;
+         View.SortedPathElementId = pathElementId;
       }
 
-      public void Show(PathElement pathElement)
+      public void Show(PathElementId pathElementId)
       {
-         View.SetVisibility(pathElement, visible: true);
+         View.SetVisibility(pathElementId, visible: true);
       }
 
-      public void Hide(PathElement pathElement)
+      public void Hide(PathElementId pathElementId)
       {
-         View.SetVisibility(pathElement, visible: false);
+         View.SetVisibility(pathElementId, visible: false);
       }
 
-      public void SetCaption(PathElement pathElement, string caption)
+      public void SetCaption(PathElementId pathElementId, string caption)
       {
-         View.SetCaption(pathElement, caption);
+         View.SetCaption(pathElementId, caption);
       }
 
       public void Show(QuantityColumn column)

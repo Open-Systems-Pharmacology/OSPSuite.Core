@@ -40,12 +40,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public DataColumn DataColumn { get; }
 
       public string RepositoryName => DataColumn.Repository?.Name;
-      public string Simulation => displayNameFor(PathElement.Simulation);
-      public string TopContainer => displayNameFor(PathElement.TopContainer);
-      public string Container => displayNameFor(PathElement.Container);
-      public string BottomCompartment => displayNameFor(PathElement.BottomCompartment);
-      public string Molecule => displayNameFor(PathElement.Molecule);
-      public string Name => displayNameFor(PathElement.Name);
+      public string Simulation => displayNameFor(PathElementId.Simulation);
+      public string TopContainer => displayNameFor(PathElementId.TopContainer);
+      public string Container => displayNameFor(PathElementId.Container);
+      public string BottomCompartment => displayNameFor(PathElementId.BottomCompartment);
+      public string Molecule => displayNameFor(PathElementId.Molecule);
+      public string Name => displayNameFor(PathElementId.Name);
       public string BaseGridName => DataColumn.BaseGrid.Name;
       public int OrderIndex => DataColumn.QuantityInfo.OrderIndex;
       public string QuantityName => DataColumn.QuantityInfo.Name;
@@ -70,6 +70,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _pathElements = displayQuantityPathFunc(dataColumn);
       }
 
-      private string displayNameFor(PathElement pathElement) => _pathElements[pathElement].DisplayName;
+      private string displayNameFor(PathElementId pathElementId) => _pathElements[pathElementId].DisplayName;
    }
 }

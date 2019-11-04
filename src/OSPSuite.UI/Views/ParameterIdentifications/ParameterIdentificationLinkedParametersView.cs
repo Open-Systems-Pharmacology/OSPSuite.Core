@@ -47,9 +47,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.RefreshData();
       }
 
-      public void SetVisibility(PathElement pathElement, bool visible)
+      public void SetVisibility(PathElementId pathElementId, bool visible)
       {
-         _pathElementsBinder.SetVisibility(pathElement, visible);
+         _pathElementsBinder.SetVisibility(pathElementId, visible);
       }
 
       public override void InitializeBinding()

@@ -81,8 +81,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_group_the_view_by_simulation_and_container()
       {
-         A.CallTo(() => _view.GroupBy(PathElement.Container, 0)).MustHaveHappened();
-         A.CallTo(() => _view.GroupBy(PathElement.Name, 1)).MustHaveHappened();
+         A.CallTo(() => _view.GroupBy(PathElementId.Container, 0)).MustHaveHappened();
+         A.CallTo(() => _view.GroupBy(PathElementId.Name, 1)).MustHaveHappened();
       }
    }
 

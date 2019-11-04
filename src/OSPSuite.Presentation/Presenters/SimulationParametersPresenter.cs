@@ -55,8 +55,8 @@ namespace OSPSuite.Presentation.Presenters
          _view.BindToModeSelection();
          _view.BindTo(_allParameterDTOs);
          Refresh();
-         _view.GroupBy(PathElement.Container, groupIndex: 0);
-         _view.GroupBy(PathElement.Name, groupIndex: 1);
+         _view.GroupBy(PathElementId.Container, groupIndex: 0);
+         _view.GroupBy(PathElementId.Name, groupIndex: 1);
       }
 
       public ParameterGroupingMode ParameterGroupingMode

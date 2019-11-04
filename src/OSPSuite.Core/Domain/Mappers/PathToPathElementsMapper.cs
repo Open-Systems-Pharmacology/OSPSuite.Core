@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Presentation.DTO;
 
-namespace OSPSuite.Presentation.Mappers
+namespace OSPSuite.Core.Domain.Mappers
 {
    public interface IPathToPathElementsMapper : IMapper<IEntity, PathElements>
    {
       /// <summary>
-      ///    Returns values for the fixed <see cref="PathElement" /> to display the variable length path starting from container
+      ///    Returns values for the fixed <see cref="PathElementId" /> to display the variable length path starting from
+      ///    container
       /// </summary>
       /// <param name="rootContainer">root container for path </param>
       /// <param name="entityPath">variable length path (may begin with root container name)</param>
-      /// <returns>values for the fixed  <see cref="PathElement" /></returns>
+      /// <returns>values for the fixed  <see cref="PathElementId" /></returns>
       PathElements MapFrom(IContainer rootContainer, IReadOnlyList<string> entityPath);
    }
 
@@ -62,7 +61,7 @@ namespace OSPSuite.Presentation.Mappers
          if (string.Equals(rootContainer.Name, pathElements[0]))
          {
             containers.Add(rootContainer);
-            firstPathElementToProcess = 1; // first pathElement already processed
+            firstPathElementToProcess = 1; // first pathElementId already processed
          }
 
          IContainer container = rootContainer;
@@ -97,7 +96,7 @@ namespace OSPSuite.Presentation.Mappers
          var containerList = containers.ToList();
 
          if (!string.IsNullOrEmpty(name))
-            pathElements[PathElement.Name] = CreatePathElementDTO(name);
+            pathElements[PathElementId.Name] = CreatePathElement(name);
 
          if (!containerList.Any())
             return pathElements;
@@ -105,10 +104,10 @@ namespace OSPSuite.Presentation.Mappers
          // add Simulation entry
          if (isRootContainer(containerList[0]))
          {
-            var rootPathElement = CreatePathElementDTO(containerList[0]);
-            pathElements[PathElement.Simulation] = rootPathElement;
-            if(string.IsNullOrEmpty(rootPathElement.IconName))
-               rootPathElement.IconName = ApplicationIcons.Simulation.IconName;
+            var rootPathElement = CreatePathElement(containerList[0]);
+            pathElements[PathElementId.Simulation] = rootPathElement;
+            if (string.IsNullOrEmpty(rootPathElement.IconName))
+               rootPathElement.IconName = IconNames.SIMULATION;
 
             containerList.RemoveAt(0);
          }
@@ -117,19 +116,19 @@ namespace OSPSuite.Presentation.Mappers
          var moleculeContainer = containerList.LastOrDefault(item => item.ContainerType == ContainerType.Molecule);
          if (moleculeContainer != null)
          {
-            pathElements[PathElement.Molecule] = CreatePathElementDTO(moleculeContainer);
+            pathElements[PathElementId.Molecule] = CreatePathElement(moleculeContainer);
             if (containerList.Last() == moleculeContainer)
                containerList.Remove(moleculeContainer);
 
             // same name in molecule and in name, this is the amount for the molecule
-            if (string.Equals(pathElements[PathElement.Molecule].DisplayName, name))
-               pathElements[PathElement.Name].DisplayName = Captions.AmountInContainer;
+            if (string.Equals(pathElements[PathElementId.Molecule].DisplayName, name))
+               pathElements[PathElementId.Name].DisplayName = Captions.AmountInContainer;
          }
 
          // add TopContainer entry
          if (containerList.Any())
          {
-            pathElements[PathElement.TopContainer] = CreatePathElementDTO(containerList[0]);
+            pathElements[PathElementId.TopContainer] = CreatePathElement(containerList[0]);
             containerList.RemoveAt(0);
          }
 
@@ -138,21 +137,21 @@ namespace OSPSuite.Presentation.Mappers
          var compartmentContainer = containerList.LastOrDefault(item => item.ContainerType == ContainerType.Compartment);
          if (compartmentContainer != null)
          {
-            pathElements[PathElement.BottomCompartment] = CreatePathElementDTO(compartmentContainer);
+            pathElements[PathElementId.BottomCompartment] = CreatePathElement(compartmentContainer);
             if (containerList.Last() == compartmentContainer)
                containerList.Remove(compartmentContainer);
          }
 
          if (containerList.Any())
-            pathElements[PathElement.Container] = CreateContainerPath(containerList);
+            pathElements[PathElementId.Container] = CreateContainerPath(containerList);
 
          return pathElements;
       }
 
-      protected virtual PathElementDTO CreateContainerPath(IReadOnlyList<IContainer> containerList)
+      protected virtual PathElement CreateContainerPath(IReadOnlyList<IContainer> containerList)
       {
          var containerNames = containerList.Select(DisplayNameFor).ToString(Constants.DISPLAY_PATH_SEPARATOR);
-         return CreatePathElementDTO(containerNames);
+         return CreatePathElement(containerNames);
       }
 
       protected virtual string DisplayNameFor(IContainer container)
@@ -173,22 +172,15 @@ namespace OSPSuite.Presentation.Mappers
             : MapFrom(entity.RootContainer, _entityPathResolver.ObjectPathFor(entity, addSimulationName: true).ToList());
       }
 
-      protected virtual PathElementDTO CreatePathElementDTO(IContainer container)
+      protected virtual PathElement CreatePathElement(IContainer container)
       {
-         string iconName = null;
-         if (ApplicationIcons.HasIconNamed(container.Icon))
-            iconName = container.Icon;
-
-         return CreatePathElementDTO(DisplayNameFor(container), iconName);
+         return CreatePathElement(DisplayNameFor(container), container?.Icon);
       }
 
-      protected virtual PathElementDTO CreatePathElementDTO(string pathElementValue, string iconName = null)
+      protected virtual PathElement CreatePathElement(string pathElementValue, string iconName = null)
       {
          var iconNameToUse = string.IsNullOrEmpty(iconName) ? pathElementValue.Replace(" ", string.Empty) : iconName;
-         if (!ApplicationIcons.HasIconNamed(iconNameToUse))
-            iconNameToUse = null;
-
-         return new PathElementDTO
+         return new PathElement
          {
             DisplayName = pathElementValue,
             IconName = iconNameToUse

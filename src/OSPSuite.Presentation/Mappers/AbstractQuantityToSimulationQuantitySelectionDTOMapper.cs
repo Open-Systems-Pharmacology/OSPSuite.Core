@@ -31,15 +31,15 @@ namespace OSPSuite.Presentation.Mappers
          if (quantity.HasAncestorWith(x => x.ContainerType == ContainerType.Application))
             updatePathElement(containerPathElement, ObjectTypes.Application, ApplicationIcons.Application);
 
-         quantitySelectionDTO.PathElements[PathElement.Container] = containerPathElement;
+         quantitySelectionDTO.PathElements[PathElementId.Container] = containerPathElement;
       }
 
-      private void updatePathElement(PathElementDTO pathElement, string displayName, ApplicationIcon icon)
+      private void updatePathElement(PathElement pathElement, string displayName, ApplicationIcon icon)
       {
          updatePathElement(pathElement, displayName, icon.IconName);
       }
 
-      private void updatePathElement(PathElementDTO pathElement, string displayName, string iconName)
+      private void updatePathElement(PathElement pathElement, string displayName, string iconName)
       {
          if (string.IsNullOrEmpty(pathElement.DisplayName))
             pathElement.DisplayName = displayName;

@@ -58,17 +58,17 @@ namespace OSPSuite.Presentation.Presentation
          _dto1 = new DiffItemDTO();
          _dto2 = new DiffItemDTO();
 
-         _dto1.PathElements[PathElement.Name] = new PathElementDTO {DisplayName = "A"};
-         _dto2.PathElements[PathElement.Name] = new PathElementDTO { DisplayName = "B" };
+         _dto1.PathElements[PathElementId.Name] = new PathElement {DisplayName = "A"};
+         _dto2.PathElements[PathElementId.Name] = new PathElement { DisplayName = "B" };
          
-         _dto1.PathElements[PathElement.Molecule] = new PathElementDTO {DisplayName = "Mol"};
-         _dto2.PathElements[PathElement.Molecule] = new PathElementDTO {DisplayName = "Mol2"};
+         _dto1.PathElements[PathElementId.Molecule] = new PathElement {DisplayName = "Mol"};
+         _dto2.PathElements[PathElementId.Molecule] = new PathElement {DisplayName = "Mol2"};
 
-         _dto1.PathElements[PathElement.TopContainer] = new PathElementDTO {DisplayName = "A"};
-         _dto2.PathElements[PathElement.TopContainer] = new PathElementDTO {DisplayName = "A"};
+         _dto1.PathElements[PathElementId.TopContainer] = new PathElement {DisplayName = "A"};
+         _dto2.PathElements[PathElementId.TopContainer] = new PathElement {DisplayName = "A"};
 
-         _dto1.PathElements[PathElement.BottomCompartment] = new PathElementDTO { DisplayName = "" };
-         _dto2.PathElements[PathElement.BottomCompartment] = new PathElementDTO { DisplayName = "" };
+         _dto1.PathElements[PathElementId.BottomCompartment] = new PathElement { DisplayName = "" };
+         _dto2.PathElements[PathElementId.BottomCompartment] = new PathElement { DisplayName = "" };
 
 
          _report.Add(_diffItem1);
@@ -107,21 +107,21 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_hide_columns_in_the_view_with_only_empty_value()
       {
-         A.CallTo(() => _view.SetVisibility(PathElement.BottomCompartment, false)).MustHaveHappened();
-         A.CallTo(() => _view.SetVisibility(PathElement.Simulation, false)).MustHaveHappened();
+         A.CallTo(() => _view.SetVisibility(PathElementId.BottomCompartment, false)).MustHaveHappened();
+         A.CallTo(() => _view.SetVisibility(PathElementId.Simulation, false)).MustHaveHappened();
       }
 
       [Observation]
       public void should_show_columns_in_the_view_with_different_values()
       {
-         A.CallTo(() => _view.SetVisibility(PathElement.TopContainer, true)).MustHaveHappened();
-         A.CallTo(() => _view.SetVisibility(PathElement.Molecule, true)).MustHaveHappened();
+         A.CallTo(() => _view.SetVisibility(PathElementId.TopContainer, true)).MustHaveHappened();
+         A.CallTo(() => _view.SetVisibility(PathElementId.Molecule, true)).MustHaveHappened();
       }
 
       [Observation]
       public void should_always_hide_the_column_name_as_it_is_redundant_with_the_column_object_name()
       {
-         A.CallTo(() => _view.SetVisibility(PathElement.Name, false)).MustHaveHappened();
+         A.CallTo(() => _view.SetVisibility(PathElementId.Name, false)).MustHaveHappened();
       }
    }
 }

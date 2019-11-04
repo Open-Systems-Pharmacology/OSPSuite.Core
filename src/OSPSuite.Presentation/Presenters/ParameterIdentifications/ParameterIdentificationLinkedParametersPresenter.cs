@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _allLinkedParameters.AddRange(allExistingLinkedParametersFrom(_identificationParameter));
 
          rebind();
-         EnumHelper.AllValuesFor<PathElement>().Each(updateColumnVisibility);
+         EnumHelper.AllValuesFor<PathElementId>().Each(updateColumnVisibility);
       }
 
       private IEnumerable<LinkedParameterDTO> allExistingLinkedParametersFrom(IdentificationParameter identificationParameter)
@@ -75,9 +75,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindTo(_allLinkedParameters);
       }
 
-      private void updateColumnVisibility(PathElement pathElement)
+      private void updateColumnVisibility(PathElementId pathElementId)
       {
-         _view.SetVisibility(pathElement, !_allLinkedParameters.HasOnlyEmptyValuesAt(pathElement));
+         _view.SetVisibility(pathElementId, !_allLinkedParameters.HasOnlyEmptyValuesAt(pathElementId));
       }
 
       public void RemoveParameter(LinkedParameterDTO linkedParameterDTO)
