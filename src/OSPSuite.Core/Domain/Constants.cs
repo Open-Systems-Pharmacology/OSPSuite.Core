@@ -64,9 +64,10 @@ namespace OSPSuite.Core.Domain
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
 
-      public static readonly string ProjectUndefined = "Undefined";
+      public const string PROJECT_UNDEFINED = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";
       public const string NAN = "<NaN>";
+      public const string UNKNOWN = "Unknown";
       public const string CHILD = "Child";
 
       public const string PRODUCT_SITE = "www.open-systems-pharmacology.org";
@@ -397,13 +398,14 @@ namespace OSPSuite.Core.Domain
 
       public static class Population
       {
-         public const string ALL_GENDER = "AllGender";
+         public const string ALL_GENDERS = "AllGenders";
          public const string TIME_COLUMN = "Time";
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
          public const string RACE_INDEX = "RaceIndex";
-         public const string GENDER = "GENDER";
+         public const string GENDER = "Gender";
+         public const string POPULATION = "Population";
       }
 
       public static class OptimizationAlgorithm

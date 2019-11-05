@@ -14,7 +14,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface ISimulationResultsImportTask
    {
-      Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files,CancellationToken cancellationToken, bool showImportProgress = true);
+      Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files, CancellationToken cancellationToken, bool showImportProgress = true);
    }
 
    public class SimulationResultsImportTask : ISimulationResultsImportTask
@@ -63,7 +63,6 @@ namespace OSPSuite.Infrastructure.Import.Services
 
                //once all results have been imported, it is time to ensure that they are consistent
                var results = createSimulationResultsFrom(allImportedResults);
-
 
                addImportedQuantityToLogForSuccessfulImport(results);
                return results;
