@@ -20,6 +20,12 @@ namespace OSPSuite.Core.Domain.Populations
          AllCovariates = new List<Covariates>(allCovariates);
       }
 
+      public void Add(IndividualValues individualValues)
+      {
+         AllCovariates.Add(individualValues.Covariates);
+         Add(individualValues.ParameterValues);
+      }
+
       public virtual bool Has(string parameterPath) => ParameterValuesCache.Has(parameterPath);
 
       public virtual IReadOnlyList<double> ValuesFor(string parameterPath) => ParameterValuesCache.ValuesFor(parameterPath);
@@ -75,6 +81,12 @@ namespace OSPSuite.Core.Domain.Populations
          {
             AllCovariates.Add(new Covariates());
          }
+      }
+
+      public virtual void Merge(IndividualValuesCache individualValuesCache, PathCache<IParameter> parameterCache)
+      {
+         AllCovariates.AddRange(individualValuesCache.AllCovariates);
+         ParameterValuesCache.Merge(individualValuesCache.ParameterValuesCache, parameterCache);
       }
 
       public IReadOnlyList<string> AllCovariatesNames() => AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct().ToArray();
