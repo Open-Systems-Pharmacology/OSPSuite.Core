@@ -77,6 +77,12 @@ namespace OSPSuite.Core.Domain.Populations
          }
       }
 
+      public virtual void Merge(IndividualValuesCache individualValuesCache, PathCache<IParameter> parameterCache)
+      {
+         AllCovariates.AddRange(individualValuesCache.AllCovariates);
+         ParameterValuesCache.Merge(individualValuesCache.ParameterValuesCache, parameterCache);
+      }
+
       public IReadOnlyList<string> AllCovariatesNames() => AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct().ToArray();
 
       public Covariates CovariatesAt(int index) => AllCovariates[index];
