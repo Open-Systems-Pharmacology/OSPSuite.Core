@@ -25,7 +25,19 @@ namespace OSPSuite.Core.Domain.Populations
       void SetValues(string parameterPath, IReadOnlyList<RandomValue> newValues);
       void SetValues(string parameterPath, IReadOnlyList<double> newValues);
       IReadOnlyCollection<ParameterValues> AllParameterValues { get; }
+
+      /// <summary>
+      /// Returns the <see cref="ParameterValues"/> defined with path <paramref name="parameterPath"/> or NULL if not found
+      /// </summary>
+      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues"/></param>
       ParameterValues ParameterValuesFor(string parameterPath);
+
+      /// <summary>
+      /// Returns the <see cref="ParameterValues"/> defined with path <paramref name="parameterPath"/>. It it does not exist, an empty value will be added
+      /// </summary>
+      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues"/></param>
+      ParameterValues GetOrAddParameterValuesFor(string parameterPath);
+
       ParameterValues ParameterValuesAt(int index);
       void Add(ParameterValues parameterValues);
       void Add(IReadOnlyCollection<ParameterValue> parameterValues);
@@ -68,7 +80,7 @@ namespace OSPSuite.Core.Domain.Populations
          return matchingPath ?? string.Empty;
       }
 
-      public virtual ParameterValues ParameterValuesFor(string parameterPath)
+      public virtual ParameterValues GetOrAddParameterValuesFor(string parameterPath)
       {
          var possibleKey = internalKeyFor(parameterPath);
          if (string.IsNullOrEmpty(possibleKey))
@@ -76,6 +88,15 @@ namespace OSPSuite.Core.Domain.Populations
             possibleKey = parameterPath;
             Add(new ParameterValues(parameterPath));
          }
+
+         return _parameterValuesCache[possibleKey];
+      }
+
+      public virtual ParameterValues ParameterValuesFor(string parameterPath)
+      {
+         var possibleKey = internalKeyFor(parameterPath);
+         if (string.IsNullOrEmpty(possibleKey))
+            return null;
 
          return _parameterValuesCache[possibleKey];
       }
@@ -88,7 +109,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       private void addValues(IEnumerable<ParameterValue> parameterValues)
       {
-         parameterValues.Each(pv => ParameterValuesFor(pv.ParameterPath).Add(pv));
+         parameterValues.Each(pv => GetOrAddParameterValuesFor(pv.ParameterPath).Add(pv));
       }
 
       public virtual bool Has(string parameterPath)
@@ -97,9 +118,9 @@ namespace OSPSuite.Core.Domain.Populations
          return !string.IsNullOrEmpty(possibleKey);
       }
 
-      public virtual IReadOnlyList<double> ValuesFor(string parameterPath) => ParameterValuesFor(parameterPath).Values;
+      public virtual IReadOnlyList<double> ValuesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Values ?? new List<double>();
 
-      public virtual IReadOnlyList<double> PercentilesFor(string parameterPath) => ParameterValuesFor(parameterPath).Percentiles;
+      public virtual IReadOnlyList<double> PercentilesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Percentiles ?? new List<double>();
 
       public virtual string[] AllParameterPaths() => _parameterValuesCache.Keys.ToArray();
 
@@ -119,7 +140,7 @@ namespace OSPSuite.Core.Domain.Populations
       private void setValues<T>(string parameterPath, IReadOnlyList<T> newValues, Func<ParameterValues, Action<IReadOnlyList<T>>> addValuesFunc)
       {
          validateCount(parameterPath, newValues);
-         var parameterValues = ParameterValuesFor(parameterPath);
+         var parameterValues = GetOrAddParameterValuesFor(parameterPath);
          parameterValues.Clear();
          addValuesFunc(parameterValues)(newValues);
       }
@@ -165,7 +186,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       private void addDefaultValues(PathCache<IParameter> parameterCache, string parameterPath, int numberOfItems)
       {
-         var parameterValues = ParameterValuesFor(parameterPath);
+         var parameterValues = GetOrAddParameterValuesFor(parameterPath);
          var parameter = parameterCache[parameterPath];
          var defaultValue = double.NaN;
          if (parameter != null)

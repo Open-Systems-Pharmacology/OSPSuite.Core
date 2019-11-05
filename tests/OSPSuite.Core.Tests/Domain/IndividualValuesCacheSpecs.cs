@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FakeItEasy;
+﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Populations;
@@ -44,12 +43,8 @@ namespace OSPSuite.Core.Domain
       private IndividualValuesCache _individualPropertiesCacheToMerge;
       private ParameterValuesCache _originalValueCache;
       private ParameterValuesCache _cacheToMerge;
-      private List<Covariates> _originalCovariates;
-      private List<Covariates> _covariatesToMerge;
-      private Covariates _cov1;
-      private Covariates _cov2;
-      private Covariates _cov3;
-      private Covariates _cov4;
+      private CovariateValuesCache _originalCovariates;
+      private CovariateValuesCache _covariatesToMerge;
       private PathCache<IParameter> _parameterCache;
 
       protected override void Context()
@@ -57,13 +52,10 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _originalValueCache = A.Fake<ParameterValuesCache>();
          _parameterCache = A.Fake<PathCache<IParameter>>();
-         _cov1 = new Covariates();
-         _cov2 = new Covariates();
-         _cov3 = new Covariates();
-         _cov4 = new Covariates();
          _cacheToMerge = A.Fake<ParameterValuesCache>();
-         _originalCovariates = new List<Covariates> {_cov1, _cov2};
-         _covariatesToMerge = new List<Covariates> {_cov3, _cov4};
+         _originalCovariates = A.Fake<CovariateValuesCache>();
+         _parameterCache = A.Fake<PathCache<IParameter>>();
+         _covariatesToMerge = A.Fake<CovariateValuesCache>();
          sut = new IndividualValuesCache(_originalValueCache, _originalCovariates);
          _individualPropertiesCacheToMerge = new IndividualValuesCache(_cacheToMerge, _covariatesToMerge);
       }
@@ -76,7 +68,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_add_the_covariates_from_the_properties_cache()
       {
-         sut.AllCovariates.ShouldOnlyContain(_cov1, _cov2, _cov3, _cov4);
+         A.CallTo(() => _originalCovariates.Merge(_covariatesToMerge)).MustHaveHappened();
       }
 
       [Observation]

@@ -2,11 +2,12 @@
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class CovariatesXmlSerializer : OSPSuiteXmlSerializer<Covariates>
+   public class CovariateValuesXmlSerializer : OSPSuiteXmlSerializer<CovariateValues>
    {
       public override void PerformMapping()
       {
-         Map(x => x.Attributes);
+         Map(x => x.Name);
+         Map(x => x.Values);
       }
    }
 }

@@ -34,7 +34,6 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         var simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");
          _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
       }
 
@@ -58,8 +57,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_be_able_to_retrieve_covariates_by_index()
       {
-         var cov = _individualValuesCache.CovariatesAt(7);
-         cov.Covariate("Gender").ShouldBeEqualTo("2");
+         var cov = _individualValuesCache.CovariateValuesFor("Gender");
+         cov.ValueAt(6).ShouldBeEqualTo("2");
       }
    }
 }

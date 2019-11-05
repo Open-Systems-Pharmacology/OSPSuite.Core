@@ -1,28 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace OSPSuite.Core.Domain.Populations
 {
    public class IndividualValuesCache : IParameterValueCache
    {
-      // One entry per individual. Each Covariate item contains all the covariates defined for one individual such as gender, race, populationName 
-      public List<Covariates> AllCovariates { get; }
-
       public ParameterValuesCache ParameterValuesCache { get; }
+      public CovariateValuesCache CovariateValuesCache { get; }
 
-      public IndividualValuesCache() : this(new ParameterValuesCache(), new List<Covariates>())
+      public IndividualValuesCache() : this(new ParameterValuesCache(), new CovariateValuesCache())
       {
       }
 
-      public IndividualValuesCache(ParameterValuesCache parameterValuesCache, IEnumerable<Covariates> allCovariates)
+      public IndividualValuesCache(ParameterValuesCache parameterValuesCache, CovariateValuesCache covariateValuesCache)
       {
          ParameterValuesCache = parameterValuesCache;
-         AllCovariates = new List<Covariates>(allCovariates);
+         CovariateValuesCache = covariateValuesCache;
       }
 
       public void Add(IndividualValues individualValues)
       {
-         AllCovariates.Add(individualValues.Covariates);
+         CovariateValuesCache.AddIndividualValues(individualValues.Covariates);
          Add(individualValues.ParameterValues);
       }
 
@@ -41,9 +38,11 @@ namespace OSPSuite.Core.Domain.Populations
 
       public double[] GetValues(string parameterPath) => ParameterValuesCache.GetValues(parameterPath);
 
+      public string[] GetCovariateValues(string covariateName) => CovariateValuesCache.GetValues(covariateName);
+
       public virtual IndividualValuesCache Clone()
       {
-         return new IndividualValuesCache(ParameterValuesCache.Clone(), AllCovariates);
+         return new IndividualValuesCache(ParameterValuesCache.Clone(), CovariateValuesCache.Clone());
       }
 
       public virtual void Remove(string parameterPath) => ParameterValuesCache.Remove(parameterPath);
@@ -56,6 +55,8 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual ParameterValues ParameterValuesFor(string parameterPath) => ParameterValuesCache.ParameterValuesFor(parameterPath);
 
+      public ParameterValues GetOrAddParameterValuesFor(string parameterPath) => ParameterValuesCache.GetOrAddParameterValuesFor(parameterPath);
+
       public virtual ParameterValues ParameterValuesAt(int index) => ParameterValuesCache.ParameterValuesAt(index);
 
       public virtual void Add(ParameterValues parameterValues) => ParameterValuesCache.Add(parameterValues);
@@ -64,38 +65,23 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual void RenamePath(string oldPath, string newPath) => ParameterValuesCache.RenamePath(oldPath, newPath);
 
-      public virtual void AddCovariate(string covariate, IReadOnlyList<string> values) => addCovariates(covariate, values);
-
-      private void addCovariates<T>(string covariate, IReadOnlyList<T> values)
-      {
-         addCovariatesIfRequired(values.Count);
-         for (int i = 0; i < values.Count; i++)
-         {
-            AllCovariates[i].AddCovariate(covariate, values[i]);
-         }
-      }
-
-      private void addCovariatesIfRequired(int numberOfItems)
-      {
-         for (int i = AllCovariates.Count; i < numberOfItems; i++)
-         {
-            AllCovariates.Add(new Covariates());
-         }
-      }
+      public virtual void AddCovariate(string covariateName, IReadOnlyList<string> values) => CovariateValuesCache.Add(covariateName, values);
 
       public virtual void Merge(IndividualValuesCache individualValuesCache, PathCache<IParameter> parameterCache)
       {
-         AllCovariates.AddRange(individualValuesCache.AllCovariates);
+         CovariateValuesCache.Merge(individualValuesCache.CovariateValuesCache);
          ParameterValuesCache.Merge(individualValuesCache.ParameterValuesCache, parameterCache);
       }
 
-      public IReadOnlyList<string> AllCovariatesNames() => AllCovariates.SelectMany(x => x.Attributes.Keys).Distinct().ToArray();
+      /// <summary>
+      ///    Returns the covariates with the given <paramref name="covariateName"/> or null if not defined
+      /// </summary>
+      /// <param name="covariateName"></param>
+      /// <returns></returns>
+      public virtual CovariateValues CovariateValuesFor(string covariateName) => CovariateValuesCache.CovariateValuesFor(covariateName);
 
-      public Covariates CovariatesAt(int index) => AllCovariates[index];
+      public IReadOnlyList<string> AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
 
-      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName)
-      {
-         return AllCovariates.Select(x => x.Covariate(covariateName)).ToArray();
-      }
+      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesFor(covariateName)?.Values ?? new List<string>();
    }
 }

@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          Map(x => x.ParameterValuesCache);
-         MapEnumerable(x => x.AllCovariates, cache => cache.AllCovariates.Add);
+         Map(x => x.CovariateValuesCache);
       }
    }
 }
