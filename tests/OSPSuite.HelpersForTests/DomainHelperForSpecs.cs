@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
@@ -10,6 +12,8 @@ namespace OSPSuite.Helpers
 {
    public static class DomainHelperForSpecs
    {
+      private static string PATH_TO_DATA = "..\\..\\..\\Data\\";
+
       private static Dimension _lengthDimension;
       private static Dimension _concentrationDimension;
       private static Dimension _timeDimension;
@@ -216,6 +220,12 @@ namespace OSPSuite.Helpers
          }.WithName(name);
 
       }
+
+      public static string SimulationResultsFilePathFor(string fileNameWithoutExtension)
+      {
+         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "SimulationResultsFiles", fileNameWithoutExtension + ".csv");
+      }
+
    }
 
 

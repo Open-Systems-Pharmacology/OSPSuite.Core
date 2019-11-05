@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public Covariates()
       {
-         Attributes = new Cache<string, string>(onMissingKey: x => string.Empty);
+         Attributes = new Cache<string, string>(onMissingKey: x => Constants.UNKNOWN);
       }
 
       public void AddCovariate<T>(string attributeName, T attributeValue)
