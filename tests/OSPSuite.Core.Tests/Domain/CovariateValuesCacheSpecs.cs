@@ -57,6 +57,14 @@ namespace OSPSuite.Core.Domain
       {
          sut.GetValues("Head").ShouldOnlyContainInOrder("Big", "Small"); 
       }
+
+      [Observation]
+      public void should_be_able_to_retrieve_all_values_for_a_given_individual()
+      {
+         sut.AllCovariateValuesForIndividual(0).ShouldOnlyContainInOrder("Male", "Big");
+         sut.AllCovariateValuesForIndividual(1).ShouldOnlyContainInOrder("Female", "Small");
+         sut.AllCovariateValuesForIndividual(100).ShouldOnlyContainInOrder(Constants.UNKNOWN, Constants.UNKNOWN);
+      }
    }
 
 

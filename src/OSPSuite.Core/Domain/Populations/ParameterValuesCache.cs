@@ -12,14 +12,29 @@ namespace OSPSuite.Core.Domain.Populations
    public interface IParameterValueCache
    {
       bool Has(string parameterPath);
+
+      /// <summary>
+      /// Returns the values for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      /// </summary>
       IReadOnlyList<double> ValuesFor(string parameterPath);
+
+      /// <summary>
+      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      /// </summary>
       IReadOnlyList<double> PercentilesFor(string parameterPath);
+
       string[] AllParameterPaths();
 
       /// <summary>
-      ///    Similar to <see cref="ValuesFor" /> but returns an array for R compatibility
+      /// Returns the values for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
       /// </summary>
       double[] GetValues(string parameterPath);
+
+
+      /// <summary>
+      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      /// </summary>
+      double[] GetPercentiles(string parameterPath);
 
       void Remove(string parameterPath);
       void SetValues(string parameterPath, IReadOnlyList<RandomValue> newValues);
@@ -103,8 +118,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual ParameterValues ParameterValuesAt(int index) => _parameterValuesCache.ElementAt(index);
 
-      public double[] GetValues(string parameterPath) => ValuesFor(parameterPath).ToArray();
-
+     
       public virtual void Add(ParameterValues parameterValues) => _parameterValuesCache.Add(parameterValues);
 
       private void addValues(IEnumerable<ParameterValue> parameterValues)
@@ -118,9 +132,19 @@ namespace OSPSuite.Core.Domain.Populations
          return !string.IsNullOrEmpty(possibleKey);
       }
 
-      public virtual IReadOnlyList<double> ValuesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Values ?? new List<double>();
+      public virtual IReadOnlyList<double> ValuesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Values;
 
-      public virtual IReadOnlyList<double> PercentilesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Percentiles ?? new List<double>();
+      public double[] GetValues(string parameterPath) => ValuesFor(parameterPath)?.ToArray();
+
+      /// <summary>
+      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      /// </summary>
+      public virtual IReadOnlyList<double> PercentilesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Percentiles;
+
+      /// <summary>
+      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      /// </summary>
+      public double[] GetPercentiles(string parameterPath) => PercentilesFor(parameterPath)?.ToArray();
 
       public virtual string[] AllParameterPaths() => _parameterValuesCache.Keys.ToArray();
 

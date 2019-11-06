@@ -1,552 +1,91 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6457DB7A-E3C9-48E0-A886-601570E0C060}</ProjectGuid>
+    <TargetFramework>net472</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OSPSuite.Starter</RootNamespace>
-    <AssemblyName>OSPSuite.Starter</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <StartupObject>OSPSuite.Starter.Program</StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkProfile />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <Authors>Open-Systems-Pharmacology</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <OutputPath>bin\$(Configuration)</OutputPath>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591, 3246</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Bootstrapping\ApplicationStartup.cs" />
-    <Compile Include="Domain\TestSimulation.cs" />
-    <Compile Include="Presenters\ChartTestPresenter.cs" />
-    <Compile Include="Presenters\ComparisonTestPresenter.cs" />
-    <Compile Include="Presenters\DataRepositoryTestPresenter.cs" />
-    <Compile Include="Presenters\ExplorerForTestPresenter.cs" />
-    <Compile Include="Presenters\ExplorerTestPresenter.cs" />
-    <Compile Include="Presenters\HistogramTestPresenter.cs" />
-    <Compile Include="Presenters\MatrixTestPresenter.cs" />
-    <Compile Include="Presenters\SensitivityAnalysisStarter.cs" />
-    <Compile Include="Services\ApplicationSettings.cs" />
-    <Compile Include="Services\HistoryManagerRetriever.cs" />
-    <Compile Include="Services\OSPLogger.cs" />
-    <Compile Include="Tasks\Calculations.cs" />
-    <Compile Include="Tasks\DataRepositoryCreator.cs" />
-    <Compile Include="Tasks\SingleStartPresenterTask.cs" />
-    <Compile Include="Tasks\Starters\ImportObservedDataTask.cs" />
-    <Compile Include="Views\ChartTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ChartTestView.Designer.cs">
-      <DependentUpon>ChartTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HistogramTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\HistogramTestView.Designer.cs">
-      <DependentUpon>HistogramTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IChartTestView.cs" />
-    <Compile Include="Presenters\IJournalRichEditFormPresenter.cs" />
-    <Compile Include="Presenters\ImporterTestPresenter.cs" />
-    <Compile Include="Presenters\JournalPresenter.cs" />
-    <Compile Include="Presenters\MainComparisonPresenter.cs" />
-    <Compile Include="Presenters\MenuAndToolBarPresenter.cs" />
-    <Compile Include="Presenters\MenuBarItemRepository.cs" />
-    <Compile Include="Presenters\OptimizationStarterPresenter.cs" />
-    <Compile Include="Presenters\PivotGridTestPresenter.cs" />
-    <Compile Include="Presenters\RegionNames.cs" />
-    <Compile Include="Presenters\ShellPresenter.cs" />
-    <Compile Include="Presenters\SimulationAnalysisPresenterFactory.cs" />
-    <Compile Include="Services\CompoundCalculationMethodRepository.cs" />
-    <Compile Include="Services\CoreUserSettings.cs" />
-    <Compile Include="Services\FullPathDisplayResolver.cs" />
-    <Compile Include="Services\LazyLoadTask.cs" />
-    <Compile Include="Services\ParameterAnalysableParameterSelector.cs" />
-    <Compile Include="Services\ParameterToParameterDTOMapper.cs" />
-    <Compile Include="Services\SimulationRepository.cs" />
-    <Compile Include="Services\TransferOptimizedParametersToSimulationsTask.cs" />
-    <Compile Include="Tasks\ClassificationTypeToRootNodeTypeMapper.cs" />
-    <Compile Include="Tasks\MyContext.cs" />
-    <Compile Include="Tasks\ObjectTypeResolver.cs" />
-    <Compile Include="Tasks\ParameterValueSetCommand.cs" />
-    <Compile Include="Tasks\SimulationSelector.cs" />
-    <Compile Include="Tasks\Starters\CommandBrowserStarter.cs" />
-    <Compile Include="Tasks\Starters\GridTestStarter.cs" />
-    <Compile Include="Tasks\ApplicationConfiguration.cs" />
-    <Compile Include="Tasks\ChangePropagator.cs" />
-    <Compile Include="Forms\GridViewForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\GridViewForm.Designer.cs">
-      <DependentUpon>GridViewForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tasks\ApplicationDescriminator.cs" />
-    <Compile Include="Tasks\PresentationUserSettings.cs" />
-    <Compile Include="ConstantsForSpecs.cs" />
-    <Compile Include="CreateDataForQuantityVisitor.cs" />
-    <Compile Include="Tasks\DimensionRetriever.cs" />
-    <Compile Include="Tasks\GroupRepository.cs" />
-    <Compile Include="Tasks\License.cs" />
-    <Compile Include="Tasks\ProgressManager.cs" />
-    <Compile Include="Layouts.cs" />
-    <Compile Include="Presenters\JournalTestPresenter.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\RelatedItemDescriptionCreator.cs" />
-    <Compile Include="Tasks\Starters\SimpleUIStarter.cs" />
-    <Compile Include="Tasks\Starters\TestStarter.cs" />
-    <Compile Include="Tasks\ImporterConfigurationDataGenerator.cs" />
-    <Compile Include="Tasks\ToolTipPartCreator.cs" />
-    <Compile Include="Tasks\Workspace.cs" />
-    <Compile Include="Tasks\CloneManager.cs" />
-    <Compile Include="Tasks\OSPSuiteExecutionContext.cs" />
-    <Compile Include="Tasks\ProjectRetriever.cs" />
-    <Compile Include="TestRegister.cs" />
-    <Compile Include="Views\ComparisonTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ComparisonTestView.Designer.cs">
-      <DependentUpon>ComparisonTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DataRepositoryTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\DataRepositoryTestView.Designer.cs">
-      <DependentUpon>DataRepositoryTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\FormMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\FormMain.designer.cs">
-      <DependentUpon>FormMain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IDataRepositoryTestView.cs" />
-    <Compile Include="Views\ExplorerForTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ExplorerForTestView.Designer.cs">
-      <DependentUpon>ExplorerForTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ExplorerTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ExplorerTestView.Designer.cs">
-      <DependentUpon>ExplorerTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IComparisonTestView.cs" />
-    <Compile Include="Views\IExplorerForTestView.cs" />
-    <Compile Include="Views\IExplorerTestView.cs" />
-    <Compile Include="Views\IHistogramTestView.cs" />
-    <Compile Include="Views\IImporterTestView.cs" />
-    <Compile Include="Views\IJournalRichEditFormView.cs" />
-    <Compile Include="Views\IJournalTestView.cs" />
-    <Compile Include="Views\ImporterTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\ImporterTestView.Designer.cs">
-      <DependentUpon>ImporterTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\IPivotGridTestView.cs" />
-    <Compile Include="Views\IShellVIew.cs" />
-    <Compile Include="Views\ITestView.cs" />
-    <Compile Include="Views\JournalRichEditFormView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\JournalRichEditFormView.Designer.cs">
-      <DependentUpon>JournalRichEditFormView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\JournalTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\JournalTestView.Designer.cs">
-      <DependentUpon>JournalTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Presenters\TestPresenter.cs" />
-    <Compile Include="Views\PivotGridTestView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\PivotGridTestView.Designer.cs">
-      <DependentUpon>PivotGridTestView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ShellView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ShellView.Designer.cs">
-      <DependentUpon>ShellView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SimpleUIStarterView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\SimpleUIStarterView.designer.cs">
-      <DependentUpon>SimpleUIStarterView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\StaticCommandList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\StaticCommandList.designer.cs">
-      <DependentUpon>StaticCommandList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TestView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\TestView.Designer.cs">
-      <DependentUpon>TestView.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Forms\GridViewForm.resx">
-      <DependentUpon>GridViewForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="QuantitySelectionForm.resx">
-      <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="Views\ChartTestView.resx">
-      <DependentUpon>ChartTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ComparisonTestView.resx">
-      <DependentUpon>ComparisonTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\DataRepositoryTestView.resx">
-      <DependentUpon>DataRepositoryTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ExplorerTestView.resx">
-      <DependentUpon>ExplorerTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\FormMain.resx">
-      <DependentUpon>FormMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\HistogramTestView.resx">
-      <DependentUpon>HistogramTestView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ImporterTestView.resx">
-      <DependentUpon>ImporterTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\JournalRichEditFormView.resx">
-      <DependentUpon>JournalRichEditFormView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\JournalTestView.resx">
-      <DependentUpon>JournalTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\PivotGridTestView.resx">
-      <DependentUpon>PivotGridTestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ShellView.resx">
-      <DependentUpon>ShellView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\SimpleUIStarterView.resx">
-      <DependentUpon>SimpleUIStarterView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\StaticCommandList.resx">
-      <DependentUpon>StaticCommandList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\TestView.resx">
-      <DependentUpon>TestView.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="QuantitySelectionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="QuantitySelectionForm.Designer.cs">
-      <DependentUpon>QuantitySelectionForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Tasks\ChartTemplatingTask.cs" />
-    <Compile Include="TestConverterter.cs" />
-    <Compile Include="TestEnvironment.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="TestProgramButton.cs" />
+    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\..\packages\OSPSuite.SimModelSolver_CVODES.4.0.0.5\lib\net45\OSPSuite.SimModelSolver_CVODES.dll">
-      <Link>OSPSuite.SimModelSolver_CVODES.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\packages\OSPSuite.FuncParser.4.0.0.42\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll">
-      <Link>OSPSuite.FuncParserNative.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\packages\OSPSuite.SimModel.4.0.0.29\OSPSuite.SimModelNative\bin\native\x64\Release\OSPSuite.SimModelNative.dll">
-      <Link>OSPSuite.SimModelNative.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\x64\SQLite.Interop.dll">
-      <Link>SQLite.Interop.dll</Link>
+    <Content Include="$(PkgOSPSuite_FuncParser)\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml">
-      <Link>OSPSuite.Dimensions.xml</Link>
+    <Content Include="$(PkgOSPSuite_SimModel)\OSPSuite.SimModelNative\bin\native\x64\Release\OSPSuite.SimModelNative.dll" Link="OSPSuite.SimModelNative.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml">
-      <Link>OSPSuite.PKParameters.xml</Link>
+    <Content Include="$(PkgOSPSuite_SimModelSolver_CVODES)\OSPSuite.SimModelSolver_CVODES\bin\native\x64\Release\OSPSuite.SimModelSolver_CVODES.dll" Link="OSPSuite.SimModelSolver_CVODES.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="fish.bmp" />
+    <Content Include="$(PkgSystem_Data_SQLite_Core)\build\net46\x64\SQLite.Interop.dll" Link="SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml" Link="OSPSuite.PKParameters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Folder Include="Properties\" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
-      <Project>{debf0532-3317-4ecf-9877-8efe90ff7372}</Project>
-      <Name>OSPSuite.Assets</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj">
-      <Project>{c74efa9f-8da4-4722-9bb1-70e9664f1ed4}</Project>
-      <Name>OSPSuite.Assets.Images</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj">
-      <Project>{46CB3FBC-88B4-4016-AEC9-91C165EA5671}</Project>
-      <Name>OSPSuite.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Export\OSPSuite.Infrastructure.Export.csproj">
-      <Project>{8a5de288-f16a-468d-802c-3ab42ef55c57}</Project>
-      <Name>OSPSuite.Infrastructure.Export</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj">
-      <Project>{ae585306-54a1-4de1-88f4-ca6ee564558c}</Project>
-      <Name>OSPSuite.Infrastructure.Serialization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj">
-      <Project>{9545FA35-289D-4457-9461-C5F940694607}</Project>
-      <Name>OSPSuite.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj">
-      <Project>{a9abce50-65d6-4e4c-a4f1-730a4feecc46}</Project>
-      <Name>OSPSuite.Presentation.Importer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
-      <Project>{2F8B2246-4458-494A-9A62-3F6E6F62082A}</Project>
-      <Name>OSPSuite.Presentation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj">
-      <Project>{6b501af0-acc0-4051-8fde-9e8a92db22d8}</Project>
-      <Name>OSPSuite.UI.Importer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj">
-      <Project>{ac617e4a-028b-4bff-993c-3ea34eb042b4}</Project>
-      <Name>OSPSuite.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj">
-      <Project>{78911b30-8a98-4881-be77-c163d85b2393}</Project>
-      <Name>OSPSuite.HelpersForTests</Name>
-    </ProjectReference>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\src\OSPSuite.Dimensions\OSPSuite.Dimensions.xml" Link="OSPSuite.Dimensions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Castle.Windsor.5.0.0\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.BonusSkins.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.BonusSkins.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Charts.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Charts.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Data.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Data.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Images.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Images.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Office.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Office.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.PivotGrid.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.PivotGrid.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Printing.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.Printing.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.RichEdit.v18.2.Core, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.RichEdit.v18.2.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.RichEdit.v18.2.Export, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.RichEdit.v18.2.Export.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Utils.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.Presentation.18.2.7\lib\net45\DevExpress.Utils.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraBars.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraBars.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2.UI, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraCharts.v18.2.Wizard, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraCharts.v18.2.Wizard.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraEditors.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraEditors.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraLayout.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraLayout.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraNavBar.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraNavBar.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraPivotGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraPivotGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraPrinting.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraPrinting.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraRichEdit.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraRichEdit.v18.2.Extensions, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraRichEdit.v18.2.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraTreeList.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraTreeList.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraVerticalGrid.v18.2, Version=18.2.7.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DevExpress.18.2.7\lib\net45\DevExpress.XtraVerticalGrid.v18.2.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.DataBinding, Version=2.3.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.2.3.0.3\lib\net462\OSPSuite.DataBinding.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=3.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.DataBinding.DevExpress.3.0.0.3\lib\net462\OSPSuite.DataBinding.DevExpress.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.FuncParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.FuncParser.4.0.0.42\lib\netstandard2.0\OSPSuite.FuncParser.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.Serializer, Version=3.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Serializer.3.0.0.1\lib\netstandard2.0\OSPSuite.Serializer.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.SimModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.SimModel.4.0.0.29\lib\netstandard2.0\OSPSuite.SimModel.dll</HintPath>
-    </Reference>
-    <Reference Include="OSPSuite.Utility, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\OSPSuite.Utility.4.0.0.1\lib\netstandard2.0\OSPSuite.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.111.0\lib\net46\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Web" />
+    <PackageReference Include="OSPSuite.Core" Version="9.0.21" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="18.2.7" />
+    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.42" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.29" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.0.0.6" GeneratePathProperty="true" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Export\OSPSuite.Infrastructure.Export.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Reporting\OSPSuite.Infrastructure.Reporting.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
+    <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
-  <Import Project="..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets'))" />
-  </Target>
+
+
 </Project>

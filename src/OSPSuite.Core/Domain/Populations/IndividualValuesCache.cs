@@ -38,6 +38,8 @@ namespace OSPSuite.Core.Domain.Populations
 
       public double[] GetValues(string parameterPath) => ParameterValuesCache.GetValues(parameterPath);
 
+      public double[] GetPercentiles(string parameterPath) => ParameterValuesCache.GetPercentiles(parameterPath);
+
       public string[] GetCovariateValues(string covariateName) => CovariateValuesCache.GetValues(covariateName);
 
       public virtual IndividualValuesCache Clone()
@@ -74,14 +76,16 @@ namespace OSPSuite.Core.Domain.Populations
       }
 
       /// <summary>
-      ///    Returns the covariates with the given <paramref name="covariateName"/> or null if not defined
+      ///    Returns the covariates with the given <paramref name="covariateName" /> or null if not defined
       /// </summary>
       /// <param name="covariateName"></param>
       /// <returns></returns>
       public virtual CovariateValues CovariateValuesFor(string covariateName) => CovariateValuesCache.CovariateValuesFor(covariateName);
 
-      public IReadOnlyList<string> AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
+      public string[] AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
 
-      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesFor(covariateName)?.Values ?? new List<string>();
+      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
+
+      public string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesForIndividual(individualId);
    }
 }

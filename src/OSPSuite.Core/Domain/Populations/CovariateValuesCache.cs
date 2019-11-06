@@ -90,10 +90,18 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual CovariateValues CovariateValuesFor(string covariateName) => _covariateValuesCache[covariateName];
 
-      public virtual IReadOnlyList<string> ValuesFor(string covariateName) => CovariateValuesFor(covariateName).Values;
+      /// <summary>
+      /// Returns the values for the covariate <paramref name="covariateName"/> or null if the covariate does not exist
+      /// </summary>
+      public virtual IReadOnlyList<string> ValuesFor(string covariateName) => CovariateValuesFor(covariateName)?.Values;
 
-      public string[] GetValues(string covariateName) => ValuesFor(covariateName).ToArray();
+      /// <summary>
+      /// Returns the values for the covariate <paramref name="covariateName"/> or null if the covariate does not exist
+      /// </summary>
+      public string[] GetValues(string covariateName) => ValuesFor(covariateName)?.ToArray();
 
       public void Remove(string covariateName) => _covariateValuesCache.Remove(covariateName);
+
+      public string[] AllCovariateValuesForIndividual(int individualId) => AllCovariateValues.Select(x => x.ValueAt(individualId)).ToArray();
    }
 }

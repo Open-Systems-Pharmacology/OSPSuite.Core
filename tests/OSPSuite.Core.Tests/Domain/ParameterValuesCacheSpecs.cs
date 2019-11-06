@@ -344,8 +344,8 @@ namespace OSPSuite.Core.Domain
       public void should_be_able_to_retrieve_the_values_for_the_parameter_without_the_unit()
       {
          sut.GetValues("PATH1").ShouldOnlyContainInOrder(1, 2, 3);
-         sut.GetValues("PATH2").ShouldBeEmpty();
-         sut.GetValues("PATH2 REST").ShouldBeEmpty();
+         sut.GetValues("PATH2").ShouldBeNull();
+         sut.GetValues("PATH2 REST").ShouldBeNull();
       }
    }
 }

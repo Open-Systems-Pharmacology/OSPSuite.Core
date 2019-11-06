@@ -25,7 +25,13 @@ namespace OSPSuite.Core.Domain.Populations
          Values.Add(value);
       }
 
-      public string ValueAt(int index) => Values[index];
+      public string ValueAt(int index)
+      {
+         if (index < 0 || index >= Count)
+            return Constants.UNKNOWN;
+
+         return Values[index];
+      }
 
       public int Count => Values.Count;
 
