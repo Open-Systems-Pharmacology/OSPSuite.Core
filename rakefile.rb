@@ -19,6 +19,7 @@ task :cover do
 	"OSPSuite.Infrastructure.Tests.dll",
 	"OSPSuite.UI.Tests.dll",
 	"OSPSuite.Presentation.Tests.dll",
+	"OSPSuite.R.Tests.dll",
 	];
 
   Coverage.cover(filter, targetProjects)

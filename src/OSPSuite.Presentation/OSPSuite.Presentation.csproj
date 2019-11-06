@@ -22,6 +22,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
+
   <ItemGroup>
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
@@ -52,5 +53,13 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\common\ChartLayouts\*.*">
+      <Pack>True</Pack>
+      <PackagePath>OSPSuite.Presentation\ChartLayouts</PackagePath>
+    </None>
+  </ItemGroup>
+
 
 </Project>
