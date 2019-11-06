@@ -17,9 +17,6 @@ dotnet_csproj:
   file_version: '$(app_version).$(build_number)'
   informational_version: '$(app_version).$(build_number)'
 
-#cache:
-#  packages -> **\*.csproj  # preserve "packages" directory in the root of build folder but will reset it if a project file is modified
-
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
   - nuget sources add -name utility -source https://ci.appveyor.com/nuget/ospsuite-utility 
@@ -31,6 +28,7 @@ before_build:
   - nuget sources add -name simmodel -source https://ci.appveyor.com/nuget/ospsuite-simmodel
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
   - nuget restore
+  - nuget install opencover -OutputDirectory packages
 
 build:
   publish_nuget: true
