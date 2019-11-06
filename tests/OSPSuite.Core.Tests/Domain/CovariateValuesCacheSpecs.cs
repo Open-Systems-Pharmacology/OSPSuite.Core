@@ -65,6 +65,18 @@ namespace OSPSuite.Core.Domain
          sut.AllCovariateValuesForIndividual(1).ShouldOnlyContainInOrder("Female", "Small");
          sut.AllCovariateValuesForIndividual(100).ShouldOnlyContainInOrder(Constants.UNKNOWN, Constants.UNKNOWN);
       }
+
+
+      [Observation]
+      public void should_be_able_to_retrieve_all_values_for_a_given_individual_covariate()
+      {
+         sut.CovariateValueFor("Gender", 0).ShouldBeEqualTo("Male");
+         sut.CovariateValueFor("Gender", 1).ShouldBeEqualTo("Female");
+         sut.CovariateValueFor("Head", 1).ShouldBeEqualTo("Small");
+         sut.CovariateValueFor("Head", 10).ShouldBeEqualTo(Constants.UNKNOWN);
+         sut.CovariateValueFor("Unknown", 1).ShouldBeNull();
+         sut.CovariateValueFor("Unknown", 10).ShouldBeNull();
+      }
    }
 
 

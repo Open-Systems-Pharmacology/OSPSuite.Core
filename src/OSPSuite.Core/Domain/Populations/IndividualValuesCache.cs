@@ -87,5 +87,7 @@ namespace OSPSuite.Core.Domain.Populations
       public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
 
       public string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesForIndividual(individualId);
+
+      public string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, individualId);
    }
 }
