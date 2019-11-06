@@ -28,7 +28,6 @@ before_build:
   - nuget sources add -name simmodel -source https://ci.appveyor.com/nuget/ospsuite-simmodel
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
   - nuget restore
-  - nuget install opencover -OutputDirectory packages
 
 build:
   publish_nuget: true
