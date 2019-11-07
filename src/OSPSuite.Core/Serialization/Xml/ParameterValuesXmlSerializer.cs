@@ -40,7 +40,9 @@ namespace OSPSuite.Core.Serialization.Xml
             return element;
 
          var doubleSerializer = SerializerRepository.SerializerFor(parameterValues.Percentiles);
-         element.Add(doubleSerializer.Serialize(parameterValues.Percentiles, serializationContext));
+         var percentilesElement = doubleSerializer.Serialize(parameterValues.Percentiles, serializationContext);
+         percentilesElement.Name = Constants.Serialization.PERCENTILES;
+         element.Add(percentilesElement);
 
          return element;
       }

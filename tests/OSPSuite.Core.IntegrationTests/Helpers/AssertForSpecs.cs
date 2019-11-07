@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.PKAnalyses;
+using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Utility.Extensions;
@@ -309,6 +310,12 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x2, x1);
       }
 
+      public static void AreEqualParameterValues(ParameterValues x1, ParameterValues x2)
+      {
+         Assert.AreEqual(x1.ParameterPath, x2.ParameterPath);
+         x1.Values.ShouldBeEqualTo(x2.Values);
+         x1.Percentiles.ShouldBeEqualTo(x2.Percentiles);
+      }
       // checks whether both are null or else both are equal
       public static void AssertAreEqualDouble(double x1, double x2)
       {
