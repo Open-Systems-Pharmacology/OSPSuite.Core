@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -53,7 +54,7 @@ namespace OSPSuite.R.Services
          _results = sut.RunSimulation(_simulation);
       }
 
-      [Observation]
+      [Test]
       public void should_update_the_persistable_flag_in_the_simulation_based_on_the_simulation_settings()
       {
          A.CallTo(() => _simulationPersitableUpdater.UpdateSimulationPersistable(_simulation)).MustHaveHappened();

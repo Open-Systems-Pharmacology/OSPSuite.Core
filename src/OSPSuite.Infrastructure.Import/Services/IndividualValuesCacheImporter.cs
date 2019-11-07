@@ -157,7 +157,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private bool entryRepresentsParameter(string parameterPath)
       {
-         if (parameterPath.IsOneOf(Constants.Population.RACE_INDEX, Constants.Population.GENDER, Constants.Population.RACE))
+         if (parameterPath.IsOneOf(Constants.Population.RACE_INDEX, Constants.Population.GENDER, Constants.Population.POPULATION))
             return false;
 
          return parameterPath.Contains(ObjectPath.PATH_DELIMITER);
