@@ -16,6 +16,9 @@ namespace OSPSuite.R
             DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME),
             PKParametersFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME),
          });
+
+         Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
       }
    }
 }
