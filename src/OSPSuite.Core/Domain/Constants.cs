@@ -404,7 +404,7 @@ namespace OSPSuite.Core.Domain
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
          public const string RACE_INDEX = "RaceIndex";
-         public const string RACE = "Race";
+         public const string POPULATION = "Population";
          public const string GENDER = "Gender";
       }
 

@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
       public void should_not_raise_property_change_event_if_the_value_has_not_changed()
       {
          sut.InterpolationMode = InterpolationModes.xLinear;
-         _propertyName.IsNullOrEmpty().ShouldBeTrue();
+         string.IsNullOrEmpty(_propertyName).ShouldBeTrue();
       }
 
       [Observation]

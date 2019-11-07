@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.UI.Importer", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.UI.Tests", "tests\OSPSuite.UI.Tests\OSPSuite.UI.Tests.csproj", "{D17000A2-5981-44EE-85FA-FDE93DF8D8D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Starter", "tests\OSPSuite.Starter\OSPSuite.Starter.csproj", "{6457DB7A-E3C9-48E0-A886-601570E0C060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Starter", "tests\OSPSuite.Starter\OSPSuite.Starter.csproj", "{6457DB7A-E3C9-48E0-A886-601570E0C060}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.HelpersForTests", "tests\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj", "{78911B30-8A98-4881-BE77-C163D85B2393}"
 EndProject
