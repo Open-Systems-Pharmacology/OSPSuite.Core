@@ -8,6 +8,10 @@
     <RootNamespace>OSPSuite.UI</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="5.4.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
