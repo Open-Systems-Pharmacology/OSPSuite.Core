@@ -7,8 +7,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       ISimulationExportCreator Create();
    }
 
-   //TODO
-   public class  SimulationExportCreatorFactory : DynamicFactory<ISimulationExportCreator>, ISimulationExportCreatorFactory
+   internal class  SimulationExportCreatorFactory : DynamicFactory<ISimulationExportCreator>, ISimulationExportCreatorFactory
    {
    }
 }

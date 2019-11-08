@@ -46,11 +46,19 @@ namespace OSPSuite.Presentation
 
             scan.ExcludeType<ExceptionManager>();
 
+            //Exclude context menu registered separately
+            scan.ExcludeNamespaceContainingType<IContextMenu>();
+
             //should be registered as singleton
             scan.ExcludeType<JournalPageEditorFormPresenter>();
             scan.ExcludeType<ChartLayoutTemplateRepository>();
             scan.ExcludeType<HistoryBrowserConfiguration>();
             scan.ExcludeType<ParameterIdentificationFeedbackPresenter>();
+
+            //Registered as open generic
+            scan.ExcludeType(typeof(CloneObjectBasePresenter<>));
+            scan.ExcludeType(typeof(ParameterToParameterDTOInContainerMapper<>));
+            scan.ExcludeType(typeof(SubPresenterItemManager<>));
 
             //specific app registration
             scan.ExcludeType<DataColumnToPathElementsMapper>();
@@ -66,6 +74,7 @@ namespace OSPSuite.Presentation
          container.Register(typeof(ISubPresenterItemManager<>), typeof(SubPresenterItemManager<>));
          container.Register(typeof(IParameterToParameterDTOInContainerMapper<>), typeof(ParameterToParameterDTOInContainerMapper<>));
          container.Register(typeof(ICloneObjectBasePresenter<>), typeof(CloneObjectBasePresenter<>));
+         
 
          //SINGLETONS
          container.Register<IJournalPageEditorFormPresenter, JournalPageEditorFormPresenter>(LifeStyle.Singleton);
@@ -86,8 +95,11 @@ namespace OSPSuite.Presentation
          {
             scan.AssemblyContainingType<PresenterRegister>();
             scan.IncludeNamespaceContainingType<IContextMenu>();
+            scan.ExcludeType(typeof(ContextMenuFactory<>));
             scan.WithConvention<AllInterfacesAndConcreteTypeRegistrationConvention>();
          });
+
+         container.Register(typeof(IContextMenuFactory<>), typeof(ContextMenuFactory<>));
       }
 
       private static void registerUICommands(IContainer container)

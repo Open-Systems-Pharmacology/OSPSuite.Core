@@ -181,6 +181,11 @@ namespace OSPSuite.Infrastructure.Container.Castle
          return WindsorContainer.ResolveAll<TInterface>();
       }
 
+      public void AddFacility<T>() where T : IFacility, new()
+      {
+         WindsorContainer.AddFacility<T>();
+      }
+
       public void Dispose()
       {
          if (_disposed) return;

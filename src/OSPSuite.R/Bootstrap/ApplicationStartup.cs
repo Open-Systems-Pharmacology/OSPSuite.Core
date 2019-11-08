@@ -35,33 +35,28 @@ namespace OSPSuite.R.Bootstrap
          var container = new AutofacContainer();
 
          IoC.InitializeWith(container);
-         container.RegisterImplementationOf<IContainer>(container);
-//         IoC.RegisterImplementationOf(IoC.Container);
-//         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
+         IoC.RegisterImplementationOf(IoC.Container);
+         //         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
+
+         var serializerRegister = new CoreSerializerRegister();
 
 
-//         using (container.OptimizeDependencyResolution())
-//         {
-         container.RegisterImplementationOf(new SynchronizationContext());
-         container.AddRegister(x => x.FromType<CoreRegister>());
-         container.AddRegister(x => x.FromType<InfrastructureRegister>());
-         container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
-         container.AddRegister(x => x.FromType<RRegister>());
+         using (container.OptimizeDependencyResolution())
+         {
+            container.RegisterImplementationOf(new SynchronizationContext());
+            container.AddRegister(x => x.FromType<CoreRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
+            container.AddRegister(x => x.FromType<RRegister>());
 
-         registerCoreDependencies(container);
+            registerCoreDependencies(container);
 
-         var register = new CoreSerializerRegister();
-         container.AddRegister(x => x.FromInstance(register));
+            container.AddRegister(x => x.FromInstance(serializerRegister));
+         }
 
-         container.Build();
+         serializerRegister.PerformMappingForSerializerIn(container);
 
          initializeGroups(container);
-
-         register.PerformMappingForSerializerIn(container);
-
-         //         }
-
-
          initializeConfiguration(container, apiConfig);
 
          initializeDimensions(container);

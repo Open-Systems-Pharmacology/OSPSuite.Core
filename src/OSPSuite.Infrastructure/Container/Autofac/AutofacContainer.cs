@@ -6,12 +6,14 @@ using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using IContainer = Autofac.IContainer;
-using IoCContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Infrastructure.Container.Autofac
 {
    public class AutofacContainer : IOSPSuiteContainer
    {
+      private readonly List<IAutofacActivationHook> _activationHooks = new List<IAutofacActivationHook>();
+      private bool _hasActivationHooks;
+
       public AutofacContainer() : this(new ContainerBuilder())
       {
       }
@@ -28,11 +30,12 @@ namespace OSPSuite.Infrastructure.Container.Autofac
       public void Build()
       {
          Container = AutofacBuilder.Build();
+         _hasActivationHooks = _activationHooks.Any();
       }
 
       public void Dispose()
       {
-         throw new NotImplementedException();
+         Container.Dispose();
       }
 
       public TInterface Resolve<TInterface>() => Container.Resolve<TInterface>();
@@ -133,6 +136,9 @@ namespace OSPSuite.Infrastructure.Container.Autofac
 
          if (lifeStyle == LifeStyle.Singleton)
             builder.SingleInstance();
+
+         if(_hasActivationHooks)
+            _activationHooks.Each(x=> builder.OnActivated(x.OnActivated));
       }
 
       public void RegisterFactory<TFactory>() where TFactory : class
@@ -141,7 +147,12 @@ namespace OSPSuite.Infrastructure.Container.Autofac
 
       public IDisposable OptimizeDependencyResolution()
       {
-         throw new NotImplementedException();
+         return new AutofacBuilderDisposer(this);
+      }
+
+      public void AddActivationHook<T>() where T: IAutofacActivationHook, new()
+      {
+         _activationHooks.Add(new T());
       }
    }
 }

@@ -97,15 +97,7 @@ namespace OSPSuite.Core
 
          registerThirdPartyComponents(container);
 
-         //FACTORIES
-         container.RegisterFactory<IDiagramModelFactory>();
-         container.RegisterFactory<IModelValidatorFactory>();
-         container.RegisterFactory<IParameterIdentificationEngineFactory>();
-         container.RegisterFactory<ISimModelBatchFactory>();
-         container.RegisterFactory<IParameterIdentificationRunInitializerFactory>();
-         container.RegisterFactory<ISensitivityAnalysisEngineFactory>();
          container.RegisterFactory<IStartableProcessFactory>();
-         container.RegisterFactory<ISimulationExportCreatorFactory>();
 
          //Register Optimization algorithm explicitly
          container.Register<IOptimizationAlgorithm, NelderMeadOptimizer>(Constants.OptimizationAlgorithm.NELDER_MEAD_PKSIM);
