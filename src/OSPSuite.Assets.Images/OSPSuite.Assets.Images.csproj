@@ -17,7 +17,6 @@
     <Description>Common image resources for the Open Systems Pharmacology Suite</Description>
     <Authors>Open-Systems-Pharmacology</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <RootNamespace>OSPSuite.Assets</RootNamespace>

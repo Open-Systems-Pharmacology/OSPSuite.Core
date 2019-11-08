@@ -55,6 +55,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Imp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Serialization", "src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj", "{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Infrastructure.Castle", "src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj", "{F428C61C-1B1A-42E2-8362-E416260E7B07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +153,14 @@ Global
 		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F428C61C-1B1A-42E2-8362-E416260E7B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F428C61C-1B1A-42E2-8362-E416260E7B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F428C61C-1B1A-42E2-8362-E416260E7B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F428C61C-1B1A-42E2-8362-E416260E7B07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
