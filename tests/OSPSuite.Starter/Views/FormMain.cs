@@ -4,8 +4,8 @@ using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Utility.Container;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Helpers;
 using OSPSuite.Starter.Tasks;
-using MyContext = OSPSuite.Starter.Tasks.MyContext;
 
 namespace OSPSuite.Starter.Views
 {

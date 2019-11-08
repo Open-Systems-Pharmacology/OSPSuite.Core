@@ -1,9 +1,11 @@
 ﻿using DevExpress.XtraRichEdit;
 using Northwoods.Go;
+using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Serialization.Diagram;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
+using OSPSuite.UI.Diagram.Managers;
 using OSPSuite.UI.Diagram.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.UI.Views;
@@ -25,6 +27,9 @@ namespace OSPSuite.UI
             scan.ExcludeType<ExceptionView>();
             scan.ExcludeType<ToolTipCreator>();
             scan.ExcludeType<DiagramModelToXmlMapper>();
+
+            //Open type
+            scan.ExcludeType(typeof(ReactionDiagramManager<>));
          });
 
          //Register singleton objects
@@ -33,7 +38,6 @@ namespace OSPSuite.UI
          container.Register<IImageListRetriever, ImageListRetriever>(LifeStyle.Singleton);
          container.Register<IDiagramModelToXmlMapper, DiagramModelToXmlMapper>(LifeStyle.Singleton);
          container.Register<IRichEditDocumentServer, RichEditDocumentServer>();
-         container.RegisterFactory<IRichEditDocumentServerFactory>();
 
          //Register open types
          container.Register(typeof(PathElementsBinder<>), typeof(PathElementsBinder<>));

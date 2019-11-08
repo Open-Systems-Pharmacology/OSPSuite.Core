@@ -6,6 +6,7 @@ using Castle.MicroKernel;
 using Castle.MicroKernel.ModelBuilder.Inspectors;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
@@ -160,6 +161,11 @@ namespace OSPSuite.Infrastructure.Container.Castle
          return WindsorContainer.Kernel.DowncastTo<DefaultKernel>().OptimizeDependencyResolution();
       }
 
+      public void RegisterOpenGeneric(Type serviceType, Type concreteType)
+      {
+         Register(serviceType, concreteType);
+      }
+
       public void RegisterImplementationOf<TInterface>(TInterface component) where TInterface : class
       {
          RegisterImplementationOf(component, typeof(TInterface).FullName);
@@ -173,6 +179,11 @@ namespace OSPSuite.Infrastructure.Container.Castle
       public IEnumerable<TInterface> ResolveAll<TInterface>()
       {
          return WindsorContainer.ResolveAll<TInterface>();
+      }
+
+      public void AddFacility<T>() where T : IFacility, new()
+      {
+         WindsorContainer.AddFacility<T>();
       }
 
       public void Dispose()

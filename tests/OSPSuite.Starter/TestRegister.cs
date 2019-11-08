@@ -74,8 +74,6 @@ namespace OSPSuite.Starter
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
 
-         container.RegisterFactory<IHeavyWorkPresenterFactory>();
-
          container.Register<TestEnvironment, TestEnvironment>();
       }
    }

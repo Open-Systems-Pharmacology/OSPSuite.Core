@@ -4,6 +4,7 @@ using DevExpress.XtraEditors;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Commands;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Utility.Container;
@@ -20,8 +21,6 @@ namespace OSPSuite.Starter.Views
       {
          InitializeComponent();
          _myContext = new MyContext();
-         IoC.Container.Register<IHistoryManager, HistoryManager<MyContext>>();
-         IoC.Container.Register<MyContext, MyContext>();
 
          var historyBrowserConfiguation = IoC.Resolve<IHistoryBrowserConfiguration>();
          var historyManagerRetriever = IoC.Resolve<IHistoryManagerRetriever>();

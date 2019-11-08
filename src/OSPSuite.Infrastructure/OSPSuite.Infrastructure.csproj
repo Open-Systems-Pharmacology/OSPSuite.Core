@@ -24,16 +24,23 @@
 
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <None Remove="Configuration\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Castle.Windsor" Version="5.0.0" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
