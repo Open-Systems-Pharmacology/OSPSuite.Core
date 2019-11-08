@@ -9,7 +9,7 @@ using IContainer = Autofac.IContainer;
 
 namespace OSPSuite.Infrastructure.Container.Autofac
 {
-   public class AutofacContainer : IOSPSuiteContainer
+   public class AutofacContainer : OSPSuite.Utility.Container.IContainer
    {
       private readonly List<IAutofacActivationHook> _activationHooks = new List<IAutofacActivationHook>();
       private bool _hasActivationHooks;

@@ -12,7 +12,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Container.Castle
 {
-   public class CastleWindsorContainer : IOSPSuiteContainer
+   public class CastleWindsorContainer : IContainer
    {
       private readonly IWindsorLifeStyleMapper _lifeStyleMapper;
       private bool _disposed;
