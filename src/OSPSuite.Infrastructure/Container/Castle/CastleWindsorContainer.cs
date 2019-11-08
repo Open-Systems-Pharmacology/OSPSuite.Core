@@ -6,12 +6,13 @@ using Castle.MicroKernel;
 using Castle.MicroKernel.ModelBuilder.Inspectors;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Container.Castle
 {
-   public class CastleWindsorContainer : IContainer
+   public class CastleWindsorContainer : IOSPSuiteContainer
    {
       private readonly IWindsorLifeStyleMapper _lifeStyleMapper;
       private bool _disposed;
@@ -158,6 +159,11 @@ namespace OSPSuite.Infrastructure.Container.Castle
       public IDisposable OptimizeDependencyResolution()
       {
          return WindsorContainer.Kernel.DowncastTo<DefaultKernel>().OptimizeDependencyResolution();
+      }
+
+      public void RegisterOpenGeneric(Type serviceType, Type concreteType)
+      {
+         Register(serviceType, concreteType);
       }
 
       public void RegisterImplementationOf<TInterface>(TInterface component) where TInterface : class

@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using Castle.Facilities.TypedFactory;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
@@ -7,9 +6,9 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure;
-using OSPSuite.Infrastructure.Container.Castle;
+using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
-using OSPSuite.R.MinimalImplementations;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -33,35 +32,48 @@ namespace OSPSuite.R.Bootstrap
          if (IoC.Container != null)
             return;
 
-         var container = new CastleWindsorContainer();
+         var container = new AutofacContainer();
 
          IoC.InitializeWith(container);
-         IoC.RegisterImplementationOf(IoC.Container);
-         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
+         container.RegisterImplementationOf<IContainer>(container);
+//         IoC.RegisterImplementationOf(IoC.Container);
+//         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
 
 
-         using (container.OptimizeDependencyResolution())
-         {
-            container.RegisterImplementationOf(new SynchronizationContext());
-            container.AddRegister(x => x.FromType<CoreRegister>());
-            container.AddRegister(x => x.FromType<InfrastructureRegister>());
-            container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
-            container.AddRegister(x => x.FromType<RRegister>());
+//         using (container.OptimizeDependencyResolution())
+//         {
+         container.RegisterImplementationOf(new SynchronizationContext());
+         container.AddRegister(x => x.FromType<CoreRegister>());
+         container.AddRegister(x => x.FromType<InfrastructureRegister>());
+         container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
+         container.AddRegister(x => x.FromType<RRegister>());
 
-            initializeGroups(container);
+         registerCoreDependencies(container);
 
-            var register = new CoreSerializerRegister();
-            container.AddRegister(x => x.FromInstance(register));
-            register.PerformMappingForSerializerIn(container);
+         var register = new CoreSerializerRegister();
+         container.AddRegister(x => x.FromInstance(register));
 
-            registerCoreDependencies(container);
-         }
+         container.Build();
+
+         initializeGroups(container);
+
+         register.PerformMappingForSerializerIn(container);
+
+         //         }
+
 
          initializeConfiguration(container, apiConfig);
 
          initializeDimensions(container);
 
          loadPKParameterRepository(container);
+      }
+
+      private static void registerCoreDependencies(IContainer container)
+      {
+         container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
+         container.Register<IApplicationConfiguration, RConfiguration>(LifeStyle.Singleton);
+         container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
       }
 
       private void initializeConfiguration(IContainer container, ApiConfig apiConfig)
@@ -71,15 +83,8 @@ namespace OSPSuite.R.Bootstrap
          applicationConfiguration.DimensionFilePath = apiConfig.DimensionFilePath;
       }
 
-      private static void registerCoreDependencies(IContainer container)
-      {
-         container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
-         container.Register<IApplicationConfiguration, RConfiguration>(LifeStyle.Singleton);
-      }
-
       private static void initializeDimensions(IContainer container)
       {
-         container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
          var applicationConfiguration = container.Resolve<IApplicationConfiguration>();
          var dimensionFactory = container.Resolve<IDimensionFactory>();
          var persistor = container.Resolve<IDimensionFactoryPersistor>();
@@ -107,6 +112,5 @@ namespace OSPSuite.R.Bootstrap
          var configuration = container.Resolve<IApplicationConfiguration>();
          pKParameterLoader.Load(pkParameterRepository, configuration.PKParametersFilePath);
       }
-
    }
 }

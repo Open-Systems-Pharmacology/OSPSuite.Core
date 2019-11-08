@@ -12,8 +12,11 @@ namespace OSPSuite.Core.Domain
       private readonly IIdGenerator _idGenerator;
       private readonly ICreationMetaDataFactory _creationMetaDataFactory;
 
-      public ObjectBaseFactory(Utility.Container.IContainer container, IDimensionFactory dimensionFactory,
-         IIdGenerator idGenerator, ICreationMetaDataFactory creationMetaDataFactory)
+      public ObjectBaseFactory(
+         Utility.Container.IContainer container, 
+         IDimensionFactory dimensionFactory,
+         IIdGenerator idGenerator, 
+         ICreationMetaDataFactory creationMetaDataFactory)
       {
          _container = container;
          _dimensionFactory = dimensionFactory;

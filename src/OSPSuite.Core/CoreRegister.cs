@@ -1,3 +1,4 @@
+using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Converter.v5_2;
@@ -16,6 +17,7 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core
@@ -57,6 +59,11 @@ namespace OSPSuite.Core
             scan.ExcludeType<ParameterIdentificationRunner>();
             scan.ExcludeType<SensitivityAnalysisRunner>();
 
+            scan.ExcludeType(typeof(ExtendedProperty<>));
+            scan.ExcludeType(typeof(HistoryManager<>));
+            scan.ExcludeType(typeof(MacroCommand<>));
+            scan.ExcludeType(typeof(RollBackCommand<>));
+
             //PK-Sim registers its own implementation
             scan.ExcludeType<ObjectIdResetter>();
             scan.ExcludeType<DisplayNameProvider>();
@@ -69,6 +76,9 @@ namespace OSPSuite.Core
 
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
          });
+
+
+         container.Register(typeof(IHistoryManager<>), typeof(HistoryManager<>));
 
          //this should be registered as singleton
          container.Register<IWithIdRepository, WithIdRepository>(LifeStyle.Singleton);
@@ -128,9 +138,11 @@ namespace OSPSuite.Core
             scan.AssemblyContainingType<CoreRegister>();
             scan.IncludeNamespaceContainingType<IDiffBuilder>();
             scan.ExcludeType<DiffBuilderRepository>();
+            scan.ExcludeType(typeof(Comparison<>));
             scan.WithConvention<RegisterTypeConvention<IDiffBuilder>>();
          });
          container.Register(typeof(WithValueOriginComparison<>), typeof(WithValueOriginComparison<>));
+         container.Register(typeof(IComparison<>), typeof(Comparison<>));
          container.Register<EnumerableComparer, EnumerableComparer>();
       }
 
