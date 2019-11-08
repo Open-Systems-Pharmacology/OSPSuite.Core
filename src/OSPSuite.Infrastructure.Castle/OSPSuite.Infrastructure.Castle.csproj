@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>1.0.0</Version>
     <PackageVersion>1.0.0</PackageVersion>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -13,37 +13,30 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
-    <Description>Export functionalities (e.g. to Excel) for the Open Systems Pharmacology Suite</Description>
+    <Description>Castle implementation for the Open Systems Pharmacology Suite</Description>
     <Authors>Open-Systems-Pharmacology</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.2.3" />
+    <None Include="..\..\LICENSE" Link="LICENSE">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Windsor" Version="5.0.1" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
 
 </Project>

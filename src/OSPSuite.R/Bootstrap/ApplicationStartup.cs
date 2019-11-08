@@ -8,7 +8,6 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -36,10 +35,8 @@ namespace OSPSuite.R.Bootstrap
 
          IoC.InitializeWith(container);
          IoC.RegisterImplementationOf(IoC.Container);
-         //         container.WindsorContainer.AddFacility<TypedFactoryFacility>();
 
          var serializerRegister = new CoreSerializerRegister();
-
 
          using (container.OptimizeDependencyResolution())
          {
