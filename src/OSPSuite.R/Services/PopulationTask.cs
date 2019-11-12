@@ -3,6 +3,8 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Populations;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Extensions;
 using OSPSuite.Utility.Extensions;
@@ -12,16 +14,18 @@ namespace OSPSuite.R.Services
    public interface IPopulationTask
    {
       IndividualValuesCache ImportPopulation(string fileFullPath);
-      DataTable PopulationTableFrom(IndividualValuesCache population);
+      DataTable PopulationTableFrom(IndividualValuesCache population, IModelCoreSimulation simulation);
    }
 
    public class PopulationTask : IPopulationTask
    {
       private readonly IIndividualValuesCacheImporter _individualValuesCacheImporter;
+      private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
 
-      public PopulationTask(IIndividualValuesCacheImporter individualValuesCacheImporter)
+      public PopulationTask(IIndividualValuesCacheImporter individualValuesCacheImporter, IEntitiesInSimulationRetriever entitiesInSimulationRetriever)
       {
          _individualValuesCacheImporter = individualValuesCacheImporter;
+         _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
 
       public IndividualValuesCache ImportPopulation(string fileFullPath)
@@ -32,9 +36,10 @@ namespace OSPSuite.R.Services
          return parameterValuesCache;
       }
 
-      public DataTable PopulationTableFrom(IndividualValuesCache population)
+      public DataTable PopulationTableFrom(IndividualValuesCache population, IModelCoreSimulation simulation)
       {
          var dataTable = new DataTable();
+         var allParameters = _entitiesInSimulationRetriever.QuantitiesFrom(simulation);
          dataTable.BeginLoadData();
 
          //Create one column for the parameter path
@@ -43,7 +48,8 @@ namespace OSPSuite.R.Services
          //add advanced parameters
          foreach (var parameterValues in population.AllParameterValues)
          {
-            addColumnValues(dataTable, parameterValues.ParameterPath, parameterValues.Values);
+            var parameterPathWithoutUnit = allParameters.Contains(parameterValues.ParameterPath) ? parameterValues.ParameterPath : parameterValues.ParameterPath.StripUnit();
+            addColumnValues(dataTable, parameterPathWithoutUnit, parameterValues.Values);
          }
 
          dataTable.EndLoadData();

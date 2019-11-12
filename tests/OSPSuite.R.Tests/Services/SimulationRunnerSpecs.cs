@@ -81,7 +81,7 @@ namespace OSPSuite.R.Services
          _simulation = new ModelCoreSimulation();
          _population = new IndividualValuesCache();
          _populationData = new DataTable();
-         A.CallTo(() => _populationTask.PopulationTableFrom(_population)).Returns(_populationData);
+         A.CallTo(() => _populationTask.PopulationTableFrom(_population, _simulation)).Returns(_populationData);
       }
 
       protected override void Because()

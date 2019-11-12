@@ -24,9 +24,9 @@ namespace OSPSuite.Core.Domain.Services
          _numberOfSimulationsPerCore = getNumberOfSimulationsPerCore();
       }
 
-      public void UpdateParametersAndInitialValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> variableParameters, IReadOnlyList<SpeciesProperties> speciesProperties)
+      public void UpdateParametersAndInitialValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> parameterProperties, IReadOnlyList<SpeciesProperties> speciesProperties)
       {
-         fillParameterAndInitialValuesFor(individualId, variableParameters, speciesProperties);
+         fillParameterAndInitialValuesFor(individualId, parameterProperties, speciesProperties);
       }
 
       public IEnumerable<int> GetIndividualIdsFor(int coreIndex)
