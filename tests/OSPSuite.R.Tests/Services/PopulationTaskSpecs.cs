@@ -29,7 +29,6 @@ namespace OSPSuite.R.Services
          _simulationPersister = IoC.Resolve<ISimulationPersister>();
          sut = IoC.Resolve<IPopulationTask>();
       }
-
    }
 
    public class When_importing_a_population_from_file_that_matches_a_simulation_structure : concern_for_PopulationTask
@@ -92,7 +91,6 @@ namespace OSPSuite.R.Services
          _dataTable.Columns["Organism|Weight"].ShouldNotBeNull();
          _dataTable.Columns["Organism|Weight [kg]"].ShouldBeNull();
       }
-
 
       [Observation]
       public void should_not_remove_the_units_from_parameter_with_path_in_their_name()
