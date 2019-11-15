@@ -8,6 +8,5 @@ namespace OSPSuite.Presentation.Views.ParameterIdentifications
    {
       void BindTo(DataTable dataTable, double maxValue);
       void DeleteBinding();
-      IFormatter<double> NumberFormatter { get; set; }
    }
 }

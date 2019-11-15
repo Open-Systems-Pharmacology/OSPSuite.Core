@@ -1,5 +1,4 @@
-﻿using OSPSuite.Utility.Format;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 
@@ -11,7 +10,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       void ShowCalculationError(string calculationError);
       string NotificationMessage { get; }
       string DefaultNotificationMessage { get; set; }
-      IFormatter<double> NumberFormatter { get; set; }
    }
 
    public class ParameterIdentificationMatrixPresenter : AbstractPresenter<IParameterIdentificationMatrixView, IParameterIdentificationMatrixPresenter>, IParameterIdentificationMatrixPresenter
@@ -53,12 +51,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void bindTo(Matrix matrix)
       {
          View.BindTo(_matrixToDataTableMapper.MapFrom(matrix), matrix.Max);
-      }
-
-      public IFormatter<double> NumberFormatter
-      {
-         get { return View.NumberFormatter; }
-         set { View.NumberFormatter = value; }
       }
    }
 }

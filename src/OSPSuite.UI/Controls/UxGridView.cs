@@ -88,8 +88,8 @@ namespace OSPSuite.UI.Controls
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool ShowRowIndicator
       {
-         set { OptionsView.ShowIndicator = value; }
-         get { return OptionsView.ShowIndicator; }
+         set => OptionsView.ShowIndicator = value;
+         get => OptionsView.ShowIndicator;
       }
 
       protected virtual void DoInit()
@@ -113,7 +113,7 @@ namespace OSPSuite.UI.Controls
          KeyDown += onProcessGridKey;
          PopupMenuShowing += OnPopupMenuShowing;
          OptionsSelection.MultiSelect = true;
-         OptionsSelection.MultiSelectMode = GridMultiSelectMode.RowSelect;
+         OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
       }
 
       private void onRowCellStyle(object sender, RowCellStyleEventArgs e)
@@ -153,7 +153,7 @@ namespace OSPSuite.UI.Controls
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedCell);
          else
-            updateAppearanceBackColor(e.Appearance, color);
+            UpdateAppearanceBackColor(e.Appearance, color);
       }
 
       public void AdjustAppearance(RowStyleEventArgs e, Color color)
@@ -161,10 +161,10 @@ namespace OSPSuite.UI.Controls
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedRow);
          else
-            updateAppearanceBackColor(e.Appearance, color);
+            UpdateAppearanceBackColor(e.Appearance, color);
       }
 
-      private void updateAppearanceBackColor(AppearanceObject appearance, Color color)
+      public void UpdateAppearanceBackColor(AppearanceObject appearance, Color color)
       {
          appearance.BackColor = color;
          appearance.BackColor2 = color;
@@ -208,15 +208,15 @@ namespace OSPSuite.UI.Controls
             OptionsView.ShowGroupPanel = value;
             OptionsCustomization.AllowColumnMoving = value;
          }
-         get { return OptionsCustomization.AllowFilter; }
+         get => OptionsCustomization.AllowFilter;
       }
 
       [Browsable(false)]
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool ShowColumnHeaders
       {
-         set { OptionsView.ShowColumnHeaders = value; }
-         get { return OptionsView.ShowColumnHeaders; }
+         set => OptionsView.ShowColumnHeaders = value;
+         get => OptionsView.ShowColumnHeaders;
       }
 
       private void disableColumnChooser(object sender, PopupMenuShowingEventArgs e)
@@ -248,16 +248,16 @@ namespace OSPSuite.UI.Controls
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public EditorShowMode EditorShowMode
       {
-         get { return OptionsBehavior.EditorShowMode; }
-         set { OptionsBehavior.EditorShowMode = value; }
+         get => OptionsBehavior.EditorShowMode;
+         set => OptionsBehavior.EditorShowMode = value;
       }
 
       [Browsable(false)]
       [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
       public bool RowsInsertable
       {
-         get { return OptionsView.NewItemRowPosition != NewItemRowPosition.None; }
-         set { OptionsView.NewItemRowPosition = value ? NewItemRowPosition.Bottom : NewItemRowPosition.None; }
+         get => OptionsView.NewItemRowPosition != NewItemRowPosition.None;
+         set => OptionsView.NewItemRowPosition = value ? NewItemRowPosition.Bottom : NewItemRowPosition.None;
       }
 
       /// <summary>
@@ -446,13 +446,13 @@ namespace OSPSuite.UI.Controls
 
       public bool EnableColumnContextMenu
       {
-         set { OptionsMenu.EnableColumnMenu = value; }
-         get { return OptionsMenu.EnableColumnMenu; }
+         set => OptionsMenu.EnableColumnMenu = value;
+         get => OptionsMenu.EnableColumnMenu;
       }
 
       public bool MultiSelect
       {
-         get { return OptionsSelection.MultiSelect; }
+         get => OptionsSelection.MultiSelect;
          set
          {
             OptionsSelection.EnableAppearanceFocusedRow = value;
