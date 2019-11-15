@@ -7,6 +7,7 @@ task :cover do
   filter << "+[OSPSuite.Core]*"
   filter << "+[OSPSuite.Infrastructure]*"
   filter << "+[OSPSuite.Presentation]*"
+  filter << "+[OSPSuite.R]*"
   
   #exclude namespaces that are tested from applications
   filter << "-[OSPSuite.Infrastructure.Serialization]OSPSuite.Infrastructure.Serialization.ORM*"
@@ -18,7 +19,6 @@ task :cover do
 	"OSPSuite.Core.Tests.csproj",
 	"OSPSuite.Core.IntegrationTests.csproj",
 	"OSPSuite.Infrastructure.Tests.csproj",
-	"OSPSuite.UI.Tests.csproj",
 	"OSPSuite.Presentation.Tests.csproj",
 	"OSPSuite.R.Tests.csproj",
 	];

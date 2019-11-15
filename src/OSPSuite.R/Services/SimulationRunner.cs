@@ -82,7 +82,7 @@ namespace OSPSuite.R.Services
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          try
          {
-            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, _populationTask.PopulationTableFrom(population));
+            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, _populationTask.PopulationTableFrom(population, simulation));
             return populationRunResults.Results;
          }
          finally

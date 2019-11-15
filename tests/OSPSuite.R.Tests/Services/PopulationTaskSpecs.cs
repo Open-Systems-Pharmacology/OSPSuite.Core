@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -10,6 +11,11 @@ namespace OSPSuite.R.Services
 {
    public abstract class concern_for_PopulationTask : ContextSpecification<IPopulationTask>
    {
+      protected string _populationFile;
+      protected ISimulationPersister _simulationPersister;
+      protected string _simulationFile;
+      protected string _populationFileWithUnitInParameterName;
+
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -18,27 +24,22 @@ namespace OSPSuite.R.Services
             DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME),
             PKParametersFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME),
          });
-      }
 
-      protected override void Context()
-      {
+         _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
+         _populationFileWithUnitInParameterName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10_parameter_with_unit.csv");
+         _simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");
+         _simulationPersister = IoC.Resolve<ISimulationPersister>();
          sut = IoC.Resolve<IPopulationTask>();
       }
    }
 
    public class When_importing_a_population_from_file_that_matches_a_simulation_structure : concern_for_PopulationTask
    {
-      private string _populationFile;
       private IndividualValuesCache _individualValuesCache;
 
-      protected override void Context()
+      public override void GlobalContext()
       {
-         base.Context();
-         _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
-      }
-
-      protected override void Because()
-      {
+         base.GlobalContext();
          _individualValuesCache = sut.ImportPopulation(_populationFile);
       }
 
@@ -59,6 +60,45 @@ namespace OSPSuite.R.Services
       {
          var cov = _individualValuesCache.CovariateValuesFor("Gender");
          cov.ValueAt(6).ShouldBeEqualTo("2");
+      }
+   }
+
+   public class When_exporting_a_population_to_data_table_for_calculation : concern_for_PopulationTask
+   {
+      private IModelCoreSimulation _simulation;
+      private DataTable _dataTable;
+      private IndividualValuesCache _individualValuesCache;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(_simulationFile);
+         _individualValuesCache = sut.ImportPopulation(_populationFileWithUnitInParameterName);
+      }
+
+      protected override void Because()
+      {
+         _dataTable = sut.PopulationTableFrom(_individualValuesCache, _simulation);
+      }
+
+      [Observation]
+      public void should_return_a_data_table_with_one_row_per_individual()
+      {
+         _dataTable.Rows.Count.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void should_have_removed_the_units_from_the_parameter_path()
+      {
+         _dataTable.Columns["Organism|Weight"].ShouldNotBeNull();
+         _dataTable.Columns["Organism|Weight [kg]"].ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_not_remove_the_units_from_parameter_with_path_in_their_name()
+      {
+         _dataTable.Columns["Acidic phospholipids [mg/g] - RR"].ShouldNotBeNull();
+         _dataTable.Columns["Acidic phospholipids - RR"].ShouldBeNull();
       }
    }
 }
