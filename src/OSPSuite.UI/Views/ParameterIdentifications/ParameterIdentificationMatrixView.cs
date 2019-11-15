@@ -58,6 +58,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          anchorColumn.Fixed = FixedStyle.Left;
          anchorColumn.Caption = Captions.EmptyColumn;
 
+         matrixGridView.ClearSelection();
          setBestColumnWidth();
       }
 
@@ -259,7 +260,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             e.CombineAppearance(matrixGridView.Appearance.FocusedCell);
          else
             matrixGridView.UpdateAppearanceBackColor(e.Appearance, getColor(value));
-//         e.Appearance.BackColor = getColor(value);
       }
 
       public void BindTo(DataTable dataTable, double maxValue)

@@ -31,6 +31,8 @@ namespace OSPSuite.Starter.Presenters
          p1C2.ValueOrigin.Method = ValueOriginDeterminationMethods.InVitro;
          p1C2.ValueOrigin.Source = ValueOriginSources.ParameterIdentification;
 
+         var p2C2 = new Parameter().WithName("P2").WithParentContainer(container2);
+
          _mainComparisonPresenter.CompareObjects(container1, container2);
       }
    }

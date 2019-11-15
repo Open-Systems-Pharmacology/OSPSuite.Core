@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Comparisons
          gridView.MultiSelect = true;
 
          _gridViewBinder = new GridViewBinder<DiffItemDTO>(gridView);
-       //  gridView.RowCellStyle += updateRowCellStyle;
+          gridView.RowCellStyle += updateRowCellStyle;
       }
 
       public void AttachPresenter(IComparisonPresenter presenter)
@@ -62,8 +62,7 @@ namespace OSPSuite.UI.Views.Comparisons
 
          if (dto.ItemIsMissing)
             gridView.AdjustAppearance(e, Colors.ADDED_OR_MISSING);
-         else
-            e.CombineAppearance(gridView.Appearance.Row);
+
       }
 
       public void BindTo(IEnumerable<DiffItemDTO> diffItemsDTOs)
