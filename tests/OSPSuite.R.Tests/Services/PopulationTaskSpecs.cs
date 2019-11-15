@@ -14,6 +14,7 @@ namespace OSPSuite.R.Services
       protected string _populationFile;
       protected ISimulationPersister _simulationPersister;
       protected string _simulationFile;
+      protected string _populationFileWithUnitInParameterName;
 
       public override void GlobalContext()
       {
@@ -25,6 +26,7 @@ namespace OSPSuite.R.Services
          });
 
          _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
+         _populationFileWithUnitInParameterName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10_parameter_with_unit.csv");
          _simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");
          _simulationPersister = IoC.Resolve<ISimulationPersister>();
          sut = IoC.Resolve<IPopulationTask>();
@@ -71,7 +73,7 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(_simulationFile);
-         _individualValuesCache = sut.ImportPopulation(_populationFile);
+         _individualValuesCache = sut.ImportPopulation(_populationFileWithUnitInParameterName);
       }
 
       protected override void Because()

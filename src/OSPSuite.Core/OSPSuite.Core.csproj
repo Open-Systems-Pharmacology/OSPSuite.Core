@@ -42,7 +42,7 @@
 
   <ItemGroup>
     <PackageReference Include="csmpfit" Version="1.1.1" />
-    <PackageReference Include="MathNet.Numerics" Version="4.8.1" />
+    <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="OSPSuite.Serializer" Version="3.0.0.1" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.42" GeneratePathProperty="true" />
