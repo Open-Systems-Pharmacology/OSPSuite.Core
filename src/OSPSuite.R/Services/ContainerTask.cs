@@ -52,7 +52,7 @@ namespace OSPSuite.R.Services
 
       public IContainer[] AllContainersMatching(IContainer container, string path) =>
          // Distributed parameters are also containers but should not be returned from the following method
-         allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<DistributedParameter>()).ToArray();
+         allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<IDistributedParameter>() && !c.IsAnImplementationOf<IMoleculeAmount>()).ToArray();
 
       public IParameter[] AllParametersMatching(IContainer container, string path) =>
          allEntitiesMatching<IParameter>(container, path);
