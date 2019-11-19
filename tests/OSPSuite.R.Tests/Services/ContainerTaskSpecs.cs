@@ -27,6 +27,7 @@ namespace OSPSuite.R.Services
       protected IParameter _gfr;
       private IEntityPathResolver _entityPathResolver;
       protected IParameter _clearance;
+      protected MoleculeAmount _liverIntracellularMoleculeAmount;
 
       protected override void Context()
       {
@@ -58,6 +59,9 @@ namespace OSPSuite.R.Services
 
          _kidney.AddChildren(_kidneyIntracellular, _volumeKidney);
          _kidneyIntracellular.AddChildren(_volumeKidneyCell, _gfr);
+
+         _liverIntracellularMoleculeAmount = new MoleculeAmount().WithName("Drug");
+         _liverIntracellular.Add(_liverIntracellularMoleculeAmount);
       }
 
       protected string pathFrom(params string[] paths)
@@ -138,7 +142,7 @@ namespace OSPSuite.R.Services
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr);
          sut.AllParametersMatching(_organism, pathFrom(_liver.Name, Constants.WILD_CARD_RECURSIVE, "Volume")).ShouldOnlyContain(_volumeLiverCell, _volumeLiver);
 
-         sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiver,  _volumeLiverCell, _clearance);
+         sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiver, _volumeLiverCell, _clearance);
          sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"{Constants.WILD_CARD}INTR{Constants.WILD_CARD}", $"{Constants.WILD_CARD}ol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, $"INTR{Constants.WILD_CARD}", Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr);
          sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"INTRA{Constants.WILD_CARD}", $"{Constants.WILD_CARD}o*")).ShouldOnlyContain(_volumeLiverCell);
@@ -177,8 +181,6 @@ namespace OSPSuite.R.Services
       }
    }
 
-
-
    public class When_resolving_all_quantities_of_a_container_with_a_quantity_name_using_wildcards : concern_for_ContainerTask
    {
       [Observation]
@@ -186,6 +188,17 @@ namespace OSPSuite.R.Services
       {
          sut.AllQuantitiesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
          sut.AllQuantitiesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}Vol")).ShouldBeEmpty();
+      }
+   }
+
+   public class When_resolving_all_molecule_amounts_of_a_simulation : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_return_the_matching_molecule_amounts()
+      {
+         sut.AllMoleculesMatching(_organism,Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
+         sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}")).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
+         sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, _liverIntracellularMoleculeAmount.Name)).ShouldBeEmpty();
       }
    }
 }

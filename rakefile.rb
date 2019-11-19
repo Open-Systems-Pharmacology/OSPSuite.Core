@@ -26,30 +26,19 @@ task :cover do
 	Coverage.cover(filter, targetProjects)
 end
   
-module Coverage
-  def self.cover(filter_array, targetProjects)
-	testProjects = Dir.glob("tests/**/*.csproj").select{|path| targetProjects.include?(File.basename path)}
-	openCover = Dir.glob("packages/OpenCover.*/tools/OpenCover.Console.exe").first
-	targetArgs = testProjects.join(" ")
-
-	Utils.run_cmd(openCover, ["-register:path64", "-target:nunit3-console.exe", "-targetargs:#{targetArgs}", "-output:OpenCover.xml", "-filter:#{filter_array.join(" ")}", "-excludebyfile:*.Designer.cs"])
-	Utils.run_cmd("codecov", ["-f", "OpenCover.xml"])
-  end
-end
-
   task :copy_to_pksim do
-	copy_to_app '../PK-Sim/src/PKSim/bin/Debug/'
+	copy_to_app '../PK-Sim/src/PKSim/bin/Debug/net472'
   end
   
   task :copy_to_mobi do
-	copy_to_app '../MoBi/src/MoBi/bin/Debug/'
+	copy_to_app '../MoBi/src/MoBi/bin/Debug/net472'
   end
   
   private
   
   def copy_to_app(app_target_relative_path)
 	app_target_path = File.join(solution_dir, app_target_relative_path)
-	source_dir = File.join(tests_dir, 'OSPSuite.Starter', 'bin', 'Debug')
+	source_dir = File.join(tests_dir, 'OSPSuite.Starter', 'bin', 'Debug', "net472")
 	
 	copy_depdencies source_dir,  app_target_path do
 	  copy_file 'OSPSuite.*.dll'
