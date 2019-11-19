@@ -41,6 +41,8 @@ OpenCover.xml
 [Rr]eleasePS/
 dlldata.c
 
+**/launchSettings.json
+
 # DNX
 project.lock.json
 artifacts/

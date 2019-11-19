@@ -17,10 +17,12 @@ namespace OSPSuite.R.Services
       IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path);
       IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path);
       IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path);
+      IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
 
       IParameter[] AllParametersMatching(IContainer container, string path);
       IContainer[] AllContainersMatching(IContainer container, string path);
       IQuantity[] AllQuantitiesMatching(IContainer container, string path);
+      IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path);
    }
 
    public class ContainerTask : IContainerTask
@@ -45,6 +47,9 @@ namespace OSPSuite.R.Services
       public IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation?.Model?.Root, path);
 
+      public IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path) =>
+         AllMoleculesMatching(simulation?.Model?.Root, path);
+
       public IContainer[] AllContainersMatching(IContainer container, string path) =>
          // Distributed parameters are also containers but should not be returned from the following method
          allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<DistributedParameter>()).ToArray();
@@ -54,6 +59,9 @@ namespace OSPSuite.R.Services
 
       public IQuantity[] AllQuantitiesMatching(IContainer container, string path) =>
          allEntitiesMatching<IQuantity>(container, path);
+
+      public IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path) =>
+         allEntitiesMatching<IMoleculeAmount>(container, path);
 
       private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
