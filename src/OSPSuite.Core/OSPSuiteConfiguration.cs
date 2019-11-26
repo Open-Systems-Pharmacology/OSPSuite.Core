@@ -16,7 +16,6 @@ namespace OSPSuite.Core
       public string ChartLayoutTemplateFolderPath { get; }
       public string TeXTemplateFolderPath { get; }
       public string PKParametersFilePath { get; set; }
-      public string SimModelSchemaFilePath { get; }
       public string DimensionFilePath { get; set; }
       public abstract string ProductName { get; }
       public abstract int InternalVersion { get; }
@@ -58,12 +57,12 @@ namespace OSPSuite.Core
          _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
 
          FullVersionDisplay = retrieveFullVersionDisplay();
+
          OSPSuiteNameWithVersion = $"{Constants.SUITE_NAME} - {Major}";
          ProductDisplayName = retrieveProductDisplayName();
          CurrentUserFolderPath = CurrentUserFolderPathFor(Version);
          AllUsersFolderPath = AllUserFolderPathFor(Version);
          PKParametersFilePath = LocalOrAllUsersPathForFile(Constants.Files.PK_PARAMETERS_FILE_NAME);
-         SimModelSchemaFilePath = LocalPathFor(Constants.Files.SIM_MODEL_SCHEMA_FILE_NAME);
          TeXTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.TEX_TEMPLATE_FOLDER_NAME);
          ChartLayoutTemplateFolderPath = LocalOrAllUsersPathForFolder(Constants.Files.CHART_LAYOUT_FOLDER_NAME);
          DimensionFilePath = LocalOrAllUsersPathForFile(Constants.Files.DIMENSIONS_FILE_NAME);
@@ -143,7 +142,19 @@ namespace OSPSuite.Core
       /// <summary>
       ///    Returns a local full path for the file with name <paramref name="fileName" />
       /// </summary>
-      protected string LocalPathFor(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+      protected string LocalPathFor(string fileName)
+      {
+         var localFolder = AppDomain.CurrentDomain.BaseDirectory;
+
+         // Potentially null in Mono
+         if (string.IsNullOrEmpty(localFolder))
+            localFolder = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
+
+         if (string.IsNullOrEmpty(localFolder))
+            return null;
+
+         return Path.Combine(localFolder, fileName);
+      }
 
       private string getLocalPathOrAllUsersPathFor(string appDataName, string localName, Func<string, bool> existsFunc)
       {

@@ -131,11 +131,6 @@ namespace OSPSuite.Core
       string CurrentUserFolderPath { get; }
 
       /// <summary>
-      ///    Path of the schema used to validate our models
-      /// </summary>
-      string SimModelSchemaFilePath { get; }
-
-      /// <summary>
       ///    Path of the dimension file
       /// </summary>
       string DimensionFilePath { get; set; }
