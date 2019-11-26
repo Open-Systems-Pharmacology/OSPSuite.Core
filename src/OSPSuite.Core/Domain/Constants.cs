@@ -112,7 +112,6 @@ namespace OSPSuite.Core.Domain
          public const string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
          public const string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
          public const string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
-         public const string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
          public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
