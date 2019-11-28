@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
    /// <summary>
    ///    Information about the simulation progress
    /// </summary>
-   public class PopulationSimulationProgressEventArgs : EventArgs
+   public class MultipleSimulationsProgressEventArgs : EventArgs
    {
       /// <summary>
       ///    Actual Progress as a Integer between 0 and 100
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public int NumberOfSimulations { get; }
 
-      public PopulationSimulationProgressEventArgs(int numberOfCalculatedSimulation, int numberOfSimulations)
+      public MultipleSimulationsProgressEventArgs(int numberOfCalculatedSimulation, int numberOfSimulations)
       {
          NumberOfCalculatedSimulation = numberOfCalculatedSimulation;
          NumberOfSimulations = numberOfSimulations;
@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
       /// </summary>
-      event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress;
+      event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress;
 
       /// <summary>
       ///    Event raised when simulation is terminated (either after normal termination or cancel)

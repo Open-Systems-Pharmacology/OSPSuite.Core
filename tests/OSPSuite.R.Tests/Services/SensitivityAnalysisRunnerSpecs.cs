@@ -37,7 +37,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         sut.RunSimulation(_sensitivityAnalysis);
+         sut.Run(_sensitivityAnalysis);
       }
    }
 
@@ -58,7 +58,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         sut.RunSimulation(_sensitivityAnalysis);
+         sut.Run(_sensitivityAnalysis);
       }
    }
 }

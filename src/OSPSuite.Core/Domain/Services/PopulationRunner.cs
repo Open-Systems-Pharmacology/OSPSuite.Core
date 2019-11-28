@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
    public class PopulationRunner : SimModelManagerBase, IPopulationRunner
    {
       private readonly IObjectPathFactory _objectPathFactory;
-      public event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress = delegate { };
+      public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
 
       private PopulationRunResults _populationRunResults;
       private PopulationDataSplitter _populationDataSplitter;
@@ -136,7 +136,7 @@ namespace OSPSuite.Core.Domain.Services
              _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
 
                //Could lead to a wrong progress if two threads are accessing the value at the same time
-               SimulationProgress(this, new PopulationSimulationProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
+               SimulationProgress(this, new MultipleSimulationsProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
             }
          }
       }

@@ -42,7 +42,7 @@
     <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="3.0.0.3" />
     <PackageReference Include="OSPSuite.DevExpress" Version="18.2.7" />
     <PackageReference Include="OSPSuite.DevExpress.Presentation" Version="18.2.7" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.3" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
 

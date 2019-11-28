@@ -11,6 +11,16 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
    {
       Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions);
       void Stop();
+
+      /// <summary>
+      ///    Progress event returns the percent representing the progress of a simulation
+      /// </summary>
+      event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress;
+
+      /// <summary>
+      ///    Event raised when simulation is terminated (either after normal termination or cancel)
+      /// </summary>
+      event EventHandler Terminated;
    }
 
    public class SensitivityAnalysisEngine : ISensitivityAnalysisEngine
@@ -22,6 +32,8 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       private readonly ISensitivityAnalysisRunResultCalculator _runResultCalculator;
       private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
       private SensitivityAnalysis _sensitivityAnalysis;
+      public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
+      public event EventHandler Terminated = delegate { };
 
       public SensitivityAnalysisEngine(
          IEventPublisher eventPublisher, 
@@ -67,15 +79,17 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results));
       }
 
-      private void simulationProgress(object sender, PopulationSimulationProgressEventArgs eventArgs)
+      private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs eventArgs)
       {
          _eventPublisher.PublishEvent(new SensitivityAnalysisProgressEvent(_sensitivityAnalysis, eventArgs.NumberOfCalculatedSimulation, eventArgs.NumberOfSimulations));
+         SimulationProgress(this, eventArgs);
       }
 
       private void terminated(object sender, EventArgs e)
       {
          _populationRunner.Terminated -= terminated;
          _populationRunner.SimulationProgress -= simulationProgress;
+         Terminated(this, e);
       }
 
       public void Stop()
