@@ -52,7 +52,6 @@ namespace OSPSuite.R.Services
          _progressUpdater.ReportProgress(e.NumberOfCalculatedSimulation, e.NumberOfSimulations, Messages.CalculationPopulationSimulation(e.NumberOfCalculatedSimulation, e.NumberOfSimulations));
       }
 
-
       private void simulationTerminated()
       {
          terminated(this, new EventArgs());
@@ -82,14 +81,13 @@ namespace OSPSuite.R.Services
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          try
          {
-            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, options,  _populationTask.PopulationTableFrom(population, simulation));
+            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, options, _populationTask.PopulationTableFrom(population, simulation));
             return populationRunResults.Results;
          }
          finally
          {
             simulationTerminated();
          }
-
       }
 
       private void initializeProgress(SimulationRunOptions options)
