@@ -14,12 +14,6 @@ namespace OSPSuite.Starter.Domain
          return null;
       }
 
-      public IEnumerable<T> All<T>() where T : class, IEntity
-      {
-         var root = Model?.Root;
-         return root == null ? Enumerable.Empty<T>() : root.GetAllChildren<T>();
-      }
-
       public IEnumerable<CurveChart> Charts
       {
          get { yield break; }
@@ -28,7 +22,6 @@ namespace OSPSuite.Starter.Domain
       public OutputSchema OutputSchema => Settings.OutputSchema;
       public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;
 
-      public IReadOnlyList<string> CompoundNames => BuildConfiguration.AllPresentMolecules().Select(x => x.Name).ToList();
 
       public void AddChartTemplate(CurveChartTemplate chartTemplate)
       {

@@ -38,6 +38,7 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       public abstract bool CanUseParameter(IParameter parameter);
+
       public abstract ParameterGroupingMode DefaultParameterSelectionMode { get; }
    }
 }

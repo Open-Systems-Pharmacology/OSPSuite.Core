@@ -25,10 +25,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _fullPathDisplayResolver = fullPathDisplayResolver;
       }
 
-      public SensitivityParameter EmptySensitivityParameter()
-      {
-         return createSensitivityParameter();
-      }
+      public SensitivityParameter EmptySensitivityParameter() => createSensitivityParameter();
 
       public SensitivityParameter CreateFor(ParameterSelection parameterSelection, SensitivityAnalysis sensitivityAnalysis)
       {
@@ -50,8 +47,8 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       private void addParametersTo(SensitivityParameter sensitivityParameter)
       {
-         sensitivityParameter.Add(createParameter(Constants.Parameters.VARIATION_RANGE, _dimensionFactory.Dimension(Constants.Dimension.FRACTION), defaultValue: 0.1, min: 0, minAllowed: false));
-         sensitivityParameter.Add(createParameter(Constants.Parameters.NUMBER_OF_STEPS, Constants.Dimension.NO_DIMENSION, defaultValue: 2, min: 1, max: 10));
+         sensitivityParameter.Add(createParameter(Constants.Parameters.VARIATION_RANGE, _dimensionFactory.Dimension(Constants.Dimension.FRACTION), defaultValue: Constants.DEFAULT_SENSITIVITY_VARIATION_RANGE, min: 0, minAllowed: false));
+         sensitivityParameter.Add(createParameter(Constants.Parameters.NUMBER_OF_STEPS, Constants.Dimension.NO_DIMENSION, defaultValue: Constants.DEFAULT_SENSITIVITY_NUMBER_OF_STEPS, min: 1, max: 10));
       }
 
       private string uniqueNameFor(SensitivityAnalysis sensitivityAnalysis, IParameter parameter)

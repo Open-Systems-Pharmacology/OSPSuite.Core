@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -9,6 +10,7 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -26,6 +28,8 @@ namespace OSPSuite.Presentation.Presentation
       protected IReadOnlyCollection<ISimulation> _simulations;
       private ISimulationSelector _simulationSelector;
       protected ISensitivityAnalysisTask _sensitivityAnalysisTask;
+      protected IApplicationController _applicationController;
+      protected IValidationMessagesPresenter _validationMessagesPresenter;
 
       protected override void Context()
       {
@@ -36,8 +40,12 @@ namespace OSPSuite.Presentation.Presentation
          _lazyLoadTask = A.Fake<ILazyLoadTask>();
          _simulationSelector = A.Fake<ISimulationSelector>();
          _sensitivityAnalysisTask = A.Fake<ISensitivityAnalysisTask>();
+         _applicationController= A.Fake<IApplicationController>();
+         _validationMessagesPresenter = A.Fake<IValidationMessagesPresenter>();
+         A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_validationMessagesPresenter);
 
-         sut = new SensitivityAnalysisParameterSelectionPresenter(_view, _simulationParametersPresenter, _sensitivityAnalysisParametersPresenter, _simulationRepository, _lazyLoadTask, _simulationSelector, _sensitivityAnalysisTask);
+
+         sut = new SensitivityAnalysisParameterSelectionPresenter(_view, _simulationParametersPresenter, _sensitivityAnalysisParametersPresenter, _simulationRepository, _lazyLoadTask, _simulationSelector, _sensitivityAnalysisTask,_applicationController);
 
          _sensitivityAnalysis = new SensitivityAnalysis { Simulation = A.Fake<ISimulation>() };
          _simulations = new[] { _sensitivityAnalysis.Simulation };
@@ -84,12 +92,16 @@ namespace OSPSuite.Presentation.Presentation
    public class When_validating_a_simulation_change_in_a_sensitivity_analysis : concern_for_SensitivityAnalysisParameterSelectionPresenter
    {
       private ISimulation _newSimulation;
+      private ValidationResult _validationResults;
 
       protected override void Context()
       {
          base.Context();
          _newSimulation = A.Fake<ISimulation>();
          sut.EditSensitivityAnalysis(_sensitivityAnalysis);
+         _validationResults =new ValidationResult();
+         _validationResults.AddMessage(NotificationType.Warning, _sensitivityAnalysis, "Warning");
+         A.CallTo(_sensitivityAnalysisTask).WithReturnType<ValidationResult>().Returns(_validationResults);
       }
 
       protected override void Because()
@@ -102,7 +114,14 @@ namespace OSPSuite.Presentation.Presentation
       {
          A.CallTo(() => _sensitivityAnalysisTask.ValidateSwap(_sensitivityAnalysis, _sensitivityAnalysis.Simulation, _newSimulation)).MustHaveHappened();
       }
+
+      [Observation]
+      public void the_validation_message_presenter_should_display_any_validation_messages()
+      {
+         A.CallTo(() => _validationMessagesPresenter.Display(_validationResults)).MustHaveHappened();
+      }
    }
+
    public class When_editing_a_sensitivity_analysis : concern_for_SensitivityAnalysisParameterSelectionPresenter
    {
       protected override void Because()

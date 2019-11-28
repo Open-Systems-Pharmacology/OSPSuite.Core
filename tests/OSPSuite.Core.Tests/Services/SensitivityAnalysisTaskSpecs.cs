@@ -6,35 +6,29 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Events;
-using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Services;
 
-namespace OSPSuite.Presentation.Presentation
+namespace OSPSuite.Core.Services
 {
    public abstract class concern_for_SensitivityAnalysisTask : ContextSpecification<SensitivityAnalysisTask>
    {
       protected ISensitivityAnalysisSimulationSwapValidator _sensitivityAnalysisSwapValidator;
       protected ISensitivityAnalysisSimulationSwapCorrector _sensitivityAnalysisSwapCorrector;
-      protected IApplicationController _applicationController;
       protected IOSPSuiteExecutionContext _executionContext;
       protected ISensitivityAnalysisFactory _sensitivityAnalysisFactory;
-      protected IValidationMessagesPresenter _validationMessagesPresenter;
       protected IDialogCreator _dialogCreator;
+      protected ISensitivityParameterFactory _sensitivityParameterFactory;
 
       protected override void Context()
       {
          _executionContext = A.Fake<IOSPSuiteExecutionContext>();
          _sensitivityAnalysisFactory = A.Fake<ISensitivityAnalysisFactory>();
-         _applicationController = A.Fake<IApplicationController>();
          _sensitivityAnalysisSwapCorrector = A.Fake<ISensitivityAnalysisSimulationSwapCorrector>();
          _sensitivityAnalysisSwapValidator = A.Fake<ISensitivityAnalysisSimulationSwapValidator>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         sut = new SensitivityAnalysisTask(_sensitivityAnalysisFactory, _executionContext, _applicationController, _sensitivityAnalysisSwapCorrector, _sensitivityAnalysisSwapValidator, _dialogCreator);
+         _sensitivityParameterFactory= A.Fake<ISensitivityParameterFactory>();   
 
-         _validationMessagesPresenter = A.Fake<IValidationMessagesPresenter>();
-         A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_validationMessagesPresenter);
+         sut = new SensitivityAnalysisTask(_sensitivityAnalysisFactory, _executionContext, _sensitivityAnalysisSwapCorrector, _sensitivityAnalysisSwapValidator,_sensitivityParameterFactory, _dialogCreator);
+
       }
    }
 
@@ -86,12 +80,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.ValidateSwap(_sensitivityAnalysis, _oldSimulation, _newSimulation);
       }
 
-      [Observation]
-      public void the_validation_message_presenter_should_display_any_validation_messages()
-      {
-         A.CallTo(() => _validationMessagesPresenter.Display(_validationResult)).MustHaveHappened();
-      }
-
+    
       [Observation]
       public void the_execution_context_must_be_used_to_load_the_simulation_before_validation()
       {
@@ -128,40 +117,6 @@ namespace OSPSuite.Presentation.Presentation
       public void the_sensitivity_analysis_corrector_must_be_called()
       {
          A.CallTo(() => _sensitivityAnalysisSwapCorrector.CorrectSensitivityAnalysis(_sensitivityAnalysis, _oldSimulation, _newSimulation)).MustHaveHappened();
-      }
-   }
-
-   public class When_cloning_a_sensitivity_analysis : concern_for_SensitivityAnalysisTask
-   {
-      private SensitivityAnalysis _sensitivityAnalysis;
-      private SensitivityAnalysis _result;
-      private SensitivityAnalysis _cloneSensitivityAnalysis;
-
-      protected override void Context()
-      {
-         base.Context();
-         _sensitivityAnalysis = new SensitivityAnalysis().WithId("Id1");
-         _cloneSensitivityAnalysis = new SensitivityAnalysis().WithId("Id2");
-         var clonePresenter = A.Fake<ICloneObjectBasePresenter<SensitivityAnalysis>>();
-         A.CallTo(() => clonePresenter.CreateCloneFor(_sensitivityAnalysis)).Returns(_cloneSensitivityAnalysis);
-         A.CallTo(() => _applicationController.Start<ICloneObjectBasePresenter<SensitivityAnalysis>>()).Returns(clonePresenter);
-      }
-
-      protected override void Because()
-      {
-         _result = sut.Clone(_sensitivityAnalysis);
-      }
-
-      [Observation]
-      public void should_load_the_sensitivity_analysis_to_be_cloned()
-      {
-         A.CallTo(() => _executionContext.Load(_sensitivityAnalysis)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void should_leverage_the_clone_object_presenter_to_clone_the_sensitivity_and_return_the_clone()
-      {
-         _result.ShouldBeEqualTo(_cloneSensitivityAnalysis);
       }
    }
 

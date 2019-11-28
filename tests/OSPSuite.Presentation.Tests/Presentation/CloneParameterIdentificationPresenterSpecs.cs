@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
@@ -15,6 +16,7 @@ namespace OSPSuite.Presentation.Presentation
       private IObjectTypeResolver _objectTypeResolver;
       private IObjectBaseView _view;
       protected ParameterIdentification _parameterIdentification;
+      private IOSPSuiteExecutionContext _executionContext;
 
       protected override void Context()
       {
@@ -24,8 +26,8 @@ namespace OSPSuite.Presentation.Presentation
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
          _view = A.Fake<IObjectBaseView>();
          _parameterIdentification = A.Fake<ParameterIdentification>();
-
-         sut = new CloneObjectBasePresenter<ParameterIdentification>(_view, _objectTypeResolver, _renameObjectDTOFactory, _cloneManager);
+         _executionContext = A.Fake<IOSPSuiteExecutionContext>();
+         sut = new CloneObjectBasePresenter<ParameterIdentification>(_view, _objectTypeResolver, _renameObjectDTOFactory, _cloneManager,_executionContext);
       }
    }
 

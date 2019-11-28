@@ -1,12 +1,9 @@
-﻿namespace OSPSuite.R
-{
-   public class SimulationRunOptions
-   {
-      /// <summary>
-      ///    (Maximal) number of cores to be used (1 per default)
-      /// </summary>
-      public int NumberOfCoresToUse { get; set; } = 1;
+﻿using OSPSuite.Core.Domain;
 
+namespace OSPSuite.R.Domain
+{
+   public class SimulationRunOptions : RunOptions
+   {
       /// <summary>
       ///    Specifies whether negative values check is on or off. Default is <c>true</c>
       /// </summary>

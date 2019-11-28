@@ -38,6 +38,8 @@ namespace OSPSuite.R
 
       public static IOutputIntervalFactory GetOutputIntervalFactory() => resolveTask<IOutputIntervalFactory>();
 
+      public static ISensitivityAnalysisRunner GetSensitivityAnalysisRunner() => resolveTask<ISensitivityAnalysisRunner>();
+
       private static T resolveTask<T>()
       {
          try

@@ -22,6 +22,7 @@ namespace OSPSuite.Core
       protected DataTable _agingData;
       protected DataTable _initialValuesData;
       protected PopulationRunResults _results;
+      protected RunOptions _runOptions;
 
       public override void GlobalContext()
       {
@@ -37,9 +38,10 @@ namespace OSPSuite.Core
          _agingData = createPopAgingParameters();
          _initialValuesData = createPopInitialValues();
 
+         _runOptions = new RunOptions();
          sut = new PopulationRunner(_simModelExporter, new SimModelSimulationFactory(), _objectPathFactory);
 
-         _results = sut.RunPopulationAsync(_simulation, _populationData, _agingData).Result;
+         _results = sut.RunPopulationAsync(_simulation, _runOptions,  _populationData, _agingData).Result;
       }
 
       private DataTable createPopInitialValues()
@@ -198,7 +200,7 @@ namespace OSPSuite.Core
       [Observation]
       public async Task should_set_correct_initial_values_for_arterial_blood_plasma_A_and_venous_blood_plasma_A()
       {
-         var results = await sut.RunPopulationAsync(_simulation, _populationData, _agingData, _initialValuesData);
+         var results = await sut.RunPopulationAsync(_simulation, _runOptions, _populationData, _agingData, _initialValuesData);
          var simResults = results.Results;
 
          var arterialBloodPlasmaValuesSim1 = arterialPlasmaValuesFor(simResults.AllIndividualResults.ElementAt(0));

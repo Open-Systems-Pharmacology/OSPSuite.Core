@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Events;
+using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
@@ -74,6 +75,7 @@ namespace OSPSuite.R.Services
       private IndividualValuesCache _population;
       private DataTable _populationData;
       private SimulationResults _results;
+      private SimulationRunOptions _simulationRunOptions;
 
       protected override void Context()
       {
@@ -81,12 +83,13 @@ namespace OSPSuite.R.Services
          _simulation = new ModelCoreSimulation();
          _population = new IndividualValuesCache();
          _populationData = new DataTable();
+         _simulationRunOptions =new SimulationRunOptions();
          A.CallTo(() => _populationTask.PopulationTableFrom(_population, _simulation)).Returns(_populationData);
       }
 
       protected override void Because()
       {
-         _results = sut.RunSimulation(_simulation, _population);
+         _results = sut.RunSimulation(_simulation, _population, _simulationRunOptions);
       }
 
       [Observation]
@@ -98,7 +101,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_using_the_population_data()
       {
-         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _populationData, null, null)).MustHaveHappened();
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions,  _populationData, null, null)).MustHaveHappened();
       }
    }
 }

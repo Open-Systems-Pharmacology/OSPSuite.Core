@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Repositories;
@@ -10,7 +8,10 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Events;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 {
@@ -37,9 +38,17 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       private readonly ILazyLoadTask _lazyLoadTask;
       private readonly ISimulationSelector _simulationSelector;
       private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
+      private readonly IApplicationController _applicationController;
 
-      public SensitivityAnalysisParameterSelectionPresenter(ISensitivityAnalysisParameterSelectionView view, ISimulationParametersPresenter simulationParametersPresenter,
-          ISensitivityAnalysisParametersPresenter sensitivityAnalysisParametersPresenter, ISimulationRepository simulationRepository, ILazyLoadTask lazyLoadTask, ISimulationSelector simulationSelector, ISensitivityAnalysisTask sensitivityAnalysisTask) : base(view)
+      public SensitivityAnalysisParameterSelectionPresenter(
+         ISensitivityAnalysisParameterSelectionView view,
+         ISimulationParametersPresenter simulationParametersPresenter,
+         ISensitivityAnalysisParametersPresenter sensitivityAnalysisParametersPresenter,
+         ISimulationRepository simulationRepository,
+         ILazyLoadTask lazyLoadTask,
+         ISimulationSelector simulationSelector,
+         ISensitivityAnalysisTask sensitivityAnalysisTask,
+         IApplicationController applicationController) : base(view)
       {
          _simulationParametersPresenter = simulationParametersPresenter;
          _sensitivityAnalysisParametersPresenter = sensitivityAnalysisParametersPresenter;
@@ -47,6 +56,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
          _lazyLoadTask = lazyLoadTask;
          _simulationSelector = simulationSelector;
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
+         _applicationController = applicationController;
          _subPresenterManager.Add(_simulationParametersPresenter);
          _subPresenterManager.Add(_sensitivityAnalysisParametersPresenter);
          _view.AddSimulationParametersView(_simulationParametersPresenter.BaseView);
@@ -107,7 +117,15 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public bool ValidateSimulationChange(ISimulation newSimulation)
       {
-         return _sensitivityAnalysisTask.ValidateSwap(_sensitivityAnalysis, _sensitivityAnalysis.Simulation, newSimulation);
+         var swapValidationResult = _sensitivityAnalysisTask.ValidateSwap(_sensitivityAnalysis, _sensitivityAnalysis.Simulation, newSimulation);
+
+         if (swapValidationResult.ValidationState == ValidationState.Valid)
+            return true;
+
+         using (var validationMessagesPresenter = _applicationController.Start<IValidationMessagesPresenter>())
+         {
+            return validationMessagesPresenter.Display(swapValidationResult);
+         }
       }
 
       public void AddAllConstantParameters()

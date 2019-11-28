@@ -97,7 +97,7 @@ namespace OSPSuite.Infrastructure.Journal
          _journalPage.AddRelatedItem(_relatedItem2);
          _journal = new Core.Journal.Journal();
          _journal.AddJournalPage(_journalPage);
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems, ViewResult.Yes)).Returns(ViewResult.Yes);
       }
 
       protected override void Because()
@@ -108,7 +108,7 @@ namespace OSPSuite.Infrastructure.Journal
       [Observation]
       public void should_asks_the_user_if_he_really_wants_to_delete_the_related_items()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems, ViewResult.Yes)).MustHaveHappened();
       }
 
       [Observation]
@@ -137,7 +137,7 @@ namespace OSPSuite.Infrastructure.Journal
          A.CallTo(() => _eventPublisher.PublishEvent(A<JournalPageUpdatedEvent>._))
             .Invokes(x => _event = x.GetArgument<JournalPageUpdatedEvent>(0));
 
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteRelatedItem(_relatedItem.Display))).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteRelatedItem(_relatedItem.Display), ViewResult.Yes)).Returns(ViewResult.Yes);
       }
 
       protected override void Because()
@@ -148,7 +148,7 @@ namespace OSPSuite.Infrastructure.Journal
       [Observation]
       public void should_asks_the_user_if_he_really_wants_to_delete_the_related_item()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteRelatedItem(_relatedItem.Display))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteRelatedItem(_relatedItem.Display), ViewResult.Yes)).MustHaveHappened();
       }
 
       [Observation]
@@ -307,7 +307,7 @@ namespace OSPSuite.Infrastructure.Journal
          base.Context();
          sut.FileLength = s => 2 * Constants.RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES;
          A.CallTo(_dialogCreator).WithReturnType<string>().Returns(_fileName);
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._)).Returns(ViewResult.No);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).Returns(ViewResult.No);
          _relatedItem = new RelatedItem();
          A.CallTo(() => _relatedItemFactory.CreateFromFile(_fileName)).Returns(_relatedItem);
       }
@@ -334,7 +334,7 @@ namespace OSPSuite.Infrastructure.Journal
          base.Context();
          sut.FileLength = s => 2 * Constants.RELATIVE_ITEM_FILE_SIZE_WARNING_THRESHOLD_IN_BYTES;
          A.CallTo(_dialogCreator).WithReturnType<string>().Returns(_fileName);
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).Returns(ViewResult.Yes);
          _relatedItem = new RelatedItem();
          A.CallTo(() => _relatedItemFactory.CreateFromFile(_fileName)).Returns(_relatedItem);
       }

@@ -9,7 +9,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
-   public abstract class concern_for_PopulationTask : ContextSpecification<IPopulationTask>
+   public abstract class concern_for_PopulationTask : ContextForIntegration<IPopulationTask>
    {
       protected string _populationFile;
       protected ISimulationPersister _simulationPersister;
@@ -19,12 +19,6 @@ namespace OSPSuite.R.Services
       public override void GlobalContext()
       {
          base.GlobalContext();
-         Api.InitializeOnce(new ApiConfig
-         {
-            DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME),
-            PKParametersFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME),
-         });
-
          _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
          _populationFileWithUnitInParameterName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10_parameter_with_unit.csv");
          _simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");

@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
+using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
@@ -78,11 +79,10 @@ namespace OSPSuite.R.Services
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
          initializeProgress(population, options);
-         _populationRunner.NumberOfCoresToUse = options.NumberOfCoresToUse;
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          try
          {
-            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, _populationTask.PopulationTableFrom(population, simulation));
+            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, options,  _populationTask.PopulationTableFrom(population, simulation));
             return populationRunResults.Results;
          }
          finally

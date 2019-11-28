@@ -2,14 +2,15 @@
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Exchange;
+using OSPSuite.R.Domain;
 using CorePersistor = OSPSuite.Core.Serialization.Exchange.ISimulationPersistor;
 
 namespace OSPSuite.R.Services
 {
    public interface ISimulationPersister
    {
-      IModelCoreSimulation LoadSimulation(string fileName);
-      void SaveSimulation(IModelCoreSimulation simulation, string fileName);
+      Simulation LoadSimulation(string fileName);
+      void SaveSimulation(Simulation simulation, string fileName);
    }
 
    public class SimulationPersister : ISimulationPersister
@@ -31,15 +32,15 @@ namespace OSPSuite.R.Services
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IModelCoreSimulation LoadSimulation(string fileName)
+      public Simulation LoadSimulation(string fileName)
       {
          var simulationTransfer = _simulationPersistor.Load(fileName, _dimensionFactory, _objectBaseFactory, new WithIdRepository(), _cloneManagerForModel);
-         return simulationTransfer.Simulation;
+         return new Simulation(simulationTransfer.Simulation);
       }
 
-      public void SaveSimulation(IModelCoreSimulation simulation, string fileName)
+      public void SaveSimulation(Simulation simulation, string fileName)
       {
-         var simulationTransfer = new SimulationTransfer {Simulation = simulation};
+         var simulationTransfer = new SimulationTransfer {Simulation = simulation.CoreSimulation};
          _simulationPersistor.Save(simulationTransfer, fileName);
       }
    }

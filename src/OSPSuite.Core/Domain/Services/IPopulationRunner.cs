@@ -26,14 +26,10 @@ namespace OSPSuite.Core.Domain.Services
    public interface IPopulationRunner
    {
       /// <summary>
-      ///    (Maximal) number of cores to be used (1 per default)
-      /// </summary>
-      int NumberOfCoresToUse { get; set; }
-
-      /// <summary>
       ///    Runs population and returns the results.
       /// </summary>
       /// <param name="simulation"></param>
+      /// <param name="runOptions">Options for the run</param>
       /// <param name="populationData">Data table with non-table parameter values for variation</param>
       /// <param name="agingData">Data table with table parameter values for variation</param>
       /// <param name="initialValues">Data table with (molecule) initial values</param>
@@ -44,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    <para></para>
       ///    For failed individuals, pairs {IndividualId, ErrorMessage} are stored
       /// </returns>
-      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
+      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
 
       /// <summary>
       ///    Stops SimModelSimulation run

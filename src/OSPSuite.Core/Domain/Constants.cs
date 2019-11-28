@@ -90,6 +90,9 @@ namespace OSPSuite.Core.Domain
       public const byte RANGE_AREA_OPACITY = 55;
       public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
       public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
+      public const int DEFAULT_SENSITIVITY_NUMBER_OF_STEPS = 2;
+      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1; 
+
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;

@@ -17,9 +17,8 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_SensitivityAnalysisEngine : ContextSpecification<ISensitivityAnalysisEngine>
    {
       protected IEventPublisher _eventPublisher;
-      protected ISensitivyAnalysisVariationDataCreator _sensitivyAnalysisVariationDataCreator;
+      protected ISensitivityAnalysisVariationDataCreator _sensitivityAnalysisVariationDataCreator;
       protected IPopulationRunner _populationRunner;
-      protected ICoreUserSettings _userSettings;
       protected ISimulationToModelCoreSimulationMapper _modelCoreSimulationMapper;
       protected ISensitivityAnalysisRunResultCalculator _runResultCalculator;
       protected ISimulationPersistableUpdater _simulationPersistableUpdater;
@@ -29,13 +28,12 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _eventPublisher = A.Fake<IEventPublisher>();
-         _sensitivyAnalysisVariationDataCreator = A.Fake<ISensitivyAnalysisVariationDataCreator>();
+         _sensitivityAnalysisVariationDataCreator = A.Fake<ISensitivityAnalysisVariationDataCreator>();
          _populationRunner = A.Fake<IPopulationRunner>();
-         _userSettings = A.Fake<ICoreUserSettings>();
          _modelCoreSimulationMapper = A.Fake<ISimulationToModelCoreSimulationMapper>();
          _runResultCalculator = A.Fake<ISensitivityAnalysisRunResultCalculator>();
          _simulationPersistableUpdater = A.Fake<ISimulationPersistableUpdater>();
-         sut = new SensitivityAnalysisEngine(_eventPublisher, _sensitivyAnalysisVariationDataCreator, _populationRunner, _userSettings, _modelCoreSimulationMapper, _runResultCalculator, _simulationPersistableUpdater);
+         sut = new SensitivityAnalysisEngine(_eventPublisher, _sensitivityAnalysisVariationDataCreator, _populationRunner, _modelCoreSimulationMapper, _runResultCalculator, _simulationPersistableUpdater);
 
          _sensitivityAnalysis = A.Fake<SensitivityAnalysis>();
          _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
@@ -50,10 +48,12 @@ namespace OSPSuite.Core.Domain
       private VariationData _variationData;
       private SensitivityAnalysisRunResult _sensitivityAnalysisResults;
       private DataTable _dataTable;
+      private RunOptions _runOptions;
 
       protected override void Context()
       {
          base.Context();
+         _runOptions = new RunOptions();
          _allEvents = new List<SensitivityAnalysisEvent>();
          A.CallTo(() => _eventPublisher.PublishEvent(A<SensitivityAnalysisStartedEvent>._))
             .Invokes(x => _allEvents.Add(x.GetArgument<SensitivityAnalysisStartedEvent>(0)));
@@ -67,9 +67,9 @@ namespace OSPSuite.Core.Domain
          _variationData= A.Fake<VariationData>();
          _dataTable=new DataTable();
          A.CallTo(() => _variationData.ToDataTable()).Returns(_dataTable);
-         A.CallTo(() => _sensitivyAnalysisVariationDataCreator.CreateForRun(_sensitivityAnalysis)).Returns(_variationData);
+         A.CallTo(() => _sensitivityAnalysisVariationDataCreator.CreateForRun(_sensitivityAnalysis)).Returns(_variationData);
          _populationRunResult = new PopulationRunResults {Results = new SimulationResults()};
-         A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _dataTable, null, null)).ReturnsAsync(_populationRunResult);
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _runOptions,  _dataTable, null, null)).ReturnsAsync(_populationRunResult);
 
          _sensitivityAnalysisResults=new SensitivityAnalysisRunResult();
          A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results)).Returns(_sensitivityAnalysisResults);
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.StartAsync(_sensitivityAnalysis).Wait();
+         sut.StartAsync(_sensitivityAnalysis, _runOptions).Wait();
       }
 
       [Observation]

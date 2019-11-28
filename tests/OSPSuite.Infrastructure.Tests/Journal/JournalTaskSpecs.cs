@@ -324,7 +324,7 @@ namespace OSPSuite.Infrastructure.Journal
          A.CallTo(() => _eventPublisher.PublishEvent(A<JournalPageDeletedEvent>._))
             .Invokes(x => _event = x.GetArgument<JournalPageDeletedEvent>(0));
 
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteJournalPage(_journalPage.Title))).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteJournalPage(_journalPage.Title), ViewResult.Yes)).Returns(ViewResult.Yes);
       }
 
       protected override void Because()
@@ -335,7 +335,7 @@ namespace OSPSuite.Infrastructure.Journal
       [Observation]
       public void should_asks_the_user_if_he_really_wants_to_delete_the_related_item()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteJournalPage(_journalPage.Title))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteJournalPage(_journalPage.Title), ViewResult.Yes)).MustHaveHappened();
       }
 
       [Observation]
@@ -365,7 +365,7 @@ namespace OSPSuite.Infrastructure.Journal
       {
          base.Context();
          _journalPage2 = new JournalPage();
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleRelatedItems, ViewResult.Yes)).Returns(ViewResult.Yes);
       }
 
       protected override void Because()
@@ -376,7 +376,7 @@ namespace OSPSuite.Infrastructure.Journal
       [Observation]
       public void should_asks_the_user_if_he_really_wants_to_delete_the_related_items()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleJournalPages)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Journal.ReallyDeleteMultipleJournalPages, ViewResult.Yes)).MustHaveHappened();
       }
 
       [Observation]

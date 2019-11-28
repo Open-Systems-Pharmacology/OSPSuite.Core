@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Presentation
          _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
          A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns("a path");
          DirectoryHelper.DirectoryExists = path => true;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).Returns(ViewResult.Yes);
          A.CallTo(() => _parameterIdentification.AllSimulations).Returns(new[] {_simulation});
          A.CallTo(() => _simulationToModelCoreSimulationMapper.MapFrom(_simulation, A<bool>._)).Returns(_modelCoreSimulation);
       }
@@ -147,7 +147,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_dialog_creator_must_be_used_to_inform_the_user()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).MustHaveHappened();
       }
    }
 
@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation.Presentation
          _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
          A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns("a path");
          DirectoryHelper.DirectoryExists = path => true;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).Returns(ViewResult.Yes);
          A.CallTo(() => _parameterIdentification.AllSimulations).Returns(new[] {_simulation});
          A.CallTo(() => _simulationToModelCoreSimulationMapper.MapFrom(_simulation, A<bool>._)).Returns(_modelCoreSimulation);
       }
@@ -189,7 +189,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_dialog_creator_must_be_used_to_inform_the_user()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).MustHaveHappened();
       }
    }
 

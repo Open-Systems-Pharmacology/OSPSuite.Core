@@ -61,13 +61,13 @@ namespace OSPSuite.Presentation.Presentation
       public void should_confirm_before_delete()
       {
          sut.RestoreChronologicalOrder();
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>.Ignored, ViewResult.Yes)).MustHaveHappened();
       }
 
       [Observation]
       public void should_not_restore_if_not_confirmed()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._)).Returns(ViewResult.No);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).Returns(ViewResult.No);
          sut.RestoreChronologicalOrder();
          A.CallTo(() => _journalDiagram.DiagramManager.RefreshDiagramFromModel()).MustNotHaveHappened();
       }
@@ -75,7 +75,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_restore_if_confirmed()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).Returns(ViewResult.Yes);
          sut.RestoreChronologicalOrder();
          A.CallTo(() => _journalDiagram.DiagramManager.RefreshDiagramFromModel()).MustHaveHappened();
       }
