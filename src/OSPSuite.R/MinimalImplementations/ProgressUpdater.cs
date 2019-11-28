@@ -11,12 +11,23 @@ namespace OSPSuite.R.MinimalImplementations
 
       public override void ReportProgress(int iteration, int numberOfIterations, string message)
       {
-         Console.Write(value: $"..{PercentFrom(iteration, numberOfIterations)}");
+         var currentPercent = PercentFrom(_currentIteration, numberOfIterations);
+         var nextPercent = PercentFrom(iteration, numberOfIterations);
+         _currentIteration = iteration;
+
+         if (currentPercent == nextPercent)
+            return;
+
+         var inProgress = (iteration != numberOfIterations);
+         if (inProgress)
+            Console.Write(value: $"{currentPercent}..");   
+         else
+            Console.WriteLine(value: $"{currentPercent}");
       }
 
       public override void ReportStatusMessage(string message)
       {
-         Console.Write(message);
+         Console.WriteLine(message);
       }
    }
 }

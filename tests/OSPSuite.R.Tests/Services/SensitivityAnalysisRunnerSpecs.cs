@@ -1,16 +1,12 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.R.Domain;
-using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
    public abstract class concern_for_SensitivityAnalysisRunner : ContextForIntegration<ISensitivityAnalysisRunner>
    {
-
-
       protected override void Context()
       {
          sut = IoC.Resolve<ISensitivityAnalysisRunner>();
@@ -21,6 +17,7 @@ namespace OSPSuite.R.Services
    {
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
+      private Core.Domain.SensitivityAnalyses.SensitivityAnalysis _result;
 
       public override void GlobalContext()
       {
@@ -28,16 +25,21 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          var simulationPersister = IoC.Resolve<ISimulationPersister>();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
-         _sensitivityAnalysis = new SensitivityAnalysis(_simulation){NumberOfSteps = 2, VariationRange = 0.2};
+         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
          var containerTask = IoC.Resolve<IContainerTask>();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
          _sensitivityAnalysis.AddParameters(liverVolumes);
       }
 
+      protected override void Because()
+      {
+         _result = sut.Run(_sensitivityAnalysis);
+      }
+
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         sut.Run(_sensitivityAnalysis);
+         _result.AllSensitivityParameterPaths.ShouldOnlyContain("Organism|Liver|Volume");
       }
    }
 
@@ -45,6 +47,7 @@ namespace OSPSuite.R.Services
    {
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
+      private Core.Domain.SensitivityAnalyses.SensitivityAnalysis _result;
 
       public override void GlobalContext()
       {
@@ -52,13 +55,20 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("simple.pkml");
          var simulationPersister = IoC.Resolve<ISimulationPersister>();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
-         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) { NumberOfSteps = 1, VariationRange = 0.2 };
+         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 1, VariationRange = 0.2};
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Run(_sensitivityAnalysis);
       }
 
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         sut.Run(_sensitivityAnalysis);
+         _result.AllSensitivityParameterPaths.Count.ShouldBeGreaterThan(0);
+
+         var pkAnalysis = _result.AllPKParameterSensitivitiesFor("AUC", "Simple|Organism|Liver|A|Concentration", 1);
       }
    }
 }

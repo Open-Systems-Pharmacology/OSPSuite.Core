@@ -7,13 +7,27 @@ using OSPSuite.Core.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Events;
+using CoreSensitivityAnalysis = OSPSuite.Core.Domain.SensitivityAnalyses.SensitivityAnalysis;
 
 namespace OSPSuite.R.Services
 {
    public interface ISensitivityAnalysisRunner
    {
-      Task RunAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null);
-      void Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null);
+      /// <summary>
+      /// Runs the sensitivity analysis and returns a Core Sensitivity analysis holding the sensitivity analysis results
+      /// </summary>
+      /// <param name="sensitivityAnalysis">Sensitivity analysis to run</param>
+      /// <param name="runOptions">Options to use for the run. If not defined, the default options will be used</param>
+      /// <returns>a Core Sensitivity analysis holding the sensitivity analysis results</returns>
+      Task<CoreSensitivityAnalysis> RunAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null);
+
+      /// <summary>
+      /// Runs the sensitivity analysis and returns a Core Sensitivity analysis holding the sensitivity analysis results
+      /// </summary>
+      /// <param name="sensitivityAnalysis">Sensitivity analysis to run</param>
+      /// <param name="runOptions">Options to use for the run. If not defined, the default options will be used</param>
+      /// <returns>a Core Sensitivity analysis holding the sensitivity analysis results</returns>
+      CoreSensitivityAnalysis Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null);
    }
 
    public class SensitivityAnalysisRunner : ISensitivityAnalysisRunner
@@ -34,7 +48,7 @@ namespace OSPSuite.R.Services
          _progressManager = progressManager;
       }
 
-      public async Task RunAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null)
+      public async Task<CoreSensitivityAnalysis> RunAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null)
       {
          var options = runOptions ?? new SensitivityAnalysisRunOptions();
 
@@ -44,6 +58,7 @@ namespace OSPSuite.R.Services
             initializeProgress(sensitivityAnalysisEngine, options);
             var coreSensitivityAnalysis = _sensitivityAnalysisMapper.MapFrom(sensitivityAnalysis);
             await sensitivityAnalysisEngine.StartAsync(coreSensitivityAnalysis, options);
+            return coreSensitivityAnalysis;
          }
          finally
          {
@@ -58,10 +73,7 @@ namespace OSPSuite.R.Services
          _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
       }
 
-      public void Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null)
-      {
-         RunAsync(sensitivityAnalysis, runOptions).Wait();
-      }
+      public CoreSensitivityAnalysis Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null) => RunAsync(sensitivityAnalysis, runOptions).Result;
 
       private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs e)
       {
