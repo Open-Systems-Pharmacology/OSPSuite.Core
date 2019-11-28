@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             .Each(sensitivityAnalysis.AddSensitivityParameter);
       }
 
-      public void AddToProject(SensitivityAnalysis sensitivityAnalysis) => addSensitivityAnalysisToProject(sensitivityAnalysis, _executionContext);
+      public void AddToProject(SensitivityAnalysis sensitivityAnalysis) => addSensitivityAnalysisToProject(sensitivityAnalysis);
 
       public bool Delete(IReadOnlyList<SensitivityAnalysis> sensitivityAnalyses)
       {
@@ -105,12 +105,12 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _executionContext.PublishEvent(new SensitivityAnalysisDeletedEvent(sensitivityAnalysis));
       }
 
-      private void addSensitivityAnalysisToProject(SensitivityAnalysis sensitivityAnalysis, IOSPSuiteExecutionContext executionContext)
+      private void addSensitivityAnalysisToProject(SensitivityAnalysis sensitivityAnalysis)
       {
-         var project = executionContext.Project;
+         var project = _executionContext.Project;
          project.AddSensitivityAnalysis(sensitivityAnalysis);
-         executionContext.Register(sensitivityAnalysis);
-         executionContext.PublishEvent(new SensitivityAnalysisCreatedEvent(sensitivityAnalysis));
+         _executionContext.Register(sensitivityAnalysis);
+         _executionContext.PublishEvent(new SensitivityAnalysisCreatedEvent(sensitivityAnalysis));
       }
    }
 }
