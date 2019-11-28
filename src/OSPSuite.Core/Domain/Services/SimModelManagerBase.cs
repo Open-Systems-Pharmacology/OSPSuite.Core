@@ -44,9 +44,10 @@ namespace OSPSuite.Core.Domain.Services
          simModelSimulation.FinalizeSimulation();
       }
 
-      protected Simulation CreateSimulation(string simulationExport)
+      protected Simulation CreateSimulation(string simulationExport, Action<SimulationOptions> configureSimulationAction = null)
       {
          var simulation = _simModelSimulationFactory.Create();
+         configureSimulationAction?.Invoke(simulation.Options);
          simulation.LoadFromXMLString(simulationExport);
          return simulation;
       }
@@ -76,6 +77,5 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       protected IEnumerable<SolverWarning> WarningsFrom(Simulation simModelSimulation) => simModelSimulation.SolverWarnings;
-
    }
 }

@@ -20,7 +20,7 @@ namespace OSPSuite.R.Services
       public IReadOnlyList<string> AllPathOfParametersUsedInSimulation(IModelCoreSimulation modelCoreSimulation)
       {
          var simulationExport = CreateSimulationExport(modelCoreSimulation, SimModelExportMode.Optimized);
-         var simulation = CreateSimulation(simulationExport);
+         var simulation = CreateSimulation(simulationExport, o => o.IdentifyUsedParameters = true);
          FinalizeSimulation(simulation);
          var allUsedParameters = simulation.ParameterProperties.Where(x => x.IsUsedInSimulation);
          return allUsedParameters.Select(x => x.Path).ToList();

@@ -33,7 +33,6 @@ namespace OSPSuite.Core.Domain.Services
          _simulationResultsName = simulationResultsName;
          _calculateSensitivities = calculateSensitivities;
          _simModelSimulation = createAndFinalizeSimulation();
-         _simModelSimulation.Options.CheckForNegativeValues = false;
          _allVariableParameters = _simModelSimulation.VariableParameters.ToList();
       }
 
@@ -45,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
       private Simulation createAndFinalizeSimulation()
       {
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized);
-         var simulation = CreateSimulation(simulationExport);
+         var simulation = CreateSimulation(simulationExport, x => x.CheckForNegativeValues = false);
          setVariableParameters(simulation);
          FinalizeSimulation(simulation);
          return simulation;
