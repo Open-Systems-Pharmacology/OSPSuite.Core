@@ -130,7 +130,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public void AddAllConstantParameters()
       {
-         var allConstantParameters = _simulationParametersPresenter.AllParameters.Where(isNonFormulaParameter).ToList();
+         var allConstantParameters = _simulationParametersPresenter.AllParameters.Where(isConstantParameter).ToList();
          _sensitivityAnalysisParametersPresenter.AddParameters(allConstantParameters);
       }
 
@@ -141,11 +141,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public ISimulation Simulation => _sensitivityAnalysis.Simulation;
 
-      private static bool isNonFormulaParameter(ParameterSelection parameterSelection)
-      {
-         var parameter = parameterSelection.Parameter;
-         return parameter.IsFixedValue || !parameter.Formula.IsExplicit();
-      }
+      private static bool isConstantParameter(ParameterSelection parameterSelection) => parameterSelection.Parameter.IsConstantParameter();
 
       public void Handle(SimulationReplacedInParameterAnalyzableEvent eventToHandle)
       {
