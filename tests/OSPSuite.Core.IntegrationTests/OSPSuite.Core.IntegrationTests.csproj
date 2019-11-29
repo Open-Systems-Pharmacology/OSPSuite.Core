@@ -58,6 +58,9 @@
     <None Update="Data\multi_admin_oral.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Data\simple.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\simple_IV_53.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
