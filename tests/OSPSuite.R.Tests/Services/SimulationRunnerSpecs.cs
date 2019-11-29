@@ -89,7 +89,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.RunSimulation(_simulation, _population, _simulationRunOptions);
+         _results = sut.Run(_simulation, _population, _simulationRunOptions);
       }
 
       [Observation]

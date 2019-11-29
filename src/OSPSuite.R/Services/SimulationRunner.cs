@@ -17,7 +17,7 @@ namespace OSPSuite.R.Services
       Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
       SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
 
-      SimulationResults RunSimulation(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
+      SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
       Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
    }
 
@@ -69,7 +69,7 @@ namespace OSPSuite.R.Services
          return RunAsync(simulation, simulationRunOptions).Result;
       }
 
-      public SimulationResults RunSimulation(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
+      public SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
       {
          return RunAsync(simulation, population, simulationRunOptions).Result;
       }
