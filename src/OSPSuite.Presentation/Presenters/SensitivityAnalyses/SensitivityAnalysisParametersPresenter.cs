@@ -162,9 +162,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public override void AddParameters(IReadOnlyList<ParameterSelection> parameters)
       {
-         parameters.Select(parameterSelection => _sensitivityParameterFactory.CreateFor(parameterSelection, _sensitivityAnalysis))
-            .Where(sensitivityParameter => sensitivityParameter != null)
-            .Each(sensitivityParameter => _sensitivityAnalysis.AddSensitivityParameter(sensitivityParameter));
+         _sensitivityAnalysisTask.AddParametersTo(_sensitivityAnalysis, parameters);
 
          updateView();
          ViewChanged();

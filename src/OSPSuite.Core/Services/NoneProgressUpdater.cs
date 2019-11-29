@@ -34,7 +34,17 @@ namespace OSPSuite.Core.Services
          // nothing to do
       }
 
+      public void ReportProgress(int iteration, int numberOfIterations)
+      {
+         // nothing to do
+      }
+
       public void ReportProgress(int iteration, string message)
+      {
+         // nothing to do
+      }
+
+      public void ReportProgress(int iteration, int numberOfIterations, string message)
       {
          // nothing to do
       }

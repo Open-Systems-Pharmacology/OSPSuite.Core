@@ -1,25 +1,14 @@
-﻿using System;
-using System.IO;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
-   public abstract class concern_for_SimulationPersister : ContextSpecification<ISimulationPersister>
+   public abstract class concern_for_SimulationPersister : ContextForIntegration<ISimulationPersister>
    {
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         Api.InitializeOnce(new ApiConfig
-         {
-            DimensionFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME),
-            PKParametersFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME),
-         });
-      }
-
       protected override void Context()
       {
          sut = IoC.Resolve<ISimulationPersister>();
@@ -52,7 +41,7 @@ namespace OSPSuite.R.Services
    public class When_saving_a_simulation_to_file : concern_for_SimulationPersister
    {
       private string _simulationFile;
-      private IModelCoreSimulation _simulation;
+      private Simulation _simulation;
 
       protected override void Context()
       {

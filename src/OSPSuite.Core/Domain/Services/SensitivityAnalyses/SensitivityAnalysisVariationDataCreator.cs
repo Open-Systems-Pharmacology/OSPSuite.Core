@@ -4,12 +4,12 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
-   public interface ISensitivyAnalysisVariationDataCreator
+   public interface ISensitivityAnalysisVariationDataCreator
    {
       VariationData CreateForRun(SensitivityAnalysis sensitivityAnalysis);
    }
 
-   public class SensitivyAnalysisVariationDataCreator : ISensitivyAnalysisVariationDataCreator
+   public class SensitivityAnalysisVariationDataCreator : ISensitivityAnalysisVariationDataCreator
    {
       public VariationData CreateForRun(SensitivityAnalysis sensitivityAnalysis)
       {

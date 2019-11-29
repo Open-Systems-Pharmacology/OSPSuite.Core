@@ -200,7 +200,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_warn_the_user()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun)).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun, ViewResult.Yes)).MustHaveHappened();
       }
    }
 
@@ -212,7 +212,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _runResult.Status = RunStatus.Canceled;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun)).Returns(ViewResult.No);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun, ViewResult.Yes)).Returns(ViewResult.No);
       }
 
       protected override void Because()
@@ -235,7 +235,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _runResult.Status = RunStatus.Canceled;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun)).Returns(ViewResult.Yes);
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Warning.ImportingParameterIdentificationValuesFromCancelledRun, ViewResult.Yes)).Returns(ViewResult.Yes);
       }
 
       protected override void Because()

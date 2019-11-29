@@ -84,8 +84,7 @@ namespace OSPSuite.Core.Services
          A.CallTo(() => _userOfObservedData2.UsesObservedData(_obsData1)).Returns(true);
          A.CallTo(() => _userOfObservedData1.UsesObservedData(_obsData2)).Returns(false);
 
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._
-         )).Invokes(x => _message = x.GetArgument<string>(0));
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).Invokes(x => _message = x.GetArgument<string>(0));
       }
 
       protected override void Because()

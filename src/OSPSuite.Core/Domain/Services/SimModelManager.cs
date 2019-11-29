@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Timers;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.SimModel.Services;

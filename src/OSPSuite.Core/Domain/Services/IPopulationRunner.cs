@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
    /// <summary>
    ///    Information about the simulation progress
    /// </summary>
-   public class PopulationSimulationProgressEventArgs : EventArgs
+   public class MultipleSimulationsProgressEventArgs : EventArgs
    {
       /// <summary>
       ///    Actual Progress as a Integer between 0 and 100
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public int NumberOfSimulations { get; }
 
-      public PopulationSimulationProgressEventArgs(int numberOfCalculatedSimulation, int numberOfSimulations)
+      public MultipleSimulationsProgressEventArgs(int numberOfCalculatedSimulation, int numberOfSimulations)
       {
          NumberOfCalculatedSimulation = numberOfCalculatedSimulation;
          NumberOfSimulations = numberOfSimulations;
@@ -26,14 +26,10 @@ namespace OSPSuite.Core.Domain.Services
    public interface IPopulationRunner
    {
       /// <summary>
-      ///    (Maximal) number of cores to be used (1 per default)
-      /// </summary>
-      int NumberOfCoresToUse { get; set; }
-
-      /// <summary>
       ///    Runs population and returns the results.
       /// </summary>
       /// <param name="simulation"></param>
+      /// <param name="runOptions">Options for the run</param>
       /// <param name="populationData">Data table with non-table parameter values for variation</param>
       /// <param name="agingData">Data table with table parameter values for variation</param>
       /// <param name="initialValues">Data table with (molecule) initial values</param>
@@ -44,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    <para></para>
       ///    For failed individuals, pairs {IndividualId, ErrorMessage} are stored
       /// </returns>
-      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
+      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
 
       /// <summary>
       ///    Stops SimModelSimulation run
@@ -54,7 +50,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
       /// </summary>
-      event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress;
+      event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress;
 
       /// <summary>
       ///    Event raised when simulation is terminated (either after normal termination or cancel)

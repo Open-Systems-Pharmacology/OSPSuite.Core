@@ -14,9 +14,7 @@ namespace OSPSuite.Core.Services
    {
       void MessageBoxError(string message);
 
-      ViewResult MessageBoxYesNoCancel(string message);
-
-      ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton);
+      ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton = ViewResult.Yes);
 
       /// <summary>
       ///    Customize a yes no cancel message box by allowing to change caption for yes, no, and cancel
@@ -24,13 +22,10 @@ namespace OSPSuite.Core.Services
       /// <remarks>
       ///    Leaving caption empty will use the default for the button
       /// </remarks>
-      ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel);
+      ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes);
 
-      ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton);
 
-      ViewResult MessageBoxYesNo(string message);
-
-      ViewResult MessageBoxYesNo(string message, ViewResult defaultButton);
+      ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes);
 
       /// <summary>
       ///    Customize a yes no cancel message box by allowing to change caption for yes, no
@@ -38,9 +33,7 @@ namespace OSPSuite.Core.Services
       /// <remarks>
       ///    Leaving caption empty will use the default for the button
       /// </remarks>
-      ViewResult MessageBoxYesNo(string message, string yes, string no);
-
-      ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton);
+      ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes);
 
       void MessageBoxInfo(string message);
 
@@ -51,7 +44,7 @@ namespace OSPSuite.Core.Services
       /// <param name="filter">Filter used to retrieve the file to open</param>
       /// <param name="directoryKey">
       ///    Directory key used to retrieve the default directory if <paramref name="defaultDirectory" />
-      ///    is not specified. Selcted path will be saved in this key
+      ///    is not specified. Selected path will be saved in this key
       /// </param>
       /// <param name="defaultFileName">Optional: default file name</param>
       /// <param name="defaultDirectory">Optional: default directory, This will override the directory key value</param>
@@ -64,7 +57,7 @@ namespace OSPSuite.Core.Services
       /// <param name="filter">Filter used to retrieve the file to save </param>
       /// <param name="directoryKey">
       ///    Directory key used to retrieve the default directory if <paramref name="defaultDirectory" />
-      ///    is not specified. Selcted path will be saved in this key
+      ///    is not specified. Selected path will be saved in this key
       /// </param>
       /// <param name="defaultFileName">Optional: default file name</param>
       /// <param name="defaultDirectory">Optional: default directory, This will override the directory key value</param>

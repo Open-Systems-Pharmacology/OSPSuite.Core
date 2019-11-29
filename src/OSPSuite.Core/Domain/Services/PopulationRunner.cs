@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
    public class PopulationRunner : SimModelManagerBase, IPopulationRunner
    {
       private readonly IObjectPathFactory _objectPathFactory;
-      public event EventHandler<PopulationSimulationProgressEventArgs> SimulationProgress = delegate { };
+      public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
 
       private PopulationRunResults _populationRunResults;
       private PopulationDataSplitter _populationDataSplitter;
@@ -24,24 +24,23 @@ namespace OSPSuite.Core.Domain.Services
       private int _numberOfSimulationsToRun;
       private int _numberOfProcessedSimulations;
       private string _simulationName;
-      public int NumberOfCoresToUse { get; set; }
 
       public PopulationRunner(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IObjectPathFactory objectPathFactory) : base(simModelExporter, simModelSimulationFactory)
       {
          _objectPathFactory = objectPathFactory;
-         NumberOfCoresToUse = 1;
       }
 
-      public async Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
+      public async Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
       {
          try
          {
-            if (NumberOfCoresToUse < 1)
-               NumberOfCoresToUse = 1;
+            var numberOfCoresToUse = runOptions.NumberOfCoresToUse;
+            if (numberOfCoresToUse < 1)
+               numberOfCoresToUse = 1;
 
             agingData = agingData ?? undefinedAgingData();
             initialValues = initialValues ?? undefinedInitialValues();
-            _populationDataSplitter = new PopulationDataSplitter(populationData, agingData, initialValues, NumberOfCoresToUse);
+            _populationDataSplitter = new PopulationDataSplitter(populationData, agingData, initialValues, numberOfCoresToUse);
             _cancellationTokenSource = new CancellationTokenSource();
             _populationRunResults = new PopulationRunResults();
 
@@ -49,11 +48,12 @@ namespace OSPSuite.Core.Domain.Services
             _numberOfProcessedSimulations = 0;
 
             _simulationName = simulation.Name;
+
             //create simmodel-XML
-            string simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized);
+            var simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized);
 
             //Starts one task per core
-            var tasks = Enumerable.Range(0, NumberOfCoresToUse)
+            var tasks = Enumerable.Range(0, numberOfCoresToUse)
                .Select(coreIndex => runSimulation(coreIndex, simulationExport, _cancellationTokenSource.Token)).ToList();
 
             await Task.WhenAll(tasks);
@@ -136,7 +136,7 @@ namespace OSPSuite.Core.Domain.Services
              _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
 
                //Could lead to a wrong progress if two threads are accessing the value at the same time
-               SimulationProgress(this, new PopulationSimulationProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
+               SimulationProgress(this, new MultipleSimulationsProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
             }
          }
       }

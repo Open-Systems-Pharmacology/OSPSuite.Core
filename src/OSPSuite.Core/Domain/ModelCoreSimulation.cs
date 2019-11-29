@@ -1,15 +1,15 @@
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
    public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel
    {
-
       /// <summary>
-      /// Build configuration used to create the simulation. May be null
+      ///    Build configuration used to create the simulation. May be null
       /// </summary>
       IBuildConfiguration BuildConfiguration { get; }
 
@@ -27,13 +27,20 @@ namespace OSPSuite.Core.Domain
       ///    on model creation for now. Adding <see cref="Reaction" /> to the building block will not change the model structure
       /// </summary>
       IReactionBuildingBlock Reactions { get; }
+
+      /// <summary>
+      ///    Name of all compounds used in the simulation
+      /// </summary>
+      IReadOnlyList<string> CompoundNames { get; }
+
+      IEnumerable<T> All<T>() where T : class, IEntity;
    }
 
    public class ModelCoreSimulation : ObjectBase, IModelCoreSimulation
    {
       public IModel Model { get; set; }
+
       public IBuildConfiguration BuildConfiguration { get; set; }
-      public virtual DataRepository Results { get; set; }
 
       public double? EndTime => SimulationSettings?.OutputSchema?.EndTime;
 
@@ -42,6 +49,19 @@ namespace OSPSuite.Core.Domain
       public ISimulationSettings SimulationSettings => BuildConfiguration?.SimulationSettings;
 
       public IReactionBuildingBlock Reactions => BuildConfiguration?.Reactions;
+
+      public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
+
+      public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>());
+
+      private IEnumerable<TEntity> allFromSettings<TEntity>() where TEntity : class, IEntity
+      {
+         if (SimulationSettings?.OutputSchema == null || SimulationSettings?.Solver == null)
+            return Enumerable.Empty<TEntity>();
+
+         return SimulationSettings.OutputSchema.GetAllChildren<TEntity>()
+            .Union(SimulationSettings.Solver.GetAllChildren<TEntity>());
+      }
 
       public CreationMetaData Creation { get; set; }
 
@@ -58,9 +78,6 @@ namespace OSPSuite.Core.Domain
          Model?.AcceptVisitor(visitor);
 
          BuildConfiguration?.AcceptVisitor(visitor);
-
-         if (!Results.IsNull())
-            Results.AcceptVisitor(visitor);
       }
    }
 }

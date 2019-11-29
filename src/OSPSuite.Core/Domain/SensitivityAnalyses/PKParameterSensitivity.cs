@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
    public class PKParameterSensitivity
    {
       /// <summary>
-      ///    Path of underlying quantity for which pkanalyses were performed
+      ///    Path of underlying quantity for which pk-analyses were performed
       /// </summary>
       public virtual string QuantityPath { get; set; }
 

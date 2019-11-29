@@ -1,8 +1,11 @@
 ﻿using OSPSuite.Core;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.R.Mapper;
 using OSPSuite.R.MinimalImplementations;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Events;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.R
@@ -15,9 +18,14 @@ namespace OSPSuite.R
          {
             scan.AssemblyContainingType<RRegister>();
 
-            //REGISTER Services
+            //Register Services
             scan.IncludeNamespaceContainingType<ISimulationRunner>();
+
+            //Register Minimal implementations
             scan.IncludeNamespaceContainingType<DisplayUnitRetriever>();
+
+            //Register Mappers
+            scan.IncludeNamespaceContainingType<ISensitivityAnalysisToCoreSensitivityAnalysisMapper>();
 
             // This will be registered as singleton
             scan.ExcludeType<GroupRepository>();
@@ -25,6 +33,9 @@ namespace OSPSuite.R
          });
 
          container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
+
+         container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
+         container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
       }
    }
 }

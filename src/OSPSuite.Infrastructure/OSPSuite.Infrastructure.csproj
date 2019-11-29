@@ -38,8 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
 

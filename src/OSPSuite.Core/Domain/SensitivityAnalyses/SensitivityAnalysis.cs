@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       private double[] defaultParameterValues => _allSensitivityParameters.Select(x => x.Parameter.Value).ToArray();
 
-      public IReadOnlyList<string> AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToList();
+      public IReadOnlyList<string> AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToArray();
 
       public bool Uses(IParameter parameter)
       {
@@ -120,7 +120,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public IReadOnlyList<PKParameterSensitivity> AllPKParameterSensitivitiesFor(string pkParameterName, string outputPath, double totalSensitivityThreshold)
       {
          var allPossiblePKParameterSensitivities = allPKParametersForSelectionWithDefinedSensitivity(pkParameterName, outputPath).OrderByDescending(x => Math.Abs(x.Value));
-         return sensitivitiesUpToTotalSensitivity(allPossiblePKParameterSensitivities, totalSensitivityThreshold).ToList();
+         return sensitivitiesUpToTotalSensitivity(allPossiblePKParameterSensitivities, totalSensitivityThreshold).ToArray();
       }
 
       private IEnumerable<PKParameterSensitivity> allPKParametersForSelectionWithDefinedSensitivity(string pkParameterName, string outputPath)

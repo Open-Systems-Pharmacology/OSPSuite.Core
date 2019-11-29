@@ -8,16 +8,17 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
+using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
    public interface ISimulationRunner
    {
-      Task<SimulationResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
-      SimulationResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
+      Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
+      SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
 
       SimulationResults RunSimulation(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
-      Task<SimulationResults> RunSimulationAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
+      Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
    }
 
    public class SimulationRunner : ISimulationRunner
@@ -46,11 +47,10 @@ namespace OSPSuite.R.Services
          _progressManager = progressManager;
       }
 
-      private void simulationProgress(object sender, PopulationSimulationProgressEventArgs e)
+      private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs e)
       {
-         _progressUpdater.ReportProgress(e.NumberOfCalculatedSimulation, Messages.CalculationPopulationSimulation(e.NumberOfCalculatedSimulation, e.NumberOfSimulations));
+         _progressUpdater.ReportProgress(e.NumberOfCalculatedSimulation, e.NumberOfSimulations, Messages.CalculationPopulationSimulation(e.NumberOfCalculatedSimulation, e.NumberOfSimulations));
       }
-
 
       private void simulationTerminated()
       {
@@ -64,43 +64,40 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
+      public SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
-         return RunSimulationAsync(simulation, simulationRunOptions).Result;
+         return RunAsync(simulation, simulationRunOptions).Result;
       }
 
       public SimulationResults RunSimulation(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
       {
-         return RunSimulationAsync(simulation, population, simulationRunOptions).Result;
+         return RunAsync(simulation, population, simulationRunOptions).Result;
       }
 
-      public async Task<SimulationResults> RunSimulationAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
+      public async Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
-         initializeProgress(population, options);
-         _populationRunner.NumberOfCoresToUse = options.NumberOfCoresToUse;
+         initializeProgress(options);
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          try
          {
-            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, _populationTask.PopulationTableFrom(population, simulation));
+            var populationRunResults = await _populationRunner.RunPopulationAsync(simulation, options, _populationTask.PopulationTableFrom(population, simulation));
             return populationRunResults.Results;
          }
          finally
          {
             simulationTerminated();
          }
-
       }
 
-      private void initializeProgress(IndividualValuesCache population, SimulationRunOptions options)
+      private void initializeProgress(SimulationRunOptions options)
       {
          _populationRunner.Terminated += terminated;
          _populationRunner.SimulationProgress += simulationProgress;
          _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
-         _progressUpdater.Initialize(population.Count);
       }
 
-      public Task<SimulationResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
+      public Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
          return Task.Run(() =>
          {

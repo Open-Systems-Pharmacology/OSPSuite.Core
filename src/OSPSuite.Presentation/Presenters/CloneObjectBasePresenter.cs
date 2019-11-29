@@ -1,3 +1,4 @@
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
@@ -13,8 +14,14 @@ namespace OSPSuite.Presentation.Presenters
    public class CloneObjectBasePresenter<TObjectBase> : AbstractClonePresenter<TObjectBase>, ICloneObjectBasePresenter<TObjectBase> where TObjectBase : class, IObjectBase
    {
       private readonly ICloneManagerForModel _cloneManager;
-      public CloneObjectBasePresenter(IObjectBaseView view, IObjectTypeResolver objectTypeResolver, IRenameObjectDTOFactory renameObjectDTOFactory, ICloneManagerForModel cloneManager) :
-         base(view, objectTypeResolver, renameObjectDTOFactory)
+
+      public CloneObjectBasePresenter(
+         IObjectBaseView view,
+         IObjectTypeResolver objectTypeResolver,
+         IRenameObjectDTOFactory renameObjectDTOFactory,
+         ICloneManagerForModel cloneManager,
+         IOSPSuiteExecutionContext executionContext) :
+         base(view, objectTypeResolver, renameObjectDTOFactory, executionContext)
       {
          _cloneManager = cloneManager;
       }

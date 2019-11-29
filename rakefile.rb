@@ -1,4 +1,4 @@
-# require_relative 'scripts/coverage'
+require_relative 'scripts/coverage'
 require_relative 'scripts/utils'
 require_relative 'scripts/copy-dependencies'
 

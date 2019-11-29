@@ -117,14 +117,17 @@ namespace OSPSuite.Core
       }
    }
 
-   public abstract class ContextForModelConstructorIntegration : ContextForIntegration<CreationResult>
+   public abstract class ContextWithLoadedSimulation<T> : ContextForIntegration<T>
    {
       public SimulationTransfer LoadPKMLFile(string pkmlName)
       {
          var projectFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Data\\{pkmlName}.pkml");
          return SerializationHelperForSpecs.Load(projectFile);
       }
+   }
 
+   public abstract class ContextForModelConstructorIntegration : ContextWithLoadedSimulation<CreationResult>
+   {
       public CreationResult CreateFrom(string pkmlName)
       {
          var simulationTransfer = LoadPKMLFile(pkmlName);

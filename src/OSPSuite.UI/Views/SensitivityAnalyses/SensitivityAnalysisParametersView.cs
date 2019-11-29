@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       private readonly ComboBoxUnitParameter _comboBoxUnit;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private IGridViewColumn _colName;
-      private const int PANEL_WITDH = 250;
+      private const int PANEL_WIDTH = 250;
       private const int PANEL_HEIGHT = 29;
 
       public SensitivityAnalysisParametersView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
@@ -93,15 +93,9 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          }
       }
 
-      public void SetNMaxView(IView view)
-      {
-         panelSetNMax.FillWith(view);
-      }
+      public void SetNMaxView(IView view) => panelSetNMax.FillWith(view);
 
-      public void SetRangeView(IView view)
-      {
-         panelSetRange.FillWith(view);
-      }
+      public void SetRangeView(IView view) => panelSetRange.FillWith(view);
 
       public override void InitializeBinding()
       {
@@ -172,7 +166,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
 
       private void updatePanelSize(PanelControl panelControl)
       {
-         var panelSize = new Size(PANEL_WITDH, PANEL_HEIGHT);
+         var panelSize = new Size(PANEL_WIDTH, PANEL_HEIGHT);
          panelControl.MinimumSize = panelSize;
          panelControl.MaximumSize = panelSize;
       }

@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public ParameterGroupingMode ParameterGroupingMode
       {
-         get { return _parameterGroupingMode; }
+         get => _parameterGroupingMode;
          set
          {
             _parameterGroupingMode = value;
