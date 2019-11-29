@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
          _quantityDisplayPathMapper = quantityDisplayPathMapper;
       }
 
-      public string FullPathFor(IObjectBase objectBase, bool addSimulationName = false)
+      public virtual string FullPathFor(IObjectBase objectBase, bool addSimulationName = false)
       {
          switch (objectBase)
          {
