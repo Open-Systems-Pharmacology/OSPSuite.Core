@@ -67,6 +67,7 @@ namespace OSPSuite.Core
             //PK-Sim registers its own implementation
             scan.ExcludeType<ObjectIdResetter>();
             scan.ExcludeType<DisplayNameProvider>();
+            scan.ExcludeType<FullPathDisplayResolver>();
 
             if (!RegisterParameter)
             {
