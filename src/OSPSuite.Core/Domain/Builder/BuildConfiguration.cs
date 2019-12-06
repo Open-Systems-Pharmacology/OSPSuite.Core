@@ -180,6 +180,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
+      //Uses toArray so that the marshaling to R works out of the box (array vs list)
       public virtual IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query) =>
          AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
 
