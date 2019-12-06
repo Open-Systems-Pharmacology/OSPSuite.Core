@@ -180,13 +180,17 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
-      public virtual IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query) => AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
+      public virtual IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query) =>
+         AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
 
-      public virtual IReadOnlyList<string> AllPresentFloatingMoleculeNames() => AllPresentMoleculeNames(m => m.IsFloating);
+      public virtual IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
+         AllPresentMoleculeNames(m => m.IsFloating);
 
-      public virtual IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() => AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
+      public virtual IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() =>
+         AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
 
-      public virtual IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames() => AllPresentMoleculeNames(m => !m.IsFloating && !m.IsXenobiotic);
+      public virtual IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames() =>
+         AllPresentMoleculeNames(m => !m.IsFloating && !m.IsXenobiotic);
 
       public virtual IReadOnlyList<string> AllPresentEndogenousMoleculeNames() => AllPresentMoleculeNames(m => !m.IsXenobiotic);
 
