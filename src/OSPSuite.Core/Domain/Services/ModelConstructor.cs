@@ -286,20 +286,20 @@ namespace OSPSuite.Core.Domain.Services
          // retrieve all molecules container defined int the spatial structure
          var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
 
-         var allPresentMolecules = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames().ToList();
-         var allEndogenous = buildConfiguration.AllPresentEndogenousStationaryMoleculeNames().ToList();
+         var allPresentMolecules = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames();
+         var allEndogenous = buildConfiguration.AllPresentEndogenousStationaryMoleculeNames();
 
          foreach (var moleculePropertiesContainer in allMoleculePropertiesContainer)
          {
-            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, buildConfiguration, model, x => !isEdogenousParameter(x));
-            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, buildConfiguration, model, isEdogenousParameter);
+            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, buildConfiguration, model, x => !isEndogenousParameter(x));
+            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, buildConfiguration, model, isEndogenousParameter);
 
             // remove the molecule properties container only used as template
             moleculePropertiesContainer.ParentContainer.RemoveChild(moleculePropertiesContainer);
          }
       }
 
-      private static bool isEdogenousParameter(IParameter parameter)
+      private static bool isEndogenousParameter(IParameter parameter)
       {
          return parameter.NameIsOneOf(Constants.ONTOGENY_FACTOR, Constants.HALF_LIFE, Constants.DEGRADATION_COEFF);
       }

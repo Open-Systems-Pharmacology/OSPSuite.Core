@@ -37,38 +37,45 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Return the names of all molecules defined in the configuration that will be present in the model
       /// </summary>
-      IEnumerable<string> AllPresentMoleculeNames();
+      IReadOnlyList<string> AllPresentMoleculeNames();
 
       /// <summary>
       ///    Return the names of all molecules defined in the configuration that will be present in the model and that
-      ///    satisifies the given query
+      ///    satisfies the given query
       /// </summary>
-      IEnumerable<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query);
+      IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query);
 
       /// <summary>
       ///    Return the names of all molecules defined in the configuration
       ///    that will be present in the model and are floating
       /// </summary>
-      IEnumerable<string> AllPresentFloatingMoleculeNames();
+      IReadOnlyList<string> AllPresentFloatingMoleculeNames();
 
       /// <summary>
       ///    Return the names of all molecules defined in the configuration
       ///    that will be present in the model, are floating and whose molecule dependent properties
       ///    will be copied into the simulation
       /// </summary>
-      IEnumerable<string> AllPresentXenobioticFloatingMoleculeNames();
+      IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames();
 
       /// <summary>
       ///    Return the names of all molecules defined in the configuration
       ///    that will be present in the model, are floating and whose molecule dependent properties
       ///    will be copied into the simulation
       /// </summary>
-      IEnumerable<string> AllPresentEndogenousStationaryMoleculeNames();
+      IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames();
+
+      /// <summary>
+      ///    Return the names of all molecules defined in the configuration
+      ///    that will be present in the model, are floating and whose molecule dependent properties
+      ///    will be copied into the simulation
+      /// </summary>
+      IReadOnlyList<string> AllPresentEndogenousMoleculeNames();
 
       /// <summary>
       ///    Returns the calculation that will be used to create the model structure
       /// </summary>
-      IEnumerable<ICoreCalculationMethod> AllCalculationMethods();
+      IReadOnlyList<ICoreCalculationMethod> AllCalculationMethods();
 
       /// <summary>
       ///    Add a calculation method to the list of used calculation method for the given configuration
@@ -88,7 +95,7 @@ namespace OSPSuite.Core.Domain.Builder
       bool ShowProgress { get; set; }
 
       /// <summary>
-      ///    Set to <c>true</c> (default), the circulare reference check will be performed when creating a simulation. This
+      ///    Set to <c>true</c> (default), the circular reference check will be performed when creating a simulation. This
       ///    should only be set to <c>false</c> for very massive model.
       /// </summary>
       bool PerformCircularReferenceCheck { get; set; }
@@ -125,7 +132,7 @@ namespace OSPSuite.Core.Domain.Builder
    /// </summary>
    public class BuildConfiguration : IBuildConfiguration
    {
-      private readonly IList<ICoreCalculationMethod> _allCalculationMethods;
+      private readonly List<ICoreCalculationMethod> _allCalculationMethods;
       private readonly ICache<IObjectBase, IObjectBase> _builderCache;
       public virtual ISpatialStructure SpatialStructure { get; set; }
       public virtual IMoleculeStartValuesBuildingBlock MoleculeStartValues { get; set; }
@@ -149,7 +156,7 @@ namespace OSPSuite.Core.Domain.Builder
          _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
       }
 
-      public virtual IEnumerable<ICoreCalculationMethod> AllCalculationMethods()
+      public virtual IReadOnlyList<ICoreCalculationMethod> AllCalculationMethods()
       {
          return _allCalculationMethods;
       }
@@ -171,40 +178,26 @@ namespace OSPSuite.Core.Domain.Builder
             .Where(msv => msv.IsPresent);
       }
 
-      public virtual IEnumerable<string> AllPresentMoleculeNames()
-      {
-         return AllPresentMoleculeNames(x => true);
-      }
+      public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
-      public IEnumerable<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query)
-      {
-         return AllPresentMolecules().Where(query).Select(x => x.Name);
-      }
+      //Uses toArray so that the marshaling to R works out of the box (array vs list)
+      public virtual IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query) =>
+         AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
 
-      public virtual IEnumerable<string> AllPresentFloatingMoleculeNames()
-      {
-         return AllPresentMoleculeNames(m => m.IsFloating);
-      }
+      public virtual IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
+         AllPresentMoleculeNames(m => m.IsFloating);
 
-      public IEnumerable<string> AllPresentXenobioticFloatingMoleculeNames()
-      {
-         return AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
-      }
+      public virtual IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() =>
+         AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
 
-      public IEnumerable<string> AllPresentEndogenousStationaryMoleculeNames()
-      {
-         return AllPresentMoleculeNames(m => !m.IsFloating && !m.IsXenobiotic);
-      }
+      public virtual IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames() =>
+         AllPresentMoleculeNames(m => !m.IsFloating && !m.IsXenobiotic);
 
-      public virtual IObjectBase BuilderFor(IObjectBase modelObject)
-      {
-         return _builderCache[modelObject];
-      }
+      public virtual IReadOnlyList<string> AllPresentEndogenousMoleculeNames() => AllPresentMoleculeNames(m => !m.IsXenobiotic);
 
-      public virtual void ClearCache()
-      {
-         _builderCache.Clear();
-      }
+      public virtual IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
+
+      public virtual void ClearCache() => _builderCache.Clear();
 
       public virtual void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
       {
