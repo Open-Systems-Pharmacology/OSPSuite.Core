@@ -28,10 +28,4 @@
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="DevExpress.Data.v18.2">
-      <HintPath>..\..\lib\DevExpress.Data.v18.2.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
