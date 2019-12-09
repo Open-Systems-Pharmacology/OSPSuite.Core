@@ -12,6 +12,7 @@ using OSPSuite.Core;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
@@ -103,6 +104,7 @@ namespace OSPSuite.Starter.Bootstrapping
             container.Register<ILogger, OSPLogger>(LifeStyle.Singleton);
             container.RegisterImplementationOf(getCurrentContext());
             container.Register<IHistoryManager, HistoryManager<MyContext>>();
+            container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();
             container.Register<MyContext, MyContext>();
 
 

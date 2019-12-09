@@ -196,8 +196,8 @@ namespace OSPSuite.UI.Controls
       {
          Rectangle r = new Rectangle(new Point(0, 0), ri.PreviewBounds.Size);
          r.Inflate(-GetPreviewTextIndent(), -GetPreviewTextVIndent());
-         r.X += ri.PreviewIndent;
-         r.Width -= ri.PreviewIndent;
+         r.X += ri.PreviewBounds.X;
+         r.Width -= ri.PreviewBounds.Width;
          return r;
       }
    }
