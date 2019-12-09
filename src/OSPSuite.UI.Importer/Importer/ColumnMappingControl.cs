@@ -16,6 +16,7 @@ using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Importer.Services;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Importer
@@ -34,6 +35,7 @@ namespace OSPSuite.UI.Importer
       private readonly Dictionary<string, ImageComboBoxEdit> _editorsForDisplay;
       private readonly Dictionary<string, ImageComboBoxEdit> _editorsForEditing;
       private IColumnCaptionHelper _columnCaptionHelper;
+      private readonly IToolTipRetriever _toolTipRetriever;
       private readonly IImporterTask _importerTask;
 
       private enum Buttons
@@ -52,7 +54,13 @@ namespace OSPSuite.UI.Importer
          IsUnitExplicitlySet
       }
 
-      public ColumnMappingControl(DataTable sourceTable, ImportDataTable table, IImageListRetriever imageListRetriever, IImporterTask importerTask, IColumnCaptionHelper columnCaptionHelper)
+      public ColumnMappingControl(
+         DataTable sourceTable, 
+         ImportDataTable table, 
+         IImageListRetriever imageListRetriever, 
+         IImporterTask importerTask, 
+         IColumnCaptionHelper columnCaptionHelper,
+         IToolTipRetriever toolTipRetriever)
       {
          InitializeComponent();
 
@@ -61,6 +69,7 @@ namespace OSPSuite.UI.Importer
          _imageListRetriever = imageListRetriever;
          _importerTask = importerTask;
          _columnCaptionHelper = columnCaptionHelper;
+         _toolTipRetriever = toolTipRetriever;
          _editorsForDisplay = new Dictionary<string, ImageComboBoxEdit>();
          _editorsForEditing = new Dictionary<string, ImageComboBoxEdit>();
 
@@ -136,7 +145,7 @@ namespace OSPSuite.UI.Importer
          if (String.IsNullOrEmpty(mappingRow.Target)) return;
          var tableColumn = getTableColumn(mappingRow);
          if (tableColumn != null)
-            e.Info.SuperTip = _importerTask.GetToolTipForImportDataColumn(tableColumn);
+            e.Info.SuperTip = _toolTipRetriever.GetToolTipForImportDataColumn(tableColumn);
 
          if (mappingRow.Target == "<Group By>")
          {

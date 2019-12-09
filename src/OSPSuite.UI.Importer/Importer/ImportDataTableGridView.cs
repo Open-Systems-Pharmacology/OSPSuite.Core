@@ -14,6 +14,7 @@ using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Presenter;
 using OSPSuite.Presentation.Importer.View;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Importer.Services;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Importer
@@ -22,12 +23,15 @@ namespace OSPSuite.UI.Importer
    {
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
+      private readonly IToolTipRetriever _toolTipRetriever;
       private IImportDataTableGridPresenter _presenter;
 
-      public ImportDataTableGridView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
+      //This is terrible with two objects and will be unified completely upon redesign
+      public ImportDataTableGridView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator, IToolTipRetriever toolTipRetriever)
       {
          _imageListRetriever = imageListRetriever;
          _toolTipCreator = toolTipCreator;
+         _toolTipRetriever = toolTipRetriever;
          InitializeComponent();
       }
 
@@ -244,7 +248,7 @@ namespace OSPSuite.UI.Importer
          e.Info = new ToolTipControlInfo(hi.Column, "")
          {
             SuperTip =
-               _presenter.GetToolTipForImportDataColumn(
+               _toolTipRetriever.GetToolTipForImportDataColumn(
                   table.Columns.ItemByIndex(hi.Column.ColumnHandle)),
             ToolTipType = ToolTipType.SuperTip
          };

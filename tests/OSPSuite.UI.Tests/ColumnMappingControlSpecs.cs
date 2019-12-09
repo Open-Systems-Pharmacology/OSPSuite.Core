@@ -13,6 +13,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Importer;
+using OSPSuite.UI.Importer.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Collections;
 
@@ -30,6 +31,7 @@ namespace OSPSuite.UI
       protected IColumnCaptionHelper _columnCaptionHelper;
       private ILowerLimitOfQuantificationTask _lowerLimitOfQuantificationTask;
       private IDialogCreator _dialogCreator;
+      private ToolTipRetriever _toolTipRetriever;
 
       #region Generate Test Case Configuration Settings
 
@@ -693,6 +695,7 @@ namespace OSPSuite.UI
          _columnCaptionHelper = new ColumnCaptionHelper();
          _lowerLimitOfQuantificationTask = new LowerLimitOfQuantificationTask();
          _importerTask = new ImporterTask(_columnCaptionHelper, _lowerLimitOfQuantificationTask);
+         _toolTipRetriever = new ToolTipRetriever(_importerTask);
       }
 
       public class when_excel_file_is_test2 : concern_for_ColumnMappingControl
@@ -723,7 +726,7 @@ namespace OSPSuite.UI
          [Test]
          public void should_map_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -763,7 +766,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_group_by_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -793,7 +796,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_pksim_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -818,7 +821,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -883,7 +886,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_group_by_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -933,7 +936,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_pksim_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -978,7 +981,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1024,7 +1027,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_group_by_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1060,7 +1063,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_pksim_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1118,7 +1121,7 @@ namespace OSPSuite.UI
          [Test]
          public void should_map_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1158,7 +1161,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_groupBy_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1188,7 +1191,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_PKSim_sheet1()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet1"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1213,7 +1216,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1292,7 +1295,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_groupBy_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1356,7 +1359,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_PKSim_sheet2()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet2"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1415,7 +1418,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1461,7 +1464,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_groupBy_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTableGroupBy, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)
@@ -1497,7 +1500,7 @@ namespace OSPSuite.UI
          [Observation]
          public void should_map_PKSim_sheet3()
          {
-            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper);
+            sut = new ColumnMappingControl(_data.Tables["Sheet3"], _importDataTablePKSim, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever);
             var mapping = sut.Mapping;
 
             foreach (var cm in mapping)

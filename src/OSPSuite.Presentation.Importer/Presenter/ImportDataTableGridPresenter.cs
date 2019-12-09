@@ -59,7 +59,6 @@ namespace OSPSuite.Presentation.Importer.Presenter
       int GetImageIndexForColumnName(string columnName);
 
       string GetLowerLimitOfQuantificationToolTipTextForRow(int dataTableRow);
-      SuperToolTip GetToolTipForImportDataColumn(ImportDataColumn importDataColumn);
    }
 
    public class ImportDataTableGridPresenter : AbstractPresenter<IImportDataTableGridView, IImportDataTableGridPresenter>, IImportDataTableGridPresenter
@@ -142,11 +141,6 @@ namespace OSPSuite.Presentation.Importer.Presenter
             return string.Empty;
 
          return ToolTips.LLOQTooltip(lloqColumn.ColumnName, getValueForRowAndColumn(dataTableRow, lloqColumn), lloqColumn.ActiveUnit.DisplayName, getLowerLimitFromColumnExtendedProperties(lloqColumn));
-      }
-
-      public SuperToolTip GetToolTipForImportDataColumn(ImportDataColumn importDataColumn)
-      {
-         return _importerTask.GetToolTipForImportDataColumn(importDataColumn);
       }
 
       private string getValueForRowAndColumn(int sourceRow, DataColumn column)

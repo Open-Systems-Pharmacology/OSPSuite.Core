@@ -18,6 +18,7 @@ using OSPSuite.Presentation.Importer.View;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Importer.Services;
 using OSPSuite.UI.Services;
 using OSPSuite.UI.Views;
 using OSPSuite.Utility.Collections;
@@ -51,9 +52,10 @@ namespace OSPSuite.UI.Importer
       private Cache<string, Rectangle> _rangesCache;
       private IImporterPresenter _presenter;
       private readonly IColumnCaptionHelper _columnCaptionHelper;
+      private readonly IToolTipRetriever _toolTipRetriever;
 
       public ImporterView(IColumnInfosToImportDataTableMapper importMapper, IImportDataTableToDataRepositoryMapper dataRepositoryMapper, IImageListRetriever imageListRetriever,
-         IDialogCreator dialogCreator, IImporterTask importerTask, IColumnCaptionHelper columnCaptionHelper)
+         IDialogCreator dialogCreator, IImporterTask importerTask, IColumnCaptionHelper columnCaptionHelper, IToolTipRetriever toolTipRetriever)
       {
          _importMapper = importMapper;
          _dataRepositoryMapper = dataRepositoryMapper;
@@ -61,6 +63,7 @@ namespace OSPSuite.UI.Importer
          _dialogCreator = dialogCreator;
          _importerTask = importerTask;
          _columnCaptionHelper = columnCaptionHelper;
+         _toolTipRetriever = toolTipRetriever;
          InitializeComponent();
       }
 
@@ -261,7 +264,7 @@ namespace OSPSuite.UI.Importer
 
       private ColumnMappingControl createColumnMappingControl(DataTable sourceTable)
       {
-         var columnMappingControl = new ColumnMappingControl(sourceTable, _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper) {Dock = DockStyle.Fill};
+         var columnMappingControl = new ColumnMappingControl(sourceTable, _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever) {Dock = DockStyle.Fill};
          _columnMappingControls.Add(sourceTable.TableName, columnMappingControl);
          columnMappingControl.OnMappingCompleted += onColumnMappingMappingCompleted;
          columnMappingControl.OnMissingMapping += onColumnMappingMissingMapping;
@@ -587,7 +590,7 @@ namespace OSPSuite.UI.Importer
 
       private ColumnMappingControl createNewColumnMappingControl(DataSet preview, string sheet)
       {
-         var cmc = new ColumnMappingControl(preview.Tables[sheet], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper) {Dock = DockStyle.Fill};
+         var cmc = new ColumnMappingControl(preview.Tables[sheet], _importDataTable, _imageListRetriever, _importerTask, _columnCaptionHelper, _toolTipRetriever) {Dock = DockStyle.Fill};
          cmc.OnMappingCompleted += setImportFlagToTrue;
          cmc.OnMissingMapping += setImportFlagToFalse;
          _columnMappingControls.Add(sheet, cmc);
