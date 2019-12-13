@@ -144,8 +144,11 @@ namespace OSPSuite.Core
       /// </summary>
       protected string LocalPathFor(string fileName)
       {
-         //Do not use AppDomain.CurrentDomain.BaseDirectory as it is potentially null in Mono and returns the path of the main assembly as opposed to where the dll calling this code resides
-         var localFolder = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
+         var localFolder = AppDomain.CurrentDomain.BaseDirectory;
+
+         // Potentially null in Mono
+         if (string.IsNullOrEmpty(localFolder))
+            localFolder = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
 
          if (string.IsNullOrEmpty(localFolder))
             return null;
