@@ -16,13 +16,13 @@ namespace OSPSuite.Core.Domain
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _entityPathResolver = A.Fake<IEntityPathResolver>();
-         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver, "{0}_");
+         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver);
       }
    }
 
    internal class When_retrieving_a_sub_container_for_a_molecule_that_was_already_created : concern_for_ContainerTask
    {
-      private IContainer _parentContaiener;
+      private IContainer _parentContainer;
       private IContainer _moleculeContainer;
       private string _moleculeName;
       private IContainer _result;
@@ -31,14 +31,14 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _moleculeName = "a molcule";
-         _parentContaiener = new Container().WithName("parentContainer");
+         _parentContainer = new Container().WithName("parentContainer");
          _moleculeContainer = new Container().WithName(_moleculeName);
-         _parentContaiener.Add(_moleculeContainer);
+         _parentContainer.Add(_moleculeContainer);
       }
 
       protected override void Because()
       {
-         _result = sut.CreateOrRetrieveSubContainerByName(_parentContaiener, _moleculeName);
+         _result = sut.CreateOrRetrieveSubContainerByName(_parentContainer, _moleculeName);
       }
 
       [Observation]
@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain
 
    internal class When_retrieving_a_sub_container_for_a_molecule_that_was_not_already_created : concern_for_ContainerTask
    {
-      private IContainer _parentContaiener;
+      private IContainer _parentContainer;
       private IContainer _moleculeContainer;
       private string _moleculeName;
       private IContainer _result;
@@ -59,22 +59,22 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _moleculeName = "a molcule";
-         _parentContaiener = new Container().WithName("parentContainer");
+         _parentContainer = new Container().WithName("parentContainer");
          _moleculeContainer = new Container();
-         _parentContaiener.Add(_moleculeContainer);
+         _parentContainer.Add(_moleculeContainer);
          A.CallTo(() => _objectBaseFactory.Create<IContainer>()).Returns(_moleculeContainer);
       }
 
       protected override void Because()
       {
-         _result = sut.CreateOrRetrieveSubContainerByName(_parentContaiener, _moleculeName);
+         _result = sut.CreateOrRetrieveSubContainerByName(_parentContainer, _moleculeName);
       }
 
       [Observation]
       public void should_create_a_container_into_the_parent_container_and_return_the_newly_created_container()
       {
          _result.ShouldBeEqualTo(_moleculeContainer);
-         _result.ParentContainer.ShouldBeEqualTo(_parentContaiener);
+         _result.ParentContainer.ShouldBeEqualTo(_parentContainer);
          _result.Name.ShouldBeEqualTo(_moleculeName);
       }
    }
@@ -138,9 +138,9 @@ namespace OSPSuite.Core.Domain
          _container = new Container().WithName("ParentContainer");
          _container.Add(new Parameter().WithName("para"));
          _container.Add(new Parameter().WithName("toto"));
-         _container.Add(new Parameter().WithName("toto_1"));
-         _container.Add(new Parameter().WithName("toto_3"));
-         _container.Add(new Parameter().WithName("toto_tralala"));
+         _container.Add(new Parameter().WithName("toto 1"));
+         _container.Add(new Parameter().WithName("toto 3"));
+         _container.Add(new Parameter().WithName("toto tralala"));
       }
 
       [Observation]
@@ -158,8 +158,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_a_new_name_based_on_the_given_string_if_the_name_exists()
       {
-         sut.CreateUniqueName(_container, "para").ShouldBeEqualTo("para_1");
-         sut.CreateUniqueName(_container, "toto").ShouldBeEqualTo("toto_4");
+         sut.CreateUniqueName(_container, "para").ShouldBeEqualTo("para 1");
+         sut.CreateUniqueName(_container, "toto").ShouldBeEqualTo("toto 4");
       }
    }
 

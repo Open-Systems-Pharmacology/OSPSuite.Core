@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Returns a unique child name in the parent container with the suffix baseName.
-      ///    e.g  baseName_* where * is a number so that the returned value does not exitst in the container
+      ///    e.g  baseName_* where * is a number so that the returned value does not exist in the container
       ///    if <paramref name="canUseBaseName" /> is true, the provided base name can be used as returned value if the name does
       ///    not
       ///    exist in the container.
@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Returns a unique child name with the suffix baseName.
-      ///    e.g baseName_* where * is a number so that the returned value does not exitst in <paramref name="usedNames" />.
+      ///    e.g baseName_* where * is a number so that the returned value does not exist in <paramref name="usedNames" />.
       ///    if <paramref name="canUseBaseName" /> is true, the provided base name can be used as returned value if the name does
       ///    not
       ///    exist in <paramref name="usedNames" />.
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Returns a unique child name with the suffix baseName.
-      ///    e.g baseName_* where * is a number so that the returned value does not exitst in <paramref name="usedNames" />.
+      ///    e.g baseName_* where * is a number so that the returned value does not exist in <paramref name="usedNames" />.
       ///    if <paramref name="canUseBaseName" /> is true, the provided base name can be used as returned value if the name does
       ///    not
       ///    exist in <paramref name="usedNames" />.
@@ -80,17 +80,12 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectBaseFactory _objectBaseFactory;
 
       //format used to generate the unique name
-      private readonly string _uniqueNameFormat;
+      private readonly string _uniqueNameFormat = "{0} ";
 
-      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver) : this(objectBaseFactory, entityPathResolver, "{0} ")
-      {
-      }
-
-      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, string uniqueNameFormat)
+      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver)
       {
          _objectBaseFactory = objectBaseFactory;
          _entityPathResolver = entityPathResolver;
-         _uniqueNameFormat = uniqueNameFormat;
       }
 
       public IContainer CreateOrRetrieveSubContainerByName(IContainer parentContainer, string subContainerName)
