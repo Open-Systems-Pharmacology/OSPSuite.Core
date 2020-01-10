@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,9 +36,7 @@ namespace OSPSuite.Core.Domain.Services
             if (numberOfCoresToUse < 1)
                numberOfCoresToUse = 1;
 
-            agingData = agingData ?? undefinedAgingData();
-            initialValues = initialValues ?? undefinedInitialValues();
-            _populationDataSplitter = new PopulationDataSplitter(populationData, agingData, initialValues, numberOfCoresToUse);
+            _populationDataSplitter = new PopulationDataSplitter(numberOfCoresToUse, populationData, agingData, initialValues);
             _cancellationTokenSource = new CancellationTokenSource();
             _populationRunResults = new PopulationRunResults();
 
@@ -71,21 +67,6 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private DataTable undefinedAgingData()
-      {
-         var table = new DataTable();
-         table.AddColumn<int>(Constants.Population.INDIVIDUAL_ID_COLUMN);
-         table.AddColumn<string>(Constants.Population.PARAMETER_PATH_COLUMN);
-         return table;
-      }
-
-      private DataTable undefinedInitialValues()
-      {
-         var table = new DataTable();
-         table.AddColumn<int>(Constants.Population.INDIVIDUAL_ID_COLUMN);
-         return table;
-      }
-
       private Task runSimulation(int coreIndex, string simulationExport, CancellationToken cancellationToken)
       {
          return Task.Run(() =>
@@ -113,7 +94,7 @@ namespace OSPSuite.Core.Domain.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             //get row indices for the simulations on current core
-            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies); 
+            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies);
 
 
             //set new parameter values into SimModel
@@ -133,7 +114,7 @@ namespace OSPSuite.Core.Domain.Services
             }
             finally
             {
-             _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
+               _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
 
                //Could lead to a wrong progress if two threads are accessing the value at the same time
                SimulationProgress(this, new MultipleSimulationsProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
@@ -202,7 +183,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">SimModel simulation</param>
       private void setVariableParameters(Simulation simulation)
       {
-         SetVariableParameters(simulation, _populationDataSplitter.ParameterPathsToBeVaried(), calculateSensitivities: false);  
+         SetVariableParameters(simulation, _populationDataSplitter.ParameterPathsToBeVaried(), calculateSensitivities: false);
       }
 
       /// <summary>

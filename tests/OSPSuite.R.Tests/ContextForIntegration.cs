@@ -20,5 +20,7 @@ namespace OSPSuite.R
          Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
       }
+
+      public string DataFile(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", fileName);
    }
 }

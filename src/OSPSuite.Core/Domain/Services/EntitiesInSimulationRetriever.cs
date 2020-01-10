@@ -36,14 +36,12 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation);
 
-     
       /// <summary>
       ///    Returns all <see cref="IQuantity" /> that were selected when calculating the <paramref name="simulation" />  (e.g.
       ///    Persistable=true)
       /// </summary>
       PathCache<IQuantity> OutputsFrom(IModelCoreSimulation simulation);
 
-     
       /// <summary>
       ///    Returns all <see cref="IQuantity" /> defined under the <paramref name="simulation" />  (search performed using
       ///    complete hierarchy) fulfilling the given    <paramref name="predicate" />
@@ -77,10 +75,10 @@ namespace OSPSuite.Core.Domain.Services
          return outputs;
       }
 
-      public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation) => EntitiesFrom<IQuantity>(simulation.Model.Root);
+      public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation) => QuantitiesFrom(simulation, x => true);
 
       public PathCache<IQuantity> QuantitiesFrom(IModelCoreSimulation simulation, Func<IQuantity, bool> predicate) =>
-         EntitiesFrom(simulation.Model.Root, predicate);
+         EntitiesFrom(simulation, predicate);
 
       public PathCache<IParameter> ParametersFrom(IModelCoreSimulation simulation) => EntitiesFrom<IParameter>(simulation);
 
@@ -89,7 +87,7 @@ namespace OSPSuite.Core.Domain.Services
       public PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation) where TEntity : class, IEntity => EntitiesFrom<TEntity>(simulation, x => true);
 
       public PathCache<TEntity> EntitiesFrom<TEntity>(IModelCoreSimulation simulation, Func<TEntity, bool> predicate) where TEntity : class, IEntity =>
-         EntitiesFrom(simulation.Model.Root, predicate);
+         EntitiesFrom(simulation?.Model?.Root, predicate);
 
       public PathCache<TEntity> EntitiesFrom<TEntity>(IContainer container) where TEntity : class, IEntity => EntitiesFrom<TEntity>(container, x => true);
 
