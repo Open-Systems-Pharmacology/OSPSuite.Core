@@ -57,7 +57,6 @@ namespace OSPSuite.Core.Domain.Populations
       void Add(ParameterValues parameterValues);
       void Add(IReadOnlyCollection<ParameterValue> parameterValues);
       void RenamePath(string oldPath, string newPath);
-      int Count { get; }
    }
 
    /// <summary>
@@ -82,7 +81,7 @@ namespace OSPSuite.Core.Domain.Populations
          _parameterValuesCache.Add(newPath, values);
       }
 
-      public virtual int Count => !_parameterValuesCache.Any() ? 0 : _parameterValuesCache.First().Count;
+      private int numberOfValuesPerPath => !_parameterValuesCache.Any() ? 0 : _parameterValuesCache.First().Count;
 
       private string internalKeyFor(string parameterPath)
       {
@@ -172,21 +171,21 @@ namespace OSPSuite.Core.Domain.Populations
       private void validateCount<T>(string parameterPath, IReadOnlyList<T> values)
       {
          // nothing added yet
-         if (Count == 0)
+         if (numberOfValuesPerPath == 0)
             return;
 
-         if (Count == values.Count)
+         if (numberOfValuesPerPath == values.Count)
             return;
 
-         throw new OSPSuiteException(Error.ParameterValuesDoNotHaveTheExpectedCount(parameterPath, Count, values.Count));
+         throw new OSPSuiteException(Error.ParameterValuesDoNotHaveTheExpectedCount(parameterPath, numberOfValuesPerPath, values.Count));
       }
 
       public virtual IReadOnlyCollection<ParameterValues> AllParameterValues => _parameterValuesCache;
 
       public virtual void Merge(ParameterValuesCache parameterValuesCache, PathCache<IParameter> parameterCache)
       {
-         var numberOfNewItems = parameterValuesCache.Count;
-         var currentCount = Count;
+         var numberOfNewItems = parameterValuesCache.numberOfValuesPerPath;
+         var currentCount = numberOfValuesPerPath;
 
          foreach (var parameterPath in parameterValuesCache.AllParameterPaths())
          {

@@ -21,6 +21,5 @@ namespace OSPSuite.R
 
       }
 
-      public string DataFile(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", fileName);
    }
 }

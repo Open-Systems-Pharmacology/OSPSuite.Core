@@ -281,6 +281,30 @@ namespace OSPSuite.Core.Helpers
          Assert.Fail("No McAssert.Equal available for Type " + x1.GetType().Name);
       }
 
+
+      public static bool AreEqualIndividualValueCache(IndividualValuesCache x1, IndividualValuesCache x2)
+      {
+         AssertBothNotNull(x1, x2);
+
+         x1.IndividualIds.ShouldBeEqualTo(x2.IndividualIds);
+         x1.ParameterValuesCache.AllParameterValues.Count.ShouldBeEqualTo(x2.ParameterValuesCache.AllParameterValues.Count);
+
+         foreach (var x1ParameterValues in x1.ParameterValuesCache.AllParameterValues)
+         {
+            var x2ParameterValues = x2.ParameterValuesFor(x1ParameterValues.ParameterPath);
+            AreEqualDoubleArray(x1ParameterValues.Values, x2ParameterValues.Values);
+            AreEqualDoubleArray(x1ParameterValues.Percentiles, x2ParameterValues.Percentiles);
+         }
+
+         foreach (var x1CovariateValues in x1.CovariateValuesCache.AllCovariateValues)
+         {
+            var x2CovariateValues = x2.CovariateValuesFor(x1CovariateValues.CovariateName);
+            x1CovariateValues.Values.ShouldBeEqualTo(x2CovariateValues.Values);
+         }
+
+         return true;
+      }
+
       public static bool AssertBothNotNull(object x2, object x1)
       {
          if (x2 == null)

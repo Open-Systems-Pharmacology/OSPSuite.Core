@@ -5,6 +5,8 @@ namespace OSPSuite.Core.Domain.Populations
 {
    public class IndividualValues
    {
+      public int? IndividualId { get; set; }
+
       private readonly Cache<string, ParameterValue> _parameterValues = new Cache<string, ParameterValue>(x => x.ParameterPath);
 
       public ICache<string, string> Covariates { get; } = new Cache<string, string>();

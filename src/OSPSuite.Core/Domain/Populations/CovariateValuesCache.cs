@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Populations
 {
    public class CovariateValuesCache
    {
-      private readonly ICache<string, CovariateValues> _covariateValuesCache = new Cache<string, CovariateValues>(x => x.Name, x => null);
+      private readonly ICache<string, CovariateValues> _covariateValuesCache = new Cache<string, CovariateValues>(x => x.CovariateName, x => null);
 
       public virtual IReadOnlyCollection<CovariateValues> AllCovariateValues => _covariateValuesCache;
 
@@ -102,8 +102,8 @@ namespace OSPSuite.Core.Domain.Populations
 
       public void Remove(string covariateName) => _covariateValuesCache.Remove(covariateName);
 
-      public string[] AllCovariateValuesForIndividual(int individualId) => AllCovariateValues.Select(x => x.ValueAt(individualId)).ToArray();
+      public string[] AllCovariateValuesForIndividual(int individualIndex) => AllCovariateValues.Select(x => x.ValueAt(individualIndex)).ToArray();
 
-      public string CovariateValueFor(string covariateName, int individualId) => CovariateValuesFor(covariateName)?.ValueAt(individualId);
+      public string CovariateValueFor(string covariateName, int individualIndex) => CovariateValuesFor(covariateName)?.ValueAt(individualIndex);
    }
 }

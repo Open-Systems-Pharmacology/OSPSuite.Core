@@ -40,7 +40,7 @@ namespace OSPSuite.Core
          _populationData = createPopTableParameters();
          _agingData = createPopAgingParameters();
          _initialValuesData = createPopInitialValues();
-         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData, _numberOfCores);
+         sut = new PopulationDataSplitter(_numberOfCores, _populationData, _agingData, _initialValuesData );
 
          _variableParameters = _simModelManagerForSpecs.SetVariableParameters(_simModelSimulation, sut.ParameterPathsToBeVaried());
          _variableSpecies = _simModelManagerForSpecs.SetVariableSpecies(_simModelSimulation, sut.InitialValuesPathsToBeVaried());
@@ -211,7 +211,7 @@ namespace OSPSuite.Core
          base.Context();
 
          _initialValuesData = createEmptyInitialValuesData();
-         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData, _numberOfCores);
+         sut = new PopulationDataSplitter(_numberOfCores, _populationData, _agingData, _initialValuesData);
 
          _variableParameters = _simModelManagerForSpecs.SetVariableParameters(_simModelSimulation, sut.ParameterPathsToBeVaried());
          _variableSpecies = _simModelManagerForSpecs.SetVariableSpecies(_simModelSimulation, sut.InitialValuesPathsToBeVaried());

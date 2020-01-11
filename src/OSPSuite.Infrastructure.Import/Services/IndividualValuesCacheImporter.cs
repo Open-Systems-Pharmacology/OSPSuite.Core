@@ -125,12 +125,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             for (int i = 0; i < fieldCount; i++)
             {
-               if (i == indexIndividualId)
-                  continue;
-
                var header = headers[i];
-               if (parameterValues.Contains(header))
+               if (i == indexIndividualId)
+                  individualPropertiesCache.IndividualIds.Add(csv.IntAt(i));
+
+               else if (parameterValues.Contains(header))
                   parameterValues[header].Add(csv.DoubleAt(i));
+
                else
                   covariateCache[header].Add(csv[i]);
             }

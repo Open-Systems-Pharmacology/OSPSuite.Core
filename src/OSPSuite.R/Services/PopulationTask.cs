@@ -52,6 +52,11 @@ namespace OSPSuite.R.Services
          var allParameters = _entitiesInSimulationRetriever.QuantitiesFrom(simulation);
          dataTable.BeginLoadData();
 
+         //add individual ids column
+         population.IndividualIds.Each(i => dataTable.Rows.Add(dataTable.NewRow()));
+         addColumnValues(dataTable, Constants.Population.INDIVIDUAL_ID_COLUMN, population.IndividualIds);
+
+
          //Create one column for the parameter path
          addCovariates(population, dataTable);
 
@@ -102,12 +107,6 @@ namespace OSPSuite.R.Services
 
       private void addCovariates(IndividualValuesCache population, DataTable dataTable)
       {
-         var individualIds = Enumerable.Range(0, population.Count).ToList();
-
-         //add individual ids column
-         individualIds.Each(i => dataTable.Rows.Add(dataTable.NewRow()));
-         addColumnValues(dataTable, Constants.Population.INDIVIDUAL_ID_COLUMN, individualIds);
-
          //and one column for each individual in the population
          foreach (var covariateName in population.AllCovariatesNames())
          {

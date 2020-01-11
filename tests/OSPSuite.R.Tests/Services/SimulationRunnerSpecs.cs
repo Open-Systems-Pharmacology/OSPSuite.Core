@@ -69,7 +69,7 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_returning_a_population_simulation : concern_for_SimulationRunner
+   public class When_running_a_population_simulation : concern_for_SimulationRunner
    {
       private IModelCoreSimulation _simulation;
       private IndividualValuesCache _population;

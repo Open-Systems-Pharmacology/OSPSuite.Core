@@ -22,9 +22,9 @@ namespace OSPSuite.R.Services
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _populationFile = DataFile("pop_10.csv");
-         _populationFileWithUnitInParameterName = DataFile("pop_10_parameter_with_unit.csv");
-         _simulationFile = DataFile("S1.pkml");
+         _populationFile = HelperForSpecs.DataFile("pop_10.csv");
+         _populationFileWithUnitInParameterName = HelperForSpecs.DataFile("pop_10_parameter_with_unit.csv");
+         _simulationFile = HelperForSpecs.DataFile("S1.pkml");
          _simulationPersister = IoC.Resolve<ISimulationPersister>();
          sut = IoC.Resolve<IPopulationTask>();
       }

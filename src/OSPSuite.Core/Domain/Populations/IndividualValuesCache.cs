@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain.Populations
 {
@@ -6,21 +7,35 @@ namespace OSPSuite.Core.Domain.Populations
    {
       public ParameterValuesCache ParameterValuesCache { get; }
       public CovariateValuesCache CovariateValuesCache { get; }
+      public List<int> IndividualIds { get; }
 
-      public IndividualValuesCache() : this(new ParameterValuesCache(), new CovariateValuesCache())
+      public IndividualValuesCache() : this(new ParameterValuesCache(), new CovariateValuesCache(), new List<int>())
       {
       }
 
-      public IndividualValuesCache(ParameterValuesCache parameterValuesCache, CovariateValuesCache covariateValuesCache)
+      public IndividualValuesCache(ParameterValuesCache parameterValuesCache, CovariateValuesCache covariateValuesCache, List<int> individualIds)
       {
          ParameterValuesCache = parameterValuesCache;
          CovariateValuesCache = covariateValuesCache;
+         IndividualIds = individualIds;
       }
 
       public void Add(IndividualValues individualValues)
       {
          CovariateValuesCache.AddIndividualValues(individualValues.Covariates);
          Add(individualValues.ParameterValues);
+         IndividualIds.Add(getIndividualIdFor(individualValues));
+      }
+
+      private int getIndividualIdFor(IndividualValues individualValues)
+      {
+         if (individualValues.IndividualId != null)
+            return individualValues.IndividualId.GetValueOrDefault();
+
+         if (IndividualIds.Any())
+            return IndividualIds.Max() + 1;
+
+         return 0;
       }
 
       public virtual bool Has(string parameterPath) => ParameterValuesCache.Has(parameterPath);
@@ -32,7 +47,7 @@ namespace OSPSuite.Core.Domain.Populations
       /// <summary>
       ///    Returns the number of individuals
       /// </summary>
-      public virtual int Count => ParameterValuesCache.Count;
+      public virtual int Count => IndividualIds.Count;
 
       public virtual string[] AllParameterPaths() => ParameterValuesCache.AllParameterPaths();
 
@@ -44,7 +59,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual IndividualValuesCache Clone()
       {
-         return new IndividualValuesCache(ParameterValuesCache.Clone(), CovariateValuesCache.Clone());
+         return new IndividualValuesCache(ParameterValuesCache.Clone(), CovariateValuesCache.Clone(), new List<int>(IndividualIds));
       }
 
       public virtual void Remove(string parameterPath) => ParameterValuesCache.Remove(parameterPath);
@@ -59,8 +74,6 @@ namespace OSPSuite.Core.Domain.Populations
 
       public ParameterValues GetOrAddParameterValuesFor(string parameterPath) => ParameterValuesCache.GetOrAddParameterValuesFor(parameterPath);
 
-      public virtual ParameterValues ParameterValuesAt(int index) => ParameterValuesCache.ParameterValuesAt(index);
-
       public virtual void Add(ParameterValues parameterValues) => ParameterValuesCache.Add(parameterValues);
 
       public virtual void Add(IReadOnlyCollection<ParameterValue> parameterValues) => ParameterValuesCache.Add(parameterValues);
@@ -71,6 +84,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual void Merge(IndividualValuesCache individualValuesCache, PathCache<IParameter> parameterCache)
       {
+         IndividualIds.AddRange(individualValuesCache.IndividualIds);
          CovariateValuesCache.Merge(individualValuesCache.CovariateValuesCache);
          ParameterValuesCache.Merge(individualValuesCache.ParameterValuesCache, parameterCache);
       }
@@ -86,8 +100,13 @@ namespace OSPSuite.Core.Domain.Populations
 
       public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
 
-      public string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesForIndividual(individualId);
+      public string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesForIndividual(IndexOfIndividual(individualId));
 
-      public string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, individualId);
+      public string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, IndexOfIndividual(individualId));
+
+      public virtual ParameterValues ParameterValuesAt(int index) => ParameterValuesCache.ParameterValuesAt(index);
+
+      public int IndexOfIndividual(int individualId) => IndividualIds.IndexOf(individualId);
+
    }
 }
