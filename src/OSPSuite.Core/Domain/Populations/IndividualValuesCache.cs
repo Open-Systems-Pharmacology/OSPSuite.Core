@@ -24,14 +24,11 @@ namespace OSPSuite.Core.Domain.Populations
       {
          CovariateValuesCache.AddIndividualValues(individualValues.Covariates);
          Add(individualValues.ParameterValues);
-         IndividualIds.Add(getIndividualIdFor(individualValues));
+         IndividualIds.Add(getNextIndividualId());
       }
 
-      private int getIndividualIdFor(IndividualValues individualValues)
+      private int getNextIndividualId()
       {
-         if (individualValues.IndividualId != null)
-            return individualValues.IndividualId.GetValueOrDefault();
-
          if (IndividualIds.Any())
             return IndividualIds.Max() + 1;
 
@@ -107,6 +104,5 @@ namespace OSPSuite.Core.Domain.Populations
       public virtual ParameterValues ParameterValuesAt(int index) => ParameterValuesCache.ParameterValuesAt(index);
 
       public int IndexOfIndividual(int individualId) => IndividualIds.IndexOf(individualId);
-
    }
 }
