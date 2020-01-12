@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Core.Domain.Populations
 {
-   public class CovariateValues : IWithName
+   public class CovariateValues
    {
-      public string Name { get; set; }
+      public string CovariateName { get; set; }
       public List<string> Values { get; set; } = new List<string>();
 
 
@@ -14,9 +14,9 @@ namespace OSPSuite.Core.Domain.Populations
       {
       }
 
-      public CovariateValues(string name, List<string> values = null)
+      public CovariateValues(string covariateName, List<string> values = null)
       {
-         Name = name;
+         CovariateName = covariateName;
          Values = values ?? Values;
       }
       
@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public CovariateValues Clone()
       {
-         return new CovariateValues(Name) {Values = new List<string>(Values)};
+         return new CovariateValues(CovariateName) {Values = new List<string>(Values)};
       }
       
       public void AddEmptyItems(int count, string defaultValue = Constants.UNKNOWN)

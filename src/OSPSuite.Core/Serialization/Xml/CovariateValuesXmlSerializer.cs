@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
       public override void PerformMapping()
       {
-         Map(x => x.Name);
+         Map(x => x.CovariateName);
          Map(x => x.Values);
       }
    }

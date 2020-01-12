@@ -144,8 +144,7 @@ namespace OSPSuite.Core.Domain.Services
          var allValues = new List<int>();
          foreach (var suffix in allUsedNamesMatchingBaseFormat)
          {
-            int value;
-            if (int.TryParse(suffix, out value))
+            if (int.TryParse(suffix, out var value))
                allValues.Add(value);
          }
 
@@ -162,7 +161,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public PathCache<TChildren> CacheAllChildrenSatisfying<TChildren>(IContainer parentContainer, Func<TChildren, bool> predicate) where TChildren : class, IEntity
       {
-         return new PathCache<TChildren>(_entityPathResolver).For(parentContainer.GetAllChildren(predicate));
+         var pathCache = new PathCache<TChildren>(_entityPathResolver);
+         return parentContainer == null ? pathCache : pathCache.For(parentContainer.GetAllChildren(predicate));
       }
 
       public PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity

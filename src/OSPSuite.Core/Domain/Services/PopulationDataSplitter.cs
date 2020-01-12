@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   internal class PopulationDataSplitter
+   public class PopulationDataSplitter
    {
       private readonly DataTable _populationData;
       private readonly DataTable _agingData;
@@ -15,13 +15,28 @@ namespace OSPSuite.Core.Domain.Services
       private readonly int _numberOfCores;
       private readonly int _numberOfSimulationsPerCore;
 
-      public PopulationDataSplitter(DataTable populationData, DataTable agingData, DataTable initialValues, int numberOfCores)
+      public PopulationDataSplitter(int numberOfCores, DataTable populationData, DataTable agingData = null, DataTable initialValues=null)
       {
          _populationData = populationData;
-         _agingData = agingData;
-         _initialValues = initialValues;
+         _agingData = agingData ?? undefinedAgingData();
+         _initialValues = initialValues ?? undefinedInitialValues();
          _numberOfCores = numberOfCores;
          _numberOfSimulationsPerCore = getNumberOfSimulationsPerCore();
+      }
+
+      private DataTable undefinedAgingData()
+      {
+         var table = new DataTable();
+         table.AddColumn<int>(Constants.Population.INDIVIDUAL_ID_COLUMN);
+         table.AddColumn<string>(Constants.Population.PARAMETER_PATH_COLUMN);
+         return table;
+      }
+
+      private DataTable undefinedInitialValues()
+      {
+         var table = new DataTable();
+         table.AddColumn<int>(Constants.Population.INDIVIDUAL_ID_COLUMN);
+         return table;
       }
 
       public void UpdateParametersAndInitialValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> parameterProperties, IReadOnlyList<SpeciesProperties> speciesProperties)
@@ -29,11 +44,11 @@ namespace OSPSuite.Core.Domain.Services
          fillParameterAndInitialValuesFor(individualId, parameterProperties, speciesProperties);
       }
 
-      public IEnumerable<int> GetIndividualIdsFor(int coreIndex)
+      public IReadOnlyList<int> GetIndividualIdsFor(int coreIndex)
       {
-         var rowIndices = getRowIndices(coreIndex);
+         var rowIndices = GetRowIndices(coreIndex);
          return rowIndices.Select(rowIndex => _populationData.Rows[rowIndex])
-            .Select(individualIdFrom);
+            .Select(individualIdFrom).ToList();
       }
 
       private int getNumberOfSimulationsPerCore()
@@ -46,14 +61,14 @@ namespace OSPSuite.Core.Domain.Services
          int rowsPerCore = numberOfJobs / numberOfCoresToUse;
 
          if (rowsPerCore * _numberOfCores < numberOfJobs)
-            rowsPerCore = rowsPerCore + 1;
+            rowsPerCore += 1;
 
          return rowsPerCore;
       }
 
       public int NumberOfIndividuals => _populationData.Rows.Count;
 
-      private IEnumerable<int> getRowIndices(int coreIndex)
+      public IEnumerable<int> GetRowIndices(int coreIndex)
       {
          int firstRow = _numberOfSimulationsPerCore * coreIndex;
 

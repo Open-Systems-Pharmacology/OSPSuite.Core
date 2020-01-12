@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Populations;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -19,9 +22,9 @@ namespace OSPSuite.R.Services
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _populationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10.csv");
-         _populationFileWithUnitInParameterName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "pop_10_parameter_with_unit.csv");
-         _simulationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Data", "S1.pkml");
+         _populationFile = HelperForSpecs.DataFile("pop_10.csv");
+         _populationFileWithUnitInParameterName = HelperForSpecs.DataFile("pop_10_parameter_with_unit.csv");
+         _simulationFile = HelperForSpecs.DataFile("S1.pkml");
          _simulationPersister = IoC.Resolve<ISimulationPersister>();
          sut = IoC.Resolve<IPopulationTask>();
       }
@@ -93,6 +96,77 @@ namespace OSPSuite.R.Services
       {
          _dataTable.Columns["Acidic phospholipids [mg/g] - RR"].ShouldNotBeNull();
          _dataTable.Columns["Acidic phospholipids - RR"].ShouldBeNull();
+      }
+   }
+
+   public class When_splitting_a_population_file_into_multiple_files : concern_for_PopulationTask
+   {
+      private IReadOnlyList<string> _result;
+      private string _outputFolder;
+      private int _numberOfCores = 5;
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var tmpFile = FileHelper.GenerateTemporaryFileName();
+         _outputFolder = new FileInfo(tmpFile).DirectoryName;
+      }
+
+      protected override void Because()
+      {
+         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+      }
+
+      [Observation]
+      public void should_create_one_file_per_requested_core()
+      {
+         _result.Count.ShouldBeEqualTo(_numberOfCores);
+         for (int i = 0; i < _numberOfCores; i++)
+         {
+            _result.ShouldContain(Path.Combine(_outputFolder, $"PopFile_{i+1}.csv"));
+         }
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         _result.Each(FileHelper.DeleteFile);
+      }
+   }
+
+   public class When_splitting_a_population_file_into_multiple_files_and_the_number_of_individuals_is_less_than_the_number_of_cores : concern_for_PopulationTask
+   {
+      private IReadOnlyList<string> _result;
+      private string _outputFolder;
+      private int _numberOfCores = 30;
+      private IndividualValuesCache _individualValuesCache;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var tmpFile = FileHelper.GenerateTemporaryFileName();
+         _outputFolder = new FileInfo(tmpFile).DirectoryName;
+         _individualValuesCache = sut.ImportPopulation(_populationFile);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+      }
+
+      [Observation]
+      public void should_only_create_one_file_per_individual()
+      {
+         _result.Count.ShouldBeEqualTo(_individualValuesCache.Count);
+         for (int i = 0; i < _individualValuesCache.Count; i++)
+         {
+            _result.ShouldContain(Path.Combine(_outputFolder, $"PopFile_{i + 1}.csv"));
+         }
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         _result.Each(FileHelper.DeleteFile);
       }
    }
 }
