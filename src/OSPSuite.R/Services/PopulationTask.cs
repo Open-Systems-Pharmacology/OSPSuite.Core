@@ -21,10 +21,11 @@ namespace OSPSuite.R.Services
 
       /// <summary>
       /// Loads the population from the <paramref name="populationFile"/> and split the loaded population according to the <paramref name="numberOfCores"/>.
-      /// Resulting files will be exported in the <paramref name="outputFolder"/>. File names will be constructed using the <paramref name="outputFileName"/> concatenated with the node index.
+      /// Resulting files will be exported in the <paramref name="outputFolder"/>. File names will be constructed using the <paramref name="outputFileName"/>
+      /// concatenated with the core index.
       /// Returns an array of string containing the full path of the population files created
       /// </summary>
-      IReadOnlyList<string> SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName);
+      string[] SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName);
    }
 
    public class PopulationTask : IPopulationTask
@@ -71,7 +72,7 @@ namespace OSPSuite.R.Services
          return dataTable;
       }
 
-      public IReadOnlyList<string> SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName)
+      public string[] SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName)
       {
          var population = ImportPopulation(populationFile);
          var populationData = PopulationTableFrom(population);
@@ -92,7 +93,7 @@ namespace OSPSuite.R.Services
             exportSplitPopulation(populationData, rowIndices, outputFile);
          }
 
-         return outputFiles;
+         return outputFiles.ToArray();
       }
 
       private void exportSplitPopulation(DataTable populationData, IReadOnlyList<int> rowIndices, string outputFile)
