@@ -41,9 +41,6 @@ namespace OSPSuite.Presentation
             scan.IncludeNamespaceContainingType<ShowHelpCommand>();
 
             //Exclude these implementations that are specific to each application
-            scan.ExcludeType<PathToPathElementsMapper>();
-            scan.ExcludeType<QuantityPathToQuantityDisplayPathMapper>();
-
             scan.ExcludeType<ExceptionManager>();
 
             //Exclude context menu registered separately
@@ -60,8 +57,6 @@ namespace OSPSuite.Presentation
             scan.ExcludeType(typeof(ParameterToParameterDTOInContainerMapper<>));
             scan.ExcludeType(typeof(SubPresenterItemManager<>));
 
-            //specific app registration
-            scan.ExcludeType<DataColumnToPathElementsMapper>();
          });
 
          registerUICommands(container);
