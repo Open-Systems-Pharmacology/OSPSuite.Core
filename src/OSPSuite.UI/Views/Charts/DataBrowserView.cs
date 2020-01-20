@@ -116,7 +116,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private bool shouldShowPopup(PopupMenuShowingEventArgs e)
       {
-         return e.MenuType == GridMenuType.Row && e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
+         return e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
       }
 
       private void viewMouseDown(MouseEventArgs e)

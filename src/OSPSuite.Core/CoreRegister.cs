@@ -2,9 +2,9 @@ using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
 using OSPSuite.Core.Converter.v5_2;
-using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
@@ -12,12 +12,10 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
-using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core
@@ -25,7 +23,7 @@ namespace OSPSuite.Core
    public class CoreRegister : Register
    {
       /// <summary>
-      ///    Specifies if the parameter objects should also be registerd in the container
+      ///    Specifies if the parameter objects should also be registered in the container
       ///    Default value is true
       /// </summary>
       public bool RegisterParameter { get; set; }
@@ -64,10 +62,13 @@ namespace OSPSuite.Core
             scan.ExcludeType(typeof(MacroCommand<>));
             scan.ExcludeType(typeof(RollBackCommand<>));
 
-            //PK-Sim registers its own implementation
+            //Exclude these implementations that are specific to each application
             scan.ExcludeType<ObjectIdResetter>();
             scan.ExcludeType<DisplayNameProvider>();
             scan.ExcludeType<FullPathDisplayResolver>();
+            scan.ExcludeType<PathToPathElementsMapper>();
+            scan.ExcludeType<QuantityPathToQuantityDisplayPathMapper>();
+            scan.ExcludeType<DataColumnToPathElementsMapper>();
 
             if (!RegisterParameter)
             {
