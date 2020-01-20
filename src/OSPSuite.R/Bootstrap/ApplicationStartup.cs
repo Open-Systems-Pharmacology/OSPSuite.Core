@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -67,7 +68,10 @@ namespace OSPSuite.R.Bootstrap
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
          container.Register<IApplicationConfiguration, RConfiguration>(LifeStyle.Singleton);
          container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
-         container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>(LifeStyle.Singleton);
+         container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();
+         container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
+         container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
+         container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
       }
 
       private void initializeConfiguration(IContainer container, ApiConfig apiConfig)
