@@ -162,10 +162,7 @@ namespace OSPSuite.UI.Views
          popupMenu.Show(e.HitInfo.HitPoint);
       }
 
-      private bool shouldShowPopupMenu(PopupMenuShowingEventArgs e)
-      {
-         return e.MenuType == GridMenuType.Row && e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
-      }
+      private bool shouldShowPopupMenu(PopupMenuShowingEventArgs e) => e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
 
       public PathElementId GroupPathElementId
       {
