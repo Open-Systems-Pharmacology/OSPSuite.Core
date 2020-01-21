@@ -210,4 +210,22 @@ namespace OSPSuite.Core.Domain.Services
          CheckPath(eventAssignment, eventAssignment.ObjectPath, ResolveErrorBehavior.Error);
       }
    }
+
+   internal class ModelNameValidator : IModelValidator
+   {
+      public ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration)
+      {
+         var model = objectToValidate as IModel;
+         var result = new ValidationResult();
+         if (model == null)
+            return result;
+
+         var allTopContainerNames = model.Root.GetChildren<IContainer>().AllNames();
+         if (!allTopContainerNames.Contains(model.Name))
+            return result;
+
+         result.AddMessage(NotificationType.Error, objectToValidate, Validation.ModelNameCannotBeNamedLikeATopContainer(allTopContainerNames));
+         return result;
+      }
+   }
 }

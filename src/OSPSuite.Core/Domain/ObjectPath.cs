@@ -163,13 +163,23 @@ namespace OSPSuite.Core.Domain
          if (_pathEntries.Count == 0)
             return null;
 
-         var firstEntry = _pathEntries[0];
-         var root = refEntity.RootContainer;
          var usePath = new List<string>(_pathEntries);
-         IEntity dependentObject;
+
+         var dependentObject = refEntity;
+         //Do we have a valid relative path from the current object
+         var resolvedEntity = resolvePath<T>(dependentObject, usePath);
+         if (resolvedEntity != null)
+            return resolvedEntity;
+
+         var root = refEntity.RootContainer;
+         var firstEntry = _pathEntries[0];
+
+         //We have an absolute Path from the ref entity
+         if (string.Equals(firstEntry, refEntity.Name))
+            usePath.RemoveAt(0);
 
          //We have an absolute Path from the root container
-         if (root != null && string.Equals(firstEntry, root.Name))
+         else if (root != null && string.Equals(firstEntry, root.Name))
          {
             if (_pathEntries.Count == 1)
                return root as T;
@@ -178,18 +188,9 @@ namespace OSPSuite.Core.Domain
             dependentObject = root;
          }
 
-         //We have an absolute Path from the ref entity
-         else if (string.Equals(firstEntry, refEntity.Name))
-         {
-            usePath.RemoveAt(0);
-            dependentObject = refEntity;
-         }
-         //We have a relative path
-         else
-            dependentObject = refEntity;
-
          return resolvePath<T>(dependentObject, usePath);
       }
+
 
       public virtual T Clone<T>() where T : IObjectPath
       {
@@ -198,8 +199,8 @@ namespace OSPSuite.Core.Domain
 
       public string this[int index]
       {
-         get { return _pathEntries[index]; }
-         set { _pathEntries[index] = value; }
+         get => _pathEntries[index];
+         set => _pathEntries[index] = value;
       }
 
       public void RemoveAt(int index)

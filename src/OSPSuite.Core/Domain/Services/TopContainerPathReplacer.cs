@@ -4,14 +4,15 @@ using System.Linq;
 namespace OSPSuite.Core.Domain.Services
 {
    /// <summary>
-   ///    Add the modelname at the begining of the path, if the path starts with one of the top container names
+   ///    Adds the root name at the beginning of the path, if the path starts with one of the top container names provided as
+   ///    parameters or if the path does not start with the root name already
    /// </summary>
    public class TopContainerPathReplacer : IKeywordInObjectPathReplacer
    {
       private readonly string _rootName;
-      private readonly IEnumerable<string> _topContainerNames;
+      private readonly IReadOnlyList<string> _topContainerNames;
 
-      public TopContainerPathReplacer(string rootName, IEnumerable<string> topContainerNames)
+      public TopContainerPathReplacer(string rootName, IReadOnlyList<string> topContainerNames)
       {
          _rootName = rootName;
          _topContainerNames = topContainerNames;

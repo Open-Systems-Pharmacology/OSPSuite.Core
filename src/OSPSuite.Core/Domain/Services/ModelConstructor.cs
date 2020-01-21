@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -78,6 +78,7 @@ namespace OSPSuite.Core.Domain.Services
                //One function per process step
                checkBuildConfiguration,
                createModelStructure,
+               validateModelName,
                createProcesses,
                createObserversAndEvents,
                setQuantitiesValues);
@@ -155,6 +156,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             progress?.Dispose();
          }
+
          return result;
       }
 
@@ -186,8 +188,12 @@ namespace OSPSuite.Core.Domain.Services
          // replace all keywords define in the model structure
          _keywordReplacerTask.ReplaceIn(model.Root);
 
-
          return new ValidationResult(moleculeMessages);
+      }
+
+      private ValidationResult validateModelName(IModel model, IBuildConfiguration buildConfiguration)
+      {
+         return validate<ModelNameValidator>(model, buildConfiguration);
       }
 
       private void createMoleculeCalculationMethodsFormula(IModel model, IBuildConfiguration buildConfiguration)
