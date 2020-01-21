@@ -1493,6 +1493,11 @@ namespace OSPSuite.Assets
          return $"Reference '{reference}' used in {entityType.ToLower()} '{entity}' with path '{entityPath}' contains reserved keywords. Remove them before resolving the path";
       }
 
+      public static string ModelNameCannotBeNamedLikeATopContainer(IReadOnlyCollection<string> topContainerNames)
+      {
+         return $"The simulation name cannot be one of the following reserved terms:\n\t{topContainerNames.ToString(", ", "'")}.\nPlease rename your simulation.";
+      }
+
       public static string ErrorUnableToFindReference(string entity, string entityType, string entityPath, string reference)
       {
          return string.Format("{1} '{2}' with path '{3}' references an entity with path '{0}' that cannot be found", reference, entityType, entity, entityPath);

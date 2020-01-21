@@ -242,7 +242,7 @@ namespace OSPSuite.Core.Domain.Services
       private void addCommonModelReplacersTo(IKeywordReplacerCollection keywordReplacer, IContainer rootContainer)
       {
          //Replace the predefined keywords 
-         keywordReplacer.AddReplacement(new TopContainerPathReplacer(rootContainer.Name, rootContainer.GetChildren<IContainer>().Select(x => x.Name)));
+         keywordReplacer.AddReplacement(new TopContainerPathReplacer(rootContainer.Name, rootContainer.GetChildren<IContainer>().AllNames()));
          keywordReplacer.AddReplacement(new TopContainerPathReplacer(rootContainer.Name, new[] {ObjectPathKeywords.MOLECULE, Constants.NEIGHBORHOODS}));
       }
 

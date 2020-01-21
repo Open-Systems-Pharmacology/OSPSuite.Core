@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Utility.Container;
@@ -19,6 +20,7 @@ namespace OSPSuite.Core
       protected CreationResult _result;
       protected IModel _model;
 
+      protected string _modelName = "MyModel";
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -28,7 +30,7 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
-         _result = sut.CreateModelFrom(_buildConfiguration, "MyModel");
+         _result = sut.CreateModelFrom(_buildConfiguration, _modelName);
          _model = _result.Model;
       }
    }
@@ -484,4 +486,52 @@ namespace OSPSuite.Core
          _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
+
+   public class When_naming_the_model_like_a_distributed_parameter_sub_parameter : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _modelName = "Mean";
+      }
+
+      [Observation]
+      public void should_be_able_to_create_the_model()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+   }
+
+   public class When_naming_the_model_like_the_neighborhood_container : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _modelName = Constants.NEIGHBORHOODS;
+      }
+
+      [Observation]
+      public void should_not_be_able_to_create_the_model()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
+
+   public class When_naming_the_model_like_the_organism_container : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _modelName = Constants.ORGANISM;
+      }
+
+      [Observation]
+      public void should_not_be_able_to_create_the_model()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
+         _result.ValidationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
+      }
+   }
+
 }
