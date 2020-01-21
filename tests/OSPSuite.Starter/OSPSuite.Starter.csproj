@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <IsPackable>false</IsPackable>
     <TargetFramework>net472</TargetFramework>
     <OutputType>WinExe</OutputType>
     <Version>1.0.0</Version>
