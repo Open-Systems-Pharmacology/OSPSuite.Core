@@ -157,40 +157,6 @@ namespace OSPSuite.Core.Domain
       {
          _pathEntries.Remove(entry);
       }
-//
-//      public virtual T Resolve<T>(IEntity refEntity) where T : class
-//      {
-//         if (_pathEntries.Count == 0)
-//            return null;
-//
-//         var firstEntry = _pathEntries[0];
-//         var root = refEntity.RootContainer;
-//         var usePath = new List<string>(_pathEntries);
-//         IEntity dependentObject;
-//
-//         //We have an absolute Path from the root container
-//         if (root != null && string.Equals(firstEntry, root.Name))
-//         {
-//            if (_pathEntries.Count == 1)
-//               return root as T;
-//
-//            usePath.RemoveAt(0);
-//            dependentObject = root;
-//         }
-//
-//         //We have an absolute Path from the ref entity
-//         else if (string.Equals(firstEntry, refEntity.Name))
-//         {
-//            usePath.RemoveAt(0);
-//            dependentObject = refEntity;
-//         }
-//         //We have a relative path
-//         else
-//            dependentObject = refEntity;
-//
-//         return resolvePath<T>(dependentObject, usePath);
-//      }
-
 
       public virtual T Resolve<T>(IEntity refEntity) where T : class
       {
