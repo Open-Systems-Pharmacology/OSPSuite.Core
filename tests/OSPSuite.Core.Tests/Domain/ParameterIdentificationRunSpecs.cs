@@ -297,9 +297,9 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_create_a_copy_of_the_optimized_parameter_values_and_save_them_into_the_current_result()
       {
-         sut.BestResult.Values[0].Name.ShouldBeEqualTo("A");
-         sut.BestResult.Values[0].Value.ShouldBeEqualTo(100);
-         sut.BestResult.Values[0].StartValue.ShouldBeEqualTo(50d);
+         sut.BestResult.Values[0].Name.ShouldBeEqualTo(_optimizedParameterValue.Name);
+         sut.BestResult.Values[0].Value.ShouldBeEqualTo(_optimizedParameterValue.Value);
+         sut.BestResult.Values[0].StartValue.ShouldBeEqualTo(_optimizedParameterValue.StartValue);
          sut.BestResult.Values[0].ShouldNotBeEqualTo(_optimizedParameterValue);
       }
    }
