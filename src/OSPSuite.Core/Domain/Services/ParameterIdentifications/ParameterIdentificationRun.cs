@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.ParameterIdentifications.Algorithms;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private ISimModelBatch createSimModelBatch(ISimulation simulation)
       {
          var simModelBatch = _simModelBatchFactory.Create();
-         var modelCoreSimulation = _modelCoreSimulationMapper.MapFrom(simulation, shouldCloneModel:true);
+         var modelCoreSimulation = _modelCoreSimulationMapper.MapFrom(simulation, shouldCloneModel: true);
          _timeGridUpdater.UpdateSimulationTimeGrid(modelCoreSimulation, _parameterIdentification.Configuration.RemoveLLOQMode, _parameterIdentification.AllDataRepositoryMappedFor(simulation));
          _outputSelectionUpdater.UpdateOutputsIn(modelCoreSimulation, _parameterIdentification.AllOutputsMappedFor(simulation));
          simModelBatch.InitializeWith(modelCoreSimulation, _parameterIdentification.PathOfOptimizedParameterBelongingTo(simulation), simulationResultsName: Captions.ParameterIdentification.SimulationResultsForRun(RunResult.Index));
@@ -172,7 +172,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private OptimizationRunResult performRun(IReadOnlyList<OptimizedParameterValue> values)
       {
-         var optimizationRunResult = updateValuesAndCalculate(values);
+         //We clone the values here to ensure that we are not sharing the same parameter value instances as the PI algorithm
+         var clonedValues = values.Select(x => new OptimizedParameterValue(x.Name, x.Value, x.StartValue)).ToList();
+
+         var optimizationRunResult = updateValuesAndCalculate(clonedValues);
 
          updateRunResult(optimizationRunResult);
 

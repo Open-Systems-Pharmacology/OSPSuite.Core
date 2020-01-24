@@ -259,6 +259,9 @@ namespace OSPSuite.Core.Domain
    public class When_the_parameter_identification_run_is_running_the_simulations : concern_for_ParameterIdentificationRun
    {
       private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
+      private OptimizedParameterValue _optimizedParameterValue;
+
+     
 
       protected override void Context()
       {
@@ -268,12 +271,14 @@ namespace OSPSuite.Core.Domain
             .Invokes(x => { _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1); })
             .Returns(A.Fake<OptimizationRunProperties>());
 
+         _optimizedParameterValue = new OptimizedParameterValue("A", 100.0, 50d);
+
          sut.Run(_cancellationToken);
       }
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {new OptimizedParameterValue("A", 100.0, 50d)});
+         _objectiveFunction(new[] { _optimizedParameterValue });
       }
 
       [Observation]
@@ -287,6 +292,15 @@ namespace OSPSuite.Core.Domain
       public void should_run_the_simulation()
       {
          A.CallTo(() => _simModelBatch.RunSimulation()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_create_a_copy_of_the_optimized_parameter_values_and_save_them_into_the_current_result()
+      {
+         sut.BestResult.Values[0].Name.ShouldBeEqualTo(_optimizedParameterValue.Name);
+         sut.BestResult.Values[0].Value.ShouldBeEqualTo(_optimizedParameterValue.Value);
+         sut.BestResult.Values[0].StartValue.ShouldBeEqualTo(_optimizedParameterValue.StartValue);
+         sut.BestResult.Values[0].ShouldNotBeEqualTo(_optimizedParameterValue);
       }
    }
 
