@@ -8,7 +8,6 @@ using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using CoreSensitivityAnalysis = OSPSuite.Core.Domain.SensitivityAnalyses.SensitivityAnalysis;
-using IContainerTask = OSPSuite.Core.Domain.Services.IContainerTask;
 
 namespace OSPSuite.R.Mapper
 {
@@ -19,21 +18,18 @@ namespace OSPSuite.R.Mapper
    public class SensitivityAnalysisToCoreSensitivityAnalysisMapper : ISensitivityAnalysisToCoreSensitivityAnalysisMapper
    {
       private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
-      private readonly IEntityPathResolver _entityPathResolver;
       private readonly ISimulationAnalyzer _simulationAnalyzer;
       private readonly IParameterAnalysableParameterSelector _parameterSelector;
       private readonly IContainerTask _containerTask;
 
       public SensitivityAnalysisToCoreSensitivityAnalysisMapper(
          ISensitivityAnalysisTask sensitivityAnalysisTask,
-         IEntityPathResolver entityPathResolver,
          ISimulationAnalyzer simulationAnalyzer,
          IParameterAnalysableParameterSelector parameterSelector,
          IContainerTask containerTask
-         )
+      )
       {
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
-         _entityPathResolver = entityPathResolver;
          _simulationAnalyzer = simulationAnalyzer;
          _parameterSelector = parameterSelector;
          _containerTask = containerTask;
@@ -43,7 +39,7 @@ namespace OSPSuite.R.Mapper
       {
          var simulation = sensitivityAnalysis.Simulation;
          var coreSensitivityAnalysis = _sensitivityAnalysisTask.CreateSensitivityAnalysisFor(simulation);
-         var parametersToVary = parametersToVaryFrom(sensitivityAnalysis).Select(x => new ParameterSelection(simulation, _entityPathResolver.PathFor(x))).ToList();
+         var parametersToVary = parameterPathsToVaryFrom(sensitivityAnalysis).Select(x => new ParameterSelection(simulation, x)).ToList();
 
          _sensitivityAnalysisTask.AddParametersTo(coreSensitivityAnalysis, parametersToVary);
 
@@ -56,18 +52,22 @@ namespace OSPSuite.R.Mapper
          return coreSensitivityAnalysis;
       }
 
-      private IReadOnlyList<IParameter> parametersToVaryFrom(SensitivityAnalysis sensitivityAnalysis)
+      private IReadOnlyList<string> parameterPathsToVaryFrom(SensitivityAnalysis sensitivityAnalysis)
       {
-         var parametersToVary = new List<IParameter>(sensitivityAnalysis.Parameters);
-         if (parametersToVary.Any())
-            return parametersToVary;
+         if (sensitivityAnalysis.ParameterPaths.Any())
+            return sensitivityAnalysis.ParameterPaths;
 
          var simulation = sensitivityAnalysis.Simulation;
          var constantParametersCache = _containerTask.CacheAllChildrenSatisfying<IParameter>(simulation.Model.Root, x => _parameterSelector.CanUseParameter(x) && x.IsConstantParameter());
          var allUsedParameterPaths = _simulationAnalyzer.AllPathOfParametersUsedInSimulation(sensitivityAnalysis.Simulation);
 
-         return allUsedParameterPaths.Select(x => constantParametersCache[x]).Where(x=>x!=null).ToList();
+         return allUsedParameterPaths.Select(x => new
+            {
+               Parameter = constantParametersCache[x],
+               Path = x
+            })
+            .Where(x => x.Parameter != null)
+            .Select(x => x.Path).ToList();
       }
-
    }
 }

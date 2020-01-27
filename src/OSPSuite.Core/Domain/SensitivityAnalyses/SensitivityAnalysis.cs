@@ -110,36 +110,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       private double[] defaultParameterValues => _allSensitivityParameters.Select(x => x.Parameter.Value).ToArray();
 
-      public IReadOnlyList<string> AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToArray();
+      public string[] AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToArray();
 
       public bool Uses(IParameter parameter)
       {
          return _allSensitivityParameters.Select(x => x.Parameter).Contains(parameter);
-      }
-
-      public IReadOnlyList<PKParameterSensitivity> AllPKParameterSensitivitiesFor(string pkParameterName, string outputPath, double totalSensitivityThreshold)
-      {
-         var allPossiblePKParameterSensitivities = allPKParametersForSelectionWithDefinedSensitivity(pkParameterName, outputPath).OrderByDescending(x => Math.Abs(x.Value));
-         return sensitivitiesUpToTotalSensitivity(allPossiblePKParameterSensitivities, totalSensitivityThreshold).ToArray();
-      }
-
-      private IEnumerable<PKParameterSensitivity> allPKParametersForSelectionWithDefinedSensitivity(string pkParameterName, string outputPath)
-      {
-         return Results.AllFor(pkParameterName, outputPath).Where(x => !double.IsNaN(x.Value));
-      }
-
-      private static IEnumerable<PKParameterSensitivity> sensitivitiesUpToTotalSensitivity(IOrderedEnumerable<PKParameterSensitivity> orderedSensitivities, double totalSensitivityThreshold)
-      {
-         var totalSensitivity = orderedSensitivities.Sum(x => Math.Abs(x.Value));
-         var runningSensitivity = 0.0;
-         return orderedSensitivities.TakeWhile(x =>
-         {
-            if (runningSensitivity / totalSensitivity >= totalSensitivityThreshold)
-               return false;
-
-            runningSensitivity += Math.Abs(x.Value);
-            return true;
-         });
       }
 
       public bool UsesSimulation(ISimulation oldSimulation) => Equals(Simulation, oldSimulation);

@@ -1,0 +1,56 @@
+﻿"QuantityPath","Parameter","PKParameter","Value"
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,C_max,-0.0728632210734388
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,t_max,0
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,C_tEnd,-0.000813163039057784
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,AUC,-0.00205221473741394
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,AUC_inf,0.0324977379464863
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,MRT,0.0344211960743897
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,Thalf,0.0343882570930739
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,FractionAucLastToInf,0.00107705582675601
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,CL,-0.0325037022914505
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,Vss,0.00192336925661144
+Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),Organism-Liver-Volume,Vd,0.00189018406819129
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,C_max,-0.135830430039486
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,t_max,0
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,C_tEnd,-0.000803123059448242
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,AUC,-0.00168216807577902
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,AUC_inf,0.0315080780949326
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,MRT,0.0333698618318872
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,Thalf,0.0333464439375644
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,FractionAucLastToInf,0.00103465939169557
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,CL,-0.0314961269615877
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,Vss,0.00186121376547567
+Organism|ArterialBlood|Plasma|Caffeine|Concentration in container,Organism-Liver-Volume,Vd,0.00183786926965991
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,C_max,-0.135830345908465
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,t_max,0
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,C_tEnd,-0.000802830696192088
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,AUC,-0.00168211881490249
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,AUC_inf,0.0337038717060407
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,MRT,0.0356339039841277
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,Thalf,0.035610413259975
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,FractionAucLastToInf,0.00110337722830509
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,CL,-0.0336988492802673
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,Vss,0.00192955612337874
+Organism|ArterialBlood|Plasma|Caffeine|Plasma Unbound,Organism-Liver-Volume,Vd,0.00190633943656704
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,C_max,-0.135194328243481
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,t_max,0
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,C_tEnd,-0.000802497286818011
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,AUC,-0.00167197502377738
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,AUC_inf,0.0325238806944247
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,MRT,0.0344158696749456
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,Thalf,0.034392942967188
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,FractionAucLastToInf,0.00106628401136067
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,CL,-0.0325169336764086
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,Vss,0.00189166190476012
+Organism|ArterialBlood|BloodCells|Caffeine|Concentration in container,Organism-Liver-Volume,Vd,0.00186876028953888
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,C_max,-0.135639764137761
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,t_max,0
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,C_tEnd,-0.000802758500182467
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,AUC,-0.00167907548052398
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,AUC_inf,0.0326737736177011
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,MRT,0.0345713998508719
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,Thalf,0.034548253212193
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,FractionAucLastToInf,0.00107120174905535
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,CL,-0.0326660003538076
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,Vss,0.0018970196686917
+Organism|ArterialBlood|Caffeine|Whole Blood,Organism-Liver-Volume,Vd,0.00187378752056333

@@ -329,6 +329,14 @@ namespace OSPSuite.Core.Domain
          public const string UNIT = "Unit";
       }
 
+      public static class SensitivityAnalysisResults
+      {
+         public const string QUANTITY_PATH = "QuantityPath";
+         public const string PARAMETER = "Parameter";
+         public const string VALUE = "Value";
+         public const string PK_PARAMETER = "PKParameter";
+      }
+
       public static class Distribution
       {
          public const string DEVIATION = "Deviation";

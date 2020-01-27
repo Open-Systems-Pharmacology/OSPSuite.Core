@@ -18,6 +18,7 @@ namespace OSPSuite.R.Services
       IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path);
       IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path);
       IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
+      IParameter[] AllSensitivityAnalysisParametersMatching(ISimulation simulation, string path);
 
       IParameter[] AllParametersMatching(IContainer container, string path);
       IContainer[] AllContainersMatching(IContainer container, string path);
@@ -28,14 +29,16 @@ namespace OSPSuite.R.Services
    public class ContainerTask : IContainerTask
    {
       private readonly IEntityPathResolver _entityPathResolver;
+      private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
       private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
       private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
 
 
-      public ContainerTask(IEntityPathResolver entityPathResolver)
+      public ContainerTask(IEntityPathResolver entityPathResolver, ISensitivityAnalysisTask sensitivityAnalysisTask)
       {
          _entityPathResolver = entityPathResolver;
+         _sensitivityAnalysisTask = sensitivityAnalysisTask;
       }
 
       public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path) =>
@@ -49,6 +52,13 @@ namespace OSPSuite.R.Services
 
       public IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path) =>
          AllMoleculesMatching(simulation?.Model?.Root, path);
+
+      public IParameter[] AllSensitivityAnalysisParametersMatching(ISimulation simulation, string path)
+      {
+         var allParametersMatchingPath = AllParametersMatching(simulation, path);
+         var allPotentialParametersPath = new HashSet<string>(_sensitivityAnalysisTask.PotentialVariableParameterPathsFor(simulation));
+         return allParametersMatchingPath.Where(x => allPotentialParametersPath.Contains(x.ConsolidatedPath())).ToArray();
+      }
 
       public IContainer[] AllContainersMatching(IContainer container, string path) =>
          // Distributed parameters are also containers but should not be returned from the following method

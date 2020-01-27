@@ -68,7 +68,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       public void ExportToExcel()
       {
-         var fileName = _dialogCreator.AskForFileToSave(Captions.SensitivityAnalysis.ExportPKAnalysesSentitivityTToExcelTitle, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _sensitivityAnalysis.Name);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.SensitivityAnalysis.ExportPKAnalysesSensitivityToExcelTitle, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _sensitivityAnalysis.Name);
          if (string.IsNullOrEmpty(fileName)) return;
 
          _exportToExcelTask.ExportDataTableToExcel(mapResultsToTable(), fileName, openExcel: true);
