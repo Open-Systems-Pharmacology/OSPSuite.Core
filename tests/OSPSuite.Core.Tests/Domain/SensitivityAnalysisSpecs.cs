@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain
    }
 
 
-   public class When_retrieving_the_pk_parameter_sensitivty_analysis_covering_a_given_total_sensitivity : concern_for_SensitivityAnalysis
+   public class When_retrieving_the_pk_parameter_sensitivity_analysis_covering_a_given_total_sensitivity : concern_for_SensitivityAnalysis
    {
       private IReadOnlyList<PKParameterSensitivity> _result;
       private string _pkParameterName;
@@ -74,7 +74,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.AllPKParameterSensitivitiesFor(_pkParameterName, _outputPath, 0.7);
+         _result = sut.Results.AllPKParameterSensitivitiesFor(_pkParameterName, _outputPath, 0.7);
       }
 
       [Observation]

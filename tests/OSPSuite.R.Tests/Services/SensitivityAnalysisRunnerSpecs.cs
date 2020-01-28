@@ -1,12 +1,17 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Linq;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility.Container;
+using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
 
 namespace OSPSuite.R.Services
 {
    public abstract class concern_for_SensitivityAnalysisRunner : ContextForIntegration<ISensitivityAnalysisRunner>
    {
+      protected SensitivityAnalysisRunResult _result;
       protected override void Context()
       {
          sut = IoC.Resolve<ISensitivityAnalysisRunner>();
@@ -17,7 +22,6 @@ namespace OSPSuite.R.Services
    {
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
-      private Core.Domain.SensitivityAnalyses.SensitivityAnalysis _result;
 
       public override void GlobalContext()
       {
@@ -28,7 +32,7 @@ namespace OSPSuite.R.Services
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
          var containerTask = IoC.Resolve<IContainerTask>();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
-         _sensitivityAnalysis.AddParameters(liverVolumes);
+         _sensitivityAnalysis.AddParameterPaths(liverVolumes.Select(x => x.ConsolidatedPath()));
       }
 
       protected override void Because()
@@ -39,7 +43,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         _result.AllSensitivityParameterPaths.ShouldOnlyContain("Organism|Liver|Volume");
+         _result.AllPKParameterSensitivities.Select(x=>x.ParameterName).Distinct().ShouldOnlyContain("Organism-Liver-Volume");
       }
    }
 
@@ -47,7 +51,6 @@ namespace OSPSuite.R.Services
    {
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
-      private Core.Domain.SensitivityAnalyses.SensitivityAnalysis _result;
 
       public override void GlobalContext()
       {
@@ -66,9 +69,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         _result.AllSensitivityParameterPaths.Count.ShouldBeGreaterThan(0);
-
-         var pkAnalysis = _result.AllPKParameterSensitivitiesFor("AUC", "Simple|Organism|Liver|A|Concentration", 1);
+         var pkAnalysis = _result.AllPKParameterSensitivitiesFor("C_max", "Organism|Liver|A", 1);
+         pkAnalysis.Count.ShouldBeGreaterThan(0);
       }
    }
 }

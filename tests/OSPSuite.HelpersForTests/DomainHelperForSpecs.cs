@@ -226,6 +226,10 @@ namespace OSPSuite.Helpers
          return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "SimulationResultsFiles", fileNameWithoutExtension + ".csv");
       }
 
+      public static string SensitivityAnalysisResultsFilePathFor(string fileNameWithoutExtension)
+      {
+         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "SensitivityAnalysisResultsFiles", fileNameWithoutExtension + ".csv");
+      }
    }
 
 

@@ -143,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       private IReadOnlyList<PKParameterSensitivity> allPKParameterSensitivitiesFor(string pkParameterName, string outputPath)
       {
-         return _sensitivityAnalysis.AllPKParameterSensitivitiesFor(pkParameterName, outputPath, TOTAL_SENSITIVITY_THRESHOLD);
+         return _sensitivityAnalysis.Results.AllPKParameterSensitivitiesFor(pkParameterName, outputPath, TOTAL_SENSITIVITY_THRESHOLD);
       }
 
       public void Handle(SensitivityAnalysisResultsUpdatedEvent eventToHandle)

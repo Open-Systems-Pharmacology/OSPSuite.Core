@@ -988,8 +988,8 @@ namespace OSPSuite.Assets
          public static readonly string SensitivityAnalysisPKParameterAnalysisDescription = "Create a new chart displaying the sensitivity of the parameters which are responsible for 90% of the cumulated sensitivity";
          public static readonly string PKParameter = "PK-Parameter";
          public static readonly string AddAllConstants = "Add All Constants";
-         public static readonly string ExportPKAnalysesSentitivityToExcel = $"Export to {Excel}";
-         public static readonly string ExportPKAnalysesSentitivityTToExcelTitle = $"Export PK-Analyses Sensitivity to {Excel}";
+         public static readonly string ExportPKAnalysesSensitivityToExcel = $"Export to {Excel}";
+         public static readonly string ExportPKAnalysesSensitivityToExcelTitle = $"Export PK-Analyses Sensitivity to {Excel}";
          public static readonly string OutputPath = "Output Path";
          public static readonly string SensitivityAnalysisCouldNotBeCalculated = "No sensitivity values available for this combination of output path and PK parameter";
          public static readonly string Selection = "Selection";
@@ -1016,7 +1016,7 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ApplyValueToAllSensitivityParameters = "Apply value to all sensitivity parameters";
-         public static readonly string ApplyValueToSelectedSensitivityParameters = "Apply value to selected sensitivity paramters";
+         public static readonly string ApplyValueToSelectedSensitivityParameters = "Apply value to selected sensitivity parameters";
          public static readonly string NumberOfStepsDescription = "Number of simulation evaluations at each side to the default value";
          public static readonly string VariationRangeDescription = "Parameter will be varied between <current value/(1+variation range)> and <current value*(1+variation range)>";
          public static readonly string AddAllConstantsDescription = "Add all parameters with a constant value to the sensitivity parameters";
@@ -1403,6 +1403,8 @@ namespace OSPSuite.Assets
      
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
+      public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
+
       public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
 
       public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
@@ -1642,11 +1644,10 @@ namespace OSPSuite.Assets
       public static readonly string CreatingModel = "Creating Model...";
       public static readonly string ImportingResults = "Importing results...";
 
-      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals)
-      {
-         return $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
-      }
+      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals) => 
+         $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
 
+      public static readonly string FollowingPKParameterSensitivityWereSuccessfullyImported = "PKParameter sensitivities were successfully imported for the following quantities:";
 
       public static string CalculationPopulationSimulation(int number, int total) => $"Simulation {number}/{total}...";
    }
@@ -1658,6 +1659,7 @@ namespace OSPSuite.Assets
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
       public static readonly string PopulationFileFormatIsNotSupported = "Population file format is not supported.";
+      public static readonly string SensitivityAnalysisFileFormatIsNotSupported = "Sensitivity analysis file format is not supported.";
 
       public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
    }

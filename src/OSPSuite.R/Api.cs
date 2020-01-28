@@ -40,6 +40,8 @@ namespace OSPSuite.R
 
       public static ISensitivityAnalysisRunner GetSensitivityAnalysisRunner() => resolveTask<ISensitivityAnalysisRunner>();
 
+      public static ISensitivityAnalysisTask GetSensitivityAnalysisTask() => resolveTask<ISensitivityAnalysisTask>();
+
       private static T resolveTask<T>()
       {
          try

@@ -22,7 +22,6 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IEntitiesInSimulationRetriever _quantitiesRetriever;
       private readonly IIndividualResultsImporter _individualResultsImporter;
       private readonly IProgressManager _progressManager;
-      private PathCache<IQuantity> _allQuantities;
 
       public SimulationResultsImportTask(IEntitiesInSimulationRetriever quantitiesRetriever, IIndividualResultsImporter individualResultsImporter, IProgressManager progressManager)
       {
@@ -33,44 +32,36 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public async Task<SimulationResultsImport> ImportResults(IModelCoreSimulation simulation, IReadOnlyCollection<string> files, CancellationToken cancellationToken, bool showImportProgress = true)
       {
-         try
+         using (var progressUpdater = showImportProgress ? _progressManager.Create() : new NoneProgressUpdater())
          {
-            using (var progressUpdater = showImportProgress ? _progressManager.Create() : new NoneProgressUpdater())
+            progressUpdater.Initialize(files.Count, Messages.ImportingResults);
+
+            // Use ToList to execute the query and start the import task.
+            var tasks = files.Select(f => importFiles(f, simulation, cancellationToken)).ToList();
+            var allImportedResults = new List<IndividualResultsImport>();
+            // Await the completion of all the running tasks. 
+            // Add a loop to process the tasks one at a time until none remain. 
+            while (tasks.Count > 0)
             {
-               progressUpdater.Initialize(files.Count, Messages.ImportingResults);
-               _allQuantities = _quantitiesRetriever.QuantitiesFrom(simulation);
+               cancellationToken.ThrowIfCancellationRequested();
 
-               // Use ToList to execute the query and start the import task.
-               var tasks = files.Select(f => importFiles(f, simulation, cancellationToken)).ToList();
-               var allImportedResults = new List<IndividualResultsImport>();
-               // Await the completion of all the running tasks. 
-               // Add a loop to process the tasks one at a time until none remain. 
-               while (tasks.Count > 0)
-               {
-                  cancellationToken.ThrowIfCancellationRequested();
+               // Identify the first task that completes.
+               var firstFinishedTask = await Task.WhenAny(tasks);
 
-                  // Identify the first task that completes.
-                  var firstFinishedTask = await Task.WhenAny(tasks);
+               // Remove the selected task from the list so that you don't 
+               // process it more than once.
+               tasks.Remove(firstFinishedTask);
 
-                  // Remove the selected task from the list so that you don't 
-                  // process it more than once.
-                  tasks.Remove(firstFinishedTask);
-
-                  // Await the completed task. 
-                  allImportedResults.Add(await firstFinishedTask);
-                  progressUpdater.IncrementProgress();
-               }
-
-               //once all results have been imported, it is time to ensure that they are consistent
-               var results = createSimulationResultsFrom(allImportedResults);
-
-               addImportedQuantityToLogForSuccessfulImport(results);
-               return results;
+               // Await the completed task. 
+               allImportedResults.Add(await firstFinishedTask);
+               progressUpdater.IncrementProgress();
             }
-         }
-         finally
-         {
-            _allQuantities.Clear();
+
+            //once all results have been imported, it is time to ensure that they are consistent
+            var results = createSimulationResultsFrom(allImportedResults, simulation);
+
+            addImportedQuantityToLogForSuccessfulImport(results);
+            return results;
          }
       }
 
@@ -103,7 +94,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }, cancellationToken);
       }
 
-      private SimulationResultsImport createSimulationResultsFrom(IEnumerable<IndividualResultsImport> importedResults)
+      private SimulationResultsImport createSimulationResultsFrom(IEnumerable<IndividualResultsImport> importedResults, IModelCoreSimulation simulation)
       {
          var simulationResultsImport = new SimulationResultsImport();
 
@@ -111,8 +102,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          importedResults.Each(import => addIndividualResultsFromSingleFile(simulationResultsImport, import));
 
          //now check that the defined outputs are actually available in the population simulation
-         validateImportedQuantities(simulationResultsImport);
-
+         validateImportedQuantities(simulationResultsImport, simulation);
 
          return simulationResultsImport;
       }
@@ -133,11 +123,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      private void validateImportedQuantities(SimulationResultsImport simulationResultsImport)
+      private void validateImportedQuantities(SimulationResultsImport simulationResultsImport, IModelCoreSimulation simulation)
       {
+         var allQuantities = _quantitiesRetriever.QuantitiesFrom(simulation);
+
          foreach (var quantityPath in simulationResultsImport.SimulationResults.AllQuantityPaths())
          {
-            var quantity = _allQuantities[quantityPath];
+            var quantity = allQuantities[quantityPath];
             if (quantity != null) continue;
 
             simulationResultsImport.AddError(Error.CouldNotFindQuantityWithPath(quantityPath));

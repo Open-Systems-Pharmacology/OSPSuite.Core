@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
@@ -43,6 +44,8 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
       /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
       DataTable PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
+
+      DataTable SensitivityAnalysisResultsToDataTable(SensitivityAnalysisRunResult sensitivityAnalysisRunResult, IModelCoreSimulation simulation);
    }
 
    public class SimulationResultsToDataTableConverter : ISimulationResultsToDataTableConverter
@@ -148,6 +151,30 @@ namespace OSPSuite.Core.Domain.Services
                row[UNIT] = unit.Name;
                dataTable.Rows.Add(row);
             });
+         }
+
+         dataTable.EndLoadData();
+         return dataTable;
+      }
+
+      public DataTable SensitivityAnalysisResultsToDataTable(SensitivityAnalysisRunResult sensitivityAnalysisRunResult, IModelCoreSimulation simulation)
+      {
+         var dataTable = new DataTable(simulation.Name);
+
+         dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.QUANTITY_PATH);
+         dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.PARAMETER);
+         dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.PK_PARAMETER);
+         dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.VALUE);
+
+         dataTable.BeginLoadData();
+         foreach (var pkParameterSensitivity in sensitivityAnalysisRunResult.AllPKParameterSensitivities)
+         {
+            var row = dataTable.NewRow();
+            row[Constants.SensitivityAnalysisResults.QUANTITY_PATH] = pkParameterSensitivity.QuantityPath;
+            row[Constants.SensitivityAnalysisResults.PARAMETER] = pkParameterSensitivity.ParameterName;
+            row[Constants.SensitivityAnalysisResults.PK_PARAMETER] = pkParameterSensitivity.PKParameterName;
+            row[Constants.SensitivityAnalysisResults.VALUE] = pkParameterSensitivity.Value.ConvertedTo<string>();
+            dataTable.Rows.Add(row);
          }
 
          dataTable.EndLoadData();
