@@ -129,7 +129,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_parameters_that_match_the_criteria_and_also_potentially_variable_in_a_sensitivity_analysis()
       {
-         sut.AllSensitivityAnalysisParametersMatching(_simulation, pathFrom(Constants.WILD_CARD, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell);
+         sut.AllParametersForSensitivityAnalysisMatching(_simulation, pathFrom(Constants.WILD_CARD, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell);
       }
    }
 

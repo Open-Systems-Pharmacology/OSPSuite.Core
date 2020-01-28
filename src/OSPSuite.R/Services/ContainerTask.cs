@@ -18,7 +18,12 @@ namespace OSPSuite.R.Services
       IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path);
       IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path);
       IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
-      IParameter[] AllSensitivityAnalysisParametersMatching(ISimulation simulation, string path);
+
+      /// <summary>
+      /// Returns all parameter matching <paramref name="path"/> that could meaningfully be used in a SA analysis.
+      /// For example, it will only return parameter used in model, non-categorical etc.
+      /// </summary>
+      IParameter[] AllParametersForSensitivityAnalysisMatching(ISimulation simulation, string path);
 
       IParameter[] AllParametersMatching(IContainer container, string path);
       IContainer[] AllContainersMatching(IContainer container, string path);
@@ -53,7 +58,7 @@ namespace OSPSuite.R.Services
       public IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path) =>
          AllMoleculesMatching(simulation?.Model?.Root, path);
 
-      public IParameter[] AllSensitivityAnalysisParametersMatching(ISimulation simulation, string path)
+      public IParameter[] AllParametersForSensitivityAnalysisMatching(ISimulation simulation, string path)
       {
          var allParametersMatchingPath = AllParametersMatching(simulation, path);
          var allPotentialParametersPath = new HashSet<string>(_sensitivityAnalysisTask.PotentialVariableParameterPathsFor(simulation));

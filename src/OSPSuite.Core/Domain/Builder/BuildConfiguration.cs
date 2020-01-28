@@ -187,6 +187,9 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
          AllPresentMoleculeNames(m => m.IsFloating);
 
+      public virtual IReadOnlyList<string> AllPresentStationaryMoleculeNames() =>
+         AllPresentMoleculeNames(m => !m.IsFloating);
+
       public virtual IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() =>
          AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
 
