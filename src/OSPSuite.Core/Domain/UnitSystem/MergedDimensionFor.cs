@@ -49,8 +49,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit DefaultUnit
       {
-         get { return SourceDimension.DefaultUnit; }
-         set { SourceDimension.DefaultUnit = value; }
+         get => SourceDimension.DefaultUnit;
+         set => SourceDimension.DefaultUnit = value;
       }
 
       public string DefaultUnitName => SourceDimension.DefaultUnitName;
@@ -83,16 +83,21 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return HasUnit(name) ? Unit(name) : DefaultUnit;
       }
 
-      public double BaseUnitValueToUnitValue(Unit unit, double value)
+      public Unit UnitAt(int index)
+      {
+         return cachedUnit.ElementAt(index);
+      }
+
+      public double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit)
       {
          if (SourceDimension.Units.Contains(unit))
-            return SourceDimension.BaseUnitValueToUnitValue(unit, value);
+            return SourceDimension.BaseUnitValueToUnitValue(unit, valueInBaseUnit);
 
          var usedDimension = targetDimensionWith(unit);
          var usedConverter = converterFor(usedDimension);
 
          if (usedConverter.CanResolveParameters())
-            return usedDimension.BaseUnitValueToUnitValue(unit, usedConverter.ConvertToTargetBaseUnit(value));
+            return usedDimension.BaseUnitValueToUnitValue(unit, usedConverter.ConvertToTargetBaseUnit(valueInBaseUnit));
 
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }
@@ -102,16 +107,16 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return _converters.First(converter => converter.CanConvertTo(usedDimension));
       }
 
-      public double UnitValueToBaseUnitValue(Unit unit, double value)
+      public double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
       {
          if (SourceDimension.Units.Contains(unit))
-            return SourceDimension.UnitValueToBaseUnitValue(unit, value);
+            return SourceDimension.UnitValueToBaseUnitValue(unit, valueInUnit);
 
          var usedDimension = targetDimensionWith(unit);
          var usedConverter = converterFor(usedDimension);
 
          if (usedConverter.CanResolveParameters())
-            return usedConverter.ConvertToSourceBaseUnit(usedDimension.UnitValueToBaseUnitValue(unit, value));
+            return usedConverter.ConvertToSourceBaseUnit(usedDimension.UnitValueToBaseUnitValue(unit, valueInUnit));
 
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }

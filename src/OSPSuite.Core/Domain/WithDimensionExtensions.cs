@@ -8,14 +8,14 @@ namespace OSPSuite.Core.Domain
 {
    public static class WithDimensionExtensions
    {
-      public static double ConvertToUnit(this IWithDimension withDimension, double value, Unit unit)
+      public static double ConvertToUnit(this IWithDimension withDimension, double valueInBaseUnit, Unit unit)
       {
-         return withDimension.Dimension?.BaseUnitValueToUnitValue(unit, value) ?? value;
+         return withDimension.Dimension?.BaseUnitValueToUnitValue(unit, valueInBaseUnit) ?? valueInBaseUnit;
       }
 
-      public static double ConvertToUnit(this IWithDimension withDimension, double value, string unit)
+      public static double ConvertToUnit(this IWithDimension withDimension, double valueInBaseUnit, string unit)
       {
-         return HasUnit(withDimension, unit) ? ConvertToUnit(withDimension, value, withDimension.Dimension.Unit(unit)) : value;
+         return HasUnit(withDimension, unit) ? ConvertToUnit(withDimension, valueInBaseUnit, withDimension.Dimension.Unit(unit)) : valueInBaseUnit;
       }
 
       public static double ConvertToBaseUnit(this IWithDimension withDimension, double value, Unit unit)
