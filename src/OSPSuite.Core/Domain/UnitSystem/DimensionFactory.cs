@@ -30,15 +30,17 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension Dimension(string name)
       {
-         if (!_dimensions.Keys.Contains(name))
+         if (!Has(name))
             throw new KeyNotFoundException("Dimension " + name + " not available in DimensionFactory.");
 
          return _dimensions[name];
       }
 
+      public bool Has(string dimensionName) => _dimensions.Contains(dimensionName);
+
       public IDimension AddDimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName)
       {
-         if (_dimensions.Contains(dimensionName))
+         if (Has(dimensionName))
             throw new NotUniqueIdException(dimensionName);
 
          var dimension = new Dimension(baseRepresentation, dimensionName, baseUnitName);
@@ -55,7 +57,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public void RemoveDimension(string dimensionName)
       {
-         if (!_dimensions.Contains(dimensionName))
+         if (!Has(dimensionName))
             return;
 
          _dimensions.Remove(dimensionName);
@@ -66,7 +68,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          RemoveDimension(dimension.Name);
       }
 
-      /// <exception cref="OSPSuiteException">Thrown when no well-defined merging Informations for the dimensions found</exception>
+      /// <exception cref="OSPSuiteException">Thrown when no well-defined merging information for the dimensions found</exception>
       public IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension
       {
          if (hasDimension.Dimension == null)
@@ -80,7 +82,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
             return hasDimension.Dimension;
 
          var converters = new List<IDimensionConverterFor>();
-         var targedDimensions = new List<IDimension>();
+         var targetDimensions = new List<IDimension>();
 
          foreach (var dimensionToMerge in dimensionsToMerge)
          {
@@ -88,18 +90,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
             if (conv == null) continue;
 
             converters.Add(conv);
-            targedDimensions.Add(dimensionToMerge);
+            targetDimensions.Add(dimensionToMerge);
          }
 
          //We have a real merged dimension
          var displayName = MergedDimensionNameFor(hasDimension.Dimension);
-         return new MergedDimensionFor<T>(hasDimension.Dimension, targedDimensions, converters) {DisplayName = displayName};
+         return new MergedDimensionFor<T>(hasDimension.Dimension, targetDimensions, converters) {DisplayName = displayName};
       }
 
-      public virtual string MergedDimensionNameFor(IDimension sourceDimension)
-      {
-         return sourceDimension.DisplayName;
-      }
+      public virtual string MergedDimensionNameFor(IDimension sourceDimension) => sourceDimension.DisplayName;
 
       public void AddMergingInformation(IDimensionMergingInformation mergingInformation)
       {

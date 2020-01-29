@@ -67,7 +67,7 @@
         <Builders>
           <ReactionBuilder id="qKXPT97S8Uqu22ZZ6s_iug" name="R1" icon="Reaction" mode="Logical" containerType="Reaction" dimension="Amount per time" createProcessRateParameter="0" processRateParameterPersistable="0" formula="K5eIQ19-wES0JkO5C8T9Vg">
             <Children>
-              <Parameter id="emEP0Iaqc0S2QFaHKsEOTg" name="k1" icon="Parameter" persistable="0" isFixedValue="0" dim="Inversed time" quantityType="Parameter" negativeValuesAllowed="1" buildMode="Global" isDefault="0" value="0.01" displayUnit="1/min">
+              <Parameter id="emEP0Iaqc0S2QFaHKsEOTg" name="k1" icon="Parameter" persistable="0" isFixedValue="0" dim="Dimensionless per time" quantityType="Parameter" negativeValuesAllowed="1" buildMode="Global" isDefault="0" value="0.01" displayUnit="1/min">
                 <Info flag="10" seq="1" ref="0" bb="2" group="143" />
               </Parameter>
             </Children>
@@ -5254,7 +5254,7 @@
           <Map s="B" id="9" />
           <Map s="Simple|R1|k1" id="10" />
           <Map s="k1" id="11" />
-          <Map s="Inversed time" id="12" />
+          <Map s="Dimensionless per time" id="12" />
         </StringMap>
       </FormulaCache>
     </Model>

@@ -297,8 +297,8 @@ namespace OSPSuite.Core.Domain
          public const string AMOUNT = "Amount";
          public const string MASS_AMOUNT = "Mass";
          public const string TIME = "Time";
+         public const string RHS_DIMENSION_SUFFIX = " per time";
          public const string RESOLUTION = "Resolution";
-         public const string RHS_DIMENSION_SUFFIX = " per Time";
          public const string AMOUNT_PER_TIME = "Amount per time";
          public const string MOLAR_CONCENTRATION_PER_TIME = "Concentration (molar) per time";
          public const string MOLECULAR_WEIGHT = "Molecular weight";

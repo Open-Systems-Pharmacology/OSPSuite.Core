@@ -7,12 +7,12 @@ namespace OSPSuite.Core
       /// <summary>
       ///    The version as number
       /// </summary>
-      public int Version { get; private set; }
+      public int Version { get; }
 
       /// <summary>
       ///    The version as display string (e.g. 5.1.2)
       /// </summary>
-      public string VersionDisplay { get; private set; }
+      public string VersionDisplay { get; }
 
       public ProjectVersion(int version, string versionDisplay)
       {

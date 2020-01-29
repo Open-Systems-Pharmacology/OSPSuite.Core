@@ -32,6 +32,11 @@ namespace OSPSuite.Core.Converter.v5_2
          return _dimensionFactory.MergedDimensionFor(hasDimension);
       }
 
+      public bool Has(string dimensionName)
+      {
+         return Dimension(dimensionName) != null;
+      }
+
       public IDimension AddDimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName)
       {
          throw new InvalidOperationException("Should never be called");
