@@ -64,6 +64,7 @@ namespace OSPSuite.UI.Controls
          ToolTipForNode = node => node.ToolTip;
          ToolTipController = new ToolTipController();
          ToolTipController.GetActiveObjectInfo += (o, e) => ShowToolTip(e);
+         OptionsMenu.ShowExpandCollapseItems = false;
       }
 
       public TreeListColumn DataColumn { get; }
