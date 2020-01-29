@@ -323,7 +323,7 @@ namespace OSPSuite.Core.Domain
       {
          public const string INDIVIDUAL_ID = "IndividualId";
          public const string TIME = "Time";
-         public const string QUANTITY_PATH = "Quantity Path";
+         public const string QUANTITY_PATH = "QuantityPath";
          public const string PARAMETER = "Parameter";
          public const string VALUE = "Value";
          public const string UNIT = "Unit";
