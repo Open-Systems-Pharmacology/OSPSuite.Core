@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
@@ -7,8 +8,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
 {
    public class DimensionFactory : IDimensionFactory
    {
-      private readonly ICache<string, IDimension> _dimensions;
-      private readonly IList<IDimensionMergingInformation> _allMergingInformation;
+      private readonly Cache<string, IDimension> _dimensions;
+      private readonly List<IDimensionMergingInformation> _allMergingInformation;
+
+      public IEnumerable<IDimension> Dimensions => _dimensions;
+
+      public IEnumerable<string> DimensionNames => _dimensions.Keys;
 
       public DimensionFactory()
       {
@@ -24,16 +29,35 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _dimensions.Add(dimension.Name, dimension);
       }
 
-      public IEnumerable<IDimension> Dimensions => _dimensions;
-
-      public IEnumerable<string> DimensionNames => _dimensions.Keys;
-
       public IDimension Dimension(string name)
       {
          if (!Has(name))
-            throw new KeyNotFoundException("Dimension " + name + " not available in DimensionFactory.");
+            throw new KeyNotFoundException(unknownDimension(name));
 
          return _dimensions[name];
+      }
+
+      public bool TryGetDimension(string dimensionName, out IDimension dimension)
+      {
+         // Dimensions already registered. Returned
+         if (Has(dimensionName))
+         {
+            dimension = Dimension(dimensionName);
+            return true;
+         }
+
+         //It might be a RHS dimension. Let see if we can retrieve it
+
+         try
+         {
+            dimension = getOrAddRHSDimensionForName(dimensionName);
+            return true;
+         }
+         catch (KeyNotFoundException)
+         {
+            dimension = null;
+            return false;
+         }
       }
 
       public bool Has(string dimensionName) => _dimensions.Contains(dimensionName);
@@ -55,6 +79,72 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension NoDimension => _dimensions[Constants.Dimension.DIMENSIONLESS];
 
+      private string rhsDimensionName(IDimension dimension) => $"{dimension.Name}{Constants.Dimension.RHS_DIMENSION_SUFFIX}";
+
+      private string rhsDefaultUnitName(IDimension dimension)
+      {
+         var numerator = string.IsNullOrEmpty(dimension.BaseUnit.Name) ? "1" : dimension.BaseUnit.Name;
+         if (string.Equals(numerator, "min"))
+            return string.Empty;
+
+         return $"{numerator}/min";
+      }
+
+      private IDimension findFirstEquivalentDimension(Dimension rhsDimension, string unitName) =>
+         Dimensions.FirstOrDefault(x => x.IsEquivalentTo(rhsDimension) && x.HasUnit(unitName));
+
+      public IDimension GetOrAddRHSDimensionFor(IDimension dimension)
+      {
+         var dimensionName = rhsDimensionName(dimension);
+         if (Has(dimensionName))
+            return Dimension(dimensionName);
+
+         var unitName = rhsDefaultUnitName(dimension);
+
+         // RHS is per Time hence -1
+         var rhsDimensionRepresentation = new BaseDimensionRepresentation(dimension.BaseRepresentation);
+         rhsDimensionRepresentation.TimeExponent -= 1;
+
+         var rhsDimension = new Dimension(rhsDimensionRepresentation, dimensionName, unitName);
+         var equivalentRHSDimension = findFirstEquivalentDimension(rhsDimension, unitName);
+         if (equivalentRHSDimension != null)
+            return equivalentRHSDimension;
+
+         // Equivalent dimensions does nto exist. We add it and return it
+         AddDimension(rhsDimension);
+         return rhsDimension;
+      }
+
+      public IDimension DimensionForUnit(string unitName)
+      {
+         var matches = Dimensions.Where(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.OrdinalIgnoreCase))).ToList();
+         if (!matches.Any())
+            return null;
+
+         return matches.Count > 1
+            ? matches.FirstOrDefault(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.Ordinal)))
+            : matches.First();
+      }
+
+      /// <summary>
+      ///    Try to find a dimension that could be the origin dimension for the given <paramref name="rhsDimensionName" />
+      /// </summary>
+      /// <exception cref="KeyNotFoundException">is thrown when match could not be found</exception>
+      private IDimension getOrAddRHSDimensionForName(string rhsDimensionName)
+      {
+         if (string.IsNullOrEmpty(rhsDimensionName))
+            throw new KeyNotFoundException();
+
+         if (!rhsDimensionName.Contains(Constants.Dimension.RHS_DIMENSION_SUFFIX))
+            throw new KeyNotFoundException(unknownDimension(rhsDimensionName));
+
+         var dimensionName = rhsDimensionName.Replace(Constants.Dimension.RHS_DIMENSION_SUFFIX, "");
+         var originDimension = Dimension(dimensionName);
+         return GetOrAddRHSDimensionFor(originDimension);
+      }
+
+      private static string unknownDimension(string name) => $"Dimension '{name}' not available in DimensionFactory.";
+
       public void RemoveDimension(string dimensionName)
       {
          if (!Has(dimensionName))
@@ -63,10 +153,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _dimensions.Remove(dimensionName);
       }
 
-      public void RemoveDimension(IDimension dimension)
-      {
-         RemoveDimension(dimension.Name);
-      }
+      public void RemoveDimension(IDimension dimension) => RemoveDimension(dimension.Name);
 
       /// <exception cref="OSPSuiteException">Thrown when no well-defined merging information for the dimensions found</exception>
       public IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension
@@ -100,10 +187,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public virtual string MergedDimensionNameFor(IDimension sourceDimension) => sourceDimension.DisplayName;
 
-      public void AddMergingInformation(IDimensionMergingInformation mergingInformation)
-      {
-         _allMergingInformation.Add(mergingInformation);
-      }
+      public void AddMergingInformation(IDimensionMergingInformation mergingInformation) => _allMergingInformation.Add(mergingInformation);
 
       public IEnumerable<IDimensionMergingInformation> AllMergingInformation => _allMergingInformation;
 

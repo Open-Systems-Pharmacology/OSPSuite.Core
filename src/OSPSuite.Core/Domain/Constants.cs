@@ -307,6 +307,7 @@ namespace OSPSuite.Core.Domain
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
 
+
          public static class Units
          {
             public const string Seconds = "s";
