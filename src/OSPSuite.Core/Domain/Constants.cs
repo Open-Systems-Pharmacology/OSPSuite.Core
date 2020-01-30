@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
 {
    public static class Constants
    {
-      public const int PKML_VERSION = PKMLVersion.Current;
+      public const int PKML_VERSION = PKMLVersion.CURRENT;
       public const string CVODES = "CVODES";
       public const int SIM_MODEL_XML_VERSION = 4;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
-      public const string TOO_OLD_PKML = "PKML file is too old and cannot be converted";
+      public const string TOO_OLD_PKML = "PKML file is too old and cannot be converted. Please install the version 8.0 of the OSPSuite to convert the file to a version that can be supported";
 
       public const string MOL_WEIGHT_EXTENDED_PROPERTY = "MolWeight";
 

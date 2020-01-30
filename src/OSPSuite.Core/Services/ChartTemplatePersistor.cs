@@ -155,7 +155,7 @@ namespace OSPSuite.Core.Services
 
       private void saveTemplateToFile(XElement element, string fileFullPath)
       {
-         element.AddAttribute(Constants.Serialization.Attribute.VERSION, PKMLVersion.Current);
+         element.AddAttribute(Constants.Serialization.Attribute.VERSION, PKMLVersion.CURRENT);
          element.Save(fileFullPath);
       }
    }
