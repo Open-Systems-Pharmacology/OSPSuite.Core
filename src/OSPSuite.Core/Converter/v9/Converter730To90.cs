@@ -84,6 +84,10 @@ namespace OSPSuite.Core.Converter.v9
          if (dimensionName.IsOneOf($"{Constants.Dimension.DIMENSIONLESS} per Time", $"{Constants.Dimension.DIMENSIONLESS} per time", "Fraction per time", "Fraction per Time"))
             return "Inversed time";
 
+         // Some old dimensions that were not converted properly and that require some TLC 
+         if (dimensionName.IsOneOf("Rate"))
+            return Constants.Dimension.AMOUNT_PER_TIME;
+
          return dimensionName;
       }
    }
