@@ -4,7 +4,6 @@ using Castle.Facilities.TypedFactory;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Commands;
-using OSPSuite.Core.Converter.v5_2;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -99,8 +98,6 @@ namespace OSPSuite.Core
          var persistor = IoC.Resolve<IDimensionFactoryPersistor>();
          persistor.Load(dimensionFactory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.Dimensions.xml"));
          dimensionFactory.AddDimension(Constants.Dimension.NO_DIMENSION);
-         var dimensionMapper = IoC.Resolve<IDimensionMapper>();
-         dimensionMapper.DummyDimensionsForConversion.Each(dimensionFactory.AddDimension);
 
          var molarConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var massConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);

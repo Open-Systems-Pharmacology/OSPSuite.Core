@@ -14,12 +14,12 @@ namespace OSPSuite.Core.Converter
    {
       public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
-         return (PKMLVersion.Current, false);
+         return (PKMLVersion.CURRENT, false);
       }
 
       public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return (PKMLVersion.Current, false);
+         return (PKMLVersion.CURRENT, false);
       }
 
       public bool IsSatisfiedBy(int version)

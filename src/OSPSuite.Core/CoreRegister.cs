@@ -1,7 +1,6 @@
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Converter;
-using OSPSuite.Core.Converter.v5_2;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
@@ -115,14 +114,8 @@ namespace OSPSuite.Core
             scan.IncludeNamespaceContainingType<IObjectConverter>();
             scan.WithConvention<RegisterTypeConvention<IObjectConverter>>();
             scan.ExcludeType<ObjectConverterFinder>();
-            scan.ExcludeType<DimensionMapper>();
-            scan.ExcludeType<FormulaMapper>();
-            scan.ExcludeType<SerializationDimensionFactory>();
          });
          container.Register<IObjectConverterFinder, ObjectConverterFinder>(LifeStyle.Singleton);
-         container.Register<IDimensionMapper, DimensionMapper>(LifeStyle.Singleton);
-         container.Register<IFormulaMapper, FormulaMapper>(LifeStyle.Singleton);
-         container.Register<ISerializationDimensionFactory, SerializationDimensionFactory>(LifeStyle.Singleton);
       }
 
       private static void registerComparers(IContainer container)
