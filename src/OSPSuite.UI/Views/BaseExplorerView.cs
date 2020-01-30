@@ -39,7 +39,6 @@ namespace OSPSuite.UI.Views
          treeView.SelectionChanged += (o, e) => OnEvent(() => manageSelectedNodes());
          treeView.NodeDoubleClick += node => OnEvent(() => nodeDoubleClick(node));
          treeView.NodeClick += (e, node) => OnEvent(() => nodeClick(e, node));
-         treeView.OptionsMenu.ShowExpandCollapseItems = false;
          treeView.OptionsSelection.MultiSelect = true;
       }
 

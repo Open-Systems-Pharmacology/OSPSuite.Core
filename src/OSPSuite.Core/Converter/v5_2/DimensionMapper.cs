@@ -35,6 +35,8 @@ namespace OSPSuite.Core.Converter.v5_2
 
    internal class DimensionMapper : IDimensionMapper
    {
+      private const string RHS_DIMENSION_SUFFIX = " per Time";
+
       private readonly IDimensionFactory _dimensionFactory;
       private readonly ICache<string, Tuple<string, double>> _cache;
       private readonly List<IDimension> _dummyDimensionsForConversion;
@@ -117,7 +119,7 @@ namespace OSPSuite.Core.Converter.v5_2
       private void map(string oldDim, string newDim, double factor = 1)
       {
          if(factor==0)
-            throw new ArgumentException(string.Format("Factor for dimension {0} is 0", oldDim));
+            throw new ArgumentException($"Factor for dimension {oldDim} is 0");
 
          var conversion = new Tuple<string, double>(newDim, factor);
          _cache.Add(oldDim, conversion);
@@ -130,7 +132,7 @@ namespace OSPSuite.Core.Converter.v5_2
             //same factor nothing to do
             if (existingFactor == factor) return;
 
-            throw new ArgumentException(string.Format("Dimension {0} already exist with a different conversion factor {1} instead of {2}", newDim, existingFactor, factor));
+            throw new ArgumentException($"Dimension {newDim} already exist with a different conversion factor {existingFactor} instead of {factor}");
          }
          _cache.Add(newDim, conversion);
       }
@@ -164,7 +166,7 @@ namespace OSPSuite.Core.Converter.v5_2
 
       private static string createDimensionName(string oldDimensionName, string newDimensionName)
       {
-         return oldDimensionName.Contains(Constants.Dimension.RHS_DIMENSION_SUFFIX) ? string.Format("{0}{1}", newDimensionName, Constants.Dimension.RHS_DIMENSION_SUFFIX) : newDimensionName;
+         return oldDimensionName.Contains(RHS_DIMENSION_SUFFIX) ? $"{newDimensionName}{RHS_DIMENSION_SUFFIX}" : newDimensionName;
       }
 
       public double ConversionFactor(string dimensionName)
@@ -178,8 +180,8 @@ namespace OSPSuite.Core.Converter.v5_2
 
       private static string createTestDimensionName(string dimensionName)
       {
-         return dimensionName.Contains(Constants.Dimension.RHS_DIMENSION_SUFFIX)
-                   ? dimensionName.Replace(Constants.Dimension.RHS_DIMENSION_SUFFIX, string.Empty).Trim()
+         return dimensionName.Contains(RHS_DIMENSION_SUFFIX)
+                   ? dimensionName.Replace(RHS_DIMENSION_SUFFIX, string.Empty).Trim()
                    : dimensionName;
       }
 

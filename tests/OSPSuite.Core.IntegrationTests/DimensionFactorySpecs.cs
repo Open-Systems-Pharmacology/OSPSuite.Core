@@ -2,9 +2,9 @@
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
@@ -16,7 +16,6 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _timeUnits = IoC.Resolve<IDimensionFactory>().Dimension(Constants.Dimension.TIME).Units.Select(x => x.Name);
-
       }
    }
 
@@ -34,5 +33,4 @@ namespace OSPSuite.Core
          _timeUnits.ShouldContain(Constants.Dimension.Units.Years);
       }
    }
-
 }
