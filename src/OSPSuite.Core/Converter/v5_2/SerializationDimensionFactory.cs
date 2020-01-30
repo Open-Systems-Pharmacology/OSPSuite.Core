@@ -27,6 +27,11 @@ namespace OSPSuite.Core.Converter.v5_2
          _allDimensions.AddRange(dimensionMapper.DummyDimensionsForConversion);
       }
 
+      public bool TryGetDimension(string dimensionName, out IDimension dimension)
+      {
+         throw new InvalidOperationException("Should never be called");
+      }
+
       public IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension
       {
          return _dimensionFactory.MergedDimensionFor(hasDimension);
@@ -78,6 +83,16 @@ namespace OSPSuite.Core.Converter.v5_2
       public IDimension NoDimension
       {
          get { return _dimensionFactory.NoDimension; }
+      }
+
+      public IDimension GetOrAddRHSDimensionFor(IDimension dimension)
+      {
+         throw new InvalidOperationException("Should never be called");
+      }
+
+      public IDimension DimensionForUnit(string unitName)
+      {
+         throw new InvalidOperationException("Should never be called");
       }
 
       public void RemoveDimension(string dimensionName)
