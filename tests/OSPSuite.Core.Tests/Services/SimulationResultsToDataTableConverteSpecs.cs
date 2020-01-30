@@ -80,12 +80,12 @@ namespace OSPSuite.Core.Services
       public void should_have_set_the_expected_value_in_other_columns()
       {
          _dataTable.Rows[0][Constants.SimulationResults.INDIVIDUAL_ID].ShouldBeEqualTo(0);
-         _dataTable.Rows[0][Constants.SimulationResults.QUANTITY_PATH].ShouldBeEqualTo("Liver");
-         _dataTable.Rows[0][Constants.SimulationResults.PARAMETER].ShouldBeEqualTo("P");
+         _dataTable.Rows[0][Constants.SimulationResults.QUANTITY_PATH].ShouldBeEqualTo("\"Liver\"");
+         _dataTable.Rows[0][Constants.SimulationResults.PARAMETER].ShouldBeEqualTo("\"P\"");
          _dataTable.Rows[0][Constants.SimulationResults.UNIT].ShouldBeEqualTo("UNIT");
          _dataTable.Rows[1][Constants.SimulationResults.INDIVIDUAL_ID].ShouldBeEqualTo(1);
-         _dataTable.Rows[1][Constants.SimulationResults.QUANTITY_PATH].ShouldBeEqualTo("Liver");
-         _dataTable.Rows[1][Constants.SimulationResults.PARAMETER].ShouldBeEqualTo("P");
+         _dataTable.Rows[1][Constants.SimulationResults.QUANTITY_PATH].ShouldBeEqualTo("\"Liver\"");
+         _dataTable.Rows[1][Constants.SimulationResults.PARAMETER].ShouldBeEqualTo("\"P\"");
          _dataTable.Rows[1][Constants.SimulationResults.UNIT].ShouldBeEqualTo("UNIT");
       }
    }
@@ -126,9 +126,9 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_have_set_the_expected_value_in_other_columns()
       {
-         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.QUANTITY_PATH].ShouldBeEqualTo("Liver");
-         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.PARAMETER].ShouldBeEqualTo("P1");
-         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.PK_PARAMETER].ShouldBeEqualTo("AUC");
+         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.QUANTITY_PATH].ShouldBeEqualTo("\"Liver\"");
+         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.PARAMETER].ShouldBeEqualTo("\"P1\"");
+         _dataTable.Rows[0][Constants.SensitivityAnalysisResults.PK_PARAMETER].ShouldBeEqualTo("\"AUC\"");
          _dataTable.Rows[0][Constants.SensitivityAnalysisResults.VALUE].ShouldBeEqualTo("0.5");
       }
    }

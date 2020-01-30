@@ -145,8 +145,8 @@ namespace OSPSuite.Core.Domain.Services
             {
                var row = dataTable.NewRow();
                row[INDIVIDUAL_ID] = index;
-               row[QUANTITY_PATH] = parameter.QuantityPath;
-               row[PARAMETER] = parameter.Name;
+               row[QUANTITY_PATH] = inQuote(parameter.QuantityPath); 
+               row[PARAMETER] = inQuote(parameter.Name);
                row[VALUE] = parameter.ConvertToUnit(value, unit).ConvertedTo<string>();
                row[UNIT] = unit.Name;
                dataTable.Rows.Add(row);
@@ -170,9 +170,9 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var pkParameterSensitivity in sensitivityAnalysisRunResult.AllPKParameterSensitivities)
          {
             var row = dataTable.NewRow();
-            row[Constants.SensitivityAnalysisResults.QUANTITY_PATH] = pkParameterSensitivity.QuantityPath;
-            row[Constants.SensitivityAnalysisResults.PARAMETER] = pkParameterSensitivity.ParameterName;
-            row[Constants.SensitivityAnalysisResults.PK_PARAMETER] = pkParameterSensitivity.PKParameterName;
+            row[Constants.SensitivityAnalysisResults.QUANTITY_PATH] = inQuote(pkParameterSensitivity.QuantityPath);
+            row[Constants.SensitivityAnalysisResults.PARAMETER] = inQuote(pkParameterSensitivity.ParameterName);
+            row[Constants.SensitivityAnalysisResults.PK_PARAMETER] = inQuote(pkParameterSensitivity.PKParameterName);
             row[Constants.SensitivityAnalysisResults.VALUE] = pkParameterSensitivity.Value.ConvertedTo<string>();
             dataTable.Rows.Add(row);
          }
@@ -180,5 +180,7 @@ namespace OSPSuite.Core.Domain.Services
          dataTable.EndLoadData();
          return dataTable;
       }
+
+      private string inQuote(string text)=> $"\"{text}\"";
    }
 }
