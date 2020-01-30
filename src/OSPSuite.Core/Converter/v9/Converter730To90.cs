@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Converter.v9
          //retrieve all elements with an attribute dimension
          var allDimensionAttributes = from child in element.DescendantsAndSelf()
             where child.HasAttributes
-            let attr = child.Attribute(Constants.Serialization.Attribute.Dimension)
+            let attr = child.Attribute(Constants.Serialization.Attribute.Dimension) ?? child.Attribute("dimension")
             where attr != null
             select attr;
 
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Converter.v9
 
       private string mapDimensionName(string dimensionName)
       {
-         if(_dimensionFactory.Has(dimensionName))
+         if (_dimensionFactory.Has(dimensionName))
             return dimensionName;
 
          if (dimensionName.IsOneOf($"{Constants.Dimension.DIMENSIONLESS} per Time", $"{Constants.Dimension.DIMENSIONLESS} per time", "Fraction per time", "Fraction per Time"))
