@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
 
-      public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>());
+      public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>()) ?? Enumerable.Empty<T>();
 
       private IEnumerable<TEntity> allFromSettings<TEntity>() where TEntity : class, IEntity
       {
