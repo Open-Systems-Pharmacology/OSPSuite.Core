@@ -14,25 +14,28 @@ namespace OSPSuite.Core.Domain.Populations
       bool Has(string parameterPath);
 
       /// <summary>
-      /// Returns the values for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the values for the parameter with path <paramref name="parameterPath" /> or null if the no parameter with
+      ///    path <paramref name="parameterPath" /> was found
       /// </summary>
       IReadOnlyList<double> ValuesFor(string parameterPath);
 
       /// <summary>
-      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the percentiles for the parameter with path <paramref name="parameterPath" /> or null if the no parameter
+      ///    with path <paramref name="parameterPath" /> was found
       /// </summary>
       IReadOnlyList<double> PercentilesFor(string parameterPath);
 
       string[] AllParameterPaths();
 
       /// <summary>
-      /// Returns the values for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the values for the parameter with path <paramref name="parameterPath" /> or null if the no parameter with
+      ///    path <paramref name="parameterPath" /> was found
       /// </summary>
       double[] GetValues(string parameterPath);
 
-
       /// <summary>
-      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the percentiles for the parameter with path <paramref name="parameterPath" /> or null if the no parameter
+      ///    with path <paramref name="parameterPath" /> was found
       /// </summary>
       double[] GetPercentiles(string parameterPath);
 
@@ -42,21 +45,27 @@ namespace OSPSuite.Core.Domain.Populations
       IReadOnlyCollection<ParameterValues> AllParameterValues { get; }
 
       /// <summary>
-      /// Returns the <see cref="ParameterValues"/> defined with path <paramref name="parameterPath"/> or NULL if not found
+      ///    Returns the <see cref="ParameterValues" /> defined with path <paramref name="parameterPath" /> or NULL if not found
       /// </summary>
-      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues"/></param>
+      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues" /></param>
       ParameterValues ParameterValuesFor(string parameterPath);
 
       /// <summary>
-      /// Returns the <see cref="ParameterValues"/> defined with path <paramref name="parameterPath"/>. It it does not exist, an empty value will be added
+      ///    Returns the <see cref="ParameterValues" /> defined with path <paramref name="parameterPath" />. It it does not
+      ///    exist, an empty value will be added
       /// </summary>
-      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues"/></param>
+      /// <param name="parameterPath">Parameter path used to retrieve the <see cref="ParameterValues" /></param>
       ParameterValues GetOrAddParameterValuesFor(string parameterPath);
 
-      ParameterValues ParameterValuesAt(int index);
       void Add(ParameterValues parameterValues);
       void Add(IReadOnlyCollection<ParameterValue> parameterValues);
       void RenamePath(string oldPath, string newPath);
+
+      /// <summary>
+      ///    Returns an array containing all the parameter values for the individual row at index
+      ///    <paramref name="indexOfIndividual" />
+      /// </summary>
+      ParameterValue[] AllParameterValuesAt(int indexOfIndividual);
    }
 
    /// <summary>
@@ -66,7 +75,7 @@ namespace OSPSuite.Core.Domain.Populations
    /// </summary>
    public class ParameterValuesCache : IParameterValueCache
    {
-      private readonly ICache<string, ParameterValues> _parameterValuesCache = new Cache<string, ParameterValues>(x => x.ParameterPath);
+      private readonly Cache<string, ParameterValues> _parameterValuesCache = new Cache<string, ParameterValues>(x => x.ParameterPath);
 
       public virtual void Add(IReadOnlyCollection<ParameterValue> parameterValues) => addValues(parameterValues);
 
@@ -115,9 +124,6 @@ namespace OSPSuite.Core.Domain.Populations
          return _parameterValuesCache[possibleKey];
       }
 
-      public virtual ParameterValues ParameterValuesAt(int index) => _parameterValuesCache.ElementAt(index);
-
-     
       public virtual void Add(ParameterValues parameterValues) => _parameterValuesCache.Add(parameterValues);
 
       private void addValues(IEnumerable<ParameterValue> parameterValues)
@@ -136,12 +142,14 @@ namespace OSPSuite.Core.Domain.Populations
       public double[] GetValues(string parameterPath) => ValuesFor(parameterPath)?.ToArray();
 
       /// <summary>
-      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the percentiles for the parameter with path <paramref name="parameterPath" /> or null if the no parameter
+      ///    with path <paramref name="parameterPath" /> was found
       /// </summary>
       public virtual IReadOnlyList<double> PercentilesFor(string parameterPath) => ParameterValuesFor(parameterPath)?.Percentiles;
 
       /// <summary>
-      /// Returns the percentiles for the parameter with path <paramref name="parameterPath"/> or null if the no parameter with path <paramref name="parameterPath"/> was found
+      ///    Returns the percentiles for the parameter with path <paramref name="parameterPath" /> or null if the no parameter
+      ///    with path <paramref name="parameterPath" /> was found
       /// </summary>
       public double[] GetPercentiles(string parameterPath) => PercentilesFor(parameterPath)?.ToArray();
 
@@ -216,6 +224,16 @@ namespace OSPSuite.Core.Domain.Populations
             defaultValue = parameter.Value;
 
          parameterValues.AddEmptyItems(numberOfItems, defaultValue);
+      }
+
+      public ParameterValue[] AllParameterValuesAt(int indexOfIndividual)
+      {
+         if (indexOfIndividual <= 0 || indexOfIndividual >= numberOfValuesPerPath)
+            throw new ArgumentOutOfRangeException(nameof(indexOfIndividual));
+
+         return _parameterValuesCache.KeyValues.Select(kv =>
+               new ParameterValue(kv.Key, kv.Value.Values[indexOfIndividual], kv.Value.Percentiles[indexOfIndividual]))
+            .ToArray();
       }
    }
 }

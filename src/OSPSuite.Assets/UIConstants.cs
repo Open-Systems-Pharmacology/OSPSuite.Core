@@ -1470,6 +1470,8 @@ namespace OSPSuite.Assets
          sb.AppendLine($"use '{correctedPath}'");
          return sb.ToString();
       }
+
+      public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
    }
 
    public static class Validation

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -128,6 +130,80 @@ namespace OSPSuite.Core.Domain
          sut.GetValues("Path1").ShouldBeEqualTo(new[] {2.0, 3, 4, 10, 20});
          sut.GetValues("Path2").ShouldBeEqualTo(new[] {4.0, 5, 6, double.NaN, double.NaN});
          sut.GetValues("Path3").ShouldBeEqualTo(new[] {double.NaN, double.NaN, double.NaN, 30, 40});
+      }
+   }
+
+   public class When_retrieving_all_parameter_value_for_a_given_individual_by_id : concern_for_IndividualValuesCache
+   {
+      protected override void Context()
+      {
+         base.Context();
+         //3 individuals to in original pop
+         var ids = new List<int> {1, 2, 3};
+
+         var parameterValues1 = new ParameterValues("Path1");
+         parameterValues1.Add(new double[] {2, 3, 4});
+
+         var parameterValues2 = new ParameterValues("Path2");
+         parameterValues2.Add(new double[] {4, 5, 6});
+
+         sut.Add(parameterValues1);
+         sut.Add(parameterValues2);
+
+         sut.IndividualIds.AddRange(ids);
+
+         sut.CovariateValuesCache.Add("Gender", new[] {"Male", "Female", "Female"});
+      }
+
+      [Observation]
+      public void should_return_the_expected_values_for_a_valid_id()
+      {
+         var values = sut.AllParameterValuesForIndividual(2);
+
+         values.Length.ShouldBeEqualTo(2);
+         values[0].ParameterPath.ShouldBeEqualTo("Path1");
+         values[0].Value.ShouldBeEqualTo(3);
+
+         values[1].ParameterPath.ShouldBeEqualTo("Path2");
+         values[1].Value.ShouldBeEqualTo(5);
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_individual_id_is_not_found()
+      {
+         The.Action(() => sut.AllParameterValuesForIndividual(5)).ShouldThrowAn<OSPSuiteException>();
+
+         The.Action(() => sut.AllParameterValuesAt(4)).ShouldThrowAn<ArgumentOutOfRangeException>();
+      }
+   }
+
+   public class When_retrieving_the_individual_index_of_an_individual_id : concern_for_IndividualValuesCache
+   {
+      protected override void Context()
+      {
+         base.Context();
+         //3 individuals to in original pop
+         var ids = new List<int> {1, 2, 3};
+
+         sut.IndividualIds.AddRange(ids);
+      }
+
+      [Observation]
+      public void should_return_the_expected_index_if_the_individual_id_exists()
+      {
+         sut.IndexOfIndividual(3).ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_return_a_negative_value_if_the_individual_id_is_not_found_an_no_exception_should_be_raised()
+      {
+         sut.IndexOfIndividual(5, throwExceptionIfNotFound: false).ShouldBeEqualTo(-1);
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_individual_id_is_not_found_and_an_exception_should_be_raised()
+      {
+         The.Action(() => sut.IndexOfIndividual(5, throwExceptionIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }
