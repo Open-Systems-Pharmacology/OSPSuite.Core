@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain.Populations
 {
@@ -77,6 +79,8 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual void RenamePath(string oldPath, string newPath) => ParameterValuesCache.RenamePath(oldPath, newPath);
 
+      public ParameterValue[] AllParameterValuesAt(int indexOfIndividual) => ParameterValuesCache.AllParameterValuesAt(indexOfIndividual);
+
       public virtual void AddCovariate(string covariateName, IReadOnlyList<string> values) => CovariateValuesCache.Add(covariateName, values);
 
       public virtual void Merge(IndividualValuesCache individualValuesCache, PathCache<IParameter> parameterCache)
@@ -93,16 +97,23 @@ namespace OSPSuite.Core.Domain.Populations
       /// <returns></returns>
       public virtual CovariateValues CovariateValuesFor(string covariateName) => CovariateValuesCache.CovariateValuesFor(covariateName);
 
-      public string[] AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
+      public virtual string[] AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
 
-      public IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
+      public virtual IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
 
-      public string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesForIndividual(IndexOfIndividual(individualId));
+      public virtual  string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesAt(IndexOfIndividual(individualId));
 
-      public string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, IndexOfIndividual(individualId));
+      public virtual  string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, IndexOfIndividual(individualId));
 
-      public virtual ParameterValues ParameterValuesAt(int index) => ParameterValuesCache.ParameterValuesAt(index);
+      public virtual ParameterValue[] AllParameterValuesForIndividual(int individualId) => AllParameterValuesAt(IndexOfIndividual(individualId));
 
-      public int IndexOfIndividual(int individualId) => IndividualIds.IndexOf(individualId);
+      public virtual int IndexOfIndividual(int individualId, bool throwExceptionIfNotFound = true)
+      {
+         var index = IndividualIds.IndexOf(individualId);
+         if(index<0 && throwExceptionIfNotFound)
+            throw new OSPSuiteException(Error.IndividualWithIdNotFound(individualId));
+
+         return index;
+      }
    }
 }

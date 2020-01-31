@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public void Remove(string covariateName) => _covariateValuesCache.Remove(covariateName);
 
-      public string[] AllCovariateValuesForIndividual(int individualIndex) => AllCovariateValues.Select(x => x.ValueAt(individualIndex)).ToArray();
+      public string[] AllCovariateValuesAt(int individualIndex) => AllCovariateValues.Select(x => x.ValueAt(individualIndex)).ToArray();
 
       public string CovariateValueFor(string covariateName, int individualIndex) => CovariateValuesFor(covariateName)?.ValueAt(individualIndex);
    }
