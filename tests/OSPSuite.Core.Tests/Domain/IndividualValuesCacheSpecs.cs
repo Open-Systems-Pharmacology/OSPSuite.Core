@@ -141,7 +141,7 @@ namespace OSPSuite.Core.Domain
          //3 individuals to in original pop
          var ids = new List<int> {1, 2, 3};
 
-         var parameterValues1 = new ParameterValues("Path1");
+         var parameterValues1 = new ParameterValues("Path1 [ml]");
          parameterValues1.Add(new double[] {2, 3, 4});
 
          var parameterValues2 = new ParameterValues("Path2");

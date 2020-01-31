@@ -231,8 +231,10 @@ namespace OSPSuite.Core.Domain.Populations
          if (indexOfIndividual <= 0 || indexOfIndividual >= numberOfValuesPerPath)
             throw new ArgumentOutOfRangeException(nameof(indexOfIndividual));
 
+         //FOR Now: Strip units so that we have path without units. This should be changed
+
          return _parameterValuesCache.KeyValues.Select(kv =>
-               new ParameterValue(kv.Key, kv.Value.Values[indexOfIndividual], kv.Value.Percentiles[indexOfIndividual]))
+               new ParameterValue(kv.Key.StripUnit(), kv.Value.Values[indexOfIndividual], kv.Value.Percentiles[indexOfIndividual]))
             .ToArray();
       }
    }
