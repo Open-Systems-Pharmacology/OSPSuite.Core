@@ -11,6 +11,12 @@ namespace OSPSuite.Core.Domain
    public interface IContainer : IEntity, IEnumerable<IEntity>
    {
       ContainerType ContainerType { set; get; }
+
+      /// <summary>
+      ///   Returns the <see cref="ContainerType"/> as a string
+      /// </summary>
+      string ContainerTypeAsString { get; }
+
       ContainerMode Mode { get; set; }
 
       /// <summary>
@@ -122,6 +128,8 @@ namespace OSPSuite.Core.Domain
             OnChanged();
          }
       }
+
+      public string ContainerTypeAsString => ContainerType.ToString();
 
       public ContainerMode Mode
       {

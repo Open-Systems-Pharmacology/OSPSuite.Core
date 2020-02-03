@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_child_to_a_conatainer : concern_for_Container
+   public class When_adding_a_child_to_a_container : concern_for_Container
    {
       protected override void Because()
       {
@@ -30,15 +30,25 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_have_added_the_entity_to_the_Children_collection()
+      public void should_have_added_the_entity_to_the_children_collection()
       {
          sut.Children.ShouldOnlyContain(_stefanSwitch);
       }
 
       [Observation]
-      public void should_have_set_the_entitys_parent_container_property_to_sut()
+      public void should_have_set_the_entities_parent_container_property_to_sut()
       {
          _stefanSwitch.ParentContainer.ShouldBeEqualTo(sut);
+      }
+   }
+
+   public class When_returning_the_container_type_as_string : concern_for_Container
+   {
+      [Observation]
+      public void should_return_the_expected_value()
+      {
+         sut.ContainerType = ContainerType.Compartment;
+         sut.ContainerTypeAsString.ShouldBeEqualTo("Compartment");
       }
    }
 
@@ -103,7 +113,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_entity_with_a_allready_existing_name : concern_for_Container
+   public class When_adding_a_entity_with_a_already_existing_name : concern_for_Container
    {
       protected override void Context()
       {
@@ -112,7 +122,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_throw_an_not_unique_name_exeception()
+      public void should_throw_an_not_unique_name_exception()
       {
          The.Action(() => sut.Add(_stefanSwitch)).ShouldThrowAn<NotUniqueNameException>();
       }
@@ -179,13 +189,13 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_not_do_anythin()
+      public void should_not_do_anything()
       {
          sut.Children.Count().ShouldBeEqualTo(0);
       }
    }
 
-   public class When_retreving_a_container_and_self_with_a_predicate : concern_for_Container
+   public class When_retrieving_a_container_and_self_with_a_predicate : concern_for_Container
    {
       private IReadOnlyList<IContainer> _results;
 
@@ -215,7 +225,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_retreving_a_container_and_self_with_a_predicate_and_the_container_does_not_match_the_predicate : concern_for_Container
+   public class When_retrieving_a_container_and_self_with_a_predicate_and_the_container_does_not_match_the_predicate : concern_for_Container
    {
       private IReadOnlyList<IContainer> _results;
 
