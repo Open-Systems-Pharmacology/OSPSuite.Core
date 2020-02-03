@@ -1,9 +1,4 @@
-﻿using FakeItEasy;
-using NUnit.Framework;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Formulas;
+﻿using NUnit.Framework;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Helpers;
 
