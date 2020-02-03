@@ -29,6 +29,11 @@ namespace OSPSuite.Core.Domain
       QuantityType QuantityType { get; set; }
 
       /// <summary>
+      ///   Returns the <see cref="QuantityType"/> as a string
+      /// </summary>
+      string QuantityTypeAsString { get;  }
+
+      /// <summary>
       ///    The value in the displayed unit
       /// </summary>
       double ValueInDisplayUnit { get; set; }
@@ -122,6 +127,8 @@ namespace OSPSuite.Core.Domain
             OnPropertyChanged(() => Value);
          }
       }
+
+      public virtual string QuantityTypeAsString => QuantityType.ToString();
 
       /// <inheritdoc />
       public double ValueInDisplayUnit

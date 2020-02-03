@@ -214,6 +214,8 @@ namespace OSPSuite.Core.Domain
          set { }
       }
 
+      public string QuantityTypeAsString => QuantityType.ToString();
+
       public double ValueInDisplayUnit { get; set; }
 
       public ParameterBuildMode BuildMode

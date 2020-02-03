@@ -51,4 +51,18 @@ namespace OSPSuite.Core.Domain
          _valueChangedRaised.ShouldBeTrue();
       }
    }
+
+   public class When_returning_the_quantity_type_as_string : concern_for_Quantity
+   {
+      [Observation]
+      public void should_return_the_expected_string_value()
+      {
+         sut.QuantityType = QuantityType.Enzyme  |  QuantityType.Observer;
+         sut.QuantityTypeAsString.ShouldBeEqualTo("Enzyme, Observer");
+
+         sut.QuantityType = QuantityType.Parameter;
+         sut.QuantityTypeAsString.ShouldBeEqualTo("Parameter");
+
+      }
+   }
 }	
