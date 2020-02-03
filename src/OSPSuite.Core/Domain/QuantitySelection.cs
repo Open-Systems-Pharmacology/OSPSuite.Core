@@ -11,6 +11,8 @@ namespace OSPSuite.Core.Domain
 
       public virtual QuantityType QuantityType { get; }
 
+      public virtual string QuantityTypeAsString => QuantityType.ToString();
+
       [Obsolete("For serialization")]
       public QuantitySelection()
       {
