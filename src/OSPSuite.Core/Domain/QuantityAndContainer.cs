@@ -15,6 +15,7 @@ namespace OSPSuite.Core.Domain
    {
       private readonly IContainer _container;
       public ContainerType ContainerType { get; set; }
+      public string ContainerTypeAsString => ContainerType.ToString();
 
       protected QuantityAndContainer()
       {
@@ -27,7 +28,7 @@ namespace OSPSuite.Core.Domain
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
-         // ToList nessary to be able to remove child in visitor.
+         // ToList necessary to be able to remove child in visitor.
          Children.ToList().Each(child => child.AcceptVisitor(visitor));
       }
 
@@ -92,7 +93,7 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer
       {
-         //needs to reimplement the method since we do not want to return the internal _container
+         //needs to re-implement the method since we do not want to return the internal _container
          var allChildren = GetAllChildren(predicate).ToList();
          var container = this as TContainer;
          if (container != null && predicate(container))
