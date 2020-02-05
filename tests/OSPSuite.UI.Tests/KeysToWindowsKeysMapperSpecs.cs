@@ -22,6 +22,7 @@ namespace OSPSuite.UI
          sut.MapFrom(Keys.A).ShouldBeEqualTo(WindowsKey.A);
          sut.MapFrom(Keys.A | Keys.Alt).ShouldBeEqualTo(WindowsKey.A | WindowsKey.Alt);
          sut.MapFrom(Keys.Shift | Keys.Alt | Keys.D).ShouldBeEqualTo(WindowsKey.D | WindowsKey.Alt | WindowsKey.Shift);
+         sut.MapFrom(Keys.F1).ShouldBeEqualTo(WindowsKey.F1);
       }
    }
 }

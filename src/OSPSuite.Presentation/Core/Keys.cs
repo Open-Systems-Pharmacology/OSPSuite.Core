@@ -6,7 +6,7 @@ namespace OSPSuite.Presentation.Core
    public enum Keys
    {
       None = 0,
-      F1 = 1 <<0,
+      F1 = 1 << 0,
       F2 = 1 << 1,
       F3 = 1 << 2,
       F4 = 1 << 3,
