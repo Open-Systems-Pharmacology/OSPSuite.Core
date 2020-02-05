@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain
       void Remove(string entry);
 
       /// <summary>
-      ///    Returns the entity of type <typeparamref name="T" /> with the given path relatve to the
+      ///    Returns the entity of type <typeparamref name="T" /> with the given path relative to the
       ///    <paramref name="refEntity" />
       /// </summary>
       /// <exception cref="Exception">
@@ -77,6 +77,13 @@ namespace OSPSuite.Core.Domain
       ///    Throws an exception if the path does not contain any element
       /// </summary>
       void RemoveFirst();
+
+
+      /// <summary>
+      /// Replaces the path with the path entries in <paramref name="pathEntries"/>
+      /// </summary>
+      /// <param name="pathEntries">Path entries used to replace the path</param>
+      void ReplaceWith(IEnumerable<string> pathEntries);
    }
 
    public class ObjectPath : IObjectPath
@@ -90,9 +97,9 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    String separating elements of the <see cref="FormulaUsablePath" /> in String Representation
       /// </summary>
-      public const string PATH_DELIMITER = "|";
+      public const string PATH_DELIMITER  = "|";
 
-      protected readonly IList<string> _pathEntries;
+      protected readonly List<string> _pathEntries;
 
       public static IObjectPath Empty { get; } =  new ObjectPath();
 
@@ -213,6 +220,12 @@ namespace OSPSuite.Core.Domain
          RemoveAt(0);
       }
 
+      public void ReplaceWith(IEnumerable<string> pathEntries)
+      {
+         _pathEntries.Clear();
+         _pathEntries.AddRange(pathEntries);
+      }
+
       public IEnumerator<string> GetEnumerator()
       {
          return _pathEntries.GetEnumerator();
@@ -299,9 +312,6 @@ namespace OSPSuite.Core.Domain
          return objectPath.ToString();
       }
 
-      public int Count
-      {
-         get { return _pathEntries.Count; }
-      }
+      public int Count => _pathEntries.Count;
    }
 }
