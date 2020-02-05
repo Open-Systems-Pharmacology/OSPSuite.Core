@@ -9,9 +9,9 @@ namespace OSPSuite.UI.Mappers
 
    public class KeysToWindowsKeysMapper : IKeysToWindowsKeysMapper
    {
-      public System.Windows.Forms.Keys MapFrom(Keys keys)
+      public System.Windows.Forms.Keys MapFrom(Keys key)
       {
-         return EnumHelper.ParseValue<System.Windows.Forms.Keys>(keys.ToString());
+         return (System.Windows.Forms.Keys) (key);
       }
    }
 }
