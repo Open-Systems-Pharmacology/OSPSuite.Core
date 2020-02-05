@@ -100,6 +100,17 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_replacing_the_content_of_a_path_with_another_path : concern_for_ObjectPath
+   {
+      [Observation]
+      public void should_have_updated_the_path()
+      {
+         sut = new ObjectPath("A", "B");
+         sut.ReplaceWith(new []{"C", "D"});
+         sut.PathAsString.ShouldBeEqualTo("C|D");
+      }
+   }
+
    public class When_removing_the_first_element_of_an_empty_path : concern_for_ObjectPath
    {
       [Observation]
