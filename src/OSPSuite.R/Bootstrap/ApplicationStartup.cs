@@ -33,7 +33,6 @@ namespace OSPSuite.R.Bootstrap
       {
          var container = new AutofacContainer();
 
-//         IoC.InitializeWith(container);
          container.RegisterImplementationOf((IContainer) container);
 
          var serializerRegister = new CoreSerializerRegister();
