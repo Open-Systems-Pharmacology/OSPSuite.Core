@@ -14,7 +14,7 @@ namespace OSPSuite.Core
 
       public Simulation CreateSimulation(IModelCoreSimulation modelCoreSimulation)
       {
-         return base.CreateSimulation(_simModelExporter.Export(modelCoreSimulation, SimModelExportMode.Optimized));
+         return base.CreateSimulation(_simModelExporter.ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Optimized));
       }
 
       public IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variablePaths)

@@ -23,7 +23,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.m" />
     <None Remove="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.r" />
   </ItemGroup>
 
@@ -32,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.m" />
     <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.r" />
   </ItemGroup>
 

@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IMenuBarItem StopSensitivityAnalysis(MenuBarItemId menuBarItemId)
       {
-         return CreateMenuButton.WithCaption(MenuNames.StopSensitivityanalysis)
+         return CreateMenuButton.WithCaption(MenuNames.StopSensitivityAnalysis)
             .WithId(menuBarItemId)
             .WithDescription(MenuDescriptions.StopSensitivityanalysis)
             .WithIcon(ApplicationIcons.Stop)

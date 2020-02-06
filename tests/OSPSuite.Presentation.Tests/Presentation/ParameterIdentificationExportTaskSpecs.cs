@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.ExportToMatlab(_parameterIdentification).Wait();
+         sut.ExportToR(_parameterIdentification).Wait();
       }
 
       [Observation]
@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_model_core_exporter_is_used_to_export_the_simulation()
       {
-         A.CallTo(() => _simModelExporter.Export(_modelCoreSimulation, A<string>._)).MustHaveHappened();
+         A.CallTo(() => _simModelExporter.ExportSimModelXml(_modelCoreSimulation, A<string>._)).MustHaveHappened();
       }
 
       [Observation]
@@ -151,47 +151,6 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_exporting_a_parameter_identification_to_matlab_and_the_directory_already_exists : concern_for_ParameterIdentificationExportTask
-   {
-      private ISimulation _simulation;
-      private IModelCoreSimulation _modelCoreSimulation;
-
-      protected override void Context()
-      {
-         base.Context();
-         _simulation = A.Fake<ISimulation>();
-         _modelCoreSimulation = A.Fake<IModelCoreSimulation>();
-         A.CallTo(() => _dialogCreator.AskForFolder(A<string>._, A<string>._, A<string>._)).Returns("a path");
-         DirectoryHelper.DirectoryExists = path => true;
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).Returns(ViewResult.Yes);
-         A.CallTo(() => _parameterIdentification.AllSimulations).Returns(new[] {_simulation});
-         A.CallTo(() => _simulationToModelCoreSimulationMapper.MapFrom(_simulation, A<bool>._)).Returns(_modelCoreSimulation);
-      }
-
-      protected override void Because()
-      {
-         sut.ExportToMatlab(_parameterIdentification).Wait();
-      }
-
-      [Observation]
-      public void the_model_core_exporter_is_used_to_export_the_simulation()
-      {
-         A.CallTo(() => _simModelExporter.Export(_modelCoreSimulation, A<string>._)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void the_file_system_service_is_used_to_remove_the_directory_and_create_it_again()
-      {
-         _deletedDirectories.ShouldOnlyContain("a path\\name with spaces");
-         _createdDirectories.ShouldOnlyContain("a path\\name with spaces");
-      }
-
-      [Observation]
-      public void the_dialog_creator_must_be_used_to_inform_the_user()
-      {
-         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, Captions.Delete, Captions.Cancel, ViewResult.Yes)).MustHaveHappened();
-      }
-   }
 
    public class When_exporting_a_parameter_identification_to_xml : concern_for_ParameterIdentificationExportTask
    {
@@ -203,13 +162,13 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.ExportToMatlab(_parameterIdentification).Wait();
+         sut.ExportToR(_parameterIdentification).Wait();
       }
 
       [Observation]
       public void the_file_should_be_written_at_the_correct_location()
       {
-         _writtenFileCache.Keys.Single().ShouldBeEqualTo("A path\\name with spaces\\name_with_spaces.m");
+         _writtenFileCache.Keys.Single().ShouldBeEqualTo("A path\\name with spaces\\name_with_spaces.r");
       }
 
       [Observation]
@@ -225,7 +184,7 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void The_paramter_identification_exporter_is_used_to_export_the_object()
+      public void The_parameter_identification_exporter_is_used_to_export_the_object()
       {
          A.CallTo(() => _parameterIdentificationExporter.Export(_parameterIdentification, A<string>._)).MustHaveHappened();
       }

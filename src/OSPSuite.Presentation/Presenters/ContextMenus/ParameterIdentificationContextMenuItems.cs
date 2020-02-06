@@ -6,7 +6,6 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
-using MenuBarItemExtensions = OSPSuite.Presentation.MenuAndBars.MenuBarItemExtensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
@@ -21,7 +20,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IMenuBarItem CreateParameterIdentification()
       {
-         return MenuBarItemExtensions.WithDescription(CreateMenuButton.WithCaption(MenuNames.AddParameterIdentification), MenuDescriptions.CreateParameterIdentification)
+         return CreateMenuButton.WithCaption(MenuNames.AddParameterIdentification)
+            .WithDescription(MenuDescriptions.CreateParameterIdentification)
             .WithIcon(ApplicationIcons.ParameterIdentification)
             .WithCommand<CreateParameterIdentificationUICommand>();
       }
@@ -54,13 +54,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<ExportParameterIdentificationToRUICommand, ParameterIdentification>(parameterIdentification);
       }
 
-      public static IMenuBarButton ExportParameterIdentificationToMatlab(ParameterIdentification parameterIdentification)
-      {
-         return CreateMenuButton.WithCaption(MenuNames.ExportForMatlab.WithEllipsis())
-            .WithIcon(ApplicationIcons.Matlab)
-            .WithCommandFor<ExportParameterIdentificationToMatlabUICommand, ParameterIdentification>(parameterIdentification);
-      }
-
       public static IMenuBarButton CloneParameterIdentification(ParameterIdentification parameterIdentification)
       {
          return CreateMenuButton.WithCaption(MenuNames.Clone)
@@ -83,13 +76,11 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
          yield return CloneParameterIdentification(parameterIdentification)
             .AsGroupStarter();
-         
+
          yield return AddParameterIdentificationToJournal(parameterIdentification);
 
-         yield return ExportParameterIdentificationToMatlab(parameterIdentification);
-
          yield return DeleteParameterIdentification(parameterIdentification)
-          .AsGroupStarter();
+            .AsGroupStarter();
       }
    }
 }
