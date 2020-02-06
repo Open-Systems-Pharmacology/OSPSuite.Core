@@ -9,5 +9,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
    class ParameterIdentificationEngineFactory : DynamicFactory<IParameterIdentificationEngine>, IParameterIdentificationEngineFactory
    {
+      public ParameterIdentificationEngineFactory(Utility.Container.IContainer container) : base(container)
+      {
+      }
    }
 }

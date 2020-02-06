@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Exceptions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Serialization.Exchange
 {
@@ -21,17 +22,23 @@ namespace OSPSuite.Core.Serialization.Exchange
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IObjectConverterFinder _objectConverterFinder;
       private readonly IReferencesResolver _refResolver;
+      private readonly IContainer _container;
 
-      public SimulationPersistor(IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, IObjectConverterFinder objectConverterFinder, IReferencesResolver refResolver)
+      public SimulationPersistor(
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, 
+         IObjectConverterFinder objectConverterFinder, 
+         IReferencesResolver refResolver, 
+         IContainer container)
       {
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _objectConverterFinder = objectConverterFinder;
          _refResolver = refResolver;
+         _container = container;
       }
 
       public void Save(SimulationTransfer simulationTransfer, string fileName)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor(simulationTransfer);
             var element = serializer.Serialize(simulationTransfer, serializationContext);
@@ -65,7 +72,7 @@ namespace OSPSuite.Core.Serialization.Exchange
       {
          SimulationTransfer simulationTransfer;
          int version;
-         using (var serializationContext = SerializationTransaction.Create(dimensionFactory, objectBaseFactory, withIdRepository, cloneManagerForModel))
+         using (var serializationContext = SerializationTransaction.Create(_container, dimensionFactory, objectBaseFactory, withIdRepository, cloneManagerForModel))
          {
             var element = XElement.Load(pkmlFileFullPath);
             version = element.GetPKMLVersion();

@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
@@ -9,5 +10,8 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
    internal class  SimulationExportCreatorFactory : DynamicFactory<ISimulationExportCreator>, ISimulationExportCreatorFactory
    {
+      public SimulationExportCreatorFactory(IContainer container) : base(container)
+      {
+      }
    }
 }

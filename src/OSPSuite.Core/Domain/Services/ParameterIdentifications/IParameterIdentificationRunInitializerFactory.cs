@@ -9,5 +9,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
    class ParameterIdentificationRunInitializerFactory : DynamicFactory<IParameterIdentifcationRunInitializer>, IParameterIdentificationRunInitializerFactory
    {
+      public ParameterIdentificationRunInitializerFactory(Utility.Container.IContainer container) : base(container)
+      {
+      }
    }
 }

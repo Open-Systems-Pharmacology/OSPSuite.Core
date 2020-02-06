@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Serialization.Diagram
 
       protected override void TypedDeserialize(IDiagramModel diagramModel, XElement diagramElement, SerializationContext serializationContext)
       {
-         var diagramModelToXmlMapper = IoC.Resolve<IDiagramModelToXmlMapper>();
+         var diagramModelToXmlMapper = serializationContext.Resolve<IDiagramModelToXmlMapper>();
          var xmlDoc = new XmlDocument();
          xmlDoc.Load(diagramElement.CreateReader());
          diagramModelToXmlMapper.Deserialize(diagramModel, xmlDoc);
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Serialization.Diagram
 
       protected override XElement TypedSerialize(IDiagramModel diagramModel, SerializationContext serializationContext)
       {
-         var diagramModelToXmlMapper = IoC.Resolve<IDiagramModelToXmlMapper>();
+         var diagramModelToXmlMapper = serializationContext.Resolve<IDiagramModelToXmlMapper>();
          var xmlDoc = diagramModelToXmlMapper.DiagramModelToXmlDocument(diagramModel);
 
          //xmlDoc is empty return null
@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Serialization.Diagram
 
       public override IDiagramModel CreateObject(XElement element, SerializationContext serializationContext)
       {
-         return IoC.Resolve<IDiagramModel>();
+         return serializationContext.Resolve<IDiagramModel>();
       }
    }
 }

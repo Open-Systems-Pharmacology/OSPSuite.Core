@@ -1,5 +1,6 @@
 using DevExpress.XtraRichEdit;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.UI.Services
 {
@@ -10,5 +11,8 @@ namespace OSPSuite.UI.Services
 
    class RichEditDocumentServerFactory : DynamicFactory<IRichEditDocumentServer>, IRichEditDocumentServerFactory
    {
+      public RichEditDocumentServerFactory(IContainer container) : base(container)
+      {
+      }
    }
 }

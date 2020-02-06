@@ -21,13 +21,13 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
-         var simulationPersister = IoC.Resolve<ISimulationPersister>();
+         var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
-         var containerTask = IoC.Resolve<IContainerTask>();
+         var containerTask = Api.GetContainerTask();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
          _sensitivityAnalysis.AddParameters(liverVolumes);
-         _sensitivityAnalysisRunner = IoC.Resolve<ISensitivityAnalysisRunner>();
+         _sensitivityAnalysisRunner = Api.GetSensitivityAnalysisRunner();
 
          _sensitivityAnalysisRunResult = _sensitivityAnalysisRunner.Run(_sensitivityAnalysis);
          _allPKParameterSensitivities = _sensitivityAnalysisRunResult.AllPKParameterSensitivities;
@@ -35,7 +35,7 @@ namespace OSPSuite.R.Services
 
       protected override void Context()
       {
-         sut = IoC.Resolve<ISensitivityAnalysisTask>();
+         sut = Api.GetSensitivityAnalysisTask();
       }
    }
 

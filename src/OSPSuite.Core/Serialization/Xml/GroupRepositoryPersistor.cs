@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
 using OSPSuite.Core.Domain;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -10,8 +11,8 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class GroupRepositoryPersistor : AbstractFilePersistor<IGroupRepository>, IGroupRepositoryPersistor
    {
-      public GroupRepositoryPersistor(IOSPSuiteXmlSerializerRepository serializerRepository)
-         : base(serializerRepository)
+      public GroupRepositoryPersistor(IOSPSuiteXmlSerializerRepository serializerRepository, IContainer container)
+         : base(serializerRepository, container)
       {
       }
 
@@ -19,7 +20,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          groupRepository.Clear();
 
-         using (var serializationContext = SerializationTransaction.Create(withIdRepository: new WithIdRepository()))
+         using (var serializationContext = SerializationTransaction.Create(_container, withIdRepository: new WithIdRepository()))
          {
             var serializer = _serializerRepository.SerializerFor(groupRepository);
             var element = XElement.Load(fileName);

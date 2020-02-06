@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Services
 {
@@ -66,26 +67,33 @@ namespace OSPSuite.Core.Services
    public class ChartTemplatePersistor : IChartTemplatePersistor
    {
       private readonly ICurveChartToCurveChartTemplateMapper _curveChartTemplateMapper;
-      private readonly IOSPSuiteXmlSerializerRepository _modellingXmlSerializerRepository;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IWithIdRepository _withIdRepository;
+      private readonly IContainer _container;
 
-      public ChartTemplatePersistor(ICurveChartToCurveChartTemplateMapper curveChartTemplateMapper, IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository,
-         IDimensionFactory dimensionFactory, IObjectBaseFactory objectBaseFactory, IWithIdRepository withIdRepository)
+      public ChartTemplatePersistor(
+         ICurveChartToCurveChartTemplateMapper curveChartTemplateMapper, 
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
+         IDimensionFactory dimensionFactory, 
+         IObjectBaseFactory objectBaseFactory, 
+         IWithIdRepository withIdRepository, 
+         IContainer container)
       {
          _curveChartTemplateMapper = curveChartTemplateMapper;
-         _modellingXmlSerializerRepository = modellingXmlSerializerRepository;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _dimensionFactory = dimensionFactory;
          _objectBaseFactory = objectBaseFactory;
          _withIdRepository = withIdRepository;
+         _container = container;
       }
 
       public CurveChartTemplate Deserialize(XElement element)
       {
-         using (var serializationContext = SerializationTransaction.Create(_dimensionFactory, _objectBaseFactory, _withIdRepository))
+         using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory, _objectBaseFactory, _withIdRepository))
          {
-            var chartTemplateSerializer = _modellingXmlSerializerRepository.SerializerFor(element);
+            var chartTemplateSerializer = _modelingXmlSerializerRepository.SerializerFor(element);
             return chartTemplateSerializer.Deserialize<CurveChartTemplate>(element, serializationContext);
          }
       }
@@ -124,9 +132,9 @@ namespace OSPSuite.Core.Services
 
       public XElement Serialize(CurveChartTemplate chartTemplate)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
-            var chartSerializer = _modellingXmlSerializerRepository.SerializerFor(chartTemplate);
+            var chartSerializer = _modelingXmlSerializerRepository.SerializerFor(chartTemplate);
             return chartSerializer.Serialize(chartTemplate, serializationContext);
          }
       }

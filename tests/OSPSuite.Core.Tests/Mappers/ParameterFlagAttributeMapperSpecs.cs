@@ -1,8 +1,10 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -13,10 +15,9 @@ namespace OSPSuite.Core.Mappers
       protected override void Context()
       {
          sut = new ParameterFlagAttributeMapper();
-         _serializationContext = SerializationTransaction.Create();
+         _serializationContext = SerializationTransaction.Create(A.Fake<IContainer>());
       }
    }
-
 
    public class When_converting_a_parameter_flag_to_a_string_using_the_parameter_flag_attribute_mapper : concern_for_ParameterFlagAttributeMapper
    {

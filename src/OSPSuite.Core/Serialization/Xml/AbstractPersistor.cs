@@ -1,5 +1,6 @@
 ﻿using System.Xml.Linq;
 using OSPSuite.Serializer.Xml;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -12,15 +13,17 @@ namespace OSPSuite.Core.Serialization.Xml
    public abstract class AbstractFilePersistor<T> : IFilePersistor<T>
    {
       protected readonly IXmlSerializerRepository<SerializationContext> _serializerRepository;
+      protected readonly IContainer _container;
 
-      protected AbstractFilePersistor(IXmlSerializerRepository<SerializationContext> serializerRepository)
+      protected AbstractFilePersistor(IXmlSerializerRepository<SerializationContext> serializerRepository, IContainer container)
       {
          _serializerRepository = serializerRepository;
+         _container = container;
       }
 
       public virtual void Save(T objectToSerialize, string fileName)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _serializerRepository.SerializerFor(objectToSerialize);
             var xel = serializer.Serialize(objectToSerialize, serializationContext);
@@ -30,7 +33,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public virtual void Load(T objectToLoad, string fileName)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _serializerRepository.SerializerFor(objectToLoad);
             var element = XElement.Load(fileName);

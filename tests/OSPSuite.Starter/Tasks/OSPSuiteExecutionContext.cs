@@ -9,6 +9,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Events;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Starter.Tasks
 {
@@ -17,12 +18,18 @@ namespace OSPSuite.Starter.Tasks
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly ICompression _compress;
       private readonly IEventPublisher _eventPublisher;
+      private readonly IContainer _container;
 
-      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, ICompression compress, IEventPublisher eventPublisher)
+      public OSPSuiteExecutionContext(
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, 
+         ICompression compress, 
+         IEventPublisher eventPublisher,
+         IContainer container)
       {
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _compress = compress;
          _eventPublisher = eventPublisher;
+         _container = container;
          Project = new TestProject();
       }
 
@@ -66,7 +73,7 @@ namespace OSPSuite.Starter.Tasks
             return new byte[0];
 
          var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
             return _compress.Compress(XmlHelper.XmlContentToByte(serializer.Serialize(objectToSerialize, serializationContext)));
 
       }
@@ -77,7 +84,7 @@ namespace OSPSuite.Starter.Tasks
             return default(TObject);
 
          var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var outputToDeserialize = XmlHelper.ElementFromBytes(_compress.Decompress(serializationByte));
             return (TObject)serializer.Deserialize(outputToDeserialize, serializationContext);

@@ -3,7 +3,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
@@ -11,7 +10,7 @@ namespace OSPSuite.R.Services
    {
       protected override void Context()
       {
-         sut = IoC.Resolve<ISimulationPersister>();
+         sut = Api.GetSimulationPersister();
       }
    }
 

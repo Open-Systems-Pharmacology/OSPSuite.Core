@@ -17,26 +17,24 @@ namespace OSPSuite.R.Bootstrap
 {
    internal class ApplicationStartup
    {
-      private static bool _initialized;
+      private static IContainer _container;
 
-      public static void Initialize(ApiConfig apiConfig)
+      public static IContainer Initialize(ApiConfig apiConfig)
       {
-         if (_initialized) return;
+         if (_container != null)
+            return _container;
 
-         new ApplicationStartup().performInitialization(apiConfig);
+         _container = new ApplicationStartup().performInitialization(apiConfig);
 
-         _initialized = true;
+         return _container;
       }
 
-      private void performInitialization(ApiConfig apiConfig)
+      private IContainer performInitialization(ApiConfig apiConfig)
       {
-         if (IoC.Container != null)
-            return;
-
          var container = new AutofacContainer();
 
-         IoC.InitializeWith(container);
-         IoC.RegisterImplementationOf(IoC.Container);
+//         IoC.InitializeWith(container);
+         container.RegisterImplementationOf((IContainer) container);
 
          var serializerRegister = new CoreSerializerRegister();
 
@@ -61,6 +59,8 @@ namespace OSPSuite.R.Bootstrap
          initializeDimensions(container);
 
          loadPKParameterRepository(container);
+
+         return container;
       }
 
       private static void registerCoreDependencies(IContainer container)
