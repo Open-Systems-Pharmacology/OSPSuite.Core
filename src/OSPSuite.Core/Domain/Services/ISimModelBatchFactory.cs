@@ -9,5 +9,8 @@ namespace OSPSuite.Core.Domain.Services
 
    class SimModelBatchFactory : DynamicFactory<ISimModelBatch>, ISimModelBatchFactory
    {
+      public SimModelBatchFactory(Utility.Container.IContainer container) : base(container)
+      {
+      }
    }
 }

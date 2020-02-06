@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.TypedDeserialize(parameterIdentification, parameterIdentificationElement, context);
 
-         var lazyLoadTask = IoC.Resolve<ILazyLoadTask>();
+         var lazyLoadTask = context.Resolve<ILazyLoadTask>();
 
          parameterIdentificationElement.AddReferencedSimulations(parameterIdentification, context.IdRepository, lazyLoadTask);
       }

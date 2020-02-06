@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Serializers
          var formulaCacheSerializer = SerializerRepository.SerializerFor<IFormulaCache>();
          IXmlSerializer<SerializationContext> serializer;
 
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(IoC.Container))
          {
             serializer = SerializerRepository.SerializerFor(x1);
             xel = serializer.Serialize(x1, serializationContext);
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serializers
       {
          var objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         return SerializationTransaction.Create(dimensionFactory, objectBaseFactory, new WithIdRepository(), new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), new ModelFinalizer(new ObjectPathFactory(new AliasCreator()), new ReferencesResolver())), new List<DataRepository>());
+         return SerializationTransaction.Create(IoC.Container, dimensionFactory, objectBaseFactory, new WithIdRepository(), new CloneManagerForModel(objectBaseFactory, new DataRepositoryTask(), new ModelFinalizer(new ObjectPathFactory(new AliasCreator()), new ReferencesResolver())), new List<DataRepository>());
       }
    }
 }

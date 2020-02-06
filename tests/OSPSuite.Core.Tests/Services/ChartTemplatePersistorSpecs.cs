@@ -12,6 +12,7 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Serializer.Xml;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Services
 {
@@ -22,6 +23,7 @@ namespace OSPSuite.Core.Services
       private IDimensionFactory _dimensionFactory;
       private IObjectBaseFactory _objectBaseFactory;
       private IWithIdRepository _withIdRepository;
+      private IContainer _container;
 
       protected override void Context()
       {
@@ -30,7 +32,8 @@ namespace OSPSuite.Core.Services
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _withIdRepository = A.Fake<IWithIdRepository>();
-         sut = new ChartTemplatePersistor(_curveChartTemplateMapper, _xmlSerializerRepository, _dimensionFactory, _objectBaseFactory, _withIdRepository);
+         _container = A.Fake<IContainer>();
+         sut = new ChartTemplatePersistor(_curveChartTemplateMapper, _xmlSerializerRepository, _dimensionFactory, _objectBaseFactory, _withIdRepository, _container);
       }
    }
 

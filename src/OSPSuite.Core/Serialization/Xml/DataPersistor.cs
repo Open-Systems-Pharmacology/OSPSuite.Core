@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -17,10 +18,12 @@ namespace OSPSuite.Core.Serialization.Xml
    public class DataPersistor : IDataPersistor
    {
       private readonly IOSPSuiteXmlSerializerRepository _serializerRepository;
+      private readonly IContainer _container;
 
-      public DataPersistor(IOSPSuiteXmlSerializerRepository serializerRepository)
+      public DataPersistor(IOSPSuiteXmlSerializerRepository serializerRepository, IContainer container)
       {
          _serializerRepository = serializerRepository;
+         _container = container;
       }
 
       public virtual XElement Serialize<T>(T obj, SerializationContext serializationContext)
@@ -37,7 +40,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public virtual void Save<T>(T obj, string fileName)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var xel = Serialize(obj, serializationContext);
             xel.Save(fileName);
@@ -46,7 +49,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public virtual T Load<T>(string fileName, IDimensionFactory dimensionFactory = null, IEnumerable<DataRepository> dataRepositories = null)
       {
-         using (var serializationContext = SerializationTransaction.Create(dimensionFactory, dataRepositories: dataRepositories))
+         using (var serializationContext = SerializationTransaction.Create(_container, dimensionFactory, dataRepositories: dataRepositories))
          {
             var xel = XElement.Load(fileName);
             return Deserialize<T>(xel, serializationContext);
@@ -55,7 +58,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public virtual string ToString<T>(T obj)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             return Serialize(obj, serializationContext).ToString();
          }
@@ -66,7 +69,7 @@ namespace OSPSuite.Core.Serialization.Xml
          if (string.IsNullOrEmpty(serializationString))
             return default(T);
 
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var xDoc = XDocument.Load(new StringReader(serializationString));
             return Deserialize<T>(xDoc.Root, serializationContext);

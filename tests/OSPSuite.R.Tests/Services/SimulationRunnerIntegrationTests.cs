@@ -1,13 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
@@ -25,9 +23,9 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _populationFile = HelperForSpecs.DataFile("pop_10.csv");
          _simulationFile = HelperForSpecs.DataFile("S1.pkml");
-         _simulationPersister = IoC.Resolve<ISimulationPersister>();
-         _populationTask = IoC.Resolve<IPopulationTask>();
-         sut = IoC.Resolve<ISimulationRunner>();
+         _simulationPersister = Api.GetSimulationPersister();
+         _populationTask = Api.GetPopulationTask();
+         sut = Api.GetSimulationRunner();
 
          _simulation = _simulationPersister.LoadSimulation(_simulationFile);
 

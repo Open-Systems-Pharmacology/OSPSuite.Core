@@ -30,16 +30,16 @@ namespace OSPSuite.Core.Serialization.Xml
       protected override XElement TypedSerialize(List<T> list, SerializationContext context)
       {
          var element = SerializerRepository.CreateElement(ElementName);
-         element.SetValue(StringValueFor(list));
+         element.SetValue(StringValueFor(list, context));
          return element;
       }
 
-      protected virtual string StringValueFor(List<T> list)
+      protected virtual string StringValueFor(List<T> list, SerializationContext context)
       {
          return list.ToArray().ToByteString();
       }
 
-      protected virtual T[] ListFrom(string value)
+      protected virtual T[] ListFrom(string value, SerializationContext context)
       {
          return _converter(value);
       }
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          var list = new List<T>();
          if (element.Value != string.Empty)
-            list.AddRange(ListFrom(element.Value));
+            list.AddRange(ListFrom(element.Value, context));
 
          return list;
       }
@@ -80,24 +80,24 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class StringListXmlSerializer : ValueTypeListXmlSerializer<string>
    {
-      private readonly IStringCompression _stringCompression;
 
       public StringListXmlSerializer()
          : base(x => x.ToStringArray())
       {
-         _stringCompression = IoC.Resolve<IStringCompression>();
       }
 
-      protected override string StringValueFor(List<string> list)
+      protected override string StringValueFor(List<string> list, SerializationContext context)
       {
-         var value = base.StringValueFor(list);
-         return _stringCompression.Compress(value);
+         var value = base.StringValueFor(list, context);
+         var stringCompression = context.Resolve<IStringCompression>();
+         return stringCompression.Compress(value);
       }
 
-      protected override string[] ListFrom(string value)
+      protected override string[] ListFrom(string value, SerializationContext context)
       {
-         var decompressedValue = _stringCompression.Decompress(value);
-         return base.ListFrom(decompressedValue);
+         var stringCompression = context.Resolve<IStringCompression>();
+         var decompressedValue = stringCompression.Decompress(value);
+         return base.ListFrom(decompressedValue, context);
       }
    }
 

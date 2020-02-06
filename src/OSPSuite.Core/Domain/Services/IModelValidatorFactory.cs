@@ -9,5 +9,8 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelValidatorFactory : DynamicFactory<IModelValidator>, IModelValidatorFactory
    {
+      public ModelValidatorFactory(Utility.Container.IContainer container) : base(container)
+      {
+      }
    }
 }

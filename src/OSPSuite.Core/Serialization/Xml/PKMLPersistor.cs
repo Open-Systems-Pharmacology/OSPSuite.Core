@@ -1,10 +1,11 @@
-using System.Collections.Generic;
 using System.Xml.Linq;
 using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using IContainer = OSPSuite.Utility.Container.IContainer;
+
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -16,15 +17,17 @@ namespace OSPSuite.Core.Serialization.Xml
    public class PKMLPersistor : IPKMLPersistor
    {
       private readonly IOSPSuiteXmlSerializerRepository _serializerRepository;
+      private readonly IContainer _container;
 
-      public PKMLPersistor(IOSPSuiteXmlSerializerRepository serializerRepository)
+      public PKMLPersistor(IOSPSuiteXmlSerializerRepository serializerRepository, IContainer container)
       {
          _serializerRepository = serializerRepository;
+         _container = container;
       }
 
       public void SaveToPKML<T>(T entityToSerialize, string fileName)
       {
-         using (var serializationContext = SerializationTransaction.Create())
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var xElement = serializeModelPart(entityToSerialize, serializationContext);
             xElement.AddAttribute(Constants.Serialization.Attribute.VERSION, Constants.PKML_VERSION.ToString());

@@ -9,5 +9,8 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
    class SensitivityAnalysisEngineFactory : DynamicFactory<ISensitivityAnalysisEngine>, ISensitivityAnalysisEngineFactory
    {
+      public SensitivityAnalysisEngineFactory(Utility.Container.IContainer container) : base(container)
+      {
+      }
    }
 }

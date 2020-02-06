@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using OSPSuite.BDDHelper;
@@ -7,7 +6,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
@@ -25,8 +23,8 @@ namespace OSPSuite.R.Services
          _populationFile = HelperForSpecs.DataFile("pop_10.csv");
          _populationFileWithUnitInParameterName = HelperForSpecs.DataFile("pop_10_parameter_with_unit.csv");
          _simulationFile = HelperForSpecs.DataFile("S1.pkml");
-         _simulationPersister = IoC.Resolve<ISimulationPersister>();
-         sut = IoC.Resolve<IPopulationTask>();
+         _simulationPersister = Api.GetSimulationPersister();
+         sut = Api.GetPopulationTask();
       }
    }
 

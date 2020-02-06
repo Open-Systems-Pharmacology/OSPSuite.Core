@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Diagram
 {
@@ -9,5 +10,8 @@ namespace OSPSuite.Core.Diagram
 
    class DiagramModelFactory : DynamicFactory<IDiagramModel>, IDiagramModelFactory
    {
+      public DiagramModelFactory(IContainer container) : base(container)
+      {
+      }
    }
 }

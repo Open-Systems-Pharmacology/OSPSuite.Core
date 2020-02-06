@@ -1,9 +1,11 @@
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Serializer.Xml;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
@@ -16,7 +18,7 @@ namespace OSPSuite.Core.Serializers
       {
          base.GlobalContext();
          _unitSystemXmlRepository = new UnitSystemXmlSerializerRepository();
-         _serializationContext = SerializationTransaction.Create();
+         _serializationContext = SerializationTransaction.Create(A.Fake<IContainer>());
       }
 
       protected override void Context()

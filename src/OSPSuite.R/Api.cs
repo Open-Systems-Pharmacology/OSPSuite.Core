@@ -3,8 +3,8 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
-using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
 
 namespace OSPSuite.R
@@ -17,9 +17,11 @@ namespace OSPSuite.R
 
    public static class Api
    {
+      private static IContainer _container;
+
       public static void InitializeOnce(ApiConfig apiConfig)
       {
-         ApplicationStartup.Initialize(apiConfig);
+         _container = ApplicationStartup.Initialize(apiConfig);
       }
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
@@ -46,7 +48,7 @@ namespace OSPSuite.R
       {
          try
          {
-            return IoC.Resolve<T>();
+            return _container.Resolve<T>();
          }
          catch (Exception e)
          {

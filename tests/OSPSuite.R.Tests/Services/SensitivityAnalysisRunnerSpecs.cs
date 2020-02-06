@@ -14,7 +14,7 @@ namespace OSPSuite.R.Services
       protected SensitivityAnalysisRunResult _result;
       protected override void Context()
       {
-         sut = IoC.Resolve<ISensitivityAnalysisRunner>();
+         sut = Api.GetSensitivityAnalysisRunner();
       }
    }
 
@@ -27,10 +27,10 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
-         var simulationPersister = IoC.Resolve<ISimulationPersister>();
+         var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
-         var containerTask = IoC.Resolve<IContainerTask>();
+         var containerTask = Api.GetContainerTask();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
          _sensitivityAnalysis.AddParameterPaths(liverVolumes.Select(x => x.ConsolidatedPath()));
       }
@@ -56,7 +56,7 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          var simulationFile = HelperForSpecs.DataFile("simple.pkml");
-         var simulationPersister = IoC.Resolve<ISimulationPersister>();
+         var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 1, VariationRange = 0.2};
       }

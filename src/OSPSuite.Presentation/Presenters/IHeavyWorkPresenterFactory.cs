@@ -1,4 +1,5 @@
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -9,5 +10,8 @@ namespace OSPSuite.Presentation.Presenters
 
    internal class HeavyWorkPresenterFactory : DynamicFactory<IHeavyWorkPresenter>, IHeavyWorkPresenterFactory
    {
+      public HeavyWorkPresenterFactory(IContainer container) : base(container)
+      {
+      }
    }
 }

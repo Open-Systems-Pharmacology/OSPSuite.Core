@@ -10,8 +10,8 @@ namespace OSPSuite.Helpers
    {
       public static SimulationTransfer Load(string fileName)
       {
-         var simulationPersiter = IoC.Resolve<ISimulationPersistor>();
-         return simulationPersiter.Load(fileName, IoC.Resolve<IDimensionFactory>(), IoC.Resolve<IObjectBaseFactory>(), IoC.Resolve<IWithIdRepository>(), IoC.Resolve<ICloneManagerForModel>());
+         var simulationPersister = IoC.Resolve<ISimulationPersistor>();
+         return simulationPersister.Load(fileName, IoC.Resolve<IDimensionFactory>(), IoC.Resolve<IObjectBaseFactory>(), IoC.Resolve<IWithIdRepository>(), IoC.Resolve<ICloneManagerForModel>());
       }
    }
 }

@@ -3,8 +3,6 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 
@@ -17,8 +15,8 @@ namespace OSPSuite.R.Services
 
       protected override void Context()
       {
-         sut = IoC.Resolve<ISimulationResultsTask>();
-         _simulationPersister = IoC.Resolve<ISimulationPersister>();
+         sut = Api.GetSimulationResultsTask();
+         _simulationPersister = Api.GetSimulationPersister();
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          _simulation = _simulationPersister.LoadSimulation(simulationFile);
       }
@@ -72,7 +70,7 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         var simulationRunner = IoC.Resolve<ISimulationRunner>();
+         var simulationRunner = Api.GetSimulationRunner();
          _results = simulationRunner.Run(_simulation);
          _csvFile = FileHelper.GenerateTemporaryFileName();
       }
@@ -107,7 +105,7 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("Simple.pkml");
          _simulation = _simulationPersister.LoadSimulation(simulationFile);
 
-         var simulationRunner = IoC.Resolve<ISimulationRunner>();
+         var simulationRunner = Api.GetSimulationRunner();
          _results = simulationRunner.Run(_simulation);
          _csvFile = FileHelper.GenerateTemporaryFileName();
       }
