@@ -18,30 +18,45 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _exportSerializer = exportSerializer;
       }
 
-      public string Export(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
          return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode));
       }
 
-      public void Export(IModelCoreSimulation simulation, string fileName)
+      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName)
       {
          var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full));
          XmlHelper.SaveXmlElementToFile(element, fileName);
       }
 
-      public void ExportODEForMatlab(IModelCoreSimulation modelCoreSimulation, string outputFolder, MatlabFormulaExportMode formulaExportMode)
+      public void ExportODEForMatlab(IModelCoreSimulation modelCoreSimulation, string outputFolder, FormulaExportMode formulaExportMode)
+      {
+         exportToCode(modelCoreSimulation, outputFolder, formulaExportMode, CodeExportLanguage.Matlab);
+      }
+
+      public void ExportODEForR(IModelCoreSimulation modelCoreSimulation, string outputFolder, FormulaExportMode formulaExportMode)
+      {
+         exportToCode(modelCoreSimulation, outputFolder, formulaExportMode, CodeExportLanguage.R);
+      }
+
+      public void ExportCppCode(IModelCoreSimulation modelCoreSimulation, string outputFolder, FormulaExportMode formulaExportMode)
+      {
+         exportToCode(modelCoreSimulation, outputFolder, formulaExportMode, CodeExportLanguage.Cpp);
+      }
+
+      private void exportToCode(IModelCoreSimulation modelCoreSimulation, string outputFolder, FormulaExportMode formulaExportMode, CodeExportLanguage codeExportLanguage)
       {
          if (!Directory.Exists(outputFolder))
             Directory.CreateDirectory(outputFolder);
 
-         var simModelXml = Export(modelCoreSimulation, SimModelExportMode.Full);
+         var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full);
          var simModelSimulation = new Simulation();
 
          simModelSimulation.LoadFromXMLString(simModelXml);
-         simModelSimulation.ExportToCode(outputFolder, CodeExportLanguage.Matlab, writeModeFrom(formulaExportMode));
+         simModelSimulation.ExportToCode(outputFolder, codeExportLanguage, writeModeFrom(formulaExportMode));
       }
 
-      private CodeExportMode writeModeFrom(MatlabFormulaExportMode formulaExportMode)
+      private CodeExportMode writeModeFrom(FormulaExportMode formulaExportMode)
       {
          return EnumHelper.ParseValue<CodeExportMode>(formulaExportMode.ToString());
       }

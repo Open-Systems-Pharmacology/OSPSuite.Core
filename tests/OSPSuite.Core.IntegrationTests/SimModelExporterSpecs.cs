@@ -1,5 +1,6 @@
 using System.IO;
 using System.Xml;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -48,7 +49,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _xmlString = sut.Export(_simulation, SimModelExportMode.Full);
+         _xmlString = sut.ExportSimModelXml(_simulation, SimModelExportMode.Full);
       }
 
       [Observation]
@@ -86,7 +87,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         sut.Export(_simulation, _tempFile);
+         sut.ExportSimModelXml(_simulation, _tempFile);
       }
 
       [Observation]
@@ -102,7 +103,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_exporting_a_simulation_as_ode_system : concern_for_SimModelExporter
+   public class When_exporting_a_simulation_as_ode_system_for_matlab : concern_for_SimModelExporter
    {
       private IModelCoreSimulation _simulation;
       private string _tempFolderFormulas;
@@ -135,8 +136,8 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         sut.ExportODEForMatlab(_simulation, _tempFolderFormulas, MatlabFormulaExportMode.Formula);
-         sut.ExportODEForMatlab(_simulation, _tempFolderValues, MatlabFormulaExportMode.Values);
+         sut.ExportODEForMatlab(_simulation, _tempFolderFormulas, FormulaExportMode.Formula);
+         sut.ExportODEForMatlab(_simulation, _tempFolderValues, FormulaExportMode.Values);
       }
 
       [Observation]
@@ -153,4 +154,56 @@ namespace OSPSuite.Core
          Directory.Delete(_tempFolderValues, true);
       }
    }
+
+
+   [Ignore("Crash in SimModel. See https://github.com/Open-Systems-Pharmacology/OSPSuite.SimModel/issues/99")]
+   public class When_exporting_a_simulation_as_cpp_code : concern_for_SimModelExporter
+   {
+      private IModelCoreSimulation _simulation;
+      private string _tempFolderFormulas;
+      private string _tempFolderValues;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         _tempFolderFormulas = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+         _tempFolderValues = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      }
+
+      private void checkFiles(string path)
+      {
+         //TODO
+         var cppFiles = new string[]
+         {
+            
+         };
+
+         foreach (var matlabFileName in cppFiles)
+         {
+            FileHelper.FileExists(Path.Combine(path, matlabFileName)).ShouldBeTrue();
+         }
+      }
+
+      protected override void Because()
+      {
+         sut.ExportCppCode(_simulation, _tempFolderValues, FormulaExportMode.Values);
+         sut.ExportCppCode(_simulation, _tempFolderFormulas, FormulaExportMode.Formula);
+      }
+
+      [Observation]
+      public void should_export_cpp_code_in_formula_mode_and_in_value_mode()
+      {
+         checkFiles(_tempFolderFormulas);
+         checkFiles(_tempFolderValues);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         Directory.Delete(_tempFolderFormulas, true);
+         Directory.Delete(_tempFolderValues, true);
+      }
+   }
+
 }

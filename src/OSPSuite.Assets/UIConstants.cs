@@ -1690,6 +1690,8 @@ namespace OSPSuite.Assets
 
    public static class MenuNames
    {
+      public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
+
       public static readonly string ExportToPDF = "Export to PDF...";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
@@ -1710,7 +1712,7 @@ namespace OSPSuite.Assets
       public static readonly string RemoveEmptyGroups = "Empty Subfolders";
       public static readonly string ManageProjectDisplayUnits = "Manage Project Display Units";
       public static readonly string ManageUserDisplayUnits = "Manage User Display Units";
-      public static readonly string UpdateAllToDisplaytUnits = "Update All Display Units";
+      public static readonly string UpdateAllToDisplayUnits = "Update All Display Units";
       public static readonly string ApplyChartTemplate = "Apply Chart Template";
       public static readonly string NoTemplateAvailable = "No Template Available";
       public static readonly string ChartTemplate = "Chart Template";
@@ -1728,8 +1730,8 @@ namespace OSPSuite.Assets
       public static readonly string ShowRelatedItems = "Show Related Items";
       public static readonly string Layout = "Layout";
       public static readonly string SaveToUserSettings = "Save to User Settings";
-      public static readonly string CustomizeEditorLayout = "Customize Layout (Developer only)...";
-      public static readonly string SaveChartLayoutToFile = "Save Layout to File (Developer only)...";
+      public static readonly string CustomizeEditorLayout = AsDeveloperOnly("Customize Layout");
+      public static readonly string SaveChartLayoutToFile = AsDeveloperOnly("Save Layout to File");
       public static readonly string StartParameterIdentification = "Start Parameter Identification...";
       public static readonly string AddParameterIdentification = "Add Parameter Identification";
       public static readonly string AddSensitivityAnalysis = "Add Sensitivity Analysis";
@@ -1739,12 +1741,13 @@ namespace OSPSuite.Assets
       public static readonly string StopParameterIdentification = "Stop";
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
-      public static readonly string ExportForMatlab = "Export for Matlab®";
-      public static readonly string ExportForR = "Export for R";
+      public static readonly string ExportForR = "Export for R...";
+      public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
+      public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
       public static readonly string Clone = "Clone";
       public static readonly string RunSensitivityAnalysis = "Run";
-      public static readonly string StopSensitivityanalysis = "Stop";
-      public static readonly string StartSensitivityanalysis = "Start Sensitivity Analysis...";
+      public static readonly string StopSensitivityAnalysis = "Stop";
+      public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
       public static readonly string Help = "Help";
 

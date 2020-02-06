@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
-         return _simModelExporter.Export(simulation, simModelExportMode);
+         return _simModelExporter.ExportSimModelXml(simulation, simModelExportMode);
       }
 
       /// <summary>
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
       {
-         return Task.Run(() => _simModelExporter.Export(simulation, simModelExportMode));
+         return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode));
       }
 
       /// <summary>
