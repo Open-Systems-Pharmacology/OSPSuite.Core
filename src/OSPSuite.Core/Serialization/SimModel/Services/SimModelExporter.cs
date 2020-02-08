@@ -52,6 +52,9 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full);
          var simModelSimulation = new Simulation();
 
+         if (codeExportLanguage == CodeExportLanguage.Cpp)
+            simModelSimulation.Options.KeepXMLNodeAsString = true;
+
          simModelSimulation.LoadFromXMLString(simModelXml);
          simModelSimulation.ExportToCode(outputFolder, codeExportLanguage, writeModeFrom(formulaExportMode));
       }
