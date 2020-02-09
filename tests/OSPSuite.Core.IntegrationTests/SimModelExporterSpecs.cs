@@ -173,11 +173,7 @@ namespace OSPSuite.Core
 
       private void checkFiles(string path)
       {
-         //TODO
-         var cppFiles = new string[]
-         {
-            
-         };
+         var cppFiles = new[] {"Standard.cpp"};
 
          foreach (var matlabFileName in cppFiles)
          {
