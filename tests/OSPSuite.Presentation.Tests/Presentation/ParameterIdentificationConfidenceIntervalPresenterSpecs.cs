@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presentation
    }
 
 
-   public class When_calculating_the_confidence_interval_for_a_parameter_identificaiton_with_a_valid_jacobian : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   public class When_calculating_the_confidence_interval_for_a_parameter_identification_with_a_valid_jacobian : concern_for_ParameterIdentificationConfidenceIntervalPresenter
    {
       private ICache<string, double> _confidenceIntervals;
       private ParameterSelection _parameterSelection;
@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_bind_the_epxected_confidence_interval_to_the_view()
+      public void should_bind_the_expected_confidence_interval_to_the_view()
       {
          _allParameterConfidenceIntervalDTOs.Count.ShouldBeEqualTo(1);
          var confidenceIntervalDTO = _allParameterConfidenceIntervalDTOs[0];
@@ -105,4 +105,46 @@ namespace OSPSuite.Presentation.Presentation
          confidenceIntervalDTO.Unit.ShouldBeEqualTo(_identificationParameter.DisplayUnit);
       }
    }
-}	
+
+   public class When_calculating_the_confidence_interval_for_a_parameter_identification_with_a_valid_jacobian_but_for_a_parameter_that_does_not_exist_anymore_in_the_parameter_identification : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   {
+      private ICache<string, double> _confidenceIntervals;
+      private ParameterSelection _parameterSelection;
+      private IDimension _dimension;
+      private IdentificationParameter _identificationParameter;
+      private ISimulation _simulation;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dimension = A.Fake<IDimension>();
+         _simulation= A.Fake<ISimulation>(); 
+         _parameterSelection = new ParameterSelection(_simulation, "A|B|C");
+         _runResult.JacobianMatrix = new JacobianMatrix(new[] { _parameterSelection.FullQuantityPath });
+
+         _identificationParameter = DomainHelperForSpecs.IdentificationParameter("IP1");
+         _confidenceIntervals = new Cache<string, double> {{_identificationParameter.Name, 5}};
+
+         A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(_confidenceIntervals);
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] { new OptimizedParameterValue(_identificationParameter.Name, 10, 20) });
+         A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
+
+         _identificationParameter.AddLinkedParameter(_parameterSelection);
+
+         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit, 5)).Returns(50);
+         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit, 10)).Returns(100);
+      }
+
+      protected override void Because()
+      {
+         sut.CalculateConfidenceIntervalFor(_parameterIdentification, _runResult);
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         _allParameterConfidenceIntervalDTOs.Count.ShouldBeEqualTo(0);
+      }
+   }
+
+}

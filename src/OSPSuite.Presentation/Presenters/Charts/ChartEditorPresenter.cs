@@ -404,7 +404,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var columnsToRemove = dataColumns.ToList();
          _dataBrowserPresenter.RemoveDataColumns(columnsToRemove);
-         Chart.RemoveCurvesForColumns(columnsToRemove);
+         Chart?.RemoveCurvesForColumns(columnsToRemove);
       }
 
       public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
