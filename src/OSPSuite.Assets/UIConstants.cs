@@ -1741,9 +1741,11 @@ namespace OSPSuite.Assets
       public static readonly string StopParameterIdentification = "Stop";
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
-      public static readonly string ExportForR = "Export for R...";
+      public static readonly string ExportForR = "Export for R";
       public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
       public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
+      public static readonly string ExportODEForR = "Export Simulation to R Differential Equations";
+      public static readonly string ExportODEForMatlab = "Export Simulation to Matlab® Differential Equations";
       public static readonly string Clone = "Clone";
       public static readonly string RunSensitivityAnalysis = "Run";
       public static readonly string StopSensitivityAnalysis = "Stop";

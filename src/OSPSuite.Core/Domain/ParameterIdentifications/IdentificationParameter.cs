@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public virtual double MaxValue => MaxValueParameter.Value;
 
       public virtual IDimension Dimension => _allLinkedParameters.FirstOrDefault()?.Dimension;
+
       public virtual bool UseAsFactor { get; set; }
       public virtual bool IsFixed { get; set; }
       public virtual Scalings Scaling { get; set; }

@@ -43,7 +43,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          return from optimizedParameter in runResult.BestResult.Values
                      let identificationParameter = parameterIdentification.IdentificationParameterByName(optimizedParameter.Name)
-                     where identificationParameter != null
+                     where identificationParameter?.Dimension != null
                      select confidenceIntervalDTOFrom(confidenceInterval, identificationParameter, optimizedParameter);
       }
 

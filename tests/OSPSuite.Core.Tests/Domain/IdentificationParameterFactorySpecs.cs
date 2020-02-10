@@ -160,6 +160,31 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+
+   public class When_creating_an_identification_parameter_for_parameters_referencing_an_entity_that_does_not_exist : concern_for_IdentificationParameterFactory
+   {
+      private IdentificationParameter _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationParameterSelection.Clear();
+         _simulationParameterSelection.Add(new ParameterSelection(_simulation, new QuantitySelection("Kidney|Lipo", QuantityType.Parameter)));
+         _simulationParameterSelection.Add(new ParameterSelection(_simulation, new QuantitySelection("I DO NOT EXIST", QuantityType.Parameter)));
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CreateFor(_simulationParameterSelection, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_be_able_to_create_an_identification_parameter_using_only_the_valid_parameters_()
+      {
+         _result.ShouldNotBeNull();
+      }
+   }
+
    public class When_creating_an_identification_parameter_for_a_parameter_using_the_lin_dimension_but_with_a_minimum_value_set_to_zero : concern_for_IdentificationParameterFactory
    {
       private IdentificationParameter _result;
