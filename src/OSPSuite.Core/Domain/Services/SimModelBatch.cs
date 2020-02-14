@@ -85,7 +85,7 @@ namespace OSPSuite.Core.Domain.Services
          return _simModelSimulation.SensitivityValuesByPathFor(outputPath, parameterPath);
       }
 
-      public void Clear()
+      protected virtual void Cleanup()
       {
          _modelCoreSimulation = null;
          _simModelSimulation?.Dispose();
@@ -108,5 +108,25 @@ namespace OSPSuite.Core.Domain.Services
 
          _simModelSimulation.SetParameterValues();
       }
+
+      #region Disposable properties
+
+      private bool _disposed;
+
+      public void Dispose()
+      {
+         if (_disposed) return;
+
+         Cleanup();
+         GC.SuppressFinalize(this);
+         _disposed = true;
+      }
+
+      ~SimModelBatch()
+      {
+         Cleanup();
+      }
+
+      #endregion
    }
 }

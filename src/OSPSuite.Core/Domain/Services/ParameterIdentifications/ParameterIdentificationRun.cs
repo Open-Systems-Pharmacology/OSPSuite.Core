@@ -24,12 +24,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       }
    }
 
-   public interface IParameterIdentificationRun
+   public interface IParameterIdentificationRun : IDisposable
    {
       void InitializeWith(IParameterIdentifcationRunInitializer runInitializer);
       ParameterIdentificationRunResult Run(CancellationToken cancellationToken);
       event EventHandler<ParameterIdentificationRunStatusEventArgs> RunStatusChanged;
-      void Clear();
       OptimizationRunResult BestResult { get; }
       ParameterIdentificationRunResult RunResult { get; }
       IReadOnlyList<float> TotalErrorHistory { get; }
@@ -147,9 +146,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          }
       }
 
-      public void Clear()
+      protected virtual void Cleanup()
       {
-         _allSimModelBatches.Each(x => x.Clear());
+         _allSimModelBatches.Each(x => x.Dispose());
          _allSimModelBatches.Clear();
          _variableParameters?.Clear();
          _fixedParameters?.Clear();
@@ -264,5 +263,25 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          return _variableParameters.Select(x => new OptimizedParameterConstraint(x.Name, x.MinValueParameter.Value, x.MaxValueParameter.Value, x.StartValueParameter.Value, x.Scaling)).ToArray();
       }
+
+      #region Disposable properties
+
+      private bool _disposed;
+
+      public void Dispose()
+      {
+         if (_disposed) return;
+
+         Cleanup();
+         GC.SuppressFinalize(this);
+         _disposed = true;
+      }
+
+      ~ParameterIdentificationRun()
+      {
+         Cleanup();
+      }
+
+      #endregion
    }
 }
