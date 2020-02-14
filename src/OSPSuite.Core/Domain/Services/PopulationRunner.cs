@@ -71,8 +71,10 @@ namespace OSPSuite.Core.Domain.Services
       {
          return Task.Run(() =>
          {
-            var sim = createAndFinalizeSimulation(simulationExport, cancellationToken);
-            simulate(sim, coreIndex, cancellationToken);
+            using (var sim = createAndFinalizeSimulation(simulationExport, cancellationToken))
+            {
+               simulate(sim, coreIndex, cancellationToken);
+            }
          }, cancellationToken);
       }
 
