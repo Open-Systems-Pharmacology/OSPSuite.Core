@@ -59,6 +59,7 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
+            _simModelSimulation?.Dispose();
             _simModelSimulation = null;
             RaiseTerminated(this, EventArgs.Empty);
          }

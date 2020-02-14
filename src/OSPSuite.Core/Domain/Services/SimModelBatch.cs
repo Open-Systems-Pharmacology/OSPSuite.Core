@@ -88,6 +88,7 @@ namespace OSPSuite.Core.Domain.Services
       public void Clear()
       {
          _modelCoreSimulation = null;
+         _simModelSimulation?.Dispose();
          _simModelSimulation = null;
          _parameterValueCache.Clear();
          _allVariableParameters.Clear();
