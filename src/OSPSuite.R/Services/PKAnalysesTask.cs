@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Data;
+using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -14,6 +15,7 @@ namespace OSPSuite.R.Services
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
       PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
       PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults);
+      DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
    }
 
    public class PKAnalysesTask : IPKAnalysesTask
@@ -23,7 +25,7 @@ namespace OSPSuite.R.Services
       private readonly ISimulationPKParametersImportTask _simulationPKParametersImportTask;
 
       public PKAnalysesTask(
-         ISimulationResultsToDataTableConverter simulationResultsToDataTableConverter, 
+         ISimulationResultsToDataTableConverter simulationResultsToDataTableConverter,
          ICorePKAnalysisTask corePKAnalysesTask,
          ISimulationPKParametersImportTask simulationPKParametersImportTask)
       {
@@ -34,21 +36,26 @@ namespace OSPSuite.R.Services
 
       public void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName)
       {
-         var dataTable = _simulationResultsToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
+         var dataTable = ConvertToDataTable(pkAnalyses, simulation);
          dataTable.ExportToCSV(fileName);
       }
 
       public PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation)
       {
-         var  pkSimulationImport  = _simulationPKParametersImportTask.ImportPKParameters(fileName, simulation, CancellationToken.None).Result;
+         var pkSimulationImport = _simulationPKParametersImportTask.ImportPKParameters(fileName, simulation, CancellationToken.None).Result;
          pkSimulationImport.LogToR();
          var simulationPKAnalyses = new PopulationSimulationPKAnalyses();
-         pkSimulationImport.PKParameters.Each(x=> simulationPKAnalyses.AddPKAnalysis(x));
+         pkSimulationImport.PKParameters.Each(x => simulationPKAnalyses.AddPKAnalysis(x));
          return simulationPKAnalyses;
       }
 
-
-      public PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults) => 
+      public PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults) =>
          _corePKAnalysesTask.CalculateFor(simulation, numberOfIndividuals, runResults);
+
+      public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
+      {
+         return _simulationResultsToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
+         ;
+      }
    }
 }
