@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\PKAnalysesFiles\" />
     <Folder Include="Data\SensitivityAnalysisResultsFiles\" />
   </ItemGroup>
 

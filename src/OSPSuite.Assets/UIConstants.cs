@@ -1317,9 +1317,9 @@ namespace OSPSuite.Assets
 
       public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
 
-      public static string IndividualIdDoesNotMatchTheValueLength(int indiviudalId, int count)
+      public static string IndividualIdDoesNotMatchTheValueLength(int individualId, int count)
       {
-         return $"Individual Id '{indiviudalId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
+         return $"Individual Id '{individualId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
       }
 
       public static string CannotFindSimulationParameterForIdentificationParameter(string fullQuantityPath, string name)
@@ -1425,6 +1425,10 @@ namespace OSPSuite.Assets
       {
          return $"Time array for individual '{id}' does not have the expected value in row '{index}' ({expectedValue} vs {currentValue}).";
       }
+
+      public static string CouldNotFindDimensionWithUnit(string unit) => $"Could not find dimension containing unit '{unit}'.";
+
+      public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
       public static class SensitivityAnalysis
       {
@@ -1652,6 +1656,9 @@ namespace OSPSuite.Assets
       public static readonly string FollowingPKParameterSensitivityWereSuccessfullyImported = "PKParameter sensitivities were successfully imported for the following quantities:";
 
       public static string CalculationPopulationSimulation(int number, int total) => $"Simulation {number}/{total}...";
+
+      public static readonly string FollowingPKParametersWereSuccessfullyImported = "Following PK-Parameters were successfully imported:";
+
    }
 
    public static class Warning

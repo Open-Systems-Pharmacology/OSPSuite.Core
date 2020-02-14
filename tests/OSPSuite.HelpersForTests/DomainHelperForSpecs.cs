@@ -230,8 +230,12 @@ namespace OSPSuite.Helpers
       {
          return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "SensitivityAnalysisResultsFiles", fileNameWithoutExtension + ".csv");
       }
-   }
 
+      public static string PKAnalysesFilePathFor(string fileNameWithoutExtension)
+      {
+         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "PKAnalysesFiles", fileNameWithoutExtension + ".csv");
+      }
+   }
 
    public class PathCacheForSpecs<T> : PathCache<T> where T : class, IEntity
    {

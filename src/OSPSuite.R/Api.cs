@@ -6,6 +6,7 @@ using OSPSuite.R.Services;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
+using IPKAnalysesTask = OSPSuite.R.Services.IPKAnalysesTask;
 
 namespace OSPSuite.R
 {
@@ -31,8 +32,6 @@ namespace OSPSuite.R
       public static ISimulationRunner GetSimulationRunner() => resolveTask<ISimulationRunner>();
 
       public static IPKAnalysesTask GetPKAnalysesTask() => resolveTask<IPKAnalysesTask>();
-
-      public static ISimulationExporter GetSimulationExporter() => resolveTask<ISimulationExporter>();
 
       public static IPopulationTask GetPopulationTask() => resolveTask<IPopulationTask>();
 
