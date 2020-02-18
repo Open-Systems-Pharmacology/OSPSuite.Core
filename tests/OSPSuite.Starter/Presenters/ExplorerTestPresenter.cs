@@ -18,7 +18,7 @@ namespace OSPSuite.Starter.Presenters
          _explorerForTestPresenter = explorerForTestPresenter;
          _explorerForTestPresenter.Initialize();
          _explorerForTestPresenter.AddNode(new ObjectWithIdAndNameNode<Parameter>(new Parameter().WithId("1").WithName("Para1")));
-         _explorerForTestPresenter.AddNode(new ObjectWithIdAndNameNode<Parameter>(new Parameter().WithId("2").WithName("Para2")));
+         _explorerForTestPresenter.AddNode(new ObjectWithIdAndNameNode<Parameter>(new Parameter().WithId("2").WithName("A very long name that should not fit in the view and requires scrolling")));
       }
    }
 }

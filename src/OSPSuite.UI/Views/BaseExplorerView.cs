@@ -5,6 +5,7 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraBars;
 using DevExpress.XtraGrid;
+using DevExpress.XtraTreeList;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
@@ -125,7 +126,7 @@ namespace OSPSuite.UI.Views
 
       public IUxTreeView TreeView => treeView;
 
-      public ITreeNode AddNode(ITreeNode nodeToAdd)
+      public virtual ITreeNode AddNode(ITreeNode nodeToAdd)
       {
          treeView.AddNode(nodeToAdd);
          return nodeToAdd;
