@@ -5,7 +5,6 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraBars;
 using DevExpress.XtraGrid;
-using DevExpress.XtraTreeList;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
@@ -41,6 +40,7 @@ namespace OSPSuite.UI.Views
          treeView.NodeDoubleClick += node => OnEvent(() => nodeDoubleClick(node));
          treeView.NodeClick += (e, node) => OnEvent(() => nodeClick(e, node));
          treeView.OptionsSelection.MultiSelect = true;
+         treeView.OptionsView.AutoWidth = false;
       }
 
       private void manageSelectedNodes(ITreeNode selectedNode = null, bool canClearSelection = true)
@@ -129,7 +129,13 @@ namespace OSPSuite.UI.Views
       public virtual ITreeNode AddNode(ITreeNode nodeToAdd)
       {
          treeView.AddNode(nodeToAdd);
+         AdjustTreeViewColumns();
          return nodeToAdd;
+      }
+
+      protected  virtual void AdjustTreeViewColumns()
+      {
+         treeView.BestFitColumns();
       }
 
       public BarManager PopupBarManager { get; }
