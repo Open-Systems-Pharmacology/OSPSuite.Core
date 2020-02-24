@@ -27,7 +27,9 @@ namespace OSPSuite.Core
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
-
+      private double _firstDose = 4;
+      private double _oneMinusLastDose = 4;
+      private double _lastDose = 2;
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -37,9 +39,9 @@ namespace OSPSuite.Core
          {
             Dose = 10,
          };
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8, Dose = 4});
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 8, EndValue = 16, Dose = 4});
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = 2});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8, Dose = _firstDose });
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 8, EndValue = 16, Dose = _oneMinusLastDose });
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = _lastDose });
       }
 
       protected override void Because()
@@ -53,18 +55,18 @@ namespace OSPSuite.Core
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
          _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.Dose), 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(16.72404671f, 1e-2);
-         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _lastDose), 1e-2);
          _pk[Constants.PKParameters.Tmax].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_tLast_tEnd].Value.ShouldBeEqualTo(16.25f, 1e-2);
          _pk[Constants.PKParameters.AUC_t1_t2].Value.ShouldBeEqualTo(37.6964700029334f, 1e-2);
-         _pk[Constants.PKParameters.AUC_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast].Value.ShouldBeEqualTo(53.4314169287681f, 1e-2);
-         _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_tLast_minus_1_tLast], _pkOptions.LastMinusOneDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_tLast_minus_1_tLast], _oneMinusLastDose), 1e-2);
          _pk[Constants.PKParameters.AUC_inf_t1].Value.ShouldBeEqualTo(80.7110566815556f, 1e-2);
-         _pk[Constants.PKParameters.AUC_inf_t1_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_t1], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_inf_t1_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_t1], _firstDose), 1e-2);
          _pk[Constants.PKParameters.Vss].Value.ShouldBeEqualTo(1.68843561172615f, 1e-2);
          _pk[Constants.PKParameters.CL].Value.ShouldBeEqualTo(0.123898761968324f, 1e-2);
          _pk[Constants.PKParameters.MRT].Value.ShouldBeEqualTo(13.6275422361186f, 0.05);
@@ -73,7 +75,7 @@ namespace OSPSuite.Core
          _pk[Constants.PKParameters.Ctrough_t2].Value.ShouldBeEqualTo(2.89605998992919f, 1e-2);
          _pk[Constants.PKParameters.Ctrough_tLast].Value.ShouldBeEqualTo(1.210245967f, 1e-2);
          _pk[Constants.PKParameters.AUC_inf_tLast].Value.ShouldBeEqualTo(152.2143635f, 1e-2);
-         _pk[Constants.PKParameters.AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_tLast], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_tLast], _lastDose), 1e-2);
       }
 
    
@@ -155,6 +157,9 @@ namespace OSPSuite.Core
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
+      private double _firstDose = 5;
+      private double _oneMinusLastDose = 2;
+      private double _lastDose = 3;
 
       public override void GlobalContext()
       {
@@ -166,9 +171,9 @@ namespace OSPSuite.Core
             Dose = 10,
          };
 
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8.1f, Dose = 5});
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 8.1f, EndValue = 16f, Dose = 2});
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = 3});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8.1f, Dose = _firstDose });
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 8.1f, EndValue = 16f, Dose = _oneMinusLastDose });
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = _lastDose });
       }
 
       protected override void Because()
@@ -182,9 +187,9 @@ namespace OSPSuite.Core
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
          _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max],_pkOptions.Dose), 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(16.72404671f, 1e-2);
-         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _lastDose), 1e-2);
          _pk[Constants.PKParameters.Tmax].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_tLast_tEnd].Value.ShouldBeEqualTo(16.25f, 1e-2);
