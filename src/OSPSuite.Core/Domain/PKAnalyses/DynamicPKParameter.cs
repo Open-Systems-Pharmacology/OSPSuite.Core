@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       Thalf,
       Vss,
       Vd,
+      Tthreshold
    }
 
    public class DynamicPKParameter : PKParameter
@@ -55,7 +56,12 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       /// <summary>
       /// Dose parameter that will be used to calculate a normalized parameter. Not that if specified, only the normalized parameter will be added
       /// </summary>
-      public double? DoseForNormalization { get; set; }
+      public float? DoseForNormalization { get; set; }
+
+      /// <summary>
+      /// If defined, the time at which this concentration was reached will be calculated
+      /// </summary>
+      public float? ConcentrationThreshold { get; set; }
 
       public float? EstimateStartTimeFrom(PKCalculationOptions pkCalculationOptions)
       {

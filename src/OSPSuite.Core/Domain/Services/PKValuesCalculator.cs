@@ -162,7 +162,7 @@ namespace OSPSuite.Core.Domain.Services
                continue;
 
             var dose = dynamicPKParameter.DoseForNormalization;
-            var pkInterval = createPKInterval(time, concentration, startIndex, endIndex, dose, options);
+            var pkInterval = createPKInterval(time, concentration, startIndex, endIndex,  options, dose, dynamicPKParameter.ConcentrationThreshold);
             var value = pkInterval.ValueFor(dynamicPKParameter.StandardPKParameter);
             if (dose.HasValue)
                value = normalizedValue(value, dose);
@@ -202,7 +202,7 @@ namespace OSPSuite.Core.Domain.Services
          if (oneTimeIndexInvalid(dosingStartIndex, dosingEndIndex))
             return null;
 
-         return createPKInterval(time, concentration, dosingStartIndex, dosingEndIndex, dosingInterval.Dose, options);
+         return createPKInterval(time, concentration, dosingStartIndex, dosingEndIndex, options, dosingInterval.Dose);
       }
 
       private bool oneTimeIndexInvalid(params int[] indexes)
@@ -210,9 +210,9 @@ namespace OSPSuite.Core.Domain.Services
          return indexes.Any(i => i < 0);
       }
 
-      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, double? dose, PKCalculationOptions options)
+      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, PKCalculationOptions options, double? dose = null, float? concentrationThreshold = null)
       {
-         return new PKInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options, dose);
+         return new PKInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options, dose, concentrationThreshold);
       }
 
       private static class ArrayHelper
@@ -291,11 +291,13 @@ namespace OSPSuite.Core.Domain.Services
 
          private readonly List<float> _time;
          private readonly List<float> _concentration;
+         private readonly float? _concentrationThreshold;
 
          public float Cmax { get; private set; }
          public float Tmax { get; private set; }
          public float Cmin { get; private set; }
          public float Tmin { get; private set; }
+         public float Tthreshold { get; private set; }
          public float CTrough { get; private set; }
          public double Auc { get; private set; }
          public double Aucm { get; private set; }
@@ -308,12 +310,13 @@ namespace OSPSuite.Core.Domain.Services
          public double Vss => CL * Mrt;
          public double Vd => CL / _lambda;
 
-         public PKInterval(List<float> time, List<float> concentration, PKCalculationOptions options, double? dose)
+         public PKInterval(List<float> time, List<float> concentration, PKCalculationOptions options, double? dose = null, float? concentrationThreshold = null)
          {
             _options = options;
             Dose = dose;
             _time = time;
             _concentration = concentration;
+            _concentrationThreshold = concentrationThreshold;
             _timeSteps = ArrayHelper.TimeStepsFrom(time);
             _polyFit = new PolyFit();
          }
@@ -327,9 +330,24 @@ namespace OSPSuite.Core.Domain.Services
             CTrough = _concentration.Last();
             Auc = calculateAuc();
             calculateAucInf();
-
             Aucm = calculateAucm();
             Mrt = calculateMrt();
+            Tthreshold = calculateTThreshold();
+         }
+
+         private float calculateTThreshold()
+         {
+            if (_concentrationThreshold == null)
+               return float.NaN;
+
+            var startIndex = _concentration.IndexOf(Cmax);
+            for (int i = startIndex; i < _concentration.Count; i++)
+            {
+               if (_concentration[i] <= _concentrationThreshold)
+                  return _time[i];
+            }
+
+            return float.NaN;
          }
 
          private void calculateAucInf()
@@ -461,6 +479,12 @@ namespace OSPSuite.Core.Domain.Services
                   return Vss;
                case StandardPKParameter.Vd:
                   return Vd;
+               case StandardPKParameter.Tthreshold:
+                  return Tthreshold;
+               case StandardPKParameter.Cmin:
+                  return Cmin;
+               case StandardPKParameter.Tmin:
+                  return Tmin;
                case StandardPKParameter.Unknown:
                   return Double.NaN;
                default:

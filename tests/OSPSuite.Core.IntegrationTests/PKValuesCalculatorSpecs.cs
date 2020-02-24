@@ -106,6 +106,8 @@ namespace OSPSuite.Core
       private DynamicPKParameter _cmax_t1_t2_offset;
       private DynamicPKParameter _cmax_t1_offset_no_end;
       private DynamicPKParameter _cmax_tD1_tD2_DOSE_BW;
+      private DynamicPKParameter _tThreshold;
+      private DynamicPKParameter _tThreshold_last;
 
       public override void GlobalContext()
       {
@@ -127,8 +129,11 @@ namespace OSPSuite.Core
          _cmax_t1_t2 = new DynamicPKParameter {StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2"};
          _cmax_t1_t2_offset = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2offset"};
          _cmax_t1_offset_no_end = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1offset_no_end"};
+         _tThreshold= new DynamicPKParameter { StartApplication = 1,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4};
+         _tThreshold_last = new DynamicPKParameter { StartApplication = 3,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5};
 
-         _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW };
+
+         _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW, _tThreshold, _tThreshold_last };
       }
 
       protected override void Because()
@@ -139,12 +144,15 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_the_expected_parameter_values()
       {
+         _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value, 1e-2);
          _pk[_cmax_tD1_tD2_DOSE_BW.Name].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value/10, 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2.Name].Value, 1e-2);
          _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(_pk[_tmax_tD1_tD2.Name].Value, 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2_offset.Name].Value, 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_offset_no_end.Name].Value, 1e-2);
+         _pk[_tThreshold.Name].Value.ShouldBeEqualTo(3.75f);
+         _pk[_tThreshold_last.Name].Value.ShouldBeEqualTo(26);
       }
 
     
