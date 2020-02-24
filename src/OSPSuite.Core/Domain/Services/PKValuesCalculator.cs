@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Maths.Interpolations;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -27,21 +28,29 @@ namespace OSPSuite.Core.Domain.Services
       //This represents the time interval between simulation start and end
       private const int FULL_RANGE_INTERVAL = 3;
 
-      public PKValues CalculatePK(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options = null)
+      public PKValues CalculatePK(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options = null, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null)
       {
          //we use a cache to avoid conversion problem between double and float. 
          var pk = new Cache<string, double>();
+         var timeValues = time.ToList();
+         var concentrationValues = concentration.ToList();
+
+         if (!timeValues.Any() || !concentrationValues.Any())
+            return new PKValues();
 
          options = checkOptions(options);
-         var allIntervals = allIntervalsFor(time, concentration, options);
-         var isSingleDosing = allIntervals.Count == 1;
+         var allStandardIntervals = allStandardIntervalsFor(timeValues, concentrationValues, options);
+         var isSingleDosing = allStandardIntervals.Count == 1;
 
-         allIntervals.Each(x => x.Calculate());
+         allStandardIntervals.Each(x => x.Calculate());
          if (isSingleDosing)
-            setSingleDosingPKValues(pk, allIntervals[FIRST_INTERVAL], options.Dose);
+            setSingleDosingPKValues(pk, allStandardIntervals[FIRST_INTERVAL], options.Dose);
 
-         else if (allIntervals.Any())
-            setMultipleDosingPKValues(pk, allIntervals, options);
+         else if (allStandardIntervals.Any())
+            setMultipleDosingPKValues(pk, allStandardIntervals, options);
+
+         if (dynamicPKParameters != null)
+            addDynamicPKValues(pk, dynamicPKParameters, timeValues, concentrationValues, options);
 
          return pkValuesFrom(pk);
       }
@@ -134,40 +143,66 @@ namespace OSPSuite.Core.Domain.Services
          return options ?? new PKCalculationOptions();
       }
 
-      public PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null)
+      public PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null)
       {
-         return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options);
+         return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options, dynamicPKParameters);
       }
 
-      private IReadOnlyList<PKInterval> allIntervalsFor(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options)
+      private void addDynamicPKValues(ICache<string, double> pk, IReadOnlyList<DynamicPKParameter> dynamicPKParameters, List<float> time, List<float> concentration, PKCalculationOptions options)
       {
-         var intervals = new List<PKInterval>();
-         var timeValues = time.ToList();
-         var concentrationValues = concentration.ToList();
-
-         if (!timeValues.Any() || !concentrationValues.Any())
-            return intervals;
-
-         var fullRange = new PKInterval(timeValues, concentrationValues, options, dose:null);
-
-         //only one interval
-         if (options.SingleDosing)
+         foreach (var dynamicPKParameter in dynamicPKParameters)
          {
-            intervals.Add(fullRange);
-            return intervals;
-         }
+            var startTime = dynamicPKParameter.EstimateStartTimeFrom(options);
+            //No end time specified? Then we assume we want to calculate until the end of the time array
+            var endTime = dynamicPKParameter.EstimateEndTimeFrom(options) ?? time.Last();
 
-         foreach (var dosingInterval in options.DosingIntervals)
-         {
-            var dosingStartIndex = ArrayHelper.ClosestIndexOf(timeValues, dosingInterval.StartValue);
-            var dosingEndIndex = ArrayHelper.ClosestIndexOf(timeValues, dosingInterval.EndValue);
-            if (oneTimeIndexInvalid(dosingStartIndex, dosingEndIndex))
+            var startIndex = ArrayHelper.ClosestIndexOf(time, startTime);
+            var endIndex = ArrayHelper.ClosestIndexOf(time, endTime);
+            if (oneTimeIndexInvalid(startIndex, endIndex) || startIndex >= endIndex)
                continue;
-            intervals.Add(createPKInterval(timeValues, concentrationValues, dosingStartIndex, dosingEndIndex, dosingInterval.Dose, options));
-         }
 
-         intervals.Add(fullRange);
-         return intervals;
+            var dose = dynamicPKParameter.DoseForNormalization;
+            var pkInterval = createPKInterval(time, concentration, startIndex, endIndex, dose, options);
+            var value = pkInterval.ValueFor(dynamicPKParameter.StandardPKParameter);
+            if (dose.HasValue)
+               value = normalizedValue(value, dose);
+
+            setValue(pk, dynamicPKParameter.Name, value);
+         }
+      }
+
+      private IReadOnlyList<PKInterval> allStandardIntervalsFor(List<float> time, List<float> concentration, PKCalculationOptions options)
+      {
+         var fullRange = new PKInterval(time, concentration, options, dose: null);
+
+         //only one interval, return the full range
+         if (options.SingleDosing)
+            return new[] {fullRange};
+
+         //Two or more intervals
+         var intervals = new[]
+         {
+            pkIntervalFromDosingInterval(options.FirstInterval, time, concentration, options),
+            pkIntervalFromDosingInterval(options.LastMinusOneInterval, time, concentration, options),
+            pkIntervalFromDosingInterval(options.LastInterval, time, concentration, options),
+            fullRange
+         };
+
+
+         return intervals.Where(x => x != null).ToList();
+      }
+
+      private PKInterval pkIntervalFromDosingInterval(DosingInterval dosingInterval, List<float> time, List<float> concentration, PKCalculationOptions options)
+      {
+         if (dosingInterval == null)
+            return null;
+
+         var dosingStartIndex = ArrayHelper.ClosestIndexOf(time, dosingInterval.StartValue);
+         var dosingEndIndex = ArrayHelper.ClosestIndexOf(time, dosingInterval.EndValue);
+         if (oneTimeIndexInvalid(dosingStartIndex, dosingEndIndex))
+            return null;
+
+         return createPKInterval(time, concentration, dosingStartIndex, dosingEndIndex, dosingInterval.Dose, options);
       }
 
       private bool oneTimeIndexInvalid(params int[] indexes)
@@ -175,7 +210,7 @@ namespace OSPSuite.Core.Domain.Services
          return indexes.Any(i => i < 0);
       }
 
-      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex,  double? dose,   PKCalculationOptions options)
+      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, double? dose, PKCalculationOptions options)
       {
          return new PKInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options, dose);
       }
@@ -256,8 +291,11 @@ namespace OSPSuite.Core.Domain.Services
 
          private readonly List<float> _time;
          private readonly List<float> _concentration;
+
          public float Cmax { get; private set; }
          public float Tmax { get; private set; }
+         public float Cmin { get; private set; }
+         public float Tmin { get; private set; }
          public float CTrough { get; private set; }
          public double Auc { get; private set; }
          public double Aucm { get; private set; }
@@ -270,12 +308,12 @@ namespace OSPSuite.Core.Domain.Services
          public double Vss => CL * Mrt;
          public double Vd => CL / _lambda;
 
-         public PKInterval(List<float> time, List<float> conc, PKCalculationOptions options, double? dose)
+         public PKInterval(List<float> time, List<float> concentration, PKCalculationOptions options, double? dose)
          {
             _options = options;
             Dose = dose;
             _time = time;
-            _concentration = conc;
+            _concentration = concentration;
             _timeSteps = ArrayHelper.TimeStepsFrom(time);
             _polyFit = new PolyFit();
          }
@@ -283,7 +321,9 @@ namespace OSPSuite.Core.Domain.Services
          public void Calculate()
          {
             Cmax = _concentration.Max();
+            Cmin = _concentration.Min();
             Tmax = _time[_concentration.IndexOf(Cmax)];
+            Tmin = _time[_concentration.IndexOf(Cmin)];
             CTrough = _concentration.Last();
             Auc = calculateAuc();
             calculateAucInf();
@@ -389,6 +429,42 @@ namespace OSPSuite.Core.Domain.Services
             {
                //in that case we return and do not throw as something went wrong in the calculation
                return errorResult;
+            }
+         }
+
+         public double ValueFor(StandardPKParameter standardPKParameter)
+         {
+            Calculate();
+            switch (standardPKParameter)
+            {
+               case StandardPKParameter.Cmax:
+                  return Cmax;
+               case StandardPKParameter.Tmax:
+                  return Tmax;
+               case StandardPKParameter.CTrough:
+                  return CTrough;
+               case StandardPKParameter.Auc:
+                  return Auc;
+               case StandardPKParameter.Aucm:
+                  return Aucm;
+               case StandardPKParameter.AucInf:
+                  return AucInf;
+               case StandardPKParameter.AucTendInf:
+                  return AucTendInf;
+               case StandardPKParameter.Mrt:
+                  return Mrt;
+               case StandardPKParameter.FractionAucEndToInf:
+                  return FractionAucEndToInf;
+               case StandardPKParameter.Thalf:
+                  return Thalf;
+               case StandardPKParameter.Vss:
+                  return Vss;
+               case StandardPKParameter.Vd:
+                  return Vd;
+               case StandardPKParameter.Unknown:
+                  return Double.NaN;
+               default:
+                  throw new ArgumentOutOfRangeException(nameof(standardPKParameter), standardPKParameter, null);
             }
          }
       }

@@ -41,5 +41,11 @@ namespace OSPSuite.Core.Domain.Services
       public PKParameterMode PKParameterMode => SingleDosing ? PKParameterMode.Single : PKParameterMode.Multi;
 
       private bool dosingIntervalsWellDefined => _dosingIntervals.All(x => x.IsValid);
+
+      public DosingInterval FirstInterval => DosingIntervals.FirstOrDefault();
+
+      public DosingInterval LastMinusOneInterval => DosingIntervals.ElementAt(DosingIntervals.Count-2);
+
+      public DosingInterval LastInterval => DosingIntervals.ElementAt(DosingIntervals.Count-1);
    }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Helpers;
 
@@ -19,7 +21,6 @@ namespace OSPSuite.Core
       {
          return Convert.ToSingle(value.Value / norm.Value);
       }
-
    }
 
    public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application : concern_for_PKValuesCalculator
@@ -27,9 +28,10 @@ namespace OSPSuite.Core
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
-      private double _firstDose = 4;
-      private double _oneMinusLastDose = 4;
-      private double _lastDose = 2;
+      private readonly double _firstDose = 4;
+      private readonly double _oneMinusLastDose = 4;
+      private readonly double _lastDose = 2;
+
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -39,9 +41,9 @@ namespace OSPSuite.Core
          {
             Dose = 10,
          };
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8, Dose = _firstDose });
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 8, EndValue = 16, Dose = _oneMinusLastDose });
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = _lastDose });
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, Dose = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, Dose = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, Dose = _lastDose});
       }
 
       protected override void Because()
@@ -78,7 +80,6 @@ namespace OSPSuite.Core
          _pk[Constants.PKParameters.AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_tLast], _lastDose), 1e-2);
       }
 
-   
       [Observation]
       public void should_return_nan_for_values_that_should_not_be_calculated()
       {
@@ -88,6 +89,65 @@ namespace OSPSuite.Core
          _pk.HasValueFor(Constants.PKParameters.AUC_norm).ShouldBeFalse();
          _pk.HasValueFor(Constants.PKParameters.C_tEnd).ShouldBeFalse();
       }
+   }
+
+   public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application_using_also_dynamic_parameters : concern_for_PKValuesCalculator
+   {
+      private DataColumn _multipleDosingColumn;
+      private PKCalculationOptions _pkOptions;
+      private PKValues _pk;
+      private readonly double _firstDose = 4;
+      private readonly double _oneMinusLastDose = 4;
+      private readonly double _lastDose = 2;
+      private IReadOnlyList<DynamicPKParameter> _allDynamicPkParameters;
+      private DynamicPKParameter _cmax_tD1_tD2;
+      private DynamicPKParameter _tmax_tD1_tD2;
+      private DynamicPKParameter _cmax_t1_t2;
+      private DynamicPKParameter _cmax_t1_t2_offset;
+      private DynamicPKParameter _cmax_t1_offset_no_end;
+      private DynamicPKParameter _cmax_tD1_tD2_DOSE_BW;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _multipleDosingColumn = DataColumnLoader.GetDataColumnFrom("MultipleDosing_0_8_16");
+
+         _pkOptions = new PKCalculationOptions
+         {
+            Dose = 10,
+         };
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, Dose = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, Dose = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, Dose = _lastDose});
+
+         _cmax_tD1_tD2 = new DynamicPKParameter {StartApplication = 1, EndApplication = 2, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2"};
+         _cmax_tD1_tD2_DOSE_BW = new DynamicPKParameter {StartApplication = 1, EndApplication = 2, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2_Normalized", DoseForNormalization = 10};
+         _tmax_tD1_tD2 = new DynamicPKParameter {StartApplication = 1, EndApplication = 2, StandardPKParameter = StandardPKParameter.Tmax, Name = "MyTmaxD1D2"};
+
+         _cmax_t1_t2 = new DynamicPKParameter {StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2"};
+         _cmax_t1_t2_offset = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2offset"};
+         _cmax_t1_offset_no_end = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1offset_no_end"};
+
+         _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW };
+      }
+
+      protected override void Because()
+      {
+         _pk = sut.CalculatePK(_multipleDosingColumn, _pkOptions, _allDynamicPkParameters);
+      }
+
+      [Observation]
+      public void should_return_the_expected_parameter_values()
+      {
+         _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value, 1e-2);
+         _pk[_cmax_tD1_tD2_DOSE_BW.Name].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value/10, 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(_pk[_tmax_tD1_tD2.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2_offset.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_offset_no_end.Name].Value, 1e-2);
+      }
+
+    
    }
 
    public class When_calculating_the_pk_parameters_for_a_single_dosing_application : concern_for_PKValuesCalculator
@@ -152,14 +212,14 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_calculating_the_pk_parameters_for_a_multipe_dosing_application_with_approximated_time : concern_for_PKValuesCalculator
+   public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application_with_approximated_time : concern_for_PKValuesCalculator
    {
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
-      private double _firstDose = 5;
-      private double _oneMinusLastDose = 2;
-      private double _lastDose = 3;
+      private readonly double _firstDose = 5;
+      private readonly double _oneMinusLastDose = 2;
+      private readonly double _lastDose = 3;
 
       public override void GlobalContext()
       {
@@ -171,9 +231,9 @@ namespace OSPSuite.Core
             Dose = 10,
          };
 
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8.1f, Dose = _firstDose });
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 8.1f, EndValue = 16f, Dose = _oneMinusLastDose });
-         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = _lastDose });
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8.1f, Dose = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8.1f, EndValue = 16f, Dose = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, Dose = _lastDose});
       }
 
       protected override void Because()
@@ -185,7 +245,7 @@ namespace OSPSuite.Core
       public void should_return_the_expected_parameter_values()
       {
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max],_pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.Dose), 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(16.72404671f, 1e-2);
@@ -209,7 +269,7 @@ namespace OSPSuite.Core
    public class When_calculating_pk_values_for_a_column_with_no_values : concern_for_PKValuesCalculator
    {
       private PKValues _pk;
-      private DataColumn _emptyColums;
+      private DataColumn _emptyColumns;
       private PKCalculationOptions _pkOptions;
       private BaseGrid _baseGrid;
 
@@ -217,7 +277,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _baseGrid = new BaseGrid("BaseGrid", Constants.Dimension.NO_DIMENSION) {Values = new float[0]};
-         _emptyColums = new DataColumn("TEST", Constants.Dimension.NO_DIMENSION, _baseGrid) {Values = new float[0]};
+         _emptyColumns = new DataColumn("TEST", Constants.Dimension.NO_DIMENSION, _baseGrid) {Values = new float[0]};
          _pkOptions = new PKCalculationOptions
          {
             Dose = 10,
@@ -226,7 +286,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _pk = sut.CalculatePK(_emptyColums, _pkOptions);
+         _pk = sut.CalculatePK(_emptyColumns, _pkOptions);
       }
 
       [Observation]
