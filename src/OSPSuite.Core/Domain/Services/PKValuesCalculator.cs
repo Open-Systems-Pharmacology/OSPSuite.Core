@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain.Services
          return pkValuesFrom(pk);
       }
 
-      private void setMultipleDosingPKValues(ICache<string, double> pk, List<DosingInterval> allIntervals, PKCalculationOptions options)
+      private void setMultipleDosingPKValues(ICache<string, double> pk, List<PKInterval> allIntervals, PKCalculationOptions options)
       {
          var firstInterval = allIntervals[FIRST_INTERVAL];
          var lastMinusOneInterval = allIntervals[LAST_MINUS_ONE_INTERVAL];
@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Domain.Services
          setCmaxAndTmax(pk, fullInterval, options.Dose, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
       }
 
-      private void setSingleDosingPKValues(ICache<string, double> pk, DosingInterval interval, double? dose)
+      private void setSingleDosingPKValues(ICache<string, double> pk, PKInterval interval, double? dose)
       {
          setCmaxAndTmax(pk, interval, dose, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
          setValue(pk, Constants.PKParameters.C_tEnd, interval.CTrough);
@@ -80,13 +80,13 @@ namespace OSPSuite.Core.Domain.Services
          setValue(pk, Constants.PKParameters.FractionAucEndToInf, interval.FractionAucEndToInf);
       }
 
-      private void setCmaxAndTmax(ICache<string, double> pk, DosingInterval interval, double? dose, string cmaxName, string tMaxName)
+      private void setCmaxAndTmax(ICache<string, double> pk, PKInterval interval, double? dose, string cmaxName, string tMaxName)
       {
          setValueAndNormalize(pk, cmaxName, interval.Cmax, dose);
          setValue(pk, tMaxName, interval.Tmax);
       }
 
-      private void setFirstIntervalPKValues(ICache<string, double> pk, DosingInterval interval, double? dose)
+      private void setFirstIntervalPKValues(ICache<string, double> pk, PKInterval interval, double? dose)
       {
          setValue(pk, Constants.PKParameters.Thalf, interval.Thalf);
          setValue(pk, Constants.PKParameters.MRT, interval.Mrt);
@@ -138,7 +138,7 @@ namespace OSPSuite.Core.Domain.Services
          return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options);
       }
 
-      private IEnumerable<DosingInterval> allIntervalsFor(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options)
+      private IEnumerable<PKInterval> allIntervalsFor(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options)
       {
          var timeValues = time.ToList();
          var concentrationValues = concentration.ToList();
@@ -146,7 +146,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!timeValues.Any() || !concentrationValues.Any())
             yield break;
 
-         var fullRange = new DosingInterval(timeValues, concentrationValues, options);
+         var fullRange = new PKInterval(timeValues, concentrationValues, options);
 
          //only one interval
          if (options.SingleDosing)
@@ -176,9 +176,9 @@ namespace OSPSuite.Core.Domain.Services
          return indexes.Any(i => i < 0);
       }
 
-      private DosingInterval dosingInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, PKCalculationOptions options)
+      private PKInterval dosingInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, PKCalculationOptions options)
       {
-         return new DosingInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options);
+         return new PKInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options);
       }
 
       private static class ArrayHelper
@@ -238,13 +238,13 @@ namespace OSPSuite.Core.Domain.Services
             if (index >= 0)
                return index;
 
-            //does not exist in the list. We find the index of the point immedialy after this value
+            //does not exist in the list. We find the index of the point immediately after this value
             var closestIndex = ~index;
             return closestIndex < list.Count ? closestIndex : -1;
          }
       }
 
-      private class DosingInterval
+      private class PKInterval
       {
          private readonly PKCalculationOptions _options;
          private readonly IReadOnlyList<double> _timeSteps;
@@ -268,7 +268,7 @@ namespace OSPSuite.Core.Domain.Services
          public double Vss => CL * Mrt;
          public double Vd => CL / _lambda;
 
-         public DosingInterval(List<float> time, List<float> conc, PKCalculationOptions options)
+         public PKInterval(List<float> time, List<float> conc, PKCalculationOptions options)
          {
             _options = options;
             _time = time;

@@ -35,16 +35,11 @@ namespace OSPSuite.Core
 
          _pkOptions = new PKCalculationOptions
          {
-            FirstDosingStartValue = 0,
-            FirstDosingEndValue = 8,
-            LastMinusOneDosingStartValue = 8,
-            LastDosingStartValue = 16,
-            LastDosingEndValue = 48,
             Dose = 10,
-            FirstDose = 4,
-            LastMinusOneDose = 4,
-            LastDose = 2
          };
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8, Dose = 4});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 8, EndValue = 16, Dose = 4});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = 2});
       }
 
       protected override void Because()
@@ -168,16 +163,12 @@ namespace OSPSuite.Core
 
          _pkOptions = new PKCalculationOptions
          {
-            FirstDosingStartValue = 0,
-            FirstDosingEndValue = 8.1f,
-            LastMinusOneDosingStartValue = 8.1f,
-            LastDosingStartValue = 16,
-            LastDosingEndValue = 48,
             Dose = 10,
-            FirstDose = 5,
-            LastMinusOneDose = 2,
-            LastDose = 3
          };
+
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 0, EndValue = 8.1f, Dose = 5});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 8.1f, EndValue = 16f, Dose = 2});
+         _pkOptions.AddInterval(new DosingInterval{StartValue = 16, EndValue = 48, Dose = 3});
       }
 
       protected override void Because()

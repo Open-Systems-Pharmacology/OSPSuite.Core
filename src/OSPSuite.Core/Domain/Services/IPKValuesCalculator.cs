@@ -22,6 +22,4 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null);
    }
-
-
 }

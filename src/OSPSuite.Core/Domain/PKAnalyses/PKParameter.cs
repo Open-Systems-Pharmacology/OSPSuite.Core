@@ -16,8 +16,8 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       /// </summary>
       public virtual string DisplayName
       {
-         set { _displayName = value; }
-         get { return string.IsNullOrEmpty(_displayName) ? Name : _displayName; }
+         set => _displayName = value;
+         get => string.IsNullOrEmpty(_displayName) ? Name : _displayName;
       }
 
       /// <summary>

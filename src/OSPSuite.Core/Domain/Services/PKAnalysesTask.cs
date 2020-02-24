@@ -62,9 +62,16 @@ namespace OSPSuite.Core.Domain.Services
          return popAnalyses;
       }
 
-      private void addPKParametersForOutput(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults simulationResults, Action<int> performIndividualScalingAction,
-         QuantitySelection selectedQuantity, PopulationSimulationPKAnalyses popAnalyses, string moleculeName,
-         PKCalculationOptions pkCalculationOptions, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParameters)
+      private void addPKParametersForOutput(
+         IModelCoreSimulation simulation, 
+         int numberOfIndividuals, 
+         SimulationResults simulationResults, 
+         Action<int> performIndividualScalingAction,
+         QuantitySelection selectedQuantity, 
+         PopulationSimulationPKAnalyses popAnalyses, 
+         string moleculeName,
+         PKCalculationOptions pkCalculationOptions, 
+         IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParameters)
       {
          var availablePKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).ToList();
 
