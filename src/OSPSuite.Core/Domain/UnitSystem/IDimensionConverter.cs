@@ -1,6 +1,6 @@
 namespace OSPSuite.Core.Domain.UnitSystem
 {
-   public interface IDimensionConverterFor
+   public interface IDimensionConverter
    {
       bool CanResolveParameters();
       double ConvertToTargetBaseUnit(double sourceBaseUnitValue);

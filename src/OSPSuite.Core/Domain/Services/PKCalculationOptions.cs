@@ -22,6 +22,17 @@ namespace OSPSuite.Core.Domain.Services
 
       public virtual void AddInterval(DosingInterval dosingInterval) => _dosingIntervals.Add(dosingInterval);
 
+      /// <summary>
+      /// Returns the <see cref="DosingInterval"/> at index <paramref name="index"/> or null if the <paramref name="index"/> is out of bound
+      /// </summary>
+      public DosingInterval DosingIntervalAt(int index)
+      {
+         if (index < 0 || index >= _dosingIntervals.Count)
+            return null;
+
+         return _dosingIntervals[index];
+      }
+
       public bool SingleDosing
       {
          get
@@ -44,8 +55,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public DosingInterval FirstInterval => DosingIntervals.FirstOrDefault();
 
-      public DosingInterval LastMinusOneInterval => DosingIntervals.ElementAt(DosingIntervals.Count-2);
+      public DosingInterval LastMinusOneInterval => DosingIntervalAt(DosingIntervals.Count - 2);
 
-      public DosingInterval LastInterval => DosingIntervals.ElementAt(DosingIntervals.Count-1);
+      public DosingInterval LastInterval => DosingIntervalAt(DosingIntervals.Count - 1);
    }
 }

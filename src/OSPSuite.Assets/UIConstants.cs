@@ -1117,6 +1117,7 @@ namespace OSPSuite.Assets
       public static readonly string DifferentXAxisDimension = "Different from X axis dimension";
       public static readonly string DifferentYAxisDimension = "Different from Y axis dimension";
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
+      public static readonly string MolWeightNotAvailable = "Molecular Weight not available.";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 

@@ -213,7 +213,7 @@ namespace OSPSuite.Core.Domain.Services
          return indexes.Any(i => i < 0);
       }
 
-      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, PKCalculationOptions options, double? drugMassPerBodyWeight = null, float? concentrationThreshold = null)
+      private PKInterval createPKInterval(List<float> time, List<float> concentration, int startIndex, int endIndex, PKCalculationOptions options, double? drugMassPerBodyWeight = null, double? concentrationThreshold = null)
       {
          return new PKInterval(ArrayHelper.TruncateArray(time, startIndex, endIndex), ArrayHelper.TruncateArray(concentration, startIndex, endIndex), options, drugMassPerBodyWeight, concentrationThreshold);
       }
@@ -294,7 +294,7 @@ namespace OSPSuite.Core.Domain.Services
 
          private readonly List<float> _time;
          private readonly List<float> _concentration;
-         private readonly float? _concentrationThreshold;
+         private readonly double? _concentrationThreshold;
 
          public float Cmax { get; private set; }
          public float Tmax { get; private set; }
@@ -313,7 +313,7 @@ namespace OSPSuite.Core.Domain.Services
          public double Vss => CL * Mrt;
          public double Vd => CL / _lambda;
 
-         public PKInterval(List<float> time, List<float> concentration, PKCalculationOptions options, double? drugMassPerBodyWeight = null, float? concentrationThreshold = null)
+         public PKInterval(List<float> time, List<float> concentration, PKCalculationOptions options, double? drugMassPerBodyWeight = null, double? concentrationThreshold = null)
          {
             _options = options;
             DrugMassPerBodyWeight = drugMassPerBodyWeight;

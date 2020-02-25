@@ -38,9 +38,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <param name="dimension">Dimension to use for conversion</param>
       /// <param name="unit">Unit into which the value should be converted</param>
       /// <param name="values">Values in base unit to convert</param>
-      public static IReadOnlyList<double> BaseUnitValuesToUnitValues(this IDimension dimension, Unit unit, IEnumerable<double> values)
+      public static double[] BaseUnitValuesToUnitValues(this IDimension dimension, Unit unit, IEnumerable<double> values)
       {
-         return values.Select(value => dimension.BaseUnitValueToUnitValue(unit, value)).ToList();
+         return values.Select(value => dimension.BaseUnitValueToUnitValue(unit, value)).ToArray();
       }
 
       /// <summary>
@@ -49,9 +49,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <param name="dimension">Dimension to use for conversion</param>
       /// <param name="unit">Unit of the value given as parameter</param>
       /// <param name="values">Value to be converted in base unit </param>
-      public static IReadOnlyList<double> UnitValuesToBaseUnitValues(this IDimension dimension, Unit unit, IEnumerable<double> values)
+      public static double[] UnitValuesToBaseUnitValues(this IDimension dimension, Unit unit, IEnumerable<double> values)
       {
-         return values.Select(value => dimension.UnitValueToBaseUnitValue(unit, value)).ToList();
+         return values.Select(value => dimension.UnitValueToBaseUnitValue(unit, value)).ToArray();
       }
 
       public static bool IsEquivalentTo(this IDimension dimension, IDimension otherDimension)

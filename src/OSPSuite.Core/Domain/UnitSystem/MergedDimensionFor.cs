@@ -15,11 +15,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
    public class MergedDimensionFor<T> : IMergedDimension where T : IWithDimension
    {
-      private readonly IReadOnlyList<IDimensionConverterFor> _converters;
+      private readonly IReadOnlyList<IDimensionConverter> _converters;
       private readonly ICache<string, Unit> _units = new Cache<string, Unit>(x => x.Name);
       public string DisplayName { get; set; }
 
-      public MergedDimensionFor(IDimension sourceDimension, IEnumerable<IDimension> targetDimensions, IReadOnlyList<IDimensionConverterFor> converters)
+      public MergedDimensionFor(IDimension sourceDimension, IEnumerable<IDimension> targetDimensions, IReadOnlyList<IDimensionConverter> converters)
       {
          SourceDimension = sourceDimension;
          TargetDimensions = targetDimensions;
@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _converters.Each(addUnitsFromConverter);
       }
 
-      private void addUnitsFromConverter(IDimensionConverterFor converter)
+      private void addUnitsFromConverter(IDimensionConverter converter)
       {
          TargetDimensions.Where(converter.CanConvertTo).Each(dim => { _units.AddRange(dim.Units); });
       }
@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }
 
-      private IDimensionConverterFor converterFor(IDimension usedDimension)
+      private IDimensionConverter converterFor(IDimension usedDimension)
       {
          return _converters.First(converter => converter.CanConvertTo(usedDimension));
       }
