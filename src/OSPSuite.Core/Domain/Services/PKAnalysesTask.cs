@@ -67,7 +67,8 @@ namespace OSPSuite.Core.Domain.Services
          return popAnalyses;
       }
 
-      private void addPKParametersForOutput(IModelCoreSimulation simulation,
+      private void addPKParametersForOutput(
+         IModelCoreSimulation simulation,
          int numberOfIndividuals,
          SimulationResults simulationResults,
          Action<int> performIndividualScalingAction,
@@ -80,8 +81,13 @@ namespace OSPSuite.Core.Domain.Services
       {
          var allPKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).Union(dynamicPKParameters).ToList();
 
-         //create pk parameter for each predefined pk parameters
-         allPKParameters.Each(x => addPKParameterFor(numberOfIndividuals, selectedQuantity, popAnalyses, x));
+         //create pk parameter for each  pk parameters (predefined and dynamic)
+         foreach (var pkParameter in allPKParameters)
+         {
+            var quantityPKParameter = new QuantityPKParameter { Name = pkParameter.Name, QuantityPath = selectedQuantity.Path, Dimension = pkParameter.Dimension };
+            quantityPKParameter.SetNumberOfIndividuals(numberOfIndividuals);
+            popAnalyses.AddPKAnalysis(quantityPKParameter);
+         }
 
          //add the values for each individual
          foreach (var individualResult in simulationResults.AllIndividualResults)
@@ -103,21 +109,8 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private static void addPKParameterFor(int numberOfIndividuals, QuantitySelection selectedQuantity, PopulationSimulationPKAnalyses popAnalyses, PKParameter pkParameter)
-      {
-         var quantityPKParameter = new QuantityPKParameter {Name = pkParameter.Name, QuantityPath = selectedQuantity.Path, Dimension = pkParameter.Dimension};
-         quantityPKParameter.SetNumberOfIndividuals(numberOfIndividuals);
-         popAnalyses.AddPKAnalysis(quantityPKParameter);
-      }
+      private static string moleculeNameFrom(QuantitySelection selectedQuantity) => selectedQuantity.Path.ToPathArray().MoleculeName();
 
-      private static string moleculeNameFrom(QuantitySelection selectedQuantity)
-      {
-         return selectedQuantity.Path.ToPathArray().MoleculeName();
-      }
-
-      public virtual bool PKParameterCanBeUsed(PKParameter p, PKCalculationOptions pkCalculationOptions)
-      {
-         return p.Mode.Is(pkCalculationOptions.PKParameterMode);
-      }
+      public virtual bool PKParameterCanBeUsed(PKParameter p, PKCalculationOptions pkCalculationOptions) => p.Mode.Is(pkCalculationOptions.PKParameterMode);
    }
 }
