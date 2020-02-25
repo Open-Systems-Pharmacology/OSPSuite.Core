@@ -34,29 +34,29 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       /// <summary>
       ///    1-based index of the application that should be used to estimate the start of the interval
       /// </summary>
-      public int? StartApplication { get; set; }
+      public int? StartApplicationIndex { get; set; }
 
       /// <summary>
       ///    1-based index of the application that should be used to estimate the end of the interval
       /// </summary>
-      public int? EndApplication { get; set; }
+      public int? EndApplicationIndex { get; set; }
 
       /// <summary>
       ///    Time offset in min to apply to the start time (either from the absolute <see cref="StartTime" /> or the start time
-      ///    estimated from the application <see cref="StartApplication" />
+      ///    estimated from the application <see cref="StartApplicationIndex" />
       /// </summary>
       public float? StartTimeOffset { get; set; }
 
       /// <summary>
       ///    Time offset in min to apply to the start time (either from the absolute <see cref="EndTime" /> or the start time
-      ///    estimated from the application <see cref="EndApplication" />
+      ///    estimated from the application <see cref="EndApplicationIndex" />
       /// </summary>
       public float? EndTimeOffset { get; set; }
       
       /// <summary>
-      /// Dose parameter that will be used to calculate a normalized parameter. Not that if specified, only the normalized parameter will be added
+      /// Normalization Factory parameter that will be used to calculate a normalized parameter. Not that if specified, only the normalized parameter will be added
       /// </summary>
-      public float? DoseForNormalization { get; set; }
+      public double? NormalizationFactor { get; set; }
 
       /// <summary>
       /// If defined, the time at which this concentration was reached will be calculated
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          if (StartTime != null)
             return StartTime + StartTimeOffset.GetValueOrDefault(0);
 
-         var oneBaseApplicationIndex = StartApplication.GetValueOrDefault(0);
+         var oneBaseApplicationIndex = StartApplicationIndex.GetValueOrDefault(0);
          if (oneBaseApplicationIndex <= 0)
             return null;
 
@@ -84,7 +84,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          if (EndTime != null)
             return EndTime + EndTimeOffset.GetValueOrDefault(0);
 
-         var oneBaseApplicationIndex = EndApplication.GetValueOrDefault(0);
+         var oneBaseApplicationIndex = EndApplicationIndex.GetValueOrDefault(0);
          if (oneBaseApplicationIndex <= 0)
             return null;
 

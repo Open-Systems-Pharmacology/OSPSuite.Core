@@ -15,7 +15,7 @@
       /// <summary>
       ///    Dose (in µmol/kg BW) of the interval
       /// </summary>
-      public double? Dose { get; set; }
+      public double? DrugMassPerBodyWeight { get; set; }
 
       public bool IsValid => StartValue != null && EndValue != null && StartValue < EndValue;
    }

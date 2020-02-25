@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var individualResult in simulationResults.AllIndividualResults)
          {
             performIndividualScalingAction(individualResult.IndividualId);
-            _pkCalculationOptionsFactory.UpdateAppliedDose(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
+            _pkCalculationOptionsFactory.UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
             
             var values = individualResult.QuantityValuesFor(selectedQuantity.Path);
             //This can happen is the results do not match the simulation

@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Services
    public interface IPKCalculationOptionsFactory
    {
       PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName);
-      void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
+      void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
       IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation, string moleculeName);
    }
 
@@ -41,15 +41,15 @@ namespace OSPSuite.Core.Domain.Services
             options.InfusionTime = allApplicationParameters.FirstOrDefault()?.InfusionTime?.Value;
          }
 
-         // Once all dosing are defined, update applied dose
-         UpdateAppliedDose(simulation, moleculeName, options, allApplicationParameters);
+         // Once all dosing are defined, update total drug mass
+         UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, options, allApplicationParameters);
 
          return options;
       }
 
-      public virtual void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
+      public virtual void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
       {
-         options.Dose = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
+         options.DrugMassPerBodyWeight = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
       }
 
       private IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)

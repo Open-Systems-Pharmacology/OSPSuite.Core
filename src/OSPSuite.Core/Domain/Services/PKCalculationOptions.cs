@@ -9,9 +9,9 @@ namespace OSPSuite.Core.Domain.Services
       private readonly List<DosingInterval> _dosingIntervals = new List<DosingInterval>();
 
       /// <summary>
-      ///    Total dose (in µmol/kg BW)
+      ///    Total drug mass per body weight (in µmol/kg BW)
       /// </summary>
-      public double? Dose { get; set; }
+      public double? DrugMassPerBodyWeight { get; set; }
 
       /// <summary>
       ///    Infusion time (in time unit)
