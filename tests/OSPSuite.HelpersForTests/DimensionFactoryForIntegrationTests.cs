@@ -5,7 +5,7 @@ namespace OSPSuite.Helpers
 {
    public class DimensionFactoryForIntegrationTests : DimensionFactory
    {
-      protected override IDimensionConverterFor CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension)
+      protected override IDimensionConverter CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension)
       {
          if(dimension.Name== Constants.Dimension.MOLAR_CONCENTRATION)
             return new ConcentrationMassToMolarConverter();
@@ -14,7 +14,7 @@ namespace OSPSuite.Helpers
       }
    }
 
-   public class ConcentrationMassToMolarConverter : IDimensionConverterFor
+   public class ConcentrationMassToMolarConverter : IDimensionConverter
    {
       public string UnableToResolveParametersMessage { get; } = "Cannot find dimension";
 

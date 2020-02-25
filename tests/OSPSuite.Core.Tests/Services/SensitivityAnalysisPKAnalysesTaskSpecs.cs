@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Services
       private SimulationResults _runResults;
       private PKParameter _p1;
       private PKParameter _p2;
-      private PopulationSimulationPKAnalyses _popAnalaysis;
+      private PopulationSimulationPKAnalyses _popAnalysis;
 
       protected override void Context()
       {
@@ -64,15 +64,65 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _popAnalaysis = sut.CalculateFor(_simulation, 1, _runResults);
+         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults);
       }
 
       [Observation]
       public void should_exclude_the_norm_parameters()
       {
-         _popAnalaysis.All().Count().ShouldBeEqualTo(1);
-         _popAnalaysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
-         _popAnalaysis.HasPKParameterFor("Liver|Cell|Drug|Concentration", _p2.Name).ShouldBeFalse();
+         _popAnalysis.All().Count().ShouldBeEqualTo(1);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
+         _popAnalysis.HasPKParameterFor("Liver|Cell|Drug|Concentration", _p2.Name).ShouldBeFalse();
+      }
+   }
+
+   public class When_calculating_the_pk_analyses_for_a_sensitivity_analysis_with_dynamic_pk_parameters : concern_for_SensitivityAnalysisPKAnalysesTask
+   {
+      private ISimulation _simulation;
+      private SimulationResults _runResults;
+      private PKParameter _p1;
+      private PopulationSimulationPKAnalyses _popAnalysis;
+      private List<DynamicPKParameter> _dynamicParameters;
+      private DynamicPKParameter _dynamicParameter1;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = A.Fake<ISimulation>();
+         _runResults = A.Fake<SimulationResults>();
+         var outputSelections = new OutputSelections();
+         outputSelections.AddOutput(new QuantitySelection("Liver|Cell|Drug|Concentration", QuantityType.Drug));
+
+         A.CallTo(() => _simulation.OutputSelections).Returns(outputSelections);
+         var pKCalculationOptions = new PKCalculationOptions();
+         A.CallTo(_pkCalculationOptionsFactory).WithReturnType<PKCalculationOptions>().Returns(pKCalculationOptions);
+
+         _p1 = new PKParameter().WithName("AUC");
+         _p1.Mode = PKParameterMode.Single;
+
+         A.CallTo(() => _pkParameterRepository.All()).Returns(new[] { _p1 });
+         var individualResults = A.Fake<IndividualResults>();
+         A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new[] { individualResults }));
+         _dynamicParameter1 = new DynamicPKParameter { Name = "Dynamic1" };
+         _dynamicParameters = new List<DynamicPKParameter>() { _dynamicParameter1 };
+
+         var pKValues = new PKValues();
+         pKValues.AddValue(_p1.Name, 10f);
+         pKValues.AddValue(_dynamicParameter1.Name, 30f);
+         A.CallTo(_pkValuesCalculator).WithReturnType<PKValues>().Returns(pKValues);
+      }
+
+      protected override void Because()
+      {
+         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults, _dynamicParameters);
+      }
+
+      [Observation]
+      public void should_also_return_value_for_the_dynamic_parameters()
+      {
+         _popAnalysis.All().Count().ShouldBeEqualTo(2);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _dynamicParameter1.Name).Values[0].ShouldBeEqualTo(30f);
       }
    }
 }

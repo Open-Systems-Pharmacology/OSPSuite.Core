@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -18,7 +19,11 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">Simulation used to perform the population run</param>
       /// <param name="numberOfIndividuals">Number of individuals in the population run</param>
       /// <param name="runResults">Results for the simulation run</param>
-      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults);
+      /// <param name="dynamicPKParameters">
+      ///    Optional list of <see cref="DynamicPKParameter" /> that will be calculated during the
+      ///    sensitivity
+      /// </param>
+      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null);
    }
 
    public class PKAnalysesTask : IPKAnalysesTask
@@ -36,12 +41,12 @@ namespace OSPSuite.Core.Domain.Services
          _pkValuesCalculator = pkValuesCalculator;
       }
 
-      public virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults)
+      public virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null)
       {
-         return CalculateFor(simulation, numberOfIndividuals, runResults, id => { });
+         return CalculateFor(simulation, numberOfIndividuals, runResults, dynamicPKParameters ?? Array.Empty<DynamicPKParameter>(), id => { });
       }
 
-      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, Action<int> performIndividualScalingAction)
+      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, IReadOnlyList<DynamicPKParameter> dynamicPKParameters, Action<int> performIndividualScalingAction)
       {
          _lazyLoadTask.Load(simulation as ILazyLoadable);
 
@@ -55,57 +60,57 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var selectedQuantity in selectedQuantityForMolecule)
             {
-               addPKParametersForOutput(simulation, numberOfIndividuals, runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters);
+               addPKParametersForOutput(simulation, numberOfIndividuals, runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, dynamicPKParameters, allApplicationParameters);
             }
          }
 
          return popAnalyses;
       }
 
-      private void addPKParametersForOutput(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults simulationResults, Action<int> performIndividualScalingAction,
-         QuantitySelection selectedQuantity, PopulationSimulationPKAnalyses popAnalyses, string moleculeName,
-         PKCalculationOptions pkCalculationOptions, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParameters)
+      private void addPKParametersForOutput(
+         IModelCoreSimulation simulation,
+         int numberOfIndividuals,
+         SimulationResults simulationResults,
+         Action<int> performIndividualScalingAction,
+         QuantitySelection selectedQuantity,
+         PopulationSimulationPKAnalyses popAnalyses,
+         string moleculeName,
+         PKCalculationOptions pkCalculationOptions,
+         IReadOnlyList<DynamicPKParameter> dynamicPKParameters,
+         IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParameters)
       {
-         var availablePKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).ToList();
+         var allPKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).Union(dynamicPKParameters).ToList();
 
-         //create pk parameter for each quantities
-         foreach (var pkParameter in availablePKParameters)
+         //create pk parameter for each  pk parameters (predefined and dynamic)
+         foreach (var pkParameter in allPKParameters)
          {
-            var quantityPKParameter = new QuantityPKParameter {Name = pkParameter.Name, QuantityPath = selectedQuantity.Path, Dimension = pkParameter.Dimension};
+            var quantityPKParameter = new QuantityPKParameter { Name = pkParameter.Name, QuantityPath = selectedQuantity.Path, Dimension = pkParameter.Dimension };
             quantityPKParameter.SetNumberOfIndividuals(numberOfIndividuals);
             popAnalyses.AddPKAnalysis(quantityPKParameter);
          }
 
-         
          //add the values for each individual
          foreach (var individualResult in simulationResults.AllIndividualResults)
          {
             performIndividualScalingAction(individualResult.IndividualId);
-            _pkCalculationOptionsFactory.UpdateAppliedDose(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
-            
+            _pkCalculationOptionsFactory.UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
+
             var values = individualResult.QuantityValuesFor(selectedQuantity.Path);
             //This can happen is the results do not match the simulation
             if (values == null)
                continue;
 
-            var pkValues = _pkValuesCalculator.CalculatePK(individualResult.Time.Values, values.Values, pkCalculationOptions);
-            
-            foreach (var pkParameter in availablePKParameters)
+            var pkValues = _pkValuesCalculator.CalculatePK(individualResult.Time.Values, values.Values, pkCalculationOptions, dynamicPKParameters);
+
+            foreach (var quantityPKParameter in popAnalyses.AllPKParametersFor(selectedQuantity.Path))
             {
-               var quantityPKParameter = popAnalyses.PKParameterFor(selectedQuantity.Path, pkParameter.Name);
-               quantityPKParameter.SetValue(individualResult.IndividualId, pkValues.ValueOrDefaultFor(pkParameter.Name));
+               quantityPKParameter.SetValue(individualResult.IndividualId, pkValues.ValueOrDefaultFor(quantityPKParameter.Name));
             }
          }
       }
 
-      private static string moleculeNameFrom(QuantitySelection selectedQuantity)
-      {
-         return selectedQuantity.Path.ToPathArray().MoleculeName();
-      }
+      private static string moleculeNameFrom(QuantitySelection selectedQuantity) => selectedQuantity.Path.ToPathArray().MoleculeName();
 
-      public virtual bool PKParameterCanBeUsed(PKParameter p, PKCalculationOptions pkCalculationOptions)
-      {
-         return p.Mode.Is(pkCalculationOptions.PKParameterMode);
-      }
+      public virtual bool PKParameterCanBeUsed(PKParameter p, PKCalculationOptions pkCalculationOptions) => p.Mode.Is(pkCalculationOptions.PKParameterMode);
    }
 }

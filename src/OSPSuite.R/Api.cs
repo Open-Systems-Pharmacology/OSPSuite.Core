@@ -43,6 +43,8 @@ namespace OSPSuite.R
 
       public static ISensitivityAnalysisTask GetSensitivityAnalysisTask() => resolveTask<ISensitivityAnalysisTask>();
 
+      public static IDimensionTask GetDimensionTask() => resolveTask<IDimensionTask>();
+
       private static T resolveTask<T>()
       {
          try

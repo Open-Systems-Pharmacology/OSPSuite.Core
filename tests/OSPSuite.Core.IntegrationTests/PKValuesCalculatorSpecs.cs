@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Helpers;
 
@@ -19,7 +21,6 @@ namespace OSPSuite.Core
       {
          return Convert.ToSingle(value.Value / norm.Value);
       }
-
    }
 
    public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application : concern_for_PKValuesCalculator
@@ -27,6 +28,9 @@ namespace OSPSuite.Core
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
+      private readonly double _firstDose = 4;
+      private readonly double _oneMinusLastDose = 4;
+      private readonly double _lastDose = 2;
 
       public override void GlobalContext()
       {
@@ -35,16 +39,11 @@ namespace OSPSuite.Core
 
          _pkOptions = new PKCalculationOptions
          {
-            FirstDosingStartValue = 0,
-            FirstDosingEndValue = 8,
-            LastMinusOneDosingStartValue = 8,
-            LastDosingStartValue = 16,
-            LastDosingEndValue = 48,
-            Dose = 10,
-            FirstDose = 4,
-            LastMinusOneDose = 4,
-            LastDose = 2
+            DrugMassPerBodyWeight = 10,
          };
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
       }
 
       protected override void Because()
@@ -56,20 +55,20 @@ namespace OSPSuite.Core
       public void should_return_the_expected_parameter_values()
       {
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.DrugMassPerBodyWeight), 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(16.72404671f, 1e-2);
-         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _lastDose), 1e-2);
          _pk[Constants.PKParameters.Tmax].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_tLast_tEnd].Value.ShouldBeEqualTo(16.25f, 1e-2);
          _pk[Constants.PKParameters.AUC_t1_t2].Value.ShouldBeEqualTo(37.6964700029334f, 1e-2);
-         _pk[Constants.PKParameters.AUC_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast].Value.ShouldBeEqualTo(53.4314169287681f, 1e-2);
-         _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_tLast_minus_1_tLast], _pkOptions.LastMinusOneDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_tLast_minus_1_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_tLast_minus_1_tLast], _oneMinusLastDose), 1e-2);
          _pk[Constants.PKParameters.AUC_inf_t1].Value.ShouldBeEqualTo(80.7110566815556f, 1e-2);
-         _pk[Constants.PKParameters.AUC_inf_t1_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_t1], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_inf_t1_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_t1], _firstDose), 1e-2);
          _pk[Constants.PKParameters.Vss].Value.ShouldBeEqualTo(1.68843561172615f, 1e-2);
          _pk[Constants.PKParameters.CL].Value.ShouldBeEqualTo(0.123898761968324f, 1e-2);
          _pk[Constants.PKParameters.MRT].Value.ShouldBeEqualTo(13.6275422361186f, 0.05);
@@ -78,10 +77,9 @@ namespace OSPSuite.Core
          _pk[Constants.PKParameters.Ctrough_t2].Value.ShouldBeEqualTo(2.89605998992919f, 1e-2);
          _pk[Constants.PKParameters.Ctrough_tLast].Value.ShouldBeEqualTo(1.210245967f, 1e-2);
          _pk[Constants.PKParameters.AUC_inf_tLast].Value.ShouldBeEqualTo(152.2143635f, 1e-2);
-         _pk[Constants.PKParameters.AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_tLast], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf_tLast], _lastDose), 1e-2);
       }
 
-   
       [Observation]
       public void should_return_nan_for_values_that_should_not_be_calculated()
       {
@@ -91,6 +89,73 @@ namespace OSPSuite.Core
          _pk.HasValueFor(Constants.PKParameters.AUC_norm).ShouldBeFalse();
          _pk.HasValueFor(Constants.PKParameters.C_tEnd).ShouldBeFalse();
       }
+   }
+
+   public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application_using_also_dynamic_parameters : concern_for_PKValuesCalculator
+   {
+      private DataColumn _multipleDosingColumn;
+      private PKCalculationOptions _pkOptions;
+      private PKValues _pk;
+      private readonly double _firstDose = 4;
+      private readonly double _oneMinusLastDose = 4;
+      private readonly double _lastDose = 2;
+      private IReadOnlyList<DynamicPKParameter> _allDynamicPkParameters;
+      private DynamicPKParameter _cmax_tD1_tD2;
+      private DynamicPKParameter _tmax_tD1_tD2;
+      private DynamicPKParameter _cmax_t1_t2;
+      private DynamicPKParameter _cmax_t1_t2_offset;
+      private DynamicPKParameter _cmax_t1_offset_no_end;
+      private DynamicPKParameter _cmax_tD1_tD2_DOSE_BW;
+      private DynamicPKParameter _tThreshold;
+      private DynamicPKParameter _tThreshold_last;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _multipleDosingColumn = DataColumnLoader.GetDataColumnFrom("MultipleDosing_0_8_16");
+
+         _pkOptions = new PKCalculationOptions
+         {
+            DrugMassPerBodyWeight = 10,
+         };
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
+
+         _cmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2"};
+         _cmax_tD1_tD2_DOSE_BW = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2_Normalized", NormalizationFactor = 10};
+         _tmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Tmax, Name = "MyTmaxD1D2"};
+
+         _cmax_t1_t2 = new DynamicPKParameter {StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2"};
+         _cmax_t1_t2_offset = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2offset"};
+         _cmax_t1_offset_no_end = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1offset_no_end"};
+         _tThreshold= new DynamicPKParameter { StartApplicationIndex = 0,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4};
+         _tThreshold_last = new DynamicPKParameter { StartApplicationIndex = 2,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5};
+
+
+         _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW, _tThreshold, _tThreshold_last };
+      }
+
+      protected override void Because()
+      {
+         _pk = sut.CalculatePK(_multipleDosingColumn, _pkOptions, _allDynamicPkParameters);
+      }
+
+      [Observation]
+      public void should_return_the_expected_parameter_values()
+      {
+         _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value, 1e-2);
+         _pk[_cmax_tD1_tD2_DOSE_BW.Name].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value/10, 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(_pk[_tmax_tD1_tD2.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2_offset.Name].Value, 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(_pk[_cmax_t1_offset_no_end.Name].Value, 1e-2);
+         _pk[_tThreshold.Name].Value.ShouldBeEqualTo(3.75f);
+         _pk[_tThreshold_last.Name].Value.ShouldBeEqualTo(26);
+      }
+
+    
    }
 
    public class When_calculating_the_pk_parameters_for_a_single_dosing_application : concern_for_PKValuesCalculator
@@ -106,7 +171,7 @@ namespace OSPSuite.Core
 
          _pkOptions = new PKCalculationOptions
          {
-            Dose = 10,
+            DrugMassPerBodyWeight = 10,
          };
       }
 
@@ -119,12 +184,12 @@ namespace OSPSuite.Core
       public void should_return_the_expected_parameter_values()
       {
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.DrugMassPerBodyWeight), 1e-2);
          _pk[Constants.PKParameters.Tmax].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.AUC].Value.ShouldBeEqualTo(37.6964700029334f, 1e-2);
-         _pk[Constants.PKParameters.AUC_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC], _pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.AUC_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC], _pkOptions.DrugMassPerBodyWeight), 1e-2);
          _pk[Constants.PKParameters.AUC_inf].Value.ShouldBeEqualTo(80.7110566815556f, 1e-2);
-         _pk[Constants.PKParameters.AUC_inf_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf], _pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.AUC_inf_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.AUC_inf], _pkOptions.DrugMassPerBodyWeight), 1e-2);
          _pk[Constants.PKParameters.Vss].Value.ShouldBeEqualTo(1.68843561172615f, 1e-2);
          _pk[Constants.PKParameters.CL].Value.ShouldBeEqualTo(0.123898761968324f, 1e-2);
          _pk[Constants.PKParameters.C_tEnd].Value.ShouldBeEqualTo(2.89605998992919f, 1e-2);
@@ -155,11 +220,14 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_calculating_the_pk_parameters_for_a_multipe_dosing_application_with_approximated_time : concern_for_PKValuesCalculator
+   public class When_calculating_the_pk_parameters_for_a_multiple_dosing_application_with_approximated_time : concern_for_PKValuesCalculator
    {
       private DataColumn _multipleDosingColumn;
       private PKCalculationOptions _pkOptions;
       private PKValues _pk;
+      private readonly double _firstDose = 5;
+      private readonly double _oneMinusLastDose = 2;
+      private readonly double _lastDose = 3;
 
       public override void GlobalContext()
       {
@@ -168,16 +236,12 @@ namespace OSPSuite.Core
 
          _pkOptions = new PKCalculationOptions
          {
-            FirstDosingStartValue = 0,
-            FirstDosingEndValue = 8.1f,
-            LastMinusOneDosingStartValue = 8.1f,
-            LastDosingStartValue = 16,
-            LastDosingEndValue = 48,
-            Dose = 10,
-            FirstDose = 5,
-            LastMinusOneDose = 2,
-            LastDose = 3
+            DrugMassPerBodyWeight = 10,
          };
+
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8.1f, DrugMassPerBodyWeight = _firstDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 8.1f, EndValue = 16f, DrugMassPerBodyWeight = _oneMinusLastDose});
+         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
       }
 
       protected override void Because()
@@ -189,11 +253,11 @@ namespace OSPSuite.Core
       public void should_return_the_expected_parameter_values()
       {
          _pk[Constants.PKParameters.C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max],_pkOptions.Dose), 1e-2);
+         _pk[Constants.PKParameters.C_max_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max], _pkOptions.DrugMassPerBodyWeight), 1e-2);
          _pk[Constants.PKParameters.C_max_t1_t2].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
-         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _pkOptions.FirstDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_t1_t2_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_t1_t2], _firstDose), 1e-2);
          _pk[Constants.PKParameters.C_max_tLast_tEnd].Value.ShouldBeEqualTo(16.72404671f, 1e-2);
-         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _pkOptions.LastDose), 1e-2);
+         _pk[Constants.PKParameters.C_max_tLast_tEnd_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[Constants.PKParameters.C_max_tLast_tEnd], _lastDose), 1e-2);
          _pk[Constants.PKParameters.Tmax].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_t1_t2].Value.ShouldBeEqualTo(0.05000000f, 1e-2);
          _pk[Constants.PKParameters.Tmax_tLast_tEnd].Value.ShouldBeEqualTo(16.25f, 1e-2);
@@ -213,7 +277,7 @@ namespace OSPSuite.Core
    public class When_calculating_pk_values_for_a_column_with_no_values : concern_for_PKValuesCalculator
    {
       private PKValues _pk;
-      private DataColumn _emptyColums;
+      private DataColumn _emptyColumns;
       private PKCalculationOptions _pkOptions;
       private BaseGrid _baseGrid;
 
@@ -221,16 +285,16 @@ namespace OSPSuite.Core
       {
          base.Context();
          _baseGrid = new BaseGrid("BaseGrid", Constants.Dimension.NO_DIMENSION) {Values = new float[0]};
-         _emptyColums = new DataColumn("TEST", Constants.Dimension.NO_DIMENSION, _baseGrid) {Values = new float[0]};
+         _emptyColumns = new DataColumn("TEST", Constants.Dimension.NO_DIMENSION, _baseGrid) {Values = new float[0]};
          _pkOptions = new PKCalculationOptions
          {
-            Dose = 10,
+            DrugMassPerBodyWeight = 10,
          };
       }
 
       protected override void Because()
       {
-         _pk = sut.CalculatePK(_emptyColums, _pkOptions);
+         _pk = sut.CalculatePK(_emptyColumns, _pkOptions);
       }
 
       [Observation]

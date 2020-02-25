@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Services
    public interface IPKCalculationOptionsFactory
    {
       PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName);
-      void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
+      void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
       IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation, string moleculeName);
    }
 
@@ -17,39 +17,39 @@ namespace OSPSuite.Core.Domain.Services
       public PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName)
       {
          var options = new PKCalculationOptions();
-         var endTime = simulation.EndTime ?? 0;
+         var endTime = (simulation.EndTime ?? 0).ToFloat();
 
          var allApplicationParameters = AllApplicationParametersOrderedByStartTimeFor(simulation, moleculeName);
 
          // all application start times starting before the end of the simulation
          var applicationStartTimes = allApplicationParameters.Select(x => x.StartTime.Value).ToFloatArray();
+         var applicationEndTimes = new List<float>(applicationStartTimes.Skip(1)) {endTime};
 
-         options.FirstDosingStartValue = applicationStartTimes.FirstOrDefault();
+         for (int i = 0; i < applicationStartTimes.Length; i++)
+         {
+            var dosingInterval = new DosingInterval
+            {
+               StartValue = applicationStartTimes[i],
+               EndValue = applicationEndTimes[i]
+            };
+            options.AddInterval(dosingInterval);
+         }
 
          // single dosing
          if (applicationStartTimes.Length <= 1)
          {
-            options.FirstDosingEndValue = endTime.ToFloat();
             options.InfusionTime = allApplicationParameters.FirstOrDefault()?.InfusionTime?.Value;
          }
-         else
-         {
-            // 1 because we want the start time of the second application 
-            options.FirstDosingEndValue = applicationStartTimes[1];
-            options.LastMinusOneDosingStartValue = applicationStartTimes[applicationStartTimes.Length - 2];
-            options.LastDosingStartValue = applicationStartTimes[applicationStartTimes.Length - 1];
-            options.LastDosingEndValue = endTime.ToFloat();
-         }
 
-         // Once all dosing are defined, update applied dose
-         UpdateAppliedDose(simulation, moleculeName, options, allApplicationParameters);
+         // Once all dosing are defined, update total drug mass
+         UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, options, allApplicationParameters);
 
          return options;
       }
 
-      public virtual void UpdateAppliedDose(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
+      public virtual void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
       {
-         options.Dose = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
+         options.DrugMassPerBodyWeight = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
       }
 
       private IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)

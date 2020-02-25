@@ -49,22 +49,24 @@ namespace OSPSuite.R.Services
          _progressManager = progressManager;
       }
 
-      public async Task<SensitivityAnalysisRunResult> RunAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null)
+      public async Task<SensitivityAnalysisRunResult> RunAsync(
+         SensitivityAnalysis sensitivityAnalysis,
+         SensitivityAnalysisRunOptions runOptions = null)
       {
          var options = runOptions ?? new SensitivityAnalysisRunOptions();
 
-         var sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create();
-         try
-         {
-            initializeProgress(sensitivityAnalysisEngine, options);
-            var coreSensitivityAnalysis = _sensitivityAnalysisMapper.MapFrom(sensitivityAnalysis);
-            await sensitivityAnalysisEngine.StartAsync(coreSensitivityAnalysis, options);
-            return coreSensitivityAnalysis.Results;
-         }
-         finally
-         {
-            simulationTerminated(sensitivityAnalysisEngine);
-         }
+         using (var sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create())
+            try
+            {
+               initializeProgress(sensitivityAnalysisEngine, options);
+               var coreSensitivityAnalysis = _sensitivityAnalysisMapper.MapFrom(sensitivityAnalysis);
+               await sensitivityAnalysisEngine.StartAsync(coreSensitivityAnalysis, options);
+               return coreSensitivityAnalysis.Results;
+            }
+            finally
+            {
+               simulationTerminated(sensitivityAnalysisEngine);
+            }
       }
 
       private void initializeProgress(ISensitivityAnalysisEngine sensitivityAnalysisEngine, SensitivityAnalysisRunOptions options)
@@ -95,7 +97,6 @@ namespace OSPSuite.R.Services
 
          engine.Terminated -= terminated;
          engine.SimulationProgress -= simulationProgress;
-         engine.Dispose();
       }
    }
 }

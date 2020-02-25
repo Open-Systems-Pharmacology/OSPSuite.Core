@@ -8,6 +8,5 @@ namespace OSPSuite.R.Domain
       ///    Specifies whether progress bar should be shown during simulation run. Default is <c>true</c>
       /// </summary>
       public bool ShowProgress { get; set; } = true;
-
    }
 }

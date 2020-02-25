@@ -10,6 +10,7 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
+using OSPSuite.R.Domain.UnitSystem;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -66,7 +67,7 @@ namespace OSPSuite.R.Bootstrap
       {
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
          container.Register<IApplicationConfiguration, RConfiguration>(LifeStyle.Singleton);
-         container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
+         container.Register<IDimensionFactory, RDimensionFactory>(LifeStyle.Singleton);
          container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();
          container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
@@ -90,9 +91,13 @@ namespace OSPSuite.R.Bootstrap
 
          var molarConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var massConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
+         var amountDimension = dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         var massDimension = dimensionFactory.Dimension(Constants.Dimension.MASS_AMOUNT);
 
-         var concentrationDimensionsMergingInformation = new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension);
-         dimensionFactory.AddMergingInformation(concentrationDimensionsMergingInformation);
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension));
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(massConcentrationDimension, molarConcentrationDimension));
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(amountDimension, massDimension));
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(massDimension, amountDimension));
       }
 
       private static void initializeGroups(IContainer container)

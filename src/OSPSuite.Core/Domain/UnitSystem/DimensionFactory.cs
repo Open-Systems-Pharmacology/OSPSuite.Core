@@ -121,9 +121,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          if (!matches.Any())
             return null;
 
-         return matches.Count > 1
-            ? matches.FirstOrDefault(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.Ordinal)))
-            : matches.First();
+         return matches.FirstOrDefault(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.Ordinal))) ?? matches.First();
       }
 
       /// <summary>
@@ -168,7 +166,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          if (!dimensionsToMerge.Any())
             return hasDimension.Dimension;
 
-         var converters = new List<IDimensionConverterFor>();
+         var converters = new List<IDimensionConverter>();
          var targetDimensions = new List<IDimension>();
 
          foreach (var dimensionToMerge in dimensionsToMerge)
@@ -191,7 +189,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IEnumerable<IDimensionMergingInformation> AllMergingInformation => _allMergingInformation;
 
-      protected virtual IDimensionConverterFor CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension) where T : IWithDimension
+      protected virtual IDimensionConverter CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension) where T : IWithDimension
       {
          /*should be implemented in derived methods*/
          return null;

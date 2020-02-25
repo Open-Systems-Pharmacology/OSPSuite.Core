@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
@@ -91,7 +92,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_update_the_persistable_in_the_clone_of_the_simulation_to_ensure_that_all_parameters_are_also_avaialable_for_calculation()
+      public void should_update_the_persistable_in_the_clone_of_the_simulation_to_ensure_that_all_parameters_are_also_available_for_calculation()
       {
          A.CallTo(() => _simulationPersistableUpdater.UpdateSimulationPersistable(_modelCoreSimulation)).MustHaveHappened();
       }

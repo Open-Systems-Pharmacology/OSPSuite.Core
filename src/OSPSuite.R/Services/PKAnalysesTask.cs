@@ -1,7 +1,9 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Extensions;
@@ -10,12 +12,26 @@ using ICorePKAnalysisTask = OSPSuite.Core.Domain.Services.IPKAnalysesTask;
 
 namespace OSPSuite.R.Services
 {
+   /// <summary>
+   /// Required because of optional DynamicParameters dependencies
+   /// </summary>
+   public class CalculatePKAnalysisArgs
+   {
+      private readonly List<DynamicPKParameter> _allDynamicParameters= new List<DynamicPKParameter>();
+      public IModelCoreSimulation Simulation { get; set; }
+      public int NumberOfIndividuals { get; set; }
+      public SimulationResults SimulationResults { get; set; }
+      public IReadOnlyList<DynamicPKParameter> DynamicParameters => _allDynamicParameters;
+
+      public void AddDynamicParameter(DynamicPKParameter dynamicPKParameter) => _allDynamicParameters.Add(dynamicPKParameter);
+   }
+
    public interface IPKAnalysesTask
    {
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
-      PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
-      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults);
       DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
+      PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
+      PopulationSimulationPKAnalyses CalculateFor(CalculatePKAnalysisArgs calculatePKAnalysisArgs);
    }
 
    public class PKAnalysesTask : IPKAnalysesTask
@@ -49,8 +65,10 @@ namespace OSPSuite.R.Services
          return simulationPKAnalyses;
       }
 
-      public PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults) =>
-         _corePKAnalysesTask.CalculateFor(simulation, numberOfIndividuals, runResults);
+      public PopulationSimulationPKAnalyses CalculateFor(CalculatePKAnalysisArgs args)
+      {
+         return _corePKAnalysesTask.CalculateFor(args.Simulation, args.NumberOfIndividuals, args.SimulationResults, args.DynamicParameters);
+      }
 
       public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {
