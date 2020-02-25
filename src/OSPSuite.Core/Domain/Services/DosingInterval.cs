@@ -13,7 +13,7 @@
       public float? EndValue { get; set; }
 
       /// <summary>
-      ///    Dose (in µmol/kg BW) of the interval
+      ///    Drug mass per body weight (in µmol/kg BW) of the interval
       /// </summary>
       public double? DrugMassPerBodyWeight { get; set; }
 
