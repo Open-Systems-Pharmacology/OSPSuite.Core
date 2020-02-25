@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
@@ -12,12 +13,16 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public virtual ISimulation Simulation { get; set; }
       private readonly List<ISimulationAnalysis> _allSimulationAnalyses = new List<ISimulationAnalysis>();
       private readonly List<SensitivityParameter> _allSensitivityParameters = new List<SensitivityParameter>();
+      private readonly List<DynamicPKParameter> _allDynamicPKParameters = new List<DynamicPKParameter>();
 
       public SensitivityAnalysisRunResult Results { get; set; }
 
       public bool IsLoaded { get; set; }
 
-      public bool HasChanged { get; private set; }
+      /// <summary>
+      ///    Indicates if a sensitivity analysis was changed and hence needs to be saved
+      /// </summary>
+      public bool HasChanged { get; set; }
 
       public virtual IReadOnlyList<SensitivityParameter> AllSensitivityParameters => _allSensitivityParameters;
 
@@ -68,6 +73,22 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          HasChanged = true;
       }
 
+      public virtual void AddDynamicPKParameter(DynamicPKParameter dynamicPKParameter)
+      {
+         var existingDynamicPKParameter = DynamicPKParameterByName(dynamicPKParameter.Name);
+         if (existingDynamicPKParameter != null)
+            throw new NotUniqueNameException(Error.NameAlreadyExistsInContainerType(dynamicPKParameter.Name, ObjectTypes.SensitivityAnalysis));
+
+         _allDynamicPKParameters.Add(dynamicPKParameter);
+         HasChanged = true;
+      }
+
+      public virtual void RemoveDynamicPKParameter(DynamicPKParameter dynamicPKParameter)
+      {
+         _allDynamicPKParameters.Remove(dynamicPKParameter);
+         HasChanged = true;
+      }
+
       public IReadOnlyList<ISimulation> AllSimulations
       {
          get
@@ -92,10 +113,9 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          return _allSensitivityParameters.Any(x => x.Analyzes(parameterSelection));
       }
 
-      public SensitivityParameter SensitivityParameterByName(string name)
-      {
-         return _allSensitivityParameters.FindByName(name);
-      }
+      public DynamicPKParameter DynamicPKParameterByName(string name) => _allDynamicPKParameters.FindByName(name);
+
+      public SensitivityParameter SensitivityParameterByName(string name) => _allSensitivityParameters.FindByName(name);
 
       public IEnumerable<IReadOnlyList<double>> AllParameterVariationsFor(SensitivityParameter sensitivityParameter)
       {
@@ -112,6 +132,8 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       public string[] AllSensitivityParameterPaths => _allSensitivityParameters.Select(x => x.ParameterSelection.Path).ToArray();
 
+      public IReadOnlyList<DynamicPKParameter> AllDynamicPKParameters => _allDynamicPKParameters;
+
       public bool Uses(IParameter parameter)
       {
          return _allSensitivityParameters.Select(x => x.Parameter).Contains(parameter);
@@ -122,6 +144,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public void RemoveAllSensitivityParameters()
       {
          AllSensitivityParameters.ToList().Each(RemoveSensitivityParameter);
+      }
+
+      public void RemoveAllDynamicPKParameters()
+      {
+         AllDynamicPKParameters.ToList().Each(RemoveDynamicPKParameter);
       }
    }
 }

@@ -153,7 +153,9 @@ namespace OSPSuite.Core.Domain.Services
       {
          foreach (var dynamicPKParameter in dynamicPKParameters)
          {
-            var startTime = dynamicPKParameter.EstimateStartTimeFrom(options);
+            //No start time specified? Then we assume we want to calculate from the beginning of the time array
+            var startTime = dynamicPKParameter.EstimateStartTimeFrom(options) ?? time.First();
+            
             //No end time specified? Then we assume we want to calculate until the end of the time array
             var endTime = dynamicPKParameter.EstimateEndTimeFrom(options) ?? time.Last();
 

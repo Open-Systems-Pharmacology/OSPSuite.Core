@@ -1,7 +1,9 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Extensions;
@@ -14,7 +16,7 @@ namespace OSPSuite.R.Services
    {
       void ExportPKAnalysesToCSV(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation, string fileName);
       PopulationSimulationPKAnalyses ImportPKAnalysesFromCSV(string fileName, IModelCoreSimulation simulation);
-      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults);
+      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null);
       DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
    }
 
@@ -49,8 +51,8 @@ namespace OSPSuite.R.Services
          return simulationPKAnalyses;
       }
 
-      public PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults) =>
-         _corePKAnalysesTask.CalculateFor(simulation, numberOfIndividuals, runResults);
+      public PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults, IReadOnlyList<DynamicPKParameter> dynamicPKParameters) =>
+         _corePKAnalysesTask.CalculateFor(simulation, numberOfIndividuals, runResults, dynamicPKParameters);
 
       public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {

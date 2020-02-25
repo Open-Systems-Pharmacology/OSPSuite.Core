@@ -49,6 +49,9 @@ namespace OSPSuite.R.Mapper
             x.VariationRangeParameter.Value = sensitivityAnalysis.VariationRange;
          });
 
+
+         sensitivityAnalysis.AllDynamicParameters.Each(coreSensitivityAnalysis.AddDynamicPKParameter);
+
          return coreSensitivityAnalysis;
       }
 

@@ -3,7 +3,9 @@ using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -14,7 +16,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _oldSimulation = A.Fake<ISimulation>();
-         sut = new SensitivityAnalysis { Simulation = _oldSimulation };
+         sut = new SensitivityAnalysis {Simulation = _oldSimulation};
       }
    }
 
@@ -26,7 +28,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _newSimulation = A.Fake<ISimulation>();
-         var sensitivityParameter = new SensitivityParameter { ParameterSelection = new ParameterSelection(_oldSimulation, A.Fake<QuantitySelection>()) };
+         var sensitivityParameter = new SensitivityParameter {ParameterSelection = new ParameterSelection(_oldSimulation, A.Fake<QuantitySelection>())};
          sut.AddSensitivityParameter(sensitivityParameter);
       }
 
@@ -47,7 +49,6 @@ namespace OSPSuite.Core.Domain
          sut.AllSensitivityParameters.All(parameter => Equals(parameter.ParameterSelection.Simulation, _newSimulation)).ShouldBeTrue();
       }
    }
-
 
    public class When_retrieving_the_pk_parameter_sensitivity_analysis_covering_a_given_total_sensitivity : concern_for_SensitivityAnalysis
    {
@@ -80,7 +81,89 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_parameters()
       {
-         _result.ShouldOnlyContainInOrder(_pk3,_pk1);
+         _result.ShouldOnlyContainInOrder(_pk3, _pk1);
+      }
+   }
+
+   public class When_adding_a_new_dynamic_pk_parameter_to_the_sensitivity_analysis : concern_for_SensitivityAnalysis
+   {
+      private DynamicPKParameter _dynamicPKParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dynamicPKParameter = new DynamicPKParameter {Name = "TOTO"};
+         sut.HasChanged = false;
+      }
+
+      protected override void Because()
+      {
+         sut.AddDynamicPKParameter(_dynamicPKParameter);
+      }
+
+      [Observation]
+      public void should_mark_the_sensitivity_analysis_has_changed()
+      {
+         sut.HasChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_the_parameter()
+      {
+         sut.AllDynamicPKParameters.ShouldOnlyContain(_dynamicPKParameter);
+      }
+   }
+
+   public class When_removing_a_dynamic_pk_parameter_from_the_sensitivity_analysis : concern_for_SensitivityAnalysis
+   {
+      private DynamicPKParameter _dynamicPKParameter1;
+      private DynamicPKParameter _dynamicPKParameter2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dynamicPKParameter1 = new DynamicPKParameter {Name = "TOTO"};
+         _dynamicPKParameter2 = new DynamicPKParameter {Name = "TATA"};
+         sut.AddDynamicPKParameter(_dynamicPKParameter1);
+         sut.AddDynamicPKParameter(_dynamicPKParameter2);
+         sut.HasChanged = false;
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveDynamicPKParameter(_dynamicPKParameter1);
+      }
+
+      [Observation]
+      public void should_mark_the_sensitivity_analysis_has_changed()
+      {
+         sut.HasChanged.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_removed_the_pk_parameter()
+      {
+         sut.AllDynamicPKParameters.ShouldOnlyContain(_dynamicPKParameter2);
+      }
+   }
+
+   public class When_adding_two_dynamic_pk_parameters_with_the_same_name : concern_for_SensitivityAnalysis
+   {
+      private DynamicPKParameter _dynamicPKParameter1;
+      private DynamicPKParameter _dynamicPKParameter2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dynamicPKParameter1 = new DynamicPKParameter {Name = "TOTO"};
+         _dynamicPKParameter2 = new DynamicPKParameter {Name = "TOTO"};
+         sut.AddDynamicPKParameter(_dynamicPKParameter1);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.AddDynamicPKParameter(_dynamicPKParameter2)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }

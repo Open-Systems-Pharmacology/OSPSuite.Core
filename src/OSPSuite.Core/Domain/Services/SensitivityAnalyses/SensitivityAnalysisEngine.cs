@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
 
@@ -10,6 +12,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
    public interface ISensitivityAnalysisEngine : IDisposable
    {
       Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions);
+
       void Stop();
 
       /// <summary>

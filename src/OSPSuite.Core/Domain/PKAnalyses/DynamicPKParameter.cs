@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       Thalf,
       Vss,
       Vd,
-      Tthreshold
+      Tthreshold,
    }
 
    public class DynamicPKParameter : PKParameter
