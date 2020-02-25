@@ -122,15 +122,15 @@ namespace OSPSuite.Core
          _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose});
          _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
 
-         _cmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 1, EndApplicationIndex = 2, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2"};
-         _cmax_tD1_tD2_DOSE_BW = new DynamicPKParameter {StartApplicationIndex = 1, EndApplicationIndex = 2, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2_Normalized", NormalizationFactor = 10};
-         _tmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 1, EndApplicationIndex = 2, StandardPKParameter = StandardPKParameter.Tmax, Name = "MyTmaxD1D2"};
+         _cmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2"};
+         _cmax_tD1_tD2_DOSE_BW = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxD1D2_Normalized", NormalizationFactor = 10};
+         _tmax_tD1_tD2 = new DynamicPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.Tmax, Name = "MyTmaxD1D2"};
 
          _cmax_t1_t2 = new DynamicPKParameter {StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2"};
          _cmax_t1_t2_offset = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1T2offset"};
          _cmax_t1_offset_no_end = new DynamicPKParameter {StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.Cmax, Name = "MyCmaxT1offset_no_end"};
-         _tThreshold= new DynamicPKParameter { StartApplicationIndex = 1,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4};
-         _tThreshold_last = new DynamicPKParameter { StartApplicationIndex = 3,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5};
+         _tThreshold= new DynamicPKParameter { StartApplicationIndex = 0,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4};
+         _tThreshold_last = new DynamicPKParameter { StartApplicationIndex = 2,  StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5};
 
 
          _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW, _tThreshold, _tThreshold_last };

@@ -32,12 +32,12 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       public float? EndTime { get; set; }
 
       /// <summary>
-      ///    1-based index of the application that should be used to estimate the start of the interval
+      ///    0-based index of the application that should be used to estimate the start of the interval
       /// </summary>
       public int? StartApplicationIndex { get; set; }
 
       /// <summary>
-      ///    1-based index of the application that should be used to estimate the end of the interval
+      ///    0-based index of the application that should be used to estimate the end of the interval
       /// </summary>
       public int? EndApplicationIndex { get; set; }
 
@@ -68,11 +68,11 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          if (StartTime != null)
             return StartTime + StartTimeOffset.GetValueOrDefault(0);
 
-         var oneBaseApplicationIndex = StartApplicationIndex.GetValueOrDefault(0);
-         if (oneBaseApplicationIndex <= 0)
+         var applicationIndex = StartApplicationIndex.GetValueOrDefault(-1);
+         if (applicationIndex < 0)
             return null;
 
-         var dosingInterval = pkCalculationOptions.DosingIntervals.ElementAt(oneBaseApplicationIndex - 1);
+         var dosingInterval = pkCalculationOptions.DosingIntervals.ElementAt(applicationIndex);
          if (dosingInterval?.StartValue == null)
             return null;
 
@@ -84,11 +84,11 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          if (EndTime != null)
             return EndTime + EndTimeOffset.GetValueOrDefault(0);
 
-         var oneBaseApplicationIndex = EndApplicationIndex.GetValueOrDefault(0);
-         if (oneBaseApplicationIndex <= 0)
+         var applicationIndex = EndApplicationIndex.GetValueOrDefault(-1);
+         if (applicationIndex < 0)
             return null;
 
-         var dosingInterval = pkCalculationOptions.DosingIntervals.ElementAt(oneBaseApplicationIndex - 1);
+         var dosingInterval = pkCalculationOptions.DosingIntervals.ElementAt(applicationIndex);
          if (dosingInterval?.StartValue == null)
             return null;
 
