@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Utility.Extensions;
+﻿using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.PKAnalyses
 {
@@ -12,8 +10,8 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       Tmax,
       Tmin,
       CTrough,
-      Auc,
-      Aucm,
+      AucTend,
+      AucmTend,
       AucInf,
       AucTendInf,
       Mrt,
@@ -113,9 +111,6 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          return toNullableFloat(estimatedEndTime());
       }
 
-      private float? toNullableFloat(double? estimatedEndTime)
-      {
-         return (float?) estimatedEndTime;
-      }
+      private float? toNullableFloat(double? estimatedEndTime) => (float?) estimatedEndTime;
    }
 }

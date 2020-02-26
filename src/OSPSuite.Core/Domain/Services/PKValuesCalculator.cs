@@ -65,11 +65,11 @@ namespace OSPSuite.Core.Domain.Services
 
          setCmaxAndTmax(pk, firstInterval, firstInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_t1_t2, Constants.PKParameters.Tmax_t1_t2);
          setValue(pk, Constants.PKParameters.Ctrough_t2, firstInterval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_t1_t2, firstInterval.Auc, firstInterval.DrugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_t1_t2, firstInterval.AucTend, firstInterval.DrugMassPerBodyWeight);
          setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_t1, firstInterval.AucInf, firstInterval.DrugMassPerBodyWeight);
          setFirstIntervalPKValues(pk, firstInterval, firstInterval.DrugMassPerBodyWeight);
 
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tLast_minus_1_tLast, lastMinusOneInterval.Auc, lastMinusOneInterval.DrugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tLast_minus_1_tLast, lastMinusOneInterval.AucTend, lastMinusOneInterval.DrugMassPerBodyWeight);
 
          setCmaxAndTmax(pk, lastInterval, lastInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tLast_tEnd, Constants.PKParameters.Tmax_tLast_tEnd);
          setValue(pk, Constants.PKParameters.Ctrough_tLast, lastInterval.CTrough);
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          setCmaxAndTmax(pk, interval, drugMassPerBodyWeight, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
          setValue(pk, Constants.PKParameters.C_tEnd, interval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC, interval.Auc, drugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC, interval.AucTend, drugMassPerBodyWeight);
          setValueAndNormalize(pk, Constants.PKParameters.AUC_inf, interval.AucInf, drugMassPerBodyWeight);
          setFirstIntervalPKValues(pk, interval, drugMassPerBodyWeight);
 
@@ -302,8 +302,8 @@ namespace OSPSuite.Core.Domain.Services
          public float Tmin { get; private set; }
          public float Tthreshold { get; private set; }
          public float CTrough { get; private set; }
-         public double Auc { get; private set; }
-         public double Aucm { get; private set; }
+         public double AucTend { get; private set; }
+         public double AucmTend { get; private set; }
          public double AucInf { get; private set; }
          public double AucTendInf { get; private set; }
          public double Mrt { get; private set; }
@@ -331,9 +331,9 @@ namespace OSPSuite.Core.Domain.Services
             Tmax = _time[_concentration.IndexOf(Cmax)];
             Tmin = _time[_concentration.IndexOf(Cmin)];
             CTrough = _concentration.Last();
-            Auc = calculateAuc();
+            AucTend = calculateAuc();
             calculateAucInf();
-            Aucm = calculateAucm();
+            AucmTend = calculateAucm();
             Mrt = calculateMrt();
             Tthreshold = calculateTThreshold();
          }
@@ -365,7 +365,7 @@ namespace OSPSuite.Core.Domain.Services
 
             // add the last part of the auc interpolated to infinity (- because slope <0)
             AucTendInf = _intercept / _lambda * Math.Exp(-_lambda * _time.Last());
-            AucInf = Auc + AucTendInf;
+            AucInf = AucTend + AucTendInf;
          }
 
          private double calculateAuc()
@@ -394,7 +394,7 @@ namespace OSPSuite.Core.Domain.Services
             var cLast = _intercept * Math.Exp(-_lambda * tEnd);
             var aucmInf = cLast / _lambda * (tEnd + 1 / _lambda);
 
-            var mrt = (Aucm + aucmInf) / AucInf;
+            var mrt = (AucmTend + aucmInf) / AucInf;
 
             if (_options.InfusionTime.HasValue)
                mrt -= _options.InfusionTime.Value / 2;
@@ -464,10 +464,10 @@ namespace OSPSuite.Core.Domain.Services
                   return Tmax;
                case StandardPKParameter.CTrough:
                   return CTrough;
-               case StandardPKParameter.Auc:
-                  return Auc;
-               case StandardPKParameter.Aucm:
-                  return Aucm;
+               case StandardPKParameter.AucTend:
+                  return AucTend;
+               case StandardPKParameter.AucmTend:
+                  return AucmTend;
                case StandardPKParameter.AucInf:
                   return AucInf;
                case StandardPKParameter.AucTendInf:
