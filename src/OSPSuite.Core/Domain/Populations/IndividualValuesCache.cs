@@ -97,6 +97,8 @@ namespace OSPSuite.Core.Domain.Populations
       /// <returns></returns>
       public virtual CovariateValues CovariateValuesFor(string covariateName) => CovariateValuesCache.CovariateValuesFor(covariateName);
 
+      public virtual int[] AllIndividualIds() => IndividualIds.ToArray();
+
       public virtual string[] AllCovariatesNames() => CovariateValuesCache.AllCovariateNames();
 
       public virtual IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);

@@ -105,6 +105,12 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void should_be_able_to_return_the_individual_ids_as_array()
+      {
+         sut.AllIndividualIds().ShouldOnlyContainInOrder(1, 2, 3, 10, 20);
+      }
+
+      [Observation]
       public void should_add_the_covariates_from_the_properties_cache()
       {
          sut.CovariateValuesCache.AllCovariateValues.Count.ShouldBeEqualTo(2);
