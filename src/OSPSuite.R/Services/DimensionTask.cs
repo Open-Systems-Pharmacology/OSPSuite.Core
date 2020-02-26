@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.R.Domain.UnitSystem;
 
@@ -22,6 +24,16 @@ namespace OSPSuite.R.Services
 
       double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit, double molWeight);
       double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit);
+
+      /// <summary>
+      /// Returns an array containing all dimensions defined in the suite
+      /// </summary>
+      IDimension[] AllAvailableDimensions();
+
+      /// <summary>
+      /// Returns the name of all dimensions defined in the suite
+      /// </summary>
+      string[] AllAvailableDimensionNames();
    }
 
    public class DimensionTask : IDimensionTask
@@ -56,6 +68,10 @@ namespace OSPSuite.R.Services
       {
          return convertToUnit(DimensionByName(dimensionName), targetUnit, null, valueInBaseUnit);
       }
+
+      public IDimension[] AllAvailableDimensions() => _dimensionFactory.Dimensions.ToArray();
+
+      public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
 
       public double[] ConvertToUnit(IDimension dimension, string targetUnit, double valueInBaseUnit, double molWeight)
       {

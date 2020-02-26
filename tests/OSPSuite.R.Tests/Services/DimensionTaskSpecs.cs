@@ -84,4 +84,19 @@ namespace OSPSuite.R.Services
          _result.ShouldOnlyContainInOrder(1/20d);
       }
    }
+
+   public class When_retrieving_the_name_of_all_dimensions : concern_for_DimensionTask
+   {
+      private string[] _dimensionNames;
+
+      protected override void Because()
+      {
+         _dimensionNames = sut.AllAvailableDimensionNames();
+      }
+      [Observation]
+      public void should_return_the_dimensions_names_sorted()
+      {
+         _dimensionNames[0].StartsWith("A").ShouldBeTrue();
+      }
+   }
 }
