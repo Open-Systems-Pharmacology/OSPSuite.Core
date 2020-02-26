@@ -103,16 +103,16 @@ namespace OSPSuite.Core.Domain.Populations
 
       public virtual IReadOnlyList<string> AllCovariateValuesFor(string covariateName) => CovariateValuesCache.ValuesFor(covariateName);
 
-      public virtual  string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesAt(IndexOfIndividual(individualId));
+      public virtual string[] AllCovariateValuesForIndividual(int individualId) => CovariateValuesCache.AllCovariateValuesAt(IndexOfIndividual(individualId));
 
-      public virtual  string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, IndexOfIndividual(individualId));
+      public virtual string CovariateValueFor(string covariateName, int individualId) => CovariateValuesCache.CovariateValueFor(covariateName, IndexOfIndividual(individualId));
 
       public virtual ParameterValue[] AllParameterValuesForIndividual(int individualId) => AllParameterValuesAt(IndexOfIndividual(individualId));
 
       public virtual int IndexOfIndividual(int individualId, bool throwExceptionIfNotFound = true)
       {
          var index = IndividualIds.IndexOf(individualId);
-         if(index<0 && throwExceptionIfNotFound)
+         if (index < 0 && throwExceptionIfNotFound)
             throw new OSPSuiteException(Error.IndividualWithIdNotFound(individualId));
 
          return index;

@@ -145,7 +145,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          //3 individuals to in original pop
-         var ids = new List<int> {1, 2, 3};
+         var ids = new List<int> {0, 1, 2};
 
          var parameterValues1 = new ParameterValues("Path1 [ml]");
          parameterValues1.Add(new double[] {2, 3, 4});
@@ -164,7 +164,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_values_for_a_valid_id()
       {
-         var values = sut.AllParameterValuesForIndividual(2);
+         var values = sut.AllParameterValuesForIndividual(1);
 
          values.Length.ShouldBeEqualTo(2);
          values[0].ParameterPath.ShouldBeEqualTo("Path1");
@@ -172,6 +172,15 @@ namespace OSPSuite.Core.Domain
 
          values[1].ParameterPath.ShouldBeEqualTo("Path2");
          values[1].Value.ShouldBeEqualTo(5);
+
+
+         values = sut.AllParameterValuesForIndividual(0);
+         values.Length.ShouldBeEqualTo(2);
+         values[0].ParameterPath.ShouldBeEqualTo("Path1");
+         values[0].Value.ShouldBeEqualTo(2);
+
+         values[1].ParameterPath.ShouldBeEqualTo("Path2");
+         values[1].Value.ShouldBeEqualTo(4);
       }
 
       [Observation]

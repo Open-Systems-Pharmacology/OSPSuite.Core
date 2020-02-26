@@ -153,7 +153,7 @@ namespace OSPSuite.Core.Domain.Populations
       /// </summary>
       public double[] GetPercentiles(string parameterPath) => PercentilesFor(parameterPath)?.ToArray();
 
-      public virtual string[] AllParameterPaths() => _parameterValuesCache.Keys.ToArray();
+      public virtual string[] AllParameterPaths() => _parameterValuesCache.Keys.Select(x=>x.StripUnit()).ToArray();
 
       public virtual ParameterValuesCache Clone()
       {
@@ -228,7 +228,7 @@ namespace OSPSuite.Core.Domain.Populations
 
       public ParameterValue[] AllParameterValuesAt(int indexOfIndividual)
       {
-         if (indexOfIndividual <= 0 || indexOfIndividual >= numberOfValuesPerPath)
+         if (indexOfIndividual < 0 || indexOfIndividual >= numberOfValuesPerPath)
             throw new ArgumentOutOfRangeException(nameof(indexOfIndividual));
 
          //FOR Now: Strip units so that we have path without units. This should be changed
