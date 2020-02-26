@@ -45,6 +45,22 @@ namespace OSPSuite.R.Services
       }
    }
 
+
+   public class When_converting_a_double_value_from_molar_unit_to_mass_unit : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         //50 µmol/kg
+         _result = sut.ConvertToUnit(Constants.Dimension.AMOUNT, "kg", 10, molWeight: 50);
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(500);
+      }
+   }
+
    public class When_converting_a_double_array_from_mass_unit_to_molar_unit_and_the_mol_weight_is_not_present : concern_for_DimensionTask
    {
       [Observation]
