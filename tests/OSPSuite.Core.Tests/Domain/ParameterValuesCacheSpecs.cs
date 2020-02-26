@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Populations;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
@@ -24,7 +25,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _parameterValue1 = new ParameterValue("PATH1", 11, 0.1);
-         _parameterValue2 = new ParameterValue("PATH2 [mg]", 21, 0.2);
+         _parameterValue2 = new ParameterValue("PATH2", 21, 0.2);
       }
 
       protected override void Because()
@@ -48,21 +49,23 @@ namespace OSPSuite.Core.Domain
 
 
       [Observation]
-      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path_without_unit()
+      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path_with_unit()
       {
-         sut.Has("PATH2").ShouldBeTrue();
+         sut.Has("PATH2 [mg]").ShouldBeTrue();
       }
 
       [Observation]
       public void should_be_able_to_retrieve_the_values_for_the_individual_path()
       {
          sut.ValuesFor(_parameterValue1.ParameterPath).ShouldOnlyContainInOrder(11, 12);
+         sut.ValuesFor(_parameterValue2.ParameterPath).ShouldOnlyContainInOrder(21, 22);
       }
 
       [Observation]
       public void should_be_able_to_retrieve_the_values_for_the_individual_path_as_array()
       {
          sut.GetValues(_parameterValue1.ParameterPath).ShouldOnlyContainInOrder(11, 12);
+         sut.GetValues(_parameterValue2.ParameterPath).ShouldOnlyContainInOrder(21, 22);
       }
 
       [Observation]
@@ -82,7 +85,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _parameterValue1 = new ParameterValue("PATH_P1", 11, 0.1);
-         _parameterValue2 = new ParameterValue("PATH_P [mg]", 21, 0.2);
+         _parameterValue2 = new ParameterValue("PATH_P", 21, 0.2);
       }
 
       protected override void Because()
@@ -94,7 +97,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_store_the_value_for_the_given_parameter_path_and_be_able_to_retrieve_the_parameter_paths_afterwards()
       {
-         sut.AllParameterPaths().ShouldOnlyContainInOrder(_parameterValue1.ParameterPath, _parameterValue2.ParameterPath);
+         sut.AllParameterPaths().ShouldOnlyContainInOrder(_parameterValue1.ParameterPath, _parameterValue2.ParameterPath.StripUnit());
       }
 
       [Observation]
@@ -106,9 +109,9 @@ namespace OSPSuite.Core.Domain
 
 
       [Observation]
-      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path_without_unit()
+      public void should_return_true_if_asked_if_it_contains_some_values_for_the_added_path_with_unit()
       {
-         sut.Has("PATH_P").ShouldBeTrue();
+         sut.Has("PATH_P [mg]").ShouldBeTrue();
       }
 
       [Observation]
@@ -336,7 +339,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.SetValues("PATH1 [mg]", new double[] {1, 2, 3});
+         sut.SetValues("PATH1", new double[] {1, 2, 3});
          sut.SetValues("PATH2 [mg] REST", new double[] {1, 2, 3});
       }
 

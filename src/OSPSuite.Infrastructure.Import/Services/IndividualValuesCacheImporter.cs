@@ -108,7 +108,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          for (int i = 0; i < headers.Length; i++)
          {
-            var header = headers[i];
+            var header = headers[i].StripUnit();
             if (string.Equals(header, Constants.Population.INDIVIDUAL_ID_COLUMN))
             {
                indexIndividualId = i;
@@ -125,7 +125,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             for (int i = 0; i < fieldCount; i++)
             {
-               var header = headers[i];
+               var header = headers[i].StripUnit();
                if (i == indexIndividualId)
                   individualPropertiesCache.IndividualIds.Add(csv.IntAt(i));
 
