@@ -36,6 +36,8 @@ namespace OSPSuite.R.Domain
 
       public void AddDynamicPKParameter(DynamicPKParameter dynamicPKParameter) => _dynamicPKParameters.Add(dynamicPKParameter);
 
-      public IReadOnlyList<DynamicPKParameter> AllDynamicParameters => _dynamicPKParameters;
+      public IReadOnlyList<DynamicPKParameter> AllDynamicPKParameters => _dynamicPKParameters;
+
+      public DynamicPKParameter[] AllDynamicPKParametersAsArray() => AllDynamicPKParameters.ToArray();
    }
 }

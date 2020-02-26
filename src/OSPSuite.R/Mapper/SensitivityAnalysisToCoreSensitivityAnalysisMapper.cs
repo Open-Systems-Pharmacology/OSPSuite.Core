@@ -50,7 +50,7 @@ namespace OSPSuite.R.Mapper
          });
 
 
-         sensitivityAnalysis.AllDynamicParameters.Each(coreSensitivityAnalysis.AddDynamicPKParameter);
+         sensitivityAnalysis.AllDynamicPKParameters.Each(coreSensitivityAnalysis.AddDynamicPKParameter);
 
          return coreSensitivityAnalysis;
       }
