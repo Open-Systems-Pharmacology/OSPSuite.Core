@@ -19,7 +19,8 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\OSPSuite.Assets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
