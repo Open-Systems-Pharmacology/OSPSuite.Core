@@ -9,6 +9,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
+using ICoreContainerTask = OSPSuite.Core.Domain.Services.IContainerTask;
 
 namespace OSPSuite.R.Services
 {
@@ -20,8 +21,8 @@ namespace OSPSuite.R.Services
       IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
 
       /// <summary>
-      /// Returns all parameter matching <paramref name="path"/> that could meaningfully be used in a SA analysis.
-      /// For example, it will only return parameter used in model, non-categorical etc.
+      ///    Returns all parameter matching <paramref name="path" /> that could meaningfully be used in a SA analysis.
+      ///    For example, it will only return parameter used in model, non-categorical etc.
       /// </summary>
       IParameter[] AllParametersForSensitivityAnalysisMatching(ISimulation simulation, string path);
 
@@ -29,21 +30,30 @@ namespace OSPSuite.R.Services
       IContainer[] AllContainersMatching(IContainer container, string path);
       IQuantity[] AllQuantitiesMatching(IContainer container, string path);
       IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path);
+
+      string[] AllQuantityPathsIn(IContainer container);
+      string[] AllContainerPathsIn(IContainer container);
+      string[] AllMoleculesPathsIn(IContainer container);
+      string[] AllParameterPathsIn(IContainer container);
    }
 
    public class ContainerTask : IContainerTask
    {
       private readonly IEntityPathResolver _entityPathResolver;
       private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
+      private readonly ICoreContainerTask _coreContainerTask;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
       private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
       private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
 
-
-      public ContainerTask(IEntityPathResolver entityPathResolver, ISensitivityAnalysisTask sensitivityAnalysisTask)
+      public ContainerTask(
+         IEntityPathResolver entityPathResolver,
+         ISensitivityAnalysisTask sensitivityAnalysisTask,
+         ICoreContainerTask coreContainerTask)
       {
          _entityPathResolver = entityPathResolver;
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
+         _coreContainerTask = coreContainerTask;
       }
 
       public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path) =>
@@ -67,7 +77,7 @@ namespace OSPSuite.R.Services
 
       public IContainer[] AllContainersMatching(IContainer container, string path) =>
          // Distributed parameters are also containers but should not be returned from the following method
-         allEntitiesMatching<IContainer>(container, path).Where(c => !c.IsAnImplementationOf<IDistributedParameter>() && !c.IsAnImplementationOf<IMoleculeAmount>()).ToArray();
+         allEntitiesMatching<IContainer>(container, path).Where(isRealContainer).ToArray();
 
       public IParameter[] AllParametersMatching(IContainer container, string path) =>
          allEntitiesMatching<IParameter>(container, path);
@@ -78,6 +88,21 @@ namespace OSPSuite.R.Services
       public IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path) =>
          allEntitiesMatching<IMoleculeAmount>(container, path);
 
+      public string[] AllQuantityPathsIn(IContainer container) => allEntityPathIn<IQuantity>(container);
+
+      public string[] AllContainerPathsIn(IContainer container) => allEntityPathIn<IContainer>(container, isRealContainer);
+
+      public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<IMoleculeAmount>(container);
+
+      public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
+
+      private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
+      {
+         return _coreContainerTask.CacheAllChildrenSatisfying(container, filterFunc ?? (x => true)).Keys.ToArray();
+      }
+
+      private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<IMoleculeAmount>();
+
       private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
          if (string.IsNullOrEmpty(path))
@@ -85,7 +110,7 @@ namespace OSPSuite.R.Services
 
          var pathArray = path.ToPathArray();
          validate(pathArray);
-         
+
          // no wild cards => it's a single path and do not need to inspect 
          if (!path.Contains(WILD_CARD))
          {
@@ -101,12 +126,12 @@ namespace OSPSuite.R.Services
 
       private void validate(string[] path)
       {
-         var invalidEntries =  path.Where(x => !string.Equals(x, WILD_CARD_RECURSIVE)).Where(x => x.Contains(WILD_CARD_RECURSIVE)).ToList();
+         var invalidEntries = path.Where(x => !string.Equals(x, WILD_CARD_RECURSIVE)).Where(x => x.Contains(WILD_CARD_RECURSIVE)).ToList();
          if (!invalidEntries.Any())
             return;
 
          var correctedEntries = invalidEntries.Select(x => x.Replace(WILD_CARD_RECURSIVE, WILD_CARD)).ToList();
-         throw new OSPSuiteException(Error.WildCardRecursiveCannotBePartOfPath(WILD_CARD_RECURSIVE,  invalidEntries.ToPathString(), correctedEntries.ToPathString()));
+         throw new OSPSuiteException(Error.WildCardRecursiveCannotBePartOfPath(WILD_CARD_RECURSIVE, invalidEntries.ToPathString(), correctedEntries.ToPathString()));
       }
 
       private string createSearchPattern(string[] path)
@@ -114,7 +139,8 @@ namespace OSPSuite.R.Services
          var pattern = new List<string>();
          foreach (var entry in path)
          {
-            if (string.Equals(entry, WILD_CARD)) { 
+            if (string.Equals(entry, WILD_CARD))
+            {
                // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
                pattern.Add($"{ALL_BUT_PATH_DELIMITER}?");
                pattern.Add(PATH_DELIMITER);
@@ -131,7 +157,7 @@ namespace OSPSuite.R.Services
             }
          }
 
-         pattern.RemoveAt(pattern.Count-1);
+         pattern.RemoveAt(pattern.Count - 1);
          var searchPattern = pattern.ToString("");
          return $"^{searchPattern}$";
       }
