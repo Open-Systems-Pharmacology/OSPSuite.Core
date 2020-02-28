@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -64,6 +65,9 @@ namespace OSPSuite.R.Services
 
          _liverIntracellularMoleculeAmount = new MoleculeAmount().WithName("Drug");
          _liverIntracellular.Add(_liverIntracellularMoleculeAmount);
+
+         _simulation= A.Fake<ISimulation>();
+         _simulation.Model.Root = _organism;
       }
 
       protected string pathFrom(params string[] paths) => paths.ToPathString();
@@ -208,6 +212,27 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          _result = sut.AllParameterPathsIn(_organism);
+      }
+
+      [Observation]
+      public void should_return_the_expected_path()
+      {
+         var parameters = new[]
+         {
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter
+         };
+         var expected = parameters.Select(x => x.EntityPath()).ToArray();
+         _result.ShouldOnlyContain(expected);
+      }
+   }
+
+   public class When_returning_all_parameter_path_from_a_given_simulation : concern_for_ContainerTask
+   {
+      private string[] _result;
+
+      protected override void Because()
+      {
+         _result = sut.AllParameterPathsIn(_simulation);
       }
 
       [Observation]

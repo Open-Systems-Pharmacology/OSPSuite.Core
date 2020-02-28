@@ -35,6 +35,12 @@ namespace OSPSuite.R.Services
       string[] AllContainerPathsIn(IContainer container);
       string[] AllMoleculesPathsIn(IContainer container);
       string[] AllParameterPathsIn(IContainer container);
+
+      string[] AllQuantityPathsIn(IModelCoreSimulation simulation);
+      string[] AllContainerPathsIn(IModelCoreSimulation simulation);
+      string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
+      string[] AllParameterPathsIn(IModelCoreSimulation simulation);
+
    }
 
    public class ContainerTask : IContainerTask
@@ -95,6 +101,14 @@ namespace OSPSuite.R.Services
       public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<IMoleculeAmount>(container);
 
       public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
+
+      public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) =>  AllQuantityPathsIn(simulation?.Model?.Root);
+
+      public string[] AllContainerPathsIn(IModelCoreSimulation simulation) => AllContainerPathsIn(simulation?.Model?.Root);
+
+      public string[] AllMoleculesPathsIn(IModelCoreSimulation simulation) => AllMoleculesPathsIn(simulation?.Model?.Root);
+
+      public string[] AllParameterPathsIn(IModelCoreSimulation simulation) => AllParameterPathsIn(simulation?.Model?.Root);
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {
