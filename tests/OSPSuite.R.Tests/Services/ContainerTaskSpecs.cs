@@ -1,15 +1,14 @@
-﻿using FakeItEasy;
+﻿using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
-   public abstract class concern_for_ContainerTask : ContextSpecification<IContainerTask>
+   public abstract class concern_for_ContainerTask : ContextForIntegration<IContainerTask>
    {
       protected const string INTRACELLULAR = "Intracellular";
       protected IContainer _organism;
@@ -25,19 +24,19 @@ namespace OSPSuite.R.Services
       protected IParameter _height;
       protected IParameter _weight;
       protected IContainer _liverIntracellularSubContainer;
-      protected IParameter _gfr;
-      private IEntityPathResolver _entityPathResolver;
+      protected IDistributedParameter _gfr;
       protected IParameter _clearance;
       protected MoleculeAmount _liverIntracellularMoleculeAmount;
-      protected ISensitivityAnalysisTask _sensitivityAnalysisTask;
       protected ISimulation _simulation;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         sut = Api.GetContainerTask();
+      }
 
       protected override void Context()
       {
-         _entityPathResolver = new EntityPathResolverForSpecs();
-         _sensitivityAnalysisTask= A.Fake<ISensitivityAnalysisTask>();
-         sut = new ContainerTask(_entityPathResolver, _sensitivityAnalysisTask);
-
          _organism = new Container().WithName(Constants.ORGANISM);
          _liver = new Container().WithName("Liver");
          _kidney = new Container().WithName("Kidney");
@@ -65,15 +64,9 @@ namespace OSPSuite.R.Services
 
          _liverIntracellularMoleculeAmount = new MoleculeAmount().WithName("Drug");
          _liverIntracellular.Add(_liverIntracellularMoleculeAmount);
-
-         _simulation = A.Fake<ISimulation>();
-         _simulation.Model.Root = _organism;
       }
 
-      protected string pathFrom(params string[] paths)
-      {
-         return paths.ToPathString();
-      }
+      protected string pathFrom(params string[] paths) => paths.ToPathString();
    }
 
    public class When_resolving_all_parameters_of_a_container_with_an_explicit_path : concern_for_ContainerTask
@@ -115,21 +108,6 @@ namespace OSPSuite.R.Services
       {
          sut.AllParametersMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
          sut.AllParametersMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}Vol")).ShouldBeEmpty();
-      }
-   }
-
-   public class When_resolving_all_parameters_potentially_variable_for_sensitivity_analysis_matching_a_criteria : concern_for_ContainerTask
-   {
-      protected override void Context()
-      {
-         base.Context();
-         A.CallTo(() => _sensitivityAnalysisTask.PotentialVariableParameterPathsFor(_simulation)).Returns(new []{_volumeLiverCell.ConsolidatedPath()});
-      }
-
-      [Observation]
-      public void should_return_the_parameters_that_match_the_criteria_and_also_potentially_variable_in_a_sensitivity_analysis()
-      {
-         sut.AllParametersForSensitivityAnalysisMatching(_simulation, pathFrom(Constants.WILD_CARD, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell);
       }
    }
 
@@ -217,9 +195,66 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_molecule_amounts()
       {
-         sut.AllMoleculesMatching(_organism,Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
+         sut.AllMoleculesMatching(_organism, Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
          sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}")).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
          sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, _liverIntracellularMoleculeAmount.Name)).ShouldBeEmpty();
+      }
+   }
+
+   public class When_returning_all_parameter_path_from_a_given_container : concern_for_ContainerTask
+   {
+      private string[] _result;
+
+      protected override void Because()
+      {
+         _result = sut.AllParameterPathsIn(_organism);
+      }
+
+      [Observation]
+      public void should_return_the_expected_path()
+      {
+         var parameters = new[]
+         {
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter
+         };
+         var expected = parameters.Select(x => x.EntityPath()).ToArray();
+         _result.ShouldOnlyContain(expected);
+      }
+   }
+
+   public class When_returning_all_quantity_path_from_a_given_sub_container : concern_for_ContainerTask
+   {
+      private string[] _result;
+
+      protected override void Because()
+      {
+         _result = sut.AllQuantityPathsIn(_liver);
+      }
+
+      [Observation]
+      public void should_return_the_expected_path()
+      {
+         var quantities = new IQuantity[] {_volumeLiver, _volumeLiverCell, _clearance, _liverIntracellularMoleculeAmount};
+         var expected = quantities.Select(x => x.EntityPath()).ToArray();
+         _result.ShouldOnlyContain(expected);
+      }
+   }
+
+   public class When_returning_all_container_path_from_a_given_container : concern_for_ContainerTask
+   {
+      private string[] _result;
+
+      protected override void Because()
+      {
+         _result = sut.AllContainerPathsIn(_organism);
+      }
+
+      [Observation]
+      public void should_return_the_expected_path()
+      {
+         var containers = new[] {_kidney, _liver, _liverIntracellular, _kidneyIntracellular, _liverIntracellularSubContainer,};
+         var expected = containers.Select(x => x.EntityPath()).ToArray();
+         _result.ShouldOnlyContain(expected);
       }
    }
 }

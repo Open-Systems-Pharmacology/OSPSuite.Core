@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Domain
       new IDistributionFormula Formula { get; set; }
       IParameter MeanParameter { get; }
       IParameter DeviationParameter { get; }
+      IParameter PercentileParameter { get; }
       double ProbabilityDensityFor(double value);
       double ValueFor(double percentile);
       void RefreshPercentile();
@@ -126,7 +127,7 @@ namespace OSPSuite.Core.Domain
          set
          {
             //percentile set first so that correct value is available if a value event is raised
-            percentileParameter.IsFixedValue = value;
+            PercentileParameter.IsFixedValue = value;
             base.IsFixedValue = value;
             OnPropertyChanged(() => Percentile);
          }
@@ -134,11 +135,11 @@ namespace OSPSuite.Core.Domain
 
       private double percentile
       {
-         get => percentileParameter.Value;
-         set => percentileParameter.Value = value;
+         get => PercentileParameter.Value;
+         set => PercentileParameter.Value = value;
       }
 
-      private IParameter percentileParameter => this.GetSingleChildByName<IParameter>(Constants.Distribution.PERCENTILE);
+      public IParameter PercentileParameter => this.Parameter(Constants.Distribution.PERCENTILE);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
