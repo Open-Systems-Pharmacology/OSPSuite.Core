@@ -46,13 +46,13 @@ namespace OSPSuite.Core.Services
             _parserFunc.SetParameterValues(parameterValues);
             return _parserFunc.CalcExpression(variableValues);
          }
-         catch (FuncParserException)
+         catch (OSPSuiteException ex)
          {
-            throw;
+            throw new FuncParserException(ex.Message,ex);
          }
-         catch (Exception e)
+         catch (Exception ex)
          {
-            throw new FuncParserException("Unable to compute expression", e);
+            throw new FuncParserException($"Unable to compute expression: {ex.Message}", ex);
          }
       }
 
@@ -62,13 +62,13 @@ namespace OSPSuite.Core.Services
          {
             _parserFunc.Parse();
          }
-         catch (FuncParserException)
+         catch (OSPSuiteException ex)
          {
-            throw;
+            throw new FuncParserException(ex.Message, ex);
          }
-         catch (Exception e)
+         catch (Exception ex)
          {
-            throw new FuncParserException("Unable to parse expression", e);
+            throw new FuncParserException($"Unable to parse expression: {ex.Message}", ex);
          }
       }
    }
