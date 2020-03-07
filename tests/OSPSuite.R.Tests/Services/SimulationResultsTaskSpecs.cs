@@ -4,7 +4,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.R.Services
 {
@@ -90,6 +89,30 @@ namespace OSPSuite.R.Services
       {
          base.Cleanup();
          FileHelper.DeleteFile(_csvFile);
+      }
+   }
+
+   public class When_exporting_empty_simulation_results_to_file : concern_for_SimulationResultsTask
+   {
+      private SimulationResults _results;
+      private string _csvFile;
+
+      protected override void Context()
+      {
+         base.Context();
+         _results = new SimulationResults();
+         _csvFile = FileHelper.GenerateTemporaryFileName();
+      }
+
+      protected override void Because()
+      {
+         sut.ExportResultsToCSV(_results, _simulation, _csvFile);
+      }
+
+      [Observation]
+      public void should_not_have_crated_a_file_with_the_exported_results()
+      {
+         FileHelper.FileExists(_csvFile).ShouldBeFalse();
       }
    }
 
