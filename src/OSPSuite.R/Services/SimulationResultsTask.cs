@@ -34,6 +34,9 @@ namespace OSPSuite.R.Services
 
       public void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string csvFile)
       {
+         if (simulationResults.IsNull() || simulationResults.Count == 0)
+            return;
+
          var dataTable = _simulationResultsToDataTableConverter.ResultsToDataTable(simulationResults, simulation);
          dataTable.ExportToCSV(csvFile);
       }
