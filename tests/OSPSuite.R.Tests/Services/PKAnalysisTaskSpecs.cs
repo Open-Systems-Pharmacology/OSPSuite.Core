@@ -6,7 +6,7 @@ using OSPSuite.R.Domain;
 
 namespace OSPSuite.R.Services
 {
-   public abstract class concern_for_PKAnalysesTask : ContextForIntegration<IPKAnalysesTask>
+   public abstract class concern_for_PKAnalysisTask : ContextForIntegration<IPKAnalysisTask>
    {
       protected string _pkParameterFile;
       protected Simulation _simulation;
@@ -18,11 +18,11 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
-         sut = Api.GetPKAnalysesTask();
+         sut = Api.GetPKAnalysisTask();
       }
    }
 
-   public class When_importing_a_valid_pk_parameter_files : concern_for_PKAnalysesTask
+   public class When_importing_a_valid_pk_parameter_files : concern_for_PKAnalysisTask
    {
       private PopulationSimulationPKAnalyses _result;
 

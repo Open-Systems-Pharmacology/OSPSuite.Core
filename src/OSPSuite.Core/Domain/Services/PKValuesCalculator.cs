@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Services
       //This represents the time interval between simulation start and end
       private const int FULL_RANGE_INTERVAL = 3;
 
-      public PKValues CalculatePK(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options = null, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null)
+      public PKValues CalculatePK(IReadOnlyList<float> time, IReadOnlyList<float> concentration, PKCalculationOptions options = null, IReadOnlyList<UserDefinedPKParameter> userDefinedPKParameters = null)
       {
          //we use a cache to avoid conversion problem between double and float. 
          var pk = new Cache<string, double>();
@@ -50,8 +50,8 @@ namespace OSPSuite.Core.Domain.Services
          else if (allStandardIntervals.Any())
             setMultipleDosingPKValues(pk, allStandardIntervals, options);
 
-         if (dynamicPKParameters != null)
-            addDynamicPKValues(pk, dynamicPKParameters, timeValues, concentrationValues, options);
+         if (userDefinedPKParameters != null)
+            addDynamicPKValues(pk, userDefinedPKParameters, timeValues, concentrationValues, options);
 
          return pkValuesFrom(pk);
       }
@@ -63,18 +63,18 @@ namespace OSPSuite.Core.Domain.Services
          var lastInterval = allIntervals[LAST_INTERVAL];
          var fullInterval = allIntervals[FULL_RANGE_INTERVAL];
 
-         setCmaxAndTmax(pk, firstInterval, firstInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_t1_t2, Constants.PKParameters.Tmax_t1_t2);
-         setValue(pk, Constants.PKParameters.Ctrough_t2, firstInterval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_t1_t2, firstInterval.AucTend, firstInterval.DrugMassPerBodyWeight);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_t1, firstInterval.AucInf, firstInterval.DrugMassPerBodyWeight);
+         setCmaxAndTmax(pk, firstInterval, firstInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tD1_tD2, Constants.PKParameters.Tmax_tD1_tD2);
+         setValue(pk, Constants.PKParameters.Ctrough_tD2, firstInterval.CTrough);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tD1_tD2, firstInterval.AucTend, firstInterval.DrugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tD1, firstInterval.AucInf, firstInterval.DrugMassPerBodyWeight);
          setFirstIntervalPKValues(pk, firstInterval, firstInterval.DrugMassPerBodyWeight);
 
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tLast_minus_1_tLast, lastMinusOneInterval.AucTend, lastMinusOneInterval.DrugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tDLast_minus_1_tDLast, lastMinusOneInterval.AucTend, lastMinusOneInterval.DrugMassPerBodyWeight);
 
-         setCmaxAndTmax(pk, lastInterval, lastInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tLast_tEnd, Constants.PKParameters.Tmax_tLast_tEnd);
-         setValue(pk, Constants.PKParameters.Ctrough_tLast, lastInterval.CTrough);
-         setValue(pk, Constants.PKParameters.Thalf_tLast_tEnd, lastInterval.Thalf);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tLast, lastInterval.AucInf, lastInterval.DrugMassPerBodyWeight);
+         setCmaxAndTmax(pk, lastInterval, lastInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tDLast_tDEnd, Constants.PKParameters.Tmax_tDLast_tDEnd);
+         setValue(pk, Constants.PKParameters.Ctrough_tDLast, lastInterval.CTrough);
+         setValue(pk, Constants.PKParameters.Thalf_tDLast_tEnd, lastInterval.Thalf);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tDLast, lastInterval.AucInf, lastInterval.DrugMassPerBodyWeight);
 
          setCmaxAndTmax(pk, fullInterval, options.DrugMassPerBodyWeight, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
       }
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          setCmaxAndTmax(pk, interval, drugMassPerBodyWeight, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
          setValue(pk, Constants.PKParameters.C_tEnd, interval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC, interval.AucTend, drugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tEnd, interval.AucTend, drugMassPerBodyWeight);
          setValueAndNormalize(pk, Constants.PKParameters.AUC_inf, interval.AucInf, drugMassPerBodyWeight);
          setFirstIntervalPKValues(pk, interval, drugMassPerBodyWeight);
 
@@ -144,12 +144,12 @@ namespace OSPSuite.Core.Domain.Services
          return options ?? new PKCalculationOptions();
       }
 
-      public PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null, IReadOnlyList<DynamicPKParameter> dynamicPKParameters = null)
+      public PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null, IReadOnlyList<UserDefinedPKParameter> userDefinedPKParameters = null)
       {
-         return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options, dynamicPKParameters);
+         return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options, userDefinedPKParameters);
       }
 
-      private void addDynamicPKValues(ICache<string, double> pk, IReadOnlyList<DynamicPKParameter> dynamicPKParameters, List<float> time, List<float> concentration, PKCalculationOptions options)
+      private void addDynamicPKValues(ICache<string, double> pk, IReadOnlyList<UserDefinedPKParameter> dynamicPKParameters, List<float> time, List<float> concentration, PKCalculationOptions options)
       {
          foreach (var dynamicPKParameter in dynamicPKParameters)
          {

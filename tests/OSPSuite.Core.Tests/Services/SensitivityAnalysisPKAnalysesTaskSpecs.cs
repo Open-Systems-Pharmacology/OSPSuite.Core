@@ -82,8 +82,7 @@ namespace OSPSuite.Core.Services
       private SimulationResults _runResults;
       private PKParameter _p1;
       private PopulationSimulationPKAnalyses _popAnalysis;
-      private List<DynamicPKParameter> _dynamicParameters;
-      private DynamicPKParameter _dynamicParameter1;
+      private UserDefinedPKParameter _userDefinedParameter1;
 
       protected override void Context()
       {
@@ -97,24 +96,22 @@ namespace OSPSuite.Core.Services
          var pKCalculationOptions = new PKCalculationOptions();
          A.CallTo(_pkCalculationOptionsFactory).WithReturnType<PKCalculationOptions>().Returns(pKCalculationOptions);
 
-         _p1 = new PKParameter().WithName("AUC");
-         _p1.Mode = PKParameterMode.Single;
+         _p1 = new PKParameter {Name = "AUC", Mode = PKParameterMode.Single};
+         _userDefinedParameter1 = new UserDefinedPKParameter { Name = "Dynamic1", Mode = PKParameterMode.Single};
 
-         A.CallTo(() => _pkParameterRepository.All()).Returns(new[] { _p1 });
+         A.CallTo(() => _pkParameterRepository.All()).Returns(new[] { _p1, _userDefinedParameter1 });
          var individualResults = A.Fake<IndividualResults>();
          A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new[] { individualResults }));
-         _dynamicParameter1 = new DynamicPKParameter { Name = "Dynamic1" };
-         _dynamicParameters = new List<DynamicPKParameter>() { _dynamicParameter1 };
 
          var pKValues = new PKValues();
          pKValues.AddValue(_p1.Name, 10f);
-         pKValues.AddValue(_dynamicParameter1.Name, 30f);
+         pKValues.AddValue(_userDefinedParameter1.Name, 30f);
          A.CallTo(_pkValuesCalculator).WithReturnType<PKValues>().Returns(pKValues);
       }
 
       protected override void Because()
       {
-         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults, _dynamicParameters);
+         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults);
       }
 
       [Observation]
@@ -122,7 +119,7 @@ namespace OSPSuite.Core.Services
       {
          _popAnalysis.All().Count().ShouldBeEqualTo(2);
          _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
-         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _dynamicParameter1.Name).Values[0].ShouldBeEqualTo(30f);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _userDefinedParameter1.Name).Values[0].ShouldBeEqualTo(30f);
       }
    }
 }

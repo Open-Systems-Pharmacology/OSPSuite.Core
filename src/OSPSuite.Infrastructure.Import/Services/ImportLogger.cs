@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using ILogger = OSPSuite.Core.Services.ILogger;
 
@@ -42,6 +43,8 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public virtual string LogString => Log.ToString("\n");
 
+      public virtual bool HasError => Status.Is(NotificationType.Error);
+
       public virtual NotificationType Status
       {
          get
@@ -56,6 +59,14 @@ namespace OSPSuite.Infrastructure.Import.Services
 
             return NotificationType.Info;
          }
+      }
+
+      public void ThrowOnError()
+      {
+         if (!HasError)
+            return;
+
+         throw new OSPSuiteException(LogString);
       }
    }
 }

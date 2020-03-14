@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.R.Domain;
-using OSPSuite.Utility.Container;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
 
 namespace OSPSuite.R.Services
@@ -52,21 +51,21 @@ namespace OSPSuite.R.Services
    {
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
-      private DynamicPKParameter _dynamicPKParameter;
+      private UserDefinedPKParameter _userDefinedPKParameter;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          var simulationPersister = Api.GetSimulationPersister();
+         var pkParametersTask = Api.GetPKParameterTask();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) { NumberOfSteps = 2, VariationRange = 0.2 };
 
          //Should calculate CMax/100
-         _dynamicPKParameter = new DynamicPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.Cmax};
+         _userDefinedPKParameter = new UserDefinedPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.Cmax, Mode = PKParameterMode.Always};
+         pkParametersTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
 
-
-         _sensitivityAnalysis.AddDynamicPKParameter(_dynamicPKParameter);
          var containerTask = Api.GetContainerTask();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
          _sensitivityAnalysis.AddParameterPaths(liverVolumes.Select(x => x.ConsolidatedPath()));
@@ -80,7 +79,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected_and_return_results_for_dynamic_parameters()
       {
-         var allPKParameterSensitivities = _result.AllPKParameterSensitivities.Where(x => x.PKParameterName == _dynamicPKParameter.Name);
+         var allPKParameterSensitivities = _result.AllPKParameterSensitivities.Where(x => x.PKParameterName == _userDefinedPKParameter.Name);
          allPKParameterSensitivities.Any().ShouldBeTrue();
       }
    }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
@@ -52,12 +53,18 @@ namespace OSPSuite.Core.Domain.Services
    {
       private readonly IEntitiesInSimulationRetriever _quantityRetriever;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
+      private readonly IPKParameterRepository _pkParameterRepository;
       private readonly IDimension _timeDimension;
 
-      public SimulationResultsToDataTableConverter(IDimensionFactory dimensionFactory, IEntitiesInSimulationRetriever quantityRetriever, IDisplayUnitRetriever displayUnitRetriever)
+      public SimulationResultsToDataTableConverter(
+         IDimensionFactory dimensionFactory, 
+         IEntitiesInSimulationRetriever quantityRetriever, 
+         IDisplayUnitRetriever displayUnitRetriever, 
+         IPKParameterRepository pkParameterRepository)
       {
          _quantityRetriever = quantityRetriever;
          _displayUnitRetriever = displayUnitRetriever;
+         _pkParameterRepository = pkParameterRepository;
          _timeDimension = dimensionFactory.Dimension(Constants.Dimension.TIME);
       }
 
@@ -135,20 +142,22 @@ namespace OSPSuite.Core.Domain.Services
          dataTable.AddColumn<string>(PARAMETER);
          dataTable.AddColumn<string>(VALUE);
          dataTable.AddColumn<string>(UNIT);
+         dataTable.AddColumn<string>(DISPLAY);
 
          dataTable.BeginLoadData();
-         foreach (var pkParameter in pkAnalyses.All())
+         foreach (var pkAnalysis in pkAnalyses.All())
          {
-            var parameter = pkParameter;
-            var unit = _displayUnitRetriever.PreferredUnitFor(parameter);
-            parameter.Values.Each((value, index) =>
+            var unit = _displayUnitRetriever.PreferredUnitFor(pkAnalysis);
+            var pkParameter = _pkParameterRepository.FindByName(pkAnalysis.Name);
+            pkAnalysis.Values.Each((value, index) =>
             {
                var row = dataTable.NewRow();
                row[INDIVIDUAL_ID] = index;
-               row[QUANTITY_PATH] = inQuote(parameter.QuantityPath); 
-               row[PARAMETER] = inQuote(parameter.Name);
-               row[VALUE] = parameter.ConvertToUnit(value, unit).ConvertedTo<string>();
+               row[QUANTITY_PATH] = inQuote(pkAnalysis.QuantityPath); 
+               row[PARAMETER] = inQuote(pkAnalysis.Name);
+               row[VALUE] = pkAnalysis.ConvertToUnit(value, unit).ConvertedTo<string>();
                row[UNIT] = unit.Name;
+               row[DISPLAY] = pkParameter.DisplayName;
                dataTable.Rows.Add(row);
             });
          }

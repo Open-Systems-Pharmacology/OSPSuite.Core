@@ -8,6 +8,8 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       void Add(PKParameter pkParameter);
       string DisplayNameFor(string pkParameterName);
       string DescriptionFor(string pkParameterName);
+      void Remove(PKParameter pkParameter);
+      PKParameter FindByName(string pkParameterName);
    }
 
    public class PKParameterRepository : IPKParameterRepository
@@ -40,5 +42,15 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          var pkParameter = _allParameters[pkParameterName];
          return pkParameter == null ? string.Empty : pkParameter.Description;
       }
+
+      public void Remove(PKParameter pkParameter)
+      {
+         if (pkParameter == null)
+            return;
+
+         _allParameters.Remove(pkParameter.Name);
+      }
+
+      public PKParameter FindByName(string pkParameterName) => _allParameters[pkParameterName];
    }
 }

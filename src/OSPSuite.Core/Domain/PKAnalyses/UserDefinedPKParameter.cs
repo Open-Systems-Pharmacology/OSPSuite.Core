@@ -22,9 +22,9 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       Tthreshold,
    }
 
-   public class DynamicPKParameter : PKParameter
+   public class UserDefinedPKParameter : PKParameter
    {
-      public DynamicPKParameter()
+      public UserDefinedPKParameter()
       {
          // Default dimension for a dynamic PK Parameter for now 
          Dimension = Constants.Dimension.NO_DIMENSION;
