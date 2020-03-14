@@ -7,7 +7,7 @@ using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.R.Extensions;
+using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
@@ -32,18 +32,24 @@ namespace OSPSuite.R.Services
    {
       private readonly IIndividualValuesCacheImporter _individualValuesCacheImporter;
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
+      private readonly RLogger _logger;
 
-      public PopulationTask(IIndividualValuesCacheImporter individualValuesCacheImporter, IEntitiesInSimulationRetriever entitiesInSimulationRetriever)
+      public PopulationTask(
+         IIndividualValuesCacheImporter individualValuesCacheImporter, 
+         IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
+         RLogger logger)
       {
          _individualValuesCacheImporter = individualValuesCacheImporter;
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
+         _logger = logger;
       }
 
       public IndividualValuesCache ImportPopulation(string fileFullPath)
       {
          var importLogger = new ImportLogger();
          var parameterValuesCache = _individualValuesCacheImporter.ImportFrom(fileFullPath, importLogger);
-         importLogger.LogToR();
+         importLogger.ThrowOnError();
+         _logger.Log(importLogger);
          return parameterValuesCache;
       }
 

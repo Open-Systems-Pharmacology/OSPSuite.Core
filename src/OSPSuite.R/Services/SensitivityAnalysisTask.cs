@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.R.Extensions;
+using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Extensions;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
@@ -39,15 +39,18 @@ namespace OSPSuite.R.Services
       private readonly ISensitivityAnalysisToCoreSensitivityAnalysisMapper _sensitivityAnalysisMapper;
       private readonly ISimulationResultsToDataTableConverter _simulationResultsToDataTableConverter;
       private readonly ISensitivityAnalysisRunResultsImportTask _sensitivityAnalysisRunResultsImportTask;
+      private readonly RLogger _logger;
 
       public SensitivityAnalysisTask(
          ISensitivityAnalysisToCoreSensitivityAnalysisMapper sensitivityAnalysisMapper,
          ISimulationResultsToDataTableConverter simulationResultsToDataTableConverter,
-         ISensitivityAnalysisRunResultsImportTask sensitivityAnalysisRunResultsImportTask)
+         ISensitivityAnalysisRunResultsImportTask sensitivityAnalysisRunResultsImportTask,
+         RLogger logger)
       {
          _sensitivityAnalysisMapper = sensitivityAnalysisMapper;
          _simulationResultsToDataTableConverter = simulationResultsToDataTableConverter;
          _sensitivityAnalysisRunResultsImportTask = sensitivityAnalysisRunResultsImportTask;
+         _logger = logger;
       }
 
       public string[] PotentialVariableParameterPathsFor(ISimulation simulation)
@@ -66,7 +69,8 @@ namespace OSPSuite.R.Services
       public SensitivityAnalysisRunResult ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles)
       {
          var sensitivityAnalysisImportResult = _sensitivityAnalysisRunResultsImportTask.ImportResults(simulation, csvFiles, CancellationToken.None, showImportProgress: false).Result;
-         sensitivityAnalysisImportResult.LogToR();
+         sensitivityAnalysisImportResult.ThrowOnError();
+         _logger.Log(sensitivityAnalysisImportResult);
          return sensitivityAnalysisImportResult.SensitivityAnalysisRunResult;
       }
    }

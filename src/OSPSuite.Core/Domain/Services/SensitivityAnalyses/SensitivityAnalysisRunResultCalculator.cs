@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       {
          var sensitivityRunResult = new SensitivityAnalysisRunResult();
 
-         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, variationData.NumberOfVariations, simulationResults, sensitivityAnalysis.AllDynamicPKParameters);
+         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, variationData.NumberOfVariations, simulationResults);
          foreach (var pkParameter in pkAnalyses.All())
          {
             sensitivityAnalysis.AllSensitivityParameters.Each((sensitivityParameter, index) =>

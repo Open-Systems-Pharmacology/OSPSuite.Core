@@ -304,10 +304,11 @@ namespace OSPSuite.Core.Domain
          public const string MOLECULAR_WEIGHT = "Molecular weight";
          public const string LOG_UNITS = "Log Units";
          public const string FRACTION = "Fraction";
+         public const string AUC_MOLAR = "AUC (molar)";
+         public const string VOLUME_PER_BODY_WEIGHT = "Volume per body weight";
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
-
-
+         
          public static class Units
          {
             public const string Seconds = "s";
@@ -328,7 +329,9 @@ namespace OSPSuite.Core.Domain
          public const string PARAMETER = "Parameter";
          public const string VALUE = "Value";
          public const string UNIT = "Unit";
+         public const string DISPLAY = "Display";
       }
+
 
       public static class SensitivityAnalysisResults
       {
@@ -350,14 +353,14 @@ namespace OSPSuite.Core.Domain
 
       public static class PKParameters
       {
-         internal const string FirstIntervalSuffix = "_t1_t2";
-         internal const string LastIntervalSuffix = "_tLast_tEnd";
+         internal const string FirstIntervalSuffix = "_tD1_tD2";
+         internal const string LastIntervalSuffix = "_tDLast_tEnd";
          internal const string NormSuffix = "_norm";
          public const string C_max = "C_max";
          public const string C_tEnd = "C_tEnd";
          public const string Tmax = "t_max";
          public const string AUC_inf = "AUC_inf";
-         public const string AUC = "AUC";
+         public const string AUC_tEnd = "AUC_tEnd";
          public const string MRT = "MRT";
          public const string Thalf = "Thalf";
          public const string CL = "CL";
@@ -371,35 +374,35 @@ namespace OSPSuite.Core.Domain
             return $"{param}{suffix ?? string.Empty}";
          }
 
-         public static readonly string AUC_norm = NormalizedName(AUC);
+         public static readonly string AUC_tEnd_norm = NormalizedName(AUC_tEnd);
          public static readonly string C_max_norm = NormalizedName(C_max);
          public static readonly string AUC_inf_norm = NormalizedName(AUC_inf);
 
-         public static readonly string C_max_t1_t2 = Create(C_max, FirstIntervalSuffix);
-         public static readonly string C_max_t1_t2_norm = NormalizedName(C_max_t1_t2);
+         public static readonly string C_max_tD1_tD2 = Create(C_max, FirstIntervalSuffix);
+         public static readonly string C_max_tD1_tD2_norm = NormalizedName(C_max_tD1_tD2);
 
-         public static readonly string C_max_tLast_tEnd = Create(C_max, LastIntervalSuffix);
-         public static readonly string C_max_tLast_tEnd_norm = NormalizedName(C_max_tLast_tEnd);
+         public static readonly string C_max_tDLast_tDEnd = Create(C_max, LastIntervalSuffix);
+         public static readonly string C_max_tDLast_tDEnd_norm = NormalizedName(C_max_tDLast_tDEnd);
 
-         public static readonly string Tmax_t1_t2 = Create(Tmax, FirstIntervalSuffix);
-         public static readonly string Tmax_tLast_tEnd = Create(Tmax, LastIntervalSuffix);
+         public static readonly string Tmax_tD1_tD2 = Create(Tmax, FirstIntervalSuffix);
+         public static readonly string Tmax_tDLast_tDEnd = Create(Tmax, LastIntervalSuffix);
 
-         public static readonly string AUC_inf_t1 = Create(AUC_inf, "_t1");
-         public static readonly string AUC_inf_t1_norm = NormalizedName(AUC_inf_t1);
+         public static readonly string AUC_inf_tD1 = Create(AUC_inf, "_tD1");
+         public static readonly string AUC_inf_tD1_norm = NormalizedName(AUC_inf_tD1);
 
-         public static readonly string AUC_t1_t2 = Create(AUC, FirstIntervalSuffix);
-         public static readonly string AUC_t1_t2_norm = NormalizedName(AUC_t1_t2);
+         public static readonly string AUC_tD1_tD2 = Create(AUC_tEnd, FirstIntervalSuffix);
+         public static readonly string AUC_tD1_tD2_norm = NormalizedName(AUC_tD1_tD2);
 
-         public const string AUC_tLast_minus_1_tLast = "AUC_tLast_minus_1_tLast";
-         public static readonly string AUC_tLast_minus_1_tLast_norm = NormalizedName(AUC_tLast_minus_1_tLast);
+         public const string AUC_tDLast_minus_1_tDLast = "AUC_tDLast_minus_1_tDLast";
+         public static readonly string AUC_tDLast_minus_1_tDLast_norm = NormalizedName(AUC_tDLast_minus_1_tDLast);
 
-         public const string AUC_inf_tLast = "AUC_inf_tLast";
-         public static readonly string AUC_inf_tLast_norm = NormalizedName(AUC_inf_tLast);
+         public const string AUC_inf_tDLast = "AUC_inf_tDLast";
+         public static readonly string AUC_inf_tLast_norm = NormalizedName(AUC_inf_tDLast);
 
-         public static readonly string Ctrough_t2 = Create(Ctrough, "_t2");
-         public static readonly string Ctrough_tLast = Create(Ctrough, "_tLast");
+         public static readonly string Ctrough_tD2 = Create(Ctrough, "_tD2");
+         public static readonly string Ctrough_tDLast = Create(Ctrough, "_tDLast");
 
-         public static readonly string Thalf_tLast_tEnd = Create(Thalf, LastIntervalSuffix);
+         public static readonly string Thalf_tDLast_tEnd = Create(Thalf, LastIntervalSuffix);
 
          internal static string NormalizedName(string pkParameter)
          {

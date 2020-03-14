@@ -1,12 +1,11 @@
 ﻿using System;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
-using IPKAnalysesTask = OSPSuite.R.Services.IPKAnalysesTask;
 
 namespace OSPSuite.R
 {
@@ -31,7 +30,7 @@ namespace OSPSuite.R
 
       public static ISimulationRunner GetSimulationRunner() => resolveTask<ISimulationRunner>();
 
-      public static IPKAnalysesTask GetPKAnalysesTask() => resolveTask<IPKAnalysesTask>();
+      public static IPKAnalysisTask GetPKAnalysisTask() => resolveTask<IPKAnalysisTask>();
 
       public static IPopulationTask GetPopulationTask() => resolveTask<IPopulationTask>();
 
@@ -44,6 +43,10 @@ namespace OSPSuite.R
       public static ISensitivityAnalysisTask GetSensitivityAnalysisTask() => resolveTask<ISensitivityAnalysisTask>();
 
       public static IDimensionTask GetDimensionTask() => resolveTask<IDimensionTask>();
+
+      public static IPKParameterTask GetPKParameterTask() => resolveTask<IPKParameterTask>();
+
+      public static ILogger GetLogger() => resolveTask<ILogger>();
 
       private static T resolveTask<T>()
       {

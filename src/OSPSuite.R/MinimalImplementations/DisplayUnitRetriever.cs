@@ -8,17 +8,32 @@ namespace OSPSuite.R.MinimalImplementations
    {
       public Unit PreferredUnitFor(IWithDimension withDimension, Unit defaultUnit = null)
       {
-         return PreferredUnitFor(withDimension?.Dimension);
+         return withDimension == null ? null : preferredUnitFor(withDimension.Dimension, defaultUnit);
       }
 
       public Unit PreferredUnitFor(IWithDisplayUnit withDisplayUnit)
       {
-         return PreferredUnitFor(withDisplayUnit?.Dimension);
+         return withDisplayUnit == null ? null : preferredUnitFor(withDisplayUnit.Dimension, withDisplayUnit.DisplayUnit);
       }
 
       public Unit PreferredUnitFor(IDimension dimension)
       {
-         return dimension?.DefaultUnit;
+         return preferredUnitFor(dimension, null);
+      }
+
+      private Unit preferredUnitFor(IDimension dimension, Unit defaultUnit)
+      {
+         if (dimension == null)
+            return null;
+
+         return defaultUnitForDimension(dimension, defaultUnit);
+      }
+
+      private Unit defaultUnitForDimension(IDimension dimension, Unit defaultUnit)
+      {
+         return dimension.HasUnit(defaultUnit)
+            ? defaultUnit
+            : dimension.DefaultUnit;
       }
    }
 }

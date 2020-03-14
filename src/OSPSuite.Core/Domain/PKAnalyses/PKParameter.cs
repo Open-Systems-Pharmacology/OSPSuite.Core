@@ -2,9 +2,10 @@
 
 namespace OSPSuite.Core.Domain.PKAnalyses
 {
-   public class PKParameter : IWithName, IWithDimension, IWithDescription
+   public class PKParameter : IWithName, IWithDescription, IWithDisplayUnit
    {
       private string _displayName;
+      private Unit _displayUnit;
 
       /// <summary>
       ///    Internal name used to identify a pk parameter
@@ -31,5 +32,11 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       public virtual IDimension Dimension { get; set; }
 
       public virtual PKParameterMode Mode { get; set; }
+
+      public virtual Unit DisplayUnit
+      {
+         get => _displayUnit ?? Dimension?.DefaultUnit;
+         set => _displayUnit = value;
+      }
    }
 }

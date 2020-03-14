@@ -1,6 +1,8 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Services;
+using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.R.MinimalImplementations;
 using OSPSuite.R.Services;
@@ -33,8 +35,8 @@ namespace OSPSuite.R
          });
 
          container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
-
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
+         container.Register<ILogger, RLogger, RLogger>(LifeStyle.Singleton);
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
       }
    }
