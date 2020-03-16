@@ -14,7 +14,13 @@ namespace OSPSuite.R.Services
       IDimension DimensionForUnit(string unit);
 
       /// <summary>
-      /// Returns the default dimension for the <paramref name="standardPKParameter"/>. Note: we use an int because there is an issue with signature matching with R
+      ///    Returns the default dimension for the <paramref name="standardPKParameter" />. 
+      /// </summary>
+      IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter);
+
+      /// <summary>
+      ///    Returns the default dimension for the <paramref name="standardPKParameter" />. Note: we use an int because there is
+      ///    an issue with signature matching with R
       /// </summary>
       IDimension DimensionForStandardPKParameter(int standardPKParameter);
 
@@ -32,20 +38,23 @@ namespace OSPSuite.R.Services
       double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit);
 
       /// <summary>
-      /// Returns an array containing all dimensions defined in the suite
+      ///    Returns an array containing all dimensions defined in the suite
       /// </summary>
       IDimension[] AllAvailableDimensions();
 
       /// <summary>
-      /// Returns the name of all dimensions defined in the suite
+      ///    Returns the name of all dimensions defined in the suite
       /// </summary>
       string[] AllAvailableDimensionNames();
 
       /// <summary>
-      /// This is a dimension that will only have one unit and assume tha the user is saving the value in the expected base unit
+      ///    This is a dimension that will only have one unit and assume tha the user is saving the value in the expected base
+      ///    unit.
+      ///    Note that this dimension is temporary and will be discarded as soon as the instance referencing it are collected
       /// </summary>
+      /// <param name="dimensionName">Name to give to the user defined dimension</param>
       /// <param name="unit">Unit that will be the only unit of this dimension</param>
-      IDimension CreateUserDefinedDimension(string unit);
+      IDimension CreateUserDefinedDimension(string dimensionName, string unit);
    }
 
    public class DimensionTask : IDimensionTask
@@ -68,7 +77,7 @@ namespace OSPSuite.R.Services
 
       public double[] ConvertToUnit(IDimension dimension, string targetUnit, double valueInBaseUnit)
       {
-         return convertToUnit(dimension, targetUnit,null , valueInBaseUnit);
+         return convertToUnit(dimension, targetUnit, null, valueInBaseUnit);
       }
 
       public double[] ConvertToUnit(string dimensionName, string targetUnit, double[] valuesInBaseUnit)
@@ -85,15 +94,13 @@ namespace OSPSuite.R.Services
 
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
 
-      public IDimension CreateUserDefinedDimension(string unit)
+      public IDimension CreateUserDefinedDimension(string dimensionName, string unit)
       {
-         return new Dimension(Constants.Dimension.NO_DIMENSION.BaseRepresentation, unit, unit);
+         return new Dimension(Constants.Dimension.NO_DIMENSION.BaseRepresentation, dimensionName, unit);
       }
 
-      public IDimension DimensionForStandardPKParameter(int standardPKParameterValue)
+      public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {
-         var standardPKParameter = (StandardPKParameter) standardPKParameterValue;
-
          switch (standardPKParameter)
          {
             case StandardPKParameter.Unknown:
@@ -102,6 +109,10 @@ namespace OSPSuite.R.Services
             case StandardPKParameter.C_min:
             case StandardPKParameter.C_trough:
                return DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION);
+            case StandardPKParameter.C_max_norm:
+            case StandardPKParameter.C_min_norm:
+            case StandardPKParameter.C_trough_norm:
+               return DimensionByName(Constants.Dimension.MASS_CONCENTRATION);
             case StandardPKParameter.t_max:
             case StandardPKParameter.t_min:
             case StandardPKParameter.Tthreshold:
@@ -109,10 +120,15 @@ namespace OSPSuite.R.Services
             case StandardPKParameter.Thalf:
                return DimensionByName(Constants.Dimension.TIME);
             case StandardPKParameter.AUC_tEnd:
-            case StandardPKParameter.AUCM_tEnd:
             case StandardPKParameter.AUC_inf:
             case StandardPKParameter.AUC_tEnd_inf:
-               return DimensionByName(Constants.Dimension.AUC_MOLAR);
+               return DimensionByName(Constants.Dimension.MOLAR_AUC);
+            case StandardPKParameter.AUC_tEnd_norm:
+            case StandardPKParameter.AUC_inf_norm:
+            case StandardPKParameter.AUC_tEnd_inf_norm:
+               return DimensionByName(Constants.Dimension.MASS_AUC);
+            case StandardPKParameter.AUCM_tEnd:
+               return DimensionByName(Constants.Dimension.MOLAR_AUCM);
             case StandardPKParameter.FractionAucEndToInf:
                return DimensionByName(Constants.Dimension.FRACTION);
             case StandardPKParameter.Vss:
@@ -121,6 +137,11 @@ namespace OSPSuite.R.Services
             default:
                throw new ArgumentOutOfRangeException(nameof(standardPKParameter), standardPKParameter, null);
          }
+      }
+
+      public IDimension DimensionForStandardPKParameter(int standardPKParameterValue)
+      {
+         return DimensionForStandardPKParameter((StandardPKParameter) standardPKParameterValue);
       }
 
       public double[] ConvertToUnit(IDimension dimension, string targetUnit, double valueInBaseUnit, double molWeight)
