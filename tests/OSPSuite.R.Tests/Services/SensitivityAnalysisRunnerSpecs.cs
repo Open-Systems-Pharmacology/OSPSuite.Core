@@ -63,7 +63,7 @@ namespace OSPSuite.R.Services
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) { NumberOfSteps = 2, VariationRange = 0.2 };
 
          //Should calculate CMax/100
-         _userDefinedPKParameter = new UserDefinedPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.Cmax, Mode = PKParameterMode.Always};
+         _userDefinedPKParameter = new UserDefinedPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.C_max, Mode = PKParameterMode.Always};
          pkParametersTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
 
          var containerTask = Api.GetContainerTask();

@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public virtual void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
       {
-         options.DrugMassPerBodyWeight = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
+         options.TotalDrugMassPerBodyWeight = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
       }
 
       private IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)

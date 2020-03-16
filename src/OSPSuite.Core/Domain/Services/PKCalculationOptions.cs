@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Total drug mass per body weight (in µmol/kg BW)
       /// </summary>
-      public double? DrugMassPerBodyWeight { get; set; }
+      public double? TotalDrugMassPerBodyWeight { get; set; }
 
       /// <summary>
       ///    Infusion time (in time unit)

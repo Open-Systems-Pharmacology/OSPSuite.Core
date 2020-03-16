@@ -98,20 +98,20 @@ namespace OSPSuite.R.Services
          {
             case StandardPKParameter.Unknown:
                return Constants.Dimension.NO_DIMENSION;
-            case StandardPKParameter.Cmax:
-            case StandardPKParameter.Cmin:
-            case StandardPKParameter.CTrough:
+            case StandardPKParameter.C_max:
+            case StandardPKParameter.C_min:
+            case StandardPKParameter.C_trough:
                return DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION);
-            case StandardPKParameter.Tmax:
-            case StandardPKParameter.Tmin:
+            case StandardPKParameter.t_max:
+            case StandardPKParameter.t_min:
             case StandardPKParameter.Tthreshold:
-            case StandardPKParameter.Mrt:
+            case StandardPKParameter.MRT:
             case StandardPKParameter.Thalf:
                return DimensionByName(Constants.Dimension.TIME);
-            case StandardPKParameter.AucTend:
-            case StandardPKParameter.AucmTend:
-            case StandardPKParameter.AucInf:
-            case StandardPKParameter.AucTendInf:
+            case StandardPKParameter.AUC_tEnd:
+            case StandardPKParameter.AUCM_tEnd:
+            case StandardPKParameter.AUC_inf:
+            case StandardPKParameter.AUC_tEnd_inf:
                return DimensionByName(Constants.Dimension.AUC_MOLAR);
             case StandardPKParameter.FractionAucEndToInf:
                return DimensionByName(Constants.Dimension.FRACTION);

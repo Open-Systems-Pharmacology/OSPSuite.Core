@@ -5,16 +5,22 @@ namespace OSPSuite.Core.Domain.PKAnalyses
    public enum StandardPKParameter
    {
       Unknown,
-      Cmax,
-      Cmin,
-      Tmax,
-      Tmin,
-      CTrough,
-      AucTend,
-      AucmTend,
-      AucInf,
-      AucTendInf,
-      Mrt,
+      C_max,
+      C_max_norm,
+      C_min,
+      C_min_norm,
+      t_max,
+      t_min,
+      C_trough,
+      C_trough_norm,
+      AUC_tEnd,
+      AUC_tEnd_norm,
+      AUCM_tEnd,
+      AUC_inf,
+      AUC_inf_norm,
+      AUC_tEnd_inf,
+      AUC_tEnd_inf_norm,
+      MRT,
       FractionAucEndToInf,
       Thalf,
       Vss,
@@ -111,6 +117,44 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          return toNullableFloat(estimatedEndTime());
       }
 
-      private float? toNullableFloat(double? estimatedEndTime) => (float?) estimatedEndTime;
+      public double? EstimateDrugMassPerBodyWeight(PKCalculationOptions pkCalculationOptions)
+      {
+         // It can be quite complicated to estimate the total drug mass between two intervals
+         // If a start time and end time is provided or any time offset, we cannot calculate for sure and we'll return NULL
+         // if a start application and an end infusion index is provided, we'll sum up the interval between those two application
+         // if a start application is provided, we'll sum up the drug mass starting at this application until the end
+         // if an end application is provided, we'll sum up the drug mass from the start until the application
+
+         if (StartTime.HasValue || EndTime.HasValue || EndTimeOffset.HasValue || StartTimeOffset.HasValue)
+            return null;
+
+         //no intervals defined
+         if (!StartApplicationIndex.HasValue && !EndApplicationIndex.HasValue)
+            return pkCalculationOptions.TotalDrugMassPerBodyWeight;
+
+         var startApplicationIndex = StartApplicationIndex.GetValueOrDefault(0);
+         var endApplicationIndex = EndApplicationIndex.GetValueOrDefault(pkCalculationOptions.DosingIntervals.Count);
+
+
+         // invalid intervals
+         if (startApplicationIndex >= endApplicationIndex)
+            return null;
+
+         double drugMassPerBodyWeight = 0;
+         for (int applicationIndex = startApplicationIndex; applicationIndex < endApplicationIndex; applicationIndex++)
+         {
+            //wrong indexes
+            var interval = pkCalculationOptions.DosingIntervalAt(applicationIndex);
+            if (interval == null)
+               return null;
+
+            drugMassPerBodyWeight += interval.DrugMassPerBodyWeight.GetValueOrDefault(0);
+         }
+
+
+         return drugMassPerBodyWeight;
+      }
+
+      private float? toNullableFloat(double? doubleValue) => (float?) doubleValue;
    }
 }
