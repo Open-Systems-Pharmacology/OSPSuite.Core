@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.R.Services
@@ -97,6 +98,36 @@ namespace OSPSuite.R.Services
       public void should_return_the_dimensions_names_sorted()
       {
          _dimensionNames[0].StartsWith("A").ShouldBeTrue();
+      }
+   }
+
+   public class When_retrieving_the_dimensions_for_standard_pk_parameters : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_expected_dimension()
+      {
+         sut.DimensionForStandardPKParameter(StandardPKParameter.Unknown).Name.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION.Name);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_max).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_max_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_min).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_min_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.t_max).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.t_min).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_trough).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.C_trough_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_tEnd).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_tEnd_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUCM_tEnd).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AUCM);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_inf).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_inf_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_tEnd_inf).Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.AUC_tEnd_inf_norm).Name.ShouldBeEqualTo(Constants.Dimension.MASS_AUC);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.MRT).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.FractionAucEndToInf).Name.ShouldBeEqualTo(Constants.Dimension.FRACTION);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.Thalf).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.Vss).Name.ShouldBeEqualTo(Constants.Dimension.VOLUME_PER_BODY_WEIGHT);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.Vd).Name.ShouldBeEqualTo(Constants.Dimension.VOLUME_PER_BODY_WEIGHT);
+         sut.DimensionForStandardPKParameter(StandardPKParameter.Tthreshold).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
       }
    }
 }

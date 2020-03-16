@@ -120,5 +120,11 @@ namespace OSPSuite.R.Services
 
          sut.AllPKParameterNames().Length.ShouldBeEqualTo(32);
       }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         sut.RemoveAllUserDefinedPKParameters();
+      }
    }
 }

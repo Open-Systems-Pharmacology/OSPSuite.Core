@@ -304,7 +304,9 @@ namespace OSPSuite.Core.Domain
          public const string MOLECULAR_WEIGHT = "Molecular weight";
          public const string LOG_UNITS = "Log Units";
          public const string FRACTION = "Fraction";
-         public const string AUC_MOLAR = "AUC (molar)";
+         public const string MOLAR_AUC = "AUC (molar)";
+         public const string MOLAR_AUCM = "AUCM (molar)";
+         public const string MASS_AUC = "AUC (mass)";
          public const string VOLUME_PER_BODY_WEIGHT = "Volume per body weight";
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);

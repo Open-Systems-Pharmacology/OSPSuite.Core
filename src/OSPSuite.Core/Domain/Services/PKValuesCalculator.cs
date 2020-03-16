@@ -39,13 +39,13 @@ namespace OSPSuite.Core.Domain.Services
          if (!timeValues.Any() || !concentrationValues.Any())
             return new PKValues();
 
-         options = checkOptions(options);
+         options = options ?? new PKCalculationOptions();
          var allStandardIntervals = allStandardIntervalsFor(timeValues, concentrationValues, options);
          var isSingleDosing = allStandardIntervals.Count == 1;
 
          allStandardIntervals.Each(x => x.Calculate());
          if (isSingleDosing)
-            setSingleDosingPKValues(pk, allStandardIntervals[FIRST_INTERVAL], options.DrugMassPerBodyWeight);
+            setSingleDosingPKValues(pk, allStandardIntervals[FIRST_INTERVAL]);
 
          else if (allStandardIntervals.Any())
             setMultipleDosingPKValues(pk, allStandardIntervals, options);
@@ -63,50 +63,46 @@ namespace OSPSuite.Core.Domain.Services
          var lastInterval = allIntervals[LAST_INTERVAL];
          var fullInterval = allIntervals[FULL_RANGE_INTERVAL];
 
-         setCmaxAndTmax(pk, firstInterval, firstInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tD1_tD2, Constants.PKParameters.Tmax_tD1_tD2);
-         setValue(pk, Constants.PKParameters.Ctrough_tD2, firstInterval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tD1_tD2, firstInterval.AucTend, firstInterval.DrugMassPerBodyWeight);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tD1, firstInterval.AucInf, firstInterval.DrugMassPerBodyWeight);
-         setFirstIntervalPKValues(pk, firstInterval, firstInterval.DrugMassPerBodyWeight);
+         setCmaxAndTmax(pk, firstInterval, Constants.PKParameters.C_max_tD1_tD2, Constants.PKParameters.Tmax_tD1_tD2);
+         setValue(pk, Constants.PKParameters.Ctrough_tD2, firstInterval, x => x.CTrough);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tD1_tD2, firstInterval, x => x.AucTend);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tD1, firstInterval, x => x.AucInf);
+         setValue(pk, Constants.PKParameters.Thalf, firstInterval, x => x.Thalf);
+         setValue(pk, Constants.PKParameters.MRT, firstInterval, x => x.Mrt);
 
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tDLast_minus_1_tDLast, lastMinusOneInterval.AucTend, lastMinusOneInterval.DrugMassPerBodyWeight);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tDLast_minus_1_tDLast, lastMinusOneInterval, x => x.AucTend);
 
-         setCmaxAndTmax(pk, lastInterval, lastInterval.DrugMassPerBodyWeight, Constants.PKParameters.C_max_tDLast_tDEnd, Constants.PKParameters.Tmax_tDLast_tDEnd);
-         setValue(pk, Constants.PKParameters.Ctrough_tDLast, lastInterval.CTrough);
-         setValue(pk, Constants.PKParameters.Thalf_tDLast_tEnd, lastInterval.Thalf);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tDLast, lastInterval.AucInf, lastInterval.DrugMassPerBodyWeight);
+         setCmaxAndTmax(pk, lastInterval, Constants.PKParameters.C_max_tDLast_tDEnd, Constants.PKParameters.Tmax_tDLast_tDEnd);
+         setValue(pk, Constants.PKParameters.Ctrough_tDLast, lastInterval, x => x.CTrough);
+         setValue(pk, Constants.PKParameters.Thalf_tDLast_tEnd, lastInterval, x => x.Thalf);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tDLast, lastInterval, x => x.AucInf);
 
-         setCmaxAndTmax(pk, fullInterval, options.DrugMassPerBodyWeight, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
+         setCmaxAndTmax(pk, fullInterval, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
       }
 
-      private void setSingleDosingPKValues(ICache<string, double> pk, PKInterval interval, double? drugMassPerBodyWeight)
+      private void setSingleDosingPKValues(ICache<string, double> pk, PKInterval interval)
       {
-         setCmaxAndTmax(pk, interval, drugMassPerBodyWeight, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
-         setValue(pk, Constants.PKParameters.C_tEnd, interval.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tEnd, interval.AucTend, drugMassPerBodyWeight);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf, interval.AucInf, drugMassPerBodyWeight);
-         setFirstIntervalPKValues(pk, interval, drugMassPerBodyWeight);
-
-         setValue(pk, Constants.PKParameters.FractionAucEndToInf, interval.FractionAucEndToInf);
+         setCmaxAndTmax(pk, interval, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
+         setValue(pk, Constants.PKParameters.C_tEnd, interval, x => x.CTrough);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_tEnd, interval, x => x.AucTend);
+         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf, interval, x => x.AucInf);
+         setValue(pk, Constants.PKParameters.Thalf, interval, x => x.Thalf);
+         setValue(pk, Constants.PKParameters.MRT, interval, x => x.Mrt);
+         setValue(pk, Constants.PKParameters.FractionAucEndToInf, interval, x => x.FractionAucEndToInf);
+         setValue(pk, Constants.PKParameters.CL, interval, x => x.CL);
+         setValue(pk, Constants.PKParameters.Vss, interval, x => x.Vss);
+         setValue(pk, Constants.PKParameters.Vd, interval, x => x.Vd);
       }
 
-      private void setCmaxAndTmax(ICache<string, double> pk, PKInterval interval, double? drugMassPerBodyWeight, string cmaxName, string tMaxName)
+      private void setCmaxAndTmax(ICache<string, double> pk, PKInterval interval, string cmaxName, string tMaxName)
       {
-         setValueAndNormalize(pk, cmaxName, interval.Cmax, drugMassPerBodyWeight);
-         setValue(pk, tMaxName, interval.Tmax);
+         setValueAndNormalize(pk, cmaxName, interval, x => x.Cmax);
+         setValue(pk, tMaxName, interval, x => x.Tmax);
       }
 
-      private void setFirstIntervalPKValues(ICache<string, double> pk, PKInterval interval, double? drugMassPerBodyWeight)
+      private void setValue(ICache<string, double> pk, string parameterName, PKInterval pkInterval, Func<PKInterval, double> valueFunc)
       {
-         setValue(pk, Constants.PKParameters.Thalf, interval.Thalf);
-         setValue(pk, Constants.PKParameters.MRT, interval.Mrt);
-
-         if (!drugMassPerBodyWeight.HasValue)
-            return;
-
-         setValue(pk, Constants.PKParameters.CL, interval.CL);
-         setValue(pk, Constants.PKParameters.Vss, interval.Vss);
-         setValue(pk, Constants.PKParameters.Vd, interval.Vd);
+         setValue(pk, parameterName, valueFunc(pkInterval));
       }
 
       private void setValue(ICache<string, double> pk, string parameterName, double value)
@@ -114,18 +110,11 @@ namespace OSPSuite.Core.Domain.Services
          pk[parameterName] = value;
       }
 
-      private void setValueAndNormalize(ICache<string, double> pk, string parameterName, double value, double? totalDrugMassPerBodyWeight)
-      {
-         setValue(pk, parameterName, value);
-         pk[Constants.PKParameters.NormalizedName(parameterName)] = normalizedValue(value, totalDrugMassPerBodyWeight);
-      }
 
-      private double normalizedValue(double value, double? normalizedBy)
+      private void setValueAndNormalize(ICache<string, double> pk, string parameterName, PKInterval pkInterval, Func<PKInterval, double> valueFunc)
       {
-         if (!normalizedBy.HasValue)
-            return NaN;
-
-         return value / normalizedBy.Value;
+         setValue(pk, parameterName, pkInterval, valueFunc);
+         pk[Constants.PKParameters.NormalizedName(parameterName)] = pkInterval.NormalizeValue(valueFunc);
       }
 
       private PKValues pkValuesFrom(ICache<string, double> pk)
@@ -139,11 +128,6 @@ namespace OSPSuite.Core.Domain.Services
          return pkValues;
       }
 
-      private static PKCalculationOptions checkOptions(PKCalculationOptions options)
-      {
-         return options ?? new PKCalculationOptions();
-      }
-
       public PKValues CalculatePK(DataColumn dataColumn, PKCalculationOptions options = null, IReadOnlyList<UserDefinedPKParameter> userDefinedPKParameters = null)
       {
          return CalculatePK(dataColumn.BaseGrid.Values, dataColumn.Values, options, userDefinedPKParameters);
@@ -155,7 +139,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             //No start time specified? Then we assume we want to calculate from the beginning of the time array
             var startTime = dynamicPKParameter.EstimateStartTimeFrom(options) ?? time.First();
-            
+
             //No end time specified? Then we assume we want to calculate until the end of the time array
             var endTime = dynamicPKParameter.EstimateEndTimeFrom(options) ?? time.Last();
 
@@ -164,19 +148,16 @@ namespace OSPSuite.Core.Domain.Services
             if (oneTimeIndexInvalid(startIndex, endIndex) || startIndex >= endIndex)
                continue;
 
-            var normalizedBy = dynamicPKParameter.NormalizationFactor;
-            var pkInterval = createPKInterval(time, concentration, startIndex, endIndex,  options, concentrationThreshold: dynamicPKParameter.ConcentrationThreshold);
-            var value = pkInterval.ValueFor(dynamicPKParameter.StandardPKParameter);
-            if (normalizedBy.HasValue)
-               value = normalizedValue(value, normalizedBy);
-
+            var drugMassPerBodyWeight = dynamicPKParameter.EstimateDrugMassPerBodyWeight(options) ?? options.TotalDrugMassPerBodyWeight;
+            var pkInterval = createPKInterval(time, concentration, startIndex, endIndex, options, drugMassPerBodyWeight: drugMassPerBodyWeight, concentrationThreshold: dynamicPKParameter.ConcentrationThreshold);
+            var value = pkInterval.ValueFor(dynamicPKParameter.StandardPKParameter, dynamicPKParameter.NormalizationFactor);
             setValue(pk, dynamicPKParameter.Name, value);
          }
       }
 
       private IReadOnlyList<PKInterval> allStandardIntervalsFor(List<float> time, List<float> concentration, PKCalculationOptions options)
       {
-         var fullRange = new PKInterval(time, concentration, options, drugMassPerBodyWeight: null);
+         var fullRange = new PKInterval(time, concentration, options, drugMassPerBodyWeight: options.TotalDrugMassPerBodyWeight);
 
          //only one interval, return the full range
          if (options.SingleDosing)
@@ -406,8 +387,9 @@ namespace OSPSuite.Core.Domain.Services
          {
             get
             {
-               if (_options.DrugMassPerBodyWeight.HasValue)
-                  return _options.DrugMassPerBodyWeight.Value / AucInf;
+               //Clearance is calculated using the Total drug mass per body weight and not only the drug mass of the interval
+               if (_options.TotalDrugMassPerBodyWeight.HasValue)
+                  return _options.TotalDrugMassPerBodyWeight.Value / AucInf;
 
                return NaN;
             }
@@ -453,46 +435,80 @@ namespace OSPSuite.Core.Domain.Services
             }
          }
 
-         public double ValueFor(StandardPKParameter standardPKParameter)
+         public double ValueFor(StandardPKParameter standardPKParameter, double? normalizationFactor)
          {
             Calculate();
-            switch (standardPKParameter)
+            var value = getPKParameterValue();
+            return normalizationFactor.HasValue ? normalizedValue(value, normalizationFactor) : value;
+
+            double getPKParameterValue()
             {
-               case StandardPKParameter.Cmax:
-                  return Cmax;
-               case StandardPKParameter.Tmax:
-                  return Tmax;
-               case StandardPKParameter.CTrough:
-                  return CTrough;
-               case StandardPKParameter.AucTend:
-                  return AucTend;
-               case StandardPKParameter.AucmTend:
-                  return AucmTend;
-               case StandardPKParameter.AucInf:
-                  return AucInf;
-               case StandardPKParameter.AucTendInf:
-                  return AucTendInf;
-               case StandardPKParameter.Mrt:
-                  return Mrt;
-               case StandardPKParameter.FractionAucEndToInf:
-                  return FractionAucEndToInf;
-               case StandardPKParameter.Thalf:
-                  return Thalf;
-               case StandardPKParameter.Vss:
-                  return Vss;
-               case StandardPKParameter.Vd:
-                  return Vd;
-               case StandardPKParameter.Tthreshold:
-                  return Tthreshold;
-               case StandardPKParameter.Cmin:
-                  return Cmin;
-               case StandardPKParameter.Tmin:
-                  return Tmin;
-               case StandardPKParameter.Unknown:
-                  return NaN;
-               default:
-                  throw new ArgumentOutOfRangeException(nameof(standardPKParameter), standardPKParameter, null);
+               switch (standardPKParameter)
+               {
+                  case StandardPKParameter.C_max:
+                     return Cmax;
+                  case StandardPKParameter.C_max_norm:
+                     return doseNormalizedValue(Cmax);
+                  case StandardPKParameter.t_max:
+                     return Tmax;
+                  case StandardPKParameter.C_trough:
+                     return CTrough;
+                  case StandardPKParameter.C_trough_norm:
+                     return doseNormalizedValue(CTrough);
+                  case StandardPKParameter.AUC_tEnd:
+                     return AucTend;
+                  case StandardPKParameter.AUC_tEnd_norm:
+                     return doseNormalizedValue(AucTend);
+                  case StandardPKParameter.AUCM_tEnd:
+                     return AucmTend;
+                  case StandardPKParameter.AUC_inf:
+                     return AucInf;
+                  case StandardPKParameter.AUC_inf_norm:
+                     return doseNormalizedValue(AucInf);
+                  case StandardPKParameter.AUC_tEnd_inf:
+                     return AucTendInf;
+                  case StandardPKParameter.AUC_tEnd_inf_norm:
+                     return doseNormalizedValue(AucTendInf);
+                  case StandardPKParameter.MRT:
+                     return Mrt;
+                  case StandardPKParameter.FractionAucEndToInf:
+                     return FractionAucEndToInf;
+                  case StandardPKParameter.Thalf:
+                     return Thalf;
+                  case StandardPKParameter.Vss:
+                     return Vss;
+                  case StandardPKParameter.Vd:
+                     return Vd;
+                  case StandardPKParameter.Tthreshold:
+                     return Tthreshold;
+                  case StandardPKParameter.C_min:
+                     return Cmin;
+                  case StandardPKParameter.C_min_norm:
+                     return doseNormalizedValue(Cmin);
+                  case StandardPKParameter.t_min:
+                     return Tmin;
+                  case StandardPKParameter.Unknown:
+                     return NaN;
+                  default:
+                     throw new ArgumentOutOfRangeException(nameof(standardPKParameter), standardPKParameter, null);
+               }
             }
+         }
+
+         public double NormalizeValue(Func<PKInterval, double> valueFunc)
+         {
+            var value = valueFunc(this);
+            return normalizedValue(value, DrugMassPerBodyWeight);
+         }
+
+         private double doseNormalizedValue(double value) => normalizedValue(value, DrugMassPerBodyWeight);
+
+         private double normalizedValue(double value, double? normalizedBy)
+         {
+            if (!normalizedBy.HasValue)
+               return NaN;
+
+            return value / normalizedBy.Value;
          }
       }
    }
