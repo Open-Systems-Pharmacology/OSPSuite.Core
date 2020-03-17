@@ -29,5 +29,7 @@ namespace OSPSuite.R.Domain
       public void AddParameterPaths(IEnumerable<string> parameterPaths) => parameterPaths.Each(AddParameterPath);
 
       public string[] ParameterPaths => _parameterPaths.ToArray();
+
+      public void ClearParameterPaths() => _parameterPaths.Clear();
    }
 }

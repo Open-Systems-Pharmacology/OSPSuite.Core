@@ -53,14 +53,19 @@ namespace OSPSuite.R.Mapper
          return coreSensitivityAnalysis;
       }
 
+      public bool ParameterCanBeUsedForSensitivity(IParameter parameter)
+      {
+         return _parameterSelector.CanUseParameter(parameter) && parameter.IsConstantParameter() && !ValueComparer.AreValuesEqual(parameter, 0);
+      }
+
       private IReadOnlyList<string> parameterPathsToVaryFrom(SensitivityAnalysis sensitivityAnalysis)
       {
-         if (sensitivityAnalysis.ParameterPaths.Any())
-            return sensitivityAnalysis.ParameterPaths;
-
          var simulation = sensitivityAnalysis.Simulation;
-         var constantParametersCache = _containerTask.CacheAllChildrenSatisfying<IParameter>(simulation.Model.Root, x => _parameterSelector.CanUseParameter(x) && x.IsConstantParameter());
-         var allUsedParameterPaths = _simulationAnalyzer.AllPathOfParametersUsedInSimulation(sensitivityAnalysis.Simulation);
+         var constantParametersCache = _containerTask.CacheAllChildrenSatisfying<IParameter>(simulation.Model.Root, ParameterCanBeUsedForSensitivity);
+
+         var allUsedParameterPaths = sensitivityAnalysis.ParameterPaths.Any()
+            ? sensitivityAnalysis.ParameterPaths
+            : _simulationAnalyzer.AllPathOfParametersUsedInSimulation(sensitivityAnalysis.Simulation);
 
          return allUsedParameterPaths.Select(x => new
             {
