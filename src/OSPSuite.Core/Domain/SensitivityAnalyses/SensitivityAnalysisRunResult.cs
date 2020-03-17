@@ -54,6 +54,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          });
       }
 
+      public string[] AllPKParameterNames
+      {
+         get { return _allPKParameterSensitivities.Select(x => x.PKParameterName).Distinct().ToArray(); }
+      }
+
       public virtual int Count => _allPKParameterSensitivities.Count;
    }
 }
