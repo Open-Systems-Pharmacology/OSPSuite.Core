@@ -13,7 +13,8 @@ using OSPSuite.Utility.Visitor;
 namespace OSPSuite.Core.Converters.v9
 {
    public class Converter730To90 : IObjectConverter,
-      IVisitor<SensitivityAnalysis>
+      IVisitor<SensitivityAnalysis>,
+      IVisitor<PopulationSimulationPKAnalyses>
    {
       private readonly IDimensionFactory _dimensionFactory;
       private static readonly ICache<string, string> _pkParameterNameMapping = createPKParameterNameMapping();
@@ -106,14 +107,22 @@ namespace OSPSuite.Core.Converters.v9
          if (!sensitivityAnalysis.HasResults)
             return;
 
-         ConvertSensitivityAnalysisResult(sensitivityAnalysis.Results);
+         sensitivityAnalysis.Results.AllPKParameterSensitivities.Each(x => { x.PKParameterName = ConvertPKParameterName(x.PKParameterName); });
 
          _converted = true;
       }
 
-      public void ConvertSensitivityAnalysisResult(SensitivityAnalysisRunResult sensitivityAnalysisRunResult)
+      public void Visit(PopulationSimulationPKAnalyses populationSimulationPKAnalyses)
       {
-         sensitivityAnalysisRunResult?.AllPKParameterSensitivities.Each(x => { x.PKParameterName = ConvertPKParameterName(x.PKParameterName); });
+         var allQuantityPKAnalysis = populationSimulationPKAnalyses.All().ToList();
+         populationSimulationPKAnalyses.Clear();
+         allQuantityPKAnalysis.Each(x =>
+         {
+            x.Name = ConvertPKParameterName(x.Name);
+            populationSimulationPKAnalyses.AddPKAnalysis(x);
+         });
+
+         _converted = true;
       }
 
       public string ConvertPKParameterName(string pkParameterName)
@@ -146,5 +155,7 @@ namespace OSPSuite.Core.Converters.v9
             {"Thalf_tLast_tEnd", "Thalf_tDLast_tEnd"}
          };
       }
+
+    
    }
 }
