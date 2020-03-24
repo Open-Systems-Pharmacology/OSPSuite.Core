@@ -1,6 +1,6 @@
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Core.Converter
+namespace OSPSuite.Core.Converters
 {
    public interface IObjectConverterFinder
    {

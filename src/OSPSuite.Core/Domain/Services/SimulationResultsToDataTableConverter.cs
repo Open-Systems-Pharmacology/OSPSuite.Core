@@ -53,18 +53,15 @@ namespace OSPSuite.Core.Domain.Services
    {
       private readonly IEntitiesInSimulationRetriever _quantityRetriever;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
-      private readonly IPKParameterRepository _pkParameterRepository;
       private readonly IDimension _timeDimension;
 
       public SimulationResultsToDataTableConverter(
          IDimensionFactory dimensionFactory, 
          IEntitiesInSimulationRetriever quantityRetriever, 
-         IDisplayUnitRetriever displayUnitRetriever, 
-         IPKParameterRepository pkParameterRepository)
+         IDisplayUnitRetriever displayUnitRetriever)
       {
          _quantityRetriever = quantityRetriever;
          _displayUnitRetriever = displayUnitRetriever;
-         _pkParameterRepository = pkParameterRepository;
          _timeDimension = dimensionFactory.Dimension(Constants.Dimension.TIME);
       }
 
@@ -142,13 +139,11 @@ namespace OSPSuite.Core.Domain.Services
          dataTable.AddColumn<string>(PARAMETER);
          dataTable.AddColumn<string>(VALUE);
          dataTable.AddColumn<string>(UNIT);
-         dataTable.AddColumn<string>(DISPLAY);
 
          dataTable.BeginLoadData();
          foreach (var pkAnalysis in pkAnalyses.All())
          {
             var unit = _displayUnitRetriever.PreferredUnitFor(pkAnalysis);
-            var pkParameter = _pkParameterRepository.FindByName(pkAnalysis.Name);
             pkAnalysis.Values.Each((value, index) =>
             {
                var row = dataTable.NewRow();
@@ -157,7 +152,6 @@ namespace OSPSuite.Core.Domain.Services
                row[PARAMETER] = inQuote(pkAnalysis.Name);
                row[VALUE] = pkAnalysis.ConvertToUnit(value, unit).ConvertedTo<string>();
                row[UNIT] = unit.Name;
-               row[DISPLAY] = pkParameter.DisplayName;
                dataTable.Rows.Add(row);
             });
          }

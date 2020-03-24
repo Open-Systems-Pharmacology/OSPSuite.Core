@@ -1,6 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Converter.v9;
+using OSPSuite.Core.Converters.v9;
 using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core

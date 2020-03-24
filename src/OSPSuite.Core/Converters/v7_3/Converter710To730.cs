@@ -6,7 +6,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
-namespace OSPSuite.Core.Converter.v7_3
+namespace OSPSuite.Core.Converters.v7_3
 {
    public class Converter710To730 : IObjectConverter,
       IVisitor<IParameterStartValuesBuildingBlock>,

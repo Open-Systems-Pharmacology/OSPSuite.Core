@@ -34,7 +34,5 @@ namespace OSPSuite.Infrastructure.Import.Services
             return log;
          }
       }
-
-      public virtual bool HasError => Status.Is(NotificationType.Error);
    }
 }
