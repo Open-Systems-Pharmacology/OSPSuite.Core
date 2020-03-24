@@ -15,15 +15,13 @@ namespace OSPSuite.Core.Services
       private IEntitiesInSimulationRetriever _quantityRetriever;
       private IDimensionFactory _dimensionRepository;
       protected IDisplayUnitRetriever _displayUnitRetriever;
-      private IPKParameterRepository _pkParameterRepository;
 
       protected override void Context()
       {
          _quantityRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          _dimensionRepository = A.Fake<IDimensionFactory>();
          _displayUnitRetriever = A.Fake<IDisplayUnitRetriever>();
-         _pkParameterRepository= A.Fake<IPKParameterRepository>();   
-         sut = new SimulationResultsToDataTableConverter(_dimensionRepository, _quantityRetriever, _displayUnitRetriever, _pkParameterRepository);
+         sut = new SimulationResultsToDataTableConverter(_dimensionRepository, _quantityRetriever, _displayUnitRetriever);
       }
    }
 
@@ -63,13 +61,12 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_return_a_table_containing_the_expected_columns_in_the_expected_order()
       {
-         _dataTable.Columns.Count.ShouldBeEqualTo(6);
+         _dataTable.Columns.Count.ShouldBeEqualTo(5);
          _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.INDIVIDUAL_ID);
          _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.QUANTITY_PATH);
          _dataTable.Columns[2].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.PARAMETER);
          _dataTable.Columns[3].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.VALUE);
          _dataTable.Columns[4].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.UNIT);
-         _dataTable.Columns[5].ColumnName.ShouldBeEqualTo(Constants.SimulationResults.DISPLAY);
       }
 
       [Observation]

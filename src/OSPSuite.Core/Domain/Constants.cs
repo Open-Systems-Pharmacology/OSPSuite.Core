@@ -331,7 +331,6 @@ namespace OSPSuite.Core.Domain
          public const string PARAMETER = "Parameter";
          public const string VALUE = "Value";
          public const string UNIT = "Unit";
-         public const string DISPLAY = "Display";
       }
 
 
