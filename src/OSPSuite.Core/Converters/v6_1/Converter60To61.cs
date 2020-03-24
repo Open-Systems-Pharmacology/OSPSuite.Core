@@ -7,7 +7,7 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
-namespace OSPSuite.Core.Converter.v6_1
+namespace OSPSuite.Core.Converters.v6_1
 {
    public class Converter60To61 : IObjectConverter,
       IVisitor<IBuildingBlock>,

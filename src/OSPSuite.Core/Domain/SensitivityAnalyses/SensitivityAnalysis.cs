@@ -3,10 +3,11 @@ using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
-   public class SensitivityAnalysis : ObjectBase, IParameterAnalysable
+   public class SensitivityAnalysis : ObjectBase, IParameterAnalysable, IVisitor
    {
       public virtual ISimulation Simulation { get; set; }
       private readonly List<ISimulationAnalysis> _allSimulationAnalyses = new List<ISimulationAnalysis>();

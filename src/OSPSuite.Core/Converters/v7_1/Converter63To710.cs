@@ -4,7 +4,7 @@ using OSPSuite.Core.Serialization.Xml.Extensions;
 using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Converter.v7_1
+namespace OSPSuite.Core.Converters.v7_1
 {
    public class Converter63To710 : IObjectConverter
    {

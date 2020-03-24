@@ -1,8 +1,8 @@
 using System.Xml.Linq;
-using OSPSuite.Utility;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility;
 
-namespace OSPSuite.Core.Converter
+namespace OSPSuite.Core.Converters
 {
    public interface IObjectConverter : ISpecification<int>
    {

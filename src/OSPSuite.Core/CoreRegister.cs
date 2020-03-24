@@ -1,6 +1,6 @@
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Comparison;
-using OSPSuite.Core.Converter;
+using OSPSuite.Core.Converters;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
