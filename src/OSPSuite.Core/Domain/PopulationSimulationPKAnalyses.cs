@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain
 {
    public class PopulationSimulationPKAnalyses
    {
-      private readonly ICache<string, QuantityPKParameter> _pkAnalyses;
+      private readonly Cache<string, QuantityPKParameter> _pkAnalyses;
 
       public PopulationSimulationPKAnalyses()
       {
@@ -58,15 +58,11 @@ namespace OSPSuite.Core.Domain
          return AllPKParametersFor(quantityPath).Select(x => x.Name).ToArray();
       }
 
-      public virtual IEnumerable<QuantityPKParameter> All()
-      {
-         return _pkAnalyses;
-      }
+      public virtual IEnumerable<QuantityPKParameter> All() => _pkAnalyses;
 
-      public virtual void AddPKAnalysis(QuantityPKParameter quantityPKParameter)
-      {
-         _pkAnalyses[quantityPKParameter.Id] = quantityPKParameter;
-      }
+      public virtual void AddPKAnalysis(QuantityPKParameter quantityPKParameter) => _pkAnalyses[quantityPKParameter.Id] = quantityPKParameter;
+
+      public void Clear() => _pkAnalyses.Clear();
    }
 
    public class NullPopulationSimulationPKAnalyses : PopulationSimulationPKAnalyses
