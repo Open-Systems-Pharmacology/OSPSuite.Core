@@ -27,8 +27,8 @@ namespace OSPSuite.R.Domain.UnitSystem
             case Constants.Dimension.MOLAR_CONCENTRATION:
             case Constants.Dimension.MOLAR_AUC:
                return new DoubleArrayMolarToMassConverter(doubleArrayContext, sourceDimension, targetDimension);
-            case Constants.Dimension.MASS_CONCENTRATION:
             case Constants.Dimension.MASS_AMOUNT:
+            case Constants.Dimension.MASS_CONCENTRATION:
             case Constants.Dimension.MASS_AUC:
                return new DoubleArrayMassToMolarConverter(doubleArrayContext, sourceDimension, targetDimension);
          }
@@ -45,8 +45,8 @@ namespace OSPSuite.R.Domain.UnitSystem
             case Constants.Dimension.MOLAR_CONCENTRATION:
             case Constants.Dimension.MOLAR_AUC:
                return new QuantityPKParameterMolarToMassConverter(quantityPKParameterContext, sourceDimension, targetDimension);
-            case Constants.Dimension.MASS_CONCENTRATION:
             case Constants.Dimension.MASS_AMOUNT:
+            case Constants.Dimension.MASS_CONCENTRATION:
             case Constants.Dimension.MASS_AUC:
                return new QuantityPKParameterMassToMolarConverter(quantityPKParameterContext, sourceDimension, targetDimension);
          }
