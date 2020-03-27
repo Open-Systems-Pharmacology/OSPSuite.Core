@@ -2,10 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants.SimulationResults;
@@ -30,21 +28,6 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulationResults">Actual results to convert to <see cref="DataTable" /></param>
       DataTable ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation);
 
-      /// <summary>
-      ///    Creates a <see cref="DataTable" /> containing the PK-Analyses of the populationSimulation.
-      /// </summary>
-      /// <remarks>The format of the table will be IndividualId, QuantityPath, ParameterName, Value, Unit</remarks>
-      /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
-      /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
-      Task<DataTable> PKAnalysesToDataTableAsync(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
-
-      /// <summary>
-      ///    Creates a <see cref="DataTable" /> containing the PK-Analyses of the populationSimulation.
-      /// </summary>
-      /// <remarks>The format of the table will be IndividualId, QuantityPath, ParameterName, Value, Unit</remarks>
-      /// <param name="simulation">Simulation used to calculate the PK-Analyses</param>
-      /// <param name="pkAnalyses">Actual pkAnalyses to convert to <see cref="DataTable" /></param>
-      DataTable PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation);
 
       DataTable SensitivityAnalysisResultsToDataTable(SensitivityAnalysisRunResult sensitivityAnalysisRunResult, IModelCoreSimulation simulation);
    }
@@ -52,27 +35,20 @@ namespace OSPSuite.Core.Domain.Services
    public class SimulationResultsToDataTableConverter : ISimulationResultsToDataTableConverter
    {
       private readonly IEntitiesInSimulationRetriever _quantityRetriever;
-      private readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly IDimension _timeDimension;
 
       public SimulationResultsToDataTableConverter(
          IDimensionFactory dimensionFactory, 
-         IEntitiesInSimulationRetriever quantityRetriever, 
-         IDisplayUnitRetriever displayUnitRetriever)
+         IEntitiesInSimulationRetriever quantityRetriever
+         )
       {
          _quantityRetriever = quantityRetriever;
-         _displayUnitRetriever = displayUnitRetriever;
          _timeDimension = dimensionFactory.Dimension(Constants.Dimension.TIME);
       }
 
       public Task<DataTable> ResultsToDataTableAsync(SimulationResults simulationResults, IModelCoreSimulation simulation)
       {
          return Task.Run(() => ResultsToDataTable(simulationResults, simulation));
-      }
-
-      public Task<DataTable> PKAnalysesToDataTableAsync(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
-      {
-         return Task.Run(() => PKAnalysesToDataTable(pkAnalyses, simulation));
       }
 
       public DataTable ResultsToDataTable(SimulationResults simulationResults, IModelCoreSimulation simulation)
@@ -130,35 +106,6 @@ namespace OSPSuite.Core.Domain.Services
          return dataTable;
       }
 
-      public DataTable PKAnalysesToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
-      {
-         var dataTable = new DataTable(simulation.Name);
-
-         dataTable.AddColumn<int>(INDIVIDUAL_ID);
-         dataTable.AddColumn<string>(QUANTITY_PATH);
-         dataTable.AddColumn<string>(PARAMETER);
-         dataTable.AddColumn<string>(VALUE);
-         dataTable.AddColumn<string>(UNIT);
-
-         dataTable.BeginLoadData();
-         foreach (var pkAnalysis in pkAnalyses.All())
-         {
-            var unit = _displayUnitRetriever.PreferredUnitFor(pkAnalysis);
-            pkAnalysis.Values.Each((value, index) =>
-            {
-               var row = dataTable.NewRow();
-               row[INDIVIDUAL_ID] = index;
-               row[QUANTITY_PATH] = inQuote(pkAnalysis.QuantityPath); 
-               row[PARAMETER] = inQuote(pkAnalysis.Name);
-               row[VALUE] = pkAnalysis.ConvertToUnit(value, unit).ConvertedTo<string>();
-               row[UNIT] = unit.Name;
-               dataTable.Rows.Add(row);
-            });
-         }
-
-         dataTable.EndLoadData();
-         return dataTable;
-      }
 
       public DataTable SensitivityAnalysisResultsToDataTable(SensitivityAnalysisRunResult sensitivityAnalysisRunResult, IModelCoreSimulation simulation)
       {
