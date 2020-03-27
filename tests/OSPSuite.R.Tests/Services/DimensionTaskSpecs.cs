@@ -36,7 +36,7 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          //20 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.AMOUNT, "kg", new[] { 1d, 2d, 3d }, molWeight: 20);
+         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", new[] { 1d, 2d, 3d }, molWeight: 20);
       }
 
       [Observation]
@@ -52,7 +52,7 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          //50 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.AMOUNT, "kg", 10, molWeight: 50);
+         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", 10, molWeight: 50);
       }
 
       [Observation]

@@ -48,13 +48,13 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _amountDimension = A.Fake<IDimension>();
-         A.CallTo(() => _amountDimension.Name).Returns(Constants.Dimension.AMOUNT);
+         A.CallTo(() => _amountDimension.Name).Returns(Constants.Dimension.MOLAR_AMOUNT);
          _moleculeBuilder = A.Fake<IMoleculeBuilder>().WithName("tralala").WithDimension(_amountDimension);
          _mappedFormula = A.Fake<IFormula>();
          _buildConfiguration = A.Fake<IBuildConfiguration>();
          _para1 = A.Fake<IParameter>();
          _para2 = A.Fake<IParameter>();
-         A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT)).Returns(_amountDimension);
+         A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)).Returns(_amountDimension);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _buildConfiguration)).Returns(_mappedFormula);
          A.CallTo(() => _parameterMapper.MapLocalFrom(_moleculeBuilder, _buildConfiguration)).Returns(new[] {_para1, _para2});
       }

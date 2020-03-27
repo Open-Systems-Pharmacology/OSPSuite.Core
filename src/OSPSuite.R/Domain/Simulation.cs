@@ -105,5 +105,9 @@ namespace OSPSuite.R.Domain
       public IReadOnlyList<string> CompoundNames => CoreSimulation.CompoundNames;
 
       public IEnumerable<T> All<T>() where T : class, IEntity => CoreSimulation.All<T>();
+
+      public double? MolWeightFor(IQuantity quantity) => CoreSimulation?.MolWeightFor(quantity);
+
+      public double? MolWeightFor(string quantityPath) => CoreSimulation?.MolWeightFor(quantityPath);
    }
 }

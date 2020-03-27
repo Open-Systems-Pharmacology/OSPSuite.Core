@@ -26,7 +26,7 @@ namespace OSPSuite.Helpers
 
       private IDimension amountPerTimeDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
 
-      private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+      private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
       public ModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IMoleculeStartValuesCreator moleculeStartValuesCreator,
          IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, ISpatialStructureFactory spatialStructureFactory,
@@ -233,7 +233,7 @@ namespace OSPSuite.Helpers
          var observers = _objectBaseFactory.Create<IObserverBuildingBlock>();
 
          var amountObserver1 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_1");
-         amountObserver1.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         amountObserver1.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver1.MoleculeList.ForAll = true;
          amountObserver1.Formula = AmountObs(observers.FormulaCache);
          amountObserver1.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
@@ -241,7 +241,7 @@ namespace OSPSuite.Helpers
 
          var amountObserver2 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_2");
          amountObserver2.MoleculeList.ForAll = false;
-         amountObserver2.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         amountObserver2.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver2.Formula = AmountObs(observers.FormulaCache);
          amountObserver2.AddMoleculeName("C");
          amountObserver2.AddMoleculeName("E");
@@ -250,7 +250,7 @@ namespace OSPSuite.Helpers
 
          var amountObserver3 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_3");
          amountObserver3.MoleculeList.ForAll = true;
-         amountObserver3.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         amountObserver3.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver3.Formula = AmountObs(observers.FormulaCache);
          amountObserver3.AddMoleculeNameToExclude("C");
          amountObserver3.AddMoleculeNameToExclude("E");
@@ -258,7 +258,7 @@ namespace OSPSuite.Helpers
          observers.Add(amountObserver3);
 
          var containerObserverBuilder = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("ContainerObs_1");
-         containerObserverBuilder.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         containerObserverBuilder.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          containerObserverBuilder.MoleculeList.ForAll = false;
          containerObserverBuilder.AddMoleculeName("C");
          containerObserverBuilder.Formula = ContainerObs(observers.FormulaCache);
@@ -275,7 +275,7 @@ namespace OSPSuite.Helpers
 
 
          var observedInOrganismLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
-         observedInOrganismLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          observedInOrganismLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismLungPlasma.AddMoleculeName("C");
          observedInOrganismLungPlasma.Formula = InContainerObs(observers.FormulaCache);
@@ -283,7 +283,7 @@ namespace OSPSuite.Helpers
          observers.Add(observedInOrganismLungPlasma);
 
          var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("NotInContainerObserver");
-         observedInOrganismNotLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         observedInOrganismNotLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          observedInOrganismNotLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismNotLungPlasma.AddMoleculeName("C");
          observedInOrganismNotLungPlasma.Formula = InContainerObs(observers.FormulaCache);
@@ -465,9 +465,9 @@ namespace OSPSuite.Helpers
       {
          var molecule = _moleculeBuilderFactory.Create(formulaCache).WithName(name);
          molecule.QuantityType = quantityType;
-         molecule.DefaultStartFormula = _objectBaseFactory.Create<ConstantFormula>().WithValue(0).WithDimension(_dimensionFactory.Dimension(Constants.Dimension.AMOUNT));
+         molecule.DefaultStartFormula = _objectBaseFactory.Create<ConstantFormula>().WithValue(0).WithDimension(_dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT));
          molecule.IsFloating = true;
-         molecule.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         molecule.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          molecule.DisplayUnit = molecule.Dimension.DefaultUnit;
 
          var molweight = newConstantParameter("MW", MW);
@@ -1040,7 +1040,7 @@ namespace OSPSuite.Helpers
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/2").WithName("AmountObs");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
-         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          formulaCache.Add(formula);
          return formula;
       }
@@ -1067,7 +1067,7 @@ namespace OSPSuite.Helpers
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("ContainerObs");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
-         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
          return formula;
@@ -1083,7 +1083,7 @@ namespace OSPSuite.Helpers
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("InContainerObs");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
-         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+         formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
          return formula;

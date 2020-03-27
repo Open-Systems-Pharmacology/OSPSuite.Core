@@ -88,18 +88,18 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_null_if_the_quantity_is_null()
       {
-         sut.MolWeightFor(null).ShouldBeNull();
+         sut.MolWeightFor((IQuantity)null).ShouldBeNull();
       }
 
       [Observation]
-      public void should_return_null_if_no_molweight_parameter_was_found_unter_the_global_container()
+      public void should_return_null_if_no_molweight_parameter_was_found_under_the_global_container()
       {
          sut.MolWeightFor(_quantityWithoutMolWeight).ShouldBeNull();
          sut.MolWeightFor(_parameterUnderMoleculeWithoutMolWeight).ShouldBeNull();
       }
 
       [Observation]
-      public void should_return_the_molweight_parameter_for_a_parameter_defined_in_a_molecule_for_which_a_molweight_parmaeter_exists()
+      public void should_return_the_molweight_parameter_for_a_parameter_defined_in_a_molecule_for_which_a_molweight_parameter_exists()
       {
          sut.MolWeightFor(_parameterUnderMoleculeWithMolWeight).ShouldBeEqualTo(400);
       }

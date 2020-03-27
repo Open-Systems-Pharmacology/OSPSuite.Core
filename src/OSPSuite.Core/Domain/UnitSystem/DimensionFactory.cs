@@ -124,6 +124,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return matches.FirstOrDefault(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.Ordinal))) ?? matches.First();
       }
 
+      public IDimension CreateUserDefinedDimension(string dimensionName, string unit)
+      {
+         return new Dimension(Constants.Dimension.NO_DIMENSION.BaseRepresentation, dimensionName, unit);
+      }
+
       /// <summary>
       ///    Try to find a dimension that could be the origin dimension for the given <paramref name="rhsDimensionName" />
       /// </summary>

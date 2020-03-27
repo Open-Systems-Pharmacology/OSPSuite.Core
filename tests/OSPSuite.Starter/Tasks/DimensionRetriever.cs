@@ -20,7 +20,7 @@ namespace OSPSuite.Starter.Tasks
 
       public IDimension MoleculeDimension
       {
-         get { return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT); }
+         get { return _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT); }
       }
 
       public ReactionDimensionMode SelectedDimensionMode

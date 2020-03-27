@@ -94,10 +94,7 @@ namespace OSPSuite.R.Services
 
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
 
-      public IDimension CreateUserDefinedDimension(string dimensionName, string unit)
-      {
-         return new Dimension(Constants.Dimension.NO_DIMENSION.BaseRepresentation, dimensionName, unit);
-      }
+      public IDimension CreateUserDefinedDimension(string dimensionName, string unit) => _dimensionFactory.CreateUserDefinedDimension(dimensionName, unit);
 
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {

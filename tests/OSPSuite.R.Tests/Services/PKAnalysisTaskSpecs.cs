@@ -10,10 +10,13 @@ namespace OSPSuite.R.Services
    {
       protected string _pkParameterFile;
       protected Simulation _simulation;
+      protected string _outputPath;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
+         _outputPath = "Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood)";
+
          _pkParameterFile = HelperForSpecs.DataFile("20 Values for peripheral venous blood.csv");
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          var simulationPersister = Api.GetSimulationPersister();
@@ -32,10 +35,19 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_return_a_pk_analysis_object_with_the_expected_dat()
+      public void should_return_a_pk_analysis_object_with_the_expected_data()
       {
-         _result.All().Count().ShouldBeEqualTo(1);
-         _result.HasPKParameterFor("Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood)", "My PK-Parameter").ShouldBeTrue();
+         _result.All().Count().ShouldBeEqualTo(2);
+         _result.HasPKParameterFor(_outputPath, "My PK-Parameter").ShouldBeTrue();
+         _result.HasPKParameterFor(_outputPath, "C_max").ShouldBeTrue();
       }
+
+      [Observation]
+      public void should_have_converted_display_dimension_into_core_dimension()
+      {
+         var c_max = _result.PKParameterFor(_outputPath, "C_max");
+         c_max.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
+      }
+
    }
 }

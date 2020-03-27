@@ -69,19 +69,19 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_created_the_amount_in_amount()
       {
-         Organsim_Molecule_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Organism_Molecule_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Lung_Molecule_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Lung_Molecule_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
+         Organsim_Molecule_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Organism_Molecule_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Lung_Molecule_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Lung_Molecule_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
       }
 
       [Observation]
       public void should_have_created_the_molecule_amount_formula_in_amount()
       {
-         Organsim_Molecule_A.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Organism_Molecule_B.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Lung_Molecule_A.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
-         Lung_Molecule_B.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT);
+         Organsim_Molecule_A.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Organism_Molecule_B.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Lung_Molecule_A.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
+         Lung_Molecule_B.Formula.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_AMOUNT);
       }
 
       [Observation]

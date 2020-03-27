@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain
    public interface IWithChartTemplates
    {
       /// <summary>
-      /// Chart templates available in the simulation. Chart templates are idenfitied by their name which should be unique
+      ///    Chart templates available in the simulation. Chart templates are identified by their name which should be unique
       /// </summary>
       IEnumerable<CurveChartTemplate> ChartTemplates { get; }
 
@@ -55,7 +55,8 @@ namespace OSPSuite.Core.Domain
       void RemoveChartTemplate(string chartTemplateName);
 
       /// <summary>
-      /// Returns the default curve chart template if one is defined, otherwise the first chart template ordered alphabetically. If not template is defined, returns null
+      ///    Returns the default curve chart template if one is defined, otherwise the first chart template ordered
+      ///    alphabetically. If not template is defined, returns null
       /// </summary>
       CurveChartTemplate DefaultChartTemplate { get; }
 
@@ -67,6 +68,31 @@ namespace OSPSuite.Core.Domain
    public interface IWithModel
    {
       IModel Model { set; get; }
+   }
+
+   public interface IMolWeightFinder
+   {
+      /// <summary>
+      ///    Returns the value of the molweight <see cref="IParameter" /> defined in the simulation. If the parameter is not
+      ///    found for
+      ///    the given <paramref name="quantity" />, returns <c>null</c>.
+      ///    We use the following logic:
+      ///    For a <see cref="IMoleculeAmount" /> a MolWeight parameter will be searched directly in the global container named
+      ///    after the molecule.
+      ///    For all other quantities (e.g. <see cref="IObserver" />,  <see cref="IParameter" />) a MolWeight parameter will be
+      ///    searched in the global container named after the parent.
+      /// </summary>
+      /// <param name="quantity">Quantity for which the molweight parameter should be retrieved</param>
+      double? MolWeightFor(IQuantity quantity);
+
+      /// <summary>
+      ///    Returns the value of the molweight <see cref="IParameter" /> defined in the simulation. If the parameter is not
+      ///    found for
+      ///    the quantity with path <paramref name="quantityPath" />, returns <c>null</c>.
+      ///    For implementation details, see MolWeightFor(IQuantity quantity)
+      /// </summary>
+      /// <param name="quantityPath">PAth of quantity for which the molecule weight should be retrieved</param>
+      double? MolWeightFor(string quantityPath);
    }
 
    public interface IWithCreationMetaData
