@@ -1,41 +1,20 @@
 ﻿namespace OSPSuite.Core.Domain.UnitSystem
 {
-   public abstract class QuantityPKParameterContextDimensionConverter : MolWeightDimensionConverter
+   public class QuantityPKParameterMolarToMassConverter : MolarToMassDimensionConverter<QuantityPKParameterContext>
    {
-      protected readonly QuantityPKParameterContext _context;
-
-      protected QuantityPKParameterContextDimensionConverter(QuantityPKParameterContext context, IDimension sourceDimension, IDimension targetDimension) : base(sourceDimension, targetDimension)
+      public QuantityPKParameterMolarToMassConverter(QuantityPKParameterContext context, IDimension molarDimension, IDimension massDimension) : base(
+         molarDimension,
+         massDimension, context, x => x.MolWeight)
       {
-         _context = context;
       }
-
-      public override bool CanResolveParameters()
-      {
-         return _context.MolWeight.HasValue;
-      }
-
-      protected override double MolWeight => _context.MolWeight.GetValueOrDefault(double.NaN);
    }
 
-   public class QuantityPKParameterMolarToMassConverter : QuantityPKParameterContextDimensionConverter
+   public class QuantityPKParameterMassToMolarConverter : MassToMolarDimensionConverter<QuantityPKParameterContext>
    {
-      public QuantityPKParameterMolarToMassConverter(QuantityPKParameterContext context, IDimension sourceDimension, IDimension targetDimension) : base(context, sourceDimension, targetDimension)
+      public QuantityPKParameterMassToMolarConverter(QuantityPKParameterContext context, IDimension massDimension, IDimension molarDimension) : base(
+         massDimension,
+         molarDimension, context, x => x.MolWeight)
       {
       }
-
-      public override double ConvertToTargetBaseUnit(double molarConcentration) => ConvertToMass(molarConcentration);
-
-      public override double ConvertToSourceBaseUnit(double massConcentration) => ConvertToMolar(massConcentration);
-   }
-
-   public class QuantityPKParameterMassToMolarConverter : QuantityPKParameterContextDimensionConverter
-   {
-      public QuantityPKParameterMassToMolarConverter(QuantityPKParameterContext context, IDimension sourceDimension, IDimension targetDimension) : base(context, sourceDimension, targetDimension)
-      {
-      }
-
-      public override double ConvertToTargetBaseUnit(double massConcentration) => ConvertToMolar(massConcentration);
-
-      public override double ConvertToSourceBaseUnit(double molarConcentration) => ConvertToMass(molarConcentration);
    }
 }

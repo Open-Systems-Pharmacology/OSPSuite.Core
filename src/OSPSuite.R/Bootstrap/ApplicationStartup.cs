@@ -101,7 +101,7 @@ namespace OSPSuite.R.Bootstrap
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(amountDimension, massDimension));
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(massDimension, amountDimension));
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(aucMolarDimension, aucMassDimension));
-         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(aucMassDimension, aucMassDimension));
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(aucMassDimension, aucMolarDimension));
       }
 
       private static void initializeGroups(IContainer container)
