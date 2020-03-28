@@ -19,3 +19,23 @@ IndividualId,Output,Parameter,Value,Unit
 17,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),My PK-Parameter,27,min
 18,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),My PK-Parameter,28,min
 19,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),My PK-Parameter,29,min
+0,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,10,mg/l
+1,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,11,mg/l
+2,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,12,mg/l
+3,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,13,mg/l
+4,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,14,mg/l
+5,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,15,mg/l
+6,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,16,mg/l
+7,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,17,mg/l
+8,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,18,mg/l
+9,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,19,mg/l
+10,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,20,mg/l
+11,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,21,mg/l
+12,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,22,mg/l
+13,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,23,mg/l
+14,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,24,mg/l
+15,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,25,mg/l
+16,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,26,mg/l
+17,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,27,mg/l
+18,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,28,mg/l
+19,Organism|PeripheralVenousBlood|Caffeine|Plasma (Peripheral Venous Blood),C_max,29,mg/l

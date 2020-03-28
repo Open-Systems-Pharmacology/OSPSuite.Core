@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         var x1 = new MoleculeStartValue {ContainerPath = new ObjectPath("aa", "bb"), Name = "H2", Dimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.AMOUNT, "mol")};
+         var x1 = new MoleculeStartValue {ContainerPath = new ObjectPath("aa", "bb"), Name = "H2", Dimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLAR_AMOUNT, "mol")};
 
          x1.IsPresent = true;
          x1.StartValue = 2.5;

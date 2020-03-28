@@ -58,5 +58,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <param name="unitName">The unit string that will be searched for. For example 'mg' or 's'</param>
       /// <returns>The dimension associated with the unit name</returns>
       IDimension DimensionForUnit(string unitName);
+
+
+      /// <summary>
+      ///    This is a dimension that will only have one unit and assume tha the user is saving the value in the expected base
+      ///    unit.
+      ///    Note that this dimension is temporary and will be discarded as soon as the instance referencing it are collected
+      /// </summary>
+      /// <param name="dimensionName">Name to give to the user defined dimension</param>
+      /// <param name="unit">Unit that will be the only unit of this dimension</param>
+      IDimension CreateUserDefinedDimension(string dimensionName, string unit);
    }
 }

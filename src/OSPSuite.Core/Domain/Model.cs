@@ -1,25 +1,14 @@
 ﻿using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IModel : IObjectBase
+   public interface IModel : IObjectBase, IMolWeightFinder
    {
       IContainer Root { get; set; }
       IContainer Neighborhoods { set; get; }
-
-      /// <summary>
-      ///    Returns the value of the molweight <see cref="IParameter" /> defined in the model. If the parameter is not found for
-      ///    the given <paramref name="quantity" />, returns <c>null</c>.
-      ///    We use the following logic:
-      ///    For a <see cref="IMoleculeAmount" /> a MolWeight parameter will be searched directly in the global container named
-      ///    after the molecule.
-      ///    For all other quantities (e.g. <see cref="IObserver" />,  <see cref="IParameter" />) a MolWeight parameter will be
-      ///    searched in the global container named after the parent.
-      /// </summary>
-      /// <param name="quantity">Quantity for which the molweight parameter should be retrieved</param>
-      double? MolWeightFor(IQuantity quantity);
    }
 
    public class Model : ObjectBase, IModel
@@ -57,6 +46,12 @@ namespace OSPSuite.Core.Domain
          //try to find the molweight parameter in the global molecule container
          var molWeightParameter = Root.EntityAt<IParameter>(moleculeName, Constants.Parameters.MOL_WEIGHT);
          return molWeightParameter?.Value;
+      }
+
+      public double? MolWeightFor(string quantityPath)
+      {
+         var quantity = Root?.EntityAt<IQuantity>(quantityPath.ToPathArray());
+         return MolWeightFor(quantity);
       }
 
       public IContainer Root

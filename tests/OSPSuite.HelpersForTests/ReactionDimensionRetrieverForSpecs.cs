@@ -30,7 +30,7 @@ namespace OSPSuite.Helpers
          get
          {
             if (SelectedDimensionMode == ReactionDimensionMode.AmountBased)
-               return _dimensionFactory.Dimension(Constants.Dimension.AMOUNT);
+               return _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
             return _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          }

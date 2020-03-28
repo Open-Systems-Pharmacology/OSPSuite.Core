@@ -43,7 +43,7 @@ namespace OSPSuite.Starter.Services
          };
 
          var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable).ToList();
-         var amounts = allPersistable.Where(x => x.Dimension.Name == Constants.Dimension.AMOUNT).Take(3).ToList();
+         var amounts = allPersistable.Where(x => x.Dimension.Name == Constants.Dimension.MOLAR_AMOUNT).Take(3).ToList();
          amounts.Each(x=>simulation.OutputSelections.AddOutput(new QuantitySelection(_entityPathResolver.PathFor(x), QuantityType.Molecule)));
 
          var firstFraction = allPersistable.First(x => x.Dimension.Name == Constants.Dimension.FRACTION);

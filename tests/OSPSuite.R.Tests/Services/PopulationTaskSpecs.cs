@@ -118,9 +118,44 @@ namespace OSPSuite.R.Services
       public void should_create_one_file_per_requested_core()
       {
          _result.Count.ShouldBeEqualTo(_numberOfCores);
-         for (int i = 0; i < _numberOfCores; i++)
+         for (int i = 0; i < _result.Count; i++)
          {
             _result.ShouldContain(Path.Combine(_outputFolder, $"PopFile_{i+1}.csv"));
+         }
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         _result.Each(FileHelper.DeleteFile);
+      }
+   }
+
+   public class When_splitting_a_population_file_into_multiple_files_resulting_in_a_bucket_size_leaving_empty_core: concern_for_PopulationTask
+   {
+      private IReadOnlyList<string> _result;
+      private string _outputFolder;
+      private int _numberOfCores = 4;
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var tmpFile = FileHelper.GenerateTemporaryFileName();
+         _outputFolder = new FileInfo(tmpFile).DirectoryName;
+         _populationFile = HelperForSpecs.DataFile("pop_5.csv");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+      }
+
+      [Observation]
+      public void should_create_the_expected_number_of_files()
+      {
+         _result.Count.ShouldBeEqualTo(_numberOfCores - 1 );
+         for (int i = 0; i < _result.Count; i++)
+         {
+            _result.ShouldContain(Path.Combine(_outputFolder, $"PopFile_{i + 1}.csv"));
          }
       }
 

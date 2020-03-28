@@ -6,7 +6,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel
+   public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel, IMolWeightFinder
    {
       /// <summary>
       ///    Build configuration used to create the simulation. May be null
@@ -53,6 +53,10 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
 
       public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>()) ?? Enumerable.Empty<T>();
+
+      public double? MolWeightFor(IQuantity quantity) => Model?.MolWeightFor(quantity);
+
+      public double? MolWeightFor(string quantityPath) => Model?.MolWeightFor(quantityPath);
 
       private IEnumerable<TEntity> allFromSettings<TEntity>() where TEntity : class, IEntity
       {

@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain
          return withDimension.DimensionIsOneOf(Constants.Dimension.MOLAR_CONCENTRATION, Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME) ? ReactionDimensionMode.ConcentrationBased : ReactionDimensionMode.AmountBased;
       }
 
-      public static bool IsAmount(this IWithDimension withDimension) => withDimension.DimensionIsOneOf(Constants.Dimension.AMOUNT, Constants.Dimension.MASS_AMOUNT);
+      public static bool IsAmount(this IWithDimension withDimension) => withDimension.DimensionIsOneOf(Constants.Dimension.MOLAR_AMOUNT, Constants.Dimension.MASS_AMOUNT);
 
       public static bool IsConcentration(this IWithDimension withDimension) => withDimension.DimensionIsOneOf(Constants.Dimension.MOLAR_CONCENTRATION, Constants.Dimension.MASS_CONCENTRATION);
 

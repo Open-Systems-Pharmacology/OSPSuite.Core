@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain
       public void should_return_valid_if_both_dimensions_are_amount()
       {
          var dimension = A.Fake<IDimension>();
-         A.CallTo(() => dimension.Name).Returns(Constants.Dimension.AMOUNT);
+         A.CallTo(() => dimension.Name).Returns(Constants.Dimension.MOLAR_AMOUNT);
          _firstDimension.Dimension = dimension;
 
          var dimension2 = A.Fake<IDimension>();

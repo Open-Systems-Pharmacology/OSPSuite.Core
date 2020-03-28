@@ -30,18 +30,18 @@ namespace OSPSuite.R.Services
 
    public class PKAnalysisTask : IPKAnalysisTask
    {
-      private readonly ISimulationResultsToDataTableConverter _simulationResultsToDataTableConverter;
+      private readonly IPopulationSimulationPKAnalysesToDataTableConverter _populationSimulationPKAnalysesToDataTableConverter;
       private readonly ICorePKAnalysisTask _corePKAnalysesTask;
       private readonly ISimulationPKParametersImportTask _simulationPKParametersImportTask;
       private readonly RLogger _logger;
 
       public PKAnalysisTask(
-         ISimulationResultsToDataTableConverter simulationResultsToDataTableConverter,
+         IPopulationSimulationPKAnalysesToDataTableConverter populationSimulationPKAnalysesToDataTableConverter,
          ICorePKAnalysisTask corePKAnalysesTask,
          ISimulationPKParametersImportTask simulationPKParametersImportTask,
          RLogger logger)
       {
-         _simulationResultsToDataTableConverter = simulationResultsToDataTableConverter;
+         _populationSimulationPKAnalysesToDataTableConverter = populationSimulationPKAnalysesToDataTableConverter;
          _corePKAnalysesTask = corePKAnalysesTask;
          _simulationPKParametersImportTask = simulationPKParametersImportTask;
          _logger = logger;
@@ -71,7 +71,7 @@ namespace OSPSuite.R.Services
 
       public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)
       {
-         return _simulationResultsToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
+         return _populationSimulationPKAnalysesToDataTableConverter.PKAnalysesToDataTable(pkAnalyses, simulation);
       }
    }
 }

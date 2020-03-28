@@ -294,7 +294,7 @@ namespace OSPSuite.Core.Domain
          public const string MOLAR_CONCENTRATION = "Concentration (molar)";
          public const string MASS_CONCENTRATION = "Concentration (mass)";
          public const string DIMENSIONLESS = "Dimensionless";
-         public const string AMOUNT = "Amount";
+         public const string MOLAR_AMOUNT = "Amount";
          public const string MASS_AMOUNT = "Mass";
          public const string TIME = "Time";
          public const string RHS_DIMENSION_SUFFIX = " per time";

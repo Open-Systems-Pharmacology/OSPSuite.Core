@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -16,9 +17,11 @@ namespace OSPSuite.Infrastructure.Import
       protected string _fileName;
       protected ImportLogger _importLogger = new ImportLogger();
       protected List<QuantityPKParameter> _results;
+      private IModelCoreSimulation _simulation;
 
       protected override void Context()
       {
+         _simulation = A.Fake<IModelCoreSimulation>();   
          _dimensionFactory = new DimensionFactoryForIntegrationTests();
          _dimensionFactory.AddDimension(DomainHelperForSpecs.TimeDimensionForSpecs());
          _dimensionFactory.AddDimension(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
@@ -27,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import
 
       protected override void Because()
       {
-         _results = sut.ImportPKParameters(_fileName, _importLogger).ToList();
+         _results = sut.ImportPKParameters(_fileName,_simulation, _importLogger).ToList();
       }
 
       protected QuantityPKParameter ParameterFor(string output, string para)
@@ -98,9 +101,9 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
-      public void should_notify_an_error()
+      public void should_have_been_able_to_import_the_file_by_creating_user_defined_units_but_a_warning_will_be_created()
       {
-         _importLogger.Status.Is(NotificationType.Error).ShouldBeTrue();
+         _importLogger.Status.Is(NotificationType.Warning).ShouldBeTrue();
       }
    }
 

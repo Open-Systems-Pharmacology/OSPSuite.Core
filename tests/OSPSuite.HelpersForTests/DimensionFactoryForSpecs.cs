@@ -11,7 +11,7 @@ namespace OSPSuite.Helpers
       {
          var factory = new DimensionFactory();
 
-         var amountDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.AMOUNT, "Molar Volume");
+         var amountDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLAR_AMOUNT, "Molar Volume");
          amountDimension.AddUnit(new Unit("mol", 1, 0));
 
          var massDimension = new Dimension(new BaseDimensionRepresentation(), DimensionNames.Mass, "g");

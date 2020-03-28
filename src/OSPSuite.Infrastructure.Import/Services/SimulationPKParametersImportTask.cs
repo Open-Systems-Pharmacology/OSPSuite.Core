@@ -25,7 +25,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public async Task<SimulationPKParametersImport> ImportPKParameters(string fileFullPath, IModelCoreSimulation simulation, CancellationToken cancellationToken)
       {
-         var importedPKAnalysis = await importPKAnalysesFromFile(fileFullPath, cancellationToken);
+         var importedPKAnalysis = await importPKAnalysesFromFile(fileFullPath, simulation, cancellationToken);
          validateConsistencyWithSimulation(simulation, importedPKAnalysis);
          addImportedPKToLogForSuccessfulImport(importedPKAnalysis);
          return importedPKAnalysis;
@@ -61,12 +61,12 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      private Task<SimulationPKParametersImport> importPKAnalysesFromFile(string fileFullPath, CancellationToken cancellationToken)
+      private Task<SimulationPKParametersImport> importPKAnalysesFromFile(string fileFullPath, IModelCoreSimulation modelCoreSimulation,  CancellationToken cancellationToken)
       {
          return Task.Run(() =>
          {
             var importLogger = new SimulationPKParametersImport {FilePath = fileFullPath};
-            importLogger.PKParameters = _pkAnalysesImporter.ImportPKParameters(fileFullPath, importLogger);
+            importLogger.PKParameters = _pkAnalysesImporter.ImportPKParameters(fileFullPath, modelCoreSimulation, importLogger);
             return importLogger;
          }, cancellationToken);
       }
