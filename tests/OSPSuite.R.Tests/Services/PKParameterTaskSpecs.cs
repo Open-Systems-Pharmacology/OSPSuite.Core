@@ -54,6 +54,12 @@ namespace OSPSuite.R.Services
       {
          sut.AddUserDefinedPKParameter(_userDefinedPKParameter);
       }
+
+      [Observation]
+      public void the_user_defined_pk_parameters_should_have_the_mode_set_to_always()
+      {
+         _userDefinedPKParameter.Mode.ShouldBeEqualTo(PKParameterMode.Always);
+      }
    }
 
    public class When_removing_a_user_defined_pk_parameter : concern_for_PKParameterTask
