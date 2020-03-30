@@ -30,6 +30,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
 
    public class UserDefinedPKParameter : PKParameter
    {
+      //User defined PK Parameters should be created via the DimensionTask method to ensure that dimensions are set as expected.
       public UserDefinedPKParameter()
       {
          // Default dimension for a dynamic PK Parameter for now 

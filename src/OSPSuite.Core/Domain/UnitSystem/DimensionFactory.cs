@@ -148,6 +148,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       private static string unknownDimension(string name) => $"Dimension '{name}' not available in DimensionFactory.";
 
+      public bool HasMergingInformation(IDimension sourceDimension, IDimension targetDimension)
+      {
+         var targetDimensions = (from dimension in _allMergingInformation
+            where   dimension.SourceDimension== sourceDimension
+            select dimension.TargetDimension).Distinct().ToList();
+
+         return targetDimensions.Contains(targetDimension);
+      }
+
       public void RemoveDimension(string dimensionName)
       {
          if (!Has(dimensionName))

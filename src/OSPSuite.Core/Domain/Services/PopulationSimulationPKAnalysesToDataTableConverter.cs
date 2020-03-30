@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
             var pkParameter = _pkParameterRepository.FindByName(quantityPKParameter.Name);
             var quantityPKParameterContext = new QuantityPKParameterContext(quantityPKParameter, molWeight);
             var mergedDimension = _dimensionFactory.MergedDimensionFor(quantityPKParameterContext);
-            var unit = mergedDimension.UnitOrDefault(pkParameter.DisplayUnitName);
+            var unit = mergedDimension.UnitOrDefault(pkParameter.DisplayUnit);
             quantityPKParameter.Values.Each((value, index) =>
             {
                var row = dataTable.NewRow();

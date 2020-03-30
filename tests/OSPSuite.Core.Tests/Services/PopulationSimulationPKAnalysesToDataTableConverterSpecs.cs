@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Services
          _pkAnalysis = new PopulationSimulationPKAnalyses();
          _populationSimulation = A.Fake<IModelCoreSimulation>();
          var quantityPKParameter = new QuantityPKParameter { QuantityPath = "Liver", Name = "P" };
-         var pkParameter = new PKParameter {DisplayUnitName = "UNIT", Name = "P" };
+         var pkParameter = new PKParameter {DisplayUnit = "UNIT", Name = "P" };
          A.CallTo(() => _pkParameterRepository.FindByName(quantityPKParameter.Name)).Returns(pkParameter);
          var mergedDimension = A.Fake<IDimension>();
          quantityPKParameter.SetNumberOfIndividuals(2);
@@ -47,8 +47,8 @@ namespace OSPSuite.Core.Services
             .Returns(mergedDimension);
 
          var unit = A.Fake<Unit>();
-         A.CallTo(() => unit.Name).Returns(pkParameter.DisplayUnitName);
-         A.CallTo(() => mergedDimension.UnitOrDefault(pkParameter.DisplayUnitName)).Returns(unit);
+         A.CallTo(() => unit.Name).Returns(pkParameter.DisplayUnit);
+         A.CallTo(() => mergedDimension.UnitOrDefault(pkParameter.DisplayUnit)).Returns(unit);
          A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 10)).Returns(100.10);
          A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 11)).Returns(110.20);
 

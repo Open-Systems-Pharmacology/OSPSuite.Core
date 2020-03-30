@@ -46,15 +46,6 @@ namespace OSPSuite.R.Services
       ///    Returns the name of all dimensions defined in the suite
       /// </summary>
       string[] AllAvailableDimensionNames();
-
-      /// <summary>
-      ///    This is a dimension that will only have one unit and assume tha the user is saving the value in the expected base
-      ///    unit.
-      ///    Note that this dimension is temporary and will be discarded as soon as the instance referencing it are collected
-      /// </summary>
-      /// <param name="dimensionName">Name to give to the user defined dimension</param>
-      /// <param name="unit">Unit that will be the only unit of this dimension</param>
-      IDimension CreateUserDefinedDimension(string dimensionName, string unit);
    }
 
    public class DimensionTask : IDimensionTask
@@ -93,8 +84,6 @@ namespace OSPSuite.R.Services
       public IDimension[] AllAvailableDimensions() => _dimensionFactory.Dimensions.ToArray();
 
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
-
-      public IDimension CreateUserDefinedDimension(string dimensionName, string unit) => _dimensionFactory.CreateUserDefinedDimension(dimensionName, unit);
 
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {

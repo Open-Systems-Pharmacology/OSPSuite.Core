@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
    public class PKParameter : IWithName, IWithDescription
    {
       private string _displayName;
-      private string _displayUnitName;
+      private string _displayUnit;
 
       /// <summary>
       ///    Internal name used to identify a pk parameter
@@ -33,10 +33,10 @@ namespace OSPSuite.Core.Domain.PKAnalyses
 
       public virtual PKParameterMode Mode { get; set; }
 
-      public virtual string DisplayUnitName
+      public virtual string DisplayUnit
       {
-         get => _displayUnitName ?? Dimension?.DefaultUnitName;
-         set => _displayUnitName = value;
+         get => string.IsNullOrEmpty(_displayUnit) ? Dimension?.DefaultUnitName : _displayUnit;
+         set => _displayUnit = value;
       }
    }
 }

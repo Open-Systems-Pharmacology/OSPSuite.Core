@@ -35,6 +35,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
       void AddDimension(IDimension dimension);
       void AddMergingInformation(IDimensionMergingInformation mergingInformation);
 
+      /// <summary>
+      /// Returns <c>true</c> if there is some merging information defined between the source and target dimension otherwise <c>false</c> 
+      /// </summary>
+      bool HasMergingInformation(IDimension sourceDimension, IDimension targetDimension);
+
       void RemoveDimension(string dimensionName);
       void RemoveDimension(IDimension dimension);
 

@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.R.Domain;
 
 namespace OSPSuite.R.Services
@@ -11,6 +14,8 @@ namespace OSPSuite.R.Services
       protected string _pkParameterFile;
       protected Simulation _simulation;
       protected string _outputPath;
+      protected ISimulationRunner _simulationRunner;
+      protected IPKParameterTask _pkParameterTask;
 
       public override void GlobalContext()
       {
@@ -21,6 +26,8 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("S1.pkml");
          var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
+         _simulationRunner = Api.GetSimulationRunner();
+         _pkParameterTask = Api.GetPKParameterTask();
          sut = Api.GetPKAnalysisTask();
       }
    }
@@ -49,5 +56,47 @@ namespace OSPSuite.R.Services
          c_max.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
       }
 
+   }
+
+
+   public class When_exporting_the_pk_analysis_to_data_frame_with_value_in_another_unit : concern_for_PKAnalysisTask
+   {
+      private SimulationResults _result;
+      private PopulationSimulationPKAnalyses _pkAnalysis;
+      private UserDefinedPKParameter _userDefinedPKParameter;
+      private DataTable _table;
+
+      protected override void Context()
+      {
+         base.Context();
+         _result = _simulationRunner.Run(_simulation);
+         _userDefinedPKParameter = _pkParameterTask.CreateUserDefinedPKParameter("MyCmax", StandardPKParameter.C_max, displayName : null, displayUnit : "mg/l");
+         _pkParameterTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
+
+      }
+      protected override void Because()
+      {
+         _pkAnalysis= sut.CalculateFor(new CalculatePKAnalysisArgs{NumberOfIndividuals = 1, Simulation = _simulation, SimulationResults = _result});
+         _table = sut.ConvertToDataTable(_pkAnalysis, _simulation);
+      }
+
+      [Observation]
+      public void should_return_a_pk_analysis_object_with_the_expected_data()
+      {
+         _table.Columns.Count.ShouldBeEqualTo(5);
+         var mw = _simulation.MolWeightFor(_outputPath).GetValueOrDefault(double.NaN);
+         var c_max = _table.Select($"QuantityPath = '\"{_outputPath}\"' AND Parameter = '\"C_max\"'");
+         var my_cmax =  _table.Select($"QuantityPath = '\"{_outputPath}\"' AND Parameter = '\"MyCmax\"'");
+         var c_max_value = double.Parse(c_max[0]["Value"].ToString());
+         var my_cmax_value = double.Parse(my_cmax[0]["Value"].ToString());
+         //kg/l => mg/l
+         my_cmax_value.ShouldBeEqualTo(c_max_value * mw * 1E6, 1e-2);
+      }
+
+      public override void Cleanup()
+      {
+         base.Cleanup();
+         _pkParameterTask.RemoveAllUserDefinedPKParameters();
+      }
    }
 }
