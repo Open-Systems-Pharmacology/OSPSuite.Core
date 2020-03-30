@@ -34,6 +34,9 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       {
          // Default dimension for a dynamic PK Parameter for now 
          Dimension = Constants.Dimension.NO_DIMENSION;
+
+         // Set the mode to always by default for now. User will be responsible to define the pk parameters in a meaningful way
+         Mode = PKParameterMode.Always;
       }
 
       // Parameter such as AUC, Cmax, Tmax that will be used to calculate the parameter
