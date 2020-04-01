@@ -47,6 +47,11 @@ namespace OSPSuite.Core.Domain
          return Value;
       }
 
+      public void ClearRHSFormula()
+      {
+         //nothing to do
+      }
+
       public string ValueDescription { get; set; }
       public bool NegativeValuesAllowed { get; set; }
 

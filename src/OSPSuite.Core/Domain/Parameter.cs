@@ -87,6 +87,11 @@ namespace OSPSuite.Core.Domain
       ///    value of the parameter are taken
       /// </summary>
       double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null);
+
+      /// <summary>
+      /// Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
+      /// </summary>
+      void ClearRHSFormula();
    }
 
    public class Parameter : Quantity, IParameter
@@ -140,9 +145,11 @@ namespace OSPSuite.Core.Domain
          if (!(minValue.HasValue && maxValue.HasValue))
             return double.NaN;
 
-         //return a unfiorm deviate between min and max
+         //return a uniform deviate between min and max
          return randomGenerator.UniformDeviate(minValue.Value, maxValue.Value);
       }
+
+      public void ClearRHSFormula() => RHSFormula = null;
 
       public virtual bool IsChangedByCreateIndividual => false;
 

@@ -94,6 +94,8 @@ namespace OSPSuite.Core.Domain
          return Formula.RandomDeviate(randomGenerator, this, 0, maxValue.Value);
       }
 
+      public void ClearRHSFormula() => RHSFormula = null;
+
       public double Percentile
       {
          get => percentile;
