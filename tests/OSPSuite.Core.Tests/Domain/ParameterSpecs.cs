@@ -216,4 +216,24 @@ namespace OSPSuite.Core.Domain
          sut.DisplayUnit.ShouldBeEqualTo(_dimension.DefaultUnit);
       }
    }
+
+   public class When_clearing_the_RHS_formula : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.RHSFormula = new ConstantFormula(10);
+      }
+
+      protected override void Because()
+      {
+         sut.ClearRHSFormula();
+      }
+
+      [Observation]
+      public void should_have_set_the_rhs_formula_to_null()
+      {
+         sut.RHSFormula.ShouldBeNull();   
+      }
+   }
 }
