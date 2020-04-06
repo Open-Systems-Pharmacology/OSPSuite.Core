@@ -7,19 +7,14 @@ namespace OSPSuite.Core.Domain.Data
    /// </summary>
    public class PKValues
    {
-      private readonly ICache<string, float?> _pkValues;
+      //returns null for an unknown value
+      public ICache<string, float?> Values { get; } = new Cache<string, float?>(s => (float?)null);
 
-      public PKValues()
-      {
-         //returns null for an unknown value
-         _pkValues = new Cache<string, float?>(s => (float?) null);
-      }
+      public virtual void AddValue(string pkParameter, float? value) => Values[pkParameter] = value;
 
-      public virtual void AddValue(string pkParameter, float? value) => _pkValues[pkParameter] = value;
+      public virtual float? ValueFor(string pkParameter) => Values[pkParameter];
 
-      public virtual float? ValueFor(string pkParameter) => _pkValues[pkParameter];
-
-      public virtual bool HasValueFor(string pkParameter) => _pkValues.Contains(pkParameter);
+      public virtual bool HasValueFor(string pkParameter) => Values.Contains(pkParameter);
 
       /// <summary>
       ///    Returns the value defined for the parameter if available or <c>float.NaN</c> otherwise

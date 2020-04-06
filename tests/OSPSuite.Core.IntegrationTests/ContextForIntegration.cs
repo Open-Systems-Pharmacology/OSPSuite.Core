@@ -5,6 +5,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Journal;
@@ -77,6 +78,7 @@ namespace OSPSuite.Core
 
 
          initializeDimensions();
+         initPKParameters();
 
          Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
       }
@@ -96,7 +98,7 @@ namespace OSPSuite.Core
       {
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
          var persistor = IoC.Resolve<IDimensionFactoryPersistor>();
-         persistor.Load(dimensionFactory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "OSPSuite.Dimensions.xml"));
+         persistor.Load(dimensionFactory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.DIMENSIONS_FILE_NAME));
          dimensionFactory.AddDimension(Constants.Dimension.NO_DIMENSION);
 
          var molarConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
@@ -105,6 +107,15 @@ namespace OSPSuite.Core
          var concentrationDimensionsMergingInformation = new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension);
          dimensionFactory.AddMergingInformation(concentrationDimensionsMergingInformation);
       }
+
+
+      private void initPKParameters()
+      {
+         var pkParameterRepository = IoC.Resolve<IPKParameterRepository>();
+         var pKParameterLoader = IoC.Resolve<IPKParameterRepositoryLoader>();
+         pKParameterLoader.Load(pkParameterRepository, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME));
+      }
+
 
       public override void GlobalCleanup()
       {
