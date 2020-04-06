@@ -391,7 +391,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string AUC_inf_tD1 = Create(AUC_inf, "_tD1");
          public static readonly string AUC_inf_tD1_norm = NormalizedName(AUC_inf_tD1);
 
-         public static readonly string AUC_tD1_tD2 = Create(AUC_tEnd, FirstIntervalSuffix);
+         public static readonly string AUC_tD1_tD2 = Create("AUC", FirstIntervalSuffix);
          public static readonly string AUC_tD1_tD2_norm = NormalizedName(AUC_tD1_tD2);
 
          public const string AUC_tDLast_minus_1_tDLast = "AUC_tDLast_minus_1_tDLast";

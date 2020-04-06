@@ -7,13 +7,18 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Helpers;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_PKValuesCalculator : ContextSpecification<IPKValuesCalculator>
+   public abstract class concern_for_PKValuesCalculator : ContextForIntegration<IPKValuesCalculator>
    {
+      protected IPKParameterRepository _pkParameterRepository;
+
       protected override void Context()
       {
+         _pkParameterRepository = IoC.Resolve<IPKParameterRepository>();
          sut = new PKValuesCalculator();
       }
 
@@ -49,6 +54,20 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          _pk = sut.CalculatePK(_multipleDosingColumn, _pkOptions);
+      }
+
+      [Observation]
+      public void should_return_parameters_that_are_available_in_the_pk_parameter_repository()
+      {
+         var errorList = new List<string>();
+
+         _pk.Values.Keys.Each(x=>
+         {
+            if (_pkParameterRepository.FindByName(x) == null)
+               errorList.Add(x);
+         });
+
+         errorList.Count.ShouldBeEqualTo(0, errorList.ToString(", "));
       }
 
       [Observation]
@@ -182,6 +201,20 @@ namespace OSPSuite.Core
       protected override void Because()
       {
          _pk = sut.CalculatePK(_singleDosing, _pkOptions);
+      }
+
+      [Observation]
+      public void should_return_parameters_that_are_available_in_the_pk_parameter_repository()
+      {
+         var errorList = new List<string>();
+
+         _pk.Values.Keys.Each(x =>
+         {
+            if (_pkParameterRepository.FindByName(x) == null)
+               errorList.Add(x);
+         });
+
+         errorList.Count.ShouldBeEqualTo(0, errorList.ToString(", "));
       }
 
       [Observation]
