@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             //get row indices for the simulations on current core
-            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies, _parameterCache);
+            _populationDataSplitter.UpdateParametersAndSpeciesValuesForIndividual(individualId, variableParameters, variableSpecies, _parameterCache);
 
 
             //set new parameter values into SimModel
