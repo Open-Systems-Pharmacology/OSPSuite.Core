@@ -14,6 +14,7 @@ namespace OSPSuite.Core.Domain.Services
    public class PopulationRunner : SimModelManagerBase, IPopulationRunner
    {
       private readonly IObjectPathFactory _objectPathFactory;
+      private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
 
       private PopulationRunResults _populationRunResults;
@@ -22,10 +23,16 @@ namespace OSPSuite.Core.Domain.Services
       private int _numberOfSimulationsToRun;
       private int _numberOfProcessedSimulations;
       private string _simulationName;
+      private PathCache<IParameter> _parameterCache;
 
-      public PopulationRunner(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IObjectPathFactory objectPathFactory) : base(simModelExporter, simModelSimulationFactory)
+      public PopulationRunner(
+         ISimModelExporter simModelExporter, 
+         ISimModelSimulationFactory simModelSimulationFactory, 
+         IObjectPathFactory objectPathFactory,
+         IEntitiesInSimulationRetriever entitiesInSimulationRetriever) : base(simModelExporter, simModelSimulationFactory)
       {
          _objectPathFactory = objectPathFactory;
+         _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
 
       public async Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
@@ -44,6 +51,7 @@ namespace OSPSuite.Core.Domain.Services
             _numberOfProcessedSimulations = 0;
 
             _simulationName = simulation.Name;
+            _parameterCache = _entitiesInSimulationRetriever.ParametersFrom(simulation);
 
             //create simmodel-XML
             var simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized);
@@ -63,6 +71,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             _populationRunResults = null;
             _populationDataSplitter = null;
+            _parameterCache = null;
             RaiseTerminated(this, EventArgs.Empty);
          }
       }
@@ -96,7 +105,7 @@ namespace OSPSuite.Core.Domain.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             //get row indices for the simulations on current core
-            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies);
+            _populationDataSplitter.UpdateParametersAndInitialValuesForIndividual(individualId, variableParameters, variableSpecies, _parameterCache);
 
 
             //set new parameter values into SimModel

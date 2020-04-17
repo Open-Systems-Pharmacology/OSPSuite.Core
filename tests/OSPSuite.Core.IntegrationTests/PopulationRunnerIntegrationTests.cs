@@ -23,6 +23,7 @@ namespace OSPSuite.Core
       protected DataTable _initialValuesData;
       protected PopulationRunResults _results;
       protected RunOptions _runOptions;
+      protected IEntitiesInSimulationRetriever _entityInSimulationRetriever;
 
       public override void GlobalContext()
       {
@@ -30,6 +31,7 @@ namespace OSPSuite.Core
          _simModelExporter = IoC.Resolve<ISimModelExporter>();
          _withIdRepository = IoC.Resolve<IWithIdRepository>();
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
+         _entityInSimulationRetriever = IoC.Resolve<IEntitiesInSimulationRetriever>();
 
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
@@ -39,7 +41,7 @@ namespace OSPSuite.Core
          _initialValuesData = createPopInitialValues();
 
          _runOptions = new RunOptions();
-         sut = new PopulationRunner(_simModelExporter, new SimModelSimulationFactory(), _objectPathFactory);
+         sut = new PopulationRunner(_simModelExporter, new SimModelSimulationFactory(), _objectPathFactory, _entityInSimulationRetriever);
 
          _results = sut.RunPopulationAsync(_simulation, _runOptions,  _populationData, _agingData).Result;
       }
@@ -105,10 +107,10 @@ namespace OSPSuite.Core
       private DataTable createPopTableParameters()
       {
          var dt = new DataTable("PopParams");
+         dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
 
          var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
             ConstantsForSpecs.BW).PathAsString;
-         dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
          dt.Columns.Add(path);
 
          //test model has event, which sets "Organism|ArterialBlood|Plasma|A" += 10 at t=StartTime
@@ -120,8 +122,15 @@ namespace OSPSuite.Core
             ConstantsForSpecs.StartTime).PathAsString;
          dt.Columns.Add(path);
 
-         dt.Rows.Add(0, 24.0, 0);
-         dt.Rows.Add(1, 25.0, 100);
+          path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+             ConstantsForSpecs.Lung,
+             ConstantsForSpecs.Plasma,
+            ConstantsForSpecs.pH).PathAsString;
+         dt.Columns.Add(path);
+
+         //adding a parameter with a NaN values to ensure that the simulation works
+         dt.Rows.Add(0, 24.0, 0, 12);
+         dt.Rows.Add(1, 25.0, 100, double.NaN);
 
          return dt;
       }

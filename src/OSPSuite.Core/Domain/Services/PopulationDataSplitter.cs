@@ -39,9 +39,9 @@ namespace OSPSuite.Core.Domain.Services
          return table;
       }
 
-      public void UpdateParametersAndInitialValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> parameterProperties, IReadOnlyList<SpeciesProperties> speciesProperties)
+      public void UpdateParametersAndSpeciesValuesForIndividual(int individualId, IReadOnlyList<ParameterProperties> parameterProperties, IReadOnlyList<SpeciesProperties> speciesProperties, PathCache<IParameter> parameterCache)
       {
-         fillParameterAndInitialValuesFor(individualId, parameterProperties, speciesProperties);
+         fillParameterAndInitialValuesFor(individualId, parameterProperties, speciesProperties, parameterCache);
       }
 
       public IReadOnlyList<int> GetIndividualIdsFor(int coreIndex)
@@ -104,7 +104,8 @@ namespace OSPSuite.Core.Domain.Services
          return dataTable.Rows.Cast<DataRow>().FirstOrDefault(r => individualIdFrom(r) == individualId);
       }
 
-      private void fillParameterAndInitialValuesFor(int individualId, IReadOnlyList<ParameterProperties> parameters, IReadOnlyList<SpeciesProperties> speciesProperties)
+      private void fillParameterAndInitialValuesFor(int individualId, IReadOnlyList<ParameterProperties> parameters,
+         IReadOnlyList<SpeciesProperties> speciesProperties, PathCache<IParameter> parameterCache)
       {
          var nonTableParameterValues = parameterDataRowFromIndividualId(individualId);
 
@@ -115,8 +116,15 @@ namespace OSPSuite.Core.Domain.Services
 
             // if no aging data found, parameter value is stored in the population data table
             // (single value)
-            if (!parameterProperties.TablePoints.Any())
-               parameterProperties.Value = nonTableParameterValues[parameterProperties.Path].ConvertedTo<double>();
+            if (parameterProperties.TablePoints.Any())
+               continue;
+            
+            var parameterValue = nonTableParameterValues[parameterProperties.Path].ConvertedTo<double>();
+            //reset the parameter to its default value if the value in the table is NaN
+            if (double.IsNaN(parameterValue))
+               parameterProperties.Value = parameterCache[parameterProperties.Path].Value;
+            else
+               parameterProperties.Value = parameterValue;
          }
 
          var initialValues = initialValuesDataRowFromIndividualId(individualId);

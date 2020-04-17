@@ -26,6 +26,7 @@ namespace OSPSuite.Core
       protected IReadOnlyList<ParameterProperties> _variableParameters;
       protected IReadOnlyList<SpeciesProperties> _variableSpecies;
       protected SimModelManagerForSpecs _simModelManagerForSpecs;
+      protected PathCache<IParameter> _parameterCache;
 
       public override void GlobalContext()
       {
@@ -35,11 +36,13 @@ namespace OSPSuite.Core
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          var simModelExporter = IoC.Resolve<ISimModelExporter>();
          var simModelSimulationFactory = IoC.Resolve<ISimModelSimulationFactory>();
+         var entityInSimulationRetriever = IoC.Resolve<IEntitiesInSimulationRetriever>();
          _simModelManagerForSpecs = new SimModelManagerForSpecs(simModelExporter, simModelSimulationFactory);
          _simModelSimulation = _simModelManagerForSpecs.CreateSimulation(_simulation);
          _populationData = createPopTableParameters();
          _agingData = createPopAgingParameters();
          _initialValuesData = createPopInitialValues();
+         _parameterCache = entityInSimulationRetriever.ParametersFrom(_simulation);
          sut = new PopulationDataSplitter(_numberOfCores, _populationData, _agingData, _initialValuesData );
 
          _variableParameters = _simModelManagerForSpecs.SetVariableParameters(_simModelSimulation, sut.ParameterPathsToBeVaried());
@@ -130,9 +133,15 @@ namespace OSPSuite.Core
             ConstantsForSpecs.StartTime).PathAsString;
          dt.Columns.Add(path);
 
-         dt.Rows.Add(0, 24.0, 10);
-         dt.Rows.Add(1, 25.0, 100);
-         dt.Rows.Add(2, 26.0, 1000);
+         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+            ConstantsForSpecs.Lung,
+            ConstantsForSpecs.Plasma,
+            ConstantsForSpecs.pH).PathAsString;
+         dt.Columns.Add(path);
+
+         dt.Rows.Add(0, 24.0, 10, 12);
+         dt.Rows.Add(1, 25.0, 100, double.NaN);
+         dt.Rows.Add(2, 26.0, 1000,13);
 
          return dt;
       }
@@ -142,7 +151,7 @@ namespace OSPSuite.Core
    {
       protected override void Because()
       {
-         sut.UpdateParametersAndInitialValuesForIndividual(0, _variableParameters, _variableSpecies);
+         sut.UpdateParametersAndSpeciesValuesForIndividual(0, _variableParameters, _variableSpecies, _parameterCache);
       }
 
       [Observation]
@@ -158,10 +167,11 @@ namespace OSPSuite.Core
       public void should_fill_correct_value_for_nonTableParameters()
       {
          var nonTableParameters = _variableParameters.Where(x => !x.TablePoints.Any()).ToList();
-         nonTableParameters.Count.ShouldBeEqualTo(2);
+         nonTableParameters.Count.ShouldBeEqualTo(3);
 
          nonTableParameters[0].Value.ShouldBeEqualTo(24);
          nonTableParameters[1].Value.ShouldBeEqualTo(10);
+         nonTableParameters[2].Value.ShouldBeEqualTo(12);
       }
 
       [Observation]
@@ -204,6 +214,28 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_filling_parameters_and_initial_values_for_the_second_individual_with_nan_values : concern_for_PopulationDataSplitterSpecs
+   {
+      protected override void Because()
+      {
+         sut.UpdateParametersAndSpeciesValuesForIndividual(1, _variableParameters, _variableSpecies, _parameterCache);
+      }
+
+      [Observation]
+      public void should_fill_correct_value_for_nonTableParameters()
+      {
+         var nonTableParameters = _variableParameters.Where(x => !x.TablePoints.Any()).ToList();
+         nonTableParameters.Count.ShouldBeEqualTo(3);
+
+         nonTableParameters[0].Value.ShouldBeEqualTo(25);
+         nonTableParameters[1].Value.ShouldBeEqualTo(100);
+
+         var defaultPhValue = _parameterCache[nonTableParameters[2].Path].Value;
+         nonTableParameters[2].Value.ShouldBeEqualTo(defaultPhValue);
+      }
+
+   }
+
    internal class When_filling_initial_values_from_empty_table : concern_for_PopulationDataSplitterSpecs
    {
       protected override void Context()
@@ -219,7 +251,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         sut.UpdateParametersAndInitialValuesForIndividual(0, new List<ParameterProperties>(), _variableSpecies);
+         sut.UpdateParametersAndSpeciesValuesForIndividual(0, new List<ParameterProperties>(), _variableSpecies, _parameterCache);
       }
 
       private DataTable createEmptyInitialValuesData()
