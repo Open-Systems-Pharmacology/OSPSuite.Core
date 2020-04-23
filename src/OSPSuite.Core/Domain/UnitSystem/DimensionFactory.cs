@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IEnumerable<IDimension> Dimensions => _dimensions;
 
-      public IReadOnlyList<IDimension> DimensionsSortedByName => Dimensions.OrderBy(x => x.Name).ToList();
+      public IDimension[] DimensionsSortedByName => Dimensions.OrderBy(x => x.Name).ToArray();
 
       public string[] DimensionNamesSortedByName => _dimensions.Keys.OrderBy(x => x).ToArray();
 

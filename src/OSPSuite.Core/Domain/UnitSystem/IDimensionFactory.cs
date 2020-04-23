@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <summary>
       ///    All dimensions defined in the repository sorted by dimension name
       /// </summary>
-      IReadOnlyList<IDimension> DimensionsSortedByName { get; }
+      IDimension[] DimensionsSortedByName { get; }
 
       /// <summary>
       /// Returns the name of all dimensions sorted by names
