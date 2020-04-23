@@ -9,7 +9,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// </summary>
       IEnumerable<IDimension> Dimensions { get; }
 
-      IEnumerable<string> DimensionNames { get; }
+      /// <summary>
+      ///    All dimensions defined in the repository sorted by dimension name
+      /// </summary>
+      IDimension[] DimensionsSortedByName { get; }
+
+      /// <summary>
+      /// Returns the name of all dimensions sorted by names
+      /// </summary>
+      string[] DimensionNamesSortedByName { get; }
 
       /// <summary>
       ///    Returns the dimension with name <paramref name="name" />.
@@ -23,6 +31,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       ///    In that case, the <paramref name="dimension" /> will be set to the dimension. Otherwise returns <c>false</c>
       /// </summary>
       bool TryGetDimension(string dimensionName, out IDimension dimension);
+
 
       IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension;
 

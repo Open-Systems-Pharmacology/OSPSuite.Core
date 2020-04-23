@@ -81,9 +81,9 @@ namespace OSPSuite.R.Services
          return convertToUnit(DimensionByName(dimensionName), targetUnit, null, valueInBaseUnit);
       }
 
-      public IDimension[] AllAvailableDimensions() => _dimensionFactory.Dimensions.ToArray();
+      public IDimension[] AllAvailableDimensions() => _dimensionFactory.DimensionsSortedByName;
 
-      public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
+      public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNamesSortedByName;
 
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {
