@@ -83,7 +83,7 @@ namespace OSPSuite.R.Services
 
       public IDimension[] AllAvailableDimensions() => _dimensionFactory.Dimensions.ToArray();
 
-      public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNames.OrderBy(x => x).ToArray();
+      public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNamesSortedByName.ToArray();
 
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {

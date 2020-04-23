@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
-using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_MoBiDimensionFactory : ContextSpecification<IDimensionFactory>
+   public abstract class concern_for_DimensionFactory : ContextSpecification<IDimensionFactory>
    {
       protected Dimension _drugMassDimension;
       protected Dimension _volumeDimension;
       protected Dimension _flowDimension;
       protected Dimension _timeDimension;
       protected Dimension _inversedTimeDimension;
-      private Dimension _anotherDimensionThatLooksLikeVolumeWithADifferentUnit;
+      protected Dimension _anotherDimensionThatLooksLikeVolumeWithADifferentUnit;
 
       protected override void Context()
       {
@@ -36,7 +35,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class When_retrieving_dimension_from_unit_with_multiple_matching_units : concern_for_MoBiDimensionFactory
+   public abstract class When_retrieving_dimension_from_unit_with_multiple_matching_units : concern_for_DimensionFactory
    {
       protected IDimension _result;
       protected Dimension _accelerationDimension;
@@ -69,6 +68,15 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_retrieving_the_dimensions_sorted_by_name : concern_for_DimensionFactory
+   {
+      [Observation]
+      public void should_return_the_dimension_in_the_expected_order()
+      {
+         sut.DimensionsSortedByName.ShouldOnlyContainInOrder(_anotherDimensionThatLooksLikeVolumeWithADifferentUnit,  Constants.Dimension.NO_DIMENSION, _drugMassDimension, _flowDimension, _inversedTimeDimension, _timeDimension, _volumeDimension);
+      }
+   }
+
    public class When_retrieving_lower_case_unit_from_multiple_matching_units : When_retrieving_dimension_from_unit_with_multiple_matching_units
    {
       protected override string ConvertUnitCase(string unit)
@@ -83,7 +91,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_told_to_retrieve_a_dimension_by_name_that_does_not_exist_and_that_is_not_an_RHS_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_retrieve_a_dimension_by_name_that_does_not_exist_and_that_is_not_an_RHS_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_throw_an_exception()
@@ -93,7 +101,7 @@ namespace OSPSuite.Core.Domain
    }
 
 
-   public class When_told_to_retrieve_the_RHS_dimension_for_the_dimensionless_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_retrieve_the_RHS_dimension_for_the_dimensionless_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_return_the_per_time_dimension()
@@ -103,7 +111,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_told_to_retrieve_the_RHS_dimension_for_the_time_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_retrieve_the_RHS_dimension_for_the_time_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_return_the_fraction_dimension()
@@ -113,7 +121,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_told_to_retrieve_a_rhs_dimension_for_a_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_retrieve_a_rhs_dimension_for_a_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_return_the_equivalent_dimension_if_it_exists_instead_of_creating_a_new_one()
@@ -122,7 +130,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_told_to_try_to_retrieve_a_dimension_by_name_that_does_exist_and_that_is_a_possible_RHS_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_try_to_retrieve_a_dimension_by_name_that_does_exist_and_that_is_a_possible_RHS_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_return_false()
@@ -133,7 +141,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_told_to_try_to_retrieve_a_dimension_by_name_that_does_not_exist_and_that_is_not_a_possible_RHS_dimension : concern_for_MoBiDimensionFactory
+   public class When_told_to_try_to_retrieve_a_dimension_by_name_that_does_not_exist_and_that_is_not_a_possible_RHS_dimension : concern_for_DimensionFactory
    {
       [Observation]
       public void should_return_false()

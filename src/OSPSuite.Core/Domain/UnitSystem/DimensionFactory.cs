@@ -8,18 +8,14 @@ namespace OSPSuite.Core.Domain.UnitSystem
 {
    public class DimensionFactory : IDimensionFactory
    {
-      private readonly Cache<string, IDimension> _dimensions;
-      private readonly List<IDimensionMergingInformation> _allMergingInformation;
+      private readonly Cache<string, IDimension> _dimensions = new Cache<string, IDimension>(dim => dim.Name);
+      private readonly List<IDimensionMergingInformation> _allMergingInformation = new List<IDimensionMergingInformation>();
 
       public IEnumerable<IDimension> Dimensions => _dimensions;
 
-      public IEnumerable<string> DimensionNames => _dimensions.Keys;
+      public IReadOnlyList<IDimension> DimensionsSortedByName => Dimensions.OrderBy(x => x.Name).ToList();
 
-      public DimensionFactory()
-      {
-         _dimensions = new Cache<string, IDimension>(dim => dim.Name);
-         _allMergingInformation = new List<IDimensionMergingInformation>();
-      }
+      public string[] DimensionNamesSortedByName => _dimensions.Keys.OrderBy(x => x).ToArray();
 
       public void AddDimension(IDimension dimension)
       {
@@ -47,7 +43,6 @@ namespace OSPSuite.Core.Domain.UnitSystem
          }
 
          //It might be a RHS dimension. Let see if we can retrieve it
-
          try
          {
             dimension = getOrAddRHSDimensionForName(dimensionName);
@@ -110,7 +105,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          if (equivalentRHSDimension != null)
             return equivalentRHSDimension;
 
-         // Equivalent dimensions does nto exist. We add it and return it
+         // Equivalent dimensions does noo exist. We add it and return it
          AddDimension(rhsDimension);
          return rhsDimension;
       }
@@ -151,7 +146,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public bool HasMergingInformation(IDimension sourceDimension, IDimension targetDimension)
       {
          var targetDimensions = (from dimension in _allMergingInformation
-            where   dimension.SourceDimension== sourceDimension
+            where dimension.SourceDimension == sourceDimension
             select dimension.TargetDimension).Distinct().ToList();
 
          return targetDimensions.Contains(targetDimension);
@@ -203,7 +198,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IEnumerable<IDimensionMergingInformation> AllMergingInformation => _allMergingInformation;
 
-      protected virtual IDimensionConverter CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension) where T : IWithDimension
+      protected virtual IDimensionConverter CreateConverterFor<T>(IDimension dimension, IDimension dimensionToMerge, T hasDimension)
+         where T : IWithDimension
       {
          /*should be implemented in derived methods*/
          return null;

@@ -12,5 +12,6 @@ namespace OSPSuite.Core.Serialization.Xml
       public DimensionFactoryPersistor(IUnitSystemXmlSerializerRepository serializerRepository, IContainer container) : base(serializerRepository, container)
       {
       }
+
    }
 }
