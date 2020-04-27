@@ -40,7 +40,7 @@ end
 	app_target_path = File.join(solution_dir, app_target_relative_path)
 	source_dir = File.join(tests_dir, 'OSPSuite.Starter', 'bin', 'Debug', "net472")
 	
-	copy_depdencies source_dir,  app_target_path do
+	copy_dependencies source_dir,  app_target_path do
 	  copy_file 'OSPSuite.*.dll'
 	  copy_file 'OSPSuite.*.pdb'
 	end

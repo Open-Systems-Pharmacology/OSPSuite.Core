@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void CalculateConfidenceIntervalFor(ParameterIdentification parameterIdentification, ParameterIdentificationRunResult runResult)
       {
-         if (runResult.JacobianMatrix == null)
+         if (runResult?.JacobianMatrix == null)
          {
             _view.DeleteBinding();
             return;

@@ -58,6 +58,21 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_calculating_the_confidence_interval_for_a_parameter_identification_whose_results_are_not_defined : concern_for_ParameterIdentificationConfidenceIntervalPresenter
+   {
+
+      protected override void Because()
+      {
+         sut.CalculateConfidenceIntervalFor(_parameterIdentification, null);
+      }
+
+      [Observation]
+      public void should_delete_the_binding_in_the_view()
+      {
+         A.CallTo(() => _view.DeleteBinding()).MustHaveHappened();
+      }
+   }
+
 
    public class When_calculating_the_confidence_interval_for_a_parameter_identification_with_a_valid_jacobian : concern_for_ParameterIdentificationConfidenceIntervalPresenter
    {
