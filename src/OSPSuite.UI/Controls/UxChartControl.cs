@@ -2,12 +2,12 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using OSPSuite.Assets;
 using OSPSuite.Core.Services;
-using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
@@ -19,7 +19,6 @@ namespace OSPSuite.UI.Controls
 
       private readonly ChartTitle _title;
       private readonly ChartTitle _description;
-      private readonly ClipboardTask _clipboardTask = new ClipboardTask();
       private readonly BarManager _barManager;
       public PopupMenu PopupMenu { get; }
 
@@ -84,10 +83,11 @@ namespace OSPSuite.UI.Controls
       {
          using (var ms = new MemoryStream())
          {
-            chartControl.ExportToImage(ms, ImageFormat.Emf);
+            chartControl.ExportToImage(ms, ImageFormat.Png);
             ms.Seek(0, SeekOrigin.Begin);
 
-            _clipboardTask.PutEnhMetafileOnClipboard(this, new Metafile(ms));
+            using (var mf = new Bitmap(ms))
+               Clipboard.SetImage(mf);
          }
       }
 
