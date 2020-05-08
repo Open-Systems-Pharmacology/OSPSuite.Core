@@ -19,6 +19,11 @@ namespace OSPSuite.UI.Views
       private readonly ScreenBinder<ReportConfiguration> _screenBinder;
       private ReportConfiguration _reportConfiguration;
 
+      //only for design time
+      public ReportingView() : this(null)
+      {
+      }
+
       public ReportingView(IShell shell) : base(shell)
       {
          InitializeComponent();

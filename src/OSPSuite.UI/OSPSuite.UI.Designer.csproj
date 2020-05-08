@@ -118,10 +118,88 @@
     <Compile Update="Views\InputBoxDialog.Designer.cs">
       <DependentUpon>Views\InputBoxDialog.cs</DependentUpon>
     </Compile>
+    <Compile Update="Views\DisplayUnitsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\DisplayUnitsView.Designer.cs">
+      <DependentUpon>Views\DisplayUnitsView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EditValueOriginView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\EditValueOriginView.Designer.cs">
+      <DependentUpon>Views\EditValueOriginView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ExceptionView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ExceptionView.Designer.cs">
+      <DependentUpon>Views\ExceptionView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ExtendedPropertiesView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ExtendedPropertiesView.Designer.cs">
+      <DependentUpon>Views\ExtendedPropertiesView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\HeavyWorkView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\HeavyWorkView.Designer.cs">
+      <DependentUpon>Views\HeavyWorkView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\LogView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\LogView.Designer.cs">
+      <DependentUpon>Views\LogView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ObjectBaseView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ObjectBaseView.Designer.cs">
+      <DependentUpon>Views\ObjectBaseView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\QuantityListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\QuantityListView.Designer.cs">
+      <DependentUpon>Views\QuantityListView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\QuantitySelectionView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\QuantitySelectionView.Designer.cs">
+      <DependentUpon>Views\QuantitySelectionView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ReportingView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ReportingView.Designer.cs">
+      <DependentUpon>Views\ReportingView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SimulationParametersView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\SimulationParametersView.Designer.cs">
+      <DependentUpon>Views\SimulationParametersView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ValidationMessagesView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ValidationMessagesView.Designer.cs">
+      <DependentUpon>Views\ValidationMessagesView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\WizardView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\WizardView.Designer.cs">
+      <DependentUpon>Views\WizardView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <!-- Designer supports for Controls -->
-  <ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Compile Update="Controls\BaseContainerUserControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -158,11 +236,15 @@
     <Compile Update="Controls\FilterTreeView.Designer.cs">
       <DependentUpon>Controls\FilterTreeView.cs</DependentUpon>
     </Compile>
-
-    
+    <Compile Update="Controls\UxHintPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\UxHintPanel.Designer.cs">
+      <DependentUpon>Controls\UxHintPanel.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
-  
+
   <ItemGroup>
     <None Remove="Services\MagnifierCursor.cur" />
   </ItemGroup>
