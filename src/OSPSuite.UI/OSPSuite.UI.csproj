@@ -23,6 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
+ 
   <ItemGroup>
     <None Remove="Services\MagnifierCursor.cur" />
   </ItemGroup>

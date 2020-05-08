@@ -1,0 +1,275 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>OSPSuite.UI.Designer</AssemblyName>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
+    <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
+    <Description>User interface common components and functionalities for the Open Systems Pharmacology Suite</Description>
+    <Authors>Open-Systems-Pharmacology</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>OSPSuite.UI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <!-- Designer supports for Views -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Compile Update="Views\BaseView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseView.Designer.cs">
+      <DependentUpon>Views\BaseView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseExplorerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseExplorerView.Designer.cs">
+      <DependentUpon>Views\BaseExplorerView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseMdiChildTabbedView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseMdiChildTabbedView.Designer.cs">
+      <DependentUpon>Views\BaseMdiChildTabbedView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseMdiChildView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseMdiChildView.Designer.cs">
+      <DependentUpon>Views\BaseMdiChildView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseModalContainerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseModalContainerView.Designer.cs">
+      <DependentUpon>Views\BaseModalContainerView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseModalTabbedContainerView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseModalTabbedContainerView.Designer.cs">
+      <DependentUpon>Views\BaseModalTabbedContainerView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseModalView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseModalView.Designer.cs">
+      <DependentUpon>Views\BaseModalView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseShell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseShell.Designer.cs">
+      <DependentUpon>Views\BaseShell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BaseToggleableView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\BaseToggleableView.Designer.cs">
+      <DependentUpon>Views\BaseToggleableView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EditAnalyzableView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\EditAnalyzableView.Designer.cs">
+      <DependentUpon>Views\EditAnalyzableView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EditDisplayUnitsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\EditDisplayUnitsView.Designer.cs">
+      <DependentUpon>Views\EditDisplayUnitsView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EditOutputSelectionsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\EditOutputSelectionsView.Designer.cs">
+      <DependentUpon>Views\EditOutputSelectionsView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\InputBoxDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\InputBoxDialog.Designer.cs">
+      <DependentUpon>Views\InputBoxDialog.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <!-- Designer supports for Controls -->
+  <ItemGroup>
+    <Compile Update="Controls\BaseContainerUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\BaseContainerUserControl.Designer.cs">
+      <DependentUpon>Controls\BaseContainerUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\BaseGridViewOnlyUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\BaseGridViewOnlyUserControl.Designer.cs">
+      <DependentUpon>Controls\BaseGridViewOnlyUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\BaseResizableUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\BaseResizableUserControl.Designer.cs">
+      <DependentUpon>Controls\BaseResizableUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\BaseUserControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\BaseUserControl.Designer.cs">
+      <DependentUpon>Controls\BaseUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\CustomGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\CustomGridView.Designer.cs">
+      <DependentUpon>Controls\CustomGridView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\FilterTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\FilterTreeView.Designer.cs">
+      <DependentUpon>Controls\FilterTreeView.cs</DependentUpon>
+    </Compile>
+
+    
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <None Remove="Services\MagnifierCursor.cur" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Services\MagnifierCursor.cur" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
+    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="19.2.4.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
+    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DevExpress.BonusSkins.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.BonusSkins.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Charts.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.Charts.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v19.2">
+      <HintPath>..\..\..\OSPSuite.DataBinding.DevExpress\packages\OSPSuite.DevExpress.19.2.4.1\lib\net45\DevExpress.Data.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Office.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.Office.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.Pdf.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.PivotGrid.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.PivotGrid.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.Printing.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v19.2.Core">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.RichEdit.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v19.2.Export">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.RichEdit.v19.2.Export.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.Utils.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraBars.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraBars.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraCharts.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v19.2.UI">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraCharts.v19.2.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v19.2.Wizard">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraCharts.v19.2.Wizard.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraGrid.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraGrid.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraLayout.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraLayout.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraNavBar.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraNavBar.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPivotGrid.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraPivotGrid.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPrinting.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraPrinting.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraRichEdit.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraTreeList.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraTreeList.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraVerticalGrid.v19.2">
+      <HintPath>..\..\..\OSPSuite.DevExpress\bin\DevExpress.XtraVerticalGrid.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+
+</Project>

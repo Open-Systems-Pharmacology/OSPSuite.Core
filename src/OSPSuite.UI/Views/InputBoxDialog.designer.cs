@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.UI.Controls
+﻿using OSPSuite.UI.Controls;
+
+namespace OSPSuite.UI.Views
 {
    partial class InputBoxDialog
    {

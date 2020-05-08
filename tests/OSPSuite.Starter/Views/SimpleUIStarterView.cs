@@ -7,6 +7,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
+using OSPSuite.UI.Views;
 
 namespace OSPSuite.Starter.Views
 {

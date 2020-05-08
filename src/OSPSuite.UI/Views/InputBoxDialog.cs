@@ -8,7 +8,7 @@ using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.UI.Extensions;
 
-namespace OSPSuite.UI.Controls
+namespace OSPSuite.UI.Views
 {
    public partial class InputBoxDialog : XtraForm
    {
@@ -44,10 +44,7 @@ namespace OSPSuite.UI.Controls
          layoutItemCancel.AdjustButtonSize();
       }
 
-      internal string InputResponse
-      {
-         get { return cbInput.Text; }
-      }
+      internal string InputResponse => cbInput.Text;
 
       public static string Show(string prompt, string title, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null)
       {
@@ -87,9 +84,9 @@ namespace OSPSuite.UI.Controls
          if (string.IsNullOrEmpty(value))
             errorProvider.SetError(cbInput, "Please enter a value");
          else if (NotAllowedValues.Contains(value))
-            errorProvider.SetError(cbInput, String.Format("{0} is not allowed", e.NewValue));
+            errorProvider.SetError(cbInput, $"{e.NewValue} is not allowed");
          else
-            errorProvider.SetError(cbInput, String.Empty);
+            errorProvider.SetError(cbInput, string.Empty);
 
          btnOk.Enabled = !errorProvider.HasErrors;
       }
