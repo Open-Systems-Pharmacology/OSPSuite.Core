@@ -37,6 +37,19 @@ namespace OSPSuite.R.Services
       double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit, double molWeight);
       double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit);
 
+      // We need all those overloads because rClr does not support nullable types and arrays are converted to single value when the array as only one entry!
+      double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit);
+
+      double[] ConvertToBaseUnit(IDimension dimension,string displayUnit, double valueInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(IDimension dimension,string displayUnit, double valueInDisplayUnit);
+
+      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double[] valuesInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double[] valuesInDisplayUnit);
+
+      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double valueInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double valueInDisplayUnit);
+
       /// <summary>
       ///    Returns an array containing all dimensions defined in the suite
       /// </summary>
@@ -76,9 +89,69 @@ namespace OSPSuite.R.Services
          return convertToUnit(DimensionByName(dimensionName), targetUnit, null, valuesInBaseUnit);
       }
 
+      public double[] ConvertToUnit(IDimension dimension, string targetUnit, double valueInBaseUnit, double molWeight)
+      {
+         return convertToUnit(dimension, targetUnit, molWeight, valueInBaseUnit);
+      }
+
+      public double[] ConvertToUnit(string dimensionName, string targetUnit, double[] valuesInBaseUnit, double molWeight)
+      {
+         return convertToUnit(DimensionByName(dimensionName), targetUnit, molWeight, valuesInBaseUnit);
+      }
+
+      public double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit, double molWeight)
+      {
+         return convertToUnit(DimensionByName(dimensionName), targetUnit, molWeight, valueInBaseUnit);
+      }
+
+      public double[] ConvertToUnit(IDimension dimension, string targetUnit, double[] valuesInBaseUnit, double molWeight)
+      {
+         return convertToUnit(dimension, targetUnit, molWeight, valuesInBaseUnit);
+      }
+
       public double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit)
       {
          return convertToUnit(DimensionByName(dimensionName), targetUnit, null, valueInBaseUnit);
+      }
+
+      public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit, double molWeight)
+      {
+         return convertToBaseUnit(dimension, displayUnit, molWeight, valuesInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit)
+      {
+         return convertToBaseUnit(dimension, displayUnit, molWeight:null, valuesInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit, double molWeight)
+      {
+         return convertToBaseUnit(dimension, displayUnit, molWeight, valueInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit)
+      {
+         return convertToBaseUnit(dimension, displayUnit, molWeight:null, valueInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit, double molWeight)
+      {
+         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight, valuesInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit)
+      {
+         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight:null, valuesInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double valueInDisplayUnit, double molWeight)
+      {
+         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight, valueInDisplayUnit);
+      }
+
+      public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double valueInDisplayUnit)
+      {
+         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight: null, valueInDisplayUnit);
       }
 
       public IDimension[] AllAvailableDimensions() => _dimensionFactory.DimensionsSortedByName;
@@ -130,32 +203,20 @@ namespace OSPSuite.R.Services
          return DimensionForStandardPKParameter((StandardPKParameter) standardPKParameterValue);
       }
 
-      public double[] ConvertToUnit(IDimension dimension, string targetUnit, double valueInBaseUnit, double molWeight)
-      {
-         return convertToUnit(dimension, targetUnit, molWeight, valueInBaseUnit);
-      }
-
-      public double[] ConvertToUnit(string dimensionName, string targetUnit, double[] valuesInBaseUnit, double molWeight)
-      {
-         return convertToUnit(DimensionByName(dimensionName), targetUnit, molWeight, valuesInBaseUnit);
-      }
-
-      public double[] ConvertToUnit(string dimensionName, string targetUnit, double valueInBaseUnit, double molWeight)
-      {
-         return convertToUnit(DimensionByName(dimensionName), targetUnit, molWeight, valueInBaseUnit);
-      }
-
-      public double[] ConvertToUnit(IDimension dimension, string targetUnit, double[] valuesInBaseUnit, double molWeight)
-      {
-         return convertToUnit(dimension, targetUnit, molWeight, valuesInBaseUnit);
-      }
-
       private double[] convertToUnit(IDimension dimension, string targetUnit, double? molWeight, params double[] valuesInBaseUnit)
       {
          var converterContext = new DoubleArrayContext(dimension, molWeight);
          var mergedDimension = _dimensionFactory.MergedDimensionFor(converterContext);
          var unit = mergedDimension.Unit(targetUnit);
          return mergedDimension.BaseUnitValuesToUnitValues(unit, valuesInBaseUnit);
+      }
+      
+      private double[] convertToBaseUnit(IDimension dimension, string displayUnit, double? molWeight, params double[] valuesInDisplayUnit)
+      {
+         var converterContext = new DoubleArrayContext(dimension, molWeight);
+         var mergedDimension = _dimensionFactory.MergedDimensionFor(converterContext);
+         var unit = mergedDimension.Unit(displayUnit);
+         return mergedDimension.UnitValuesToBaseUnitValues(unit, valuesInDisplayUnit);
       }
    }
 }
