@@ -36,10 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
     <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="4.0.0.1" />
     <PackageReference Include="OSPSuite.DevExpress" Version="19.2.4.1" />
