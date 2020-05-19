@@ -77,8 +77,9 @@ namespace OSPSuite.R.Services
          if (_dimensionFactory.HasMergingInformation(defaultDimension, dimensionForDisplayUnit))
             return userDefinedPKParameters;
 
-         //There is no converter defined between those dimensions. This should be a user defined dimension
-         userDefinedPKParameters.Dimension = _dimensionFactory.CreateUserDefinedDimension(name, displayUnit);
+         //There is no converter defined between those dimensions.
+         //We use the dimension defined for the display unit or create a user defined dimension otherwise
+         userDefinedPKParameters.Dimension = dimensionForDisplayUnit ??  _dimensionFactory.CreateUserDefinedDimension(name, displayUnit);
          return userDefinedPKParameters;
       }
 
