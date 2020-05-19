@@ -1,6 +1,7 @@
 ﻿using System;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 
 namespace OSPSuite.R.Services
@@ -82,6 +83,54 @@ namespace OSPSuite.R.Services
       public void should_have_removed_the_user_defined_pk_parameter()
       {
          sut.UserDefinedPKParameterByName(_userDefinedPKParameter.Name).ShouldBeNull();
+      }
+   }
+
+   public class
+      When_creating_a_user_defined_pk_parameter_using_a_unit_that_is_not_a_unit_of_the_base_parameter_yet_exists_in_our_system :
+         concern_for_PKParameterTask
+   {
+      private UserDefinedPKParameter _userDefinedParameter;
+
+      protected override void Because()
+      {
+         _userDefinedParameter = sut.CreateUserDefinedPKParameter("Test", StandardPKParameter.C_trough, "Test", "%");
+      }
+
+      [Observation]
+      public void should_return_the_dimension_of_the_unit()
+      {
+         _userDefinedParameter.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.FRACTION);
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         sut.RemoveAllUserDefinedPKParameters();
+      }
+   }
+
+   public class
+      When_creating_a_user_defined_pk_parameter_using_a_unit_that_is_not_a_unit_of_the_base_parameter_and_does_not_exist_in_our_system :
+         concern_for_PKParameterTask
+   {
+      private UserDefinedPKParameter _userDefinedParameter;
+
+      protected override void Because()
+      {
+         _userDefinedParameter = sut.CreateUserDefinedPKParameter("Test", StandardPKParameter.C_trough, "Test", "not_there");
+      }
+
+      [Observation]
+      public void should_return_a_user_defined_dimension_with_the_name_of_the_parameter()
+      {
+         _userDefinedParameter.Dimension.Name.ShouldBeEqualTo(_userDefinedParameter.Name);
+      }
+
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         sut.RemoveAllUserDefinedPKParameters();
       }
    }
 
