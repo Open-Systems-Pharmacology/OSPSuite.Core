@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Collections.Generic;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 
@@ -89,4 +90,50 @@ namespace OSPSuite.Core.Domain
          sut.AllPKParameterNames.ShouldOnlyContain("AUC", "AUC2");
       }
    }
+
+   public class When_retrieving_the_paths_of_all_pk_parameters_defined_in_a_sensitivity_analysis_result : concern_for_SensitivityAnalysisRunResult
+   {
+
+      [Observation]
+      public void should_return_the_name_of_all_pk_parameters()
+      {
+         sut.AllQuantityPaths.ShouldOnlyContain(_pkParameterSensitivity1.QuantityPath,  _pkParameterSensitivity3.QuantityPath);
+      }
+   }
+
+
+   public class When_retrieving_the_pk_parameter_sensitivity_analysis_covering_a_given_total_sensitivity : concern_for_SensitivityAnalysisRunResult
+   {
+      private IReadOnlyList<PKParameterSensitivity> _result;
+      private string _pkParameterName;
+      private string _outputPath;
+      private PKParameterSensitivity _pk1;
+      private PKParameterSensitivity _pk2;
+      private PKParameterSensitivity _pk3;
+
+      protected override void Context()
+      {
+         base.Context();
+         _pkParameterName = "AUC";
+         _outputPath = "Output";
+         _pk1 = new PKParameterSensitivity { PKParameterName = _pkParameterName, QuantityPath = _outputPath, Value = 0.4 };
+         _pk2 = new PKParameterSensitivity { PKParameterName = _pkParameterName, QuantityPath = _outputPath, Value = 0.1 };
+         _pk3 = new PKParameterSensitivity { PKParameterName = _pkParameterName, QuantityPath = _outputPath, Value = -0.6 };
+         sut.AddPKParameterSensitivity(_pk1);
+         sut.AddPKParameterSensitivity(_pk2);
+         sut.AddPKParameterSensitivity(_pk3);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.AllPKParameterSensitivitiesFor(_pkParameterName, _outputPath, 0.7);
+      }
+
+      [Observation]
+      public void should_return_the_expected_parameters()
+      {
+         _result.ShouldOnlyContainInOrder(_pk3, _pk1);
+      }
+   }
+
 }

@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Serializers
 {
-   public abstract class concern_for_PopulationSimulationPKAnalyses : ModellingXmlSerializerBaseSpecs
+   public class concern_for_PopulationSimulationPKAnalyses : ModellingXmlSerializerBaseSpecs
    {
       private readonly int _numberOfIndividuals = 100000;
       private readonly Random _random = new Random();
@@ -27,6 +27,16 @@ namespace OSPSuite.Core.Serializers
          x2.ShouldNotBeNull();
          x2.All().Count().ShouldBeEqualTo(5);
          x2.PKParameterFor("Path1", "AUC").Values.Length.ShouldBeEqualTo(_numberOfIndividuals);
+      }
+
+      [Observation]
+      public void should_return_the_expected_path_values()
+      {
+         var sut = new PopulationSimulationPKAnalyses();
+         sut.AddPKAnalysis(createPKAnalyses("Path1"));
+         sut.AddPKAnalysis(createPKAnalyses("Path2"));
+
+         sut.AllQuantityPaths.ShouldOnlyContain("Path1", "Path2");
       }
 
       private QuantityPKParameter createPKAnalyses(string path)
