@@ -38,5 +38,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
          get => string.IsNullOrEmpty(_displayUnit) ? Dimension?.DefaultUnitName : _displayUnit;
          set => _displayUnit = value;
       }
+
+      public virtual string BaseUnit => Dimension?.BaseUnit?.Name;
    }
 }
