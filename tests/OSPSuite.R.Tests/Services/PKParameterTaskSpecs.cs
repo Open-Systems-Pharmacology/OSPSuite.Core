@@ -103,6 +103,12 @@ namespace OSPSuite.R.Services
          _userDefinedParameter.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.FRACTION);
       }
 
+      [Observation]
+      public void should_return_the_expected_base_unit()
+      {
+         _userDefinedParameter.BaseUnit.ShouldBeEqualTo("");
+      }
+
       public override void GlobalCleanup()
       {
          base.GlobalCleanup();
@@ -125,6 +131,12 @@ namespace OSPSuite.R.Services
       public void should_return_a_user_defined_dimension_with_the_name_of_the_parameter()
       {
          _userDefinedParameter.Dimension.Name.ShouldBeEqualTo(_userDefinedParameter.Name);
+      }
+
+      [Observation]
+      public void should_return_the_expected_base_unit_equal_to_the_display_unit()
+      {
+         _userDefinedParameter.BaseUnit.ShouldBeEqualTo("not_there");
       }
 
       public override void GlobalCleanup()
