@@ -21,6 +21,17 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          return _allPKParameterSensitivities.Where(x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.PKParameterName, pkParameterName));
       }
 
+      public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)
+      {
+         return AllFor(pkParameterName, outputPath).Find(x => string.Equals(parameterName, x.ParameterName));
+      }
+
+      public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string parameterName)
+      {
+         return PKParameterSensitivityFor(pkParameterName, outputPath, parameterName)?.Value ?? double.NaN;
+      }
+
+
       public void UpdateSensitivityParameterName(string oldParameterName, string newParameterName)
       {
          var allParametersToRename = _allPKParameterSensitivities.Where(x => string.Equals(x.ParameterName, oldParameterName)).ToList();
@@ -43,6 +54,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       private static IEnumerable<PKParameterSensitivity> sensitivitiesUpToTotalSensitivity(IReadOnlyList<PKParameterSensitivity> orderedSensitivities, double totalSensitivityThreshold)
       {
          var totalSensitivity = orderedSensitivities.Sum(x => Math.Abs(x.Value));
+
+         //We want to return all
+         if (totalSensitivityThreshold == 1)
+            return orderedSensitivities;
+         
          var runningSensitivity = 0.0;
          return orderedSensitivities.TakeWhile(x =>
          {
