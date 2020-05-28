@@ -1,5 +1,6 @@
 ﻿using System;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Services;
@@ -45,6 +46,8 @@ namespace OSPSuite.R
       public static IDimensionTask GetDimensionTask() => resolveTask<IDimensionTask>();
 
       public static IPKParameterTask GetPKParameterTask() => resolveTask<IPKParameterTask>();
+
+      public static IFullPathDisplayResolver GetFullPathDisplayResolver() => resolveTask<IFullPathDisplayResolver>();
 
       public static ILogger GetLogger() => resolveTask<ILogger>();
 
