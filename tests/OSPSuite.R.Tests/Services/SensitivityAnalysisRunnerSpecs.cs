@@ -43,7 +43,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         _result.AllPKParameterSensitivities.Select(x=>x.ParameterName).Distinct().ShouldOnlyContain("Organism-Liver-Volume");
+         _result.AllPKParameterSensitivities.Select(x=>x.ParameterName).Distinct().ShouldOnlyContain("Liver-Volume");
       }
    }
 

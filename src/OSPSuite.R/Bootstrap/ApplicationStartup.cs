@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
 using OSPSuite.R.Domain.UnitSystem;
+using OSPSuite.R.MinimalImplementations;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -70,7 +71,7 @@ namespace OSPSuite.R.Bootstrap
          container.Register<IDimensionFactory, RDimensionFactory>(LifeStyle.Singleton);
          container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();
          container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
-         container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
+         container.Register<IQuantityPathToQuantityDisplayPathMapper, RQuantityPathToQuantityDisplayPathMapper>();
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
       }
 
