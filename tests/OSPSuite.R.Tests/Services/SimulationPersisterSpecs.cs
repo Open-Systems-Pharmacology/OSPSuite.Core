@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.R.Domain;
@@ -34,6 +35,13 @@ namespace OSPSuite.R.Services
       public void should_be_able_to_return_the_expected_simulation()
       {
          _simulation.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_have_kept_the_grouping_information_on_loaded_parameters()
+      {
+         var parameter = _simulation.Model.Root.EntityAt<IParameter>(Constants.ORGANISM, Constants.Parameters.WEIGHT);
+         parameter.GroupName.ShouldNotBeEqualTo(Constants.Groups.UNDEFINED);
       }
    }
 
