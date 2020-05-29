@@ -52,7 +52,7 @@ namespace OSPSuite.Starter.Views
          startSensitivityAnalysisTestButton.Text = "Start Sensitivity Analysis Test";
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
-         startEmptyFormButton.Text = "Start Empty Form Test";
+         startEmptyFormButton.Text = "Start Empty Form";
       }
 
       public void AttachPresenter(ITestPresenter presenter)
