@@ -30,11 +30,11 @@ namespace OSPSuite.R
             scan.IncludeNamespaceContainingType<ISensitivityAnalysisToCoreSensitivityAnalysisMapper>();
 
             // This will be registered as singleton
-            scan.ExcludeType<GroupRepository>();
+            scan.ExcludeType<RGroupRepository>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
-         container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
+         container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
          container.Register<ILogger, RLogger, RLogger>(LifeStyle.Singleton);
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
