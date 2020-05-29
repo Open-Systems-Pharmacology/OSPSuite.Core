@@ -30,6 +30,7 @@ namespace OSPSuite.Starter.Views
          startSensitivityAnalysisTestButton.Click += (sender, args) => OnEvent(_presenter.StartSensitivityAnalysisTest);
          startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
          startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
+         startEmptyFormButton.Click += (sender, args) => OnEvent(_presenter.StartEmptyFormTest);
       }
 
       public override void InitializeResources()
@@ -51,6 +52,7 @@ namespace OSPSuite.Starter.Views
          startSensitivityAnalysisTestButton.Text = "Start Sensitivity Analysis Test";
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
+         startEmptyFormButton.Text = "Start Empty Form Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)

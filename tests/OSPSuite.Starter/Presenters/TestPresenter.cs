@@ -24,6 +24,7 @@ namespace OSPSuite.Starter.Presenters
       void StartExceptionView();
       void StartHistogramTest();
       void StartMatrixTest();
+      void StartEmptyFormTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -58,6 +59,8 @@ namespace OSPSuite.Starter.Presenters
       public void StartHistogramTest() => startLarge<IHistogramTestPresenter>();
 
       public void StartMatrixTest() => startLarge<IMatrixTestPresenter>();
+
+      public void StartEmptyFormTest() => startLarge<IEmptyTestFormTestPresenter>();
 
       public void StartChartTest() => startLarge<IChartTestPresenter>();
 
