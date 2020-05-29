@@ -54,7 +54,6 @@ namespace OSPSuite.R.Bootstrap
 
          serializerRegister.PerformMappingForSerializerIn(container);
 
-         initializeGroups(container);
          initializeConfiguration(container, apiConfig);
 
          initializeDimensions(container);
@@ -103,13 +102,6 @@ namespace OSPSuite.R.Bootstrap
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(massDimension, amountDimension));
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(aucMolarDimension, aucMassDimension));
          dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(aucMassDimension, aucMolarDimension));
-      }
-
-      private static void initializeGroups(IContainer container)
-      {
-         var groupRepository = container.Resolve<IGroupRepository>();
-         var undefinedGroup = new Group {Name = Constants.Groups.UNDEFINED, Id = "0"};
-         groupRepository.AddGroup(undefinedGroup);
       }
 
       private static void loadPKParameterRepository(IContainer container)
