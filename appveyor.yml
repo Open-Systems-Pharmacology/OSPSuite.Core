@@ -34,6 +34,7 @@ build:
   publish_nuget: true
   verbosity: minimal
   publish_nuget_symbols: true
+  use_snupkg_format: true
   project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
@@ -41,7 +42,6 @@ skip_branch_with_pr: true
 branches:
   only:
     - develop
-    - net-standard
 
 test:
   assemblies:
