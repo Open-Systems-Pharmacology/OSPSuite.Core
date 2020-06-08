@@ -9,6 +9,16 @@ namespace OSPSuite.Core.Domain
    {
       IContainer Root { get; set; }
       IContainer Neighborhoods { set; get; }
+
+      /// <summary>
+      ///    Returns the Body weight <see cref="IParameter" /> if available in the model otherwise null.
+      /// </summary>
+      IParameter BodyWeight { get; }
+
+      /// <summary>
+      ///    Returns the total drug mass parameter defined in the model for the <paramref name="moleculeName"/> if available or null otherwise
+      /// </summary>
+      IParameter TotalDrugMassFor(string moleculeName);
    }
 
    public class Model : ObjectBase, IModel
@@ -44,9 +54,14 @@ namespace OSPSuite.Core.Domain
             return null;
 
          //try to find the molweight parameter in the global molecule container
-         var molWeightParameter = Root.EntityAt<IParameter>(moleculeName, Constants.Parameters.MOL_WEIGHT);
+         var molWeightParameter = Root?.EntityAt<IParameter>(moleculeName, Constants.Parameters.MOL_WEIGHT);
          return molWeightParameter?.Value;
       }
+
+      public virtual IParameter BodyWeight => Root?.EntityAt<IParameter>(Constants.ORGANISM, Constants.Parameters.WEIGHT);
+
+      //total drug mass is a parameter defined under the compound molecule global property
+      public virtual IParameter TotalDrugMassFor(string moleculeName) => Root?.EntityAt<IParameter>(moleculeName, Constants.Parameters.TOTAL_DRUG_MASS);
 
       public double? MolWeightFor(string quantityPath)
       {

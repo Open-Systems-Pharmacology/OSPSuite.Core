@@ -99,4 +99,31 @@ namespace OSPSuite.R.Services
          _pkParameterTask.RemoveAllUserDefinedPKParameters();
       }
    }
+
+   public class When_calculating_the_pk_analysis_for_multiple_dosing_application : concern_for_PKAnalysisTask
+   {
+      private SimulationResults _result;
+      private PopulationSimulationPKAnalyses _pkAnalysis;
+
+      protected override void Context()
+      {
+         base.Context();
+         var simulationFile = HelperForSpecs.DataFile("multiple_dosing.pkml");
+         var simulationPersister = Api.GetSimulationPersister();
+         _simulation = simulationPersister.LoadSimulation(simulationFile);
+         _result = _simulationRunner.Run(_simulation);
+
+      }
+      protected override void Because()
+      {
+         _pkAnalysis = sut.CalculateFor(new CalculatePKAnalysisArgs { NumberOfIndividuals = 1, Simulation = _simulation, SimulationResults = _result });
+      }
+
+      [Observation]
+      public void should_be_able_to_calculate_the_normalized_values()
+      {
+         var pkParameter = _pkAnalysis.PKParameterFor("Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)", "C_max_tD1_tD2_norm");
+         pkParameter.Values[0].ShouldBeGreaterThan(0);
+      }
+   }
 }

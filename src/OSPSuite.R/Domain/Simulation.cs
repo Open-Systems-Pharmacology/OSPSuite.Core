@@ -106,8 +106,12 @@ namespace OSPSuite.R.Domain
 
       public IEnumerable<T> All<T>() where T : class, IEntity => CoreSimulation.All<T>();
 
-      public double? MolWeightFor(IQuantity quantity) => CoreSimulation?.MolWeightFor(quantity);
+      public IParameter BodyWeight => CoreSimulation.BodyWeight;
 
-      public double? MolWeightFor(string quantityPath) => CoreSimulation?.MolWeightFor(quantityPath);
+      public IParameter TotalDrugMassFor(string moleculeName) => CoreSimulation.TotalDrugMassFor(moleculeName);
+
+      public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
+
+      public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
    }
 }

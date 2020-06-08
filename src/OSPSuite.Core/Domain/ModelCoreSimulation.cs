@@ -34,6 +34,16 @@ namespace OSPSuite.Core.Domain
       IReadOnlyList<string> CompoundNames { get; }
 
       IEnumerable<T> All<T>() where T : class, IEntity;
+
+      /// <summary>
+      ///    Returns the Body weight <see cref="IParameter" /> if available in the model otherwise null.
+      /// </summary>
+      IParameter BodyWeight { get; }
+
+      /// <summary>
+      ///    Returns the Total drug mass parameter applied for a molecule <see cref="IParameter" /> if available in the model otherwise null.
+      /// </summary>
+      IParameter TotalDrugMassFor(string moleculeName);
    }
 
    public class ModelCoreSimulation : ObjectBase, IModelCoreSimulation
@@ -53,6 +63,10 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
 
       public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>()) ?? Enumerable.Empty<T>();
+
+      public IParameter BodyWeight => Model?.BodyWeight;
+
+      public IParameter TotalDrugMassFor(string moleculeName) => Model?.TotalDrugMassFor(moleculeName);
 
       public double? MolWeightFor(IQuantity quantity) => Model?.MolWeightFor(quantity);
 
