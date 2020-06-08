@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
             var dosingInterval = new DosingInterval
             {
                StartValue = applicationStartTimes[i],
-               EndValue = applicationEndTimes[i],
+               EndValue = applicationEndTimes[i]
             };
 
             options.AddInterval(dosingInterval);
