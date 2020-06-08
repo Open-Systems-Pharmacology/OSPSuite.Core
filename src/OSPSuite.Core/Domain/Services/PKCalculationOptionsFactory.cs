@@ -2,14 +2,19 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public interface IPKCalculationOptionsFactory
    {
       PKCalculationOptions CreateFor(IModelCoreSimulation simulation, string moleculeName);
-      void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
-      IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation, string moleculeName);
+
+      void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options,
+         IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParametersOrderedByStartTime);
+
+      IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(IModelCoreSimulation simulation,
+         string moleculeName);
    }
 
    public class PKCalculationOptionsFactory : IPKCalculationOptionsFactory
@@ -25,6 +30,7 @@ namespace OSPSuite.Core.Domain.Services
          var applicationStartTimes = allApplicationParameters.Select(x => x.StartTime.Value).ToFloatArray();
          var applicationEndTimes = new List<float>(applicationStartTimes.Skip(1)) {endTime};
 
+
          for (int i = 0; i < applicationStartTimes.Length; i++)
          {
             var dosingInterval = new DosingInterval
@@ -32,6 +38,7 @@ namespace OSPSuite.Core.Domain.Services
                StartValue = applicationStartTimes[i],
                EndValue = applicationEndTimes[i]
             };
+
             options.AddInterval(dosingInterval);
          }
 
@@ -47,9 +54,26 @@ namespace OSPSuite.Core.Domain.Services
          return options;
       }
 
-      public virtual void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options, IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
+      public virtual void UpdateTotalDrugMassPerBodyWeight(IModelCoreSimulation simulation, string moleculeName, PKCalculationOptions options,
+         IReadOnlyList<ApplicationParameters> allApplicationParametersOrderedByStartTime)
       {
-         options.TotalDrugMassPerBodyWeight = simulation.TotalDrugMassPerBodyWeightFor(moleculeName);
+         var bodyWeight = simulation.BodyWeight?.Value;
+         var totalDrugMass = simulation.TotalDrugMassFor(moleculeName);
+
+         options.TotalDrugMassPerBodyWeight = drugMassPerBodyWeightFor(totalDrugMass, bodyWeight);
+
+         options.DosingIntervals.Each((x, i) =>
+         {
+            x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight);
+         });
+      }
+
+      private double? drugMassPerBodyWeightFor(IParameter drugMass, double? bodyWeight)
+      {
+         if (drugMass == null || bodyWeight == null || double.IsNaN(bodyWeight.Value))
+            return null;
+
+         return drugMass.Value / bodyWeight.Value;
       }
 
       private IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
@@ -58,7 +82,8 @@ namespace OSPSuite.Core.Domain.Services
          if (!applicationEventGroup.Any())
             return new List<IContainer>();
 
-         var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application)).ToList();
+         var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
+            .ToList();
          return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications);
       }
 
@@ -70,16 +95,19 @@ namespace OSPSuite.Core.Domain.Services
          return allApplicationParametersIn(allApplications, Constants.Parameters.START_TIME)
             .Where(x => x.Value <= endTime)
             .OrderBy(x => x.Value)
-            .Select(x => new ApplicationParameters(x)).ToList();
+            .Select(x => new ApplicationParameters(x))
+            .ToList();
       }
 
-      private IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName, IReadOnlyList<IContainer> allApplications)
+      private IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName,
+         IReadOnlyList<IContainer> allApplications)
       {
          if (reactions == null)
             return new List<IContainer>();
 
          var reactionsList = reactions.ToList();
-         var applicationsForAppliedAncestorMolecule = allApplications.Where(c => c.GetSingleChildByName<IMoleculeAmount>(moleculeName) != null).ToList();
+         var applicationsForAppliedAncestorMolecule =
+            allApplications.Where(c => c.GetSingleChildByName<IMoleculeAmount>(moleculeName) != null).ToList();
          // If there are any applications of this molecule, use them
          if (applicationsForAppliedAncestorMolecule.Any())
             return applicationsForAppliedAncestorMolecule;
@@ -97,12 +125,18 @@ namespace OSPSuite.Core.Domain.Services
 
       private IReadOnlyList<string> eductNamesFromReactions(IEnumerable<IReactionBuilder> reactions)
       {
-         return reactions.Where(reaction => reaction.Educts.Count() == 1).SelectMany(reaction => reaction.Educts.Select(educt => educt.MoleculeName)).Distinct().ToList();
+         return reactions
+            .Where(reaction => reaction.Educts.Count() == 1)
+            .SelectMany(reaction => reaction.Educts.Select(educt => educt.MoleculeName))
+            .Distinct()
+            .ToList();
       }
 
       private IReadOnlyList<IReactionBuilder> reactionsProducingMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName)
       {
-         return reactions.Where(reaction => reaction.Products.Count() == 1 && string.Equals(reaction.Products.First().MoleculeName, moleculeName)).ToList();
+         return reactions
+            .Where(reaction => reaction.Products.Count() == 1 && string.Equals(reaction.Products.First().MoleculeName, moleculeName))
+            .ToList();
       }
 
       private IEnumerable<IParameter> allApplicationParametersIn(IEnumerable<IContainer> allApplicationContainers, string parameterName)
@@ -111,26 +145,11 @@ namespace OSPSuite.Core.Domain.Services
             .Where(x => x.IsNamed(parameterName));
       }
 
-      private double? infusionTimeFor(IEnumerable<IContainer> allApplicationContainers)
-      {
-         var infusionTimes = allOrderedApplicationParameterValues(allApplicationContainers, Constants.Parameters.INFUSION_TIME).ToList();
-         if (infusionTimes.Any())
-            return infusionTimes.First();
-
-         return null;
-      }
-
-      private IEnumerable<double> allOrderedApplicationParameterValues(IEnumerable<IContainer> allApplicationContainers, string parameterName)
-      {
-         return allApplicationParametersIn(allApplicationContainers, parameterName)
-            .Select(x => x.Value).OrderBy(t => t);
-      }
-
       public class ApplicationParameters
       {
-         public IParameter StartTime { get;  }
-         public IParameter InfusionTime { get;  }
-         public IParameter DrugMass { get;  }
+         public IParameter StartTime { get; }
+         public IParameter InfusionTime { get; }
+         public IParameter DrugMass { get; }
 
          public ApplicationParameters(IParameter startTime)
          {
