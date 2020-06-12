@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             var moleculeName = selectedQuantityForMolecule.Key;
             var pkCalculationOptions = _pkCalculationOptionsFactory.CreateFor(simulation, moleculeName);
-            var allApplicationParameters = _pkCalculationOptionsFactory.AllApplicationParametersOrderedByStartTimeFor(simulation, moleculeName);
+            var allApplicationParameters = simulation.AllApplicationParametersOrderedByStartTimeFor(moleculeName);
 
             foreach (var selectedQuantity in selectedQuantityForMolecule)
             {
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Domain.Services
          PopulationSimulationPKAnalyses popAnalyses,
          string moleculeName,
          PKCalculationOptions pkCalculationOptions,
-         IReadOnlyList<PKCalculationOptionsFactory.ApplicationParameters> allApplicationParameters)
+         IReadOnlyList<ApplicationParameters> allApplicationParameters)
       {
          var allPKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).ToList();
          var allUserDefinedPKParameters = allPKParameters.OfType<UserDefinedPKParameter>().ToList();

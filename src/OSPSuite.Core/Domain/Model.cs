@@ -1,4 +1,7 @@
-﻿using OSPSuite.Core.Domain.Services;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -102,5 +105,7 @@ namespace OSPSuite.Core.Domain
          // so only internal property must be set
          _neighborhoods = Root.Container(sourceModel.Neighborhoods.Name);
       }
+     
+
    }
 }
