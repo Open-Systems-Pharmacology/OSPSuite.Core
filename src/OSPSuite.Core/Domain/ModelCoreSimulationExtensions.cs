@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 
@@ -9,6 +10,9 @@ namespace OSPSuite.Core.Domain
       public static IReadOnlyList<ApplicationParameters> AllApplicationParametersOrderedByStartTimeFor(this IModelCoreSimulation simulation,
          string moleculeName)
       {
+         if (string.IsNullOrEmpty(moleculeName))
+            return Array.Empty<ApplicationParameters>();
+
          var endTime = simulation.EndTime ?? 0;
          var allApplications = allApplicationsForMolecule(simulation, moleculeName);
 
@@ -17,6 +21,13 @@ namespace OSPSuite.Core.Domain
             .OrderBy(x => x.Value)
             .Select(x => new ApplicationParameters(x))
             .ToArray(); // Return array here to be compatible with R
+      }
+
+      public static IReadOnlyList<ApplicationParameters> AllApplicationParametersOrderedByStartTimeForQuantityPath(
+         this IModelCoreSimulation simulation, string quantityPath)
+      {
+         var moleculeName = simulation.Model?.MoleculeNameFor(quantityPath);
+         return AllApplicationParametersOrderedByStartTimeFor(simulation, moleculeName);
       }
 
       private static IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
@@ -34,16 +45,17 @@ namespace OSPSuite.Core.Domain
       private static IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName,
          IReadOnlyList<IContainer> allApplications)
       {
-         if (reactions == null)
-            return new List<IContainer>();
-
-         var reactionsList = reactions.ToList();
          var applicationsForAppliedAncestorMolecule =
             allApplications.Where(c => c.GetSingleChildByName<IMoleculeAmount>(moleculeName) != null).ToList();
 
          // If there are any applications of this molecule, use them
          if (applicationsForAppliedAncestorMolecule.Any())
             return applicationsForAppliedAncestorMolecule;
+
+         if (reactions == null)
+            return new List<IContainer>();
+
+         var reactionsList = reactions.ToList();
 
          // If more than one reaction produces the molecule, count the unique educts. If there is more than one, then these reactions aren't considered
          var producingMolecule = reactionsProducingMolecule(reactionsList, moleculeName);
