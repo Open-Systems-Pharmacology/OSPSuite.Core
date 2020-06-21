@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
 
       protected Project()
       {
-         Name = Constants.ProjectUndefined;
+         Name = Constants.PROJECT_UNDEFINED;
          FilePath = string.Empty;
          _chartTemplates = new Cache<string, CurveChartTemplate>(x => x.Name, x => null);
          Creation = new CreationMetaData();

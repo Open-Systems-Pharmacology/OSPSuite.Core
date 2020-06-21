@@ -17,14 +17,12 @@ namespace OSPSuite.UI.Services
       private readonly IDialogResultToViewResultMapper _mapper;
       private readonly DirectoryMapSettings _directoryMapSettings;
       private readonly IApplicationConfiguration _applicationConfiguration;
-      private readonly ViewResult _defaultButton;
 
       public DialogCreator(IDialogResultToViewResultMapper mapper, DirectoryMapSettings directoryMapSettings, IApplicationConfiguration applicationConfiguration)
       {
          _mapper = mapper;
          _directoryMapSettings = directoryMapSettings;
          _applicationConfiguration = applicationConfiguration;
-         _defaultButton = ViewResult.Yes;
       }
 
       public void MessageBoxError(string message)
@@ -32,42 +30,22 @@ namespace OSPSuite.UI.Services
          XtraMessageBox.Show(message, _applicationConfiguration.ProductNameWithTrademark, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
-      public ViewResult MessageBoxYesNoCancel(string message)
-      {
-         return MessageBoxYesNoCancel(message, _defaultButton);
-      }
-
-      public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton)
+      public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton= ViewResult.Yes)
       {
          return MessageBoxYesNoCancel(message, string.Empty, string.Empty, string.Empty, defaultButton);
       }
 
-      public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel)
-      {
-         return MessageBoxYesNoCancel(message, yes, no, cancel, _defaultButton);
-      }
-
-      public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton)
+      public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, MessageBoxButtons.YesNoCancel, yes, no, cancel, defaultButton);
       }
 
-      public ViewResult MessageBoxYesNo(string message)
-      {
-         return MessageBoxYesNo(message, _defaultButton);
-      }
-
-      public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton)
+      public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes)
       {
          return MessageBoxYesNo(message, string.Empty, string.Empty, defaultButton);
       }
 
-      public ViewResult MessageBoxYesNo(string message, string yes, string no)
-      {
-         return showQuestionMessageBox(message, MessageBoxButtons.YesNo, yes, no, string.Empty, _defaultButton);
-      }
-
-      public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton)
+      public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, MessageBoxButtons.YesNo, yes, no, string.Empty, defaultButton);
       }

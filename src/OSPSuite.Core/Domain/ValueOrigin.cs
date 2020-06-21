@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Id of the given ValueOrigin. This is the database entry for predefined parameters and is set to null if no entry is
       ///    available
-      ///    <remarks>Id is not part of equakity check</remarks>
+      ///    <remarks>Id is not part of equality check</remarks>
       /// </summary>
       public int? Id { get; set; }
 

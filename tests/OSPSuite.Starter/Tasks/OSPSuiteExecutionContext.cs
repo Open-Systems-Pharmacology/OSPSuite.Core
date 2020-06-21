@@ -9,20 +9,27 @@ using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Events;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Starter.Tasks
 {
    internal class OSPSuiteExecutionContext : IOSPSuiteExecutionContext
    {
-      private readonly IOSPSuiteXmlSerializerRepository _modellingXmlSerializerRepository;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly ICompression _compress;
       private readonly IEventPublisher _eventPublisher;
+      private readonly IContainer _container;
 
-      public OSPSuiteExecutionContext(IOSPSuiteXmlSerializerRepository modellingXmlSerializerRepository, ICompression compress, IEventPublisher eventPublisher)
+      public OSPSuiteExecutionContext(
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, 
+         ICompression compress, 
+         IEventPublisher eventPublisher,
+         IContainer container)
       {
-         _modellingXmlSerializerRepository = modellingXmlSerializerRepository;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _compress = compress;
          _eventPublisher = eventPublisher;
+         _container = container;
          Project = new TestProject();
       }
 
@@ -65,8 +72,8 @@ namespace OSPSuite.Starter.Tasks
          if (typeof (TObject) != typeof (IDiagramModel))
             return new byte[0];
 
-         var serializer = _modellingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create())
+         var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
+         using (var serializationContext = SerializationTransaction.Create(_container))
             return _compress.Compress(XmlHelper.XmlContentToByte(serializer.Serialize(objectToSerialize, serializationContext)));
 
       }
@@ -76,8 +83,8 @@ namespace OSPSuite.Starter.Tasks
          if (typeof (TObject) != typeof (IDiagramModel))
             return default(TObject);
 
-         var serializer = _modellingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create())
+         var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
+         using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var outputToDeserialize = XmlHelper.ElementFromBytes(_compress.Decompress(serializationByte));
             return (TObject)serializer.Deserialize(outputToDeserialize, serializationContext);

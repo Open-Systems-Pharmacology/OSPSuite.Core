@@ -8,12 +8,14 @@ namespace OSPSuite.Core.Domain
 {
    public static class Constants
    {
-      public const int PKML_VERSION = PKMLVersion.Current;
+      public const int PKML_VERSION = PKMLVersion.CURRENT;
       public const string CVODES = "CVODES";
       public const int SIM_MODEL_XML_VERSION = 4;
       public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
+      public const string WILD_CARD = "*";
+      public const string WILD_CARD_RECURSIVE = "**";
       public static readonly IReadOnlyList<string> ILLEGAL_CHARACTERS = new List<string> {ObjectPath.PATH_DELIMITER, ":", "*", "?", "<", ">", "|", "{", "}", "\""}.Distinct().ToList();
 
       public const string DRUG_MASS = "DrugMass";
@@ -47,10 +49,11 @@ namespace OSPSuite.Core.Domain
       public const double DEFAULT_SCALE_DIVISOR = 1;
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
       public const string DEFAULT_CHART_LAYOUT = "Standard View";
+      public const string DEFAULT_SIMULATION_RESULTS_NAME = "Simulation Results";
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
-      public const string TOO_OLD_PKML = "PKML file is too old and cannot be converted";
+      public const string TOO_OLD_PKML = "PKML file is too old and cannot be converted. Please install the version 8.0 of the OSPSuite to convert the file to a version that can be supported";
 
       public const string MOL_WEIGHT_EXTENDED_PROPERTY = "MolWeight";
 
@@ -61,9 +64,10 @@ namespace OSPSuite.Core.Domain
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
 
-      public static readonly string ProjectUndefined = "Undefined";
+      public const string PROJECT_UNDEFINED = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";
       public const string NAN = "<NaN>";
+      public const string UNKNOWN = "Unknown";
       public const string CHILD = "Child";
 
       public const string PRODUCT_SITE = "www.open-systems-pharmacology.org";
@@ -75,6 +79,7 @@ namespace OSPSuite.Core.Domain
       public const float DEFAULT_WEIGHT = 1;
       public const double DEFAULT_USE_AS_FACTOR = 1;
       public const double DEFAULT_PARAMETER_RANGE_FACTOR = 10;
+      public const double DEFAULT_PERCENTILE = 0.5;
       public const int DEFAULT_NUMBER_OF_RUNS_FOR_MULTIPLE_MODE = 10;
       public const string X = "X";
       public const string Y = "Y";
@@ -85,6 +90,9 @@ namespace OSPSuite.Core.Domain
       public const byte RANGE_AREA_OPACITY = 55;
       public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
       public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
+      public const int DEFAULT_SENSITIVITY_NUMBER_OF_STEPS = 2;
+      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1; 
+
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -107,7 +115,6 @@ namespace OSPSuite.Core.Domain
          public const string PK_PARAMETERS_FILE_NAME = "OSPSuite.PKParameters.xml";
          public const string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
          public const string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
-         public const string SIM_MODEL_SCHEMA_FILE_NAME = "OSPSuite.SimModel.xsd";
          public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
@@ -147,7 +154,7 @@ namespace OSPSuite.Core.Domain
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
-
+         public const string TOTAL_DRUG_MASS = "Total drug mass";
          public const string ParameterCompoundTypeBase = "Compound type ";
 
          public static string ParameterCompoundType(int index) => $"{ParameterCompoundTypeBase}{index}";
@@ -287,19 +294,23 @@ namespace OSPSuite.Core.Domain
          public const string MOLAR_CONCENTRATION = "Concentration (molar)";
          public const string MASS_CONCENTRATION = "Concentration (mass)";
          public const string DIMENSIONLESS = "Dimensionless";
-         public const string AMOUNT = "Amount";
+         public const string MOLAR_AMOUNT = "Amount";
          public const string MASS_AMOUNT = "Mass";
          public const string TIME = "Time";
+         public const string RHS_DIMENSION_SUFFIX = " per time";
          public const string RESOLUTION = "Resolution";
-         public const string RHS_DIMENSION_SUFFIX = " per Time";
          public const string AMOUNT_PER_TIME = "Amount per time";
          public const string MOLAR_CONCENTRATION_PER_TIME = "Concentration (molar) per time";
          public const string MOLECULAR_WEIGHT = "Molecular weight";
          public const string LOG_UNITS = "Log Units";
          public const string FRACTION = "Fraction";
+         public const string MOLAR_AUC = "AUC (molar)";
+         public const string MOLAR_AUCM = "AUCM (molar)";
+         public const string MASS_AUC = "AUC (mass)";
+         public const string VOLUME_PER_BODY_WEIGHT = "Volume per body weight";
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
-
+         
          public static class Units
          {
             public const string Seconds = "s";
@@ -310,6 +321,25 @@ namespace OSPSuite.Core.Domain
             public const string Months = "month(s)";
             public const string Years = "year(s)";
          }
+      }
+
+      public static class SimulationResults
+      {
+         public const string INDIVIDUAL_ID = "IndividualId";
+         public const string TIME = "Time";
+         public const string QUANTITY_PATH = "QuantityPath";
+         public const string PARAMETER = "Parameter";
+         public const string VALUE = "Value";
+         public const string UNIT = "Unit";
+      }
+
+
+      public static class SensitivityAnalysisResults
+      {
+         public const string QUANTITY_PATH = "QuantityPath";
+         public const string PARAMETER = "Parameter";
+         public const string VALUE = "Value";
+         public const string PK_PARAMETER = "PKParameter";
       }
 
       public static class Distribution
@@ -324,14 +354,14 @@ namespace OSPSuite.Core.Domain
 
       public static class PKParameters
       {
-         internal const string FirstIntervalSuffix = "_t1_t2";
-         internal const string LastIntervalSuffix = "_tLast_tEnd";
+         internal const string FirstIntervalSuffix = "_tD1_tD2";
+         internal const string LastIntervalSuffix = "_tDLast_tEnd";
          internal const string NormSuffix = "_norm";
          public const string C_max = "C_max";
          public const string C_tEnd = "C_tEnd";
          public const string Tmax = "t_max";
          public const string AUC_inf = "AUC_inf";
-         public const string AUC = "AUC";
+         public const string AUC_tEnd = "AUC_tEnd";
          public const string MRT = "MRT";
          public const string Thalf = "Thalf";
          public const string CL = "CL";
@@ -345,35 +375,35 @@ namespace OSPSuite.Core.Domain
             return $"{param}{suffix ?? string.Empty}";
          }
 
-         public static readonly string AUC_norm = NormalizedName(AUC);
+         public static readonly string AUC_tEnd_norm = NormalizedName(AUC_tEnd);
          public static readonly string C_max_norm = NormalizedName(C_max);
          public static readonly string AUC_inf_norm = NormalizedName(AUC_inf);
 
-         public static readonly string C_max_t1_t2 = Create(C_max, FirstIntervalSuffix);
-         public static readonly string C_max_t1_t2_norm = NormalizedName(C_max_t1_t2);
+         public static readonly string C_max_tD1_tD2 = Create(C_max, FirstIntervalSuffix);
+         public static readonly string C_max_tD1_tD2_norm = NormalizedName(C_max_tD1_tD2);
 
-         public static readonly string C_max_tLast_tEnd = Create(C_max, LastIntervalSuffix);
-         public static readonly string C_max_tLast_tEnd_norm = NormalizedName(C_max_tLast_tEnd);
+         public static readonly string C_max_tDLast_tDEnd = Create(C_max, LastIntervalSuffix);
+         public static readonly string C_max_tDLast_tDEnd_norm = NormalizedName(C_max_tDLast_tDEnd);
 
-         public static readonly string Tmax_t1_t2 = Create(Tmax, FirstIntervalSuffix);
-         public static readonly string Tmax_tLast_tEnd = Create(Tmax, LastIntervalSuffix);
+         public static readonly string Tmax_tD1_tD2 = Create(Tmax, FirstIntervalSuffix);
+         public static readonly string Tmax_tDLast_tDEnd = Create(Tmax, LastIntervalSuffix);
 
-         public static readonly string AUC_inf_t1 = Create(AUC_inf, "_t1");
-         public static readonly string AUC_inf_t1_norm = NormalizedName(AUC_inf_t1);
+         public static readonly string AUC_inf_tD1 = Create(AUC_inf, "_tD1");
+         public static readonly string AUC_inf_tD1_norm = NormalizedName(AUC_inf_tD1);
 
-         public static readonly string AUC_t1_t2 = Create(AUC, FirstIntervalSuffix);
-         public static readonly string AUC_t1_t2_norm = NormalizedName(AUC_t1_t2);
+         public static readonly string AUC_tD1_tD2 = Create("AUC", FirstIntervalSuffix);
+         public static readonly string AUC_tD1_tD2_norm = NormalizedName(AUC_tD1_tD2);
 
-         public const string AUC_tLast_minus_1_tLast = "AUC_tLast_minus_1_tLast";
-         public static readonly string AUC_tLast_minus_1_tLast_norm = NormalizedName(AUC_tLast_minus_1_tLast);
+         public const string AUC_tDLast_minus_1_tDLast = "AUC_tDLast_minus_1_tDLast";
+         public static readonly string AUC_tDLast_minus_1_tDLast_norm = NormalizedName(AUC_tDLast_minus_1_tDLast);
 
-         public const string AUC_inf_tLast = "AUC_inf_tLast";
-         public static readonly string AUC_inf_tLast_norm = NormalizedName(AUC_inf_tLast);
+         public const string AUC_inf_tDLast = "AUC_inf_tDLast";
+         public static readonly string AUC_inf_tLast_norm = NormalizedName(AUC_inf_tDLast);
 
-         public static readonly string Ctrough_t2 = Create(Ctrough, "_t2");
-         public static readonly string Ctrough_tLast = Create(Ctrough, "_tLast");
+         public static readonly string Ctrough_tD2 = Create(Ctrough, "_tD2");
+         public static readonly string Ctrough_tDLast = Create(Ctrough, "_tDLast");
 
-         public static readonly string Thalf_tLast_tEnd = Create(Thalf, LastIntervalSuffix);
+         public static readonly string Thalf_tDLast_tEnd = Create(Thalf, LastIntervalSuffix);
 
          internal static string NormalizedName(string pkParameter)
          {
@@ -383,11 +413,14 @@ namespace OSPSuite.Core.Domain
 
       public static class Population
       {
-         public const string ALL_GENDER = "AllGender";
+         public const string ALL_GENDERS = "AllGenders";
          public const string TIME_COLUMN = "Time";
          public const string VALUE_COLUMN = "Value";
          public const string PARAMETER_PATH_COLUMN = "ParameterPath";
          public const string INDIVIDUAL_ID_COLUMN = "IndividualId";
+         public const string RACE_INDEX = "RaceIndex";
+         public const string POPULATION = "Population";
+         public const string GENDER = "Gender";
       }
 
       public static class OptimizationAlgorithm
@@ -424,6 +457,10 @@ namespace OSPSuite.Core.Domain
 
       public static class Serialization
       {
+         public const string MACRO_COMMAND = "MacroCommand";
+         public const string SIMPLE_COMMAND = "SimpleCommand";
+         public const string LABEL_COMMAND = "LabelCommand";
+         public const string INFO_COMMAND = "InfoCommand";
          public const string SIMULATION = "Simulation";
          public const string SIMULATION_LIST = "SimulationList";
          public const string TIME_POINT = "TimePoint";
@@ -452,6 +489,7 @@ namespace OSPSuite.Core.Domain
          public const string DESCRIPTOR_CONDITIONS = "DescriptorConditions";
          public const string KEYS = "Keys";
          public const string VALUE_ORIGIN = "ValueOrigin";
+         public const string PERCENTILES = "Percentiles";
 
          public static class Attribute
          {
@@ -505,11 +543,11 @@ namespace OSPSuite.Core.Domain
          public const string RHS_FORMULA = "RHSFormula";
       }
 
-      public static readonly string NOT = "Not";
-      public static readonly string AND = "and";
-      public static readonly string IN_CONTAINER = "In container";
-      public static readonly string NOT_IN_CONTAINER = "Not in container";
-      public static readonly string LLOQ = "LLOQ";
+      public const string NOT = "Not";
+      public const string AND = "and";
+      public const string IN_CONTAINER = "In container";
+      public const string NOT_IN_CONTAINER = "Not in container";
+      public const string LLOQ = "LLOQ";
 
       public static string NameWithUnitFor(string name, IDimension dimension)
       {
@@ -540,10 +578,9 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman"};
 
-         public static readonly string DEFAULT_FONT_FAMILY_NAME = FontFamily.GenericSansSerif.Name;
-
+         public const string DEFAULT_FONT_FAMILY_NAME = "Microsoft Sans Serif";
+         
          public const int DEFAULT_FONT_SIZE_LEGEND = 8;
          public const int DEFAULT_FONT_SIZE_AXIS = 10;
          public const int DEFAULT_FONT_SIZE_TITLE = 16;
@@ -553,7 +590,10 @@ namespace OSPSuite.Core.Domain
          public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] {8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] { DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME };
+
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }

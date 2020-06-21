@@ -131,7 +131,7 @@ namespace OSPSuite.UI.Views
          return page;
       }
 
-      public void AddQuickAcccessButton(IMenuBarItem menuBarItem)
+      public void AddQuickAccessButton(IMenuBarItem menuBarItem)
       {
          _barManager.Ribbon.Toolbar.ItemLinks.Add(_barItemMapper.MapFrom(_barManager, menuBarItem));
       }

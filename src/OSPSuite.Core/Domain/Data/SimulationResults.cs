@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
@@ -14,17 +16,14 @@ namespace OSPSuite.Core.Domain.Data
       [EditorBrowsable(EditorBrowsableState.Never)]
       public virtual int Id { get; set; }
 
-      public virtual ISet<IndividualResults> AllIndividualResults { get; set; }
+      public virtual ISet<IndividualResults> AllIndividualResults { get; set; } = new HashSet<IndividualResults>();
 
       public virtual QuantityValues Time { get; set; }
 
-      //We need to add the objects in a thread safe manner to the list that is intrinsicly not thread safe
-      private readonly object _locker = new object();
+      public virtual IndividualResults[] IndividualResultsAsArray() => AllIndividualResults?.ToArray();
 
-      public SimulationResults()
-      {
-         AllIndividualResults = new HashSet<IndividualResults>();
-      }
+      //We need to add the objects in a thread safe manner to the list that is intrinsically not thread safe
+      private readonly object _locker = new object();
 
       public virtual void Add(IndividualResults individualResults)
       {
@@ -44,12 +43,9 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    Returns wether values were calculated for the individual with id <paramref name="individualId" /> or not
+      ///    Returns whether values were calculated for the individual with id <paramref name="individualId" /> or not
       /// </summary>
-      public virtual bool HasResultsFor(int individualId)
-      {
-         return ResultsFor(individualId) != null;
-      }
+      public virtual bool HasResultsFor(int individualId) => ResultsFor(individualId) != null;
 
       public virtual int Count
       {
@@ -78,11 +74,29 @@ namespace OSPSuite.Core.Domain.Data
       ///    Returns all values calculated for the quantity with path <paramref name="quantityPath" /> and ordered by individual
       ///    id.
       /// </summary>
-      public virtual IReadOnlyList<QuantityValues> AllValuesFor(string quantityPath)
+      public virtual IReadOnlyList<QuantityValues> AllQuantityValuesFor(string quantityPath)
       {
          lock (_locker)
          {
-            return AllIndividualResults.Select(x => x.ValuesFor(quantityPath)).ToList();
+            return AllIndividualResults.Select(x => x.QuantityValuesFor(quantityPath)).ToArray();
+         }
+      }
+
+      public virtual float[] AllValuesFor(string quantityPath, params int[] individualIds)
+      {
+         lock (_locker)
+         {
+            var individualIdsSpecified = individualIds?.Any() ?? false;
+            var ids = individualIdsSpecified ? individualIds : AllIndividualIds();
+            var values = new List<float>();
+            var numberOfValuesPerIndividual = Time?.Length ?? 0;
+            foreach (var id in ids)
+            {
+               var individualResults = ResultsFor(id);
+               values.AddRange(individualResults?.ValuesFor(quantityPath)?? new float[numberOfValuesPerIndividual].InitializeWith(float.NaN));
+            }
+
+            return values.ToArray();
          }
       }
 
@@ -104,14 +118,18 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual IReadOnlyList<string> AllQuantityPaths()
       {
-         var list = new List<string>();
          lock (_locker)
          {
-            if (AllIndividualResults.Count != 0)
-               list.AddRange(AllIndividualResults.First().Select(x => x.QuantityPath));
+            return AllIndividualResults.Any() ? AllIndividualResults.First().Select(x => x.QuantityPath).ToArray() : Array.Empty<string>();
          }
+      }
 
-         return list;
+      public virtual IReadOnlyList<int> AllIndividualIds()
+      {
+         lock (_locker)
+         {
+            return AllIndividualResults.Select(x => x.IndividualId).ToArray();
+         }
       }
 
       protected internal virtual void ReorderByIndividualId()

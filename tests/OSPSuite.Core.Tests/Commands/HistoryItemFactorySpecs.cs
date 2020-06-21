@@ -5,7 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Utility;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_history_item_factory : ContextSpecification<IHistoryItemFactory>
    {

@@ -15,11 +15,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
    public class MergedDimensionFor<T> : IMergedDimension where T : IWithDimension
    {
-      private readonly IReadOnlyList<IDimensionConverterFor> _converters;
+      private readonly IReadOnlyList<IDimensionConverter> _converters;
       private readonly ICache<string, Unit> _units = new Cache<string, Unit>(x => x.Name);
       public string DisplayName { get; set; }
 
-      public MergedDimensionFor(IDimension sourceDimension, IEnumerable<IDimension> targetDimensions, IReadOnlyList<IDimensionConverterFor> converters)
+      public MergedDimensionFor(IDimension sourceDimension, IEnumerable<IDimension> targetDimensions, IReadOnlyList<IDimensionConverter> converters)
       {
          SourceDimension = sourceDimension;
          TargetDimensions = targetDimensions;
@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _converters.Each(addUnitsFromConverter);
       }
 
-      private void addUnitsFromConverter(IDimensionConverterFor converter)
+      private void addUnitsFromConverter(IDimensionConverter converter)
       {
          TargetDimensions.Where(converter.CanConvertTo).Each(dim => { _units.AddRange(dim.Units); });
       }
@@ -49,8 +49,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit DefaultUnit
       {
-         get { return SourceDimension.DefaultUnit; }
-         set { SourceDimension.DefaultUnit = value; }
+         get => SourceDimension.DefaultUnit;
+         set => SourceDimension.DefaultUnit = value;
       }
 
       public string DefaultUnitName => SourceDimension.DefaultUnitName;
@@ -83,35 +83,40 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return HasUnit(name) ? Unit(name) : DefaultUnit;
       }
 
-      public double BaseUnitValueToUnitValue(Unit unit, double value)
+      public Unit UnitAt(int index)
+      {
+         return cachedUnit.ElementAt(index);
+      }
+
+      public double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit)
       {
          if (SourceDimension.Units.Contains(unit))
-            return SourceDimension.BaseUnitValueToUnitValue(unit, value);
+            return SourceDimension.BaseUnitValueToUnitValue(unit, valueInBaseUnit);
 
          var usedDimension = targetDimensionWith(unit);
          var usedConverter = converterFor(usedDimension);
 
          if (usedConverter.CanResolveParameters())
-            return usedDimension.BaseUnitValueToUnitValue(unit, usedConverter.ConvertToTargetBaseUnit(value));
+            return usedDimension.BaseUnitValueToUnitValue(unit, usedConverter.ConvertToTargetBaseUnit(valueInBaseUnit));
 
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }
 
-      private IDimensionConverterFor converterFor(IDimension usedDimension)
+      private IDimensionConverter converterFor(IDimension usedDimension)
       {
          return _converters.First(converter => converter.CanConvertTo(usedDimension));
       }
 
-      public double UnitValueToBaseUnitValue(Unit unit, double value)
+      public double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
       {
          if (SourceDimension.Units.Contains(unit))
-            return SourceDimension.UnitValueToBaseUnitValue(unit, value);
+            return SourceDimension.UnitValueToBaseUnitValue(unit, valueInUnit);
 
          var usedDimension = targetDimensionWith(unit);
          var usedConverter = converterFor(usedDimension);
 
          if (usedConverter.CanResolveParameters())
-            return usedConverter.ConvertToSourceBaseUnit(usedDimension.UnitValueToBaseUnitValue(unit, value));
+            return usedConverter.ConvertToSourceBaseUnit(usedDimension.UnitValueToBaseUnitValue(unit, valueInUnit));
 
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }

@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Format;
 using DevExpress.XtraEditors.Repository;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views
 {
@@ -91,9 +91,9 @@ namespace OSPSuite.UI.Views
          layoutItemModeSelection.TextVisible = false;
       }
 
-      public void GroupBy(PathElement pathElement, int groupIndex = 0)
+      public void GroupBy(PathElementId pathElementId, int groupIndex = 0)
       {
-         groupByColumn(_pathElementsBinder.ColumnAt(pathElement), groupIndex);
+         groupByColumn(_pathElementsBinder.ColumnAt(pathElementId), groupIndex);
       }
 
       private void groupByColumn(IGridViewColumn gridViewColumn, int groupIndex = 0)

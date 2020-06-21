@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.UnitSystem
@@ -57,18 +58,26 @@ namespace OSPSuite.Core.Domain.UnitSystem
       Unit UnitOrDefault(string name);
 
       /// <summary>
+      /// Returns the unit defined at the 0-based index <paramref name="index"/>. 
+      /// </summary>
+      /// <param name="index">0-based index if the unit in the unit array</param>
+      /// /// <exception cref="ArgumentOutOfRangeException">is thrown if index does not match the units array dimensions</exception>
+      /// <returns>The unit at <paramref name="index"/></returns>
+      Unit UnitAt(int index);
+
+      /// <summary>
       ///    Converts the given value (in base unit) to a representation of the value in the <paramref name="unit" />
       /// </summary>
       /// <param name="unit">Unit into which the value should be converted</param>
-      /// <param name="value">Value in base unit to convert</param>
-      double BaseUnitValueToUnitValue(Unit unit, double value);
+      /// <param name="valueInBaseUnit">Value in base unit to convert</param>
+      double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit);
 
       /// <summary>
       ///    Converts the given value in <paramref name="unit" /> to values in the base unit
       /// </summary>
       /// <param name="unit">Unit of the value given as parameter</param>
-      /// <param name="value">Value to be converted in base unit </param>
-      double UnitValueToBaseUnitValue(Unit unit, double value);
+      /// <param name="valueInUnit">Value to be converted in base unit </param>
+      double UnitValueToBaseUnitValue(Unit unit, double valueInUnit);
 
       /// <summary>
       ///    Adds a unit to the dimension. The unit won't be set as default unit
@@ -103,14 +112,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
    public class Dimension : IDimension
    {
-      private readonly BaseDimensionRepresentation _baseRepresentation;
-      private readonly ICache<string, Unit> _units;
+      private readonly Cache<string, Unit> _units;
       private Unit _defaultUnit;
       private Unit _baseUnit;
       public string Name { get; private set; }
       private string _displayName;
 
-      public Dimension() //parameterless constructor for deserialization
+      public Dimension() //parameter less constructor for deserialization
       {
          _units = new Cache<string, Unit>(x => x.Name);
          Name = string.Empty;
@@ -118,26 +126,23 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Dimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName) : this()
       {
-         _baseRepresentation = baseRepresentation;
+         BaseRepresentation = baseRepresentation;
          Name = dimensionName;
          BaseUnit = new Unit(baseUnitName, 1.0, 0.0);
          _units.Add(BaseUnit);
       }
 
-      public BaseDimensionRepresentation BaseRepresentation
-      {
-         get { return _baseRepresentation; }
-      }
+      public BaseDimensionRepresentation BaseRepresentation { get; }
 
       public string DisplayName
       {
-         get { return string.IsNullOrEmpty(_displayName) ? Name : _displayName; }
-         set { _displayName = value; }
+         get => string.IsNullOrEmpty(_displayName) ? Name : _displayName;
+         set => _displayName = value;
       }
 
       public Unit BaseUnit
       {
-         get { return _baseUnit; }
+         get => _baseUnit;
          internal set
          {
             _baseUnit = value;
@@ -147,7 +152,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit DefaultUnit
       {
-         get { return _defaultUnit; }
+         get => _defaultUnit;
          set
          {
             if (!HasUnit(value.Name))
@@ -157,15 +162,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
          }
       }
 
-      public string DefaultUnitName
-      {
-         get { return DefaultUnit.Name; }
-      }
+      public string DefaultUnitName => DefaultUnit.Name;
 
-      public IEnumerable<Unit> Units
-      {
-         get { return _units; }
-      }
+      public IEnumerable<Unit> Units => _units;
 
       public IEnumerable<string> GetUnitNames()
       {
@@ -182,14 +181,22 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return HasUnit(name) ? Unit(name) : DefaultUnit;
       }
 
-      public double BaseUnitValueToUnitValue(Unit unit, double value)
+      public Unit UnitAt(int index)
       {
-         return value / unit.Factor - unit.Offset;
+         if(index<0 || index>= _units.Count)
+            throw  new ArgumentOutOfRangeException(nameof(index));
+
+         return _units.ElementAt(index);
       }
 
-      public double UnitValueToBaseUnitValue(Unit unit, double unitValue)
+      public double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit)
       {
-         return (unitValue + unit.Offset) * unit.Factor;
+         return valueInBaseUnit / unit.Factor - unit.Offset;
+      }
+
+      public double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
+      {
+         return (valueInUnit + unit.Offset) * unit.Factor;
       }
 
       public Unit AddUnit(string unitName, double factor, double offset)

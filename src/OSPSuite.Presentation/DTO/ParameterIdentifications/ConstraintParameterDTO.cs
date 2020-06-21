@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 {
-   public abstract class ConstraintParameterDTO : ValidatableDTO, IDXDataErrorInfo, IWithName
+   public abstract class ConstraintParameterDTO : DxValidatableDTO, IWithName
    {
       public string Name { get; set; }
       public ValueDTO MinValue { get; set; }
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
          return Math.Abs(value - boundary) <= boundary * Constants.TOO_CLOSE_TO_BOUNDARY_FACTOR;
       }
 
-      public void GetPropertyError(string propertyName, ErrorInfo info)
+      public override void GetPropertyError(string propertyName, ErrorInfo info)
       {
          return;
       }
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
          }
       }
 
-      public void GetError(ErrorInfo info)
+      public override void GetError(ErrorInfo info)
       {
          if (!ValueIsCloseToBoundary) return;
 

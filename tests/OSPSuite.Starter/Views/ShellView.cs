@@ -15,6 +15,17 @@ namespace OSPSuite.Starter.Views
       {
          InitializeComponent();
 
+         // WITH AUTOFAC
+         var dxContainer = container.Resolve<DxContainer>();
+         dxContainer.RibbonBarManager = ribbon.Manager;
+         dxContainer.BarManager = ribbon.Manager ;
+         dxContainer.UserLookAndFeel = defaultLookAndFeel.LookAndFeel;
+         dxContainer.XtraTabbedMdiManager = xtraTabbedMdiManager;
+         dxContainer.ApplicationMenu = new ApplicationMenu();
+         dxContainer.PanelControl = new PanelControl();
+         dxContainer.RibbonControl = ribbon;
+
+         //WITH WINDSOR
          container.RegisterImplementationOf(ribbon.Manager);
          container.RegisterImplementationOf(ribbon.Manager as BarManager);
          container.RegisterImplementationOf(defaultLookAndFeel.LookAndFeel);
@@ -22,6 +33,7 @@ namespace OSPSuite.Starter.Views
          container.RegisterImplementationOf(new ApplicationMenu());
          container.RegisterImplementationOf(new PanelControl());
          container.RegisterImplementationOf(ribbon);
+
       }
 
       public void AttachPresenter(IShellPresenter presenter)

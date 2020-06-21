@@ -2,6 +2,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain
@@ -42,7 +43,7 @@ namespace OSPSuite.Core.Domain
    }
 
    /// <summary>
-   ///    Results of the population run. Contains individual results for sucessfull individuals.
+   ///    Results of the population run. Contains individual results for successful individuals.
    ///    Contains individual run info for all individuals
    /// </summary>
    public class PopulationRunResults
@@ -56,7 +57,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Results for successfull individuals only
+      ///    Results for successful individuals only
       /// </summary>
       public SimulationResults Results { get; internal set; }
 
@@ -74,7 +75,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Add results for successfull individual
+      ///    Add results for successful individual
       /// </summary>
       /// <param name="individualResults"></param>
       public void Add(IndividualResults individualResults)
@@ -87,7 +88,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    This methods ensure that the time arrays in all <see cref="IndividualResults" /> are using the reference defined in
       ///    the parent <see cref="SimulationResults" />.
-      ///    Also results will be reorderd by Individual Id
+      ///    Also results will be reordered by Individual Id
       /// </summary>
       public void SynchronizeResults()
       {

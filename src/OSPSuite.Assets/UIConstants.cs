@@ -263,7 +263,7 @@ namespace OSPSuite.Assets
 
       public static void AppendListItem(StringBuilder sb, bool html, string listItem, int index)
       {
-         if(html)
+         if (html)
             sb.Append($"<li>{listItem}</li>");
          else
             sb.AppendLine($"   {index}: {listItem}");
@@ -277,10 +277,9 @@ namespace OSPSuite.Assets
             sb.AppendLine(lineToAppend);
       }
 
-
-      public static void AddOrderedList(StringBuilder sb, bool html, params string [] list)
+      public static void AddOrderedList(StringBuilder sb, bool html, params string[] list)
       {
-         if(html)
+         if (html)
             sb.Append("<ol>");
 
          list.Each((item, i) =>
@@ -293,13 +292,13 @@ namespace OSPSuite.Assets
             sb.Append("</ol>");
       }
 
-      public static string ExceptionViewDescription(string issueTrackerUrl, bool html=true)
+      public static string ExceptionViewDescription(string issueTrackerUrl, bool html = true)
       {
          var sb = new StringBuilder();
          AppendLine(sb, html, "oops...something went terribly wrong.");
          AppendLine(sb, html, string.Empty);
          AppendLine(sb, html, "To best address the error, please enter an issue in our issue tracker:");
-         AddOrderedList(sb, html, 
+         AddOrderedList(sb, html,
             $"Visit <b>{issueTrackerUrl}</b> or click on the link below",
             "Click on the <b>New Issue</b> button",
             "Describe the steps you took prior to the problem emerging",
@@ -325,9 +324,9 @@ namespace OSPSuite.Assets
       {
          return $"Really delete observed data '{observedDataName}' from project";
       }
-      
-      public static string ReallyClearHistory= "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
-      
+
+      public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
+
       public static class Importer
       {
          public static readonly string ImportAll = "Import All";
@@ -354,7 +353,6 @@ namespace OSPSuite.Assets
          public static readonly string UnitInformation = "Unit Information";
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
-
 
          public class ToolTips
          {
@@ -990,8 +988,8 @@ namespace OSPSuite.Assets
          public static readonly string SensitivityAnalysisPKParameterAnalysisDescription = "Create a new chart displaying the sensitivity of the parameters which are responsible for 90% of the cumulated sensitivity";
          public static readonly string PKParameter = "PK-Parameter";
          public static readonly string AddAllConstants = "Add All Constants";
-         public static readonly string ExportPKAnalysesSentitivityToExcel = $"Export to {Excel}";
-         public static readonly string ExportPKAnalysesSentitivityTToExcelTitle = $"Export PK-Analyses Sensitivity to {Excel}";
+         public static readonly string ExportPKAnalysesSensitivityToExcel = $"Export to {Excel}";
+         public static readonly string ExportPKAnalysesSensitivityToExcelTitle = $"Export PK-Analyses Sensitivity to {Excel}";
          public static readonly string OutputPath = "Output Path";
          public static readonly string SensitivityAnalysisCouldNotBeCalculated = "No sensitivity values available for this combination of output path and PK parameter";
          public static readonly string Selection = "Selection";
@@ -1018,7 +1016,7 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ApplyValueToAllSensitivityParameters = "Apply value to all sensitivity parameters";
-         public static readonly string ApplyValueToSelectedSensitivityParameters = "Apply value to selected sensitivity paramters";
+         public static readonly string ApplyValueToSelectedSensitivityParameters = "Apply value to selected sensitivity parameters";
          public static readonly string NumberOfStepsDescription = "Number of simulation evaluations at each side to the default value";
          public static readonly string VariationRangeDescription = "Parameter will be varied between <current value/(1+variation range)> and <current value*(1+variation range)>";
          public static readonly string AddAllConstantsDescription = "Add all parameters with a constant value to the sensitivity parameters";
@@ -1028,7 +1026,7 @@ namespace OSPSuite.Assets
          {
             return $"Number of selected parameters: {numberOfParameters}";
          }
-      }   
+      }
 
       public static class Chart
       {
@@ -1119,14 +1117,14 @@ namespace OSPSuite.Assets
       public static readonly string DifferentXAxisDimension = "Different from X axis dimension";
       public static readonly string DifferentYAxisDimension = "Different from Y axis dimension";
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
+      public static readonly string MolWeightNotAvailable = "Molecular Weight not available.";
+      public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
       public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
-         var content = usersOfBuildingBlock.Count > 1 ? 
-            $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : 
-            $"{usersOfBuildingBlock.ToString(""," ")}"; 
+         var content = usersOfBuildingBlock.Count > 1 ? $"\n{usersOfBuildingBlock.ToString("\n", "  ")}\n" : $"{usersOfBuildingBlock.ToString("", " ")}";
 
          return $"{buildingBlockType} '{buildingBlockName}' is used by{content}and cannot be deleted.";
       }
@@ -1211,7 +1209,7 @@ namespace OSPSuite.Assets
       }
 
       public static string EntityIsInvalid(string entityType, string name)
-      {  
+      {
          return $"{entityType} '{name}' is invalid";
       }
 
@@ -1255,10 +1253,9 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
 
-      public static string MissingMoleculeContainerFor(string moleculeName)
-      {
-         return $"Global molecule container for '{moleculeName}' was not found in root container";
-      }
+      public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
+
+      public static string MissingMoleculeContainerFor(string moleculeName) => $"Global molecule container for '{moleculeName}' was not found in root container";
 
       public static string UndefinedHelpParameter(string calculationMethod, string category)
       {
@@ -1321,9 +1318,9 @@ namespace OSPSuite.Assets
 
       public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
 
-      public static string IndividualIdDoesNotMatchTheValueLength(int indiviudalId, int count)
+      public static string IndividualIdDoesNotMatchTheValueLength(int individualId, int count)
       {
-         return $"Individual Id '{indiviudalId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
+         return $"Individual Id '{individualId}' does not match the expected number of individual '{count}'. A reason could be that the results were imported starting with an id of 1 instead of 0.";
       }
 
       public static string CannotFindSimulationParameterForIdentificationParameter(string fullQuantityPath, string name)
@@ -1370,6 +1367,69 @@ namespace OSPSuite.Assets
 
       public const string QualificationReportConfigurationFileNotDefined = "Qualification report configuration file not defined.";
 
+      public static string ParameterValuesDoNotHaveTheExpectedCount(string parameterPath, int expectedCount, int actualCount)
+      {
+         return $"Parameter values for '{parameterPath}' does not have the expected number of elements. (Expected {expectedCount} vs Actual {actualCount})";
+      }
+
+      public static string SimulationResultsFileDoesNotHaveTheExpectedFormat
+      {
+         get
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("Simulation result files does not have the expected format:");
+            sb.AppendLine(" - Column headers are required (e.g. IndividualId;Time;....)");
+            sb.AppendLine(" - The 1st column represents the individual id");
+            sb.AppendLine(" - The 2nd column represents the time values");
+            return sb.ToString();
+         }
+      }
+
+      public static string SimulationPKAnalysesFileDoesNotHaveTheExpectedFormat
+      {
+         get
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("Simulation pk-Analyses files does not have the expected format:");
+            sb.AppendLine(" - Column headers are required (e.g. IndividualId;Output;Parameter;Value;Unit)");
+            sb.AppendLine(" - The 1st column represents the individual id");
+            sb.AppendLine(" - The 2nd column represents the output for which the PK-Parameter was calculated");
+            sb.AppendLine(" - The 3rd column represents the Name of the PK-Parameter");
+            sb.AppendLine(" - The 4th column represents the Value of the PK-Parameter");
+            sb.AppendLine(" - The 5th column represents the Unit in which the value in the 4th column is saved");
+            return sb.ToString();
+         }
+      }
+
+     
+      public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
+
+      public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
+
+      public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
+
+      public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"Individual results for individual '{individualId}' does not have the expected results:");
+         sb.AppendLine($"Expected: {expectedQuantities.ToString(",")}");
+         sb.AppendLine($"Found: {foundQuantities.ToString(",")}");
+         return sb.ToString();
+      }
+
+      public static string TimeArrayLengthDoesNotMatchFirstIndividual(int id, int expectedLength, int currentLength)
+      {
+         return $"Time array for individual '{id}' does not have the expected length ({expectedLength} vs {currentLength}).";
+      }
+
+      public static string TimeArrayValuesDoesNotMatchFirstIndividual(int id, int index, float expectedValue, float currentValue)
+      {
+         return $"Time array for individual '{id}' does not have the expected value in row '{index}' ({expectedValue} vs {currentValue}).";
+      }
+
+      public static string CouldNotFindDimensionWithUnit(string unit) => $"Could not find dimension containing unit '{unit}'.";
+
+      public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
       public static class SensitivityAnalysis
       {
@@ -1406,6 +1466,17 @@ namespace OSPSuite.Assets
       {
          return $"The selected file size is '{fileSizeInMegaBytes} MB' and exceeds the maximum supported size of '{maxSizeInMegaBytes} MB'.";
       }
+
+      public static string WildCardRecursiveCannotBePartOfPath(string wildCardRec, string invalidPath, string correctedPath)
+      {
+         var sb = new StringBuilder($"The '{wildCardRec}' search pattern cannot be used as part of a path entry:");
+         sb.AppendLine();
+         sb.AppendLine($"Instead of '{invalidPath}'");
+         sb.AppendLine($"use '{correctedPath}'");
+         return sb.ToString();
+      }
+
+      public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
    }
 
    public static class Validation
@@ -1429,6 +1500,11 @@ namespace OSPSuite.Assets
       public static string PathContainsReservedKeywords(string entity, string entityType, string entityPath, string reference)
       {
          return $"Reference '{reference}' used in {entityType.ToLower()} '{entity}' with path '{entityPath}' contains reserved keywords. Remove them before resolving the path";
+      }
+
+      public static string ModelNameCannotBeNamedLikeATopContainer(IReadOnlyCollection<string> topContainerNames)
+      {
+         return $"The simulation name cannot be one of the following reserved terms:\n\t{topContainerNames.ToString(", ", "'")}.\nPlease rename your simulation.";
       }
 
       public static string ErrorUnableToFindReference(string entity, string entityType, string entityPath, string reference)
@@ -1548,7 +1624,7 @@ namespace OSPSuite.Assets
 
          public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
-            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue,displayUnit)} for parameter '{fullQuantityPath}'";
+            return $"The minimum value must be greater than or equal to {valueWithUnit(minDisplayValue, displayUnit)} for parameter '{fullQuantityPath}'";
          }
 
          public static string MinimumMustBeGreaterThan(string minDisplayValue, string displayUnit, string fullQuantityPath)
@@ -1573,6 +1649,17 @@ namespace OSPSuite.Assets
    public static class Messages
    {
       public static readonly string CreatingModel = "Creating Model...";
+      public static readonly string ImportingResults = "Importing results...";
+
+      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals) => 
+         $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
+
+      public static readonly string FollowingPKParameterSensitivityWereSuccessfullyImported = "PKParameter sensitivities were successfully imported for the following quantities:";
+
+      public static string CalculationPopulationSimulation(int number, int total) => $"Simulation {number}/{total}...";
+
+      public static readonly string FollowingPKParametersWereSuccessfullyImported = "Following PK-Parameters were successfully imported:";
+
    }
 
    public static class Warning
@@ -1581,6 +1668,12 @@ namespace OSPSuite.Assets
       public static readonly string ImportingParameterIdentificationValuesFromCancelledRun = "This parameter identification run was cancelled.\nDo you really want to import the identified parameters?";
       public static readonly string ImportingParameterIdentificationValuesFromCategorialRun = "Only the VALUES of the identified parameters will be transferred.\nPlease set the calculation methods manually.";
       public static readonly string CurveNameIsMissing = "Curve name is missing";
+      public static readonly string PopulationFileFormatIsNotSupported = "Population file format is not supported.";
+      public static readonly string SensitivityAnalysisFileFormatIsNotSupported = "Sensitivity analysis file format is not supported.";
+
+      public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
+
+      public static string UserDefinedPKParameterAlreadyExistsAndWillBeReplaced(string pkParameterName) => $"User Defined PK-Parameter '{pkParameterName}' already exists and will be replaced.";
    }
 
    public static class RibbonCategories
@@ -1607,6 +1700,8 @@ namespace OSPSuite.Assets
 
    public static class MenuNames
    {
+      public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
+
       public static readonly string ExportToPDF = "Export to PDF...";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
@@ -1627,7 +1722,7 @@ namespace OSPSuite.Assets
       public static readonly string RemoveEmptyGroups = "Empty Subfolders";
       public static readonly string ManageProjectDisplayUnits = "Manage Project Display Units";
       public static readonly string ManageUserDisplayUnits = "Manage User Display Units";
-      public static readonly string UpdateAllToDisplaytUnits = "Update All Display Units";
+      public static readonly string UpdateAllToDisplayUnits = "Update All Display Units";
       public static readonly string ApplyChartTemplate = "Apply Chart Template";
       public static readonly string NoTemplateAvailable = "No Template Available";
       public static readonly string ChartTemplate = "Chart Template";
@@ -1645,8 +1740,8 @@ namespace OSPSuite.Assets
       public static readonly string ShowRelatedItems = "Show Related Items";
       public static readonly string Layout = "Layout";
       public static readonly string SaveToUserSettings = "Save to User Settings";
-      public static readonly string CustomizeEditorLayout = "Customize Layout (Developer only)...";
-      public static readonly string SaveChartLayoutToFile = "Save Layout to File (Developer only)...";
+      public static readonly string CustomizeEditorLayout = AsDeveloperOnly("Customize Layout");
+      public static readonly string SaveChartLayoutToFile = AsDeveloperOnly("Save Layout to File");
       public static readonly string StartParameterIdentification = "Start Parameter Identification...";
       public static readonly string AddParameterIdentification = "Add Parameter Identification";
       public static readonly string AddSensitivityAnalysis = "Add Sensitivity Analysis";
@@ -1656,12 +1751,15 @@ namespace OSPSuite.Assets
       public static readonly string StopParameterIdentification = "Stop";
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
-      public static readonly string ExportForMatlab = "Export for Matlab®";
       public static readonly string ExportForR = "Export for R";
+      public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
+      public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
+      public static readonly string ExportODEForR = "Export Simulation to R Differential Equations";
+      public static readonly string ExportODEForMatlab = "Export Simulation to Matlab® Differential Equations";
       public static readonly string Clone = "Clone";
       public static readonly string RunSensitivityAnalysis = "Run";
-      public static readonly string StopSensitivityanalysis = "Stop";
-      public static readonly string StartSensitivityanalysis = "Start Sensitivity Analysis...";
+      public static readonly string StopSensitivityAnalysis = "Stop";
+      public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
       public static readonly string Help = "Help";
 
@@ -1841,10 +1939,10 @@ namespace OSPSuite.Assets
       {
          string withObjectTypeInfo = $"for {withValueOriginType} '{withValueOriginDisplay}' in {containerType} '{containerDisplay}'";
 
-         if(string.IsNullOrEmpty(oldValueOrigin))
+         if (string.IsNullOrEmpty(oldValueOrigin))
             return $"Value origin set to '{newValueOrigin}' {withObjectTypeInfo}";
 
-         if(string.IsNullOrEmpty(newValueOrigin))
+         if (string.IsNullOrEmpty(newValueOrigin))
             return $"Value origin set to '{oldValueOrigin}' {withObjectTypeInfo}";
 
          return $"Update value origin from '{oldValueOrigin}' to '{newValueOrigin}' {withObjectTypeInfo}";

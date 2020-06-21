@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -8,8 +9,9 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class DimensionFactoryPersistor : AbstractFilePersistor<IDimensionFactory>, IDimensionFactoryPersistor
    {
-      public DimensionFactoryPersistor(IUnitSystemXmlSerializerRepository serializerRepository) : base(serializerRepository)
+      public DimensionFactoryPersistor(IUnitSystemXmlSerializerRepository serializerRepository, IContainer container) : base(serializerRepository, container)
       {
       }
+
    }
 }

@@ -20,20 +20,17 @@ namespace OSPSuite.Core.Domain
    {
       private static readonly ICache<OriginId, Origin> _allSources = new Cache<OriginId, Origin>(x => x.Id);
 
-      public static Origin PKSim = create(OriginId.PKSim, ApplicationIcons.PKSim, "PK-Sim");
-      public static Origin MoBi = create(OriginId.MoBi, ApplicationIcons.MoBi, "MoBi");
-      public static Origin Matlab = create(OriginId.Matlab, ApplicationIcons.Matlab, "Matlab");
-      public static Origin R = create(OriginId.R, ApplicationIcons.R, "R");
-      public static Origin Other = create(OriginId.Other, ApplicationIcons.Other, "Other");
+      public static Origin PKSim = create(OriginId.PKSim, IconNames.PKSIM, "PK-Sim");
+      public static Origin MoBi = create(OriginId.MoBi, IconNames.MOBI, "MoBi");
+      public static Origin Matlab = create(OriginId.Matlab, IconNames.MATLAB, "Matlab");
+      public static Origin R = create(OriginId.R, IconNames.R, "R");
+      public static Origin Other = create(OriginId.Other, IconNames.OTHER, "Other");
 
-      public static IEnumerable<Origin> All
-      {
-         get { return _allSources; }
-      }
+      public static IEnumerable<Origin> All => _allSources;
 
-      private static Origin create(OriginId originId, ApplicationIcon applicationIcon, string displayName)
+      private static Origin create(OriginId originId, string iconName, string displayName)
       {
-         var source = new Origin(originId, applicationIcon, displayName);
+         var source = new Origin(originId, iconName, displayName);
          _allSources.Add(source);
          return source;
       }
@@ -47,13 +44,13 @@ namespace OSPSuite.Core.Domain
    public class Origin
    {
       public OriginId Id { get; private set; }
-      public ApplicationIcon Icon { get; private set; }
+      public string IconName { get; private set; }
       public string DisplayName { get; private set; }
 
-      internal Origin(OriginId id, ApplicationIcon icon, string displayName)
+      internal Origin(OriginId id, string iconName, string displayName)
       {
          Id = id;
-         Icon = icon;
+         IconName = iconName;
          DisplayName = displayName;
       }
 

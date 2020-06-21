@@ -28,7 +28,13 @@ namespace OSPSuite.Starter.Views
 
       private void registerRegion(UxDockPanel dockPanel, RegionName regionName)
       {
+         //AUTOFAC
+         var regionContainer = IoC.Resolve<RegionsContainer>();
+         regionContainer.Explorer = dockPanel;
+
+         //CASTLE
          IoC.RegisterImplementationOf((IRegion)dockPanel, regionName.Name);
+
          dockPanel.InitializeWith(regionName);
       }
    }

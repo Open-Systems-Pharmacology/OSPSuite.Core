@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void CalculateConfidenceIntervalFor(ParameterIdentification parameterIdentification, ParameterIdentificationRunResult runResult)
       {
-         if (runResult.JacobianMatrix == null)
+         if (runResult?.JacobianMatrix == null)
          {
             _view.DeleteBinding();
             return;
@@ -43,7 +43,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
          return from optimizedParameter in runResult.BestResult.Values
                      let identificationParameter = parameterIdentification.IdentificationParameterByName(optimizedParameter.Name)
-                     where identificationParameter != null
+                     where identificationParameter?.Dimension != null
                      select confidenceIntervalDTOFrom(confidenceInterval, identificationParameter, optimizedParameter);
       }
 

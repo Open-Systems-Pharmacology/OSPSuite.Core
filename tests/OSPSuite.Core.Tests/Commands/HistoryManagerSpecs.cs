@@ -5,10 +5,11 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_HistoryManager : ContextSpecification<IHistoryManager<MyContext>>
    {

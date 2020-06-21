@@ -17,7 +17,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public ParameterIdentificationCorrelationAnalysisPresenter(IParameterIdentificationSingleRunAnalysisView view, IParameterIdentificationMatrixPresenter matrixPresenter, IPresentationSettingsTask presentationSettingsTask, IMatrixCalculator matrixCalculator) :
          base(view, matrixPresenter, presentationSettingsTask, matrixCalculator, ApplicationIcons.CorrelationAnalysis, Captions.ParameterIdentification.CorrelationMatrixNotAvailable)
       {
-         matrixPresenter.NumberFormatter = new NumericFormatter<double>(new NumericFormatterOptions {AllowsScientificNotation = false, DecimalPlace = NumericFormatterOptions.Instance.DecimalPlace});
          view.SetAnalysisView(matrixPresenter.View);
       }
 

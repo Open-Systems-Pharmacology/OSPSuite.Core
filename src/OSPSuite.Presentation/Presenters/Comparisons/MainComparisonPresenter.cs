@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
       /// <param name="leftObject">Left object of comparison</param>
       /// <param name="rightObject">Right object of comparison</param>
       /// <param name="runComparison">
-      ///    If set to <c>true</c> the comparison will start immediatly before showing the view to the
+      ///    If set to <c>true</c> the comparison will start immediately before showing the view to the
       ///    user. Default is <c>true</c>
       /// </param>
       /// <param name="leftCaption">Optional caption for the left object</param>

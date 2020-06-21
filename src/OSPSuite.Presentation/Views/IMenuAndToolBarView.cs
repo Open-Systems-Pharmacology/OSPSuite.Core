@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Views
       void AddDynamicPageGroupToPageCategory(IButtonGroup buttonGroup, string pageName, string pageCategoryName);
       void SetPageCategoryVisibility(string pageCategoryName, bool visible);
       void AddPageGroupToPage(IButtonGroup buttonGroup, string pageName);
-      void AddQuickAcccessButton(IMenuBarItem menuBarItem);
+      void AddQuickAccessButton(IMenuBarItem menuBarItem);
       void AddPageHeaderItemLinks(IMenuBarItem menuBarItem);
       void InitializeSkinGallery(ISkinManager skinManager, string pageGroupName, string pageName);
       void AddApplicationMenu(IButtonGroup buttonGroup);

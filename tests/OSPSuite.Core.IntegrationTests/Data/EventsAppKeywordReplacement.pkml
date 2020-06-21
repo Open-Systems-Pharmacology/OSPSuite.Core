@@ -1,0 +1,379 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SimulationTransfer id="GWFMuQmDdEurKs0xKsZgrA" reactionDimensionMode="AmountBased" version="13">
+  <Simulation id="19c0855b-45f3-41d9-b7d4-a7e44e1bf1d4" name="S1" icon="Simulation">
+    <BuildConfiguration>
+      <Molecules id="WFgpNremBUmjvgO6gH9yTw" name="Molecules" icon="Molecule" bbVersion="7">
+        <Creation createdAt="5248846087510601903" createdBy="Michael" creationMode="New" origin="Other" />
+        <Builders>
+          <MoleculeBuilder id="Jnqb5kcTi0iTY_v4JViwqg" name="C1" icon="DRUG" mode="Logical" containerType="Other" isFloating="1" quantityType="Drug" isXenobiotic="1" dim="Amount" defaultStartFormula="w-UJU8afkUen1F1PLFqWnw" displayUnit="µmol">
+            <UsedCalculationMethods>
+              <UsedCalculationMethod category="DistributionCellular" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DiffusionIntCell" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DistributionInterstitial" calculationMethod="No Calculation Method" />
+            </UsedCalculationMethods>
+          </MoleculeBuilder>
+          <MoleculeBuilder id="wkEDJ40X7UyAK8igWs8gig" name="C2" icon="DRUG" mode="Logical" containerType="Other" isFloating="1" quantityType="Drug" isXenobiotic="1" dim="Amount" defaultStartFormula="fXjovziwaUSLN5RowT-AuQ" displayUnit="µmol">
+            <UsedCalculationMethods>
+              <UsedCalculationMethod category="DistributionCellular" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DiffusionIntCell" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DistributionInterstitial" calculationMethod="No Calculation Method" />
+            </UsedCalculationMethods>
+          </MoleculeBuilder>
+          <MoleculeBuilder id="NBlkmoRjlkGJ5EfOr1nJuA" name="C3" icon="DRUG" mode="Logical" containerType="Other" isFloating="0" quantityType="Drug" isXenobiotic="1" dim="Amount" defaultStartFormula="ppUUVUNGMka9KZuXTvtYyQ" displayUnit="µmol">
+            <UsedCalculationMethods>
+              <UsedCalculationMethod category="DistributionCellular" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DiffusionIntCell" calculationMethod="No Calculation Method" />
+              <UsedCalculationMethod category="DistributionInterstitial" calculationMethod="No Calculation Method" />
+            </UsedCalculationMethods>
+          </MoleculeBuilder>
+        </Builders>
+        <FormulaCache>
+          <Formulas>
+            <ConstantFormula id="w-UJU8afkUen1F1PLFqWnw" dim="Amount" value="0" />
+            <ConstantFormula id="fXjovziwaUSLN5RowT-AuQ" dim="Amount" value="0" />
+            <ConstantFormula id="ppUUVUNGMka9KZuXTvtYyQ" dim="Amount" value="0" />
+          </Formulas>
+          <StringMap />
+        </FormulaCache>
+      </Molecules>
+      <Observers id="KJxmByMnAk6Bqb9TIad9Hg" name="Observer" icon="Observer" bbVersion="0">
+        <Creation createdAt="5248846087510761441" createdBy="Michael" creationMode="New" origin="Other" />
+      </Observers>
+      <EventGroups id="8ZAw18oFjU2b6Sy57ODj-g" name="Events" icon="EventGroup" bbVersion="27">
+        <Creation createdAt="5248846087510841231" createdBy="Michael" creationMode="New" origin="Other" />
+        <Builders>
+          <EventGroupBuilder id="2treNzLmmk2K8_1yau-Odw" name="Mixed" mode="Logical" containerType="Other">
+            <Children>
+              <EventGroupBuilder id="CoQYQJVC9kmz181EUh04KQ" name="EHC2" mode="Logical" containerType="Other">
+                <Children>
+                  <Parameter id="Dbi4g92BaU6xmo54q6VTtQ" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                  <ApplicationBuilder id="257Qso6B302ONaTwH0f03Q" name="AppC2_3" mode="Logical" containerType="Application" moleculeName="C2">
+                    <Children>
+                      <Parameter id="f_78xOrvSUeupYk_fuy3XA" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                    </Children>
+                    <SourceCriteria />
+                  </ApplicationBuilder>
+                  <ApplicationBuilder id="X4h0bKCstEWyUQs-9rE0hQ" name="AppC3_3" mode="Logical" containerType="Application" moleculeName="C3">
+                    <Children>
+                      <Parameter id="L2WLDcn6NkiLeVNonobuYg" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                    </Children>
+                    <SourceCriteria />
+                  </ApplicationBuilder>
+                  <EventGroupBuilder id="ttbExxOPUE6doD1J1WCBsg" name="EHC3" mode="Logical" containerType="Other">
+                    <Children>
+                      <Parameter id="FQxA_jNyPkm7MKJ0GozYxA" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                    </Children>
+                    <SourceCriteria />
+                  </EventGroupBuilder>
+                </Children>
+                <SourceCriteria />
+              </EventGroupBuilder>
+              <ApplicationBuilder id="PEK9zsHOaUW4R35DcgjjOw" name="AppC2_2" mode="Logical" containerType="Application" moleculeName="C2">
+                <Children>
+                  <Parameter id="KKYuQt8VXUqk7B90bekbOA" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+                <SourceCriteria />
+              </ApplicationBuilder>
+              <ApplicationBuilder id="2A_SnMDKGkWlemIK1GETPg" name="AppC3_2" mode="Logical" containerType="Application" moleculeName="C3">
+                <Children>
+                  <Parameter id="uEibay9nAUquYozHYwzyKw" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+                <SourceCriteria />
+              </ApplicationBuilder>
+              <Parameter id="3rmYDvQi80y3HfcsK-FYPw" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+              </Parameter>
+            </Children>
+            <SourceCriteria>
+              <DescriptorConditions>
+                <MatchTagCondition tag="Organism" />
+              </DescriptorConditions>
+            </SourceCriteria>
+          </EventGroupBuilder>
+          <ApplicationBuilder id="nM66xqZBR0an_HQ9m5QTLw" name="AppC3" mode="Logical" containerType="Application" moleculeName="C3">
+            <Children>
+              <Parameter id="w8no1LG9X0Wdg2Ol9Kp2bQ" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+              </Parameter>
+            </Children>
+            <SourceCriteria>
+              <DescriptorConditions>
+                <MatchTagCondition tag="Organism" />
+              </DescriptorConditions>
+            </SourceCriteria>
+          </ApplicationBuilder>
+          <ApplicationBuilder id="Y16dwR1VV0Sf6vTbC9guBw" name="AppC2" mode="Logical" containerType="Application" moleculeName="C2">
+            <Children>
+              <Parameter id="hSnT0S8gWE-2LPx_qJWOmQ" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+              </Parameter>
+            </Children>
+            <SourceCriteria>
+              <DescriptorConditions>
+                <MatchTagCondition tag="Organism" />
+              </DescriptorConditions>
+            </SourceCriteria>
+          </ApplicationBuilder>
+          <EventGroupBuilder id="wwax5NHVcEmt67PKAvomRw" name="EHC" mode="Logical" containerType="Other">
+            <Children>
+              <Parameter id="NX117kJnik6m5E_824qOIQ" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="1cesikWdGke7wUU0sAeuvw" isDefault="0">
+                <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+              </Parameter>
+            </Children>
+            <SourceCriteria>
+              <DescriptorConditions>
+                <MatchTagCondition tag="Organism" />
+              </DescriptorConditions>
+            </SourceCriteria>
+          </EventGroupBuilder>
+        </Builders>
+        <FormulaCache>
+          <Formulas>
+            <Formula id="1cesikWdGke7wUU0sAeuvw" name="Tralala" formula="0">
+              <Paths>
+                <Path path="0" as="1" dim="2" />
+              </Paths>
+            </Formula>
+          </Formulas>
+          <StringMap>
+            <Map s="Organism|MOLECULE" id="0" />
+            <Map s="XXX" id="1" />
+            <Map s="Amount" id="2" />
+          </StringMap>
+        </FormulaCache>
+      </EventGroups>
+      <PassiveTransports id="1F5HcW916Uez2UiKa70_Kw" name="Passive Transports" icon="PassiveTransport" bbVersion="0">
+        <Creation createdAt="5248846087510751785" createdBy="Michael" creationMode="New" origin="Other" />
+      </PassiveTransports>
+      <Reactions id="QgDXoeUsOkSyNyt1zjjQ7w" name="Reaction" icon="Reaction" bbVersion="0">
+        <Creation createdAt="5248846087510741735" createdBy="Michael" creationMode="New" origin="Other" />
+      </Reactions>
+      <SpatialStructure id="p3KHIVU0zECS_G86YJTMlA" name="Organism" icon="SpatialStructure" bbVersion="0">
+        <Creation createdAt="5248846087510701892" createdBy="Michael" creationMode="New" origin="Other" />
+        <GlobalMoleculeDependentProperties id="I0OZxjOnFUKCJ7Qb6rk_qw" name="MoleculeProperties" mode="Logical" containerType="Molecule" />
+        <TopContainers>
+          <Container id="jyFI-XM1JUeQBoaYRTIevA" name="Organism" mode="Physical" containerType="Organism">
+            <Tags>
+              <Tag value="Organism" />
+            </Tags>
+            <Children>
+              <Container id="pGE65__v0keUAqV2HmSdEg" name="MoleculeProperties" mode="Logical" containerType="Other" />
+            </Children>
+          </Container>
+        </TopContainers>
+        <NeighborhoodsContainer id="As3ZiVyY2Ei-MePtyrNi4A" name="Neighborhoods" mode="Logical" containerType="Other" />
+      </SpatialStructure>
+      <ParameterStartValues id="HV9L4mP8RUSnlTbdRtPeCQ" name="PSV" icon="ParameterStartValues" bbVersion="0" spatialStructureId="b804c5aa-aff2-472e-a66c-5ce88eb32fd4" moleculeBuildingBlockId="1a567bca-2b10-4868-b195-bc7e05fa4ab1">
+        <Creation createdAt="5248846087510891111" createdBy="Michael" creationMode="New" origin="Other" />
+      </ParameterStartValues>
+      <MoleculeStartValues id="fNgr6ha3YkC8rPB0GivdXw" name="MSV" icon="MoleculeStartValues" bbVersion="0" spatialStructureId="b804c5aa-aff2-472e-a66c-5ce88eb32fd4" moleculeBuildingBlockId="1a567bca-2b10-4868-b195-bc7e05fa4ab1">
+        <Creation createdAt="5248846087510911040" createdBy="Michael" creationMode="New" origin="Other" />
+        <Builders>
+          <MoleculeStartValue id="2w1F9TJIfUW1i73BZ6gJbA" name="C1" dimension="Amount" startValue="0" scaleDivisor="1" isPresent="1" negativeValuesAllowed="0" displayUnit="µmol">
+            <ContainerPath path="0" />
+          </MoleculeStartValue>
+          <MoleculeStartValue id="PZSk1_bfjEOWZ0GdKljcKw" name="C2" dimension="Amount" startValue="0" scaleDivisor="1" isPresent="1" negativeValuesAllowed="0" displayUnit="µmol">
+            <ContainerPath path="0" />
+          </MoleculeStartValue>
+          <MoleculeStartValue id="TOJy131GhUShas4q-Pm5Sg" name="C3" dimension="Amount" startValue="0" scaleDivisor="1" isPresent="1" negativeValuesAllowed="0" displayUnit="µmol">
+            <ContainerPath path="0" />
+          </MoleculeStartValue>
+        </Builders>
+        <FormulaCache>
+          <StringMap>
+            <Map s="Organism" id="0" />
+          </StringMap>
+        </FormulaCache>
+      </MoleculeStartValues>
+      <SimulationSettings id="4vVCOrK6MU6MkQaYTgdgDg" name="S1" icon="SimulationSettings" bbVersion="0" randomSeed="18003140">
+        <Creation createdAt="5248846087510781524" createdBy="Michael" creationMode="New" origin="Other" />
+        <Solver id="6Zr465_NkkWhJT2zgvSioQ" name="CVODE1002_2" mode="Logical" containerType="Other">
+          <Children>
+            <Parameter id="_2gQwlpJjUyjekACjoDd0w" name="Absolute tolerance" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="1E-09">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="fr2ohWv8xkOQd2fKJXhGVQ" name="Relative tolerance" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="0.0001">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="srKDG_ijtk2vzJvQdpE9UA" name="H0" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="1E-10">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="wEG9ybgXw0SunKRL_xs5XA" name="HMax" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="60">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="plReergoME--xAG9SNKghw" name="HMin" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="0">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="18PoM6mMckG7DhhGqLXl8Q" name="MxStep" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="100000">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+            <Parameter id="CDAdUqh91U6sCB6PD70f3w" name="Use Jacobian" icon="PARAMETER" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="1">
+              <Info flag="10" seq="1" ref="0" bb="2" group="100" />
+            </Parameter>
+          </Children>
+        </Solver>
+        <OutputSchema id="rlXshi165EmrN-oBXrRyNA" name="Output schema" mode="Logical" containerType="Other">
+          <Children>
+            <OutputInterval id="JWiR9t9a0UeMjzLEgW4bzA" name="Output interval" mode="Logical" containerType="Other">
+              <Children>
+                <Parameter id="0oek9eCHPUqR2Xt6Sm9P-A" name="Start time" icon="Parameter" persistable="0" isFixedValue="0" dim="Time" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="0" displayUnit="h">
+                  <Info flag="8" seq="1" ref="0" bb="2" group="98" />
+                </Parameter>
+                <Parameter id="uATAFM01nEqwzvG6WFG4HQ" name="End time" icon="Parameter" persistable="0" isFixedValue="0" dim="Time" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="1440" displayUnit="h">
+                  <Info flag="8" seq="1" ref="0" bb="2" group="98" />
+                </Parameter>
+                <Parameter id="oQ3AkdzNqEqpchw6-80MmA" name="Resolution" icon="Parameter" persistable="0" isFixedValue="0" dim="Resolution" quantityType="Parameter" negativeValuesAllowed="1" isDefault="0" value="0.0666666666666667" displayUnit="pts/h">
+                  <Info flag="8" seq="1" ref="0" bb="2" group="98" />
+                </Parameter>
+              </Children>
+            </OutputInterval>
+          </Children>
+        </OutputSchema>
+        <OutputSelections />
+      </SimulationSettings>
+    </BuildConfiguration>
+    <Model id="f5259008-e0f3-48e8-b3aa-cedf2ebf924c" name="S1" neighborhoods="c94622c5-ccb8-4a68-b284-292dd82c8eee">
+      <Root id="3783a98e-9b6f-49ed-b6c0-7cf32cb67b12" name="S1" mode="Logical" containerType="Simulation">
+        <Tags>
+          <Tag value="RootContainer" />
+        </Tags>
+        <Children>
+          <Container id="43ee1b39-bb6a-4c14-bba4-028cebea0c22" name="Organism" mode="Physical" containerType="Organism">
+            <Tags>
+              <Tag value="Organism" />
+            </Tags>
+            <Children>
+              <MoleculeAmount id="580c7a85-c795-4b8f-b294-8891cc5b4a6c" name="C1" icon="DRUG" persistable="1" isFixedValue="0" dim="Amount" quantityType="Drug" negativeValuesAllowed="0" mode="Logical" scaleDivisor="1" value="0" displayUnit="µmol" />
+              <MoleculeAmount id="f73f3f8d-aff7-4722-b1e5-4d6f46981342" name="C2" icon="DRUG" persistable="1" isFixedValue="0" dim="Amount" quantityType="Drug" negativeValuesAllowed="0" mode="Logical" scaleDivisor="1" value="0" displayUnit="µmol" />
+              <MoleculeAmount id="6b709f27-1ca0-4278-bd45-7e28c592cb8c" name="C3" icon="DRUG" persistable="1" isFixedValue="0" dim="Amount" quantityType="Drug" negativeValuesAllowed="0" mode="Logical" scaleDivisor="1" value="0" displayUnit="µmol" />
+              <EventGroup id="322080c6-7296-44ca-a2e2-0c371a31ba14" name="Mixed" mode="Logical" containerType="Other">
+                <Children>
+                  <EventGroup id="54588594-1088-4844-996f-70fc87fa2498" name="EHC2" mode="Logical" containerType="Other">
+                    <Children>
+                      <Parameter id="edb6e5b6-92dd-4af9-b73d-08df708fbebf" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                      <EventGroup id="fae5daaf-4db2-438c-af49-40edbc03902a" name="AppC2_3" mode="Logical" containerType="Application">
+                        <Children>
+                          <Parameter id="7164ff6e-efee-445f-9ac8-b8040b0c755d" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                            <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                          </Parameter>
+                        </Children>
+                      </EventGroup>
+                      <EventGroup id="5f350555-a504-431b-b80d-d08da2ee9221" name="AppC3_3" mode="Logical" containerType="Application">
+                        <Children>
+                          <Parameter id="7b0b28a5-7f3e-469d-8c1a-6fd5470e24f3" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                            <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                          </Parameter>
+                        </Children>
+                      </EventGroup>
+                      <EventGroup id="73e5bf92-144e-4229-8b72-579436b315e2" name="EHC3" mode="Logical" containerType="Other">
+                        <Children>
+                          <Parameter id="b6c167ea-6d52-41d7-aa9a-0bde253938c5" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                            <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                          </Parameter>
+                        </Children>
+                      </EventGroup>
+                    </Children>
+                  </EventGroup>
+                  <EventGroup id="9c8da72a-6590-4b8b-b21b-38f64ec76d91" name="AppC2_2" mode="Logical" containerType="Application">
+                    <Children>
+                      <Parameter id="70c072f4-6018-4d58-8046-f54c54c06231" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="c3cf2c8a-f7a3-4b57-9683-c79a16bd41de" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                    </Children>
+                  </EventGroup>
+                  <EventGroup id="31f591a9-c85e-426b-866b-3ff1423b5ba2" name="AppC3_2" mode="Logical" containerType="Application">
+                    <Children>
+                      <Parameter id="859812ec-c596-4815-99fc-417885756780" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="17cbee02-93ce-4855-83de-13f85f8987b5" isDefault="0">
+                        <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                      </Parameter>
+                    </Children>
+                  </EventGroup>
+                  <Parameter id="2d769fdc-2f2c-46ff-9b98-dc57b63ac3b5" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+              </EventGroup>
+              <EventGroup id="d0dc5a3c-bed9-4380-9c9a-bef46ca02665" name="AppC3" mode="Logical" containerType="Application">
+                <Children>
+                  <Parameter id="36b5ad7d-e282-44c3-a28f-3ad8ea7ded30" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="5df84ecc-560f-439b-aa03-6204b771a795" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+              </EventGroup>
+              <EventGroup id="d89ec639-5875-4c99-8eef-d473ecc37582" name="AppC2" mode="Logical" containerType="Application">
+                <Children>
+                  <Parameter id="6a6bb61d-a87d-4b50-bc4a-a78a7c2b01fa" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="8050f8c0-1eaf-432a-aee7-2b8e9ee8fff6" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+              </EventGroup>
+              <EventGroup id="fcaa7f15-8fb4-4e53-aea0-fe2fd213bbf6" name="EHC" mode="Logical" containerType="Other">
+                <Children>
+                  <Parameter id="b97f4f96-365b-4db7-afb1-cd5188674431" name="P1" icon="Parameter" persistable="0" isFixedValue="0" quantityType="Parameter" negativeValuesAllowed="1" formula="vIgqln1ohUK2FIhGYScerg" isDefault="0">
+                    <Info flag="10" seq="1" ref="0" bb="2" group="143" />
+                  </Parameter>
+                </Children>
+              </EventGroup>
+            </Children>
+          </Container>
+          <Container id="c94622c5-ccb8-4a68-b284-292dd82c8eee" name="Neighborhoods" mode="Logical" containerType="Other" />
+          <Container id="e517ba5b-1cc1-4f22-b1ff-2f33a3bae82a" name="C1" icon="DRUG" mode="Logical" containerType="Molecule" />
+          <Container id="04095f70-a03a-4a66-93ce-240cf2fa3f46" name="C2" icon="DRUG" mode="Logical" containerType="Molecule" />
+          <Container id="b7816cfd-aab9-4c23-aa3f-60306a358598" name="C3" icon="DRUG" mode="Logical" containerType="Molecule" />
+        </Children>
+      </Root>
+      <FormulaCache>
+        <Formulas>
+          <Formula id="vIgqln1ohUK2FIhGYScerg" name="Tralala" formula="0" origin="fc091eae-6b5c-465c-aa5a-251be37fde6d">
+            <Paths>
+              <Path path="0" as="1" dim="2" />
+            </Paths>
+          </Formula>
+          <Formula id="c3cf2c8a-f7a3-4b57-9683-c79a16bd41de" name="Tralala" formula="0">
+            <Paths>
+              <Path path="3" as="1" dim="2" />
+            </Paths>
+          </Formula>
+          <Formula id="17cbee02-93ce-4855-83de-13f85f8987b5" name="Tralala" formula="0">
+            <Paths>
+              <Path path="4" as="1" dim="2" />
+            </Paths>
+          </Formula>
+          <Formula id="5df84ecc-560f-439b-aa03-6204b771a795" name="Tralala" formula="0">
+            <Paths>
+              <Path path="4" as="1" dim="2" />
+            </Paths>
+          </Formula>
+          <Formula id="8050f8c0-1eaf-432a-aee7-2b8e9ee8fff6" name="Tralala" formula="0">
+            <Paths>
+              <Path path="3" as="1" dim="2" />
+            </Paths>
+          </Formula>
+        </Formulas>
+        <StringMap>
+          <Map s="S1|Organism|C1" id="0" />
+          <Map s="XXX" id="1" />
+          <Map s="Amount" id="2" />
+          <Map s="S1|Organism|C2" id="3" />
+          <Map s="S1|Organism|C3" id="4" />
+        </StringMap>
+      </FormulaCache>
+    </Model>
+    <Creation createdAt="5248846087507616707" createdBy="Michael" creationMode="New" origin="Other" />
+  </Simulation>
+  <Favorites />
+</SimulationTransfer>

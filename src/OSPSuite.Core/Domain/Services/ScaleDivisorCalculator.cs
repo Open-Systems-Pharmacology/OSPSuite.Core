@@ -106,7 +106,6 @@ namespace OSPSuite.Core.Domain.Services
       public async Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions, PathCache<IMoleculeAmount> allMoleculeAmounts)
       {
          _simulationName = simulation.Name;
-         var previousResults = simulation.Results;
          var previousSelections = outputSelectionsFor(simulation);
          _allMoleculeAmounts = allMoleculeAmounts;
          _scaleDivisorOptions = scaleDivisorOptions;
@@ -122,7 +121,6 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
-            simulation.Results = previousResults;
             settingsFor(simulation).OutputSelections = previousSelections;
             updateSelectedMoleculeAmount(simulation);
             setPreviousScaleDivisor(previousScaleDivisor);
@@ -210,7 +208,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ISimulationSettings settingsFor(IModelCoreSimulation simulation)
       {
-         return simulation.BuildConfiguration.SimulationSettings;
+         return simulation.SimulationSettings;
       }
 
       private OutputSelections outputSelectionsFor(IModelCoreSimulation simulation)

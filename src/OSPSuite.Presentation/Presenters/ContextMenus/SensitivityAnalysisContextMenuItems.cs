@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IMenuBarItem CreateSensitivityAnalysisFor(ISimulation simulation)
       {
-         return CreateMenuButton.WithCaption(MenuNames.StartSensitivityanalysis)
+         return CreateMenuButton.WithCaption(MenuNames.StartSensitivityAnalysis)
             .WithIcon(ApplicationIcons.SensitivityAnalysis)
             .WithCommandFor<CreateSensisitivityAnalysisBasedOnSimulationUICommand, ISimulation>(simulation);
       }

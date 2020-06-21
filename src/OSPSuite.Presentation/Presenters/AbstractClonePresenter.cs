@@ -1,4 +1,5 @@
 using OSPSuite.Assets;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
@@ -11,11 +12,17 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IRenameObjectDTOFactory _renameObjectBaseDTOFactory;
       private readonly IObjectTypeResolver _objectTypeResolver;
       private RenameObjectDTO _renameObjectBaseDTO;
+      private readonly IOSPSuiteExecutionContext _executionContext;
 
-      protected AbstractClonePresenter(IObjectBaseView view, IObjectTypeResolver objectTypeResolver, IRenameObjectDTOFactory renameObjectDTOFactory) : base(view)
+      protected AbstractClonePresenter(
+         IObjectBaseView view, 
+         IObjectTypeResolver objectTypeResolver, 
+         IRenameObjectDTOFactory renameObjectDTOFactory, 
+         IOSPSuiteExecutionContext executionContext) : base(view)
       {
          _objectTypeResolver = objectTypeResolver;
          _renameObjectBaseDTOFactory = renameObjectDTOFactory;
+         _executionContext = executionContext;
       }
 
       protected abstract TObjectBase Clone(TObjectBase objectToClone);
@@ -34,6 +41,8 @@ namespace OSPSuite.Presentation.Presenters
 
          if (_view.Canceled)
             return null;
+
+         _executionContext.Load(objectToClone);
 
          var clonedObject = Clone(objectToClone);
          clonedObject.Name = _renameObjectBaseDTO.Name;

@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain
 {
    public class PopulationSimulationPKAnalyses
    {
-      private readonly ICache<string, QuantityPKParameter> _pkAnalyses;
+      private readonly Cache<string, QuantityPKParameter> _pkAnalyses;
 
       public PopulationSimulationPKAnalyses()
       {
@@ -44,29 +44,29 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns all pk parameters defined for the given <paramref name="quantityPath" />
       /// </summary>
-      public virtual IReadOnlyList<QuantityPKParameter> AllPKParametersFor(string quantityPath)
+      public virtual QuantityPKParameter[] AllPKParametersFor(string quantityPath)
       {
-         return _pkAnalyses.Where(x => string.Equals(x.QuantityPath, quantityPath)).ToList();
+         return _pkAnalyses.Where(x => string.Equals(x.QuantityPath, quantityPath)).ToArray();
       }
 
       /// <summary>
       ///    Returns all distinct pk parameter names defined for the given <paramref name="quantityPath" />
       /// </summary>
       /// <returns></returns>
-      public virtual IReadOnlyList<string> AllPKParameterNamesFor(string quantityPath)
+      public virtual string[] AllPKParameterNamesFor(string quantityPath)
       {
-         return AllPKParametersFor(quantityPath).Select(x => x.Name).ToList();
+         return AllPKParametersFor(quantityPath).Select(x => x.Name).ToArray();
       }
 
-      public virtual IEnumerable<QuantityPKParameter> All()
-      {
-         return _pkAnalyses;
-      }
+      public virtual IEnumerable<QuantityPKParameter> All() => _pkAnalyses;
 
-      public virtual void AddPKAnalysis(QuantityPKParameter quantityPKParameter)
-      {
-         _pkAnalyses[quantityPKParameter.Id] = quantityPKParameter;
-      }
+      public virtual void AddPKAnalysis(QuantityPKParameter quantityPKParameter) => _pkAnalyses[quantityPKParameter.Id] = quantityPKParameter;
+
+      public void Clear() => _pkAnalyses.Clear();
+
+      public string[] AllQuantityPaths => _pkAnalyses.Select(x => x.QuantityPath).Distinct().ToArray();
+
+      public string[] AllPKParameterNames => _pkAnalyses.Select(x => x.Name).Distinct().ToArray();
    }
 
    public class NullPopulationSimulationPKAnalyses : PopulationSimulationPKAnalyses

@@ -4,7 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Presentation.DTO.Commands;
-using OSPSuite.UI.DTO.Commands;
+using OSPSuite.UI.DTO;
 
 namespace OSPSuite.UI
 {

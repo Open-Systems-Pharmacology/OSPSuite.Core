@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Starter
 {
-   internal class TestConverterter : IDimensionConverterFor
+   internal class TestConverterter : IDimensionConverter
    {
       public bool CanResolveParameters()
       {

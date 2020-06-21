@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
       /// Checks if the <paramref name="observedData"/>is used by any parameter identification in the project
       /// </summary>
       /// <returns>true if observed data is used by a parameter identification, otherwise false</returns>
-      IReadOnlyList<string> ParamterIdentificationsUsingDataRepository(DataRepository observedData);
+      IReadOnlyList<string> ParameterIdentificationsUsingDataRepository(DataRepository observedData);
    }
 
 }

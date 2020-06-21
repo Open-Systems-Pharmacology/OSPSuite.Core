@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER)
             .WithAlias("M")
-            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.AMOUNT)));
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)));
 
          formula.AddObjectPath(createVolumeReferencePath(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME));
 
@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Formulas
          return _objectBaseFactory.Create<ExplicitFormula>()
             .WithName(formulaName)
             .WithOriginId(formulaName)
-            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.AMOUNT))
+            .WithDimension(_dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT))
             .WithFormulaString(formulaString);
       }
 

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -32,7 +32,12 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       public IdentificationParameter CreateFor(IEnumerable<ParameterSelection> parameterSelections, ParameterIdentification parameterIdentification)
       {
-         var unmappedParameters = parameterSelections.Where(s => !parameterIdentification.IdentifiesParameter(s)).ToList();
+         //The referenced parameter could be null if for example the parameter selection points to a parameter that does not exist in the simulation anymore
+         //In that case, the selection itself is invalid but the check should not crash
+         var unmappedParameters = parameterSelections
+            .Where(x => !parameterIdentification.IdentifiesParameter(x))
+            .Where(x => x.Parameter != null).ToList();
+
          var parameters = unmappedParameters.Select(x => x.Parameter).ToList();
          if (!parameters.Any())
             return null;

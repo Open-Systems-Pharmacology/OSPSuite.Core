@@ -3,7 +3,7 @@
 namespace OSPSuite.Core.Domain.Services
 {
    /// <summary>
-   ///    Purpose of this class is to consolidate the absolute object pathes defined in
+   ///    Purpose of this class is to consolidate the absolute object paths defined in
    ///    1- an Individual (starts with ROOT)
    ///    2- a Spatial Structure (starts with Organism or Neighborhood)
    ///    3- a Simulation (starts with name of simulation)

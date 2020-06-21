@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public override IGroupRepository CreateObject(XElement element, SerializationContext serializationContext)
       {
-         return IoC.Resolve<IGroupRepository>();
+         return serializationContext.Resolve<IGroupRepository>();
       }
    }
 }

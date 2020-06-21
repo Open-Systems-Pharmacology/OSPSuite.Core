@@ -4,8 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Format;
 using DevExpress.Utils;
 using DevExpress.Utils.Drawing;
 using DevExpress.XtraGrid.Columns;
@@ -13,11 +11,12 @@ using DevExpress.XtraGrid.Skins;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
@@ -33,14 +32,12 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private double _maxValue;
       private IParameterIdentificationMatrixPresenter _presenter;
       private readonly Color _notCalculatedColor = Color.LightGray;
-      public IFormatter<double> NumberFormatter { get; set; } = new DoubleFormatter();
+      private readonly IFormatter<double> _formatter = new NumericFormatter<double>(new NumericFormatterOptions {AllowsScientificNotation = false, DecimalPlace = NumericFormatterOptions.Instance.DecimalPlace});
 
       public ParameterIdentificationMatrixView()
       {
          InitializeComponent();
-         initializeGridView(matrixGridView);
          initializeMatrixView();
-         initializeGridView(legendGridView);
          initializeLegendView();
 
          _maxValue = 1;
@@ -61,6 +58,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          anchorColumn.Fixed = FixedStyle.Left;
          anchorColumn.Caption = Captions.EmptyColumn;
 
+         matrixGridView.ClearSelection();
          setBestColumnWidth();
       }
 
@@ -79,6 +77,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private void initializeMatrixView()
       {
+         initializeGridView(matrixGridView);
          matrixGridView.RowCellStyle += (o, e) => OnEvent(() => onMatrixRowCellStyle(e));
          matrixGridView.RowHeight = 30;
          matrixGridView.OptionsView.ColumnAutoWidth = false;
@@ -86,6 +85,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          matrixGridControl.Load += (o, e) => OnEvent(matrixGridLoading);
          matrixGridView.CustomDrawCell += (o, e) => OnEvent(() => drawCell(o, e));
          matrixGridControl.Resize += (o, e) => OnEvent(gridResized);
+         matrixGridView.MultiSelect = true;
+         matrixGridView.OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
       }
 
       private void gridResized()
@@ -135,16 +136,15 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          e.Graphics.ResetClip();
       }
 
-      private void setDisplayTextforColumn(CustomColumnDisplayTextEventArgs e)
+      private void setDisplayTextForColumn(CustomColumnDisplayTextEventArgs e)
       {
-         double doubleValue;
-         if (double.TryParse(e.Value.ToString(), out doubleValue))
-            e.DisplayText = NumberFormatter.Format(doubleValue);
+         if (double.TryParse(e.Value.ToString(), out var doubleValue))
+            e.DisplayText = _formatter.Format(doubleValue);
       }
 
       private void onLegendRowCellStyle(RowCellStyleEventArgs e)
       {
-         applyGradientColoring(e);
+         applyLegendGradientColoring(e);
          setColumnHorizontalAlignment(e);
       }
 
@@ -154,22 +154,20 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             e.Appearance.TextOptions.HAlignment = HorzAlignment.Far;
       }
 
-      private void applyGradientColoring(RowCellStyleEventArgs e)
+      private void applyLegendGradientColoring(RowCellStyleEventArgs e)
       {
          e.Appearance.BackColor = getColor(getStartValueForCell(e.Column.AbsoluteIndex));
          e.Appearance.BackColor2 = getColor(getStartValueForCell(e.Column.AbsoluteIndex + 1));
          e.Appearance.GradientMode = LinearGradientMode.Horizontal;
       }
 
-      private double getStartValueForCell(int columnIndex)
-      {
-         return (-1.0 + columnIndex / CellRange) * _maxValue;
-      }
+      private double getStartValueForCell(int columnIndex) => (-1.0 + columnIndex / CellRange) * _maxValue;
 
       public double CellRange => (NUMBER_OF_LEGEND_CELLS + 1) / 2.0;
 
       private void initializeLegendView()
       {
+         initializeGridView(legendGridView);
          legendGridView.OptionsView.ShowHorizontalLines = DefaultBoolean.False;
          legendGridView.OptionsView.ShowVerticalLines = DefaultBoolean.False;
          legendGridView.ShowColumnHeaders = false;
@@ -183,7 +181,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.ShowColumnChooser = false;
          gridView.AllowsFiltering = false;
          gridView.OptionsBehavior.ReadOnly = true;
-         gridView.CustomColumnDisplayText += (o, e) => OnEvent(() => setDisplayTextforColumn(e));
+         gridView.OptionsBehavior.Editable = false;
+         gridView.CustomColumnDisplayText += (o, e) => OnEvent(() => setDisplayTextForColumn(e));
       }
 
       private void customDrawLegendCell(RowCellCustomDrawEventArgs e)
@@ -257,7 +256,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (columnIsHeaderColumn(gridColumn)) return;
 
          var value = Convert.ToDouble(e.CellValue);
-         e.Appearance.BackColor = getColor(value);
+         if (matrixGridView.IsCellSelected(e.RowHandle, gridColumn))
+            e.CombineAppearance(matrixGridView.Appearance.FocusedCell);
+         else
+            matrixGridView.UpdateAppearanceBackColor(e.Appearance, getColor(value));
       }
 
       public void BindTo(DataTable dataTable, double maxValue)
@@ -293,7 +295,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          legendGridControl.DataSource = null;
          matrixGridView.PopulateColumns();
       }
-
 
       private void addMessageInEmptyArea(CustomDrawEventArgs e)
       {

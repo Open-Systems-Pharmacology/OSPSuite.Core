@@ -29,8 +29,10 @@ namespace OSPSuite.UI.Views.Comparisons
          _pathElementsBinder = pathElementsBinder;
          InitializeComponent();
          gridView.ShouldUseColorForDisabledCell = false;
+         gridView.MultiSelect = true;
+
          _gridViewBinder = new GridViewBinder<DiffItemDTO>(gridView);
-         gridView.RowCellStyle += updateRowCellStyle;
+          gridView.RowCellStyle += updateRowCellStyle;
       }
 
       public void AttachPresenter(IComparisonPresenter presenter)
@@ -60,8 +62,7 @@ namespace OSPSuite.UI.Views.Comparisons
 
          if (dto.ItemIsMissing)
             gridView.AdjustAppearance(e, Colors.ADDED_OR_MISSING);
-         else
-            e.CombineAppearance(gridView.Appearance.Row);
+
       }
 
       public void BindTo(IEnumerable<DiffItemDTO> diffItemsDTOs)
@@ -71,19 +72,19 @@ namespace OSPSuite.UI.Views.Comparisons
 
       public string LeftCaption
       {
-         get { return _colValue1.Caption; }
-         set { _colValue1.Caption = value; }
+         get => _colValue1.Caption;
+         set => _colValue1.Caption = value;
       }
 
       public string RightCaption
       {
-         get { return _colValue2.Caption; }
-         set { _colValue2.Caption = value; }
+         get => _colValue2.Caption;
+         set => _colValue2.Caption = value;
       }
 
       public bool DifferenceTableVisible
       {
-         get { return layoutItemGrid.Visible; }
+         get => layoutItemGrid.Visible;
          set
          {
             layoutItemGrid.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
@@ -91,9 +92,9 @@ namespace OSPSuite.UI.Views.Comparisons
          }
       }
 
-      public void SetVisibility(PathElement pathElement, bool visible)
+      public void SetVisibility(PathElementId pathElementId, bool visible)
       {
-         _pathElementsBinder.SetVisibility(pathElement, visible);
+         _pathElementsBinder.SetVisibility(pathElementId, visible);
       }
 
       public void ClearBinding()

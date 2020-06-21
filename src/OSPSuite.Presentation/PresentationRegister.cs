@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Mappers;
@@ -40,11 +41,10 @@ namespace OSPSuite.Presentation
             scan.IncludeNamespaceContainingType<ShowHelpCommand>();
 
             //Exclude these implementations that are specific to each application
-            scan.ExcludeType<PathToPathElementsMapper>();
-            scan.ExcludeType<QuantityPathToQuantityDisplayPathMapper>();
-            scan.ExcludeType<DisplayNameProvider>();
-
             scan.ExcludeType<ExceptionManager>();
+
+            //Exclude context menu registered separately
+            scan.ExcludeNamespaceContainingType<IContextMenu>();
 
             //should be registered as singleton
             scan.ExcludeType<JournalPageEditorFormPresenter>();
@@ -52,8 +52,11 @@ namespace OSPSuite.Presentation
             scan.ExcludeType<HistoryBrowserConfiguration>();
             scan.ExcludeType<ParameterIdentificationFeedbackPresenter>();
 
-            //specific app registration
-            scan.ExcludeType<DataColumnToPathElementsMapper>();
+            //Registered as open generic
+            scan.ExcludeType(typeof(CloneObjectBasePresenter<>));
+            scan.ExcludeType(typeof(ParameterToParameterDTOInContainerMapper<>));
+            scan.ExcludeType(typeof(SubPresenterItemManager<>));
+
          });
 
          registerUICommands(container);
@@ -66,6 +69,7 @@ namespace OSPSuite.Presentation
          container.Register(typeof(ISubPresenterItemManager<>), typeof(SubPresenterItemManager<>));
          container.Register(typeof(IParameterToParameterDTOInContainerMapper<>), typeof(ParameterToParameterDTOInContainerMapper<>));
          container.Register(typeof(ICloneObjectBasePresenter<>), typeof(CloneObjectBasePresenter<>));
+         
 
          //SINGLETONS
          container.Register<IJournalPageEditorFormPresenter, JournalPageEditorFormPresenter>(LifeStyle.Singleton);
@@ -86,8 +90,11 @@ namespace OSPSuite.Presentation
          {
             scan.AssemblyContainingType<PresenterRegister>();
             scan.IncludeNamespaceContainingType<IContextMenu>();
+            scan.ExcludeType(typeof(ContextMenuFactory<>));
             scan.WithConvention<AllInterfacesAndConcreteTypeRegistrationConvention>();
          });
+
+         container.Register(typeof(IContextMenuFactory<>), typeof(ContextMenuFactory<>));
       }
 
       private static void registerUICommands(IContainer container)

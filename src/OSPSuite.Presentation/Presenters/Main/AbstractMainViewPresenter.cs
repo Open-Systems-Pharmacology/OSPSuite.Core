@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using OSPSuite.Core.Events;
-using OSPSuite.Presentation.Events;
 using OSPSuite.Presentation.Presenters.ContextMenus;
+using OSPSuite.Presentation.Presenters.Events;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility.Events;
 

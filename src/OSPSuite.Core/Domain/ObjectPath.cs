@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain
       void Remove(string entry);
 
       /// <summary>
-      ///    Returns the entity of type <typeparamref name="T" /> with the given path relatve to the
+      ///    Returns the entity of type <typeparamref name="T" /> with the given path relative to the
       ///    <paramref name="refEntity" />
       /// </summary>
       /// <exception cref="Exception">
@@ -77,6 +77,13 @@ namespace OSPSuite.Core.Domain
       ///    Throws an exception if the path does not contain any element
       /// </summary>
       void RemoveFirst();
+
+
+      /// <summary>
+      /// Replaces the path with the path entries in <paramref name="pathEntries"/>
+      /// </summary>
+      /// <param name="pathEntries">Path entries used to replace the path</param>
+      void ReplaceWith(IEnumerable<string> pathEntries);
    }
 
    public class ObjectPath : IObjectPath
@@ -90,9 +97,9 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    String separating elements of the <see cref="FormulaUsablePath" /> in String Representation
       /// </summary>
-      public const string PATH_DELIMITER = "|";
+      public const string PATH_DELIMITER  = "|";
 
-      protected readonly IList<string> _pathEntries;
+      protected readonly List<string> _pathEntries;
 
       public static IObjectPath Empty { get; } =  new ObjectPath();
 
@@ -163,13 +170,23 @@ namespace OSPSuite.Core.Domain
          if (_pathEntries.Count == 0)
             return null;
 
-         var firstEntry = _pathEntries[0];
-         var root = refEntity.RootContainer;
          var usePath = new List<string>(_pathEntries);
-         IEntity dependentObject;
+
+         var dependentObject = refEntity;
+         //Do we have a valid relative path from the current object
+         var resolvedEntity = resolvePath<T>(dependentObject, usePath);
+         if (resolvedEntity != null)
+            return resolvedEntity;
+
+         var root = refEntity.RootContainer;
+         var firstEntry = _pathEntries[0];
+
+         //We have an absolute Path from the ref entity
+         if (string.Equals(firstEntry, refEntity.Name))
+            usePath.RemoveAt(0);
 
          //We have an absolute Path from the root container
-         if (root != null && string.Equals(firstEntry, root.Name))
+         else if (root != null && string.Equals(firstEntry, root.Name))
          {
             if (_pathEntries.Count == 1)
                return root as T;
@@ -178,18 +195,9 @@ namespace OSPSuite.Core.Domain
             dependentObject = root;
          }
 
-         //We have an absolute Path from the ref entity
-         else if (string.Equals(firstEntry, refEntity.Name))
-         {
-            usePath.RemoveAt(0);
-            dependentObject = refEntity;
-         }
-         //We have a relative path
-         else
-            dependentObject = refEntity;
-
          return resolvePath<T>(dependentObject, usePath);
       }
+
 
       public virtual T Clone<T>() where T : IObjectPath
       {
@@ -198,8 +206,8 @@ namespace OSPSuite.Core.Domain
 
       public string this[int index]
       {
-         get { return _pathEntries[index]; }
-         set { _pathEntries[index] = value; }
+         get => _pathEntries[index];
+         set => _pathEntries[index] = value;
       }
 
       public void RemoveAt(int index)
@@ -210,6 +218,12 @@ namespace OSPSuite.Core.Domain
       public void RemoveFirst()
       {
          RemoveAt(0);
+      }
+
+      public void ReplaceWith(IEnumerable<string> pathEntries)
+      {
+         _pathEntries.Clear();
+         _pathEntries.AddRange(pathEntries);
       }
 
       public IEnumerator<string> GetEnumerator()
@@ -298,9 +312,6 @@ namespace OSPSuite.Core.Domain
          return objectPath.ToString();
       }
 
-      public int Count
-      {
-         get { return _pathEntries.Count; }
-      }
+      public int Count => _pathEntries.Count;
    }
 }

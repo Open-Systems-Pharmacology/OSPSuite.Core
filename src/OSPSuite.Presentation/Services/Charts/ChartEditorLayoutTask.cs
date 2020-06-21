@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Presenters.Charts;
-using OSPSuite.Presentation.Serialization;
 using OSPSuite.Presentation.Settings;
 
 namespace OSPSuite.Presentation.Services.Charts
@@ -63,16 +63,19 @@ namespace OSPSuite.Presentation.Services.Charts
    {
       private readonly IPresentationUserSettings _userSettings;
       private readonly IChartLayoutTemplateRepository _chartLayoutTemplateRepository;
+      private readonly IDataPersistor _dataPersistor;
       private readonly IDialogCreator _dialogCreator;
-      private readonly DataPersistor _settingsPersistor;
 
-      public ChartEditorLayoutTask(IPresentationUserSettings userSettings, IChartLayoutTemplateRepository chartLayoutTemplateRepository,
-         IOSPSuiteXmlSerializerRepository chartEditorXmlSerializerRepository, IDialogCreator dialogCreator)
+      public ChartEditorLayoutTask(
+         IPresentationUserSettings userSettings,
+         IChartLayoutTemplateRepository chartLayoutTemplateRepository,
+         IDataPersistor dataPersistor,
+         IDialogCreator dialogCreator)
       {
          _userSettings = userSettings;
          _chartLayoutTemplateRepository = chartLayoutTemplateRepository;
+         _dataPersistor = dataPersistor;
          _dialogCreator = dialogCreator;
-         _settingsPersistor = new DataPersistor(chartEditorXmlSerializerRepository);
       }
 
       public void InitEditorLayout(IChartEditorAndDisplayPresenter chartEditorPresenter, bool loadColumnSettings = false)
@@ -100,7 +103,7 @@ namespace OSPSuite.Presentation.Services.Charts
 
       public void InitEditorLayout(IChartEditorAndDisplayPresenter chartEditorPresenter, string serializedChartEditorLayout, bool loadColumnSettings = false)
       {
-         var settings = _settingsPersistor.FromString<ChartEditorAndDisplaySettings>(serializedChartEditorLayout);
+         var settings = _dataPersistor.FromString<ChartEditorAndDisplaySettings>(serializedChartEditorLayout);
          copySettings(chartEditorPresenter, settings, loadColumnSettings);
       }
 
@@ -116,13 +119,13 @@ namespace OSPSuite.Presentation.Services.Charts
          if (string.IsNullOrEmpty(fileName)) return;
 
          var settings = chartEditorPresenter.CreateSettings();
-         _settingsPersistor.Save(settings, fileName);
+         _dataPersistor.Save(settings, fileName);
       }
 
       public string SaveEditorLayoutToString(IChartEditorAndDisplayPresenter chartEditorPresenter)
       {
          var settings = chartEditorPresenter.CreateSettings();
-         return _settingsPersistor.ToString(settings);
+         return _dataPersistor.ToString(settings);
       }
 
       public IEnumerable<ChartEditorLayoutTemplate> AllTemplates() => _chartLayoutTemplateRepository.All();

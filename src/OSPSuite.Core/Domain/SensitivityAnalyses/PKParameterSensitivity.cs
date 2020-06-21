@@ -5,30 +5,63 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
    public class PKParameterSensitivity
    {
+      private string _quantityPath;
+      private string _id;
+      private string _pkParameterName;
+      private string _parameterName;
+
       /// <summary>
-      ///    Path of underlying quantity for which pkanalyses were performed
+      ///    Path of underlying quantity for which pk-analyses were performed
       /// </summary>
-      public virtual string QuantityPath { get; set; }
+      public virtual string QuantityPath
+      {
+         get => _quantityPath;
+         set
+         {
+            _quantityPath = value;
+            updateId();
+         }
+      }
 
       /// <summary>
       ///    Name of PK Output (Cmax, Tmax etc...)
       /// </summary>
-      public virtual string PKParameterName { get; set; }
+      public virtual string PKParameterName
+      {
+         get => _pkParameterName;
+         set
+         {
+            _pkParameterName = value;
+            updateId();
+         }
+      }
 
       /// <summary>
-      /// Unique name of parameter in sensitivity analysis
+      ///    Unique name of parameter in sensitivity analysis
       /// </summary>
-      public virtual string ParameterName { get; set; }
+      public virtual string ParameterName
+      {
+         get => _parameterName;
+         set
+         {
+            _parameterName = value;
+            updateId();
+         }
+      }
 
       /// <summary>
-      /// Value of sensitivity
+      ///    Value of sensitivity
       /// </summary>
       public virtual double Value { get; set; }
 
-      public override string ToString()
+      public virtual string Id => _id;
+
+      private void updateId()
       {
-         return new[] { QuantityPath, PKParameterName, ParameterName }.ToPathString();
+         _id = new[] {QuantityPath, PKParameterName, ParameterName}.ToPathString();
       }
+
+      public override string ToString() => Id;
 
       public string PKParameterSelection() => Captions.SensitivityAnalysis.PkParameterOfOutput(PKParameterName, QuantityPath);
    }

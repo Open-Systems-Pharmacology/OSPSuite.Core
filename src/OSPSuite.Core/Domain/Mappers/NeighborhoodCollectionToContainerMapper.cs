@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   /// Maps collection of neighborhood builder objects.<para></para>
-   /// Creates Top-Container named "NEIGHBORHOODS", all mapped neighborhoods <para></para>
-   /// are added as childs of this top container
+   ///    Maps collection of neighborhood builder objects.
+   ///    <para></para>
+   ///    Creates Top-Container named "NEIGHBORHOODS", all mapped neighborhoods
+   ///    <para></para>
+   ///    are added as childs of this top container
    /// </summary>
    public interface INeighborhoodCollectionToContainerMapper : IBuilderMapper<IModel, IContainer>
    {
@@ -22,8 +24,8 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IObjectPathFactory _objectPathFactory;
 
       public NeighborhoodCollectionToContainerMapper(IObjectBaseFactory objectBaseFactory,
-                                                     INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper,
-                                                     IObjectPathFactory objectPathFactory)
+         INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper,
+         IObjectPathFactory objectPathFactory)
       {
          _objectBaseFactory = objectBaseFactory;
          _neighborhoodMapper = neighborhoodMapper;
@@ -32,7 +34,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public IContainer MapFrom(IModel model, IBuildConfiguration buildConfiguration)
       {
-         var moleculeNames = buildConfiguration.AllPresentFloatingMoleculeNames().ToList();
+         var moleculeNames = buildConfiguration.AllPresentFloatingMoleculeNames();
 
          var neighborhoodsParentContainer = _objectBaseFactory.Create<IContainer>()
             .WithMode(ContainerMode.Logical)
@@ -40,14 +42,14 @@ namespace OSPSuite.Core.Domain.Mappers
 
          var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, buildConfiguration);
 
-         var moleculeNamesCopyProperties = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames().ToList();
+         var moleculeNamesCopyProperties = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames();
 
          buildConfiguration.SpatialStructure.Neighborhoods.Each(nb =>
-               neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb, 
-                                                                                 model, 
-                                                                                 buildConfiguration,
-                                                                                 moleculeNamesFor(nb, startValuesForFloatingMolecules),
-                                                                                 moleculeNamesCopyProperties)));
+            neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb,
+               model,
+               buildConfiguration,
+               moleculeNamesFor(nb, startValuesForFloatingMolecules),
+               moleculeNamesCopyProperties)));
 
          return neighborhoodsParentContainer;
       }
@@ -71,7 +73,7 @@ namespace OSPSuite.Core.Domain.Mappers
             }
             else
             {
-               moleculeNames=new List<string>();
+               moleculeNames = new List<string>();
                moleculeStartValuesPerContainer.Add(path, moleculeNames);
             }
 
@@ -82,21 +84,21 @@ namespace OSPSuite.Core.Domain.Mappers
       }
 
       /// <summary>
-      /// Returns molecules which will be created in both neighbours of the neighbourhood
+      ///    Returns molecules which will be created in both neighbours of the neighbourhood
       /// </summary>
       private IEnumerable<string> moleculeNamesFor(INeighborhoodBuilder neighborhoodBuilder,
-                                                   ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
+         ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
       {
          var pathToFirstNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.FirstNeighbor).ToString();
          var pathToSecondNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.SecondNeighbor).ToString();
 
          // check if both neighbours has at least 1 molecule (if not - return empty list)
-         if(!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) || 
-            !moleculesStartValuesForFloatingMolecules.Contains(pathToSecondNeighbor))
+         if (!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) ||
+             !moleculesStartValuesForFloatingMolecules.Contains(pathToSecondNeighbor))
             return new List<string>();
 
          return moleculesStartValuesForFloatingMolecules[pathToFirstNeighbor]
-                .Intersect(moleculesStartValuesForFloatingMolecules[pathToSecondNeighbor]).ToList();
+            .Intersect(moleculesStartValuesForFloatingMolecules[pathToSecondNeighbor]).ToList();
       }
    }
 }

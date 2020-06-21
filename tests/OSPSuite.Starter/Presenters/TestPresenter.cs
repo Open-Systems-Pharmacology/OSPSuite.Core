@@ -18,12 +18,13 @@ namespace OSPSuite.Starter.Presenters
       void StartDataRepositoryTest();
       void StartPivotGridTest();
       void StartParameterIdentificationTest();
-      void StartSentitivityAnalysisTest();
+      void StartSensitivityAnalysisTest();
       void StartCommandBrowserTest();
       void StartSimpleUITest();
       void StartExceptionView();
       void StartHistogramTest();
       void StartMatrixTest();
+      void StartEmptyFormTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -59,6 +60,8 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartMatrixTest() => startLarge<IMatrixTestPresenter>();
 
+      public void StartEmptyFormTest() => startLarge<IEmptyTestFormTestPresenter>();
+
       public void StartChartTest() => startLarge<IChartTestPresenter>();
 
       public void StartJournalTest() => startLarge<IJournalTestPresenter>();
@@ -79,7 +82,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartParameterIdentificationTest() => _optimizationStarter.Start();
 
-      public void StartSentitivityAnalysisTest() => _sensitivityAnalysisStarter.Start();
+      public void StartSensitivityAnalysisTest() => _sensitivityAnalysisStarter.Start();
 
       public void StartCommandBrowserTest() => _commandBrowserStarter.Start();
 

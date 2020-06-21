@@ -3,7 +3,9 @@ using OSPSuite.Core.Events;
 
 namespace OSPSuite.Presentation.Core
 {
-   public interface ICloseSubjectPresenterInvokerBase : IListener<ObservedDataRemovedEvent>
+   public interface ICloseSubjectPresenterInvokerBase : 
+      IListener<ObservedDataRemovedEvent>,
+      IListener<SensitivityAnalysisDeletedEvent>
    {
       
    }
@@ -17,19 +19,12 @@ namespace OSPSuite.Presentation.Core
          _applicationController = applicationController;
       }
 
-      protected void CloseAll()
-      {
-         _applicationController.CloseAll();
-      }
+      protected void CloseAll() => _applicationController.CloseAll();
 
-      protected void Close(object subject)
-      {
-         _applicationController.Close(subject);
-      }
+      protected void Close(object subject) => _applicationController.Close(subject);
 
-      public void Handle(ObservedDataRemovedEvent eventToHandle)
-      {
-         Close(eventToHandle.DataRepository);
-      }
+      public void Handle(ObservedDataRemovedEvent eventToHandle) => Close(eventToHandle.DataRepository);
+
+      public void Handle(SensitivityAnalysisDeletedEvent eventToHandle) => Close(eventToHandle.SensitivityAnalysis);
    }
 }

@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var parameterIdentification = _objectBaseFactory.Create<ParameterIdentification>();
          var project = _executionContext.Project;
          parameterIdentification.Name = _containerTask.CreateUniqueName(project.AllParameterIdentifications, Captions.ParameterIdentification.ParameterIdentificationDefaultName);
-         parameterIdentification.Icon = ApplicationIcons.ParameterIdentification.IconName;
+         parameterIdentification.Icon = IconNames.PARAMETER_IDENTIFICATION;
          parameterIdentification.IsLoaded = true;
          return parameterIdentification;
       }

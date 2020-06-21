@@ -36,10 +36,7 @@ namespace OSPSuite.Presentation.DTO
          this.UpdateError(info);
       }
 
-      public bool HasListOfValues
-      {
-         get { return ListOfValues != null && ListOfValues.Any(); }
-      }
+      public bool HasListOfValues => ListOfValues != null && ListOfValues.Any();
 
       private string nameAlreadyExistsError(string newName)
       {

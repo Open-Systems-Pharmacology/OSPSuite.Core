@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    Simple reference to corresponding time
       /// </summary>
-      public virtual QuantityValues Time { get; internal set; }
+      public virtual QuantityValues Time { get; set; }
 
       public QuantityValues()
       {
@@ -43,20 +43,20 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual float[] Values
       {
-         get { return _values; }
-         set { _values = value ?? new float[] {}; }
+         get => _values;
+         set => _values = value ?? new float[] {};
       }
 
       public virtual IReadOnlyList<string> PathList
       {
-         get { return QuantityPath.ToPathArray().ToList(); }
-         set { QuantityPath = value.ToPathString(); }
+         get => QuantityPath.ToPathArray().ToList();
+         set => QuantityPath = value.ToPathString();
       }
 
       public virtual byte[] Data
       {
-         get { return Values.ToByteArray(); }
-         set { Values = value.ToFloatArray(); }
+         get => Values.ToByteArray();
+         set => Values = value.ToFloatArray();
       }
 
       /// <summary>

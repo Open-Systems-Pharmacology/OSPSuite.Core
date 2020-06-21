@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
+﻿using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
@@ -10,14 +11,13 @@ namespace OSPSuite.Core.Domain
          return quantity;
       }
 
-      public static double ConvertToUnit<T>(this T quantity, Unit unit) where T : IQuantity
-      {
-         return quantity.ConvertToUnit(quantity.Value, unit);
-      }
+      public static double ConvertToUnit(this IQuantity quantity, Unit unit) => quantity.ConvertToUnit(quantity.Value, unit);
 
-      public static double ConvertToUnit<T>(this T quantity, string unit) where T : IQuantity
-      {
-         return quantity.ConvertToUnit(quantity.Value, unit);
-      }
+      public static double ConvertToUnit(this IQuantity quantity, string unit) => quantity.ConvertToUnit(quantity.Value, unit);
+
+      /// <summary>
+      /// Returns the formula defined in the quantity. Required for R Binding
+      /// </summary>
+      public static IFormula GetFormula(this IQuantity quantity) => quantity?.Formula;
    }
 }

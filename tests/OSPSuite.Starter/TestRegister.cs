@@ -14,7 +14,6 @@ using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Main;
-using OSPSuite.Presentation.Serialization;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Starter.Presenters;
@@ -74,12 +73,8 @@ namespace OSPSuite.Starter
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
-         container.Register<IDataNamingService, DataNamingServiceForSpecs >();
-
-         container.RegisterFactory<IHeavyWorkPresenterFactory>();
 
          container.Register<TestEnvironment, TestEnvironment>();
-         container.Register<DataPersistor, DataPersistor>();
       }
    }
 }

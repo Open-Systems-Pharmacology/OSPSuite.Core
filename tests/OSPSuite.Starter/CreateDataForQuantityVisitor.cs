@@ -9,9 +9,6 @@ using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Starter
 {
-   /// <summary>
-   ///    Visitor to change all <see cref="AbsoluteObjectPath" />s affected by a rename
-   /// </summary>
    internal class CreateDataForQuantityVisitor : IVisitor<IQuantity>
    {
       private readonly BaseGrid _baseGrid;

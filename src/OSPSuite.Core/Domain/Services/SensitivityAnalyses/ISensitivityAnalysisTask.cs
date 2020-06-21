@@ -11,24 +11,29 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       SensitivityAnalysis CreateSensitivityAnalysis();
 
       void AddToProject(SensitivityAnalysis sensitivityAnalysis);
-      
+
       /// <summary>
-      /// Asks the user if he really wants to delete the <paramref name="sensitivityAnalyses"/>. Returns <c>true</c> if the <paramref name="sensitivityAnalyses"/>
-      /// are deleted from the current project otherwise <c>false</c>
+      ///    Asks the user if he really wants to delete the <paramref name="sensitivityAnalyses" />. Returns <c>true</c> if the
+      ///    <paramref name="sensitivityAnalyses" />
+      ///    are deleted from the current project otherwise <c>false</c>
       /// </summary>
       bool Delete(IReadOnlyList<SensitivityAnalysis> sensitivityAnalyses);
 
       void SwapSimulations(SensitivityAnalysis sensitivityAnalysis, ISimulation oldSimulation, ISimulation newSimulation);
-      bool ValidateSwap(SensitivityAnalysis sensitivityAnalysis, ISimulation oldSimulation, ISimulation newSimulation);
+
+      ValidationResult ValidateSwap(SensitivityAnalysis sensitivityAnalysis, ISimulation oldSimulation, ISimulation newSimulation);
+
       SensitivityAnalysis CreateSensitivityAnalysisFor(ISimulation simulation);
-      SensitivityAnalysis Clone(SensitivityAnalysis sensitivityAnalysis);
 
       /// <summary>
-      /// Synchronizes the new name <paramref name="newName"/> of <paramref name="sensitivityAnalysis"/> with all results and analysis from <paramref name="sensitivityAnalysis"/>
+      ///    Synchronizes the new name <paramref name="newName" /> of <paramref name="sensitivityAnalysis" /> with all results
+      ///    and analysis from <paramref name="sensitivityAnalysis" />
       /// </summary>
       /// <param name="sensitivityAnalysis">Sensitivity analysis whose results and analyses should be synchronized</param>
-      /// <param name="sensitivityParameter">Sensitivy parameter that will be renamed</param>
+      /// <param name="sensitivityParameter">Sensitivity parameter that will be renamed</param>
       /// <param name="newName">New name for the sensitivity parameter</param>
       void UpdateSensitivityParameterName(SensitivityAnalysis sensitivityAnalysis, SensitivityParameter sensitivityParameter, string newName);
+
+      void AddParametersTo(SensitivityAnalysis sensitivityAnalysis, IReadOnlyList<ParameterSelection> parameters);
    }
 }

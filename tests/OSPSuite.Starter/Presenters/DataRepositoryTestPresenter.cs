@@ -25,7 +25,7 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryMetaDataPresenter _metaDataPresenter;
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryTask;
       private readonly IDialogCreator _dialogCreator;
       private DataRepository _repository;
 
@@ -35,7 +35,7 @@ namespace OSPSuite.Starter.Presenters
          IDataRepositoryChartPresenter chartPresenter,
          IDataRepositoryMetaDataPresenter metaDataPresenter,
          IImportObservedDataTask importObservedDataTask,
-         IDataRepositoryTask dataRepositoryTask,
+         IDataRepositoryExportTask dataRepositoryTask,
          IDialogCreator dialogCreator) : base(view)
       {
          _dataPresenter = dataPresenter;

@@ -148,11 +148,11 @@ namespace OSPSuite.UI.Binders
 
       private Image imageFor(ValueOrigin valueOrigin)
       {
-         var sourceImage = valueOrigin.Source.Icon.ToImage(IconSizes.Size16x16);
+         var sourceImage = ApplicationIcons.IconFor(valueOrigin.Source).ToImage(IconSizes.Size16x16);
          if (valueOrigin.Method == ValueOriginDeterminationMethods.Undefined)
             return sourceImage;
 
-         var methodImage = valueOrigin.Method.Icon.ToImage(IconSizes.Size16x16);
+         var methodImage = ApplicationIcons.IconFor(valueOrigin.Method).ToImage(IconSizes.Size16x16);
          if (valueOrigin.Source == ValueOriginSources.Undefined)
             return methodImage;
 

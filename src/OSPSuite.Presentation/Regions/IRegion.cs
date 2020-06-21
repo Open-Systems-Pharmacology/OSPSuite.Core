@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Regions
       void Add(object view);
 
       /// <summary>
-      ///    Switch visiblity
+      ///    Switch visibility
       /// </summary>
       void ToggleVisibility();
 

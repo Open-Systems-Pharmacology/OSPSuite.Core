@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
@@ -46,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IMenuBarButton UpdateAllToDisplayUnits(MenuBarItemId menuBarItemId)
       {
-         return CreateMenuButton.WithCaption(MenuNames.UpdateAllToDisplaytUnits)
+         return CreateMenuButton.WithCaption(MenuNames.UpdateAllToDisplayUnits)
             .WithId(menuBarItemId)
             .WithDescription(ToolTips.UpdateAllToDisplayUnits)
             .WithIcon(ApplicationIcons.Refresh)

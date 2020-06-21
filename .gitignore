@@ -34,11 +34,14 @@ bld/
 # NUNIT
 *.VisualState.xml
 TestResult.xml
+OpenCover.xml
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/
 dlldata.c
+
+**/launchSettings.json
 
 # DNX
 project.lock.json

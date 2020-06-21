@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
       ExplicitFormula CreateAmountBaseFormulaFor(IProcess process);
 
       /// <summary>
-      /// Creates a formula in <see cref="Constants.Dimension.AMOUNT"/> based on the given <paramref name="concentrationFormula"/>.
+      /// Creates a formula in <see cref="Constants.Dimension.MOLAR_AMOUNT"/> based on the given <paramref name="concentrationFormula"/>.
       /// </summary>
       ExplicitFormula CreateAmountBaseFormulaFor(IFormula concentrationFormula);
 
@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public ExplicitFormula CreateAmountBaseFormulaFor(IFormula concentrationFormula)
       {
-         return updateFormulaToAmountBase(concentrationFormula, _dimensionFactory.Dimension(Constants.Dimension.AMOUNT));
+         return updateFormulaToAmountBase(concentrationFormula, _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT));
       }
 
       public void UpdateRelativePathForStartValueMolecule(IMoleculeAmount molecule, IFormula moleculeFormulaToUse)

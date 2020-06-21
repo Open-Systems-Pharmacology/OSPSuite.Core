@@ -3,8 +3,9 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Helpers;
 
-namespace OSPSuite.Commands
+namespace OSPSuite.Core.Commands
 {
    public abstract class concern_for_CommandsExpander : ContextSpecification<ICommandsExpander>
    {

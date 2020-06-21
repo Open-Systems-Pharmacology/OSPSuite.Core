@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Views
       void Rebind();
 
       void BindToModeSelection();
-      void GroupBy(PathElement pathElement, int groupIndex = 0);
+      void GroupBy(PathElementId pathElementId, int groupIndex = 0);
       IEnumerable<SimulationParameterSelectionDTO> SelectedParameters { get; }
    }
 }

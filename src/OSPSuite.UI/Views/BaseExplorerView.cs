@@ -19,7 +19,7 @@ namespace OSPSuite.UI.Views
    public partial class BaseExplorerView : BaseUserControl, IExplorerView, IViewWithPopup, ILatchable
    {
       protected IExplorerPresenter _presenter;
-      private readonly TreeNodeExplorerViewDragDropBinder _treeNodeExplorerViewDragDrogBinder;
+      private readonly TreeNodeExplorerViewDragDropBinder _treeNodeExplorerViewDragDropBinder;
       public bool IsLatched { get; set; }
 
       public BaseExplorerView(IImageListRetriever imageListRetriever)
@@ -33,14 +33,14 @@ namespace OSPSuite.UI.Views
          treeView.ToolTipController = _toolTipController;
          _toolTipController.GetActiveObjectInfo += (o, e) => treeView.ShowToolTip(e);
          PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
-         _treeNodeExplorerViewDragDrogBinder = new TreeNodeExplorerViewDragDropBinder(treeView);
+         _treeNodeExplorerViewDragDropBinder = new TreeNodeExplorerViewDragDropBinder(treeView);
          treeView.MouseDown += (o, e) => OnEvent(TreeMouseDown, e);
          treeView.MouseMove += (o, e) => OnEvent(TreeMouseMove, e);
          treeView.SelectionChanged += (o, e) => OnEvent(() => manageSelectedNodes());
          treeView.NodeDoubleClick += node => OnEvent(() => nodeDoubleClick(node));
          treeView.NodeClick += (e, node) => OnEvent(() => nodeClick(e, node));
-
          treeView.OptionsSelection.MultiSelect = true;
+         treeView.OptionsView.AutoWidth = false;
       }
 
       private void manageSelectedNodes(ITreeNode selectedNode = null, bool canClearSelection = true)
@@ -56,7 +56,7 @@ namespace OSPSuite.UI.Views
             if (multiSelectAllowed && isMultiSelectModifier(ModifierKeys))
                return;
 
-            // Not a valid multiselect scenario or clear allowed, just do it
+            // Not a valid multi-select scenario or clear allowed, just do it
             if (!multiSelectAllowed || canClearSelection)
                resetTreeViewSelection();
          });
@@ -80,18 +80,18 @@ namespace OSPSuite.UI.Views
 
       protected virtual void TreeMouseMove(MouseEventArgs e)
       {
-         _treeNodeExplorerViewDragDrogBinder.TreeMouseMove(e);
+         _treeNodeExplorerViewDragDropBinder.TreeMouseMove(e);
       }
 
       protected virtual void TreeMouseDown(MouseEventArgs e)
       {
-         _treeNodeExplorerViewDragDrogBinder.TreeMouseDown(e);
+         _treeNodeExplorerViewDragDropBinder.TreeMouseDown(e);
       }
 
       protected void AttachPresenter(IExplorerPresenter presenter)
       {
          _presenter = presenter;
-         _treeNodeExplorerViewDragDrogBinder.InitializeDragAndDrop(_presenter);
+         _treeNodeExplorerViewDragDropBinder.InitializeDragAndDrop(_presenter);
          treeView.ToolTipForNode = presenter.ToolTipFor;
       }
 
@@ -126,10 +126,16 @@ namespace OSPSuite.UI.Views
 
       public IUxTreeView TreeView => treeView;
 
-      public ITreeNode AddNode(ITreeNode nodeToAdd)
+      public virtual ITreeNode AddNode(ITreeNode nodeToAdd)
       {
          treeView.AddNode(nodeToAdd);
+         AdjustTreeViewColumns();
          return nodeToAdd;
+      }
+
+      protected  virtual void AdjustTreeViewColumns()
+      {
+         treeView.BestFitColumns();
       }
 
       public BarManager PopupBarManager { get; }

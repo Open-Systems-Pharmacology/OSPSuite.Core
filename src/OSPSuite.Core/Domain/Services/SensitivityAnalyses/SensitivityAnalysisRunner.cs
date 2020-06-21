@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisRunner
    {
-      Task Run(SensitivityAnalysis sensitivityAnalysis);
+      Task Run(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions = null);
       void Stop();
       bool IsRunning { get; }
    }
@@ -23,20 +23,27 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       private readonly IDialogCreator _dialogCreator;
       private readonly IEntityValidationTask _entityValidationTask;
       private readonly IOSPSuiteExecutionContext _executionContext;
+      private readonly ICoreUserSettings _coreUserSettings;
       private ISensitivityAnalysisEngine _sensitivityAnalysisEngine;
 
       public bool IsRunning => _sensitivityAnalysisEngine != null;
 
-      public SensitivityAnalysisRunner(ISensitivityAnalysisEngineFactory sensitivityAnalysisEngineFactory,  IDialogCreator dialogCreator,
-         IEntityValidationTask entityValidationTask, IOSPSuiteExecutionContext executionContext)
+      public SensitivityAnalysisRunner(
+         ISensitivityAnalysisEngineFactory sensitivityAnalysisEngineFactory,  
+         IDialogCreator dialogCreator,
+         IEntityValidationTask entityValidationTask, 
+         IOSPSuiteExecutionContext executionContext,
+         ICoreUserSettings coreUserSettings
+         )
       {
          _sensitivityAnalysisEngineFactory = sensitivityAnalysisEngineFactory;
          _dialogCreator = dialogCreator;
          _entityValidationTask = entityValidationTask;
          _executionContext = executionContext;
+         _coreUserSettings = coreUserSettings;
       }
 
-      public async Task Run(SensitivityAnalysis sensitivityAnalysis)
+      public async Task Run(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions = null)
       {
          if (!_entityValidationTask.Validate(sensitivityAnalysis))
             return;
@@ -46,10 +53,11 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             if (IsRunning)
                throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
 
+            var options = runOptions ?? new RunOptions {NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse};
             using (_sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create())
             {
                var begin = SystemTime.UtcNow();
-               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis);
+               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
                _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay()));

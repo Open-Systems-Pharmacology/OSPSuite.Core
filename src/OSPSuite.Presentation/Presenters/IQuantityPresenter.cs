@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.DTO;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -13,20 +12,20 @@ namespace OSPSuite.Presentation.Presenters
    public interface IQuantityPresenter : IPresenter
    {
       /// <summary>
-      ///    Groups the columns by the given <paramref name="pathElement" />
+      ///    Groups the columns by the given <paramref name="pathElementId" />
       /// </summary>
-      void GroupBy(PathElement pathElement);
+      void GroupBy(PathElementId pathElementId);
 
       /// <summary>
       ///    Path element column that should be sorted according to the sequence
       /// </summary>
-      void SortColumn(PathElement pathElement);
+      void SortColumn(PathElementId pathElementId);
 
-      void Show(PathElement pathElement);
+      void Show(PathElementId pathElementId);
 
-      void Hide(PathElement pathElement);
+      void Hide(PathElementId pathElementId);
 
-      void SetCaption(PathElement pathElement, string caption);
+      void SetCaption(PathElementId pathElementId, string caption);
 
       void Show(QuantityColumn column);
 

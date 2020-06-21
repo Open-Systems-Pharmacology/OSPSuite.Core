@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -53,7 +53,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
                {
                   parallelOptions.CancellationToken.ThrowIfCancellationRequested();
                   results.Add(run.Run(token));
-                  run.Clear();
                }), token);
 
             updateParameterIdentificationResults(results);
@@ -66,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          }
          finally
          {
-            parameterIdentificationRuns.Each(x => x.Clear());
+            parameterIdentificationRuns.Each(x => x.Dispose());
             _eventPublisher.PublishEvent(new ParameterIdentificationTerminatedEvent(parameterIdentification));
          }
       }
@@ -106,10 +105,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var parameterIdentificationRuns = await Task.Run(() => _parameterIdentificationRunFactory.CreateFor(_parameterIdentification, cancellationToken), cancellationToken);
 
-         parameterIdentificationRuns.Each(run =>
-         {
-            run.RunStatusChanged += (o, e) => runStatusChanged(e);
-         });
+         parameterIdentificationRuns.Each(run => { run.RunStatusChanged += (o, e) => runStatusChanged(e); });
 
          return parameterIdentificationRuns;
       }

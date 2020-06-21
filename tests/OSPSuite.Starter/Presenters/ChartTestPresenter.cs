@@ -9,17 +9,17 @@ using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
-using OSPSuite.Presentation.Serialization;
-using OSPSuite.Presentation.Settings;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
 using OSPSuite.Utility;
@@ -30,11 +30,7 @@ namespace OSPSuite.Starter.Presenters
 {
    public interface IChartTestPresenter : IPresenter<IChartTestView>, ICommandCollectorPresenter
    {
-      void LoadChart();
-      void SaveChart();
-      void SaveSettings();
       void SaveChartWithDataWithoutValues();
-      void LoadSettings();
       void RefreshDisplay();
       void ReloadMenus();
       void RemoveDatalessCurves();
@@ -54,16 +50,15 @@ namespace OSPSuite.Starter.Presenters
       private readonly IContainer _model;
       private readonly IDataRepositoryCreator _dataRepositoryCreator;
       private readonly IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
-      private readonly DataPersistor _dataPersistor;
       private readonly IChartFromTemplateService _chartFromTemplateService;
       private readonly IChartTemplatePersistor _chartTemplatePersistor;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IChartUpdater _chartUpdater;
-      private ICache<string, DataRepository> _dataRepositories;
       private readonly IWithChartTemplates _simulationSettings;
+      private readonly Cache<string, DataRepository> _dataRepositories;
 
       public ChartTestPresenter(IChartTestView view, IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, TestEnvironment testEnvironment, IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper,
-         IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, DataPersistor dataPersistor, IChartFromTemplateService chartFromTemplateService,
+         IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, IChartFromTemplateService chartFromTemplateService,
          IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater) : base(view)
       {
          _model = testEnvironment.Model.Root;
@@ -71,7 +66,6 @@ namespace OSPSuite.Starter.Presenters
          _chartEditorAndDisplayPresenter = chartEditorAndDisplayPresenter;
          _dataRepositoryCreator = dataRepositoryCreator;
          _ospSuiteXmlSerializerRepository = ospSuiteXmlSerializerRepository;
-         _dataPersistor = dataPersistor;
          _chartFromTemplateService = chartFromTemplateService;
          _chartTemplatePersistor = chartTemplatePersistor;
          _dimensionFactory = dimensionFactory;
@@ -102,7 +96,6 @@ namespace OSPSuite.Starter.Presenters
          ChartDisplayPresenter.Edit(Chart);
 
          ChartDisplayPresenter.DragOver += onChartDisplayDragOver;
-         ChartEditorPresenter.DragOver += onChartDisplayDragOver;
 
          ReloadMenus();
       }
@@ -146,7 +139,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void addRepositoryToChart(DataRepository newRepository)
       {
-         var dataRepositories = new[] { newRepository };
+         var dataRepositories = new[] {newRepository};
          ChartEditorPresenter.AddDataRepositories(dataRepositories);
          addNewRepositories(dataRepositories);
          addNewCurvesToChart(dataRepositories);
@@ -198,7 +191,6 @@ namespace OSPSuite.Starter.Presenters
 
          Chart.ChartSettings.BackColor = Color.White;
          ChartEditorPresenter.Edit(Chart);
-
       }
 
       public CurveChart Chart { get; set; }
@@ -231,27 +223,9 @@ namespace OSPSuite.Starter.Presenters
          return true;
       }
 
-      private static void onChartDisplayDragOver(object sender, DragEventArgs e)
+      private static void onChartDisplayDragOver(object sender, IDragEvent e)
       {
-         e.Effect = e.Data.GetDataPresent(typeof(string)) ? DragDropEffects.Move : DragDropEffects.None;
-      }
-
-      public void SaveChart()
-      {
-         var fileName = getFileName(new SaveFileDialog());
-         if (string.IsNullOrEmpty(fileName)) return;
-
-         _dataPersistor.Save(_dataRepositories, fileName.Replace(".", "_d."));
-
-         _dataPersistor.Save(Chart, fileName);
-      }
-
-      public void SaveSettings()
-      {
-         var fileName = getFileName(new SaveFileDialog());
-         if (string.IsNullOrEmpty(fileName)) return;
-
-         _dataPersistor.Save(_chartEditorAndDisplayPresenter.CreateSettings(), fileName);
+         e.SetEffectForType<string>();
       }
 
       public void SaveChartWithDataWithoutValues()
@@ -260,18 +234,6 @@ namespace OSPSuite.Starter.Presenters
          if (string.IsNullOrEmpty(fileName)) return;
 
          _chartTemplatePersistor.SerializeToFileBasedOn(Chart, fileName);
-      }
-
-      public void LoadSettings()
-      {
-         var fileDialog = new OpenFileDialog();
-         var fileName = getFileName(fileDialog);
-         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
-            return;
-
-         var settingsPersister = new DataPersistor(_ospSuiteXmlSerializerRepository);
-         var settings = settingsPersister.Load<ChartEditorAndDisplaySettings>(fileName);
-         _chartEditorAndDisplayPresenter.CopySettingsFrom(settings);
       }
 
       public void RefreshDisplay()
@@ -320,24 +282,6 @@ namespace OSPSuite.Starter.Presenters
 
       private void onChartSave()
       {
-      }
-
-      public void LoadChart()
-      {
-         var fileDialog = new OpenFileDialog();
-         var fileName = getFileName(fileDialog);
-         if (string.IsNullOrEmpty(fileName) || !fileDialog.CheckFileExists)
-            return;
-
-         var dataPersitor = new DataPersistor(_ospSuiteXmlSerializerRepository);
-         _dataRepositories = dataPersitor.Load<ICache<string, DataRepository>>(fileName.Replace(".", "_d."), _dimensionFactory);
-
-         Chart = dataPersitor.Load<CurveChart>(fileName, _dimensionFactory, _dataRepositories);
-
-         ChartEditorPresenter.Clear();
-
-         ChartEditorPresenter.AddDataRepositories(_dataRepositories);
-         ChartEditorPresenter.Edit(Chart);
       }
 
       private string getFileName(FileDialog fileDialog)

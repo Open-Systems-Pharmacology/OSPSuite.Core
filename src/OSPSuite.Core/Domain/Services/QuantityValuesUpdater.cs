@@ -14,11 +14,11 @@ namespace OSPSuite.Core.Domain.Services
       ///    or formula will be updated.
       /// </summary>
       /// <remarks>
-      ///    This completly overrides the defaults defined in the <see cref="MoleculeBuildingBlock" /> and
+      ///    This completely overrides the defaults defined in the <see cref="MoleculeBuildingBlock" /> and
       ///    <see cref="SpatialStructure" />.
       /// </remarks>
-      /// <param name="model">The model whose quantities will be upadated</param>
-      /// <param name="buildConfiguration">The build configuration containing molecule and paramter startvalues used to update.</param>
+      /// <param name="model">The model whose quantities will be updated</param>
+      /// <param name="buildConfiguration">The build configuration containing molecule and parameter start values used to update.</param>
       void UpdateQuantitiesValues(IModel model, IBuildConfiguration buildConfiguration);
    }
 

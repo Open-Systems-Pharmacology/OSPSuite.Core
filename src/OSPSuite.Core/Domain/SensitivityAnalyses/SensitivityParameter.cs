@@ -84,41 +84,26 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
             }
          }
 
-         private static IBusinessRule parameterNotNull
-         {
-            get
+         private static IBusinessRule parameterNotNull { get; } = CreateRule.For<SensitivityParameter>()
+            .Property(x => x.Parameter)
+            .WithRule((sensitivityParameter, name) => sensitivityParameter.Parameter != null)
+            .WithError((sensitivityParameter, parameter) => Error.SensitivityAnalysis.TheParameterPathCannotBeFoundInTheSimulation(sensitivityParameter.ParameterSelection.FullQuantityPath));
+
+         private static IBusinessRule nameNotEmpty { get; } = GenericRules.NonEmptyRule<SensitivityParameter>(x => x.Name);
+
+         private static IBusinessRule nameUnique { get; } = CreateRule.For<SensitivityParameter>()
+            .Property(x => x.Name)
+            .WithRule((sensitivityParameter, name) =>
             {
-               return CreateRule.For<SensitivityParameter>()
-                  .Property(x => x.Parameter)
-                  .WithRule((sensitivityParameter, name) => sensitivityParameter.Parameter != null)
-                  .WithError((sensitivityParameter, parameter) => Error.SensitivityAnalysis.TheParameterPathCannotBeFoundInTheSimulation(sensitivityParameter.ParameterSelection.FullQuantityPath));
-            }
-         }
+               var sensitivityAnalysis = sensitivityParameter.SensitivityAnalysis;
 
-         private static IBusinessRule nameNotEmpty
-         {
-            get { return GenericRules.NonEmptyRule<SensitivityParameter>(x => x.Name); }
-         }
+               var otherSensitivityParameter = sensitivityAnalysis?.SensitivityParameterByName(name);
+               if (otherSensitivityParameter == null)
+                  return true;
 
-         private static IBusinessRule nameUnique
-         {
-            get
-            {
-               return CreateRule.For<SensitivityParameter>()
-                  .Property(x => x.Name)
-                  .WithRule((sensitivityParameter, name) =>
-                  {
-                     var sensitivityAnalysis = sensitivityParameter.SensitivityAnalysis;
-
-                     var otherSensitivityParameter = sensitivityAnalysis?.SensitivityParameterByName(name);
-                     if (otherSensitivityParameter == null)
-                        return true;
-
-                     return otherSensitivityParameter == sensitivityParameter;
-                  })
-                  .WithError((field, name) => Error.NameAlreadyExistsInContainerType(name, ObjectTypes.SensitivityParameter));
-            }
-         }
+               return Equals(otherSensitivityParameter,sensitivityParameter);
+            })
+            .WithError((field, name) => Error.NameAlreadyExistsInContainerType(name, ObjectTypes.SensitivityParameter));
       }
    }
 }

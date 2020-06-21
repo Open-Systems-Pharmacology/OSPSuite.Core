@@ -34,10 +34,10 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
    public class DataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataPresenter
    {
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryTask;
       private readonly IEditObservedDataTask _editObservedDataTask;
 
-      public DataRepositoryDataPresenter(IDataRepositoryDataView view, IDataRepositoryTask dataRepositoryTask, IEditObservedDataTask editObservedDataTask)
+      public DataRepositoryDataPresenter(IDataRepositoryDataView view, IDataRepositoryExportTask dataRepositoryTask, IEditObservedDataTask editObservedDataTask)
          : base(view)
       {
          _dataRepositoryTask = dataRepositoryTask;
@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void AddRow()
       {
-         var identificationsUsingObservedData = _editObservedDataTask.ParamterIdentificationsUsingDataRepository(_observedData);
+         var identificationsUsingObservedData = _editObservedDataTask.ParameterIdentificationsUsingDataRepository(_observedData);
          if (identificationsUsingObservedData.Any())
             throw new OSPSuiteException(Captions.ParameterIdentification.CannotAddObservedDataPointBeingUsedByParameterIdentification(_observedData.Name, identificationsUsingObservedData));
 

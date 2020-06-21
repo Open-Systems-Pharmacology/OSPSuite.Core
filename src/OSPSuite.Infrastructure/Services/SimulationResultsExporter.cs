@@ -12,13 +12,13 @@ namespace OSPSuite.Infrastructure.Services
 {
    public class SimulationResultsExporter : ISimulationResultsExporter
    {
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IQuantityPathToQuantityDisplayPathMapper _quantityDisplayPathMapper;
       private readonly ISimulationResultsToBatchSimulationExportMapper _simulationExportMapper;
 
-      public SimulationResultsExporter(IDataRepositoryTask dataRepositoryTask, IQuantityPathToQuantityDisplayPathMapper quantityDisplayPathMapper, ISimulationResultsToBatchSimulationExportMapper simulationExportMapper)
+      public SimulationResultsExporter(IDataRepositoryExportTask dataRepositoryExportTask, IQuantityPathToQuantityDisplayPathMapper quantityDisplayPathMapper, ISimulationResultsToBatchSimulationExportMapper simulationExportMapper)
       {
-         _dataRepositoryTask = dataRepositoryTask;
+         _dataRepositoryExportTask = dataRepositoryExportTask;
          _quantityDisplayPathMapper = quantityDisplayPathMapper;
          _simulationExportMapper = simulationExportMapper;
       }
@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Services
             ColumnNameRetriever = x => _quantityDisplayPathMapper.DisplayPathAsStringFor(simulation, x),
             UseDisplayUnit = false
          };
-         return _dataRepositoryTask.ExportToCsvAsync(results, fileName, options);
+         return _dataRepositoryExportTask.ExportToCsvAsync(results, fileName, options);
       }
 
       public Task ExportToJsonAsync(ISimulation simulation, DataRepository results, string fileName)

@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
 
       /// <summary>
-      ///    Adds all serializers from the assambly of T, which implement T
+      ///    Adds all serializers from the assembly of T, which implement T
       /// </summary>
       protected virtual void AddSerializersSimple<T>() where T : class, IXmlSerializer
       {

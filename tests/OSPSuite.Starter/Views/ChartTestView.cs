@@ -29,7 +29,7 @@ namespace OSPSuite.Starter.Views
          addObservationsButton.DropDownControl = _observationsDropDownControl;
          addCalculationsButton.DropDownControl = _calculationsDropDownControl;
 
-         _observationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Deviation", (o, e) => OnEvent(createObservationsWithArithmenticDeviation)));
+         _observationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Deviation", (o, e) => OnEvent(createObservationsWithArithmeticDeviation)));
          _observationsDropDownControl.Items.Add(new DXMenuItem("With Geometric Deviation", (o, e) => OnEvent(createObservationsWithGeometricDeviation)));
 
          _calculationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Population Mean", (o, e) => OnEvent(createCalculationsWithArithmeticMean)));
@@ -40,10 +40,6 @@ namespace OSPSuite.Starter.Views
       {
          base.InitializeBinding();
 
-         saveChartButton.Click += (o, e) => OnEvent(saveChart);
-         loadChartButton.Click += (o, e) => OnEvent(loadChart);
-         saveSettingsButton.Click += (o, e) => OnEvent(saveSettings);
-         loadSettingsButton.Click += (o, e) => OnEvent(loadSettings);
          refreshDisplayButton.Click += (o, e) => OnEvent(refreshDisplay);
          reloadMenusButton.Click += (o, e) => OnEvent(reloadMenus);
          removeDatalessCurvesButton.Click += (o, e) => OnEvent(removeDatalessCurves);
@@ -97,7 +93,7 @@ namespace OSPSuite.Starter.Views
          _presenter.AddCalculationsWithArithmeticMean(NumberOfCalculations, PointsPerCalculation);
       }
 
-      private void createObservationsWithArithmenticDeviation()
+      private void createObservationsWithArithmeticDeviation()
       {
          _presenter.AddObservationsWithArithmeticDeviation(NumberOfObservations, PointsPerObservation, LLOQ);
       }
@@ -135,26 +131,6 @@ namespace OSPSuite.Starter.Views
       private void refreshDisplay()
       {
          _presenter.RefreshDisplay();
-      }
-
-      private void saveSettings()
-      {
-         _presenter.SaveSettings();
-      }
-
-      private void loadSettings()
-      {
-         _presenter.LoadSettings();
-      }
-
-      private void loadChart()
-      {
-         _presenter.LoadChart();
-      }
-
-      private void saveChart()
-      {
-         _presenter.SaveChart();
       }
 
       public void AttachPresenter(IChartTestPresenter presenter)

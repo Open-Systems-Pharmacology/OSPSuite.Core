@@ -28,12 +28,15 @@ namespace OSPSuite.Core.Domain.Data
       public virtual QuantityValues Time { get; set; }
 
       /// <summary>
-      ///    The parent simulaton results. This is only used for optimal serialization
+      ///    The parent simulation results. This is only used for optimal serialization
       /// </summary>
       [EditorBrowsable(EditorBrowsableState.Never)]
       public virtual SimulationResults SimulationResults { get; set; }
 
       public virtual ISet<QuantityValues> AllValues { get; set; }
+
+      public virtual QuantityValues[] ValuesAsArray() => AllValues?.ToArray();
+
 
       public IndividualResults()
       {
@@ -46,20 +49,25 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    Returns wether values were calculated for the quantity with path <paramref name="quantityPath" /> or not
+      ///    Returns whether values were calculated for the quantity with path <paramref name="quantityPath" /> or not
       /// </summary>
       public virtual bool HasValuesFor(string quantityPath)
       {
-         return ValuesFor(quantityPath) != null;
+         return QuantityValuesFor(quantityPath) != null;
+      }
+
+      /// <summary>
+      ///    Returns the QuantityValues defined for the quantity with path <paramref name="quantityPath" /> or null it they do not exist
+      /// </summary>
+      public virtual QuantityValues QuantityValuesFor(string quantityPath)
+      {
+         return AllValues.FirstOrDefault(x => Equals(x.QuantityPath, quantityPath));
       }
 
       /// <summary>
       ///    Returns the values defined for the quantity with path <paramref name="quantityPath" /> or null it they do not exist
       /// </summary>
-      public virtual QuantityValues ValuesFor(string quantityPath)
-      {
-         return AllValues.FirstOrDefault(x => Equals(x.QuantityPath, quantityPath));
-      }
+      public float[] ValuesFor(string quantityPath) => QuantityValuesFor(quantityPath)?.Values;
 
       public virtual IEnumerator<QuantityValues> GetEnumerator()
       {
@@ -72,7 +80,7 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    This method should be called to synchronzie time references between results and values.
+      ///    This method should be called to synchronize time references between results and values.
       ///    This cannot be done in Time{set;} because of LazyLoading issues with NHibernate
       /// </summary>
       public virtual void UpdateQuantityTimeReference()

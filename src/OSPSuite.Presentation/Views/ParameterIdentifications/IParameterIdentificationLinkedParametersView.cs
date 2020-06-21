@@ -9,6 +9,6 @@ namespace OSPSuite.Presentation.Views.ParameterIdentifications
    public interface IParameterIdentificationLinkedParametersView : IView<IParameterIdentificationLinkedParametersPresenter>
    {
       void BindTo(IEnumerable<LinkedParameterDTO> linkedParameterDTOs);
-      void SetVisibility(PathElement pathElement, bool visible );
+      void SetVisibility(PathElementId pathElementId, bool visible );
    }
 }

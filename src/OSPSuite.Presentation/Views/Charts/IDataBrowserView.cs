@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
 using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Views.Charts
@@ -17,8 +16,5 @@ namespace OSPSuite.Presentation.Views.Charts
       /// Returns all selected <see cref="DataColumnDTO"/> and their descendants.
       /// </summary>
       IReadOnlyList<DataColumnDTO> SelectedDescendantColumns { get; }
-
-      event DragEventHandler DragOver;
-      event DragEventHandler DragDrop;
    }
 }

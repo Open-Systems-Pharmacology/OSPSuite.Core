@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
 
@@ -9,29 +11,44 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisEngine : IDisposable
    {
-      Task StartAsync(SensitivityAnalysis sensitivityAnalysis);
+      Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions);
+
       void Stop();
+
+      /// <summary>
+      ///    Progress event returns the percent representing the progress of a simulation
+      /// </summary>
+      event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress;
+
+      /// <summary>
+      ///    Event raised when simulation is terminated (either after normal termination or cancel)
+      /// </summary>
+      event EventHandler Terminated;
    }
 
    public class SensitivityAnalysisEngine : ISensitivityAnalysisEngine
    {
       private readonly IEventPublisher _eventPublisher;
-      private readonly ISensitivyAnalysisVariationDataCreator _sensitivyAnalysisVariationDataCreator;
+      private readonly ISensitivityAnalysisVariationDataCreator _sensitivityAnalysisVariationDataCreator;
       private readonly IPopulationRunner _populationRunner;
-      private readonly ICoreUserSettings _userSettings;
       private readonly ISimulationToModelCoreSimulationMapper _modelCoreSimulationMapper;
       private readonly ISensitivityAnalysisRunResultCalculator _runResultCalculator;
       private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
       private SensitivityAnalysis _sensitivityAnalysis;
+      public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
+      public event EventHandler Terminated = delegate { };
 
-      public SensitivityAnalysisEngine(IEventPublisher eventPublisher, ISensitivyAnalysisVariationDataCreator sensitivyAnalysisVariationDataCreator,
-         IPopulationRunner populationRunner, ICoreUserSettings userSettings, ISimulationToModelCoreSimulationMapper modelCoreSimulationMapper,
-         ISensitivityAnalysisRunResultCalculator runResultCalculator, ISimulationPersistableUpdater simulationPersistableUpdater)
+      public SensitivityAnalysisEngine(
+         IEventPublisher eventPublisher, 
+         ISensitivityAnalysisVariationDataCreator sensitivityAnalysisVariationDataCreator,
+         IPopulationRunner populationRunner, 
+         ISimulationToModelCoreSimulationMapper modelCoreSimulationMapper,
+         ISensitivityAnalysisRunResultCalculator runResultCalculator, 
+         ISimulationPersistableUpdater simulationPersistableUpdater)
       {
          _eventPublisher = eventPublisher;
-         _sensitivyAnalysisVariationDataCreator = sensitivyAnalysisVariationDataCreator;
+         _sensitivityAnalysisVariationDataCreator = sensitivityAnalysisVariationDataCreator;
          _populationRunner = populationRunner;
-         _userSettings = userSettings;
          _modelCoreSimulationMapper = modelCoreSimulationMapper;
          _runResultCalculator = runResultCalculator;
          _simulationPersistableUpdater = simulationPersistableUpdater;
@@ -39,18 +56,17 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _populationRunner.SimulationProgress += simulationProgress;
       }
 
-      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis)
+      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions)
       {
          _sensitivityAnalysis = sensitivityAnalysis;
          _eventPublisher.PublishEvent(new SensitivityAnalysisStartedEvent(sensitivityAnalysis));
-         _populationRunner.NumberOfCoresToUse = _userSettings.MaximumNumberOfCoresToUse;
 
          try
          {
             var modelCoreSimulation = _modelCoreSimulationMapper.MapFrom(sensitivityAnalysis.Simulation, shouldCloneModel: true);
             _simulationPersistableUpdater.UpdateSimulationPersistable(modelCoreSimulation);
-            var variationData = _sensitivyAnalysisVariationDataCreator.CreateForRun(sensitivityAnalysis);
-            var runResults = await _populationRunner.RunPopulationAsync(modelCoreSimulation, variationData.ToDataTable());
+            var variationData = _sensitivityAnalysisVariationDataCreator.CreateForRun(sensitivityAnalysis);
+            var runResults = await _populationRunner.RunPopulationAsync(modelCoreSimulation, runOptions,  variationData.ToDataTable());
             sensitivityAnalysis.Results = await calculateSensitivityBasedOn(sensitivityAnalysis, variationData, runResults);
             _eventPublisher.PublishEvent(new SensitivityAnalysisResultsUpdatedEvent(sensitivityAnalysis));
          }
@@ -66,15 +82,17 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results));
       }
 
-      private void simulationProgress(object sender, PopulationSimulationProgressEventArgs eventArgs)
+      private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs eventArgs)
       {
          _eventPublisher.PublishEvent(new SensitivityAnalysisProgressEvent(_sensitivityAnalysis, eventArgs.NumberOfCalculatedSimulation, eventArgs.NumberOfSimulations));
+         SimulationProgress(this, eventArgs);
       }
 
       private void terminated(object sender, EventArgs e)
       {
          _populationRunner.Terminated -= terminated;
          _populationRunner.SimulationProgress -= simulationProgress;
+         Terminated(this, e);
       }
 
       public void Stop()

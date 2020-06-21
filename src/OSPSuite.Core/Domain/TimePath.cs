@@ -21,10 +21,7 @@ namespace OSPSuite.Core.Domain
          Alias = Constants.TIME;
       }
 
-      public string PathAsString
-      {
-         get { return "TIME"; }
-      }
+      public string PathAsString => "TIME";
 
       public void Add(string pathEntry)
       {
@@ -54,8 +51,8 @@ namespace OSPSuite.Core.Domain
 
       public IDimension TimeDimension
       {
-         get { return _timeParameter.Dimension; }
-         set { _timeParameter.Dimension = value; }
+         get => _timeParameter.Dimension;
+         set => _timeParameter.Dimension = value;
       }
 
       public T Clone<T>() where T : IObjectPath
@@ -65,7 +62,7 @@ namespace OSPSuite.Core.Domain
 
       public string this[int index]
       {
-         get { return Constants.TIME; }
+         get => Constants.TIME;
          set
          {
             /*nothing to do here*/
@@ -78,6 +75,11 @@ namespace OSPSuite.Core.Domain
       }
 
       public void RemoveFirst()
+      {
+         /*nothing to do here*/
+      }
+
+      public void ReplaceWith(IEnumerable<string> pathEntries)
       {
          /*nothing to do here*/
       }
@@ -113,15 +115,12 @@ namespace OSPSuite.Core.Domain
          return PathAsString;
       }
 
-      public int Count
-      {
-         get { return _path.Count; }
-      }
+      public int Count => _path.Count;
 
       public IDimension Dimension
       {
-         get { return TimeDimension; }
-         set { TimeDimension = value; }
+         get => TimeDimension;
+         set => TimeDimension = value;
       }
    }
 }

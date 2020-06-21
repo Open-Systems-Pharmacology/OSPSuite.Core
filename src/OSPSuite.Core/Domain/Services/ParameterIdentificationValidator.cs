@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!parameterIdentification.AllIdentificationParameters.Any())
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.NoIdentificationParameterDefined);
 
-         allIdentificaitonParametersWithUndefinedLinkedParametersIn(parameterIdentification).Each(p => { validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.LinkedParameterIsNotValidInIdentificationParameter(p.Name)); });
+         allIdentificationParametersWithUndefinedLinkedParametersIn(parameterIdentification).Each(p => { validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.LinkedParameterIsNotValidInIdentificationParameter(p.Name)); });
 
          if (parameterIdentification.Configuration.AlgorithmProperties == null)
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.NoOptimizationAlgorithmSelected);
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain.Services
          return validationResult;
       }
 
-      private static IEnumerable<IdentificationParameter> allIdentificaitonParametersWithUndefinedLinkedParametersIn(ParameterIdentification parameterIdentification)
+      private static IEnumerable<IdentificationParameter> allIdentificationParametersWithUndefinedLinkedParametersIn(ParameterIdentification parameterIdentification)
       {
          return parameterIdentification.AllIdentificationParameters.Where(x => x.AllLinkedParameters.Any(linkedParameter => !linkedParameter.IsValid));
       }

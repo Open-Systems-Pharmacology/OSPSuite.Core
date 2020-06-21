@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Domain
       new IDistributionFormula Formula { get; set; }
       IParameter MeanParameter { get; }
       IParameter DeviationParameter { get; }
+      IParameter PercentileParameter { get; }
       double ProbabilityDensityFor(double value);
       double ValueFor(double percentile);
       void RefreshPercentile();
@@ -48,6 +49,8 @@ namespace OSPSuite.Core.Domain
 
       public override double Value
       {
+         //This is required to ensure that R can read the value
+         get => base.Value;
          set
          {
             _cachedValue = value;
@@ -91,6 +94,8 @@ namespace OSPSuite.Core.Domain
          return Formula.RandomDeviate(randomGenerator, this, 0, maxValue.Value);
       }
 
+      public void ClearRHSFormula() => RHSFormula = null;
+
       public double Percentile
       {
          get => percentile;
@@ -124,7 +129,7 @@ namespace OSPSuite.Core.Domain
          set
          {
             //percentile set first so that correct value is available if a value event is raised
-            percentileParameter.IsFixedValue = value;
+            PercentileParameter.IsFixedValue = value;
             base.IsFixedValue = value;
             OnPropertyChanged(() => Percentile);
          }
@@ -132,11 +137,11 @@ namespace OSPSuite.Core.Domain
 
       private double percentile
       {
-         get => percentileParameter.Value;
-         set => percentileParameter.Value = value;
+         get => PercentileParameter.Value;
+         set => PercentileParameter.Value = value;
       }
 
-      private IParameter percentileParameter => this.GetSingleChildByName<IParameter>(Constants.Distribution.PERCENTILE);
+      public IParameter PercentileParameter => this.Parameter(Constants.Distribution.PERCENTILE);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {

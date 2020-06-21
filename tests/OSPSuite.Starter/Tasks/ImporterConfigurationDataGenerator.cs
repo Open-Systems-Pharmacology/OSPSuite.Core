@@ -318,7 +318,7 @@ namespace OSPSuite.Starter.Tasks
 
       private static IEnumerable<MetaDataCategory> createMetaData()
       {
-         var images = new Dictionary<string, ApplicationIcon>();
+         var images = new Dictionary<string, string>();
          var path = Path.GetDirectoryName(
             Assembly.GetExecutingAssembly().Location);
 
@@ -328,10 +328,10 @@ namespace OSPSuite.Starter.Tasks
 
             var maleIcon =
                new Icon(Path.Combine(resourcePath, "MetaData.ico"));
-            images.Add("Male", new ApplicationIcon(maleIcon));
+            images.Add("Male", new ApplicationIcon(maleIcon).IconName);
             var femaleIcon =
                new Icon(Path.Combine(resourcePath, "UnitInformation.ico"));
-            images.Add("Female", new ApplicationIcon(femaleIcon));
+            images.Add("Female", new ApplicationIcon(femaleIcon).IconName);
          }
 
          var genderCategory = createMetaDataCategory<string>(descriptiveName: "Gender", isMandatory: false, isListOfValuesFixed: true, fixedValuesRetriever: category =>

@@ -11,6 +11,12 @@ namespace OSPSuite.Core.Domain
    public interface IContainer : IEntity, IEnumerable<IEntity>
    {
       ContainerType ContainerType { set; get; }
+
+      /// <summary>
+      ///   Returns the <see cref="ContainerType"/> as a string
+      /// </summary>
+      string ContainerTypeAsString { get; }
+
       ContainerMode Mode { get; set; }
 
       /// <summary>
@@ -96,10 +102,7 @@ namespace OSPSuite.Core.Domain
          Mode = ContainerMode.Logical;
       }
 
-      public virtual IEnumerable<IEntity> Children
-      {
-         get { return _children; }
-      }
+      public virtual IEnumerable<IEntity> Children => _children;
 
       public virtual void Add(IEntity newChild)
       {
@@ -126,24 +129,18 @@ namespace OSPSuite.Core.Domain
          }
       }
 
+      public string ContainerTypeAsString => ContainerType.ToString();
+
       public ContainerMode Mode
       {
-         get { return _mode; }
-         set
-         {
-            _mode = value;
-            OnPropertyChanged(() => Mode);
-         }
+         get => _mode;
+         set => SetProperty(ref _mode, value);
       }
 
       public ContainerType ContainerType
       {
-         get { return _containerType; }
-         set
-         {
-            _containerType = value;
-            OnPropertyChanged(() => ContainerType);
-         }
+         get => _containerType;
+         set => SetProperty(ref _containerType, value);
       }
 
       public virtual void RemoveChildren()

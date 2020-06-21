@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisRunResultCalculator
    {
-      SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults);
+      SensitivityAnalysisRunResult CreateFor(
+         SensitivityAnalysis sensitivityAnalysis,
+         VariationData variationData,
+         SimulationResults simulationResults);
    }
 
    public class SensitivityAnalysisRunResultCalculator : ISensitivityAnalysisRunResultCalculator
@@ -20,7 +25,10 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _pkAnalysesTask = pkAnalysesTask;
       }
 
-      public SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults)
+      public SensitivityAnalysisRunResult CreateFor(
+         SensitivityAnalysis sensitivityAnalysis, 
+         VariationData variationData, 
+         SimulationResults simulationResults)
       {
          var sensitivityRunResult = new SensitivityAnalysisRunResult();
 
@@ -30,7 +38,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             sensitivityAnalysis.AllSensitivityParameters.Each((sensitivityParameter, index) =>
             {
                var pkSensitivity = calculateParameterSensitivity(sensitivityParameter, index, variationData, pkParameter);
-               if(pkSensitivity!=null)
+               if (pkSensitivity != null)
                   sensitivityRunResult.AddPKParameterSensitivity(pkSensitivity);
             });
          }
@@ -54,7 +62,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             QuantityPath = pkParameter.QuantityPath,
             Value = double.NaN
          };
-      
+
          var delta = (from variation in allVariations
             let deltaP = difference(variation.Variation[sensitivityParameterIndex], defaultParameterValue)
             let deltaPK = difference(pkParameter.Values[variation.VariationId], defaultPKValue)

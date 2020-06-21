@@ -16,26 +16,25 @@ namespace OSPSuite.Presentation.Presenters
       void DeselectAll();
 
       /// <summary>
-      ///    Start the selection for all <c>persistable</c> quantities definied in the given container. The
+      ///    Start the selection for all <c>persistable</c> quantities defined in the given container. The
       ///    <paramref name="selectedQuantities" />
-      ///    is used to pre select the quantities that should be pre selected
+      ///    is used to pre select the quantities that should be preselected
       /// </summary>
       void Edit(IContainer container, IEnumerable<QuantitySelection> selectedQuantities);
 
       /// <summary>
-      ///    Start the selection for all quantities definied. The <paramref name="selectedQuantities" />
-      ///    is used to pre select the quantities that should be pre selected
+      ///    Start the selection for all quantities defined. The <paramref name="selectedQuantities" />
+      ///    is used to pre select the quantities that should be preselected
       /// </summary>
       void Edit(IEnumerable<IQuantity> quantities, IEnumerable<QuantitySelection> selectedQuantities);
 
       /// <summary>
-      ///    Start the selection for all <c>persistable</c> quantities definied in the given container.No quantitites pre
-      ///    selected
+      ///    Start the selection for all <c>persistable</c> quantities defined in the given container.No quantity is preselected
       /// </summary>
       void Edit(IContainer container);
 
       /// <summary>
-      ///    Start the selection for all quantities definied.No quantitites pre selected
+      ///    Start the selection for all quantities defined. No quantity is preselected
       /// </summary>
       void Edit(IEnumerable<IQuantity> quantities);
 
@@ -167,10 +166,10 @@ namespace OSPSuite.Presentation.Presenters
          set { View.Description = value; }
       }
 
-      public void GroupBy(PathElement pathElement)
+      public void GroupBy(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.GroupBy(pathElement);
-         _selectedQuantityListPresenter.GroupBy(pathElement);
+         _allQuantityListPresenter.GroupBy(pathElementId);
+         _selectedQuantityListPresenter.GroupBy(pathElementId);
       }
 
       public bool ExpandAllGroups
@@ -189,28 +188,28 @@ namespace OSPSuite.Presentation.Presenters
          }
       }
 
-      public void SortColumn(PathElement pathElement)
+      public void SortColumn(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.SortColumn(pathElement);
-         _selectedQuantityListPresenter.SortColumn(pathElement);
+         _allQuantityListPresenter.SortColumn(pathElementId);
+         _selectedQuantityListPresenter.SortColumn(pathElementId);
       }
 
-      public void Show(PathElement pathElement)
+      public void Show(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.Show(pathElement);
-         _selectedQuantityListPresenter.Show(pathElement);
+         _allQuantityListPresenter.Show(pathElementId);
+         _selectedQuantityListPresenter.Show(pathElementId);
       }
 
-      public void Hide(PathElement pathElement)
+      public void Hide(PathElementId pathElementId)
       {
-         _allQuantityListPresenter.Hide(pathElement);
-         _selectedQuantityListPresenter.Hide(pathElement);
+         _allQuantityListPresenter.Hide(pathElementId);
+         _selectedQuantityListPresenter.Hide(pathElementId);
       }
 
-      public void SetCaption(PathElement pathElement, string caption)
+      public void SetCaption(PathElementId pathElementId, string caption)
       {
-         _allQuantityListPresenter.SetCaption(pathElement, caption);
-         _selectedQuantityListPresenter.SetCaption(pathElement, caption);
+         _allQuantityListPresenter.SetCaption(pathElementId, caption);
+         _selectedQuantityListPresenter.SetCaption(pathElementId, caption);
       }
 
       public void Show(QuantityColumn column)

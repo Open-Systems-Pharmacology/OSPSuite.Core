@@ -28,8 +28,8 @@ namespace OSPSuite.UI.Views
       private readonly RepositoryItem _selectionRepository;
       private IGridViewColumn _colSequence;
       private IQuantityListPresenter _presenter;
-      private PathElement _groupPathElement;
-      private PathElement _sortedPathElement;
+      private PathElementId _groupPathElementId;
+      private PathElementId _sortedPathElementId;
       private bool _groupByDefined;
       private bool _sortByDefined;
 
@@ -101,26 +101,26 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.BindToSource(quantitySelectionDTOs);
       }
 
-      public void SetCaption(PathElement pathElement, string caption)
+      public void SetCaption(PathElementId pathElementId, string caption)
       {
-         _pathElementsBinder.SetCaption(pathElement, caption);
+         _pathElementsBinder.SetCaption(pathElementId, caption);
       }
 
       private void sortByColumn()
       {
          if (!_sortByDefined) return;
-         xtraColumnBy(SortedPathElement).FieldNameSortGroup = _colSequence.XtraColumn.FieldName;
+         xtraColumnBy(SortedPathElementId).FieldNameSortGroup = _colSequence.XtraColumn.FieldName;
       }
 
       private void groupByColumn()
       {
          if (!_groupByDefined) return;
-         xtraColumnBy(GroupPathElement).GroupIndex = 0;
+         xtraColumnBy(GroupPathElementId).GroupIndex = 0;
       }
 
-      private GridColumn xtraColumnBy(PathElement pathElement)
+      private GridColumn xtraColumnBy(PathElementId pathElementId)
       {
-         return _pathElementsBinder.ColumnAt(pathElement).XtraColumn;
+         return _pathElementsBinder.ColumnAt(pathElementId).XtraColumn;
       }
 
       public IEnumerable<QuantitySelectionDTO> SelectedQuantities
@@ -147,9 +147,9 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public void SetVisibility(PathElement pathElement, bool visible)
+      public void SetVisibility(PathElementId pathElementId, bool visible)
       {
-         _pathElementsBinder.SetVisibility(pathElement, visible);
+         _pathElementsBinder.SetVisibility(pathElementId, visible);
       }
 
       public override bool HasError => _gridViewBinder.HasError;
@@ -162,27 +162,24 @@ namespace OSPSuite.UI.Views
          popupMenu.Show(e.HitInfo.HitPoint);
       }
 
-      private bool shouldShowPopupMenu(PopupMenuShowingEventArgs e)
-      {
-         return e.MenuType == GridMenuType.Row && e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
-      }
+      private bool shouldShowPopupMenu(PopupMenuShowingEventArgs e) => e.HitInfo.InRow && !gridView.IsDataRow(e.HitInfo.RowHandle);
 
-      public PathElement GroupPathElement
+      public PathElementId GroupPathElementId
       {
-         get => _groupPathElement;
+         get => _groupPathElementId;
          set
          {
-            _groupPathElement = value;
+            _groupPathElementId = value;
             _groupByDefined = true;
          }
       }
 
-      public PathElement SortedPathElement
+      public PathElementId SortedPathElementId
       {
-         get => _sortedPathElement;
+         get => _sortedPathElementId;
          set
          {
-            _sortedPathElement = value;
+            _sortedPathElementId = value;
             _sortByDefined = true;
          }
       }

@@ -16,10 +16,10 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 
    public class WeightedDataRepositoryToDataTableMapper : IWeightedDataRepositoryToDataTableMapper
    {
-      private readonly IDataRepositoryTask _dataRepositoryTask;
+      private readonly IDataRepositoryExportTask _dataRepositoryTask;
       private readonly IDimensionFactory _dimensionFactory;
 
-      public WeightedDataRepositoryToDataTableMapper(IDataRepositoryTask dataRepositoryTask, IDimensionFactory dimensionFactory)
+      public WeightedDataRepositoryToDataTableMapper(IDataRepositoryExportTask dataRepositoryTask, IDimensionFactory dimensionFactory)
       {
          _dataRepositoryTask = dataRepositoryTask;
          _dimensionFactory = dimensionFactory;

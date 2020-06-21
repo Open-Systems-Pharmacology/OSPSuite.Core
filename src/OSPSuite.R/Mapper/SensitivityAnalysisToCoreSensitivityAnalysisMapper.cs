@@ -1,0 +1,79 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
+using OSPSuite.Core.Services;
+using OSPSuite.R.Domain;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
+using CoreSensitivityAnalysis = OSPSuite.Core.Domain.SensitivityAnalyses.SensitivityAnalysis;
+
+namespace OSPSuite.R.Mapper
+{
+   public interface ISensitivityAnalysisToCoreSensitivityAnalysisMapper : IMapper<SensitivityAnalysis, CoreSensitivityAnalysis>
+   {
+   }
+
+   public class SensitivityAnalysisToCoreSensitivityAnalysisMapper : ISensitivityAnalysisToCoreSensitivityAnalysisMapper
+   {
+      private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
+      private readonly ISimulationAnalyzer _simulationAnalyzer;
+      private readonly IParameterAnalysableParameterSelector _parameterSelector;
+      private readonly IContainerTask _containerTask;
+
+      public SensitivityAnalysisToCoreSensitivityAnalysisMapper(
+         ISensitivityAnalysisTask sensitivityAnalysisTask,
+         ISimulationAnalyzer simulationAnalyzer,
+         IParameterAnalysableParameterSelector parameterSelector,
+         IContainerTask containerTask
+      )
+      {
+         _sensitivityAnalysisTask = sensitivityAnalysisTask;
+         _simulationAnalyzer = simulationAnalyzer;
+         _parameterSelector = parameterSelector;
+         _containerTask = containerTask;
+      }
+
+      public CoreSensitivityAnalysis MapFrom(SensitivityAnalysis sensitivityAnalysis)
+      {
+         var simulation = sensitivityAnalysis.Simulation;
+         var coreSensitivityAnalysis = _sensitivityAnalysisTask.CreateSensitivityAnalysisFor(simulation);
+         var parametersToVary = parameterPathsToVaryFrom(sensitivityAnalysis).Select(x => new ParameterSelection(simulation, x)).ToList();
+
+         _sensitivityAnalysisTask.AddParametersTo(coreSensitivityAnalysis, parametersToVary);
+
+         coreSensitivityAnalysis.AllSensitivityParameters.Each(x =>
+         {
+            x.NumberOfStepsParameter.Value = sensitivityAnalysis.NumberOfSteps;
+            x.VariationRangeParameter.Value = sensitivityAnalysis.VariationRange;
+         });
+
+
+         return coreSensitivityAnalysis;
+      }
+
+      public bool ParameterCanBeUsedForSensitivity(IParameter parameter)
+      {
+         return _parameterSelector.CanUseParameter(parameter) && parameter.IsConstantParameter() && !ValueComparer.AreValuesEqual(parameter, 0);
+      }
+
+      private IReadOnlyList<string> parameterPathsToVaryFrom(SensitivityAnalysis sensitivityAnalysis)
+      {
+         var simulation = sensitivityAnalysis.Simulation;
+         var constantParametersCache = _containerTask.CacheAllChildrenSatisfying<IParameter>(simulation.Model.Root, ParameterCanBeUsedForSensitivity);
+
+         var allUsedParameterPaths = sensitivityAnalysis.ParameterPaths.Any()
+            ? sensitivityAnalysis.ParameterPaths
+            : _simulationAnalyzer.AllPathOfParametersUsedInSimulation(sensitivityAnalysis.Simulation);
+
+         return allUsedParameterPaths.Select(x => new
+            {
+               Parameter = constantParametersCache[x],
+               Path = x
+            })
+            .Where(x => x.Parameter != null)
+            .Select(x => x.Path).ToList();
+      }
+   }
+}

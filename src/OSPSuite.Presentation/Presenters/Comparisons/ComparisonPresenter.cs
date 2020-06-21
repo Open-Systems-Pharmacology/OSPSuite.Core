@@ -46,10 +46,10 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
          _view.RightCaption = rightCaption;
          _allDiffItemDTO = diffReport.Select(mapFrom).ToList();
          _view.BindTo(_allDiffItemDTO);
-         EnumHelper.AllValuesFor<PathElement>().Each(updateColumnVisibility);
+         EnumHelper.AllValuesFor<PathElementId>().Each(updateColumnVisibility);
 
          //Always hide name
-         _view.SetVisibility(PathElement.Name, visible: false);
+         _view.SetVisibility(PathElementId.Name, visible: false);
          _view.DifferenceTableVisible = _allDiffItemDTO.Any();
       }
 
@@ -63,9 +63,9 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
          _view.ClearBinding();
       }
 
-      private void updateColumnVisibility(PathElement pathElement)
+      private void updateColumnVisibility(PathElementId pathElementId)
       {
-         _view.SetVisibility(pathElement, !_allDiffItemDTO.HasOnlyEmptyValuesAt(pathElement));
+         _view.SetVisibility(pathElementId, !_allDiffItemDTO.HasOnlyEmptyValuesAt(pathElementId));
       }
    }
 }
