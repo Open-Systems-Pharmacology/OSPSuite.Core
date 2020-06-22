@@ -5,7 +5,7 @@ environment:
   APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
 
 init:
-- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:appveyor_build)"
+- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:build)"
 
 dotnet_csproj:
   patch: true
