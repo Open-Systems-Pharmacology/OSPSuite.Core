@@ -1,6 +1,7 @@
 configuration: Debug
 image: Visual Studio 2019
 
+
 environment:
   APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
 
