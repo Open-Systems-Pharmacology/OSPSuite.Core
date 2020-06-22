@@ -1,11 +1,10 @@
 configuration: Debug
 image: Visual Studio 2019
 
-environment:
-  APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
+version: {build}
 
 init:
-- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:APPVEYOR_BUILD_ID)"
+- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:appveyor_build_version)"
 
 dotnet_csproj:
   patch: true
