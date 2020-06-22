@@ -2,7 +2,7 @@ configuration: Debug
 image: Visual Studio 2019
 
 init:
-- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:APPVEYOR_PULL_REQUEST_NUMBER )"
+- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:APPVEYOR_BUILD_ID)"
 
 dotnet_csproj:
   patch: true
