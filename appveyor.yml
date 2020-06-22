@@ -4,6 +4,8 @@ image: Visual Studio 2019
 environment:
   APPVEYOR_BLOCK_DOTNETCORE_TESTS_AUTORUN: true
 
+version: '$(ospsuite_version).{build}'
+
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -41,7 +43,6 @@ skip_tags: true
 skip_commits:
   files:
     - '*.md'
-
 
 branches:
   only:
