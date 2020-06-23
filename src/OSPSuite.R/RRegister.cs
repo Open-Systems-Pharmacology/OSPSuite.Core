@@ -36,7 +36,7 @@ namespace OSPSuite.R
 
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
-         container.Register<ILogger, RLogger, RLogger>(LifeStyle.Singleton);
+         container.Register<IOSPLogger, RLogger, RLogger>(LifeStyle.Singleton);
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
       }
    }

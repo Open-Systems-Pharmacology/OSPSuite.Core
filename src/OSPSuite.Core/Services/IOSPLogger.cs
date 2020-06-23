@@ -3,7 +3,7 @@ using System;
 
 namespace OSPSuite.Core.Services
 {
-   public interface ILogger
+   public interface IOSPLogger
    {
       /// <summary>
       ///    Logs the <paramref name="message" /> using the provided <paramref name="logLevel" /> for the

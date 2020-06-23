@@ -29,13 +29,13 @@ namespace OSPSuite.R.Services
       private readonly IPKParameterRepository _pkParameterRepository;
       private readonly IDimensionTask _dimensionTask;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly ILogger _logger;
+      private readonly IOSPLogger _logger;
 
       public PKParameterTask(
          IPKParameterRepository pkParameterRepository,
          IDimensionTask dimensionTask,
          IDimensionFactory dimensionFactory,
-         ILogger logger)
+         IOSPLogger logger)
       {
          _pkParameterRepository = pkParameterRepository;
          _dimensionTask = dimensionTask;

@@ -13,10 +13,10 @@ namespace OSPSuite.Presentation.Services
    {
       private readonly IDialogCreator _dialogCreator;
       private readonly IExceptionView _exceptionView;
-      private readonly ILogger _logger;
+      private readonly IOSPLogger _logger;
       private readonly string _productInfo;
 
-      public ExceptionManager(IDialogCreator dialogCreator, IExceptionView exceptionView, IApplicationConfiguration configuration, ILogger logger)
+      public ExceptionManager(IDialogCreator dialogCreator, IExceptionView exceptionView, IApplicationConfiguration configuration, IOSPLogger logger)
       {
          _dialogCreator = dialogCreator;
          _exceptionView = exceptionView;

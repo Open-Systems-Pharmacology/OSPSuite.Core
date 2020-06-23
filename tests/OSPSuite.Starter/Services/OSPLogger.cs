@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using ILogger = OSPSuite.Core.Services.ILogger;
+using IOSPLogger = OSPSuite.Core.Services.IOSPLogger;
 
 namespace OSPSuite.Starter.Services
 {
-   public class OSPLogger : ILogger
+   public class OSPLogger : IOSPLogger
    {
       public void AddToLog(string message, LogLevel logLevel)
       {
