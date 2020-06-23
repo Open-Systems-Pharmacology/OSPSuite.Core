@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using IOSPLogger = OSPSuite.Core.Services.IOSPLogger;
+using OSPSuite.Core.Services;
 
 namespace OSPSuite.Starter.Services
 {
