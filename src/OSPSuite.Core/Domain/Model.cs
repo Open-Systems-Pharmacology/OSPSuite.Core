@@ -19,6 +19,17 @@ namespace OSPSuite.Core.Domain
       ///    Returns the total drug mass parameter defined in the model for the <paramref name="moleculeName"/> if available or null otherwise
       /// </summary>
       IParameter TotalDrugMassFor(string moleculeName);
+
+      /// <summary>
+      /// Returns the molecule name associated with a quantity with path <paramref name="quantityPath"/>
+      /// </summary>
+      string MoleculeNameFor(string quantityPath);
+
+      /// <summary>
+      /// Returns the molecule name associated with the <paramref name="quantity"/>
+      /// </summary>
+      string MoleculeNameFor(IQuantity quantity);
+
    }
 
    public class Model : ObjectBase, IModel
@@ -43,12 +54,7 @@ namespace OSPSuite.Core.Domain
 
       public double? MolWeightFor(IQuantity quantity)
       {
-         if (Root == null || quantity == null)
-            return null;
-
-         var moleculeName = quantity.IsAnImplementationOf<IMoleculeAmount>() ? 
-            quantity.Name : 
-            quantity.ParentContainer?.Name;
+         var moleculeName = MoleculeNameFor(quantity);
 
          if (string.IsNullOrEmpty(moleculeName))
             return null;
@@ -62,6 +68,22 @@ namespace OSPSuite.Core.Domain
 
       //total drug mass is a parameter defined under the compound molecule global property
       public virtual IParameter TotalDrugMassFor(string moleculeName) => Root?.EntityAt<IParameter>(moleculeName, Constants.Parameters.TOTAL_DRUG_MASS);
+
+      public string MoleculeNameFor(string quantityPath)
+      {
+         var quantity = Root?.EntityAt<IQuantity>(quantityPath.ToPathArray());
+         return MoleculeNameFor(quantity);
+      }
+
+      public string MoleculeNameFor(IQuantity quantity)
+      {
+         if (quantity == null)
+            return string.Empty;
+
+         return quantity.IsAnImplementationOf<IMoleculeAmount>() ?
+            quantity.Name :
+            quantity.ParentContainer?.Name;
+      }
 
       public double? MolWeightFor(string quantityPath)
       {
@@ -102,5 +124,7 @@ namespace OSPSuite.Core.Domain
          // so only internal property must be set
          _neighborhoods = Root.Container(sourceModel.Neighborhoods.Name);
       }
+     
+
    }
 }

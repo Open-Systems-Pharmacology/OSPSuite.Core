@@ -110,4 +110,45 @@ namespace OSPSuite.Core
          sut.MolWeightFor(_quantityWithMolWeight).ShouldBeEqualTo(400);
       }
    }
+
+   public class When_retrieving_the_molecule_name_for_a_given_quantity : concern_for_Model
+   {
+      private MoleculeAmount _molecule;
+      private Parameter _parameterUnderMolecule;
+
+      protected override void Context()
+      {
+         base.Context();
+         var root = new Container().WithName("Root").WithId("Root");
+         sut.Root = root;
+         _molecule = new MoleculeAmount().WithName("Molecule");
+         var containerUnderMoleculeContainer = new Container().WithName("toto");
+         _parameterUnderMolecule = new Parameter().WithName("Param").WithFormula(new ConstantFormula(400));   
+         containerUnderMoleculeContainer.Add(_parameterUnderMolecule);
+
+         sut.Root.Add(_molecule);
+         sut.Root.Add(containerUnderMoleculeContainer);
+      }
+
+
+      [Observation]
+      public void should_return_empty_string_if_the_quantity_is_null()
+      {
+         string.IsNullOrEmpty(sut.MoleculeNameFor((string)null)).ShouldBeTrue();
+         string.IsNullOrEmpty(sut.MoleculeNameFor((IQuantity)null)).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_the_name_of_the_molecule_for_a_molecule_amount()
+      {
+         sut.MoleculeNameFor(_molecule).ShouldBeEqualTo(_molecule.Name);
+      }
+
+      [Observation]
+      public void should_return_the_name_of_the_molecule_container_for_a_parameter_otherwise()
+      {
+         sut.MoleculeNameFor(_parameterUnderMolecule).ShouldBeEqualTo("toto");
+      }
+
+   }
 }
