@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Services.Logging
 {
    public interface ILoggerCreator
    {
-      ILogger GetOrCreateLogger(string categoryName);
+      ILogger GetOrCreateLogger(string categoryName); 
 
       ILoggerCreator AddLoggingBuilderConfiguration(Func<ILoggingBuilder, ILoggingBuilder> configuration);
    }
