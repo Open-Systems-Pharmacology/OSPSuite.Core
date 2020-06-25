@@ -30,6 +30,7 @@
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Export\OSPSuite.Infrastructure.Export.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 

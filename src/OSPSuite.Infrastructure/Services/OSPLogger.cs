@@ -1,17 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using OSPSuite.Core.Services.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using OSPSuite.Core.Services;
 
-namespace OSPSuite.Core.Services
+namespace OSPSuite.Infrastructure.Services
 {
-   public class OSPSuiteLogger : IOSPLogger
+   public class OSPLogger : IOSPLogger
    {
       protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
       private readonly ILoggerCreator _loggerCreator;
 
-      public OSPSuiteLogger(ILoggerCreator loggerCreator)
+      public OSPLogger(ILoggerCreator loggerCreator)
       {
          _loggerCreator = loggerCreator;
       }

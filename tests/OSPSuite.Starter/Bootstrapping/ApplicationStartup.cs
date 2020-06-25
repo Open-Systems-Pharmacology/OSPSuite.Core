@@ -103,7 +103,6 @@ namespace OSPSuite.Starter.Bootstrapping
             container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
             container.Register<IApplicationController, ApplicationController>(LifeStyle.Singleton);
             container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
-            container.Register<IOSPLogger, OSPLogger>(LifeStyle.Singleton);
             container.RegisterImplementationOf(getCurrentContext());
             container.Register<IHistoryManager, HistoryManager<MyContext>>();
             container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();

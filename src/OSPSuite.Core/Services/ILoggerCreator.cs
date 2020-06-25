@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OSPSuite.Core.Services.Logging
+namespace OSPSuite.Core.Services
 {
    public interface ILoggerCreator
    {

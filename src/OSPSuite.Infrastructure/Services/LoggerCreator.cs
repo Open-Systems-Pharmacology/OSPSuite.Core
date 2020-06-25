@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace OSPSuite.Core.Services.Logging
+namespace OSPSuite.Infrastructure.Services
 {
    public class LoggerCreator : ILoggerCreator
    {

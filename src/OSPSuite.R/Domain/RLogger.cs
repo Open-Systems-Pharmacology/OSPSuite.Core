@@ -4,7 +4,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Extensions;
-using IOSPLogger = OSPSuite.Core.Services.IOSPLogger;
 
 namespace OSPSuite.R.Domain
 {

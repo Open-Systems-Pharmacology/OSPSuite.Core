@@ -13,7 +13,6 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.Logging;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -99,8 +98,6 @@ namespace OSPSuite.Core
 
          registerThirdPartyComponents(container);
 
-         registerLogging(container);
-
          container.RegisterFactory<IStartableProcessFactory>();
 
          //Register Optimization algorithm explicitly
@@ -146,13 +143,6 @@ namespace OSPSuite.Core
       private static void registerThirdPartyComponents(IContainer container)
       {
          container.Register(typeof(IRepository<>), typeof(ImplementationRepository<>));
-      }
-
-      private static void registerLogging(IContainer container)
-      {
-         var loggerCreator = new LoggerCreator();
-         container.RegisterImplementationOf((ILoggerCreator)loggerCreator);
-         container.Register<IOSPLogger, OSPSuiteLogger>(LifeStyle.Singleton);
       }
    }
 }

@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using FakeItEasy.Configuration;
-using OSPSuite.Core.Services.Logging;
 
-namespace OSPSuite.Core.Services
+namespace OSPSuite.Infrastructure.Services
 {
    public abstract class concern_for_PKSimLoggerCreator : ContextSpecification<LoggerCreator>
    {
@@ -34,7 +33,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_invoke_new_action()
       {
-         var logger = new OSPSuiteLogger(sut);
+         var logger = new OSPLogger(sut);
          logger.AddToLog("test", new LogLevel(), "testcategory");
          A.CallTo(() => _f1.Invoke(A<ILoggingBuilder>.Ignored)).MustHaveHappened();
       }
@@ -55,7 +54,7 @@ namespace OSPSuite.Core.Services
             sut.AddLoggingBuilderConfiguration(functions[i]);
          }
 
-         var logger = new OSPSuiteLogger(sut);
+         var logger = new OSPLogger(sut);
          logger.AddToLog("test", new LogLevel(), "testcategory");
 
          for (var i = 0; i < iterations; i++)
