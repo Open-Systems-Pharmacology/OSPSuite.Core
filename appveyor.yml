@@ -35,9 +35,8 @@ build:
 
 skip_branch_with_pr: true
 
-#Set back to true when ready to merge
 pull_requests: 
-  do_not_increment_build_number: false     
+  do_not_increment_build_number: true     
 
 nuget: 
   disable_publish_on_pr: false  
