@@ -5,11 +5,10 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using ILogger = OSPSuite.Core.Services.ILogger;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   public interface IImportLogger : ILogger
+   public interface IImportLogger : IOSPLogger
    {
       IEnumerable<LogEntry> Entries { get; }
       IEnumerable<string> Log { get; }

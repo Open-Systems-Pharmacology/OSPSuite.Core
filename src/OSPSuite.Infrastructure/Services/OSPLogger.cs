@@ -1,22 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
-using ILogger = OSPSuite.Core.Services.ILogger;
+using OSPSuite.Core.Services;
 
-namespace OSPSuite.Infrastructure.Logging
+namespace OSPSuite.Infrastructure.Services
 {
-   public class OSPSuiteLogger : ILogger
+   public class OSPLogger : IOSPLogger
    {
-      private readonly ILoggerFactory _loggerFactory;
-      private readonly string _defaultLoggerCategory;
+      protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
+      private readonly ILoggerCreator _loggerCreator;
 
-      public OSPSuiteLogger(ILoggerFactory loggerFactory, string defaultLoggerCategory = "OSPSuite")
+      public OSPLogger(ILoggerCreator loggerCreator)
       {
-         _loggerFactory = loggerFactory;
-         _defaultLoggerCategory = defaultLoggerCategory;
+         _loggerCreator = loggerCreator;
       }
 
-      public virtual void AddToLog(string message, LogLevel logLevel, string categoryName)
+      public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
-         var logger = _loggerFactory.CreateLogger(string.IsNullOrEmpty(categoryName) ? _defaultLoggerCategory : categoryName);
+         var logger = _loggerCreator.GetOrCreateLogger(string.IsNullOrEmpty(categoryName) ? DEFAULT_LOGGER_CATEGORY : categoryName);
          switch (logLevel)
          {
             case LogLevel.Trace:

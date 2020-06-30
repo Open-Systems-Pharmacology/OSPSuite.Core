@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Utility.Compression;
 using OSPSuite.Utility.Container;
@@ -13,9 +14,18 @@ namespace OSPSuite.Infrastructure
          {
             scan.AssemblyContainingType<InfrastructureRegister>();
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
+            scan.ExcludeType<OSPLogger>();
          });
 
          registerThirdPartyComponents(container);
+         registerLogging(container);
+      }
+
+      private static void registerLogging(IContainer container)
+      {
+         var loggerCreator = new LoggerCreator();
+         container.RegisterImplementationOf((ILoggerCreator)loggerCreator);
+         container.Register<IOSPLogger, OSPLogger>(LifeStyle.Singleton);
       }
 
       private static void registerThirdPartyComponents(IContainer container)

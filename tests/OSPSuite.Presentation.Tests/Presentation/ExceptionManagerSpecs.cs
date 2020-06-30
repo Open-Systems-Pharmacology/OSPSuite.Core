@@ -16,14 +16,14 @@ namespace OSPSuite.Presentation.Presentation
       protected IDialogCreator _dialogCreator;
       protected IExceptionView _exceptionView;
       protected IApplicationConfiguration _configuration;
-      protected ILogger _logger;
+      protected IOSPLogger _logger;
 
       protected override void Context()
       {
          _dialogCreator = A.Fake<IDialogCreator>();
          _exceptionView = A.Fake<IExceptionView>();
          _configuration = A.Fake<IApplicationConfiguration>();
-         _logger= A.Fake<ILogger>();
+         _logger= A.Fake<IOSPLogger>();
          sut = new ExceptionManager(_dialogCreator, _exceptionView, _configuration, _logger);
       }
    }
