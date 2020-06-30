@@ -21,14 +21,11 @@ namespace OSPSuite.Infrastructure.Services
 
       public ILogger GetOrCreateLogger(string categoryName)
       {
-         var logger = _loggerDict.GetOrAdd(categoryName, (_) => SetupLogger(categoryName));
-         return logger;
+         return _loggerDict.GetOrAdd(categoryName, (_) => setupLogger(categoryName));
       }
 
-      private ILogger SetupLogger(string categoryName)
+      private ILogger setupLogger(string categoryName)
       {
-         ILogger logger;
-
          using (var loggerFactory = LoggerFactory.Create(
              builder =>
              _loggingBuilderConfigurations.Aggregate(
@@ -36,9 +33,8 @@ namespace OSPSuite.Infrastructure.Services
              ).Invoke(builder)
          ))
          {
-            logger = loggerFactory.CreateLogger(categoryName);
+            return loggerFactory.CreateLogger(categoryName);
          };
-         return logger;
       }
    }
 }
