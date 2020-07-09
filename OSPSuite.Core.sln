@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Cas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Presentation.Importer", "OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj", "{35702E0A-2BCD-4A10-B80E-306CA340DDDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,10 @@ Global
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35702E0A-2BCD-4A10-B80E-306CA340DDDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35702E0A-2BCD-4A10-B80E-306CA340DDDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35702E0A-2BCD-4A10-B80E-306CA340DDDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35702E0A-2BCD-4A10-B80E-306CA340DDDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
