@@ -25,7 +25,9 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataTable : IDataTable
    {
-      public Dictionary<string, IList<string>> RawData { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public Dictionary<string, IList<string>> RawData 
+      { get; set; }
+      
       public IFormat Format { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
    }
 }
