@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LumenWorks.Framework.IO, Version=3.8.0.0, Culture=neutral, PublicKeyToken=5ad3ea2f85776344, processorArchitecture=MSIL">
+      <HintPath>..\packages\LumenWorks.Framework.IO.3.8.0\lib\net20\LumenWorks.Framework.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,11 +45,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Core\DataSourceFileReaders\CsvDataSourceFile.cs" />
+    <Compile Include="Core\IDataSet.cs" />
     <Compile Include="Core\IDataSource.cs" />
+    <Compile Include="Core\IDataSourceFile.cs" />
     <Compile Include="Core\IDataTable.cs" />
     <Compile Include="Core\IFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IImporter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\OSPSuite.Core\OSPSuite.Core.csproj">
+      <Project>{BBEFC737-8370-44A0-B3B4-60A6C405569C}</Project>
+      <Name>OSPSuite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj">
+      <Project>{39AF5149-C3FC-4555-9DA1-F62206CEB111}</Project>
+      <Name>OSPSuite.Infrastructure.Import</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
