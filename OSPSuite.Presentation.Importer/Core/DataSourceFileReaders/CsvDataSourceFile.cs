@@ -20,6 +20,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             using (var reader = new CsvReaderDisposer(path))
             {
                var csv = reader.Csv;
+               var headers = csv.GetFieldHeaders();
+               IDataTable dataTable = new DataTable();
+               dataTable.RawData = new Dictionary<string, IList<string>>();
+               var rows = new List<List<string>>(headers.Length);
+               for (var i = 0; i < headers.Length; i++)
+                  rows.Add(new List<string>());
+               while (csv.ReadNextRecord())
+               {
+                  for (var i = 0; i < headers.Length; i++)
+                     rows[i].Add(csv[i]);
+               }
+               for (var i = 0; i < headers.Length; i++)
+                  dataTable.RawData.Add(headers[i], rows[i]);
+               var loadedData = new Dictionary<string, IDataTable>();
+               loadedData.Add("", dataTable);
+               return loadedData;
             }
          }
          catch (Exception e)
@@ -27,7 +43,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             logger.AddError(e.ToString());
             return null;
          }
-         return null;
       }
    }
 }

@@ -9,8 +9,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
    public abstract class concern_for_CsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
    {
-      private string csvFilePath;
-      protected string csvFile = "sample1.csv";
+      protected string csvFilePath;
+      private string csvFile = "sample1.csv";
 
       protected override void Context()
       {
@@ -29,16 +29,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void path_is_set()
       {
-         sut.Path.ShouldBeEqualTo(csvFile);
+         sut.Path.ShouldBeEqualTo(csvFilePath);
       }
 
       [TestCase]
       public void headers_are_read()
       {
          sut.DataTables.ElementAt(0).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
-         for (var i = 0; i < 3; i++)
+         for (var i = 1; i <= 3; i++)
          {
-            sut.DataTables.ElementAt(0).Value.RawData.Keys.ElementAt(i).ShouldBeEqualTo("header" + i);
+            sut.DataTables.ElementAt(0).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataTables.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
          for (var i = 0; i < 3; i++)
          {
-            sut.DataTables.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 3) });
+            sut.DataTables.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
          }
       }
    }
