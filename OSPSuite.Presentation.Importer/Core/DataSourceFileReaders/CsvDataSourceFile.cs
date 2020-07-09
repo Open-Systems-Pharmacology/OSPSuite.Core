@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OSPSuite.Presentation.Importer.Core.Readers
+namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
    public class CsvDataSourceFile : DataSourceFile
    {
