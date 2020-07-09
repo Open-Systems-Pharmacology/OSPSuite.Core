@@ -1,7 +1,7 @@
 ﻿using DevExpress.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
 
 namespace OSPSuite.UI.Importer.Services
 {

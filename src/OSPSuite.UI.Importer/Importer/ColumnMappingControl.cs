@@ -13,7 +13,7 @@ using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
-using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Importer.Services;

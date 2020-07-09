@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using DevExpress.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Extensions;
-using OSPSuite.Presentation.Importer.Presenter;
-using OSPSuite.Presentation.Importer.View;
+using OSPSuite.Presentation.DeprecatedImporter.Presenter;
+using OSPSuite.Presentation.DeprecatedImporter.View;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 

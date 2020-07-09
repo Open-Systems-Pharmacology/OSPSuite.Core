@@ -7,11 +7,11 @@ using DevExpress.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Services;
-using OSPSuite.Presentation.Importer.View;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
+using OSPSuite.Presentation.DeprecatedImporter.View;
 using OSPSuite.Presentation.Presenters;
 
-namespace OSPSuite.Presentation.Importer.Presenter
+namespace OSPSuite.Presentation.DeprecatedImporter.Presenter
 {
    public delegate void CopyMetaDataEventHandler(MetaDataTable metaDataTable, string columnName);
 

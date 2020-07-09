@@ -10,7 +10,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Importer;
 using OSPSuite.UI.Importer.Services;
@@ -701,7 +701,7 @@ namespace OSPSuite.UI
       public class when_excel_file_is_test2 : concern_for_ColumnMappingControl
       {
          protected string _excelFile;
-         protected Presentation.Importer.Services.Importer _importer;
+         protected Presentation.DeprecatedImporter.Services.Importer _importer;
          protected DataSet _data;
 
          public override void GlobalContext()
@@ -710,7 +710,7 @@ namespace OSPSuite.UI
 
             var dataRepositoryMapper = A.Fake<IImportDataTableToDataRepositoryMapper>();
             var columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();
-            _importer = new Presentation.Importer.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
+            _importer = new Presentation.DeprecatedImporter.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
             _excelFile = Path.Combine(_excelFilePath, "Test2.xls");
             _data = _importer.GetPreview(_excelFile, 10, new Cache<string, Rectangle>());
          }
@@ -1097,7 +1097,7 @@ namespace OSPSuite.UI
       public class when_excel_file_is_test4 : concern_for_ColumnMappingControl
       {
          protected string _excelFile;
-         protected Presentation.Importer.Services.Importer _importer;
+         protected Presentation.DeprecatedImporter.Services.Importer _importer;
          protected DataSet _data;
 
          public override void GlobalContext()
@@ -1105,7 +1105,7 @@ namespace OSPSuite.UI
             base.GlobalContext();
             var columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();
             var dataRepositoryMapper = A.Fake<IImportDataTableToDataRepositoryMapper>();
-            _importer = new Presentation.Importer.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
+            _importer = new Presentation.DeprecatedImporter.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
             _excelFile = Path.Combine(_excelFilePath, "Test4.xls");
             _data = _importer.GetPreview(_excelFile, 10, new Cache<string, Rectangle>());
          }

@@ -13,7 +13,7 @@ using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using SmartXLS;
 
-namespace OSPSuite.Presentation.Importer.Services
+namespace OSPSuite.Presentation.DeprecatedImporter.Services
 {
    public class Importer
    {

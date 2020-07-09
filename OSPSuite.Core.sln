@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Core.IntegrationTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation", "src\OSPSuite.Presentation\OSPSuite.Presentation.csproj", "{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Importer", "src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj", "{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.DeprecatedImporter", "src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.DeprecatedImporter.csproj", "{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Tests", "tests\OSPSuite.Presentation.Tests\OSPSuite.Presentation.Tests.csproj", "{4B2DDBFB-6DC8-45D0-B24E-0B64FB74B93C}"
 EndProject
@@ -55,9 +55,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Imp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Serialization", "src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj", "{47A7A6BA-C804-4A5B-A28F-535FA46E5FCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Infrastructure.Castle", "src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj", "{F428C61C-1B1A-42E2-8362-E416260E7B07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Castle", "src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj", "{F428C61C-1B1A-42E2-8362-E416260E7B07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

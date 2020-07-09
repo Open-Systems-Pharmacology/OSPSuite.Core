@@ -11,7 +11,7 @@ using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 using SmartXLS;
 
-namespace OSPSuite.Presentation.Importer.Services
+namespace OSPSuite.Presentation.DeprecatedImporter.Services
 {
    public interface IImporterTask
    {

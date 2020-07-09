@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
-using OSPSuite.Presentation.Importer.Presenter;
-using OSPSuite.Presentation.Importer.View;
+using OSPSuite.Presentation.DeprecatedImporter.Presenter;
+using OSPSuite.Presentation.DeprecatedImporter.View;
 using OSPSuite.UI.Views;
 using OSPSuite.Utility.Extensions;
 
