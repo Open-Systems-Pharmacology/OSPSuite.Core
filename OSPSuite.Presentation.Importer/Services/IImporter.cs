@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Importer.Services
 
       public IDataSourceFile LoadFile(string path)
       {
+         //Maybe also list supported file formats
          throw new System.NotImplementedException();
       }
    }
