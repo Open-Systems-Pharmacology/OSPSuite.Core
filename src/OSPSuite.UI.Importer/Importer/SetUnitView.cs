@@ -8,7 +8,7 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Extensions;
 

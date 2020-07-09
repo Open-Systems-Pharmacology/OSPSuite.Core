@@ -35,7 +35,7 @@
     <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
-    <ProjectReference Include="..\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
+    <ProjectReference Include="..\OSPSuite.Presentation.Importer\OSPSuite.Presentation.DeprecatedImporter.csproj" />
     <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
     <ProjectReference Include="..\OSPSuite.UI\OSPSuite.UI.csproj" />
   </ItemGroup>

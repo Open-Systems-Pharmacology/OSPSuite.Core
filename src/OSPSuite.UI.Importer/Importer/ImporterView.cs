@@ -12,9 +12,9 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Importer.Presenter;
-using OSPSuite.Presentation.Importer.Services;
-using OSPSuite.Presentation.Importer.View;
+using OSPSuite.Presentation.DeprecatedImporter.Presenter;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
+using OSPSuite.Presentation.DeprecatedImporter.View;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Importer
       private SourceFilePreviewControl _sourceFilePreviewControl;
       private ColumnMappingControl _columnMappingControl;
       private DataSetControl _dataSetControl;
-      private Presentation.Importer.Services.Importer _importer;
+      private Presentation.DeprecatedImporter.Services.Importer _importer;
       private ImportDataTable _importDataTable;
       private Dictionary<string, ColumnMappingControl> _columnMappingControls;
       private bool _importFlag;
@@ -98,7 +98,7 @@ namespace OSPSuite.UI.Importer
 
          MaximizeBox = true;
          namingImportPanel.FillWith(_namingView);
-         _importer = new Presentation.Importer.Services.Importer(_dataRepositoryMapper, _columnInfos, _importerTask, _dialogCreator);
+         _importer = new Presentation.DeprecatedImporter.Services.Importer(_dataRepositoryMapper, _columnInfos, _importerTask, _dialogCreator);
          _importDataTable = importDataTable;
          _columnMappingControls = new Dictionary<string, ColumnMappingControl>();
 

@@ -26,7 +26,7 @@ using OSPSuite.Infrastructure.Export;
 using OSPSuite.Infrastructure.Serialization;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Importer;
+using OSPSuite.Presentation.DeprecatedImporter;
 using OSPSuite.Presentation.Regions;
 using OSPSuite.Starter.Presenters;
 using OSPSuite.Starter.Services;

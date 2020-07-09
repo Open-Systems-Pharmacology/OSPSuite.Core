@@ -73,7 +73,7 @@
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Reporting\OSPSuite.Infrastructure.Reporting.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.DeprecatedImporter.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj" />
