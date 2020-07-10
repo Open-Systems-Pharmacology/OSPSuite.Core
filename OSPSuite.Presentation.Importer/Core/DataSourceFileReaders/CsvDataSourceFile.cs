@@ -8,10 +8,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class CsvDataSourceFile : DataSourceFile
    {
       private readonly IImportLogger logger;
-      public CsvDataSourceFile(string path, IImportLogger logger) : base(path) 
-      {
-         this.logger = logger;
-      }
+      public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
 
       override protected Dictionary<string, IDataTable> LoadFromFile(string path)
       {

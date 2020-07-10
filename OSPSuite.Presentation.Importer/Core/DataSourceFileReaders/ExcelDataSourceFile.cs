@@ -11,16 +11,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
    public class ExcelDataSourceFile : DataSourceFile
    {
-      private readonly IImportLogger logger;
-
-      public ExcelDataSourceFile(string path, IImportLogger logger) : base(path) //not sure this is the correct logger implementetion
-      {
-         this.logger = logger;
-      }
+      public ExcelDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
       override protected Dictionary<string, IDataTable> LoadFromFile(string path) //this is too long and should probably be broken down
       {
          try
          {
+
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             IWorkbook book = WorkbookFactory.Create(fs);
             var loadedData = new Dictionary<string, IDataTable>();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OSPSuite.Infrastructure.Import.Services;
+using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -13,9 +14,12 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public abstract class DataSourceFile : IDataSourceFile
    {
-      public DataSourceFile(string path)
+      protected readonly IImportLogger logger; //not sure this is the correct logger implementetion
+
+      public DataSourceFile(string path, IImportLogger logger)
       {
          Path = path;
+         this.logger = logger;
          DataTables = LoadFromFile(path);
       }
       
