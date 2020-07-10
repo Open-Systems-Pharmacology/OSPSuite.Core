@@ -6,6 +6,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
 using NPOI.HSSF.UserModel;
+using OSPSuite.Presentation.Importer.Infrastructure;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -16,66 +17,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
          try
          {
-            IWorkbook book;
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-               book = WorkbookFactory.Create(fs);
-            }
             var loadedData = new Dictionary<string, IDataTable>();
 
-
-            if (book == null)
-               return null; // actually even better throw an exception
+            var reader = new ExcelReader();
+            IWorkbook book = reader.loadWorkbook(path); //could even be extensions of IWorkbook fe
 
             for (var i = 0; i < book.NumberOfSheets; i++)
             {
                ISheet sheet = book.GetSheetAt(i);
                var sheetName = sheet.SheetName;
 
-               System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
-               excelRows.MoveNext();
+               var tableStart = reader.readFirstColumn(sheet);
+               var headers = reader.readHeadersList(sheet);
+               var rows = reader.reaDataTable(sheet, tableStart, headers.Count);
 
                IDataTable dataTable = new DataTable(); //also not sure about the naming after all - it is exactly the same with a well known C# class
                dataTable.RawData = new Dictionary<string, IList<string>>();
-
-               IRow excelRow = (XSSFRow)excelRows.Current; //THIS HERE IS xlsx SPECIFIC
-
-               var headers = new List<string>();
-               int tableStart = 0; //in case the table does not start from the column A
-
-               for (int j = 0; j < excelRow.LastCellNum; j++)
-               {
-                  ICell cell = excelRow.GetCell(j);
-
-                  if (cell != null)
-                     headers.Add(cell.ToString());
-                  else
-                     tableStart++; //assuming there are no empty headers 
-               }
-
-               var rows = new List<List<string>>(headers.Count);
-               for (var j = 0; j < headers.Count; j++)
-                  rows.Add(new List<string>());
-
-
-               while (excelRows.MoveNext())
-               {
-                  IRow excelRowsCurrent = (XSSFRow) excelRows.Current;
-
-                  for (int j = tableStart; j < excelRowsCurrent.LastCellNum; j++)
-                  {
-                     var cell = excelRowsCurrent.GetCell(j);
-
-                     if (cell != null)
-                     {
-                        rows[j - tableStart].Add(cell.ToString());
-                     }
-                     else
-                     {
-                        rows[j - tableStart].Add("");
-                     }
-                  }
-               }
 
                for (var j = 0; j < headers.Count; j++)
                   dataTable.RawData.Add(headers[j], rows[j]);
