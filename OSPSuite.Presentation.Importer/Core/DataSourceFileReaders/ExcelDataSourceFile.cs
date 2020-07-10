@@ -16,9 +16,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
          try
          {
-
-            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            IWorkbook book = WorkbookFactory.Create(fs);
+            IWorkbook book;
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+               book = WorkbookFactory.Create(fs);
+            }
             var loadedData = new Dictionary<string, IDataTable>();
 
 
