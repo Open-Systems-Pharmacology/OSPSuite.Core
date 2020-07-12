@@ -19,16 +19,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             var loadedData = new Dictionary<string, IDataSheet>();
 
             var reader = new ExcelReader();
-            IWorkbook book = reader.loadWorkbook(path); //could even be extensions of IWorkbook fe
+            IWorkbook book = reader.LoadWorkbook(path);
 
             for (var i = 0; i < book.NumberOfSheets; i++)
             {
                ISheet sheet = book.GetSheetAt(i);
                var sheetName = sheet.SheetName;
 
-               var tableStart = reader.determineFirstColumn(sheet);
-               var headers = reader.getExcelRowAsListOfStrings(sheet, tableStart);
-               var rows = reader.reaDataTable(sheet, tableStart, headers.Count);
+               var tableStart = reader.DetermineFirstColumn(sheet);
+               var headers = reader.GetExcelRowAsListOfStrings(sheet, tableStart);
+               var rows = reader.ReaDataTable(sheet, tableStart, headers.Count);
 
                IDataSheet dataSheet = new DataSheet(); //DataSheet also exists (under Microsoft.Graph.Application - but is by far less common).
                                                       //if we really want to we could even do it OSPSuiteDataSheet
