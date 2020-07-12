@@ -26,8 +26,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                ISheet sheet = book.GetSheetAt(i);
                var sheetName = sheet.SheetName;
 
-               var tableStart = reader.readFirstColumn(sheet);
-               var headers = reader.readHeadersList(sheet);
+               var tableStart = reader.determineFirstColumn(sheet);
+               var headers = reader.getExcelRowAsListOfStrings(sheet, tableStart);
                var rows = reader.reaDataTable(sheet, tableStart, headers.Count);
 
                IDataSheet dataSheet = new DataSheet(); //DataSheet also exists (under Microsoft.Graph.Application - but is by far less common).

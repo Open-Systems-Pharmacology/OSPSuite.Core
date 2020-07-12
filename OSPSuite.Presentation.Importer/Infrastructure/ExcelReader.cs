@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       private IRow GetCurrentExcelRow(IEnumerator enumerator)
       {
          IRow row;
-         try //discuss with Abdel: better an try-catch block, or should we actually do an i-esle and check the extension?
+         try //discuss with Abdel: better an try-catch block, or should we actually do an if-esle and check the extension?
          {
             row = (XSSFRow) enumerator.Current;
          }
@@ -36,35 +36,32 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return row;
       }
 
-
-      public List<string> readHeadersList(ISheet sheet)
+      //this cannot be used for readTable, bacouse we would have to transpose the list....we could do a seperate method for range.
+      //this would not ensure minimum code duplication, but is probably the most logical solution
+      //alternatively we can get the list and then traverse it to make the transposition (or with LINQ)
+      public List<string> getExcelRowAsListOfStrings(ISheet sheet, int columnOffset)
       {
+         var rangeList = new List<string>();
 
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
 
-         IDataSheet dataSheet = new DataSheet(); //also not sure about the naming after all - it is exactly the same with a well known C# class
-         dataSheet.RawData = new Dictionary<string, IList<string>>();
-
          var currentExcelRow = GetCurrentExcelRow(excelRows);
 
-         var headers = new List<string>();
-         int tableStart = 0; //in case the sheet does not start from the column A
-
-         for (int j = 0; j < currentExcelRow.LastCellNum; j++)
+         for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
          {
-            ICell cell = currentExcelRow.GetCell(j);
+            ICell cell = currentExcelRow.GetCell(i);
 
             if (cell != null)
-               headers.Add(cell.ToString());
+               rangeList.Add(cell.ToString());
             else
-               tableStart++; //assuming there are no empty headers - but if there are throw exception somewhere "fail with no proper format"
+               rangeList.Add(""); //we allow empty values for the headers in this variation - but if there are throw exception somewhere "fail with no proper format"
          }
-
-         return headers;
+         return rangeList;
       }
 
-      public int readFirstColumn(ISheet sheet)
+
+      public int determineFirstColumn(ISheet sheet)
       {
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
@@ -97,7 +94,6 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          while (excelRows.MoveNext())
          {
             var excelRowsCurrent = GetCurrentExcelRow(excelRows);
-
 
             for (int j = tableStart; j < excelRowsCurrent.LastCellNum; j++)
             {
