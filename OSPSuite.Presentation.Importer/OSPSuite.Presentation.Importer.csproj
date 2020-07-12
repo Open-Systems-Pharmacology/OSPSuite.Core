@@ -68,7 +68,7 @@
     <Compile Include="Core\IDataSet.cs" />
     <Compile Include="Core\IDataSource.cs" />
     <Compile Include="Core\IDataSourceFile.cs" />
-    <Compile Include="Core\IDataTable.cs" />
+    <Compile Include="Core\IDataSheet.cs" />
     <Compile Include="Core\IFormat.cs" />
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

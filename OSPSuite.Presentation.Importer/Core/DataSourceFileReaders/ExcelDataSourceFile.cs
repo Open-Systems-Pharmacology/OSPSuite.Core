@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using System.IO;
 using NPOI.HSSF.UserModel;
 using OSPSuite.Presentation.Importer.Infrastructure;
@@ -13,11 +12,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class ExcelDataSourceFile : DataSourceFile
    {
       public ExcelDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
-      override protected Dictionary<string, IDataTable> LoadFromFile(string path) //this is too long and should probably be broken down
+      override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
-            var loadedData = new Dictionary<string, IDataTable>();
+            var loadedData = new Dictionary<string, IDataSheet>();
 
             var reader = new ExcelReader();
             IWorkbook book = reader.loadWorkbook(path); //could even be extensions of IWorkbook fe
@@ -31,13 +30,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                var headers = reader.readHeadersList(sheet);
                var rows = reader.reaDataTable(sheet, tableStart, headers.Count);
 
-               IDataTable dataTable = new DataTable(); //also not sure about the naming after all - it is exactly the same with a well known C# class
-               dataTable.RawData = new Dictionary<string, IList<string>>();
+               IDataSheet dataSheet = new DataSheet(); //also not sure about the naming after all - it is exactly the same with a well known C# class
+               dataSheet.RawData = new Dictionary<string, IList<string>>();
 
                for (var j = 0; j < headers.Count; j++)
-                  dataTable.RawData.Add(headers[j], rows[j]);
+                  dataSheet.RawData.Add(headers[j], rows[j]);
 
-               loadedData.Add(sheetName, dataTable);
+               loadedData.Add(sheetName, dataSheet);
             }
 
             return loadedData;
