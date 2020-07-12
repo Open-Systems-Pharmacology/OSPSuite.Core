@@ -30,7 +30,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                var headers = reader.readHeadersList(sheet);
                var rows = reader.reaDataTable(sheet, tableStart, headers.Count);
 
-               IDataSheet dataSheet = new DataSheet(); //also not sure about the naming after all - it is exactly the same with a well known C# class
+               IDataSheet dataSheet = new DataSheet(); //DataSheet also exists (under Microsoft.Graph.Application - but is by far less common).
+                                                      //if we really want to we could even do it OSPSuiteDataSheet
                dataSheet.RawData = new Dictionary<string, IList<string>>();
 
                for (var j = 0; j < headers.Count; j++)
