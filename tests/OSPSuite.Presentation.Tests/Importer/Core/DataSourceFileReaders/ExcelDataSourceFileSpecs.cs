@@ -12,6 +12,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    {
       protected string excelFilePath;
       private string excelFile = "sample1.xlsx";
+      //private string excelFile = "sample1.xls"; //actually, is there a way to run all the tests agaoin, just with a 
+                                                   //different concern?
 
       protected override void Context()
       {
@@ -34,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       }
 
       [TestCase]
-      public void headers_are_read()
+      public void headers_are_read_first_sheet()
       {
          sut.DataTables.ElementAt(0).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
@@ -44,12 +46,42 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       }
 
       [TestCase]
-      public void boddy_is_read()
+      public void headers_are_read_second_sheet()
+      {
+         sut.DataTables.ElementAt(1).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
+         for (var i = 1; i <= 3; i++)
+         {
+            sut.DataTables.ElementAt(1).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+         }
+      }
+      [TestCase]
+      public void boddy_is_read_first_sheet()
       {
          sut.DataTables.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
          for (var i = 0; i < 3; i++)
          {
             sut.DataTables.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] {"str" + (i + 1), "str" + (i + 4)});
+         }
+      }
+
+      [TestCase]
+      public void boddy_is_read_second_sheet() 
+      {
+         sut.DataTables.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
+         for (var i = 0; i < 3; i++)
+         {
+            sut.DataTables.ElementAt(1).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 7), "str" + (i + 10) });
+         }
+      }
+
+      [TestCase]
+      public void sheet_names_read_correctly()
+      {
+         sut.DataTables.Count.ShouldBeEqualTo(2);
+
+         for (var i = 0; i < 2; i++)
+         {
+            sut.DataTables.ElementAt(i).Key.ShouldBeEqualTo("Sheet" + (i+1));
          }
       }
    }
