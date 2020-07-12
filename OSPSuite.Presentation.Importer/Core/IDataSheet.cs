@@ -17,13 +17,13 @@ namespace OSPSuite.Presentation.Importer.Core
    /// <summary>
    /// e.g. a sheet in an excel file
    /// </summary>
-   public interface IDataTable
+   public interface IDataSheet
    {
       Dictionary<string, IList<string>> RawData { get; set; }
       IFormat Format { get; set; }
    }
 
-   public class DataTable : IDataTable
+   public class DataSheet : IDataSheet
    {
       public Dictionary<string, IList<string>> RawData 
       { get; set; }

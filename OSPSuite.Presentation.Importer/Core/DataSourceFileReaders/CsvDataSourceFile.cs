@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       private readonly IImportLogger logger;
       public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
 
-      override protected Dictionary<string, IDataTable> LoadFromFile(string path)
+      override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
@@ -18,8 +18,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
-               IDataTable dataTable = new DataTable();
-               dataTable.RawData = new Dictionary<string, IList<string>>();
+               IDataSheet dataSheet = new DataSheet();
+               dataSheet.RawData = new Dictionary<string, IList<string>>();
                var rows = new List<List<string>>(headers.Length);
                for (var i = 0; i < headers.Length; i++)
                   rows.Add(new List<string>());
@@ -29,9 +29,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                      rows[i].Add(csv[i]);
                }
                for (var i = 0; i < headers.Length; i++)
-                  dataTable.RawData.Add(headers[i], rows[i]);
-               var loadedData = new Dictionary<string, IDataTable>();
-               loadedData.Add("", dataTable);
+                  dataSheet.RawData.Add(headers[i], rows[i]);
+               var loadedData = new Dictionary<string, IDataSheet>();
+               loadedData.Add("", dataSheet);
                return loadedData;
             }
          }

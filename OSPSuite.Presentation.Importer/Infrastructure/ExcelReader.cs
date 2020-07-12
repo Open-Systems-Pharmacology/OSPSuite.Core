@@ -1,8 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using OSPSuite.Core.Services;
-//using OSPSuite.Infrastructure.Import.Services;
-
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using NPOI.SS.UserModel;
@@ -10,7 +6,6 @@ using NPOI.XSSF.UserModel;
 using System.IO;
 using NPOI.HSSF.UserModel;
 using OSPSuite.Presentation.Importer.Core;
-using DataTable = OSPSuite.Presentation.Importer.Core.DataTable;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
@@ -24,28 +19,41 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             book = WorkbookFactory.Create(fs);
          }
 
-         if (book == null)
-            return null; // actually even better throw an exception
-
+         //could possibly throw an exception if something goes wring with reading
          return book;
       }
+      private IRow GetCurrentExcelRow(IEnumerator enumerator)
+      {
+         IRow row;
+         try //discuss with Abdel: better an try-catch block, or should we actually do an i-esle and check the extension?
+         {
+            row = (XSSFRow) enumerator.Current;
+         }
+         catch
+         {
+            row = (HSSFRow)enumerator.Current;
+         }
+         return row;
+      }
+
 
       public List<string> readHeadersList(ISheet sheet)
       {
+
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
 
-         IDataTable dataTable = new DataTable(); //also not sure about the naming after all - it is exactly the same with a well known C# class
-         dataTable.RawData = new Dictionary<string, IList<string>>();
+         IDataSheet dataSheet = new DataSheet(); //also not sure about the naming after all - it is exactly the same with a well known C# class
+         dataSheet.RawData = new Dictionary<string, IList<string>>();
 
-         IRow excelRow = (XSSFRow)excelRows.Current; //THIS HERE IS xlsx SPECIFIC
+         var currentExcelRow = GetCurrentExcelRow(excelRows);
 
          var headers = new List<string>();
-         int tableStart = 0; //in case the table does not start from the column A
+         int tableStart = 0; //in case the sheet does not start from the column A
 
-         for (int j = 0; j < excelRow.LastCellNum; j++)
+         for (int j = 0; j < currentExcelRow.LastCellNum; j++)
          {
-            ICell cell = excelRow.GetCell(j);
+            ICell cell = currentExcelRow.GetCell(j);
 
             if (cell != null)
                headers.Add(cell.ToString());
@@ -60,13 +68,14 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       {
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
-         IRow excelRow = (XSSFRow)excelRows.Current; //THIS HERE IS xlsx SPECIFIC
+
+         var currentExcelRow = GetCurrentExcelRow(excelRows);
 
          int tableStart = 0;
 
-         for (int j = 0; j < excelRow.LastCellNum; j++)
+         for (int j = 0; j < currentExcelRow.LastCellNum; j++)
          {
-            ICell cell = excelRow.GetCell(j);
+            ICell cell = currentExcelRow.GetCell(j);
 
             if (cell == null)
                tableStart++;
@@ -87,7 +96,8 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          while (excelRows.MoveNext())
          {
-            IRow excelRowsCurrent = (XSSFRow)excelRows.Current;
+            var excelRowsCurrent = GetCurrentExcelRow(excelRows);
+
 
             for (int j = tableStart; j < excelRowsCurrent.LastCellNum; j++)
             {
@@ -103,10 +113,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
                }
             }
          }
-
          return rows;
       }
-
-
    }
 }

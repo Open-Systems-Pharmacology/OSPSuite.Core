@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Dictionary<string, IDataTable> DataTables { get; set; }
+      Dictionary<string, IDataSheet> DataTables { get; set; }
 	   string Path { get; set; }
    }
 
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Core
          DataTables = LoadFromFile(path);
       }
       
-      public Dictionary<string, IDataTable> DataTables 
+      public Dictionary<string, IDataSheet> DataTables 
       { 
          get; 
          set; 
@@ -35,6 +35,6 @@ namespace OSPSuite.Presentation.Importer.Core
          set; 
       }
 
-      protected abstract Dictionary<string, IDataTable> LoadFromFile(string path);
+      protected abstract Dictionary<string, IDataSheet> LoadFromFile(string path);
    }
 }
