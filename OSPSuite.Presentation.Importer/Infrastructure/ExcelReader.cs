@@ -9,9 +9,9 @@ using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
-   public class ExcelReader //or maybe rename it to excelReaderExtensions 
+   public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into exceptions
    {
-      public IWorkbook loadWorkbook(string path)
+      public IWorkbook LoadWorkbook(string path)
       {
          IWorkbook book;
          using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -19,34 +19,21 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             book = WorkbookFactory.Create(fs);
          }
 
-         //could possibly throw an exception if something goes wring with reading
+         //could possibly throw an exception if something goes wrong with reading
          return book;
       }
-      private IRow GetCurrentExcelRow(IEnumerator enumerator)
-      {
-         IRow row;
-         try //discuss with Abdel: better an try-catch block, or should we actually do an if-esle and check the extension?
-         {
-            row = (XSSFRow) enumerator.Current;
-         }
-         catch
-         {
-            row = (HSSFRow)enumerator.Current;
-         }
-         return row;
-      }
 
-      //this cannot be used for readTable, bacouse we would have to transpose the list....we could do a seperate method for range.
+      //this cannot be used for readTable, because we would have to transpose the list....we could do a separate method for range.
       //this would not ensure minimum code duplication, but is probably the most logical solution
       //alternatively we can get the list and then traverse it to make the transposition (or with LINQ)
-      public List<string> getExcelRowAsListOfStrings(ISheet sheet, int columnOffset)
+      public List<string> GetExcelRowAsListOfStrings(ISheet sheet, int columnOffset)
       {
          var rangeList = new List<string>();
 
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
 
-         var currentExcelRow = GetCurrentExcelRow(excelRows);
+         var currentExcelRow = getCurrentExcelRow(excelRows);
 
          for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
          {
@@ -61,12 +48,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       }
 
 
-      public int determineFirstColumn(ISheet sheet)
+      public int DetermineFirstColumn(ISheet sheet)
       {
          System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
          excelRows.MoveNext();
 
-         var currentExcelRow = GetCurrentExcelRow(excelRows);
+         var currentExcelRow = getCurrentExcelRow(excelRows);
 
          int tableStart = 0;
 
@@ -82,7 +69,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return tableStart;
       }
 
-      public List<List<string>> reaDataTable(ISheet sheet, int tableStart, int size)
+      public List<List<string>> ReaDataTable(ISheet sheet, int tableStart, int size)
       {
          var rows = new List<List<string>>(size);
          for (var j = 0; j < size; j++)
@@ -93,7 +80,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          while (excelRows.MoveNext())
          {
-            var excelRowsCurrent = GetCurrentExcelRow(excelRows);
+            var excelRowsCurrent = getCurrentExcelRow(excelRows);
 
             for (int j = tableStart; j < excelRowsCurrent.LastCellNum; j++)
             {
@@ -110,6 +97,20 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             }
          }
          return rows;
+      }
+
+      private IRow getCurrentExcelRow(IEnumerator enumerator)
+      {
+         IRow row;
+         try //discuss with Abdel: better a try-catch block, or should we actually do an if-esle and check the extension?
+         {
+            row = (XSSFRow)enumerator.Current;
+         }
+         catch
+         {
+            row = (HSSFRow)enumerator.Current;
+         }
+         return row;
       }
    }
 }
