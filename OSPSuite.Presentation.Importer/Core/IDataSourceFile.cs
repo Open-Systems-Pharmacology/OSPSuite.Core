@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Dictionary<string, IDataSheet> DataTables { get; set; }
+      Dictionary<string, IDataSheet> DataSheets { get; set; }
 	   string Path { get; set; }
    }
 
@@ -20,10 +20,10 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          Path = path;
          this.logger = logger;
-         DataTables = LoadFromFile(path);
+         DataSheets = LoadFromFile(path);
       }
       
-      public Dictionary<string, IDataSheet> DataTables 
+      public Dictionary<string, IDataSheet> DataSheets 
       { 
          get; 
          set; 

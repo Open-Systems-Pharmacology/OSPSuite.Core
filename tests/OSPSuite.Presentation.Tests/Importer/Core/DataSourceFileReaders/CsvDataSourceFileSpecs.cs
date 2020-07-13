@@ -35,20 +35,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataTables.ElementAt(0).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataTables.ElementAt(0).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
       public void boddy_is_read()
       {
-         sut.DataTables.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
          for (var i = 0; i < 3; i++)
          {
-            sut.DataTables.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
+            sut.DataSheets.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
          }
       }
    }

@@ -9,8 +9,8 @@ using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
-   public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into exceptions
-   {
+   public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into extensions
+   {   //we could get this info here or in getCurrentRow, but make sure we do it once
       public IWorkbook LoadWorkbook(string path)
       {
          IWorkbook book;
@@ -101,7 +101,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
       private IRow getCurrentExcelRow(IEnumerator enumerator)
       {
-         IRow row;
+         IRow row; //we do this every time we try to read a row - we have to actually store the info at the beginning
          try //discuss with Abdel: better a try-catch block, or should we actually do an if-esle and check the extension?
          {
             row = (XSSFRow)enumerator.Current;
