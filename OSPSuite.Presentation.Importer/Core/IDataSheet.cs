@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Core
    public interface IDataSheet
    {
       Dictionary<string, IList<string>> RawData { get; set; }
-      IFormat Format { get; set; }
+      IDataFormat Format { get; set; }
    }
 
    public class DataSheet : IDataSheet
@@ -28,6 +28,6 @@ namespace OSPSuite.Presentation.Importer.Core
       public Dictionary<string, IList<string>> RawData 
       { get; set; }
       
-      public IFormat Format { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public IDataFormat Format { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
    }
 }
