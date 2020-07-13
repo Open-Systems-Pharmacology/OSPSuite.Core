@@ -11,7 +11,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public bool CheckFile(Dictionary<string, IList<string>> rawData)
       {
-         throw new System.NotImplementedException();
+         if (rawData.Keys.Count < 2)
+            return false;
+         return true;
       }
 
       public Dictionary<IColumn, IList<double>> Parse(Dictionary<string, IList<string>> rawData)
