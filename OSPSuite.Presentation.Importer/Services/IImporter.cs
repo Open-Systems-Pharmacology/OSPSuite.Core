@@ -9,12 +9,12 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       IDataSourceFile LoadFile(string path);
       IDataSource ImportFromFile(IDataSourceFile file);
-      IList<IFormat> AvailableFormats(IDataSheet sheet);
+      IList<IDataFormat> AvailableFormats(IDataSheet sheet);
    }
 
    public class Importer : IImporter
    {
-      public IList<IFormat> AvailableFormats(IDataSheet sheet)
+      public IList<IDataFormat> AvailableFormats(IDataSheet sheet)
       {
          throw new System.NotImplementedException();
       }
