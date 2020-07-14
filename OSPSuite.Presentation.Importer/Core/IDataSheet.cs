@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using OSPSuite.Core.Commands;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -28,15 +30,16 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSheet
    {
-      Dictionary<string, IList<string>> RawData { get; set; }
+      IUnformatedData RawData { get; set; }
       IDataFormat Format { get; set; }
    }
 
    public class DataSheet : IDataSheet
    {
-      public Dictionary<string, IList<string>> RawData 
-      { get; set; }
-      
-      public IDataFormat Format { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public IDataFormat Format
+      {
+         get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException();
+      }
+      public IUnformatedData RawData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
    }
 }

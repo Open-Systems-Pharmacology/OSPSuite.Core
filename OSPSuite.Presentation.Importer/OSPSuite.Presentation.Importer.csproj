@@ -72,6 +72,7 @@
     <Compile Include="Core\IDataSourceFile.cs" />
     <Compile Include="Core\IDataSheet.cs" />
     <Compile Include="Core\IDataFormat.cs" />
+    <Compile Include="Core\IUnformatedData.cs" />
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IImporter.cs" />
