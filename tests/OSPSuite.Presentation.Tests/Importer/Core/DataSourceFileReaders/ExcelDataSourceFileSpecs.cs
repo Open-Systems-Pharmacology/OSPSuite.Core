@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.Path.ShouldBeEqualTo(excelFilePath);
       }
 
+      /*
       [TestCase]
       public void headers_are_read_first_sheet()
       {
@@ -53,6 +54,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             sut.DataSheets.ElementAt(1).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
+
       [TestCase]
       public void boddy_is_read_first_sheet()
       {
@@ -72,7 +74,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             sut.DataSheets.ElementAt(1).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 7), "str" + (i + 10) });
          }
       }
-
+*/
       [TestCase]
       public void sheet_names_read_correctly()
       {
