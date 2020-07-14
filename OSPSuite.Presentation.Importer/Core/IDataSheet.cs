@@ -10,8 +10,17 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class Column : IColumn
    {
-      public string Name { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-      public string Unit { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public string Name 
+      {
+         get;
+         set; 
+      }
+
+      public string Unit 
+      { 
+         get;
+         set; 
+      }
    }
 
    /// <summary>
