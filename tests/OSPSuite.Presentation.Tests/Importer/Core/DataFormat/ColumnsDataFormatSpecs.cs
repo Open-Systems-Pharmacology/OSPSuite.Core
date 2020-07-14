@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -434,6 +435,34 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             }
          };
          sut.CheckFile(singleColumn).ShouldBeFalse();
+      }
+   }
+
+   public class when_listing_parameters : concern_for_ColumnsDataFormat
+   {
+      protected override void Because()
+      {
+         sut.CheckFile(basicFormat);
+      }
+      
+      [TestCase]
+      public void identify_time_column()
+      {
+         var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
+         timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
+         var mapping = timeParameter as MappingDataFormatParameter;
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
+         mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
+      }
+   }
+
+   public class when_parsing_format : concern_for_ColumnsDataFormat
+   {
+      [TestCase]
+      public void parse_basic_format()
+      {
+         var data = sut.Parse(basicFormat);
       }
    }
 }

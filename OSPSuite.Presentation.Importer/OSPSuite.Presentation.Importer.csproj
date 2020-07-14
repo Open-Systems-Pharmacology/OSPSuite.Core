@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
     <Compile Include="Core\DataFormat\ColumnsDataFormat.cs" />
     <Compile Include="Core\DataSourceFileReaders\ExcelDataSourceFile.cs" />
     <Compile Include="Core\DataSourceFileReaders\CsvDataSourceFile.cs" />
