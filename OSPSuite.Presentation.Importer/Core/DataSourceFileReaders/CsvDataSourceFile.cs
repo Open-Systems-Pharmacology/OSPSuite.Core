@@ -12,6 +12,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
+         throw new NotImplementedException(); 
+         /*
          try
          {
             using (var reader = new CsvReaderDisposer(path))
@@ -39,7 +41,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          {
             logger.AddError(e.ToString());
             return null;
-         }
+         }*/
       }
    }
 }

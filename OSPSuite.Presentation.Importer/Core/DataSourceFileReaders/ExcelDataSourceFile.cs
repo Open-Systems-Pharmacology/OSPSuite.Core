@@ -14,6 +14,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public ExcelDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
+         throw new NotImplementedException();
+ /*
          try
          {
             var loadedData = new Dictionary<string, IDataSheet>();
@@ -31,14 +33,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                var headers = reader.GetExcelRowAsListOfStrings(sheet, tableStart);
                var rows = reader.ReaDataTable(sheet, tableStart, headers.Count);
 
-               /*
-               var rows = new List<List<string>>(headers.Count);
-               while (csv.ReadNextRecord())
-               {
-                  for (var i = 0; i < headers.Length; i++)
-                     rows[i].Add(csv[i]);
-               }
-*/
 
                IDataSheet dataSheet = new DataSheet(); //DataSheet also exists (under Microsoft.Graph.Application - but is by far less common).
                                                       //if we really want to we could even do it OSPSuiteDataSheet
@@ -57,6 +51,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             logger.AddError(ex.ToString());
             return null;
          }
+*/
       }
    }
 }

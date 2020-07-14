@@ -32,6 +32,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.Path.ShouldBeEqualTo(csvFilePath);
       }
 
+      /*
       [TestCase]
       public void headers_are_read()
       {
@@ -51,5 +52,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             sut.DataSheets.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
          }
       }
+*/
    }
 }
