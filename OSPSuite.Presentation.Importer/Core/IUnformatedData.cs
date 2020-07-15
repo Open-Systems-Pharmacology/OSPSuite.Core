@@ -3,12 +3,29 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
+   public class ColumnDescription
+   {
+      public enum MeasurmentLevel
+      {
+         DISCRETE,
+         NUMERIC
+      }
+
+      public string Name { get; set; }
+
+      public MeasurmentLevel Level { get; set; }
+
+      public List<string> Values { get; set; }
+   }
+
    public interface IUnformatedData
    {
       //UnformatedData
       IList<string> GetRow(int index);
       IList<string> GetColumn(int index);
       IList<string> GetColumn(string columnName);
+
+      Dictionary<string, ColumnDescription> Headers { get; set; }
 
       IList<IList<string>> GetRows(Func<IList<string>, bool> filter);
 
@@ -21,6 +38,8 @@ namespace OSPSuite.Presentation.Importer.Core
    public class UnformatedData : IUnformatedData
    {
       private List<List<string>> rawData;
+
+      public Dictionary<string, ColumnDescription> Headers { get; set; }
 
       //private Dictionary<string, ColumnDescription> headers; //we have to ensure headers and RawData sizes match
       //unparsed name   //datatype, List<strings> values, 
