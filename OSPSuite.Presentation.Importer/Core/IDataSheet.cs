@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSheet
    {
-      IUnformatedData RawData { get; set; }
+      UnformattedData RawData { get; set; }
       IDataFormat Format { get; set; }
    }
 
@@ -40,6 +40,6 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException();
       }
-      public IUnformatedData RawData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+      public UnformattedData RawData { get; set; }
    }
 }
