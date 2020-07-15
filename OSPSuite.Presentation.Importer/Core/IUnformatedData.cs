@@ -11,8 +11,6 @@ namespace OSPSuite.Presentation.Importer.Core
          NUMERIC
       }
 
-      public string Name { get; set; }
-
       public MeasurmentLevel Level { get; set; }
 
       public List<string> Values { get; set; }
