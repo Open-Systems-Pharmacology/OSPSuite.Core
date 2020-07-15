@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using DevExpress.Utils.StructuredStorage.Internal.Reader;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using System.Collections.Generic;
@@ -6,413 +7,106 @@ using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
+   internal class TestUnformattedData : UnformattedData
+   {
+      public TestUnformattedData(Dictionary<string, ColumnDescription> headers)
+      {
+         Headers = headers;
+      }
+   }
    public abstract class concern_for_ColumnsDataFormat : ContextSpecification<ColumnsDataFormat>
    {
-      protected Dictionary<string, IList<string>> basicFormat;
+      protected IUnformattedData basicFormat;
 
       protected override void Context()
       {
          sut = new ColumnsDataFormat();
-         basicFormat = new Dictionary<string, IList<string>>()
-         {
+         basicFormat = new TestUnformattedData
+         (
+            new Dictionary<string, ColumnDescription>()
             {
-               "Organ",
-               new List<string>()
                {
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood",
-                  "PeripheralVenousBlood"
-               }
-            },
-            {
-               "Compartment",
-               new List<string>()
+                  "Organ",
+                  new ColumnDescription(0)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
+                  }
+               },
                {
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized",
-                  "Arterialized"
-               }
-            },
-            {
-               "Species",
-               new List<string>()
+                  "Compartment",
+                  new ColumnDescription(1)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "Arterialized" }
+                  }
+               },
                {
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human",
-                  "Human"
-               }
-            },
-            {
-               "Gender",
-               new List<string>()
+                  "Species",
+                  new ColumnDescription(2)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "Human" }
+                  }
+               },
                {
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  ""
-               }
-            },
-            {
-               "Dose [unit]",
-               new List<string>()
+                  "Dose",
+                  new ColumnDescription(3)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "75 [g] glucose" }
+                  }
+               },
                {
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose",
-                  "75 [g] glucose"
-               }
-            },
-            {
-               "Molecule",
-               new List<string>()
+                  "Molecule",
+                  new ColumnDescription(4)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }
+                  }
+               },
                {
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total",
-                  "GLP-1_7-36 total"
-               }
-            },
-            {
-               "Time [min]",
-               new List<string>()
+                  "Time [min]",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     ExistingValues = null
+                  }
+               },
                {
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160",
-                  "189.4736842",
-                  "219.4736842",
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160",
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160",
-                  "189.4736842",
-                  "219.4736842",
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160",
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160",
-                  "189.4736842",
-                  "219.4736842",
-                  "99.47368421",
-                  "116.3157895",
-                  "129.4736842",
-                  "160"
-               }
-            },
-            {
-               "Concentration (molar) [pmol/l]",
-               new List<string>()
+                  "Concentration (molar) [pmol/l]",
+                  new ColumnDescription(6)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     ExistingValues = null
+                  }
+               },
                {
-                  "11",
-                  "19",
-                  "23",
-                  "19",
-                  "17",
-                  "14",
-                  "11",
-                  "19",
-                  "23",
-                  "19",
-                  "11",
-                  "19",
-                  "23",
-                  "19",
-                  "17",
-                  "14",
-                  "11",
-                  "19",
-                  "23",
-                  "19",
-                  "11",
-                  "19",
-                  "23",
-                  "19",
-                  "17",
-                  "14",
-                  "11",
-                  "19",
-                  "23",
-                  "19"
-               }
-            },
-            {
-               "Error [pmol/l]",
-               new List<string>()
+                  "Error [pmol/l]",
+                  new ColumnDescription(7)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     ExistingValues = null
+                  }
+               },
                {
-                  "",
-                  "",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90",
-                  "",
-                  "",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90",
-                  "",
-                  "",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90",
-                  "",
-                  "2.34",
-                  "3.89",
-                  "6.90"
-               }
-            },
-            {
-               "Route",
-               new List<string>()
+                  "Route",
+                  new ColumnDescription(8)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "po" }
+                  }
+               },
                {
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po",
-                  "po"
+                  "Groupe Id",
+                  new ColumnDescription(9)
+                  {
+                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     ExistingValues = new List<string>() { "H", "T2DM" }
+                  }
                }
             }
-            ,
-            {
-               "Groupe Id",
-               new List<string>()
-               {
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "H",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM",
-                  "T2DM"
-               }
-            }
-         };
+         );
       }
    }
 
@@ -427,13 +121,36 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_single_column_data()
       {
-         var singleColumn = new Dictionary<string, IList<string>>() 
-         {
-            { 
-               "Organ",
-               basicFormat["Organ"]
+         var singleColumn = new TestUnformattedData
+         (
+            new Dictionary<string, ColumnDescription>()
+            {
+               {
+                  "Organ",
+                  basicFormat.Headers["Organ"]
+               }
             }
-         };
+         );
+         sut.CheckFile(singleColumn).ShouldBeFalse();
+      }
+
+      [TestCase]
+      public void reject_multicolumn_with_less_than_two_numeric_columns()
+      {
+         var singleColumn = new TestUnformattedData
+         (
+            new Dictionary<string, ColumnDescription>()
+            {
+               {
+                  "Organ",
+                  basicFormat.Headers["Organ"]
+               },
+               {
+                  "Time [min]",
+                  basicFormat.Headers["Time [min]"]
+               }
+            }
+         );
          sut.CheckFile(singleColumn).ShouldBeFalse();
       }
    }
@@ -455,6 +172,17 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
       }
+
+      [TestCase]
+      public void identify_error_column()
+      {
+         var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
+         timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
+         var mapping = timeParameter as MappingDataFormatParameter;
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
+         mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
+      }
    }
 
    public class when_parsing_format : concern_for_ColumnsDataFormat
@@ -462,7 +190,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void parse_basic_format()
       {
-         var data = sut.Parse(basicFormat);
+         //var data = sut.Parse(basicFormat);
       }
    }
 }

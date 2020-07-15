@@ -14,8 +14,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public string ColumnName { get; set; }
 
       public DataFormatParameterType Type { get; set; }
-
-
    }
 
    public class MappingDataFormatParameter : DataFormatParameter
