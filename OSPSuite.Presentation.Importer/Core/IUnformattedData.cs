@@ -10,7 +10,8 @@ namespace OSPSuite.Presentation.Importer.Core
       IList<string> GetRow(int index);
       IList<string> GetColumn(int columnIndex); 
       IList<string> GetColumn(string columnName);
-      IList<string> getHeadersList();
+      IList<string> getHeadersList(); //we do not need this anymore
+      Dictionary<string, ColumnDescription> Headers { get; } //make the setter private in the implementation
 
 
       IList<IList<string>> GetRows(Func<List<string>, bool> filter);
@@ -44,17 +45,18 @@ namespace OSPSuite.Presentation.Importer.Core
       
       private List<List<string>> rawDataTable = new List<List<string>>();
 
-      public Dictionary<string, ColumnDescription> headers = new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+      public Dictionary<string, ColumnDescription> Headers { get; } =
+         new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
                                                 //the list of headers is somehow the definition of the table
       {
-         headers.Add(columnName, new ColumnDescription(columnIndex)); 
+         Headers.Add(columnName, new ColumnDescription(columnIndex)); 
       }
 
       public bool AddRow(List<string> row)
       {                                   //the not empty row part we could check explicitly
-         if (headers.Count == row.Count ) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
+         if (Headers.Count == row.Count ) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
          {
             rawDataTable.Add(row);
             return true;
@@ -75,7 +77,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IList<string> GetColumn(string columnName)
       {
-         var columnIndex = headers[columnName].Index;
+         var columnIndex = Headers[columnName].Index;
 
          var resultColumn = new List<string>();
 
@@ -87,7 +89,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IList<string> getHeadersList()
       {
-         return headers.Keys.ToList();
+         return Headers.Keys.ToList();
       }
 
       public IList<string> GetRow(int index)
