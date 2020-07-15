@@ -11,6 +11,6 @@ namespace OSPSuite.Presentation.Importer.Core
       string Description { get; }
       bool CheckFile(IUnformattedData rawData);
       IList<DataFormatParameter> Parameters { get; }
-      IList<Dictionary<IColumn, IList<double>>> Parse(Dictionary<string, IList<string>> rawData);
+      IList<Dictionary<IColumn, IList<double>>> Parse(IUnformattedData data);
    }
 }
