@@ -1,7 +1,9 @@
 ﻿using DevExpress.Utils.StructuredStorage.Internal.Reader;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -220,10 +222,34 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class when_parsing_format : concern_for_ColumnsDataFormat
    {
+      private IUnformattedData mockedData;
+      protected override void Context()
+      {
+         base.Context();
+         mockedData = A.Fake<IUnformattedData>();
+         A.CallTo(() => mockedData.Headers).Returns(basicFormat.Headers);
+      }
+
+      protected override void Because()
+      {
+         sut.CheckFile(mockedData);
+      }
+
       [TestCase]
       public void parse_basic_format()
       {
-         //var data = sut.Parse(basicFormat);
+         var data = sut.Parse(mockedData);
+         data.Count.ShouldBeEqualTo(10);
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H"})))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
       }
    }
 }

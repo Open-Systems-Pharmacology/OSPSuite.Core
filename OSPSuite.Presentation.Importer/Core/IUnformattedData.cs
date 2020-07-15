@@ -12,9 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core
       IList<string> GetColumn(string columnName);
       Dictionary<string, ColumnDescription> Headers { get; set; }
 
-
       IList<IList<string>> GetRows(Func<List<string>, bool> filter);
-
 
       bool AddRow(List<string> row);
       void AddColumn(string columnName, int columnIndex); 
@@ -97,7 +95,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IList<IList<string>> GetRows(Func<List<string>, bool> filter)
       {
-         throw new NotImplementedException();
+         return null;
       }
    }
 }
