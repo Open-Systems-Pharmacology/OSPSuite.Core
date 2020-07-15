@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Core
          ExistingValues = existingValues;
          MeasurmentLevel Level = columnDataType;
       }
-      public int Index { get; set; }
+      public int Index { get; private set; }
       public IList<string> ExistingValues { get; set; }
       public MeasurmentLevel Level { get; set; }
    }

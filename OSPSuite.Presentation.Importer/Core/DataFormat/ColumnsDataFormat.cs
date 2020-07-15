@@ -13,23 +13,34 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<DataFormatParameter> Parameters { get; private set; }
 
-      public bool CheckFile(Dictionary<string, IList<string>> rawData)
+      public bool CheckFile(IUnformattedData data)
       {
-         if (rawData.Keys.Count < 2)
+         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurmentLevel.NUMERIC).Count() < 2)
             return false;
-         SetParameters(rawData);
+         SetParameters(data);
          return true;
       }
 
-      private void SetParameters(Dictionary<string, IList<string>> rawData)
+      private void SetParameters(IUnformattedData data)
       {
-         var keys = rawData.Keys.ToList();
-         var timeKey = rawData.Keys.FirstOrDefault(h => h.ToUpper().Contains("TIME"));
-         keys.Remove(timeKey);
+         var keys = data.Headers.Keys.ToList();
          Parameters = new List<DataFormatParameter>();
-         var units = Regex.Match(timeKey, @"\[\w+\]").Value;
-         units = units.Substring(1, units.Length - 2).Trim();
-         Parameters.Add(new MappingDataFormatParameter(timeKey, new Column() { Name = "Time", Unit = units }));
+
+         foreach (var header in new[] { "Time", "Measurement", "Error" })
+         {
+            var headerKey = data.Headers.Keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
+            if (headerKey != null)
+            {
+               keys.Remove(headerKey);
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = ExtractUnits(headerKey) }));
+            }
+         }
+      }
+
+      private string ExtractUnits(string description)
+      {
+         var units = Regex.Match(description, @"\[.+\]").Value;
+         return units.Substring(1, units.Length - 2).Trim();
       }
 
       public IList<Dictionary<IColumn, IList<double>>> Parse(Dictionary<string, IList<string>> rawData)
