@@ -62,7 +62,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          foreach (var header in missingKeys)
          {
-            var headerKey = keys.FirstOrDefault(h => data.Headers[h].Level == ColumnDescription.MeasurmentLevel.NUMERIC);
+            var headerKey = keys.FirstOrDefault
+               (h => 
+                  data.Headers[h].Level == ColumnDescription.MeasurmentLevel.NUMERIC && 
+                  Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING).Select(p => p as MappingDataFormatParameter).Where(m => m.ColumnName == h).Count() == 0
+               );
             if (headerKey != null)
             {
                keys.Remove(headerKey);
