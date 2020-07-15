@@ -14,35 +14,35 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public ExcelDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
-         throw new NotImplementedException();
- /*
          try
          {
             var loadedData = new Dictionary<string, IDataSheet>();
+            IDataSheet dataSheet = new DataSheet();
+            dataSheet.RawData = new UnformattedData();
 
-            var reader = new ExcelReader();
-            IWorkbook book = reader.LoadWorkbook(path);
 
-            for (var i = 0; i < book.NumberOfSheets; i++)
+            var reader = new ExcelReader(path);
+
+            do
             {
-               ISheet sheet = book.GetSheetAt(i);
-               var sheetName = sheet.SheetName;
-               sheet.GetRow(i).GetCell().GetType();
+               var sheetName = reader.CurrentSheet.SheetName;
+               var headers = new List<string>();
 
-               var tableStart = reader.DetermineFirstColumn(sheet);
-               var headers = reader.GetExcelRowAsListOfStrings(sheet, tableStart);
-               var rows = reader.ReaDataTable(sheet, tableStart, headers.Count);
+               var tableStart = reader.DetermineFirstColumn(); //rename this to columnOffset
 
-
-               IDataSheet dataSheet = new DataSheet(); //DataSheet also exists (under Microsoft.Graph.Application - but is by far less common).
-                                                      //if we really want to we could even do it OSPSuiteDataSheet
-               dataSheet.RawData = new Dictionary<string, IList<string>>();
+               if (reader.MoveToNextRow(tableStart))
+                  headers = reader.CurrentRow;
 
                for (var j = 0; j < headers.Count; j++)
-                  dataSheet.RawData.Add(headers[j], rows[j]);
+                  dataSheet.RawData.AddColumn(headers[j], j);
+
+               while (reader.MoveToNextRow(tableStart))
+               {
+                  dataSheet.RawData.AddRow(reader.CurrentRow);
+               }
 
                loadedData.Add(sheetName, dataSheet);
-            }
+            } while (reader.MoveToNextSheet());
 
             return loadedData;
          }
@@ -51,7 +51,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             logger.AddError(ex.ToString());
             return null;
          }
-*/
       }
    }
 }
