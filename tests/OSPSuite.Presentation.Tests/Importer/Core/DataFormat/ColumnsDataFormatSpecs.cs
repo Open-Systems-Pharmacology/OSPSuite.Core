@@ -176,11 +176,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_error_column()
       {
-         var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
-         timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
-         (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
-         var mapping = timeParameter as MappingDataFormatParameter;
+         var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
+         errorParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
+         var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
+         mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
+      }
+
+      [TestCase]
+      public void identify_measurement_column_without_the_name_on_the_headings()
+      {
+         var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
+         measurementParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
+         var mapping = measurementParameter as MappingDataFormatParameter;
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Measurement");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
    }

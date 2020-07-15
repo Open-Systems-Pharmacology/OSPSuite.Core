@@ -2,6 +2,8 @@
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using NPOI.SS.Util;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -26,9 +28,25 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var keys = data.Headers.Keys.ToList();
          Parameters = new List<DataFormatParameter>();
 
+         var missingKeys = new List<string>();
+
          foreach (var header in new[] { "Time", "Measurement", "Error" })
          {
-            var headerKey = data.Headers.Keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
+            var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
+            if (headerKey != null)
+            {
+               keys.Remove(headerKey);
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = ExtractUnits(headerKey) }));
+            }
+            else
+            {
+               missingKeys.Add(header);
+            }
+         }
+
+         foreach (var header in missingKeys)
+         {
+            var headerKey = keys.FirstOrDefault(h => data.Headers[h].Level == ColumnDescription.MeasurmentLevel.NUMERIC);
             if (headerKey != null)
             {
                keys.Remove(headerKey);
