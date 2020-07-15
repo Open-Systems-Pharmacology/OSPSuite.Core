@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IList<IList<string>> GetRows(Func<List<string>, bool> filter)
       {
-         return null;
+         return (IList<IList<string>>) rawDataTable.Where(filter).ToList();
       }
    }
 }
