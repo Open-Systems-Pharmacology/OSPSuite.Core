@@ -30,35 +30,60 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var missingKeys = new List<string>();
 
+         extractQualifiedHeadings(data.Headers.Keys.ToList(), missingKeys);
+         extractNonQualifiedHeadings(keys, missingKeys, data);
+         extractGeneralParameters(keys, data);
+      }
+
+      private string extractUnits(string description)
+      {
+         var units = Regex.Match(description, @"\[.+\]").Value;
+         return units.Substring(1, units.Length - 2).Trim();
+      }
+
+      private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys)
+      {
          foreach (var header in new[] { "Time", "Measurement", "Error" })
          {
             var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = ExtractUnits(headerKey) }));
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = extractUnits(headerKey) }));
             }
             else
             {
                missingKeys.Add(header);
             }
          }
+      }
 
+      private void extractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data)
+      {
          foreach (var header in missingKeys)
          {
             var headerKey = keys.FirstOrDefault(h => data.Headers[h].Level == ColumnDescription.MeasurmentLevel.NUMERIC);
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = ExtractUnits(headerKey) }));
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = extractUnits(headerKey) }));
             }
          }
       }
 
-      private string ExtractUnits(string description)
+      private void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
-         var units = Regex.Match(description, @"\[.+\]").Value;
-         return units.Substring(1, units.Length - 2).Trim();
+         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurmentLevel.DISCRETE).ToList();
+         foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count == 1))
+         {
+            keys.Remove(header);
+            Parameters.Add(new MetaDataFormatParameter(header));
+         }
+         foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count > 1))
+         {
+            keys.Remove(header);
+            Parameters.Add(new GroupByDataFormatParameter(header));
+         }
       }
 
       public IList<Dictionary<IColumn, IList<double>>> Parse(Dictionary<string, IList<string>> rawData)

@@ -194,6 +194,28 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          mapping.MappedColumn.Name.ShouldBeEqualTo("Measurement");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
+
+      [TestCase]
+      public void identify_metadata_parameters()
+      {
+         var metadataParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.META_DATA).ToList();
+         metadataParameters.Count.ShouldBeEqualTo(5);
+         foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route" })
+         {
+            metadataParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
+         }
+      }
+
+      [TestCase]
+      public void identify_groupBy_parameters()
+      {
+         var groupeByParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.GROUP_BY).ToList();
+         groupeByParameters.Count.ShouldBeEqualTo(2);
+         foreach (var name in new[] { "Groupe Id", "Molecule" })
+         {
+            groupeByParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
+         }
+      }
    }
 
    public class when_parsing_format : concern_for_ColumnsDataFormat
