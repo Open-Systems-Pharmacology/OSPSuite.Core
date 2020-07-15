@@ -59,16 +59,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public void boddy_is_read_first_sheet()
       {
          sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetColumn("header1").Count.ShouldBeEqualTo(3);
          for (var i = 0; i < 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
+            sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
          }
       }
 
       [TestCase]
       public void boddy_is_read_second_sheet()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.GetColumn("sheet2_header2").Count.ShouldBeEqualTo(2);
          for (var i = 0; i < 3; i++)
          {
             sut.DataSheets.ElementAt(1).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 7), "str" + (i + 10) });
