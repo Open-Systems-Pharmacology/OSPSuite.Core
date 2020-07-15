@@ -9,8 +9,8 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       string Name { get; }
       string Description { get; }
-      bool CheckFile(Dictionary<string, IList<string>> rawData);
+      bool CheckFile(IUnformattedData rawData);
       IList<DataFormatParameter> Parameters { get; }
-      IList<Dictionary<IColumn, IList<double>>> Parse(Dictionary<string, IList<string>> rawData);
+      IList<Dictionary<IColumn, IList<double>>> Parse(IUnformattedData data);
    }
 }

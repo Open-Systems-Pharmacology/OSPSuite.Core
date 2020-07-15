@@ -10,12 +10,9 @@ namespace OSPSuite.Presentation.Importer.Core
       IList<string> GetRow(int index);
       IList<string> GetColumn(int columnIndex); 
       IList<string> GetColumn(string columnName);
-      IList<string> getHeadersList(); //we do not need this anymore
-      Dictionary<string, ColumnDescription> Headers { get; } //make the setter private in the implementation
-
+      Dictionary<string, ColumnDescription> Headers { get; set; }
 
       IList<IList<string>> GetRows(Func<List<string>, bool> filter);
-
 
       bool AddRow(List<string> row);
       void AddColumn(string columnName, int columnIndex); 
@@ -45,8 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core
       
       private List<List<string>> rawDataTable = new List<List<string>>();
 
-      public Dictionary<string, ColumnDescription> Headers { get; } =
-         new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+      public Dictionary<string, ColumnDescription> Headers { get; set; } = new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
                                                 //the list of headers is somehow the definition of the table
@@ -99,7 +95,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IList<IList<string>> GetRows(Func<List<string>, bool> filter)
       {
-         throw new NotImplementedException();
+         return (IList<IList<string>>) rawDataTable.Where(filter).ToList();
       }
    }
 }

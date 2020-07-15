@@ -1,6 +1,8 @@
-﻿using NUnit.Framework;
+﻿using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Infrastructure.Import.Services;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,10 +15,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       protected string excelFilePath;
       private string excelFile = "sample1.xlsx";
       //private string[] excelFile = {"sample1.xls", "sample1.xlsx"};  TESTING THIS BELONGS TO THE UNIT TESTS OF ExcelReader class. NOT HERE
-      //ALSO, Mock the LOGGER
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(excelFilePath, null);
+         sut = new ExcelDataSourceFile(excelFilePath, A.Fake<IImportLogger>());
       }
 
       public override void GlobalContext()
