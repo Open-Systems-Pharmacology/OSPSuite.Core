@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             {
                ISheet sheet = book.GetSheetAt(i);
                var sheetName = sheet.SheetName;
-               //sheet.GetRow(i);
+               sheet.GetRow(i).GetCell().GetType();
 
                var tableStart = reader.DetermineFirstColumn(sheet);
                var headers = reader.GetExcelRowAsListOfStrings(sheet, tableStart);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 
@@ -12,26 +13,27 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
-         throw new NotImplementedException(); 
-         /*
          try
          {
             using (var reader = new CsvReaderDisposer(path))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
-               IDataSheet dataSheet = new DataSheet();
-               dataSheet.RawData = new Dictionary<string, IList<string>>();
                var rows = new List<List<string>>(headers.Length);
+
+               IDataSheet dataSheet = new DataSheet();
+               dataSheet.RawData = new UnformattedData();
+
                for (var i = 0; i < headers.Length; i++)
-                  rows.Add(new List<string>());
+                  dataSheet.RawData.AddColumn(headers[i], i);
+               string[] currentRow = new string[csv.FieldCount];
+
                while (csv.ReadNextRecord())
                {
-                  for (var i = 0; i < headers.Length; i++)
-                     rows[i].Add(csv[i]);
+                  csv.CopyCurrentRecordTo(currentRow);
+                  dataSheet.RawData.AddRow(currentRow.ToList());
                }
-               for (var i = 0; i < headers.Length; i++)
-                  dataSheet.RawData.Add(headers[i], rows[i]);
+
                var loadedData = new Dictionary<string, IDataSheet>();
                loadedData.Add("", dataSheet);
                return loadedData;
@@ -41,7 +43,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          {
             logger.AddError(e.ToString());
             return null;
-         }*/
+         }
       }
    }
 }

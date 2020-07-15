@@ -32,26 +32,25 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.Path.ShouldBeEqualTo(csvFilePath);
       }
 
-      /*
+
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Keys.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
       public void boddy_is_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Values.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
          for (var i = 0; i < 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.Values.ElementAt(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
+            sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
          }
       }
-*/
    }
 }
