@@ -17,16 +17,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          try
          {
             var loadedData = new Dictionary<string, IDataSheet>();
-            IDataSheet dataSheet = new DataSheet();
-            dataSheet.RawData = new UnformattedData();
 
 
             var reader = new ExcelReader(path);
 
-            do
+            while (reader.MoveToNextSheet())
             {
                var sheetName = reader.CurrentSheet.SheetName;
                var headers = new List<string>();
+               IDataSheet dataSheet = new DataSheet();
+               dataSheet.RawData = new UnformattedData();
 
                var tableStart = reader.DetermineFirstColumn(); //rename this to columnOffset
 
@@ -38,11 +38,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
                while (reader.MoveToNextRow(tableStart))
                {
-                  dataSheet.RawData.AddRow(reader.CurrentRow);
+                  var rowToAdd = reader.CurrentRow; //OK, so this error here is really weird
+                  dataSheet.RawData.AddRow(rowToAdd); 
                }
 
                loadedData.Add(sheetName, dataSheet);
-            } while (reader.MoveToNextSheet());
+            } 
 
             return loadedData;
          }

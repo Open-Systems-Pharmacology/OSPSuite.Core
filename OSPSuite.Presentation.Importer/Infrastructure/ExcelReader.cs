@@ -24,8 +24,8 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
 
          sheetEnumerator = book.GetEnumerator();
-         CurrentSheet = sheetEnumerator.Current;
-         rowEnumerator = CurrentSheet.GetEnumerator();
+         //CurrentSheet = sheetEnumerator.Current;
+         //rowEnumerator = CurrentSheet.GetEnumerator();
       }
       public ISheet CurrentSheet { get; set; }
       public List<string> CurrentRow { get; set; } = new List<string>();
