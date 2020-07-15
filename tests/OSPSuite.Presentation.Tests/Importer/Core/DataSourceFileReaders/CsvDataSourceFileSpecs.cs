@@ -1,6 +1,8 @@
-﻿using NUnit.Framework;
+﻿using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Infrastructure.Import.Services;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       protected override void Context()
       {
-         sut = new CsvDataSourceFile(csvFilePath, null);
+         sut = new CsvDataSourceFile(csvFilePath, A.Fake<IImportLogger>());
       }
 
       public override void GlobalContext()
