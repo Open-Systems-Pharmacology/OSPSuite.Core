@@ -81,7 +81,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       }
 
       //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
-      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //actually columnOffset belongs to the Sheet should not be passed over every time
+      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //IMPORTANT: should be called after headers have been read!!!!
       {
          var resultList = new List<ColumnDescription.MeasurementLevel>();
          var currentExcelRow = getCurrentExcelRow(rowEnumerator);
