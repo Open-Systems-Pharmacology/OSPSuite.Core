@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Importer.Core
             {
                if (header.Value.Level == ColumnDescription.MeasurmentLevel.DISCRETE)
                {
-                  if (header.Value.ExistingValues.Contains(row[header.Value.Index]))
+                  if (!header.Value.ExistingValues.Contains(row[header.Value.Index]))
                      header.Value.ExistingValues.Add(row[header.Value.Index]);
                }
             }
