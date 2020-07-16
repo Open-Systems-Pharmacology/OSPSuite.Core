@@ -7,11 +7,11 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSet
    {
-      IList<Dictionary<IColumn, IList<double>>> Data { get; set; }
+      IList<Dictionary<Column, IList<double>>> Data { get; set; }
    }
 
    public class DataSet : IDataSet
    {
-      public IList<Dictionary<IColumn, IList<double>>> Data { get; set; }
+      public IList<Dictionary<Column, IList<double>>> Data { get; set; }
    }
 }

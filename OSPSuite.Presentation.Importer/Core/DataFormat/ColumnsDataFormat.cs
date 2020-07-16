@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using NPOI.SS.Util;
+using System;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -43,13 +44,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys)
       {
-         foreach (var header in new[] { "Time", "Measurement", "Error" })
+         foreach (var header in Enum.GetNames(typeof(Column.ColumnNames)))
          {
             var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = extractUnits(headerKey) }));
+               Column.ColumnNames columnName;
+               Enum.TryParse(header, out columnName);
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = columnName, Unit = extractUnits(headerKey) }));
             }
             else
             {
@@ -70,7 +73,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = header, Unit = extractUnits(headerKey) }));
+               Column.ColumnNames columnName;
+               Enum.TryParse(header, out columnName);
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = columnName, Unit = extractUnits(headerKey) }));
             }
          }
       }
@@ -90,15 +95,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      public IList<Dictionary<IColumn, IList<double>>> Parse(IUnformattedData data)
+      public IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data)
       {
          var groupByParams = Parameters.Where(p => p.Type == DataFormatParameterType.GROUP_BY).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
-         var dataSets = new List<Dictionary<IColumn, IList<double>>>();
+         var dataSets = new List<Dictionary<Column, IList<double>>>();
          buildDataSet(data, groupByParams, new Stack<int>(), dataSets);
          return dataSets;
       }
 
-      private void buildDataSet(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<IColumn, IList<double>>> dataSets)
+      private void buildDataSet(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets)
       {
          if (indexes.Count() == parameters.Count())
          {
@@ -114,18 +119,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
                return check;
             });
-            var dictionary = new Dictionary<IColumn, IList<double>>();
-            var mappingParameters = (Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING)).Select(p => p as MappingDataFormatParameter);
 
-            var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == "Time"); // add Time Measurement and Error as enum in the MappedColumn
-            dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[timeParameter.ColumnName].Index])).ToList());
-
-            var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == "Measurement");
-            dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[measurementParameter.ColumnName].Index])).ToList());
-
-            var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == "Error");
-            if (errorParameter != null)
-            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[errorParameter.ColumnName].Index])).ToList());
+            var dictionary = new Dictionary<Column, IList<double>>();
+            parseMappings(rawDataSet, data, dictionary);
 
             dataSets.Add(dictionary);
          }
@@ -138,6 +134,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                indexes.Pop();
             }
          }
+      }
+
+      private void parseMappings(IList<IList<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
+      {
+         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING).Select(p => p as MappingDataFormatParameter);
+         var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time); // add Time Measurement and Error as enum in the MappedColumn
+         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[timeParameter.ColumnName].Index])).ToList());
+
+         var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Measurement);
+         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[measurementParameter.ColumnName].Index])).ToList());
+
+         var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Error);
+         if (errorParameter != null)
+            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[errorParameter.ColumnName].Index])).ToList());
       }
    }
 }

@@ -171,7 +171,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
+         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Time);
          mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
       }
 
@@ -182,7 +182,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          errorParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
+         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Error);
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 
@@ -193,7 +193,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          measurementParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo("Measurement");
+         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Measurement);
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 

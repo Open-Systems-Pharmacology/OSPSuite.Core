@@ -4,25 +4,17 @@ using OSPSuite.Core.Commands;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-   public interface IColumn
+   public class Column
    {
-      string Name { get; set; }
-      string Unit { get; set; }
-   }
-
-   public class Column : IColumn
-   {
-      public string Name 
+      public enum ColumnNames
       {
-         get;
-         set; 
+         Time,
+         Measurement,
+         Error
       }
 
-      public string Unit 
-      { 
-         get;
-         set; 
-      }
+      public ColumnNames Name { get; set; }
+      public string Unit { get; set; }
    }
 
    /// <summary>
