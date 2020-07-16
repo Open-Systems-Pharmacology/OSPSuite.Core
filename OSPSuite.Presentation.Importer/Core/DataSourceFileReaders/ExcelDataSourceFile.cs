@@ -28,19 +28,17 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                IDataSheet dataSheet = new DataSheet();
                dataSheet.RawData = new UnformattedData();
 
-               var tableStart = reader.DetermineFirstColumn(); //rename this to columnOffset
-
-               if (reader.MoveToNextRow(tableStart))
+               if (reader.MoveToNextRow())
                   headers = reader.CurrentRow;
                //else probably throw exception
 
                for (var j = 0; j < headers.Count; j++)
                   dataSheet.RawData.AddColumn(headers[j], j);
 
-               while (reader.MoveToNextRow(tableStart))
+               while (reader.MoveToNextRow())
                {
                   //the first two could even be done only once
-                  var levels = reader.GetMeasurmentLevels(tableStart);
+                  var levels = reader.GetMeasurmentLevels();
                   dataSheet.RawData.CalculateColumnDescription(levels);
                   dataSheet.RawData.AddRow(reader.CurrentRow);
                }

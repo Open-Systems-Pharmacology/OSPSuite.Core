@@ -14,7 +14,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    {
       protected string excelFilePath;
       private string excelFile = "sample1.xlsx";
-      //private string[] excelFile = {"sample1.xls", "sample1.xlsx"};  TESTING THIS BELONGS TO THE UNIT TESTS OF ExcelReader class. NOT HERE
       protected override void Context()
       {
          sut = new ExcelDataSourceFile(excelFilePath, A.Fake<IImportLogger>());
