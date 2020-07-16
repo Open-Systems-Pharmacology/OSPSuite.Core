@@ -21,19 +21,23 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       public enum MeasurmentLevel
       {
+         NOT_SET,
          DISCRETE,
          NUMERIC
       }
       public ColumnDescription(int index)
       {
          Index = index;
+         Level = MeasurmentLevel.NOT_SET;
+         ExistingValues = new List<string>();
       }
 
+      //not sure we are going to be needing this kind of constructor
       public ColumnDescription(int index, List<string> existingValues, MeasurmentLevel columnDataType )
       {
          Index = index;
          ExistingValues = existingValues;
-         MeasurmentLevel Level = columnDataType;
+         Level = columnDataType;
       }
       public int Index { get; private set; }
       public IList<string> ExistingValues { get; set; }

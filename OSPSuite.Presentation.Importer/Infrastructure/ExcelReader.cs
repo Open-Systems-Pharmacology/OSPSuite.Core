@@ -28,6 +28,24 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       public ISheet CurrentSheet { get; set; }
       public List<string> CurrentRow { get; set; } = new List<string>();
 
+      //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
+      public List<ColumnDescription.MeasurmentLevel> GetMeasurmentLevels(int columnOffset) //actually columnOffset belongs to the Sheet should not be passed over every time
+      {
+         var resultList = new List<ColumnDescription.MeasurmentLevel>();
+         var currentExcelRow = getCurrentExcelRow(rowEnumerator);
+
+         for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
+         {
+            ICell cell = currentExcelRow.GetCell(i);
+
+            if (cell.CellType == CellType.Numeric)
+               resultList.Add(ColumnDescription.MeasurmentLevel.NUMERIC);
+            else
+               resultList.Add(ColumnDescription.MeasurmentLevel.DISCRETE);
+         }
+         return resultList;
+      }
+
       public void LoadNewWorkbook(string path)
       {
          using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
