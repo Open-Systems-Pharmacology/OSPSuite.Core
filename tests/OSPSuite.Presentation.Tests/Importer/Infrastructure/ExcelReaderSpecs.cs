@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
    public class when_using_excel_reader : concern_for_ExcelReader
    {
       [TestCase]
-      public void first_sheet_read_correctly()
+      public void first_sheet_read()
       {
          foreach (var path in excelFilePath)
          {
@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       }
 
       [TestCase]
-      public void second_sheet_read_correctly()
+      public void second_sheet_read()
       {
          foreach (var path in excelFilePath)
          {
@@ -62,7 +62,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       }
 
       [TestCase]
-      public void measurement_levels_read_correctly()
+      public void measurement_levels_read()
       {
          foreach (var path in excelFilePath)
          {
