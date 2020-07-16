@@ -38,8 +38,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(3);
-         for (var i = 1; i <= 3; i++)
+         sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(5);
+         for (var i = 1; i <= 5; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
@@ -48,11 +48,32 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void boddy_is_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(5);
          for (var i = 0; i < 3; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4) });
          }
       }
+
+      [TestCase]
+      public void measurement_levels_are_read_discrete()
+      {
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header1"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header2"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header3"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+      }
+
+      [TestCase]
+      public void measurement_levels_are_read_integer()
+      {
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header4"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+      }
+
+      [TestCase]
+      public void measurement_levels_are_read_double()
+      {
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+      }
+
    }
 }
