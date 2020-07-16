@@ -4,8 +4,11 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Services.Charts;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
@@ -55,6 +58,20 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             sut.MoveToNextRow();
             sut.CurrentRow.Count.ShouldBeEqualTo(3);
             sut.CurrentRow[1].ShouldBeEqualTo("sheet2_header2");
+         }
+      }
+
+      [TestCase]
+      public void measurement_levels_read_correctly()
+      {
+         foreach (var path in excelFilePath)
+         {
+            sut.LoadNewWorkbook(path);
+            for ( int i = 0; i < 3; i++)
+               sut.MoveToNextSheet();
+            for (int i = 0; i < 2; i++)
+               sut.MoveToNextRow();
+            sut.GetMeasurementLevels().ShouldBeEqualTo(new List<ColumnDescription.MeasurementLevel>() {ColumnDescription.MeasurementLevel.NUMERIC, ColumnDescription.MeasurementLevel.DISCRETE, ColumnDescription.MeasurementLevel.NUMERIC});
          }
       }
 
