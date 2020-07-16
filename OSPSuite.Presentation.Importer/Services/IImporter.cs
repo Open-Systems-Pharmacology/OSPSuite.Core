@@ -1,10 +1,6 @@
-﻿
-using Org.BouncyCastle.Math.EC.Rfc7748;
-using OSPSuite.Presentation.Importer.Core;
-using System;
+﻿using OSPSuite.Presentation.Importer.Core;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
@@ -12,17 +8,19 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(string path);
-      IDataSource ImportFromFile(IDataSourceFile file);
+      IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets);
       IList<IDataFormat> AvailableFormats(IUnformattedData data);
    }
 
    public class Importer : IImporter
    {
       private readonly IoC container;
+      private readonly IDataSourceFileParser parser;
 
-      public Importer(IoC container)
+      public Importer(IoC container, IDataSourceFileParser parser)
       {
          this.container = container;
+         this.parser = parser;
       }
 
       public IList<IDataFormat> AvailableFormats(IUnformattedData data)
@@ -34,15 +32,14 @@ namespace OSPSuite.Presentation.Importer.Services
             .ToList();
       }
 
-      public IDataSource ImportFromFile(IDataSourceFile file)
+      public IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets)
       {
-         throw new System.NotImplementedException();
+         return new DataSource() { DataSets = (IList<IDataSet>) sheets.Select(s => new DataSet() { Data = s.Format.Parse(s.RawData) }).ToList() };
       }
 
       public IDataSourceFile LoadFile(string path)
       {
-         //Maybe also list supported file formats
-         throw new System.NotImplementedException();
+         return parser.For(path);
       }
    }
 }
