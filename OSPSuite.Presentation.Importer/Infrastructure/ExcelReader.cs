@@ -17,7 +17,8 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       private IEnumerator<ISheet> sheetEnumerator;
       private IEnumerator rowEnumerator;
       private bool columnOffsetOn;
-      private int columnOffset = 0;
+      private int columnOffset;
+      private bool IsTypeXlsx;
 
       public ExcelReader(string path, bool ColumnOffsetOn = true )
       {
@@ -27,8 +28,8 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
 
          columnOffsetOn = ColumnOffsetOn;
-
          sheetEnumerator = book.GetEnumerator();
+         IsTypeXlsx = Path.GetExtension(path).Equals(".xlsx");
       }
       public ExcelReader(bool ColumnOffsetOn = true)
       {
@@ -45,6 +46,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
          sheetEnumerator = book.GetEnumerator();
          columnOffsetOn = ColumnOffsetOn;
+         IsTypeXlsx = Path.GetExtension(path).Equals(".xlsx");
       }
 
       public bool MoveToNextSheet()
@@ -127,12 +129,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
       private IRow getCurrentExcelRow(IEnumerator enumerator)
       {
-         IRow row; //we do this every time we try to read a row - we have to actually store the info at the beginning
-         try //discuss with Abdel: better a try-catch block, or should we actually do an if-esle and check the extension?
+         IRow row;
+         if (IsTypeXlsx) 
          {
             row = (XSSFRow)enumerator.Current;
          }
-         catch
+         else
          {
             row = (HSSFRow)enumerator.Current;
          }
