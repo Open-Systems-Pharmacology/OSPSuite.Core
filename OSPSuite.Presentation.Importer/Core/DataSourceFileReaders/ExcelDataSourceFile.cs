@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
                while (reader.MoveToNextRow(tableStart))
                {
-                  var rowToAdd = reader.CurrentRow; //OK, so this error here is really weird
+                  var rowToAdd = reader.CurrentRow;
                   dataSheet.RawData.AddRow(rowToAdd); 
                }
 

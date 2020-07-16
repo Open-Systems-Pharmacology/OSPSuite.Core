@@ -117,7 +117,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             var dictionary = new Dictionary<IColumn, IList<double>>();
             var mappingParameters = (Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING)).Select(p => p as MappingDataFormatParameter);
 
-            var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == "Time");
+            var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == "Time"); // add Time Measurement and Error as enum in the MappedColumn
             dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[timeParameter.ColumnName].Index])).ToList());
 
             var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == "Measurement");
