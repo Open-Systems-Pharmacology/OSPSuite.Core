@@ -36,8 +36,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class MappingDataFormatParameter : DataFormatParameter
    {
-      public IColumn MappedColumn { get; private set; }
-      public MappingDataFormatParameter(string columnName, IColumn mappedColumn)
+      public Column MappedColumn { get; private set; }
+      public MappingDataFormatParameter(string columnName, Column mappedColumn)
       {
          MappedColumn = mappedColumn;
          Type = DataFormatParameterType.MAPPING;
