@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
+using System.Text.RegularExpressions;
+
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -10,6 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    {
       public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
 
+      private static readonly Regex regex = new Regex(@"^[0-9]+([,.][0-9]?)?$"); //^\d+$ 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
@@ -30,6 +33,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                while (csv.ReadNextRecord())
                {
                   csv.CopyCurrentRecordTo(currentRow);
+                  var levels = getMeasurementLevels(currentRow.ToList());
+                  dataSheet.RawData.CalculateColumnDescription(levels);
                   dataSheet.RawData.AddRow(currentRow.ToList());
                }
 
@@ -43,6 +48,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             logger.AddError(e.ToString());
             return null;
          }
+      }
+
+      private List<ColumnDescription.MeasurementLevel> getMeasurementLevels(List<string> dataList)
+      {
+         var resultList = new List<ColumnDescription.MeasurementLevel>();
+
+         foreach (var item in dataList)
+         {
+            if (regex.IsMatch(item))
+               resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
+            else
+               resultList.Add(ColumnDescription.MeasurementLevel.DISCRETE);
+
+         }
+
+         return resultList;
       }
    }
 }

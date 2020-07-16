@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-   //THIS IS NOT STRING, WE HAVE TO DO IT GENERIC
    public interface IUnformattedData
    {
       IList<string> GetRow(int index);
