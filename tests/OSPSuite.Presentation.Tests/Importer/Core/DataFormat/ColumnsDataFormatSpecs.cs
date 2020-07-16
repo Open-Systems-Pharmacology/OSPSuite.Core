@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Organ",
                   new ColumnDescription(0)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "PeripheralVenousBlood" }
                   }
                },
@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Compartment",
                   new ColumnDescription(1)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "Arterialized" }
                   }
                },
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Species",
                   new ColumnDescription(2)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "Human" }
                   }
                },
@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Dose",
                   new ColumnDescription(3)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "75 [g] glucose" }
                   }
                },
@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Molecule",
                   new ColumnDescription(4)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }
                   }
                },
@@ -71,7 +71,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Time [min]",
                   new ColumnDescription(5)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
                      ExistingValues = null
                   }
                },
@@ -79,7 +79,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Concentration (molar) [pmol/l]",
                   new ColumnDescription(6)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
                      ExistingValues = null
                   }
                },
@@ -87,7 +87,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Error [pmol/l]",
                   new ColumnDescription(7)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
                      ExistingValues = null
                   }
                },
@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Route",
                   new ColumnDescription(8)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "po" }
                   }
                },
@@ -103,7 +103,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Groupe Id",
                   new ColumnDescription(9)
                   {
-                     Level = ColumnDescription.MeasurmentLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
                      ExistingValues = new List<string>() { "H", "T2DM" }
                   }
                }

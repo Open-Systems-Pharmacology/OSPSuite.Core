@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class ColumnDescription
    {
-      public enum MeasurmentLevel
+      public enum MeasurementLevel
       {
          NOT_SET,
          DISCRETE,
@@ -28,12 +28,12 @@ namespace OSPSuite.Presentation.Importer.Core
       public ColumnDescription(int index)
       {
          Index = index;
-         Level = MeasurmentLevel.NOT_SET;
+         Level = MeasurementLevel.NOT_SET;
          ExistingValues = new List<string>();
       }
 
       //not sure we are going to be needing this kind of constructor
-      public ColumnDescription(int index, List<string> existingValues, MeasurmentLevel columnDataType )
+      public ColumnDescription(int index, List<string> existingValues, MeasurementLevel columnDataType )
       {
          Index = index;
          ExistingValues = existingValues;
@@ -41,6 +41,6 @@ namespace OSPSuite.Presentation.Importer.Core
       }
       public int Index { get; private set; }
       public IList<string> ExistingValues { get; set; }
-      public MeasurmentLevel Level { get; set; }
+      public MeasurementLevel Level { get; set; }
    }
 }

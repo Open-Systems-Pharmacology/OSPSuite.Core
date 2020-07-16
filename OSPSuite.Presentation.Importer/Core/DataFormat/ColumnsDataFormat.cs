@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public bool CheckFile(IUnformattedData data)
       {
-         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurmentLevel.NUMERIC).Count() < 2)
+         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.NUMERIC).Count() < 2)
             return false;
          SetParameters(data);
          return true;
@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h => 
-                  data.Headers[h].Level == ColumnDescription.MeasurmentLevel.NUMERIC && 
+                  data.Headers[h].Level == ColumnDescription.MeasurementLevel.NUMERIC && 
                   Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING).Select(p => p as MappingDataFormatParameter).Where(m => m.ColumnName == h).Count() == 0
                );
             if (headerKey != null)
@@ -82,7 +82,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
-         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurmentLevel.DISCRETE).ToList();
+         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurementLevel.DISCRETE).ToList();
          foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count == 1))
          {
             keys.Remove(header);

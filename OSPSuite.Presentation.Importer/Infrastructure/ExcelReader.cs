@@ -81,9 +81,9 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       }
 
       //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
-      public List<ColumnDescription.MeasurmentLevel> GetMeasurmentLevels() //actually columnOffset belongs to the Sheet should not be passed over every time
+      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //actually columnOffset belongs to the Sheet should not be passed over every time
       {
-         var resultList = new List<ColumnDescription.MeasurmentLevel>();
+         var resultList = new List<ColumnDescription.MeasurementLevel>();
          var currentExcelRow = getCurrentExcelRow(rowEnumerator);
 
          for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
@@ -91,9 +91,9 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             ICell cell = currentExcelRow.GetCell(i);
 
             if (cell.CellType == CellType.Numeric)
-               resultList.Add(ColumnDescription.MeasurmentLevel.NUMERIC);
+               resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
             else
-               resultList.Add(ColumnDescription.MeasurmentLevel.DISCRETE);
+               resultList.Add(ColumnDescription.MeasurementLevel.DISCRETE);
          }
          return resultList;
       }
