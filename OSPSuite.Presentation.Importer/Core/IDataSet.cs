@@ -12,6 +12,6 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataSet : IDataSet
    {
-      public IList<Dictionary<IColumn, IList<double>>> Data { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public IList<Dictionary<IColumn, IList<double>>> Data { get; set; }
    }
 }

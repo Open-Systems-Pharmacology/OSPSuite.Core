@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
     <Compile Include="Core\DataFormat\ColumnsDataFormat.cs" />
+    <Compile Include="Core\IDataSourceFileParser.cs" />
     <Compile Include="Core\DataSourceFileReaders\ExcelDataSourceFile.cs" />
     <Compile Include="Core\DataSourceFileReaders\CsvDataSourceFile.cs" />
     <Compile Include="Core\IColumnDescription.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Core\IDataSheet.cs" />
     <Compile Include="Core\IDataFormat.cs" />
     <Compile Include="Core\IUnformattedData.cs" />
+    <Compile Include="Core\UnsuportedFormatException.cs" />
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IImporter.cs" />

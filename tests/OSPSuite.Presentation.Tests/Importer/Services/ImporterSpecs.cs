@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Container;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class concern_for_Importer : ContextSpecification<Services.Importer>
    {
       protected IUnformattedData basicFormat;
-      private IContainer IoC;
+      protected IContainer IoC;
+      protected IDataSourceFileParser parser;
 
-      protected override void Context()
+      public override void GlobalContext()
       {
-         base.Context();
+         base.GlobalContext();
          basicFormat = A.Fake<UnformattedData>();
          IoC = A.Fake<IContainer>();
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.CheckFile(basicFormat)).Returns(true);
          A.CallTo(() => IoC.Resolve<IDataFormat>(A<string>.Ignored)).Returns(dataFormat);
-         sut = new Services.Importer(IoC);
+         parser = A.Fake<IDataSourceFileParser>();
+         sut = new Services.Importer(IoC, parser);
       }
    }
 
