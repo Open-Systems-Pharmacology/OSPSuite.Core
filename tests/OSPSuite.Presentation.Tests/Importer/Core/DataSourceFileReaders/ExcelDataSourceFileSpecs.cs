@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -51,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataSheets.ElementAt(1).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets.ElementAt(1).Value.RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+            sut.DataSheets["Sheet2"].RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
       [TestCase]
@@ -77,9 +78,23 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       }
 
       [TestCase]
+      public void measurement_levels_are_read_third_sheet()
+      {
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["Double"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["integer"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+      }
+
+      [TestCase]
+      public void existing_values_are_read_third_sheet()
+      {
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
+      }
+
+      [TestCase]
       public void sheet_names_read_correctly()
       {
-         sut.DataSheets.Count.ShouldBeEqualTo(2);
+         sut.DataSheets.Count.ShouldBeEqualTo(3);
 
          for (var i = 0; i < 2; i++)
          {
