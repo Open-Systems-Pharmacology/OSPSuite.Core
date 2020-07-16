@@ -24,8 +24,6 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
 
          sheetEnumerator = book.GetEnumerator();
-         //CurrentSheet = sheetEnumerator.Current;
-         //rowEnumerator = CurrentSheet.GetEnumerator();
       }
       public ISheet CurrentSheet { get; set; }
       public List<string> CurrentRow { get; set; } = new List<string>();
@@ -49,15 +47,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return true;
       }
 
-      //this cannot be used for readTable, because we would have to transpose the list....we could do a separate method for range.
-         //this would not ensure minimum code duplication, but is probably the most logical solution
-         //alternatively we can get the list and then traverse it to make the transposition (or with LINQ)
       public bool MoveToNextRow(int columnOffset)
       {
          if (!rowEnumerator.MoveNext())
             return false;
 
-         CurrentRow.Clear();
+         CurrentRow = new List<string>();
 
          var currentExcelRow = getCurrentExcelRow(rowEnumerator);
 
