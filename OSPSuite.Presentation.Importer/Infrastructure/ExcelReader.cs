@@ -5,6 +5,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.IO;
 using NPOI.HSSF.UserModel;
+using NPOI.OpenXmlFormats.Dml;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Presentation.Importer.Core;
 
@@ -15,43 +16,35 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
       private IWorkbook book;
       private IEnumerator<ISheet> sheetEnumerator;
       private IEnumerator rowEnumerator;
+      private bool columnOffsetOn;
+      private int columnOffset = 0;
 
-      public ExcelReader(string path)
+      public ExcelReader(string path, bool ColumnOffsetOn = true )
       {
          using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
          {
             book = WorkbookFactory.Create(fs);
          }
+
+         columnOffsetOn = ColumnOffsetOn;
 
          sheetEnumerator = book.GetEnumerator();
       }
-      public ISheet CurrentSheet { get; set; }
+      public ExcelReader(bool ColumnOffsetOn = true)
+      {
+         columnOffsetOn = ColumnOffsetOn;
+      }
+      public ISheet CurrentSheet { get; set; } //why is this public even????
       public List<string> CurrentRow { get; set; } = new List<string>();
 
-      //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
-      public List<ColumnDescription.MeasurmentLevel> GetMeasurmentLevels(int columnOffset) //actually columnOffset belongs to the Sheet should not be passed over every time
-      {
-         var resultList = new List<ColumnDescription.MeasurmentLevel>();
-         var currentExcelRow = getCurrentExcelRow(rowEnumerator);
-
-         for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
-         {
-            ICell cell = currentExcelRow.GetCell(i);
-
-            if (cell.CellType == CellType.Numeric)
-               resultList.Add(ColumnDescription.MeasurmentLevel.NUMERIC);
-            else
-               resultList.Add(ColumnDescription.MeasurmentLevel.DISCRETE);
-         }
-         return resultList;
-      }
-
-      public void LoadNewWorkbook(string path)
+      public void LoadNewWorkbook(string path, bool ColumnOffsetOn = true)
       {
          using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
          {
             book = WorkbookFactory.Create(fs);
          }
+         sheetEnumerator = book.GetEnumerator();
+         columnOffsetOn = ColumnOffsetOn;
       }
 
       public bool MoveToNextSheet()
@@ -61,11 +54,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          CurrentSheet = sheetEnumerator.Current;
          rowEnumerator = CurrentSheet.GetEnumerator();
+         determineFirstColumn();
 
          return true;
       }
 
-      public bool MoveToNextRow(int columnOffset)
+      public bool MoveToNextRow()
       {
          if (!rowEnumerator.MoveNext())
             return false;
@@ -86,9 +80,32 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return true;
       }
 
-
-      public int DetermineFirstColumn()
+      //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
+      public List<ColumnDescription.MeasurmentLevel> GetMeasurmentLevels() //actually columnOffset belongs to the Sheet should not be passed over every time
       {
+         var resultList = new List<ColumnDescription.MeasurmentLevel>();
+         var currentExcelRow = getCurrentExcelRow(rowEnumerator);
+
+         for (int i = columnOffset; i < currentExcelRow.LastCellNum; i++)
+         {
+            ICell cell = currentExcelRow.GetCell(i);
+
+            if (cell.CellType == CellType.Numeric)
+               resultList.Add(ColumnDescription.MeasurmentLevel.NUMERIC);
+            else
+               resultList.Add(ColumnDescription.MeasurmentLevel.DISCRETE);
+         }
+         return resultList;
+      }
+
+      private void determineFirstColumn()
+      {
+         if (!columnOffsetOn)
+         {
+            columnOffset = 0;
+            return;
+         }
+
          System.Collections.IEnumerator excelRows = CurrentSheet.GetRowEnumerator();
          excelRows.MoveNext();
 
@@ -105,37 +122,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
             else
                break;
          }
-         return tableStart;
-      }
-
-      public List<List<string>> ReaDataTable(ISheet sheet, int tableStart, int size)
-      {
-         var rows = new List<List<string>>(size);
-         for (var j = 0; j < size; j++)
-            rows.Add(new List<string>());
-
-         System.Collections.IEnumerator excelRows = sheet.GetRowEnumerator();
-         excelRows.MoveNext();
-
-         while (excelRows.MoveNext())
-         {
-            var excelRowsCurrent = getCurrentExcelRow(excelRows);
-
-            for (int j = tableStart; j < excelRowsCurrent.LastCellNum; j++)
-            {
-               var cell = excelRowsCurrent.GetCell(j);
-
-               if (cell != null)
-               {
-                  rows[j - tableStart].Add(cell.ToString());
-               }
-               else
-               {
-                  rows[j - tableStart].Add("");
-               }
-            }
-         }
-         return rows;
+         columnOffset = tableStart;
       }
 
       private IRow getCurrentExcelRow(IEnumerator enumerator)
