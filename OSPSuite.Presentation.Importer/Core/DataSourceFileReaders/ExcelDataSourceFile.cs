@@ -32,14 +32,17 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
                if (reader.MoveToNextRow(tableStart))
                   headers = reader.CurrentRow;
+               //else probably throw exception
 
                for (var j = 0; j < headers.Count; j++)
                   dataSheet.RawData.AddColumn(headers[j], j);
 
                while (reader.MoveToNextRow(tableStart))
                {
-                  var rowToAdd = reader.CurrentRow;
-                  dataSheet.RawData.AddRow(rowToAdd); 
+                  //the first two could even be done only once
+                  var levels = reader.GetMeasurmentLevels(tableStart);
+                  dataSheet.RawData.CalculateColumnDescription(levels);
+                  dataSheet.RawData.AddRow(reader.CurrentRow);
                }
 
                loadedData.Add(sheetName, dataSheet);
