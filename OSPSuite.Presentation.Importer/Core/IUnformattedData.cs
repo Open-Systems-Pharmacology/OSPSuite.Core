@@ -30,11 +30,11 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          Headers.Add(columnName, new ColumnDescription(columnIndex));
       }
-      public void CalculateColumnDescription( List<ColumnDescription.MeasurmentLevel> levels)
+      public void CalculateColumnDescription( List<ColumnDescription.MeasurementLevel> levels)
       {
          foreach (KeyValuePair<string, ColumnDescription> header in Headers)
          {
-            if (header.Value.Level == ColumnDescription.MeasurmentLevel.NOT_SET) //hell, we could even not check here
+            if (header.Value.Level == ColumnDescription.MeasurementLevel.NOT_SET) //hell, we could even not check here
                header.Value.Level = levels[header.Value.Index];
          }
       }
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
             foreach (KeyValuePair<string, ColumnDescription> header in Headers)
             {
-               if (header.Value.Level == ColumnDescription.MeasurmentLevel.DISCRETE)
+               if (header.Value.Level == ColumnDescription.MeasurementLevel.DISCRETE)
                {
                   if (!header.Value.ExistingValues.Contains(row[header.Value.Index]))
                      header.Value.ExistingValues.Add(row[header.Value.Index]);
