@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    {
       public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
 
-      private static readonly Regex regex = new Regex(@"^[0-9]+([,.][0-9]?)?$"); //^\d+$ 
+      private static readonly Regex regex = new Regex(@"^[0-9]+([,.][0-9]+?)?$"); //^\d+$ 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
