@@ -12,6 +12,6 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataSource : IDataSource
    {
-      public IList<IDataSet> DataSets { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+      public IList<IDataSet> DataSets { get; set; }
    }
 }
