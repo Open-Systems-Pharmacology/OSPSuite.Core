@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using System.Text.RegularExpressions;
 
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
@@ -11,8 +10,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class CsvDataSourceFile : DataSourceFile
    {
       public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
-
-      private static readonly Regex regex = new Regex(@"^[0-9]+([,.][0-9]+?)?$"); //^\d+$ 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
@@ -56,13 +53,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
          foreach (var item in dataList)
          {
-            if (regex.IsMatch(item))
+            if (Double.TryParse(item, out var doubleValue))
                resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.DISCRETE);
 
          }
-
          return resultList;
       }
    }
