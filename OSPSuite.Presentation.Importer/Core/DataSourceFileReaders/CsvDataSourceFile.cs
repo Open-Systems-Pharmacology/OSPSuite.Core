@@ -8,9 +8,11 @@ using System.Text.RegularExpressions;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-   public class CsvDataSourceFile : DataSourceFile
+   public interface ICsvDataSourceFile : IDataSourceFile { }
+
+   public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
-      public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
+      public CsvDataSourceFile(IImportLogger logger) : base(logger) { }
 
       private static readonly Regex regex = new Regex(@"^[0-9]+([,.][0-9]+?)?$"); //^\d+$ 
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)

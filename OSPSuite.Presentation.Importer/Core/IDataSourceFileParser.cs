@@ -15,22 +15,25 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataSourceFileParser
    {
-      private readonly IImportLogger importLogger;
+      private readonly ICsvDataSourceFile csvDataSourceFile;
+      private readonly IExcelDataSourceFile excelDataSourceFile;
 
-      public DataSourceFileParser(IImportLogger importLogger)
+      public DataSourceFileParser(ICsvDataSourceFile csvDataSourceFile, IExcelDataSourceFile excelDataSourceFile)
       {
-         this.importLogger = importLogger;
+         
       }
 
       public IDataSourceFile For(string path)
       {
          if (path.EndsWith(".csv"))
          {
-            return new CsvDataSourceFile(path, importLogger);
+            csvDataSourceFile.Path = path;
+            return csvDataSourceFile;
          }
          else if (path.EndsWith(".xls") || path.EndsWith(".xlsx"))
          {
-            return new ExcelDataSourceFile(path, importLogger);
+            excelDataSourceFile.Path = path;
+            return excelDataSourceFile;
          }
          throw new UnsuportedFormatException();
       }
