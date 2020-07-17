@@ -16,11 +16,9 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       protected readonly IImportLogger logger; //not sure this is the correct logger implementetion
 
-      public DataSourceFile(string path, IImportLogger logger)
+      public DataSourceFile(IImportLogger logger)
       {
-         Path = path;
          this.logger = logger;
-         DataSheets = LoadFromFile(path);
       }
       
       public Dictionary<string, IDataSheet> DataSheets 
@@ -28,11 +26,13 @@ namespace OSPSuite.Presentation.Importer.Core
          get; 
          set; 
       }
-      
+
+
+      private string _path;
       public string Path 
-      { 
-         get; 
-         set; 
+      {
+         get { return _path; }
+         set { _path = value; DataSheets = LoadFromFile(value); }
       }
 
       protected abstract Dictionary<string, IDataSheet> LoadFromFile(string path);

@@ -17,7 +17,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       private string excelFile = "sample1.xlsx";
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(excelFilePath, A.Fake<IImportLogger>());
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>());
+         sut.Path = excelFilePath;
       }
 
       public override void GlobalContext()

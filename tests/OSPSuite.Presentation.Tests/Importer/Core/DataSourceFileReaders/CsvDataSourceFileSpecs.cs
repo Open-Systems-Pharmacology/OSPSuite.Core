@@ -16,7 +16,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       protected override void Context()
       {
-         sut = new CsvDataSourceFile(csvFilePath, A.Fake<IImportLogger>());
+         sut = new CsvDataSourceFile(A.Fake<IImportLogger>());
+         sut.Path = csvFilePath;
       }
 
       public override void GlobalContext()

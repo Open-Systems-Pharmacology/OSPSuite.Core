@@ -9,9 +9,11 @@ using OSPSuite.Presentation.Importer.Infrastructure;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-   public class ExcelDataSourceFile : DataSourceFile
+   public interface IExcelDataSourceFile : IDataSourceFile {}
+
+   public class ExcelDataSourceFile : DataSourceFile, IExcelDataSourceFile
    {
-      public ExcelDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
+      public ExcelDataSourceFile(IImportLogger logger) : base(logger) { }
       override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
