@@ -102,5 +102,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             sut.DataSheets.ElementAt(i).Key.ShouldBeEqualTo("Sheet" + (i + 1));
          }
       }
+
+      [TestCase]
+      public void double_read_with_correct_precision()
+      {
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0,000341012439638598" , "34,4399986267089" });
+      }
+
    }
 }
