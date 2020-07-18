@@ -9,7 +9,7 @@ namespace OSPSuite.Presentation.Importer.Core
       IList<string> GetRow(int index);
       IList<string> GetColumn(int columnIndex);
       IList<string> GetColumn(string columnName);
-      Dictionary<string, ColumnDescription> Headers { get; set; }
+      Dictionary<string, ColumnDescription> Headers { get; }
 
       IList<IList<string>> GetRows(Func<List<string>, bool> filter);
 
@@ -21,7 +21,6 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       private readonly List<List<string>> rawDataTable = new List<List<string>>();
 
-      //make setter private in class!!!
       public Dictionary<string, ColumnDescription> Headers { get; set; } = new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
