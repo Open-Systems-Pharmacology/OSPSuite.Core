@@ -82,7 +82,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                DateTimeFormat = { DateSeparator = "/" }
             };
           */
-         var culturesList = new string[] { "zh - Hans" , "ja-JP", "en - US"  };
+         var culturesList = new string[] { "de - DE", "es-AR", "zh - Hans" , "ja-JP", "en - US"  };
          foreach (var culture in culturesList)
          {
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
