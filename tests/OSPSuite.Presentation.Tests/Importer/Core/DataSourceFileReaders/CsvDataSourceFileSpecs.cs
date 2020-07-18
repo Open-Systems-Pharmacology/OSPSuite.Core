@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -73,7 +74,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void measurement_levels_are_read_double()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+         //note: decimal separator info can also be set directly:
+         /*
+          * var ci = new CultureInfo(currentCulture)
+            {
+               NumberFormat = { NumberDecimalSeparator = "," },
+               DateTimeFormat = { DateSeparator = "/" }
+            };
+          */
+         var culturesList = new string[] { "zh - Hans" , "ja-JP", "en - US"  };
+         foreach (var culture in culturesList)
+         {
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+         }
       }
 
    }

@@ -82,7 +82,6 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return true;
       }
 
-      //should this here know if MeasurementLevel???or should it actually read just the Numeric or not
       public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //IMPORTANT: should be called after headers have been read!!!!
       {
          var resultList = new List<ColumnDescription.MeasurementLevel>();
