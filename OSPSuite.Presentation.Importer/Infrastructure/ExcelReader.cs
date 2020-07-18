@@ -8,6 +8,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.OpenXmlFormats.Dml;
 using OSPSuite.Core.Importer.Mappers;
 using OSPSuite.Presentation.Importer.Core;
+using System;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
@@ -91,7 +92,8 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          {
             ICell cell = currentExcelRow.GetCell(i);
 
-            if (cell.CellType == CellType.Numeric)
+            //discuss with Abdel if we should keep this option here
+            if ((cell.CellType == CellType.Numeric) || (Double.TryParse(cell.ToString(), out var doubleValue)))
                resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.DISCRETE);

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -106,7 +107,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void double_read_with_correct_precision()
       {
-         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0,000341012439638598" , "34,4399986267089" });
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , "34,4399986267089" });
+         double firstDouble, secondDouble;
+         Double.TryParse(sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double")[0], out firstDouble);
+         Double.TryParse(sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double")[1], out secondDouble);
+         firstDouble.ShouldBeEqualTo( 0.000341012439638598 );
+         secondDouble.ShouldBeEqualTo( 0.000341012439638598 );
+
       }
 
    }
