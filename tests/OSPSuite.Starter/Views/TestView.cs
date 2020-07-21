@@ -31,6 +31,7 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
          startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
          startEmptyFormButton.Click += (sender, args) => OnEvent(_presenter.StartEmptyFormTest);
+         startColumnMapping.Click += (sender, args) => OnEvent(_presenter.StartColumnMapping);
       }
 
       public override void InitializeResources()
