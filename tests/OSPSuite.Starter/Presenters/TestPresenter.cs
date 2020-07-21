@@ -27,6 +27,7 @@ namespace OSPSuite.Starter.Presenters
       void StartMatrixTest();
       void StartEmptyFormTest();
       void StartColumnMapping();
+      void StartImporterExcelView();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -99,6 +100,11 @@ namespace OSPSuite.Starter.Presenters
       public void StartColumnMapping()
       {
          startLarge<IColumnMappingPresenter>();
+      }
+
+      public void StartImporterExcelView()
+      {
+         startLarge<IDataViewingPresenter>();
       }
    }
 }

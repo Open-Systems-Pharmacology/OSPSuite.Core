@@ -156,6 +156,8 @@
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="PresentationImporterRegister.cs" />
     <Compile Include="Presenters\ColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\DataViewingPresenter.cs" />
+    <Compile Include="Presenters\IDataViewingPresenter.cs" />
     <Compile Include="Presenters\IColumnMappingPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IImporter.cs" />
@@ -165,6 +167,13 @@
     <Compile Include="Views\ColumnMappingControl.Designer.cs">
       <DependentUpon>ColumnMappingControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataViewingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\DataViewingControl.Designer.cs">
+      <DependentUpon>DataViewingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -189,8 +198,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Views\ColumnMappingControl.resx">
       <DependentUpon>ColumnMappingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\DataViewingControl.resx">
+      <DependentUpon>DataViewingControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
