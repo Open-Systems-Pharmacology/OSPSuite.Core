@@ -34,6 +34,7 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Utils.v19.2, Version=19.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -58,6 +59,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -80,8 +83,18 @@
     <Compile Include="Core\IUnformattedData.cs" />
     <Compile Include="Core\UnsuportedFormatException.cs" />
     <Compile Include="Infrastructure\ExcelReader.cs" />
+    <Compile Include="PresentationImporterRegister.cs" />
+    <Compile Include="Presenters\ColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\IColumnMappingPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IImporter.cs" />
+    <Compile Include="Views\ColumnMappingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ColumnMappingControl.Designer.cs">
+      <DependentUpon>ColumnMappingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IColumnMappingControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\OSPSuite.Core\OSPSuite.Core.csproj">
@@ -92,13 +105,18 @@
       <Project>{39AF5149-C3FC-4555-9DA1-F62206CEB111}</Project>
       <Name>OSPSuite.Infrastructure.Import</Name>
     </ProjectReference>
+    <ProjectReference Include="..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj">
+      <Project>{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}</Project>
+      <Name>OSPSuite.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\OSPSuite.UI\OSPSuite.UI.csproj">
+      <Project>{AC617E4A-028B-4BFF-993C-3EA34EB042B4}</Project>
+      <Name>OSPSuite.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Presenters\" />
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

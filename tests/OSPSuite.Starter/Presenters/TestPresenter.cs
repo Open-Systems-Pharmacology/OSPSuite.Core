@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
@@ -25,6 +26,7 @@ namespace OSPSuite.Starter.Presenters
       void StartHistogramTest();
       void StartMatrixTest();
       void StartEmptyFormTest();
+      void StartColumnMapping();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -92,6 +94,11 @@ namespace OSPSuite.Starter.Presenters
       {
          Parameter parameter = null;
          this.DoWithinExceptionHandler(() => parameter.Value = 10);
+      }
+
+      public void StartColumnMapping()
+      {
+         startLarge<IColumnMappingPresenter>();
       }
    }
 }
