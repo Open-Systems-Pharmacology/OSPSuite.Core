@@ -175,8 +175,17 @@
     </Compile>
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
+    <Compile Include="Views\IImporterTask.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj">
+      <Project>{C74EFA9F-8DA4-4722-9BB1-70E9664F1ED4}</Project>
+      <Name>OSPSuite.Assets.Images</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\src\OSPSuite.Assets\OSPSuite.Assets.csproj">
+      <Project>{DEBF0532-3317-4ECF-9877-8EFE90FF7372}</Project>
+      <Name>OSPSuite.Assets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\OSPSuite.Core\OSPSuite.Core.csproj">
       <Project>{BBEFC737-8370-44A0-B3B4-60A6C405569C}</Project>
       <Name>OSPSuite.Core</Name>
