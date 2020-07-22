@@ -31,11 +31,11 @@
          this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
          this.label1 = new System.Windows.Forms.Label();
          this.uxGrid = new OSPSuite.UI.Controls.UxGridControl();
-         this.uxGridView1 = new OSPSuite.UI.Controls.UxGridView();
+         this.uxGridView = new OSPSuite.UI.Controls.UxGridView();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          this.flowLayoutPanel1.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.uxGrid)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGridView1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.uxGridView)).BeginInit();
          this.SuspendLayout();
          // 
          // flowLayoutPanel1
@@ -59,26 +59,26 @@
          // uxGrid
          // 
          this.uxGrid.Location = new System.Drawing.Point(3, 20);
-         this.uxGrid.MainView = this.uxGridView1;
+         this.uxGrid.MainView = this.uxGridView;
          this.uxGrid.Name = "uxGrid";
          this.uxGrid.Size = new System.Drawing.Size(757, 380);
          this.uxGrid.TabIndex = 1;
          this.uxGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.uxGridView1});
+            this.uxGridView});
          // 
          // uxGridView1
          // 
-         this.uxGridView1.AllowsFiltering = true;
-         this.uxGridView1.EnableColumnContextMenu = true;
-         this.uxGridView1.GridControl = this.uxGrid;
-         this.uxGridView1.MultiSelect = true;
-         this.uxGridView1.Name = "uxGridView1";
-         this.uxGridView1.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.MouseDown;
-         this.uxGridView1.OptionsNavigation.AutoFocusNewRow = true;
-         this.uxGridView1.OptionsSelection.EnableAppearanceFocusedCell = false;
-         this.uxGridView1.OptionsSelection.EnableAppearanceFocusedRow = false;
-         this.uxGridView1.OptionsSelection.MultiSelect = true;
-         this.uxGridView1.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CellSelect;
+         this.uxGridView.AllowsFiltering = true;
+         this.uxGridView.EnableColumnContextMenu = true;
+         this.uxGridView.GridControl = this.uxGrid;
+         this.uxGridView.MultiSelect = true;
+         this.uxGridView.Name = "uxGridView1";
+         this.uxGridView.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.MouseDown;
+         this.uxGridView.OptionsNavigation.AutoFocusNewRow = true;
+         this.uxGridView.OptionsSelection.EnableAppearanceFocusedCell = false;
+         this.uxGridView.OptionsSelection.EnableAppearanceFocusedRow = false;
+         this.uxGridView.OptionsSelection.MultiSelect = true;
+         this.uxGridView.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CellSelect;
          // 
          // ColumnMappingControl
          // 
@@ -91,7 +91,7 @@
          this.flowLayoutPanel1.ResumeLayout(false);
          this.flowLayoutPanel1.PerformLayout();
          ((System.ComponentModel.ISupportInitialize)(this.uxGrid)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGridView1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.uxGridView)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -101,6 +101,6 @@
       private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
       private System.Windows.Forms.Label label1;
       private UI.Controls.UxGridControl uxGrid;
-      private UI.Controls.UxGridView uxGridView1;
+      private UI.Controls.UxGridView uxGridView;
    }
 }
