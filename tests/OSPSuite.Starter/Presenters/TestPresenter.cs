@@ -1,9 +1,12 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Extensions;
+using System.Collections.Generic;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -99,7 +102,16 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartColumnMapping()
       {
-         startLarge<IColumnMappingPresenter>();
+         var starter = new TestStarter<IColumnMappingPresenter>();
+         starter.Start(600, 400);
+         starter.Presenter.SetDataFormatParameters(new List<DataFormatParameter>()
+            {
+               new MappingDataFormatParameter("Col1", new Column() { Name = Column.ColumnNames.Time, Unit = "s" }),
+               new MappingDataFormatParameter("Col2", new Column() { Name = Column.ColumnNames.Measurement, Unit = "g/mol" }),
+               new MappingDataFormatParameter("Col3", new Column() { Name = Column.ColumnNames.Error, Unit = "g/mol" }),
+               new MetaDataFormatParameter("Col4"),
+               new GroupByDataFormatParameter("Col5")
+            });
       }
 
       public void StartImporterExcelView()

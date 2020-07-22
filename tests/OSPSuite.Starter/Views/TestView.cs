@@ -55,6 +55,7 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
          startEmptyFormButton.Text = "Start Empty Form";
+         startColumnMapping.Text = "Start Importer Mappings View";
          startImporterExcelViewButton.Text = "Start Importer Excel View";
       }
 
