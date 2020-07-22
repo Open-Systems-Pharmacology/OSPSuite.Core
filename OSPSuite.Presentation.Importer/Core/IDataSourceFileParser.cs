@@ -13,14 +13,15 @@ namespace OSPSuite.Presentation.Importer.Core
       IDataSourceFile For(string path);
    }
 
-   public class DataSourceFileParser
+   public class DataSourceFileParser : IDataSourceFileParser
    {
       private readonly ICsvDataSourceFile csvDataSourceFile;
       private readonly IExcelDataSourceFile excelDataSourceFile;
 
       public DataSourceFileParser(ICsvDataSourceFile csvDataSourceFile, IExcelDataSourceFile excelDataSourceFile)
       {
-         
+         this.csvDataSourceFile = csvDataSourceFile;
+         this.excelDataSourceFile = excelDataSourceFile;
       }
 
       public IDataSourceFile For(string path)

@@ -10,9 +10,7 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Nodes;
-using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
@@ -23,6 +21,11 @@ using OSPSuite.Starter.Views;
 using OSPSuite.UI.Services;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
+using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Presentation.Importer;
 
 namespace OSPSuite.Starter
 {
@@ -70,6 +73,11 @@ namespace OSPSuite.Starter
          container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
+
+         container.Register<IDataSourceFileParser, DataSourceFileParser>();
+         container.Register<ICsvDataSourceFile, CsvDataSourceFile>();
+         container.Register<IImportLogger, ImportLogger>();
+         //container.Register<ColumnsDataFormat, ColumnsDataFormat>();
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();

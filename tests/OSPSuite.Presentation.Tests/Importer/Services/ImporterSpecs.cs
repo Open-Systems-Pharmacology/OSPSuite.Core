@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          IoC = A.Fake<IContainer>();
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.CheckFile(basicFormat)).Returns(true);
-         A.CallTo(() => IoC.Resolve<IDataFormat>(A<string>.Ignored)).Returns(dataFormat);
+         A.CallTo(() => IoC.Resolve(A<Type>.Ignored)).Returns(dataFormat);
          parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => IoC.Resolve<IDataSourceFileParser>()).Returns(parser);
          sut = new Services.Importer(IoC);

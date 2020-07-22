@@ -1,12 +1,20 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.DeprecatedImporter.Services;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
+using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -41,10 +49,11 @@ namespace OSPSuite.Starter.Presenters
       private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
+      private readonly IImporterConfigurationDataGenerator _dataGenerator;
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
-         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter) : base(view)
+         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -52,6 +61,7 @@ namespace OSPSuite.Starter.Presenters
          _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
+         _dataGenerator = dataGenerator;
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
@@ -104,14 +114,20 @@ namespace OSPSuite.Starter.Presenters
       {
          var starter = new TestStarter<IColumnMappingPresenter>();
          starter.Start(600, 400);
-         starter.Presenter.SetDataFormatParameters(new List<DataFormatParameter>()
-            {
-               new MappingDataFormatParameter("Col1", new Column() { Name = Column.ColumnNames.Time, Unit = "s" }),
-               new MappingDataFormatParameter("Col2", new Column() { Name = Column.ColumnNames.Measurement, Unit = "g/mol" }),
-               new MappingDataFormatParameter("Col3", new Column() { Name = Column.ColumnNames.Error, Unit = "g/mol" }),
-               new MetaDataFormatParameter("Col4"),
-               new GroupByDataFormatParameter("Col5")
-            });
+         var file = new OpenFileDialog();
+         if (file.ShowDialog() == DialogResult.OK)
+         {
+            var importer = new Presentation.Importer.Services.Importer(IoC.Container);
+            var source = importer.LoadFile(file.FileName);
+            var dataImporterSettings = new DataImporterSettings();
+            dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
+            dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+            starter.Presenter.SetSettings(
+               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings);
+            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format);
+         }
       }
 
       public void StartImporterExcelView()

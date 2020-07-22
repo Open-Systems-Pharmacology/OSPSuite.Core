@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Services
       {
          return GetType().Assembly.GetTypes()
             .Where(x => typeof(IDataFormat).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-            .Select(x => container.Resolve<IDataFormat>(x.FullName))
+            .Select(x => container.Resolve(x) as IDataFormat)
             .Where(x => x.CheckFile(data))
             .ToList();
       }
@@ -39,7 +39,13 @@ namespace OSPSuite.Presentation.Importer.Services
 
       public IDataSourceFile LoadFile(string path)
       {
-         return parser.For(path);
+         var dataSource = parser.For(path);
+         foreach (var sheet in dataSource.DataSheets)
+         {
+            sheet.Value.AvailableFormats = AvailableFormats(sheet.Value.RawData);
+            sheet.Value.Format = sheet.Value.AvailableFormats.FirstOrDefault();
+         }
+         return dataSource;
       }
    }
 }

@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Importer
          container.AddScanner(scan =>
          {
             scan.AssemblyContainingType<PresentationImporterRegister>();
-
+            
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
          });
       }
