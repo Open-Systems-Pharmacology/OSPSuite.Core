@@ -18,6 +18,19 @@ using Org.BouncyCastle.Asn1.Cms;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
+   static class ColumnMapping
+   {
+      public enum ColumnName
+      {
+         Type,
+         ColumnName
+      }
+
+      static public string GetName(ColumnName name)
+      {
+         return name.ToString();
+      }
+   }
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
       private IEnumerable<DataFormatParameter> mappings;
@@ -62,8 +75,8 @@ namespace OSPSuite.Presentation.Importer.Views
          this.mappings = mappings;
          uxGrid.DataSource = mappings;
 
-         configureColumn("ColumnName", true, false);
-         configureColumn("Type", true, true);
+         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName), true, false);
+         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Type), true, true);
       }
 
       private void ValidateMapping()
@@ -130,7 +143,7 @@ namespace OSPSuite.Presentation.Importer.Views
          if (view == null) return;
          if (!e.Column.OptionsColumn.AllowEdit) return;
 
-         var sourceGridColumn = view.Columns["Type"];
+         var sourceGridColumn = view.Columns[ColumnMapping.GetName(ColumnMapping.ColumnName.Type)];
          var mappingRow = mappings.ElementAt(e.RowHandle);
 
          ImageComboBoxEdit editorObject = new ImageComboBoxEdit();
