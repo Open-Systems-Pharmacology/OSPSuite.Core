@@ -153,25 +153,35 @@ namespace OSPSuite.Presentation.Importer.Views
          editor.Properties.NullText = Captions.Importer.NoneEditorNullText;
          editor.Properties.Items.Add(new ImageComboBoxItem(editor.Properties.NullText));
 
-         foreach (var category in metaDataCategories)
-         {
-            var imageIndex = importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName), mappings);
-            var item = new ImageComboBoxItem(mappingRow.ColumnName) { ImageIndex = imageIndex, Description = category.DisplayName };
-            editor.Properties.Items.Add(item);
-         }
+         //GroupBy
+         editor.Properties.Items.Add(new ImageComboBoxItem("Group by") { ImageIndex = importerTask.GetImageIndex(new GroupByDataFormatParameter(""), null) });
 
+         //Mappings
          foreach (var info in columnInfos)
          {
-            Core.Column.ColumnNames columnName;
-            Enum.TryParse(info.DisplayName, out columnName);
-            Core.Column col = new Core.Column();
-            col.Name = columnName;
-            var imageIndex = importerTask.GetImageIndex(new MappingDataFormatParameter(info.DisplayName, col), mappings);
-            var item = new ImageComboBoxItem(mappingRow.ColumnName) { ImageIndex = imageIndex, Description = info.DisplayName };
-            editor.Properties.Items.Add(item);
+            if (mappings.Where(m => m.Type == DataFormatParameterType.MAPPING && (m as MappingDataFormatParameter).MappedColumn.Name.ToString() == info.DisplayName).Count() == 0)
+            {
+               Core.Column.ColumnNames columnName;
+               Enum.TryParse(info.DisplayName, out columnName);
+               Core.Column col = new Core.Column();
+               col.Name = columnName;
+               var imageIndex = importerTask.GetImageIndex(new MappingDataFormatParameter(info.DisplayName, col), mappings);
+               var item = new ImageComboBoxItem(mappingRow.ColumnName) { ImageIndex = imageIndex, Description = info.DisplayName };
+               editor.Properties.Items.Add(item);
+            }
          }
 
-         editor.Properties.Items.Add(new ImageComboBoxItem("Group by") { ImageIndex = importerTask.GetImageIndex(new GroupByDataFormatParameter(""), null) });
+         //MetaData
+         foreach (var category in metaDataCategories)
+         {
+            if (mappings.Where(m => m.Type == DataFormatParameterType.META_DATA && m.ColumnName == category.DisplayName).Count() == 0)
+            {
+               var imageIndex = importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName), mappings);
+               var item = new ImageComboBoxItem(mappingRow.ColumnName) { ImageIndex = imageIndex, Description = category.DisplayName };
+               editor.Properties.Items.Add(item);
+            }
+         }
+
          editor.Properties.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
          if (editor.Properties.Items.Count != 0) return;
          editor.Properties.NullText = Captions.Importer.NothingSelectableEditorNullText;
