@@ -92,8 +92,10 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          {
             ICell cell = currentExcelRow.GetCell(i);
 
+            if (cell == null)
+               resultList.Add(ColumnDescription.MeasurementLevel.NotSet);
             //discuss with Abdel if we should keep this option here
-            if ((cell.CellType == CellType.Numeric) || (Double.TryParse(cell.ToString(), out var doubleValue)))
+            else if ((cell.CellType == CellType.Numeric) || (Double.TryParse(cell.ToString(), out var doubleValue)))
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.Discrete);
