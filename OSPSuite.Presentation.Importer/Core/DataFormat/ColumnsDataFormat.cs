@@ -17,11 +17,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
             return false;
-         SetParameters(data);
+         setParameters(data);
          return true;
       }
 
-      private void SetParameters(IUnformattedData data)
+      private void setParameters(IUnformattedData data)
       {
          var keys = data.Headers.Keys.ToList();
          Parameters = new List<DataFormatParameter>();
