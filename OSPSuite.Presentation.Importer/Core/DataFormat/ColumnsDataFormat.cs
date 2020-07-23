@@ -1,9 +1,6 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using NPOI.SS.Util;
 using System;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
@@ -18,7 +15,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public bool CheckFile(IUnformattedData data)
       {
-         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.NUMERIC).Count() < 2)
+         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
             return false;
          SetParameters(data);
          return true;
@@ -67,8 +64,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h => 
-                  data.Headers[h].Level == ColumnDescription.MeasurementLevel.NUMERIC && 
-                  Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING).Select(p => p as MappingDataFormatParameter).Where(m => m.ColumnName == h).Count() == 0
+                  data.Headers[h].Level == ColumnDescription.MeasurementLevel.Numeric && 
+                  Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).Where(m => m.ColumnName == h).Count() == 0
                );
             if (headerKey != null)
             {
@@ -82,7 +79,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
-         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurementLevel.DISCRETE).ToList();
+         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
          foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count == 1))
          {
             keys.Remove(header);
@@ -97,7 +94,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data)
       {
-         var groupByParams = Parameters.Where(p => p.Type == DataFormatParameterType.GROUP_BY).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
+         var groupByParams = Parameters.Where(p => p.Type == DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
          buildDataSet(data, groupByParams, new Stack<int>(), dataSets);
          return dataSets;
@@ -138,7 +135,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void parseMappings(IList<IList<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
       {
-         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.MAPPING).Select(p => p as MappingDataFormatParameter);
+         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter);
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time); // add Time Measurement and Error as enum in the MappedColumn
          dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[timeParameter.ColumnName].Index])).ToList());
 

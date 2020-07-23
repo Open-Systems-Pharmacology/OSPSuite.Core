@@ -152,7 +152,7 @@
     <Compile Include="Core\IDataSheet.cs" />
     <Compile Include="Core\IDataFormat.cs" />
     <Compile Include="Core\IUnformattedData.cs" />
-    <Compile Include="Core\UnsuportedFormatException.cs" />
+    <Compile Include="Core\UnsupportedFormatException.cs" />
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="PresentationImporterRegister.cs" />
     <Compile Include="Presenters\ColumnMappingPresenter.cs" />

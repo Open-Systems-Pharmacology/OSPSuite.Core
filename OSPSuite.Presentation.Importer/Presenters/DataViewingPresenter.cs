@@ -7,7 +7,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       public DataViewingPresenter(IDataViewingControl view) : base(view)
       {
-
       }
    }
 }

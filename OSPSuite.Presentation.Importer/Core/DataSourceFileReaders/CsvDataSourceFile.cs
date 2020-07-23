@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          }
          catch (Exception e)
          {
-            logger.AddError(e.ToString());
+            _logger.AddError(e.ToString());
             return null;
          }
       }
@@ -53,10 +53,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
          foreach (var item in dataList)
          {
-            if (Double.TryParse(item, out var doubleValue))
+            //IMPORTANT
+            /*
+             * Providing NumberStyles.Any tells double.TryParse() to allow any format, except AllowHexSpecifier. This includes the AllowThousands option.
+               Providing the InvariantCulture causes parsing to use the ',' character as the thousands separator.
+
+             */
+            /*
+            if (double.TryParse(item, System.Globalization.NumberStyles.Float,
+                  System.Globalization.CultureInfo.InvariantCulture, out var doubleValueInvariant))
                resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
+            else */if (Double.TryParse(item, out var doubleValue))
+               resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
-               resultList.Add(ColumnDescription.MeasurementLevel.DISCRETE);
+               resultList.Add(ColumnDescription.MeasurementLevel.Discrete);
 
          }
          return resultList;

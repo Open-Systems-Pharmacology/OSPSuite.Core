@@ -1,10 +1,8 @@
-﻿
+﻿using System.Collections.Generic;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
-using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-
    public interface IDataFormat
    {
       string Name { get; }

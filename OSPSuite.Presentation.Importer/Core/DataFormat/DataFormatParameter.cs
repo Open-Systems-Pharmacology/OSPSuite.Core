@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace OSPSuite.Presentation.Importer.Core.DataFormat
+﻿namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public enum DataFormatParameterType
    {
-      MAPPING,
-      GROUP_BY,
-      META_DATA
+      Mapping,
+      GroupBy,
+      MetaData
    }
 
    public abstract class DataFormatParameter
@@ -20,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public MetaDataFormatParameter(string columnName)
       {
-         Type = DataFormatParameterType.META_DATA;
+         Type = DataFormatParameterType.MetaData;
          ColumnName = columnName;
       }
    }
@@ -29,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public GroupByDataFormatParameter(string columnName)
       {
-         Type = DataFormatParameterType.GROUP_BY;
+         Type = DataFormatParameterType.GroupBy;
          ColumnName = columnName;
       }
    }
@@ -37,10 +35,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class MappingDataFormatParameter : DataFormatParameter
    {
       public Column MappedColumn { get; private set; }
+
       public MappingDataFormatParameter(string columnName, Column mappedColumn)
       {
          MappedColumn = mappedColumn;
-         Type = DataFormatParameterType.MAPPING;
+         Type = DataFormatParameterType.Mapping;
          ColumnName = columnName;
       }
    }

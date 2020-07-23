@@ -7,58 +7,59 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
 
-   public abstract class concern_for_ExcelDataSourceFile : ContextSpecification<ExcelDataSourceFile>
+   public abstract class ConcernForExcelDataSourceFile : ContextSpecification<ExcelDataSourceFile>
    {
-      protected string excelFilePath;
-      private string excelFile = "sample1.xlsx";
+      protected string _excelFilePath;
+      private string _excelFile = "sample1.xlsx";
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>());
-         sut.Path = excelFilePath;
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>())
+         {
+            Path = _excelFilePath
+         };
       }
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         excelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", excelFile);
+         _excelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", _excelFile);
       }
    }
 
-   public class when_reading_excel : concern_for_ExcelDataSourceFile
+   public class When_reading_excel : ConcernForExcelDataSourceFile
    {
       [TestCase]
       public void path_is_set()
       {
-         sut.Path.ShouldBeEqualTo(excelFilePath);
+         sut.Path.ShouldBeEqualTo(_excelFilePath);
       }
 
 
       [TestCase]
       public void headers_are_read_first_sheet()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
       public void headers_are_read_second_sheet()
       {
-         sut.DataSheets.ElementAt(1).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets["Sheet2"].RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+            sut.DataSheets["Sheet2"].RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
       [TestCase]
-      public void boddy_is_read_first_sheet()
+      public void body_is_read_first_sheet()
       {
          sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
          sut.DataSheets.ElementAt(0).Value.RawData.GetColumn("header1").Count.ShouldBeEqualTo(3);
@@ -69,7 +70,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       }
 
       [TestCase]
-      public void boddy_is_read_second_sheet()
+      public void body_is_read_second_sheet()
       {
          sut.DataSheets.ElementAt(1).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(3);
          sut.DataSheets.ElementAt(1).Value.RawData.GetColumn("sheet2_header2").Count.ShouldBeEqualTo(2);
@@ -82,9 +83,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void measurement_levels_are_read_third_sheet()
       {
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["Double"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["integer"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["Double"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["integer"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
       }
 
       [TestCase]

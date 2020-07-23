@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using NPOI.SS.UserModel;
-using System.IO;
-using NPOI.HSSF.UserModel;
 using OSPSuite.Presentation.Importer.Infrastructure;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-   public interface IExcelDataSourceFile : IDataSourceFile {}
+   public interface IExcelDataSourceFile : IDataSourceFile
+   {
+   }
 
    public class ExcelDataSourceFile : DataSourceFile, IExcelDataSourceFile
    {
-      public ExcelDataSourceFile(IImportLogger logger) : base(logger) { }
-      override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
+      public ExcelDataSourceFile(IImportLogger logger) : base(logger)
+      {
+      }
+
+      protected override Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
@@ -46,13 +48,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                }
 
                loadedData.Add(sheetName, dataSheet);
-            } 
+            }
 
             return loadedData;
          }
          catch (Exception ex)
          {
-            logger.AddError(ex.ToString());
+            _logger.AddError(ex.ToString());
             return null;
          }
       }

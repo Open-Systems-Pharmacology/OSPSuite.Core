@@ -10,45 +10,47 @@ using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-   public abstract class concern_for_CsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
+   public abstract class ConcernForCsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
    {
-      protected string csvFilePath;
-      private string csvFile = "sample1.csv";
+      protected string _csvFilePath;
+      private string _csvFile = "sample1.csv";
 
       protected override void Context()
       {
-         sut = new CsvDataSourceFile(A.Fake<IImportLogger>());
-         sut.Path = csvFilePath;
+         sut = new CsvDataSourceFile(A.Fake<IImportLogger>())
+         {
+            Path = _csvFilePath
+         };
       }
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         csvFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", csvFile);
+         _csvFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", _csvFile);
       }
    }
 
-   public class when_reading_csv : concern_for_CsvDataSourceFile
+   public class When_reading_csv : ConcernForCsvDataSourceFile
    {
       [TestCase]
       public void path_is_set()
       {
-         sut.Path.ShouldBeEqualTo(csvFilePath);
+         sut.Path.ShouldBeEqualTo(_csvFilePath);
       }
 
 
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().Count.ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(5);
          for (var i = 1; i <= 5; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.getHeadersList().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
-      public void boddy_is_read()
+      public void body_is_read()
       {
          sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(5);
          for (var i = 0; i < 3; i++)
@@ -60,15 +62,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void measurement_levels_are_read_discrete()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header1"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header2"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header3"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.DISCRETE);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header1"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header2"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header3"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
       }
 
       [TestCase]
       public void measurement_levels_are_read_integer()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header4"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header4"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
       }
 
       [TestCase]
@@ -86,7 +88,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          foreach (var culture in culturesList)
          {
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
-            sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.NUMERIC);
+            sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          }
       }
 

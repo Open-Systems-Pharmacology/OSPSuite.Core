@@ -1,10 +1,4 @@
-﻿using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -15,28 +9,29 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataSourceFileParser : IDataSourceFileParser
    {
-      private readonly ICsvDataSourceFile csvDataSourceFile;
-      private readonly IExcelDataSourceFile excelDataSourceFile;
+      private readonly ICsvDataSourceFile _csvDataSourceFile;
+      private readonly IExcelDataSourceFile _excelDataSourceFile;
 
       public DataSourceFileParser(ICsvDataSourceFile csvDataSourceFile, IExcelDataSourceFile excelDataSourceFile)
       {
-         this.csvDataSourceFile = csvDataSourceFile;
-         this.excelDataSourceFile = excelDataSourceFile;
+         _csvDataSourceFile = csvDataSourceFile;
+         _excelDataSourceFile = excelDataSourceFile;
       }
 
       public IDataSourceFile For(string path)
       {
          if (path.EndsWith(".csv"))
          {
-            csvDataSourceFile.Path = path;
-            return csvDataSourceFile;
+            _csvDataSourceFile.Path = path;
+            return _csvDataSourceFile;
          }
          else if (path.EndsWith(".xls") || path.EndsWith(".xlsx"))
          {
-            excelDataSourceFile.Path = path;
-            return excelDataSourceFile;
+            _excelDataSourceFile.Path = path;
+            return _excelDataSourceFile;
          }
-         throw new UnsuportedFormatException();
+
+         throw new UnsupportedFormatException();
       }
    }
 }
