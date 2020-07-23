@@ -111,7 +111,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                while (check 
                   && i < indexes.Count)
                {
-                  check &= row[data.Headers[parameters.ElementAt(i).ColumnName].Index] == parameters.ElementAt(i).ExistingValues[indexes.ElementAt(indexes.Count - 1 - i)];
+                  check &= row.ElementAt(data.Headers[parameters.ElementAt(i).ColumnName].Index) == parameters.ElementAt(i).ExistingValues[indexes.ElementAt(indexes.Count - 1 - i)];
                   i++;
                }
                return check;
@@ -133,18 +133,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      private void parseMappings(IList<IList<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
+      private void parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
       {
          var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter);
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time); // add Time Measurement and Error as enum in the MappedColumn
-         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[timeParameter.ColumnName].Index])).ToList());
+         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
 
          var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Measurement);
-         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[measurementParameter.ColumnName].Index])).ToList());
+         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[measurementParameter.ColumnName].Index))).ToList());
 
          var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Error);
          if (errorParameter != null)
-            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row[data.Headers[errorParameter.ColumnName].Index])).ToList());
+            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[errorParameter.ColumnName].Index))).ToList());
       }
    }
 }

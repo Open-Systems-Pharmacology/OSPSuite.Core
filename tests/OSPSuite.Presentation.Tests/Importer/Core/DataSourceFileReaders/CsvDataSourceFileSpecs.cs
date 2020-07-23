@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count.ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count().ShouldBeEqualTo(5);
          for (var i = 0; i < 3; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });

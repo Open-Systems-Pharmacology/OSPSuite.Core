@@ -8,14 +8,14 @@ namespace OSPSuite.Presentation.Importer.Core
 {
    public interface IUnformattedData
    {
-      IList<string> GetRow(int index);
-      IList<string> GetColumn(int columnIndex);
-      IList<string> GetColumn(string columnName);
+      IEnumerable<string> GetRow(int index);
+      IEnumerable<string> GetColumn(int columnIndex);
+      IEnumerable<string> GetColumn(string columnName);
       Dictionary<string, ColumnDescription> Headers { get; }
 
-      IList<IList<string>> GetRows(Func<List<string>, bool> filter);
+      IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
 
-      bool AddRow(List<string> row);
+      bool AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
       DataTable GetSheetAsDataTable();
    }
@@ -42,29 +42,29 @@ namespace OSPSuite.Presentation.Importer.Core
          });
       }
 
-      public bool AddRow(List<string> row)
+      public bool AddRow( IEnumerable<string> row)
       {
+         var rowList = row.ToList();
          //the not empty row part we could check explicitly
-         if (Headers.Count == row.Count) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
+         if (Headers.Count == rowList.Count()) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
          {
-            _rawDataTable.Add(row);
+            _rawDataTable.Add(rowList.ToList());
 
-            foreach (KeyValuePair<string, ColumnDescription> header in Headers)
+            foreach (var header in Headers)
             {
                if (header.Value.Level == ColumnDescription.MeasurementLevel.Discrete)
                {
-                  if (!header.Value.ExistingValues.Contains(row[header.Value.Index]))
-                     header.Value.ExistingValues.Add(row[header.Value.Index]);
+                  if (!header.Value.ExistingValues.Contains(rowList.ElementAt(header.Value.Index)))
+                     header.Value.ExistingValues.Add(rowList.ElementAt(header.Value.Index));
                }
             }
-
             return true;
          }
 
          return false;
       }
 
-      public IList<string> GetColumn(int columnIndex)
+      public IEnumerable<string> GetColumn(int columnIndex)
       {
          var resultList = new List<string>();
 
@@ -75,7 +75,7 @@ namespace OSPSuite.Presentation.Importer.Core
          return resultList;
       }
 
-      public IList<string> GetColumn(string columnName)
+      public IEnumerable<string> GetColumn(string columnName)
       {
          var columnIndex = Headers[columnName].Index;
 
@@ -87,14 +87,14 @@ namespace OSPSuite.Presentation.Importer.Core
          return resultColumn;
       }
 
-      public IList<string> GetRow(int index)
+      public IEnumerable<string> GetRow(int index)
       {
          return _rawDataTable[index];
       }
 
-      public IList<IList<string>> GetRows(Func<List<string>, bool> filter)
+      public IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter)
       {
-         return (IList<IList<string>>) _rawDataTable.Where(filter).ToList();
+         return _rawDataTable.Where(filter);
       }
 
       public DataTable GetSheetAsDataTable()
@@ -102,9 +102,9 @@ namespace OSPSuite.Presentation.Importer.Core
          var resultTable = new DataTable();
 
          // Add columns.
-         for (int i = 0; i < Headers.Count; i++)
+         for (var i = 0; i < Headers.Count; i++)
          {
-            resultTable.Columns.Add(Headers.ElementAt(i).Key, typeof(String));
+            resultTable.Columns.Add(Headers.ElementAt(i).Key, typeof(string));
          }
 
          foreach (var itemList in _rawDataTable)
