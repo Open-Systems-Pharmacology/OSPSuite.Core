@@ -5,6 +5,8 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Services 
 {
@@ -21,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _container = A.Fake<IContainer>();
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.CheckFile(_basicFormat)).Returns(true);
-         A.CallTo(() => _container.Resolve(A<Type>.Ignored)).Returns(dataFormat);
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
          sut = new Services.Importer(_container);
@@ -34,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public void identify_basic_format()
       {
          var formats = sut.AvailableFormats(_basicFormat);
-         formats.Count.ShouldBeEqualTo(1);
+         formats.Count().ShouldBeEqualTo(1);
       }
    }
 }

@@ -30,9 +30,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                while (csv.ReadNextRecord())
                {
                   csv.CopyCurrentRecordTo(currentRow);
-                  var levels = getMeasurementLevels(currentRow.ToList());
+                  var rowList = currentRow.ToList();
+                  var levels = getMeasurementLevels(rowList);
                   dataSheet.RawData.CalculateColumnDescription(levels);
-                  dataSheet.RawData.AddRow(currentRow.ToList());
+                  dataSheet.RawData.AddRow(rowList);
                }
 
                var loadedData = new Dictionary<string, IDataSheet>();

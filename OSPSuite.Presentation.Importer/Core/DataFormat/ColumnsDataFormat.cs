@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var missingKeys = new List<string>();
 
-         extractQualifiedHeadings(data.Headers.Keys.ToList(), missingKeys);
+         extractQualifiedHeadings(keys, missingKeys);
          extractNonQualifiedHeadings(keys, missingKeys, data);
          extractGeneralParameters(keys, data);
       }
@@ -135,7 +135,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
       {
-         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter);
+         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time); // add Time Measurement and Error as enum in the MappedColumn
          dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
 
