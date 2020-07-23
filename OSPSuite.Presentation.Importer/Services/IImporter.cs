@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
@@ -9,7 +10,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       IDataSourceFile LoadFile(string path);
       IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets);
-      IList<IDataFormat> AvailableFormats(IUnformattedData data);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data);
    }
 
    public class Importer : IImporter
@@ -23,13 +24,10 @@ namespace OSPSuite.Presentation.Importer.Services
          this._parser = container.Resolve<IDataSourceFileParser>();
       }
 
-      public IList<IDataFormat> AvailableFormats(IUnformattedData data)
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data)
       {
-         return GetType().Assembly.GetTypes()
-            .Where(x => typeof(IDataFormat).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-            .Select(x => _container.Resolve(x) as IDataFormat)
-            .Where(x => x.CheckFile(data))
-            .ToList();
+         return _container.ResolveAll<IDataFormat>()
+            .Where(x => x.CheckFile(data));
       }
 
       public IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets)
@@ -42,7 +40,7 @@ namespace OSPSuite.Presentation.Importer.Services
          var dataSource = _parser.For(path);
          foreach (var sheet in dataSource.DataSheets)
          {
-            sheet.Value.AvailableFormats = AvailableFormats(sheet.Value.RawData);
+            sheet.Value.AvailableFormats = AvailableFormats(sheet.Value.RawData).ToList();
             sheet.Value.Format = sheet.Value.AvailableFormats.FirstOrDefault();
          }
 

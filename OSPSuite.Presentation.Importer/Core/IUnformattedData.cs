@@ -46,9 +46,9 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          var rowList = row.ToList();
          //the not empty row part we could check explicitly
-         if (Headers.Count == rowList.Count()) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
+         if (Headers.Count == rowList.Count) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
          {
-            _rawDataTable.Add(rowList.ToList());
+            _rawDataTable.Add(rowList);
 
             foreach (var header in Headers)
             {
