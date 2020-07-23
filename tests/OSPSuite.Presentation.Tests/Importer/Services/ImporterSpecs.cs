@@ -2,40 +2,38 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace OSPSuite.Presentation.Importer.Core.DataFormat
+namespace OSPSuite.Presentation.Importer.Services 
 {
-   public abstract class concern_for_Importer : ContextSpecification<Services.Importer>
+   public abstract class ConcernForImporter : ContextSpecification<Importer>
    {
-      protected IUnformattedData basicFormat;
-      protected IContainer IoC;
-      protected IDataSourceFileParser parser;
+      protected IUnformattedData _basicFormat;
+      protected IContainer _container;
+      protected IDataSourceFileParser _parser;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         basicFormat = A.Fake<UnformattedData>();
-         IoC = A.Fake<IContainer>();
+         _basicFormat = A.Fake<UnformattedData>();
+         _container = A.Fake<IContainer>();
          var dataFormat = A.Fake<IDataFormat>();
-         A.CallTo(() => dataFormat.CheckFile(basicFormat)).Returns(true);
-         A.CallTo(() => IoC.Resolve(A<Type>.Ignored)).Returns(dataFormat);
-         parser = A.Fake<IDataSourceFileParser>();
-         A.CallTo(() => IoC.Resolve<IDataSourceFileParser>()).Returns(parser);
-         sut = new Services.Importer(IoC);
+         A.CallTo(() => dataFormat.CheckFile(_basicFormat)).Returns(true);
+         A.CallTo(() => _container.Resolve(A<Type>.Ignored)).Returns(dataFormat);
+         _parser = A.Fake<IDataSourceFileParser>();
+         A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
+         sut = new Services.Importer(_container);
       }
    }
 
-   public class when_checking_DataFormat : concern_for_Importer
+   public class When_checking_data_format : ConcernForImporter
    {
       [TestCase]
       public void identify_basic_format()
       {
-         var formats = sut.AvailableFormats(basicFormat);
+         var formats = sut.AvailableFormats(_basicFormat);
          formats.Count.ShouldBeEqualTo(1);
       }
    }

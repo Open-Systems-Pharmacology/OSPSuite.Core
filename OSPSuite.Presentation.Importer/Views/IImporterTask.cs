@@ -1,11 +1,8 @@
-﻿using OSPSuite.Assets;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OSPSuite.Assets;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -18,32 +15,26 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings)
       {
-         var imageIndex = ApplicationIcons.IconIndex(ApplicationIcons.EmptyIcon);
          switch (parameter.Type)
          {
-            case DataFormatParameterType.META_DATA:
-               imageIndex = ApplicationIcons.IconIndex(
+            case DataFormatParameterType.MetaData:
+               return ApplicationIcons.IconIndex(
                   mappings
-                     .Where(m => (m.Type == DataFormatParameterType.META_DATA) && m.ColumnName == parameter.ColumnName)
-                     .Count() > 0 ?
-                        ApplicationIcons.MetaData : 
-                        ApplicationIcons.MissingMetaData);
-               break;
-            case DataFormatParameterType.MAPPING:
-               imageIndex = ApplicationIcons.IconIndex(
+                     .Any(m => (m.Type == DataFormatParameterType.MetaData) && m.ColumnName == parameter.ColumnName)
+                     ? ApplicationIcons.MetaData
+                     : ApplicationIcons.MissingMetaData);
+            case DataFormatParameterType.Mapping:
+               return ApplicationIcons.IconIndex(
                   mappings
-                     .Where(m => (m.Type == DataFormatParameterType.MAPPING) && (m as MappingDataFormatParameter).MappedColumn.Name.ToString() == parameter.ColumnName)
-                     .Count() > 0 ?
-                        ApplicationIcons.UnitInformation :
-                        ApplicationIcons.MissingUnitInformation);
-               break;
-            case DataFormatParameterType.GROUP_BY:
-               imageIndex = ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
-               break;
+                     .Any(m => (m.Type == DataFormatParameterType.Mapping) &&
+                               (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == parameter.ColumnName)
+                     ? ApplicationIcons.UnitInformation
+                     : ApplicationIcons.MissingUnitInformation);
+            case DataFormatParameterType.GroupBy:
+               return ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
             default:
                throw new Exception($"{parameter.Type} is not currently been handled");
          }
-         return imageIndex;
       }
    }
 }

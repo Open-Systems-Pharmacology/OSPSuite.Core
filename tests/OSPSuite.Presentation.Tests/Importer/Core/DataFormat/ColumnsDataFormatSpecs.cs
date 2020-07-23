@@ -1,5 +1,4 @@
-﻿using DevExpress.Utils.StructuredStorage.Internal.Reader;
-using FakeItEasy;
+﻿using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -16,14 +15,14 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          Headers = headers;
       }
    }
-   public abstract class concern_for_ColumnsDataFormat : ContextSpecification<ColumnsDataFormat>
+   public abstract class ConcernforColumnsDataFormat : ContextSpecification<ColumnsDataFormat>
    {
-      protected IUnformattedData basicFormat;
+      protected IUnformattedData _basicFormat;
 
       protected override void Context()
       {
          sut = new ColumnsDataFormat();
-         basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedData
          (
             new Dictionary<string, ColumnDescription>()
             {
@@ -31,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Organ",
                   new ColumnDescription(0)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "PeripheralVenousBlood" }
                   }
                },
@@ -39,7 +38,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Compartment",
                   new ColumnDescription(1)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "Arterialized" }
                   }
                },
@@ -47,7 +46,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Species",
                   new ColumnDescription(2)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "Human" }
                   }
                },
@@ -55,7 +54,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Dose",
                   new ColumnDescription(3)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "75 [g] glucose" }
                   }
                },
@@ -63,7 +62,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Molecule",
                   new ColumnDescription(4)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }
                   }
                },
@@ -71,7 +70,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Time [min]",
                   new ColumnDescription(5)
                   {
-                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
                      ExistingValues = null
                   }
                },
@@ -79,7 +78,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Concentration (molar) [pmol/l]",
                   new ColumnDescription(6)
                   {
-                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
                      ExistingValues = null
                   }
                },
@@ -87,7 +86,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Error [pmol/l]",
                   new ColumnDescription(7)
                   {
-                     Level = ColumnDescription.MeasurementLevel.NUMERIC,
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
                      ExistingValues = null
                   }
                },
@@ -95,7 +94,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Route",
                   new ColumnDescription(8)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "po" }
                   }
                },
@@ -103,7 +102,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   "Groupe Id",
                   new ColumnDescription(9)
                   {
-                     Level = ColumnDescription.MeasurementLevel.DISCRETE,
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "H", "T2DM" }
                   }
                }
@@ -112,12 +111,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class when_checking_format : concern_for_ColumnsDataFormat
+   public class When_checking_format : ConcernforColumnsDataFormat
    {
       [TestCase]
       public void identify_basic_format()
       {
-         sut.CheckFile(basicFormat).ShouldBeTrue();
+         sut.CheckFile(_basicFormat).ShouldBeTrue();
       }
 
       [TestCase]
@@ -129,7 +128,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  basicFormat.Headers["Organ"]
+                  _basicFormat.Headers["Organ"]
                }
             }
          );
@@ -145,11 +144,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  basicFormat.Headers["Organ"]
+                  _basicFormat.Headers["Organ"]
                },
                {
                   "Time [min]",
-                  basicFormat.Headers["Time [min]"]
+                  _basicFormat.Headers["Time [min]"]
                }
             }
          );
@@ -157,18 +156,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class when_listing_parameters : concern_for_ColumnsDataFormat
+   public class When_listing_parameters : ConcernforColumnsDataFormat
    {
       protected override void Because()
       {
-         sut.CheckFile(basicFormat);
+         sut.CheckFile(_basicFormat);
       }
       
       [TestCase]
       public void identify_time_column()
       {
          var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
-         timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         timeParameter.Type.ShouldBeEqualTo(DataFormatParameterType.Mapping);
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Time);
@@ -179,7 +178,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_error_column()
       {
          var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
-         errorParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         errorParameter.Type.ShouldBeEqualTo(DataFormatParameterType.Mapping);
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Error);
@@ -190,7 +189,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_measurement_column_without_the_name_on_the_headings()
       {
          var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
-         measurementParameter.Type.ShouldBeEqualTo(DataFormatParameterType.MAPPING);
+         measurementParameter.Type.ShouldBeEqualTo(DataFormatParameterType.Mapping);
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Measurement);
@@ -200,7 +199,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_metadata_parameters()
       {
-         var metadataParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.META_DATA).ToList();
+         var metadataParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.MetaData).ToList();
          metadataParameters.Count.ShouldBeEqualTo(5);
          foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route" })
          {
@@ -211,45 +210,45 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_groupBy_parameters()
       {
-         var groupeByParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.GROUP_BY).ToList();
-         groupeByParameters.Count.ShouldBeEqualTo(2);
+         var groupByParameters = sut.Parameters.Where(p => p.Type == DataFormatParameterType.GroupBy).ToList();
+         groupByParameters.Count.ShouldBeEqualTo(2);
          foreach (var name in new[] { "Groupe Id", "Molecule" })
          {
-            groupeByParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
+            groupByParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
          }
       }
    }
 
-   public class when_parsing_format : concern_for_ColumnsDataFormat
+   public class When_parsing_format : ConcernforColumnsDataFormat
    {
-      private IUnformattedData mockedData;
+      private IUnformattedData _mockedData;
       protected override void Context()
       {
          base.Context();
-         mockedData = A.Fake<IUnformattedData>();
-         A.CallTo(() => mockedData.Headers).Returns(basicFormat.Headers);
+         _mockedData = A.Fake<IUnformattedData>();
+         A.CallTo(() => _mockedData.Headers).Returns(_basicFormat.Headers);
       }
 
       protected override void Because()
       {
-         sut.CheckFile(mockedData);
+         sut.CheckFile(_mockedData);
       }
 
       [TestCase]
       public void parse_basic_format()
       {
-         var data = sut.Parse(mockedData);
+         var data = sut.Parse(_mockedData);
          data.Count.ShouldBeEqualTo(10);
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H"})))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H"})))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<List<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
       }
    }
 }

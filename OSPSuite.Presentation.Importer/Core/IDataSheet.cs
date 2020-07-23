@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using OSPSuite.Core.Commands;
+﻿using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -18,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Core
    }
 
    /// <summary>
-   /// e.g. a sheet in an excel file
+   ///    e.g. a sheet in an excel file
    /// </summary>
    public interface IDataSheet
    {
