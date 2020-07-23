@@ -15,6 +15,7 @@ using DevExpress.XtraEditors.Controls;
 using System.Windows.Forms;
 using OSPSuite.Core.Importer;
 using Org.BouncyCastle.Asn1.Cms;
+using DevExpress.Utils.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -39,6 +40,8 @@ namespace OSPSuite.Presentation.Importer.Views
       private IReadOnlyList<ColumnInfo> columnInfos;
       private DataImporterSettings dataImporterSettings;
       private readonly IImporterTask importerTask;
+      private DataFormatParameter contextMappingRow;
+      private readonly Dictionary<string, ImageComboBoxEdit> _editorsForEditing = new Dictionary<string, ImageComboBoxEdit>();
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever, IImporterTask importerTask)
       {
@@ -133,6 +136,8 @@ namespace OSPSuite.Presentation.Importer.Views
                superToolTip.Items.AddTitle("Meta data:");
                superToolTip.Items.Add($"The column {parameter.ColumnName} will be used as meta data");
                break;
+            default:
+               throw new Exception($"{parameter.Type} is not currently been handled");
          }
          return superToolTip;
       }
@@ -235,7 +240,53 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onCustomRowCellEditForEditing(object sender, CustomRowCellEditEventArgs e)
       {
-         //throw new NotImplementedException();
+         var view = sender as GridView;
+         if (view == null) return;
+         if (!e.Column.OptionsColumn.AllowEdit) return;
+
+         var sourceGridColumn = view.Columns[ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName)];
+         var sourceColumnName = (string)view.GetRowCellValue(e.RowHandle, sourceGridColumn);
+         if (String.IsNullOrEmpty(sourceColumnName)) return;
+         var mappingRow = mappings.ElementAt(e.RowHandle);
+
+         //the information of the current mappingRow is needed in both underlying event handlers.
+         contextMappingRow = mappingRow;
+
+         ImageComboBoxEdit editorObject = _editorsForEditing.GetOrAdd(sourceColumnName, (index) =>
+         {
+            var editorObj = new ImageComboBoxEdit();
+            editorObj.EditValueChanged += onEditorEditValueChanged;
+            Controls.Add(editorObj);
+            var editor = editorObj.Properties;
+
+            editor.AutoComplete = true;
+            editor.AllowNullInput = DefaultBoolean.True;
+            editor.CloseUpKey = new KeyShortcut(Keys.Enter);
+            return editorObj;
+         });
+
+         if (_editorsForEditing.ContainsKey(sourceColumnName))
+            editorObject = _editorsForEditing[sourceColumnName];
+         else
+         {
+            editorObject = new ImageComboBoxEdit();
+            _editorsForEditing.Add(sourceColumnName, editorObject);
+            editorObject.EditValueChanged += onEditorEditValueChanged;
+            Controls.Add(editorObject);
+            var editor = editorObject.Properties;
+
+            editor.AutoComplete = true;
+            editor.AllowNullInput = DefaultBoolean.True;
+            editor.CloseUpKey = new KeyShortcut(Keys.Enter);
+         }
+
+         editorObject.EditValue = mappingRow.ColumnName;
+         // create individual list of values
+         fillComboBoxItems(editorObject, mappingRow);
+         refreshButtons(editorObject, mappingRow);
+
+         if (editorObject.Properties.Items.Count == 0) return;
+         e.RepositoryItem = editorObject.Properties;
       }
 
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
@@ -247,6 +298,24 @@ namespace OSPSuite.Presentation.Importer.Views
 
          if (e.KeyCode == Keys.Delete)
             view.ActiveEditor.EditValue = null;
+      }
+
+      private void onEditorEditValueChanged(object sender, EventArgs e)
+      {
+         var editor = sender as ImageComboBoxEdit;
+         if (editor == null) return;
+
+         var mappingRow = contextMappingRow;
+         if (mappingRow == null) return;
+
+         uxGrid.MainView.PostEditor();
+
+         if (editor.EditValue != null && editor.EditValue.ToString() == editor.Properties.NullText)
+            editor.EditValue = null;
+
+         mappingRow.ColumnName = editor.EditValue?.ToString() ?? String.Empty;
+
+         refreshButtons(editor, mappingRow);
       }
    }
 }

@@ -40,6 +40,8 @@ namespace OSPSuite.Presentation.Importer.Views
             case DataFormatParameterType.GROUP_BY:
                imageIndex = ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
                break;
+            default:
+               throw new Exception($"{parameter.Type} is not currently been handled");
          }
          return imageIndex;
       }
