@@ -185,10 +185,9 @@ namespace OSPSuite.Presentation.Importer.Views
             if (!_mappings.Any(m =>
                m.Type == DataFormatParameterType.Mapping && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
-               Enum.TryParse(info.DisplayName, out Column.ColumnNames columnName);
                var col = new Column
                {
-                  Name = columnName
+                  Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(info.DisplayName)
                };
                var imageIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(info.DisplayName, col), _mappings);
                var item = new ImageComboBoxItem(mappingRow.ColumnName) {ImageIndex = imageIndex, Description = info.DisplayName};
