@@ -64,7 +64,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             var headerKey = keys.FirstOrDefault
                (h => 
                   data.Headers[h].Level == ColumnDescription.MeasurementLevel.Numeric && 
-                  Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).Where(m => m.ColumnName == h).Count() == 0
+                  Parameters
+                     .Where(p => p.Type == DataFormatParameterType.Mapping)
+                     .Select(p => p as MappingDataFormatParameter)
+                     .All(m => m.ColumnName != h)
                );
             if (headerKey != null)
             {
@@ -93,55 +96,68 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var groupByParams = Parameters.Where(p => p.Type == DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
-         buildDataSet(data, groupByParams, new Stack<int>(), dataSets);
+         return buildDataSets(data, groupByParams);
+      }
+
+      private List<Dictionary<Column, IList<double>>> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters)
+      {
+         var dataSets = new List<Dictionary<Column, IList<double>>>();
+         buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets);
          return dataSets;
       }
 
-      private void buildDataSet(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets)
+      /// <summary>
+      /// Populates the datasets from the data recursively.
+      /// </summary>
+      /// <param name="data">The unformatted source data</param>
+      /// <param name="parameters">Parameters of the format for grouping by</param>
+      /// <param name="indexes">List of indexes for the recursion</param>
+      /// <param name="dataSets">List to store the datasets</param>
+      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets)
       {
-         if (indexes.Count() == parameters.Count())
+         if (indexes.Count() < parameters.Count()) //Still traversing the parameters
          {
-            var rawDataSet = data.GetRows(row =>
-            {
-               var check = true;
-               var i = 0;
-               while (check 
-                  && i < indexes.Count)
-               {
-                  check &= row.ElementAt(data.Headers[parameters.ElementAt(i).ColumnName].Index) == parameters.ElementAt(i).ExistingValues[indexes.ElementAt(indexes.Count - 1 - i)];
-                  i++;
-               }
-               return check;
-            });
-
-            var dictionary = new Dictionary<Column, IList<double>>();
-            parseMappings(rawDataSet, data, dictionary);
-
-            dataSets.Add(dictionary);
-         }
-         else
-         {
-            for (var i = 0; i < parameters.ElementAt(indexes.Count()).ExistingValues.Count(); i++)
+            for (var i = 0; i < parameters.ElementAt(indexes.Count()).ExistingValues.Count(); i++) //For every existing value on the current parameter
             {
                indexes.Push(i);
-               buildDataSet(data, parameters, indexes, dataSets);
+               buildDataSetsRecursively(data, parameters, indexes, dataSets);
                indexes.Pop();
             }
          }
+         else //Fully traversed the parameters list
+         {
+            //Filter based on the parameters
+            var index = 0;
+            var rawDataSet = data.GetRows(
+               row =>
+               {
+                  var res = parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexes.ElementAt(indexes.Count - 1 - index)]);
+                  index = index + 1;
+                  return res;
+               }
+            );
+            dataSets.Add(parseMappings(rawDataSet.ToList(), data));
+         }
       }
 
-      private void parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, Dictionary<Column, IList<double>> dictionary)
+      private Dictionary<Column, IList<double>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data)
       {
+         var dictionary = new Dictionary<Column, IList<double>>();
+         //Add time mapping
          var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
-         var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time); // add Time Measurement and Error as enum in the MappedColumn
+         var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time);
          dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
 
-         var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Measurement);
+         //Add measurement mapping
+         var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Concentration);
          dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[measurementParameter.ColumnName].Index))).ToList());
 
+         //Add error mapping
          var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Error);
          if (errorParameter != null)
             dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[errorParameter.ColumnName].Index))).ToList());
+
+         return dictionary;
       }
    }
 }

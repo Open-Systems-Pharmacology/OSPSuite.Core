@@ -192,7 +192,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          measurementParameter.Type.ShouldBeEqualTo(DataFormatParameterType.Mapping);
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Measurement);
+         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Concentration);
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 

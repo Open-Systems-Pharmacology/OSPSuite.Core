@@ -7,7 +7,7 @@ namespace OSPSuite.Presentation.Importer.Core
       public enum ColumnNames
       {
          Time,
-         Measurement,
+         Concentration,
          Error
       }
 
