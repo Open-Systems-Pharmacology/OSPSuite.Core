@@ -9,9 +9,9 @@
 
    public abstract class DataFormatParameter
    {
-      public string ColumnName { get; protected set; }
+      public string ColumnName { get; set; }
 
-      public DataFormatParameterType Type { get; protected set; }
+      public DataFormatParameterType Type { get; set; }
    }
 
    public class MetaDataFormatParameter : DataFormatParameter
