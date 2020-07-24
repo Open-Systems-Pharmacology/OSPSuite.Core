@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using DevExpress.DataProcessing;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public void CalculateColumnDescription(List<ColumnDescription.MeasurementLevel> levels)
       {
-         Headers.ForEach(header =>
+         Headers.Each(header =>
          {
             if (header.Value.Level == ColumnDescription.MeasurementLevel.NotSet) //hell, we could even not check here
                header.Value.Level = levels[header.Value.Index];
@@ -77,14 +77,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IEnumerable<string> GetColumn(string columnName)
       {
-         var columnIndex = Headers[columnName].Index;
-
-         var resultColumn = new List<string>();
-
-         for (var i = 0; i < _rawDataTable.Count; i++)
-            resultColumn.Add(_rawDataTable[i][columnIndex]);
-
-         return resultColumn;
+         return GetColumn(Headers[columnName].Index);
       }
 
       public IEnumerable<string> GetRow(int index)
