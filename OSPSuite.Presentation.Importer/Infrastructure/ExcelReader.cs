@@ -113,7 +113,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
 
          var excelRows = CurrentSheet.GetRowEnumerator();
-         excelRows.MoveNext();
+
+         if (!excelRows.MoveNext())
+         {
+            _columnOffset = 0;
+            return;
+         }
 
          var currentExcelRow = getCurrentExcelRow(excelRows);
 
