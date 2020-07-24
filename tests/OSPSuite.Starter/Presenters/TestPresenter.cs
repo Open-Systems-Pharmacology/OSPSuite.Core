@@ -117,7 +117,7 @@ namespace OSPSuite.Starter.Presenters
          var file = new OpenFileDialog();
          if (file.ShowDialog() == DialogResult.OK)
          {
-            var importer = new Presentation.Importer.Services.Importer(IoC.Container);
+            var importer = IoC.Container.Resolve<IImporter>();
             var source = importer.LoadFile(file.FileName);
             var dataImporterSettings = new DataImporterSettings();
             dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
