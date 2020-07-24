@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using DevExpress.Charts.Native;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -47,9 +48,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Column.ColumnNames columnName;
-               Enum.TryParse(header, out columnName);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = columnName, Unit = extractUnits(headerKey) }));
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), Unit = extractUnits(headerKey) }));
             }
             else
             {
@@ -70,9 +69,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Column.ColumnNames columnName;
-               Enum.TryParse(header, out columnName);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = columnName, Unit = extractUnits(headerKey) }));
+               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), Unit = extractUnits(headerKey) }));
             }
          }
       }
