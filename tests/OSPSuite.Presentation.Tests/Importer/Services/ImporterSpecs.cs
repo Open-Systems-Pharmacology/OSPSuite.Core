@@ -22,11 +22,12 @@ namespace OSPSuite.Presentation.Importer.Services
          _basicFormat = A.Fake<UnformattedData>();
          _container = A.Fake<IContainer>();
          var dataFormat = A.Fake<IDataFormat>();
+
          A.CallTo(() => dataFormat.CheckFile(_basicFormat)).Returns(true);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new Services.Importer(_container);
+         sut = new Services.Importer(_container, _parser);
       }
    }
 

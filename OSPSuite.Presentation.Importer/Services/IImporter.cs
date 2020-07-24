@@ -18,10 +18,10 @@ namespace OSPSuite.Presentation.Importer.Services
       private readonly IoC _container;
       private readonly IDataSourceFileParser _parser;
 
-      public Importer(IoC container)
+      public Importer(IoC container, IDataSourceFileParser parser)
       {
-         this._container = container;
-         this._parser = container.Resolve<IDataSourceFileParser>();
+         _container = container;
+         _parser = parser;
       }
 
       public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data)
