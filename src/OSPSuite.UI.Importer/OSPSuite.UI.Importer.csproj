@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.DevExpress" Version="19.2.4.1" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="20.1.6" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
+using DevExpress.Office.Commands.Internal;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.Commands;
-using DevExpress.XtraRichEdit.Commands.Internal;
 
 namespace OSPSuite.UI.Views.Journal
 {
