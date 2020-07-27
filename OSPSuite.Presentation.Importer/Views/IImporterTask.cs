@@ -15,25 +15,25 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings)
       {
-         switch (parameter.Configuration.Type)
+         switch (parameter)
          {
-            case ParameterConfiguration.DataFormatParameterType.MetaData:
+            case MetaDataFormatParameter mp:
                return ApplicationIcons.IconIndex(
                   mappings
-                     .Any(m => (m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.MetaData) && m.ColumnName == parameter.ColumnName)
+                     .Any(m => (m is MetaDataFormatParameter) && (m as MetaDataFormatParameter).MetaDataId == mp.MetaDataId)
                      ? ApplicationIcons.MetaData
                      : ApplicationIcons.MissingMetaData);
-            case ParameterConfiguration.DataFormatParameterType.Mapping:
+            case MappingDataFormatParameter mp:
                return ApplicationIcons.IconIndex(
                   mappings
-                     .Any(m => (m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping) &&
-                               (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == parameter.ColumnName)
+                     .Any(m => (m is MappingDataFormatParameter) &&
+                               (m as MappingDataFormatParameter)?.MappedColumn.Name == mp.MappedColumn.Name)
                      ? ApplicationIcons.UnitInformation
                      : ApplicationIcons.MissingUnitInformation);
-            case ParameterConfiguration.DataFormatParameterType.GroupBy:
+            case GroupByDataFormatParameter gp:
                return ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
             default:
-               throw new Exception($"{parameter.Configuration.Type} is not currently been handled");
+               throw new Exception($"{parameter.GetType()} is not currently been handled");
          }
       }
    }
