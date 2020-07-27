@@ -8,9 +8,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public class ColumnsDataFormat : IDataFormat
    {
-      public string Name => "ColumnsFormat";
+      public string Name { get; } = "ColumnsFormat";
 
-      public string Description => "Simple format with data identified by column data...";
+      public string Description { get; } = "Simple format with data identified by column data...";
 
       public IList<DataFormatParameter> Parameters { get; private set; }
 
@@ -131,12 +131,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             var rawDataSet = data.GetRows(
                row =>
                {
-                  var res = parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexes.ElementAt(indexes.Count - 1 - index)]);
-                  index = index + 1;
-                  return res;
+                  return parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexes.ElementAt(indexes.Count - 1 - (index++))]);
                }
             );
-            dataSets.Add(parseMappings(rawDataSet.ToList(), data));
+            dataSets.Add(parseMappings(rawDataSet, data));
          }
       }
 

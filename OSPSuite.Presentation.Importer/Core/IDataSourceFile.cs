@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Dictionary<string, IDataSheet> DataSheets { get; set; }
+      Dictionary<string, IDataSheet> DataSheets { get; }
 	   string Path { get; set; }
    }
 
@@ -23,8 +23,8 @@ namespace OSPSuite.Presentation.Importer.Core
       
       public Dictionary<string, IDataSheet> DataSheets 
       { 
-         get; 
-         set; 
+         get;
+         protected set; 
       }
 
 
