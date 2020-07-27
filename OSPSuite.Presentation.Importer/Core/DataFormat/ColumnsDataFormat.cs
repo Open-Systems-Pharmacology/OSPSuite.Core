@@ -127,11 +127,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          else //Fully traversed the parameters list
          {
             //Filter based on the parameters
-            var index = 0;
+            var indexesCopy = indexes.ToList();
             var rawDataSet = data.GetRows(
                row =>
                {
-                  return parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexes.ElementAt(indexes.Count - 1 - (index++))]);
+                  var index = 0;
+                  return parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexesCopy.ElementAt(indexesCopy.Count - 1 - (index++))]);
                }
             );
             dataSets.Add(parseMappings(rawDataSet, data));
