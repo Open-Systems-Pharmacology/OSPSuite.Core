@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                (h => 
                   data.Headers[h].Level == ColumnDescription.MeasurementLevel.Numeric && 
                   Parameters
-                     .Where(p => p.Type == DataFormatParameterType.Mapping)
+                     .Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping)
                      .Select(p => p as MappingDataFormatParameter)
                      .All(m => m.ColumnName != h)
                );
@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count == 1))
          {
             keys.Remove(header);
-            Parameters.Add(new MetaDataFormatParameter(header));
+            Parameters.Add(new MetaDataFormatParameter(header, header));
          }
          foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count > 1))
          {
@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data)
       {
-         var groupByParams = Parameters.Where(p => p.Type == DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
+         var groupByParams = Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
          return buildDataSets(data, groupByParams);
       }
@@ -147,7 +147,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var dictionary = new Dictionary<Column, IList<double>>();
          //Add time mapping
-         var mappingParameters = Parameters.Where(p => p.Type == DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
+         var mappingParameters = Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time);
          dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
 

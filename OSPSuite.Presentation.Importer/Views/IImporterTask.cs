@@ -15,25 +15,25 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings)
       {
-         switch (parameter.Type)
+         switch (parameter.Configuration.Type)
          {
-            case DataFormatParameterType.MetaData:
+            case ParameterConfiguration.DataFormatParameterType.MetaData:
                return ApplicationIcons.IconIndex(
                   mappings
-                     .Any(m => (m.Type == DataFormatParameterType.MetaData) && m.ColumnName == parameter.ColumnName)
+                     .Any(m => (m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.MetaData) && m.ColumnName == parameter.ColumnName)
                      ? ApplicationIcons.MetaData
                      : ApplicationIcons.MissingMetaData);
-            case DataFormatParameterType.Mapping:
+            case ParameterConfiguration.DataFormatParameterType.Mapping:
                return ApplicationIcons.IconIndex(
                   mappings
-                     .Any(m => (m.Type == DataFormatParameterType.Mapping) &&
+                     .Any(m => (m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping) &&
                                (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == parameter.ColumnName)
                      ? ApplicationIcons.UnitInformation
                      : ApplicationIcons.MissingUnitInformation);
-            case DataFormatParameterType.GroupBy:
+            case ParameterConfiguration.DataFormatParameterType.GroupBy:
                return ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
             default:
-               throw new Exception($"{parameter.Type} is not currently been handled");
+               throw new Exception($"{parameter.Configuration.Type} is not currently been handled");
          }
       }
    }
