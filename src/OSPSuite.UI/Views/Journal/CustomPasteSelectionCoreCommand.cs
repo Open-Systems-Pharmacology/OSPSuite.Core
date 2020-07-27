@@ -1,6 +1,7 @@
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.Office.Commands.Internal;
 using OSPSuite.Utility.Extensions;
 using DevExpress.Utils.Commands;
 using DevExpress.XtraRichEdit;

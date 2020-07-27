@@ -37,8 +37,8 @@
 
   <ItemGroup>
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
-    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="4.0.0.1" />
-    <PackageReference Include="OSPSuite.DevExpress" Version="19.2.4.1" />
+    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="5.0.0.1" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="20.1.6" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
