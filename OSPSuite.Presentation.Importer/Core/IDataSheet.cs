@@ -13,6 +13,11 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public ColumnNames Name { get; set; }
       public string Unit { get; set; }
+
+      public override string ToString()
+      {
+         return $"{Name} [{Unit}]";
+      }
    }
 
    /// <summary>
