@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read_first_sheet()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read_second_sheet()
       {
-         sut.DataSheets.ElementAt(1).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.Headers.Keys.Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
             sut.DataSheets["Sheet2"].RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);

@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public bool CheckFile(IUnformattedData data)
       {
-         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
+         if (data.Headers.Where(h => h.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
             return false;
          setParameters(data);
          return true;

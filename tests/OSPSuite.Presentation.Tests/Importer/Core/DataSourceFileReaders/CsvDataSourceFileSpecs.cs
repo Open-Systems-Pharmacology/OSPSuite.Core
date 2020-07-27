@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count().ShouldBeEqualTo(5);
          for (var i = 1; i <= 5; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
