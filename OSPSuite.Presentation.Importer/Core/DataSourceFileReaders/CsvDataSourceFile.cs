@@ -7,10 +7,12 @@ using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-   public class CsvDataSourceFile : DataSourceFile
+   public interface ICsvDataSourceFile : IDataSourceFile { }
+
+   public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
-      public CsvDataSourceFile(string path, IImportLogger logger) : base(path, logger) { }
-      override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
+      public CsvDataSourceFile(IImportLogger logger) : base(logger) { }
+      protected override Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
@@ -36,8 +38,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                   dataSheet.RawData.AddRow(rowList);
                }
 
-               var loadedData = new Dictionary<string, IDataSheet>();
-               loadedData.Add("", dataSheet);
+               var loadedData = new Dictionary<string, IDataSheet>
+               {
+                  { "", dataSheet }
+               };
                return loadedData;
             }
          }
