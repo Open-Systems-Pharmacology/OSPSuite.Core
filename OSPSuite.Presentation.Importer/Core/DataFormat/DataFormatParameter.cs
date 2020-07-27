@@ -5,26 +5,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public class ParameterConfiguration
    {
-      public enum DataFormatParameterType
+      public ParameterConfiguration(object data = null)
       {
-         Mapping,
-         GroupBy,
-         MetaData
-      }
-
-      public ParameterConfiguration(DataFormatParameterType type, object data = null)
-      {
-         Type = type;
          Data = data;
       }
-
-      public DataFormatParameterType Type { get; private set; }
 
       public object Data { get; private set; }
 
       public override string ToString()
       {
-         return $"{Type}<{Data}>";
+         return Data?.ToString();
       }
    }
 
@@ -44,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.MetaData, metaDataId);
+         Configuration = new ParameterConfiguration(metaDataId);
       }
 
       public string MetaDataId
@@ -60,7 +50,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public GroupByDataFormatParameter(string columnName) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.GroupBy);
+         Configuration = new ParameterConfiguration();
       }
    }
 
@@ -68,7 +58,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public MappingDataFormatParameter(string columnName, Column mappedColumn) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.Mapping, mappedColumn);
+         Configuration = new ParameterConfiguration(mappedColumn);
       }
 
       public Column MappedColumn 

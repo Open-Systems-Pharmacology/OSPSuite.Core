@@ -127,24 +127,23 @@ namespace OSPSuite.Presentation.Importer.Views
       private SuperToolTip generateToolTipControlInfo(DataFormatParameter parameter)
       {
          var superToolTip = new SuperToolTip();
-         switch (parameter.Configuration.Type)
+         switch (parameter)
          {
-            case ParameterConfiguration.DataFormatParameterType.Mapping:
-               var mapping = parameter as MappingDataFormatParameter;
+            case MappingDataFormatParameter mp:
                superToolTip.Items.AddTitle("Mapping:");
                superToolTip.Items.Add(
-                  $"The column {parameter.ColumnName} will be mapped into {mapping?.MappedColumn.Name} with units as {mapping?.MappedColumn.Unit}");
+                  $"The column {mp.ColumnName} will be mapped into {mp?.MappedColumn.Name} with units as {mp.MappedColumn.Unit}");
                break;
-            case ParameterConfiguration.DataFormatParameterType.GroupBy:
+            case GroupByDataFormatParameter gp:
                superToolTip.Items.AddTitle("Group by:");
-               superToolTip.Items.Add($"The column {parameter.ColumnName} will be used for grouping by");
+               superToolTip.Items.Add($"The column {gp.ColumnName} will be used for grouping by");
                break;
-            case ParameterConfiguration.DataFormatParameterType.MetaData:
+            case MetaDataFormatParameter mp:
                superToolTip.Items.AddTitle("Meta data:");
-               superToolTip.Items.Add($"The column {parameter.ColumnName} will be used as meta data");
+               superToolTip.Items.Add($"The column {mp.ColumnName} will be used as meta data to extract the following data: {mp.MetaDataId}");
                break;
             default:
-               throw new Exception($"{parameter.Configuration.Type} is not currently been handled");
+               throw new Exception($"{parameter.GetType()} is not currently been handled");
          }
 
          return superToolTip;
@@ -181,13 +180,13 @@ namespace OSPSuite.Presentation.Importer.Views
 
          //GroupBy
          editor.Properties.Items.Add(new ImageComboBoxItem(mappingRow)
-            {ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(""), null)});
+            {ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(mappingRow.ColumnName), null)});
 
          //Mappings
          foreach (var info in _columnInfos)
          {
             if (!_mappings.Any(m =>
-               m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
+               m is MappingDataFormatParameter && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
                var col = new Column
                {
@@ -202,7 +201,7 @@ namespace OSPSuite.Presentation.Importer.Views
          //MetaData
          foreach (var category in _metaDataCategories)
          {
-            if (!_mappings.Any(m => m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.MetaData && m.ColumnName == category.DisplayName))
+            if (!_mappings.Any(m => m is MetaDataFormatParameter && (m as MetaDataFormatParameter).MetaDataId == category.DisplayName))
             {
                var imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName, category.DisplayName), _mappings);
                var item = new ImageComboBoxItem(mappingRow) {ImageIndex = imageIndex, Description = category.DisplayName};
