@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using DevExpress.Utils.Extensions;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Core
@@ -9,23 +11,22 @@ namespace OSPSuite.Presentation.Importer.Core
    public interface IUnformattedData
    {
       IEnumerable<string> GetRow(int index);
-      IEnumerable<string> GetColumn(int columnIndex);
       IEnumerable<string> GetColumn(string columnName);
-      Dictionary<string, ColumnDescription> Headers { get; }
+      Cache<string, ColumnDescription> Headers { get; }
 
       IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
 
       bool AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
-      DataTable GetSheetAsDataTable();
+      DataTable AsDataTable();
    }
 
    public class UnformattedData : IUnformattedData
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
 
-      public Dictionary<string, ColumnDescription> Headers { get; set; } =
-         new Dictionary<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+      public Cache<string, ColumnDescription> Headers { get; set; } =
+         new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
          //the list of headers is somehow the definition of the table
@@ -37,8 +38,8 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          Headers.Each(header =>
          {
-            if (header.Value.Level == ColumnDescription.MeasurementLevel.NotSet) //hell, we could even not check here
-               header.Value.Level = levels[header.Value.Index];
+            if (header.Level == ColumnDescription.MeasurementLevel.NotSet) //hell, we could even not check here
+               header.Level = levels[header.Index];
          });
       }
 
@@ -52,10 +53,10 @@ namespace OSPSuite.Presentation.Importer.Core
 
             foreach (var header in Headers)
             {
-               if (header.Value.Level == ColumnDescription.MeasurementLevel.Discrete)
+               if (header.Level == ColumnDescription.MeasurementLevel.Discrete)
                {
-                  if (!header.Value.ExistingValues.Contains(rowList.ElementAt(header.Value.Index)))
-                     header.Value.ExistingValues.Add(rowList.ElementAt(header.Value.Index));
+                  if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
+                     header.ExistingValues.Add(rowList.ElementAt(header.Index));
                }
             }
             return true;
@@ -90,14 +91,14 @@ namespace OSPSuite.Presentation.Importer.Core
          return _rawDataTable.Where(filter);
       }
 
-      public DataTable GetSheetAsDataTable()
+      public DataTable AsDataTable()
       {
          var resultTable = new DataTable();
 
          // Add columns.
-         for (var i = 0; i < Headers.Count; i++)
+         foreach (var header in Headers.Keys)
          {
-            resultTable.Columns.Add(Headers.ElementAt(i).Key, typeof(string));
+            resultTable.Columns.Add(header, typeof(string));
          }
 
          foreach (var itemList in _rawDataTable)

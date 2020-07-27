@@ -5,12 +5,13 @@ using OSPSuite.BDDHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    internal class TestUnformattedData : UnformattedData
    {
-      public TestUnformattedData(Dictionary<string, ColumnDescription> headers)
+      public TestUnformattedData(Cache<string, ColumnDescription> headers)
       {
          Headers = headers;
       }
@@ -24,7 +25,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          sut = new ColumnsDataFormat();
          _basicFormat = new TestUnformattedData
          (
-            new Dictionary<string, ColumnDescription>()
+            new Cache<string, ColumnDescription>()
             {
                {
                   "Organ",
@@ -124,7 +125,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var singleColumn = new TestUnformattedData
          (
-            new Dictionary<string, ColumnDescription>()
+            new Cache<string, ColumnDescription>()
             {
                {
                   "Organ",
@@ -140,7 +141,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var singleColumn = new TestUnformattedData
          (
-            new Dictionary<string, ColumnDescription>()
+            new Cache<string, ColumnDescription>()
             {
                {
                   "Organ",
