@@ -111,7 +111,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       /// </summary>
       /// <param name="data">The unformatted source data</param>
       /// <param name="parameters">Parameters of the format for grouping by</param>
-      /// <param name="indexes">List of indexes for the recursion</param>
+      /// <param name="indexes">List of indexes for the recursion, each index encodes an existingValue, 
+      /// e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index 1,
+      /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
+      /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
       /// <param name="dataSets">List to store the datasets</param>
       private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets)
       {
