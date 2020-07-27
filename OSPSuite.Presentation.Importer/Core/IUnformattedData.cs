@@ -14,6 +14,8 @@ namespace OSPSuite.Presentation.Importer.Core
       IEnumerable<string> GetColumn(string columnName);
       Cache<string, ColumnDescription> Headers { get; }
 
+      string GetCell(string columnName, int rowIndex);
+
       IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
 
       bool AddRow(IEnumerable<string> row);
@@ -107,6 +109,11 @@ namespace OSPSuite.Presentation.Importer.Core
          }
 
          return resultTable;
+      }
+
+      public string GetCell(string columnName, int rowIndex)
+      {
+         return _rawDataTable[rowIndex][Headers[columnName].Index];
       }
    }
 }

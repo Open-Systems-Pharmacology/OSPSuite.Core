@@ -111,5 +111,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString() });
       }
 
-}
+
+      [TestCase]
+      public void excel_cell_read_correctly()
+      {
+         sut.DataSheets.ElementAt(2).Value.RawData.GetCell("Double",0).ShouldBeEqualTo("0.000341012439638598");
+      }
+
+   }
 }
