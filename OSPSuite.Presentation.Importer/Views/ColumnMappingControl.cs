@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
+using DevExpress.Utils.Extensions;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Views.Base;
@@ -14,6 +15,7 @@ using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -22,7 +24,8 @@ namespace OSPSuite.Presentation.Importer.Views
       public enum ColumnName
       {
          Configuration,
-         ColumnName
+         ColumnName,
+         Source
       }
 
       public static string GetName(ColumnName name)
@@ -31,15 +34,46 @@ namespace OSPSuite.Presentation.Importer.Views
       }
    }
 
+   class MappingClass
+   {
+      public string ColumnName { get => Source.ColumnName; }
+      public string Configuration 
+      {
+         get => Source.Configuration.ToString()??"Group by";
+         set
+         {
+            if (value.StartsWith("Group by"))
+            {
+               Source = new GroupByDataFormatParameter(ColumnName);
+            }
+            else if (value.StartsWith("Mapping ["))
+            {
+               Source = new MappingDataFormatParameter(Source.ColumnName, new Column() { Name = EnumHelper.ParseValue<Column.ColumnNames>(value.Substring(9, value.Length - 10)) });
+            }
+            else if (value.StartsWith("Meta data ["))
+            {
+               Source = new MetaDataFormatParameter(Source.ColumnName, value.Substring(11, value.Length - 12));
+            }
+         }
+      }
+      public DataFormatParameter Source { get; protected set; }
+
+      public MappingClass(DataFormatParameter parameter)
+      {
+         Source = parameter;
+      }
+   }
+
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
-      private IEnumerable<DataFormatParameter> _mappings;
+      private IList<MappingClass> _mappings;
       private readonly IImageListRetriever _imageListRetriever;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
       private readonly Dictionary<string, ImageComboBoxEdit> _editorsForEditing = new Dictionary<string, ImageComboBoxEdit>();
+      private MappingClass _contextMappingRow;
 
       private enum Buttons
       {
@@ -81,11 +115,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void SetMappingSource(IEnumerable<DataFormatParameter> mappings)
       {
-         _mappings = mappings;
-         uxGrid.DataSource = mappings;
+         _mappings = mappings.Select(m => new MappingClass(m)).ToList();
+         uxGrid.DataSource = _mappings;
 
          configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName), true, false);
          configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Configuration), true, true);
+         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Source), false, false);
       }
 
       private void validateMapping()
@@ -118,7 +153,7 @@ namespace OSPSuite.Presentation.Importer.Views
          var mappingRow = _mappings.ElementAt(hitInfo.RowHandle);
          e.Info = new ToolTipControlInfo(mappingRow, string.Empty)
          {
-            SuperTip = generateToolTipControlInfo(mappingRow),
+            SuperTip = generateToolTipControlInfo(mappingRow.Source),
             ToolTipType = ToolTipType.SuperTip
          };
          uxGrid.ToolTipController.ShowHint(e.Info);
@@ -151,12 +186,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onCustomRowCellEdit(object sender, CustomRowCellEditEventArgs e)
       {
-         /*var view = sender as GridView;
+         var view = sender as GridView;
          if (view == null) return;
          if (!e.Column.OptionsColumn.AllowEdit) return;
 
-         //var sourceGridColumn = view.Columns[ColumnMapping.GetName(ColumnMapping.ColumnName.Type)];
          var mappingRow = _mappings.ElementAt(e.RowHandle);
+         _contextMappingRow = mappingRow;
 
          var editorObject = new ImageComboBoxEdit();
          Controls.Add(editorObject);
@@ -168,32 +203,64 @@ namespace OSPSuite.Presentation.Importer.Views
          fillComboBoxItems(editorObject, mappingRow);
          refreshButtons(editorObject, mappingRow);
 
-         e.RepositoryItem = editorObject.Properties;*/
+         e.RepositoryItem = editorObject.Properties;
       }
 
-      private void fillComboBoxItems(ImageComboBoxEdit editor, DataFormatParameter mappingRow)
+      private void fillComboBoxItems(ImageComboBoxEdit editor, MappingClass mappingRow)
       {
          editor.Properties.Items.Clear();
          editor.Properties.SmallImages = _imageListRetriever.AllImages16x16;
          editor.Properties.NullText = Captions.Importer.NoneEditorNullText;
+         switch (mappingRow.Source)
+         {
+            case MappingDataFormatParameter mp:
+               var imageIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(mp.ColumnName, mp.MappedColumn), _mappings.Select(m => m.Source));
+               editor.Properties.Items.Add(
+                  new ImageComboBoxItem($"Mapping [{mp.MappedColumn.Name}]")
+                  {
+                     ImageIndex = imageIndex,
+                     Description = mp.MappedColumn.Name.ToString()
+                  });
+               break;
+            case MetaDataFormatParameter mp:
+               imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(mp.ColumnName, mp.MetaDataId), _mappings.Select(m => m.Source));
+               editor.Properties.Items.Add(
+                  new ImageComboBoxItem($"Meta data [{mp.MetaDataId}]") 
+                  { 
+                     ImageIndex = imageIndex, 
+                     Description = mp.MetaDataId 
+                  });
+               break;
+            case GroupByDataFormatParameter gp:
+               editor.Properties.Items.Add(
+                  new ImageComboBoxItem("Group by")
+                  {
+                     ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(gp.ColumnName), _mappings.Select(m => m.Source))
+                  });
+               break;
+         }
+         editor.SelectedIndex = 0;
          editor.Properties.Items.Add(new ImageComboBoxItem(editor.Properties.NullText));
 
          //GroupBy
-         editor.Properties.Items.Add(new ImageComboBoxItem(mappingRow)
-            {ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(mappingRow.ColumnName), null)});
+         editor.Properties.Items.Add( 
+            new ImageComboBoxItem("Group by")
+            { 
+               ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(mappingRow.ColumnName), _mappings.Select(m => m.Source)) 
+            });
 
          //Mappings
          foreach (var info in _columnInfos)
          {
             if (!_mappings.Any(m =>
-               m is MappingDataFormatParameter && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
+               m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
                var col = new Column
                {
-                  Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(info.DisplayName)
+                  Name = EnumHelper.ParseValue<Column.ColumnNames>(info.DisplayName)
                };
-               var imageIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(info.DisplayName, col), _mappings);
-               var item = new ImageComboBoxItem(mappingRow) {ImageIndex = imageIndex, Description = info.DisplayName};
+               var imageIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(info.DisplayName, col), _mappings.Select(m => m.Source));
+               var item = new ImageComboBoxItem($"Mapping [{info.DisplayName}]") {ImageIndex = imageIndex, Description = info.DisplayName};
                editor.Properties.Items.Add(item);
             }
          }
@@ -201,10 +268,10 @@ namespace OSPSuite.Presentation.Importer.Views
          //MetaData
          foreach (var category in _metaDataCategories)
          {
-            if (!_mappings.Any(m => m is MetaDataFormatParameter && (m as MetaDataFormatParameter).MetaDataId == category.DisplayName))
+            if (!_mappings.Any(m => m.Source is MetaDataFormatParameter && (m.Source as MetaDataFormatParameter).MetaDataId == category.DisplayName))
             {
-               var imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName, category.DisplayName), _mappings);
-               var item = new ImageComboBoxItem(mappingRow) {ImageIndex = imageIndex, Description = category.DisplayName};
+               var imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName, category.DisplayName), _mappings.Select(m => m.Source));
+               var item = new ImageComboBoxItem($"Meta data [{category.DisplayName}]") {ImageIndex = imageIndex, Description = category.DisplayName};
                editor.Properties.Items.Add(item);
             }
          }
@@ -215,7 +282,7 @@ namespace OSPSuite.Presentation.Importer.Views
          editor.Enabled = false;
       }
 
-      private void refreshButtons(ButtonEdit editor, DataFormatParameter mappingRow)
+      private void refreshButtons(ButtonEdit editor, MappingClass mappingRow)
       {
          for (var i = editor.Properties.Buttons.Count - 1; i >= 0; i--)
          {
@@ -239,7 +306,7 @@ namespace OSPSuite.Presentation.Importer.Views
          //throw new NotImplementedException();
       }
 
-      private void createButtons(ButtonEdit editor, DataFormatParameter mappingRow)
+      private void createButtons(ButtonEdit editor, MappingClass mappingRow)
       {
          createDeleteButton(editor);
          editor.ButtonClick += onEditorButtonClick;
@@ -260,7 +327,54 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onCustomRowCellEditForEditing(object sender, CustomRowCellEditEventArgs e)
       {
-         //throw new NotImplementedException();
+         var view = sender as GridView;
+         if (view == null) return;
+         if (!e.Column.OptionsColumn.AllowEdit) return;
+
+         var sourceGridColumn = view.Columns[ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName)];
+         var sourceColumnName = (string)view.GetRowCellValue(e.RowHandle, sourceGridColumn);
+         if (string.IsNullOrEmpty(sourceColumnName)) return;
+         var mappingRow = _mappings.ElementAt(e.RowHandle);
+         
+         //the information of the current mappingRow is needed in both underlying event handlers.
+         _contextMappingRow = mappingRow;
+
+         ImageComboBoxEdit editorObject = _editorsForEditing.GetOrAdd(sourceColumnName, (index) =>
+         {
+            var editorObj = new ImageComboBoxEdit();
+            editorObj.EditValueChanged += onEditorEditValueChanged;
+            Controls.Add(editorObj);
+            var editor = editorObj.Properties;
+
+            editor.AutoComplete = true;
+            editor.AllowNullInput = DefaultBoolean.True;
+            editor.CloseUpKey = new KeyShortcut(Keys.Enter);
+            return editorObj;
+         });
+
+         if (_editorsForEditing.ContainsKey(sourceColumnName))
+            editorObject = _editorsForEditing[sourceColumnName];
+         else
+         {
+            editorObject = new ImageComboBoxEdit();
+            _editorsForEditing.Add(sourceColumnName, editorObject);
+            editorObject.EditValueChanged += onEditorEditValueChanged;
+            Controls.Add(editorObject);
+            var editor = editorObject.Properties;
+
+            editor.AutoComplete = true;
+            editor.AllowNullInput = DefaultBoolean.True;
+            editor.CloseUpKey = new KeyShortcut(Keys.Enter);
+         }
+
+         editorObject.EditValue = mappingRow.ColumnName;
+         // create individual list of values
+         fillComboBoxItems(editorObject, mappingRow);
+         refreshButtons(editorObject, mappingRow);
+
+         if (editorObject.Properties.Items.Count == 0) return;
+         e.RepositoryItem = editorObject.Properties;
+         editorObject.SelectedIndex = 0;
       }
 
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
@@ -276,7 +390,16 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onEditorEditValueChanged(object sender, EventArgs e)
       {
-         //throw new NotImplementedException();
+         var editor = sender as ImageComboBoxEdit;
+         if (editor == null) return;
+
+         uxGrid.MainView.PostEditor();
+
+         if (editor.EditValue != null && editor.EditValue.ToString() == editor.Properties.NullText)
+            editor.EditValue = null;
+
+         _contextMappingRow.Configuration = editor.EditValue.ToString();
+         refreshButtons(editor, _contextMappingRow);
       }
 
       private static void createMetaDataButton(ButtonEdit editor, bool visible)

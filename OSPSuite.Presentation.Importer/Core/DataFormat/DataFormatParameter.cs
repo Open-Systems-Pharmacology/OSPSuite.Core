@@ -1,7 +1,4 @@
-﻿using DevExpress.ClipboardSource.SpreadsheetML;
-using OSPSuite.Core.Domain.ParameterIdentifications;
-
-namespace OSPSuite.Presentation.Importer.Core.DataFormat
+﻿namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public class ParameterConfiguration
    {
