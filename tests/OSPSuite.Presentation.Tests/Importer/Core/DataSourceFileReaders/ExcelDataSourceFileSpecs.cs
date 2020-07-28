@@ -42,20 +42,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read_first_sheet()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders().Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
       public void headers_are_read_second_sheet()
       {
-         sut.DataSheets.ElementAt(1).Value.RawData.Headers.Keys.Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.GetHeaders().Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets["Sheet2"].RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+            sut.DataSheets["Sheet2"].RawData.GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
       [TestCase]
@@ -83,15 +83,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void measurement_levels_are_read_third_sheet()
       {
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["Double"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["integer"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("Double").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("integer").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("string").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
       }
 
       [TestCase]
       public void existing_values_are_read_third_sheet()
       {
-         sut.DataSheets.ElementAt(2).Value.RawData.Headers["string"].ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("string").ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
       }
 
       [TestCase]

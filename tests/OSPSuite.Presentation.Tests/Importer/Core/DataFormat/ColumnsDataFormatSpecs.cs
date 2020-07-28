@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       public TestUnformattedData(Cache<string, ColumnDescription> headers)
       {
-         Headers = headers;
+         _headers = headers;
       }
    }
    public abstract class ConcernforColumnsDataFormat : ContextSpecification<ColumnsDataFormat>
@@ -117,7 +117,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_basic_format()
       {
-         sut.CheckFile(_basicFormat).ShouldBeTrue();
+         sut.SetParameters(_basicFormat).ShouldBeTrue();
       }
 
       [TestCase]
@@ -129,11 +129,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  _basicFormat.Headers["Organ"]
+                  _basicFormat.GetColumnDescription("Organ")
                }
             }
          );
-         sut.CheckFile(singleColumn).ShouldBeFalse();
+         sut.SetParameters(singleColumn).ShouldBeFalse();
       }
 
       [TestCase]
@@ -145,15 +145,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  _basicFormat.Headers["Organ"]
+                  _basicFormat.GetColumnDescription("Organ")
                },
                {
                   "Time [min]",
-                  _basicFormat.Headers["Time [min]"]
+                  _basicFormat.GetColumnDescription("Time [min]")
                }
             }
          );
-         sut.CheckFile(singleColumn).ShouldBeFalse();
+         sut.SetParameters(singleColumn).ShouldBeFalse();
       }
    }
 
@@ -161,7 +161,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       protected override void Because()
       {
-         sut.CheckFile(_basicFormat);
+         sut.SetParameters(_basicFormat);
       }
       
       [TestCase]
@@ -224,12 +224,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          base.Context();
          _mockedData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _mockedData.Headers).Returns(_basicFormat.Headers);
+         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
       }
 
       protected override void Because()
       {
-         sut.CheckFile(_mockedData);
+         sut.SetParameters(_mockedData);
       }
 
       [TestCase]

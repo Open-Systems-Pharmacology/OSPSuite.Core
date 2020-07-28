@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Where(x => x.CheckFile(data));
+            .Where(x => x.SetParameters(data));
       }
 
       public IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets)
