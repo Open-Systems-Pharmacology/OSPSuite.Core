@@ -12,11 +12,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public string Description { get; } = "Simple format with data identified by column data...";
 
-      public IList<DataFormatParameter> Parameters { get; private set; }
+      public IList<IDataFormatParameter> Parameters { get; private set; }
 
       public bool CheckFile(IUnformattedData data)
       {
-         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
+         if (data.Headers.Count(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric) < 2)
             return false;
          setParameters(data);
          return true;
@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       private void setParameters(IUnformattedData data)
       {
          var keys = data.Headers.Keys.ToList();
-         Parameters = new List<DataFormatParameter>();
+         Parameters = new List<IDataFormatParameter>();
 
          var missingKeys = new List<string>();
 
@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                (h => 
                   data.Headers[h].Level == ColumnDescription.MeasurementLevel.Numeric && 
                   Parameters
-                     .Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping)
+                     .Where(p => p.Type == ParameterConfiguration.DataFormatParameterType.Mapping)
                      .Select(p => p as MappingDataFormatParameter)
                      .All(m => m.ColumnName != h)
                );
@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data)
       {
-         var groupByParams = Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
+         var groupByParams = Parameters.Where(p => p.Type == ParameterConfiguration.DataFormatParameterType.GroupBy).Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
          return buildDataSets(data, groupByParams);
       }
@@ -147,7 +147,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var dictionary = new Dictionary<Column, IList<double>>();
          //Add time mapping
-         var mappingParameters = Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
+         var mappingParameters = Parameters.Where(p => p.Type == ParameterConfiguration.DataFormatParameterType.Mapping).Select(p => p as MappingDataFormatParameter).ToList();
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time);
          dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
 

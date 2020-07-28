@@ -167,7 +167,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_time_column()
       {
          var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
-         timeParameter.Configuration.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
+         timeParameter.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Time);
@@ -178,7 +178,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_error_column()
       {
          var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
-         errorParameter.Configuration.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
+         errorParameter.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Error);
@@ -189,7 +189,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_measurement_column_without_the_name_on_the_headings()
       {
          var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
-         measurementParameter.Configuration.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
+         measurementParameter.Type.ShouldBeEqualTo(ParameterConfiguration.DataFormatParameterType.Mapping);
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Concentration);
@@ -199,7 +199,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_metadata_parameters()
       {
-         var metadataParameters = sut.Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.MetaData).ToList();
+         var metadataParameters = sut.Parameters.Where(p => p.Type == ParameterConfiguration.DataFormatParameterType.MetaData).ToList();
          metadataParameters.Count.ShouldBeEqualTo(5);
          foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route" })
          {
@@ -210,7 +210,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_groupBy_parameters()
       {
-         var groupByParameters = sut.Parameters.Where(p => p.Configuration.Type == ParameterConfiguration.DataFormatParameterType.GroupBy).ToList();
+         var groupByParameters = sut.Parameters.Where(p => p.Type == ParameterConfiguration.DataFormatParameterType.GroupBy).ToList();
          groupByParameters.Count.ShouldBeEqualTo(2);
          foreach (var name in new[] { "Groupe Id", "Molecule" })
          {

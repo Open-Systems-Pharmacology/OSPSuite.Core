@@ -1,5 +1,4 @@
-﻿using DevExpress.ClipboardSource.SpreadsheetML;
-using OSPSuite.Core.Domain.ParameterIdentifications;
+﻿using NPOI.OpenXml4Net.OPC;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -12,15 +11,27 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          MetaData
       }
 
-      public ParameterConfiguration(DataFormatParameterType type, object data = null)
+      public DataFormatParameterType Type { get; }
+
+      public ParameterConfiguration(DataFormatParameterType type)
       {
          Type = type;
-         Data = data;
       }
 
-      public DataFormatParameterType Type { get; private set; }
+      public override string ToString()
+      {
+         return $"{Type}";
+      }
+   }
 
-      public object Data { get; private set; }
+   public class ParameterConfiguration<T> : ParameterConfiguration where T : class
+   {
+      public T Data { get; }
+
+      public ParameterConfiguration(DataFormatParameterType type, T data = null) : base(type)
+      {
+         Data = data;
+      }
 
       public override string ToString()
       {
@@ -28,11 +39,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public abstract class DataFormatParameter
-   {
-      public string ColumnName { get; private set; }
 
-      public ParameterConfiguration Configuration { get; set; }
+   public interface  IDataFormatParameter
+   {
+      string ColumnName { get; }
+      ParameterConfiguration.DataFormatParameterType Type { get; }
+   }
+
+
+   public abstract class DataFormatParameter<T> : IDataFormatParameter where T : class
+   {
+      public string ColumnName { get; }
+
+      public ParameterConfiguration.DataFormatParameterType Type => Configuration.Type;
+      
+      //CONSTRUCTOR???
+      public ParameterConfiguration<T> Configuration { get; set; }
 
       protected DataFormatParameter(string columnName)
       {
@@ -40,43 +62,31 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class MetaDataFormatParameter : DataFormatParameter
+   public class MetaDataFormatParameter : DataFormatParameter<string>
    {
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.MetaData, metaDataId);
+         Configuration = new ParameterConfiguration<string>(ParameterConfiguration.DataFormatParameterType.MetaData, metaDataId);
       }
 
-      public string MetaDataId
-      {
-         get
-         {
-            return Configuration.Data as string;
-         }
-      }
+      public string MetaDataId => Configuration.Data;
    }
 
-   public class GroupByDataFormatParameter : DataFormatParameter
+   public class GroupByDataFormatParameter : DataFormatParameter<string>
    {
       public GroupByDataFormatParameter(string columnName) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.GroupBy);
+         Configuration = new ParameterConfiguration<string>(ParameterConfiguration.DataFormatParameterType.GroupBy);
       }
    }
 
-   public class MappingDataFormatParameter : DataFormatParameter
+   public class MappingDataFormatParameter : DataFormatParameter<Column>
    {
       public MappingDataFormatParameter(string columnName, Column mappedColumn) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(ParameterConfiguration.DataFormatParameterType.Mapping, mappedColumn);
+         Configuration = new ParameterConfiguration<Column>(ParameterConfiguration.DataFormatParameterType.Mapping, mappedColumn);
       }
 
-      public Column MappedColumn 
-      { 
-         get
-         {
-            return Configuration.Data as Column;
-         }
-      }
+      public Column MappedColumn => Configuration.Data;
    }
 }

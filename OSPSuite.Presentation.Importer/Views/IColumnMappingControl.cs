@@ -14,6 +14,6 @@ namespace OSPSuite.Presentation.Importer.Views
          DataImporterSettings dataImporterSettings
       );
 
-      void SetMappingSource(IEnumerable<DataFormatParameter> mappings);
+      void SetMappingSource(IEnumerable<IDataFormatParameter> mappings);
    }
 }

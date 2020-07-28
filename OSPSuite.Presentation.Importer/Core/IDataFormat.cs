@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Core
       string Name { get; }
       string Description { get; }
       bool CheckFile(IUnformattedData rawData);
-      IList<DataFormatParameter> Parameters { get; }
+      IList<IDataFormatParameter> Parameters { get; }
       IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data);
    }
 }

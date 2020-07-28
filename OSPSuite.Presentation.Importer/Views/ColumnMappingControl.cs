@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
-      private IEnumerable<DataFormatParameter> _mappings;
+      private IEnumerable<IDataFormatParameter> _mappings;
       private readonly IImageListRetriever _imageListRetriever;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private IReadOnlyList<ColumnInfo> _columnInfos;
@@ -79,7 +79,7 @@ namespace OSPSuite.Presentation.Importer.Views
       {
       }
 
-      public void SetMappingSource(IEnumerable<DataFormatParameter> mappings)
+      public void SetMappingSource(IEnumerable<IDataFormatParameter> mappings)
       {
          _mappings = mappings;
          uxGrid.DataSource = mappings;
@@ -124,10 +124,10 @@ namespace OSPSuite.Presentation.Importer.Views
          uxGrid.ToolTipController.ShowHint(e.Info);
       }
 
-      private SuperToolTip generateToolTipControlInfo(DataFormatParameter parameter)
+      private SuperToolTip generateToolTipControlInfo(IDataFormatParameter parameter)
       {
          var superToolTip = new SuperToolTip();
-         switch (parameter.Configuration.Type)
+         switch (parameter.Type)
          {
             case ParameterConfiguration.DataFormatParameterType.Mapping:
                var mapping = parameter as MappingDataFormatParameter;
@@ -144,7 +144,7 @@ namespace OSPSuite.Presentation.Importer.Views
                superToolTip.Items.Add($"The column {parameter.ColumnName} will be used as meta data");
                break;
             default:
-               throw new Exception($"{parameter.Configuration.Type} is not currently been handled");
+               throw new Exception($"{parameter.Type} is not currently been handled");
          }
 
          return superToolTip;
@@ -172,7 +172,7 @@ namespace OSPSuite.Presentation.Importer.Views
          e.RepositoryItem = editorObject.Properties;*/
       }
 
-      private void fillComboBoxItems(ImageComboBoxEdit editor, DataFormatParameter mappingRow)
+      private void fillComboBoxItems(ImageComboBoxEdit editor, IDataFormatParameter mappingRow)
       {
          editor.Properties.Items.Clear();
          editor.Properties.SmallImages = _imageListRetriever.AllImages16x16;
@@ -187,7 +187,7 @@ namespace OSPSuite.Presentation.Importer.Views
          foreach (var info in _columnInfos)
          {
             if (!_mappings.Any(m =>
-               m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.Mapping && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
+               m.Type == ParameterConfiguration.DataFormatParameterType.Mapping && (m as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
                var col = new Column
                {
@@ -202,7 +202,7 @@ namespace OSPSuite.Presentation.Importer.Views
          //MetaData
          foreach (var category in _metaDataCategories)
          {
-            if (!_mappings.Any(m => m.Configuration.Type == ParameterConfiguration.DataFormatParameterType.MetaData && m.ColumnName == category.DisplayName))
+            if (!_mappings.Any(m => m.Type == ParameterConfiguration.DataFormatParameterType.MetaData && m.ColumnName == category.DisplayName))
             {
                var imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(category.DisplayName, category.DisplayName), _mappings);
                var item = new ImageComboBoxItem(mappingRow) {ImageIndex = imageIndex, Description = category.DisplayName};
@@ -216,7 +216,7 @@ namespace OSPSuite.Presentation.Importer.Views
          editor.Enabled = false;
       }
 
-      private void refreshButtons(ButtonEdit editor, DataFormatParameter mappingRow)
+      private void refreshButtons(ButtonEdit editor, IDataFormatParameter mappingRow)
       {
          for (var i = editor.Properties.Buttons.Count - 1; i >= 0; i--)
          {
@@ -240,7 +240,7 @@ namespace OSPSuite.Presentation.Importer.Views
          //throw new NotImplementedException();
       }
 
-      private void createButtons(ButtonEdit editor, DataFormatParameter mappingRow)
+      private void createButtons(ButtonEdit editor, IDataFormatParameter mappingRow)
       {
          createDeleteButton(editor);
          editor.ButtonClick += onEditorButtonClick;
