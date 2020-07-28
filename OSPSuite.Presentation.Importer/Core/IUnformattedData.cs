@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Importer.Core
 {
    public interface IUnformattedData
    {
-      IEnumerable<string> GetRow(int index);
       IEnumerable<string> GetColumn(string columnName);
       ColumnDescription GetColumnDescription(string columnName);
       IEnumerable<string> GetHeaders();
@@ -20,6 +19,7 @@ namespace OSPSuite.Presentation.Importer.Core
       bool AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
       DataTable AsDataTable();
+      UnformattedDataRow getDataRow(int index);
    }
 
    public class UnformattedData : IUnformattedData
@@ -28,6 +28,17 @@ namespace OSPSuite.Presentation.Importer.Core
 
       protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+
+      private IEnumerable<string> getColumn(int columnIndex)
+      {
+         var resultList = new List<string>();
+
+         //change this
+         for (var i = 0; i < _rawDataTable.Count; i++)     //should have at least one row
+            resultList.Add(_rawDataTable[i][columnIndex]); //make sure the 2 indexes are correctly positioned here
+
+         return resultList;
+      }
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
          //the list of headers is somehow the definition of the table
@@ -66,25 +77,10 @@ namespace OSPSuite.Presentation.Importer.Core
          return false;
       }
 
-      public IEnumerable<string> GetColumn(int columnIndex)
-      {
-         var resultList = new List<string>();
-
-         //change this
-         for (var i = 0; i < _rawDataTable.Count; i++)     //should have at least one row
-            resultList.Add(_rawDataTable[i][columnIndex]); //make sure the 2 indexes are correctly positioned here
-
-         return resultList;
-      }
 
       public IEnumerable<string> GetColumn(string columnName)
       {
-         return GetColumn(_headers[columnName].Index);
-      }
-
-      public IEnumerable<string> GetRow(int index)
-      {
-         return _rawDataTable[index];
+         return getColumn(_headers[columnName].Index);
       }
 
       public IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter)
@@ -112,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public string GetCell(string columnName, int rowIndex)
       {
-         return _rawDataTable[rowIndex][_headers[columnName].Index];
+         return new UnformattedDataRow(_rawDataTable[rowIndex], _headers).GetCellValue(columnName);
       }
 
       public IEnumerable<string> GetHeaders()
@@ -125,13 +121,9 @@ namespace OSPSuite.Presentation.Importer.Core
          return _headers[columnName];
       }
 
-      public Dictionary<string,string> GetRowDict(int index)
+      public UnformattedDataRow getDataRow(int index)
       {
-         var dic = _headers.Keys.Zip(_rawDataTable[index], (k, v) => new { k, v })
-            .ToDictionary(x => x.k, x => x.v);
-
-         return dic;
-
+         return new UnformattedDataRow(_rawDataTable[index], _headers);
       }
    }
 }

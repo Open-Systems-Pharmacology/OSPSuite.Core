@@ -52,15 +52,14 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count().ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.getDataRow(0).Count().ShouldBeEqualTo(5);
 
-         foreach (var header in sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders())
-         {
-            
-         }
+         //actually the problem here is the way we have written the test. this should be changed
+         var headers = sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders();
+
          for (var i = 0; i < 3; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
+            sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(headers.ElementAt(i)).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
          }
       }
 

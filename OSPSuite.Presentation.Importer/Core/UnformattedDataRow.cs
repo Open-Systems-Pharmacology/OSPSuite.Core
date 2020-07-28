@@ -1,0 +1,36 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using DevExpress.XtraTreeList;
+using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Utility.Collections;
+
+namespace OSPSuite.Presentation.Importer.Core
+{
+   public class UnformattedDataRow :IEnumerable
+   {
+      private IEnumerable<string> _row;
+      private Cache<string, ColumnDescription> _headers;
+      public UnformattedDataRow(IEnumerable<string> row, Cache<string, ColumnDescription> headers)
+      {
+         _row = row;
+         _headers = headers;
+      }
+
+      public IEnumerator GetEnumerator()
+      {
+         return _row.GetEnumerator();
+      }
+
+      public string GetCellValue( string columnName )
+      {
+         return _row.ElementAt(_headers[columnName].Index);
+      }
+
+      public int Count()
+      {
+         return _row.Count();
+      }
+   }
+}
