@@ -12,10 +12,9 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       IEnumerable<string> GetRow(int index);
       IEnumerable<string> GetColumn(string columnName);
-      Cache<string, ColumnDescription> Headers { get; }
-
+      ColumnDescription GetColumnDescription(string columnName);
+      IEnumerable<string> GetHeaders();
       string GetCell(string columnName, int rowIndex);
-
       IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
 
       bool AddRow(IEnumerable<string> row);
@@ -27,18 +26,18 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
 
-      public Cache<string, ColumnDescription> Headers { get; set; } =
+      protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
          //the list of headers is somehow the definition of the table
       {
-         Headers.Add(columnName, new ColumnDescription(columnIndex));
+         _headers.Add(columnName, new ColumnDescription(columnIndex));
       }
 
       public void CalculateColumnDescription(List<ColumnDescription.MeasurementLevel> levels)
       {
-         Headers.Each(header =>
+         _headers.Each(header =>
          {
             if (header.Level == ColumnDescription.MeasurementLevel.NotSet) //hell, we could even not check here
                header.Level = levels[header.Index];
@@ -49,11 +48,11 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          var rowList = row.ToList();
          //the not empty row part we could check explicitly
-         if (Headers.Count == rowList.Count) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
+         if (_headers.Count == rowList.Count) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
          {
             _rawDataTable.Add(rowList);
 
-            foreach (var header in Headers)
+            foreach (var header in _headers)
             {
                if (header.Level == ColumnDescription.MeasurementLevel.Discrete)
                {
@@ -80,7 +79,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IEnumerable<string> GetColumn(string columnName)
       {
-         return GetColumn(Headers[columnName].Index);
+         return GetColumn(_headers[columnName].Index);
       }
 
       public IEnumerable<string> GetRow(int index)
@@ -98,7 +97,7 @@ namespace OSPSuite.Presentation.Importer.Core
          var resultTable = new DataTable();
 
          // Add columns.
-         foreach (var header in Headers.Keys)
+         foreach (var header in _headers.Keys)
          {
             resultTable.Columns.Add(header, typeof(string));
          }
@@ -113,7 +112,26 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public string GetCell(string columnName, int rowIndex)
       {
-         return _rawDataTable[rowIndex][Headers[columnName].Index];
+         return _rawDataTable[rowIndex][_headers[columnName].Index];
+      }
+
+      public IEnumerable<string> GetHeaders()
+      {
+         return _headers.Keys;
+      }
+
+      public ColumnDescription GetColumnDescription(string columnName)
+      {
+         return _headers[columnName];
+      }
+
+      public Dictionary<string,string> GetRowDict(int index)
+      {
+         var dic = _headers.Keys.Zip(_rawDataTable[index], (k, v) => new { k, v })
+            .ToDictionary(x => x.k, x => x.v);
+
+         return dic;
+
       }
    }
 }
