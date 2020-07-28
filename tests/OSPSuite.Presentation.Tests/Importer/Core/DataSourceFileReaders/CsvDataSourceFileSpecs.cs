@@ -42,10 +42,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.Count.ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders().Count().ShouldBeEqualTo(5);
          for (var i = 1; i <= 5; i++)
          {
-            sut.DataSheets.ElementAt(0).Value.RawData.Headers.Keys.ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
@@ -53,6 +53,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public void body_is_read()
       {
          sut.DataSheets.ElementAt(0).Value.RawData.GetRow(0).Count().ShouldBeEqualTo(5);
+
+         foreach (var header in sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders())
+         {
+            
+         }
          for (var i = 0; i < 3; i++)
          {
             sut.DataSheets.ElementAt(0).Value.RawData.GetColumn(i).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
@@ -62,15 +67,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void measurement_levels_are_read_discrete()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header1"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header2"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header3"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetColumnDescription("header1").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetColumnDescription("header2").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetColumnDescription("header3").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
       }
 
       [TestCase]
       public void measurement_levels_are_read_integer()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.Headers["header4"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetColumnDescription("header4").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
       }
 
       [TestCase]
@@ -88,7 +93,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          foreach (var culture in culturesList)
          {
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
-            sut.DataSheets.ElementAt(0).Value.RawData.Headers["header5"].Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+            sut.DataSheets.ElementAt(0).Value.RawData.GetColumnDescription("header5").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          }
       }
 

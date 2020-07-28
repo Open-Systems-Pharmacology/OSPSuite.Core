@@ -14,17 +14,21 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<DataFormatParameter> Parameters { get; private set; }
 
-      public bool CheckFile(IUnformattedData data)
+      public bool SetParameters(IUnformattedData data)
       {
-         if (data.Headers.Where(h => h.Value.Level == ColumnDescription.MeasurementLevel.Numeric).Count() < 2)
+         if((data.GetHeaders()
+            .Select(data.GetColumnDescription )
+            .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) <2 )
             return false;
+         
          setParameters(data);
          return true;
       }
 
+      //make this public and call every time SetParameters returns true OR rename SetParameters to CheckAndLoadFile
       private void setParameters(IUnformattedData data)
       {
-         var keys = data.Headers.Keys.ToList();
+         var keys = data.GetHeaders().ToList();
          Parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
@@ -63,7 +67,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h => 
-                  data.Headers[h].Level == ColumnDescription.MeasurementLevel.Numeric && 
+                  data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric && 
                   Parameters
                      .Where(p => p is MappingDataFormatParameter)
                      .Select(p => p as MappingDataFormatParameter)
@@ -79,13 +83,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
-         var discreteColumns = keys.Where(h => data.Headers[h].Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
-         foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count == 1))
+         var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
+         foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count == 1))
          {
             keys.Remove(header);
             Parameters.Add(new MetaDataFormatParameter(header, header));
          }
-         foreach (var header in discreteColumns.Where(h => data.Headers[h].ExistingValues.Count > 1))
+         foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count > 1))
          {
             keys.Remove(header);
             Parameters.Add(new GroupByDataFormatParameter(header));
@@ -97,7 +101,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var groupByParams = 
             Parameters
                .Where(p => p is GroupByDataFormatParameter)
-               .Select(p => (p.ColumnName, data.Headers[p.ColumnName].ExistingValues));
+               .Select(p => (p.ColumnName, data.GetColumnDescription(p.ColumnName).ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
          return buildDataSets(data, groupByParams);
       }
@@ -139,7 +143,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                row =>
                {
                   var index = 0;
-                  return parameters.All(p => row.ElementAt(data.Headers[p.ColumnName].Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
+                  return parameters.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
                }
             );
             dataSets.Add(parseMappings(rawDataSet, data));
@@ -156,16 +160,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                .Select(p => p as MappingDataFormatParameter)
                .ToList();
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time);
-         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[timeParameter.ColumnName].Index))).ToList());
+         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(timeParameter.ColumnName).Index))).ToList());
 
          //Add measurement mapping
          var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Concentration);
-         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[measurementParameter.ColumnName].Index))).ToList());
+         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(measurementParameter.ColumnName).Index))).ToList());
 
          //Add error mapping
          var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Error);
          if (errorParameter != null)
-            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.Headers[errorParameter.ColumnName].Index))).ToList());
+            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(errorParameter.ColumnName).Index))).ToList());
 
          return dictionary;
       }

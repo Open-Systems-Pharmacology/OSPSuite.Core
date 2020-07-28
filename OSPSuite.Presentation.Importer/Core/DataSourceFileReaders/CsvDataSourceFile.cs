@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
       public CsvDataSourceFile(IImportLogger logger) : base(logger) { }
-      override protected Dictionary<string, IDataSheet> LoadFromFile(string path)
+      protected override Dictionary<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
@@ -38,8 +38,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                   dataSheet.RawData.AddRow(rowList);
                }
 
-               var loadedData = new Dictionary<string, IDataSheet>();
-               loadedData.Add("", dataSheet);
+               var loadedData = new Dictionary<string, IDataSheet>
+               {
+                  { "", dataSheet }
+               };
                return loadedData;
             }
          }
