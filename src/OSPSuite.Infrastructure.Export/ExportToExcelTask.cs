@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using OSPSuite.Utility;
-using SmartXLS;
 
 namespace OSPSuite.Infrastructure.Export
 {
@@ -17,7 +20,7 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
       /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, Action<WorkBook> workbookConfiguration = null)
+      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, Action<XSSFWorkbook> workbookConfiguration = null)
       {
          ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel, workbookConfiguration);
       }
@@ -29,38 +32,33 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
       /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<WorkBook, DataTable> workbookConfiguration)
+      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<XSSFWorkbook, DataTable> workbookConfiguration)
       {
          var tables = dataTables.ToList();
-         using (var workBook = new WorkBook())
+         var workBook = new XSSFWorkbook();
+
+         for (var i = 0; i < tables.Count(); i++)
          {
-            if (tables.Count > 1)
-               workBook.insertSheets(0, tables.Count - 1); //-1 because one is always available by default
+            var dataTable = tables.ElementAt(i);
+            exportDataTableToWorkBook(workBook, dataTable);
 
-            for (var i = 0; i < tables.Count(); i++)
-            {
-               var dataTable = tables.ElementAt(i);
-               exportDataTableToWorkBook(workBook, dataTable, i);
-
-               workbookConfiguration?.Invoke(workBook, dataTable);
-            }
-
-            SaveWorkbook(fileName, workBook);
+            workbookConfiguration?.Invoke(workBook, dataTable);
          }
+
+         SaveWorkbook(fileName, workBook);
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
       }
 
-      public static void SaveWorkbook(string fileName, WorkBook workBook)
+      public static void SaveWorkbook(string fileName, XSSFWorkbook workBook)
       {
          FileHelper.TrySaveFile(fileName, () =>
          {
-            var fileInfo = new FileInfo(fileName);
-            if (fileInfo.Extension.Contains("xlsx"))
-               workBook.writeXLSX(fileName);
-            else
-               workBook.write(fileName);
+            using (FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+               workBook.Write(stream);
+            }
          });
       }
 
@@ -71,7 +69,7 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
       /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<WorkBook> workbookConfiguration = null)
+      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<XSSFWorkbook> workbookConfiguration = null)
       {
          ExportDataTablesToExcel(dataTables, fileName, openExcel, (wb, dt) =>
          {
@@ -79,11 +77,41 @@ namespace OSPSuite.Infrastructure.Export
          });
       }
 
-      private static void exportDataTableToWorkBook(WorkBook workBook, DataTable dataTable, int sheetIndex)
+      private static void exportDataTableToWorkBook(IWorkbook workBook, DataTable dataTable)
       {
-         workBook.Sheet = sheetIndex;
-         workBook.ImportDataTable(dataTable, true, 0, 0, dataTable.Rows.Count, dataTable.Columns.Count);
-         workBook.setSheetName(sheetIndex, dataTable.TableName);
+         Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+         var sheet = workBook.CreateSheet(dataTable.TableName);
+
+         var rowCount = dataTable.Rows.Count;
+         var columnCount = dataTable.Columns.Count;
+
+         var row = sheet.CreateRow(0);
+         for (var c = 0; c < columnCount; c++)
+         {
+            var cell = row.CreateCell(c);
+            cell.SetCellValue(dataTable.Columns[c].ColumnName);
+            sheet.AutoSizeColumn(c); //this should possibly be done right in the end
+         }
+
+         for (var i = 0; i < rowCount; i++)
+         {
+            row = sheet.CreateRow(i + 1);
+            for (var j = 0; j < columnCount; j++)
+            {
+               var cell = row.CreateCell(j);
+
+               if ((dataTable.Columns[j].DataType.GetType() == typeof(decimal)) && dataTable.Rows[i][j] != DBNull.Value)
+               {
+                  cell.SetCellType(CellType.Numeric);
+                  //test
+
+                  cell.SetCellValue(double.Parse((string)dataTable.Rows[i][j], Thread.CurrentThread.CurrentCulture.NumberFormat));
+               }
+               else
+                  cell.SetCellValue(dataTable.Rows[i][j].ToString());
+            }
+         }
       }
    }
 }
