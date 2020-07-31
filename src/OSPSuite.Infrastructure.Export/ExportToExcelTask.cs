@@ -101,12 +101,11 @@ namespace OSPSuite.Infrastructure.Export
             {
                var cell = row.CreateCell(j);
 
-               if ((dataTable.Columns[j].DataType.GetType() == typeof(decimal)) && dataTable.Rows[i][j] != DBNull.Value)
+               if (double.TryParse(dataTable.Rows[i][j].ToString(), out var value)) //Thread.CurrentThread.CurrentCulture.NumberFormat
                {
                   cell.SetCellType(CellType.Numeric);
-                  //test
+                  cell.SetCellValue(value);
 
-                  cell.SetCellValue(double.Parse((string)dataTable.Rows[i][j], Thread.CurrentThread.CurrentCulture.NumberFormat));
                }
                else
                   cell.SetCellValue(dataTable.Rows[i][j].ToString());
