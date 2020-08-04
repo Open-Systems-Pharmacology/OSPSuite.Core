@@ -7,11 +7,6 @@ using OSPSuite.Utility;
 
 namespace OSPSuite.Infrastructure.Export
 {
-   internal static class SheetIndex
-   {
-      public static int Report = 0;
-   }
-
    public class HistoryExportTask : IHistoryExportTask
    {
       public void CreateReport(IHistoryManager historyManager, ReportOptions reportOptions)

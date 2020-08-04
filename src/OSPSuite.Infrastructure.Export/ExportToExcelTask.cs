@@ -19,10 +19,9 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTable">Data Table to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, Action<XSSFWorkbook> workbookConfiguration = null)
+      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel)
       {
-         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel, workbookConfiguration);
+         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel);
       }
 
       /// <summary>
@@ -31,8 +30,7 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTables">Data Tables to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<XSSFWorkbook, DataTable> workbookConfiguration)
+      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel)
       {
          var tables = dataTables.ToList();
          var workBook = new XSSFWorkbook();
@@ -41,8 +39,6 @@ namespace OSPSuite.Infrastructure.Export
          {
             var dataTable = tables.ElementAt(i);
             exportDataTableToWorkBook(workBook, dataTable);
-
-            workbookConfiguration?.Invoke(workBook, dataTable);
          }
 
          SaveWorkbook(fileName, workBook);
@@ -55,25 +51,10 @@ namespace OSPSuite.Infrastructure.Export
       {
          FileHelper.TrySaveFile(fileName, () =>
          {
-            using (FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                workBook.Write(stream);
             }
-         });
-      }
-
-      /// <summary>
-      ///    Exports the given dataTables to the file given as parameter. One sheet will be created per table
-      /// </summary>
-      /// <param name="dataTables">Data Tables to export</param>
-      /// <param name="fileName">Target file</param>
-      /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<XSSFWorkbook> workbookConfiguration = null)
-      {
-         ExportDataTablesToExcel(dataTables, fileName, openExcel, (wb, dt) =>
-         {
-            workbookConfiguration?.Invoke(wb);
          });
       }
 
