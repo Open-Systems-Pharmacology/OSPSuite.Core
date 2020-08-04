@@ -12,7 +12,11 @@ namespace OSPSuite.Infrastructure.Export
       public void CreateReport(IHistoryManager historyManager, ReportOptions reportOptions)
       {
          var dataTable = historyManager.ToDataTable();
+         dataTable.TableName = reportOptions.SheetName;
 
+         ExportToExcelTask.ExportDataTableToExcel(dataTable,reportOptions.ReportFullPath, true);
+
+/*
          var workBook = new XSSFWorkbook();
          var sheet = workBook.CreateSheet(reportOptions.SheetName);
 
@@ -56,7 +60,7 @@ namespace OSPSuite.Infrastructure.Export
 
          if (reportOptions.OpenReport)
             FileHelper.TryOpenFile(reportOptions.ReportFullPath);
-         
+         */
       }
    }
 }
