@@ -72,7 +72,6 @@ namespace OSPSuite.Infrastructure.Export
          {
             var cell = row.CreateCell(c);
             cell.SetCellValue(dataTable.Columns[c].ColumnName);
-            sheet.AutoSizeColumn(c); //this should possibly be done right in the end
          }
 
          for (var i = 0; i < rowCount; i++)
@@ -86,11 +85,17 @@ namespace OSPSuite.Infrastructure.Export
                {
                   cell.SetCellType(CellType.Numeric);
                   cell.SetCellValue(value);
-
                }
                else
+               {
                   cell.SetCellValue(dataTable.Rows[i][j].ToString());
+               }
             }
+         }
+
+         for (var c = 0; c < columnCount; c++)
+         {
+            sheet.AutoSizeColumn(c); 
          }
       }
    }
