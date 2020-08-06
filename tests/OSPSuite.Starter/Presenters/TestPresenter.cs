@@ -113,7 +113,7 @@ namespace OSPSuite.Starter.Presenters
       public void StartColumnMapping()
       {
          var starter = new TestStarter<IColumnMappingPresenter>();
-         starter.Start(600, 400);
+         starter.Start(700, 400);
          var file = new OpenFileDialog();
          if (file.ShowDialog() == DialogResult.OK)
          {

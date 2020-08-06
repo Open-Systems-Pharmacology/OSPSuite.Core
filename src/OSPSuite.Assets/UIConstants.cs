@@ -1097,6 +1097,42 @@ namespace OSPSuite.Assets
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }
+
+      public static readonly string MappingTitle = "Mapping";
+      public static readonly string MappingPrefix = "Mapping";
+      public static readonly string GroupByTitle = "Group by";
+      public static readonly string GroupByPrefix = "Group by";
+      public static readonly string MetaDataTitle = "Meta data";
+      public static readonly string MetaDataPrefix = "Meta data";
+      public static readonly string IgnoredParameterTitle = "Ignored parameter";
+      public static string MappingHint(string parameter, string target, string unit)
+      {
+         return $"The column {parameter} will be mapped into {target} with units as {unit}";
+      }
+      public static string GroupByHint(string parameter)
+      {
+         return $"The column {parameter} will be used for grouping by";
+      }
+      public static string MetaDataHint(string parameter, string target)
+      {
+         return $"The column {parameter} will be used as meta data to extract the following data: {target}";
+      }
+      public static readonly string IgnoredParameterHint = "This parameter will be ignored";
+
+      public static readonly string GroupByDescription = "Group by";
+      
+      public static string MetaDataDescription(string metaDataId)
+      { 
+         return $"{MetaDataPrefix} [{metaDataId}]"; 
+      }
+
+      public static string MappingDescription(string parameter, string unit)
+      {
+         return $"{MappingPrefix} [{parameter}({unit})]";
+      }
+
+      public static readonly string UnitInformationCaption = "Unit Information";
+      public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns. CRTL-I";
    }
 
    public static class Error
@@ -1477,6 +1513,11 @@ namespace OSPSuite.Assets
       }
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
+
+      public static string TypeNotSupported(Type t)
+      {
+         return $"{t} is not currently been handled";
+      }
    }
 
    public static class Validation

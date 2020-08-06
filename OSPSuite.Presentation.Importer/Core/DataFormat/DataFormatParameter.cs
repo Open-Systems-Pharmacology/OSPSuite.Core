@@ -27,6 +27,14 @@
       }
    }
 
+   public class IgnoredDataFormatParameter : DataFormatParameter
+   {
+      public IgnoredDataFormatParameter(string columnName) : base(columnName)
+      {
+         Configuration = null;
+      }
+   }
+
    public class MetaDataFormatParameter : DataFormatParameter
    {
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
@@ -47,7 +55,7 @@
    {
       public GroupByDataFormatParameter(string columnName) : base(columnName)
       {
-         Configuration = new ParameterConfiguration();
+         Configuration = null;
       }
    }
 
