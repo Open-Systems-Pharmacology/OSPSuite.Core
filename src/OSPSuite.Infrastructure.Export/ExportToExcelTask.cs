@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -60,9 +61,18 @@ namespace OSPSuite.Infrastructure.Export
 
       private static void exportDataTableToWorkBook(IWorkbook workBook, DataTable dataTable)
       {
-        // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+         // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
 
-         var sheet = workBook.CreateSheet(dataTable.TableName);
+         ISheet sheet;
+
+         if ( !dataTable.TableName.Equals(""))
+         {
+            sheet = workBook.CreateSheet(dataTable.TableName);
+         }
+         else
+         {
+            sheet = workBook.CreateSheet("Sheet1");
+         }
 
          var rowCount = dataTable.Rows.Count;
          var columnCount = dataTable.Columns.Count;

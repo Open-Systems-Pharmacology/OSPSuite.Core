@@ -44,9 +44,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.HelpersForTests", "tests\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj", "{78911B30-8A98-4881-BE77-C163D85B2393}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Tests", "tests\OSPSuite.Infrastructure.Tests\OSPSuite.Infrastructure.Tests.csproj", "{2CA2D05C-9C85-4165-8CED-071D2C3DDF19}"
-	ProjectSection(ProjectDependencies) = postProject
-		{35702E0A-2BCD-4A10-B80E-306CA340DDDE} = {35702E0A-2BCD-4A10-B80E-306CA340DDDE}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Assets", "src\OSPSuite.Assets\OSPSuite.Assets.csproj", "{DEBF0532-3317-4ECF-9877-8EFE90FF7372}"
 EndProject
