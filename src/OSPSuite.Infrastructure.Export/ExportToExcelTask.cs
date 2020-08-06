@@ -34,15 +34,16 @@ namespace OSPSuite.Infrastructure.Export
       public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel)
       {
          var tables = dataTables.ToList();
-         var workBook = new XSSFWorkbook();
+         var workBookConfiguration = new WorkbookConfiguration();
+         workBookConfiguration.SetHeadersBold();
 
          for (var i = 0; i < tables.Count(); i++)
          {
             var dataTable = tables.ElementAt(i);
-            exportDataTableToWorkBook(workBook, dataTable);
+            exportDataTableToWorkBook(workBookConfiguration, dataTable);
          }
 
-         saveWorkbook(fileName, workBook);
+         saveWorkbook(fileName, workBookConfiguration.WorkBook);
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
@@ -59,9 +60,11 @@ namespace OSPSuite.Infrastructure.Export
          });
       }
 
-      private static void exportDataTableToWorkBook(IWorkbook workBook, DataTable dataTable)
+      private static void exportDataTableToWorkBook(IWorkbookConfiguration workBookConfiguration, DataTable dataTable)
       {
          // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+         var workBook = workBookConfiguration.WorkBook;
 
          ISheet sheet;
 
@@ -79,47 +82,32 @@ namespace OSPSuite.Infrastructure.Export
 
          var row = sheet.CreateRow(0);
 
-         var font = workBook.CreateFont();
-         font.FontHeightInPoints = 11;
-         font.FontName = "Arial";
-         font.IsBold = true;
-
-         var style = workBook.CreateCellStyle();
-         style.SetFont(font);
-
-         row.RowStyle = style;
-
-
-
          for (var c = 0; c < columnCount; c++)
          {
             var cell = row.CreateCell(c);
             cell.SetCellValue(dataTable.Columns[c].ColumnName);
-            cell.CellStyle = style;
+            cell.CellStyle = workBookConfiguration.HeadersStyle;
          }
 
-         row.RowStyle = style;
-
-         //font.IsBold = false; we need a new font for this. or we needto provide with the copy
+ //        row.RowStyle = style;
 
          for (var i = 0; i < rowCount; i++)
          {
             row = sheet.CreateRow(i + 1);
-            row.RowStyle = style;
             for (var j = 0; j < columnCount; j++)
             {
                var cell = row.CreateCell(j);
 
-               if (double.TryParse(dataTable.Rows[i][j].ToString(), out var value)) //Thread.CurrentThread.CurrentCulture.NumberFormat
+               if (double.TryParse(dataTable.Rows[i][j].ToString(), out var value))
                {
                   cell.SetCellType(CellType.Numeric);
                   cell.SetCellValue(value);
-                  cell.CellStyle = style;
+                  cell.CellStyle = workBookConfiguration.BodyStyle;
                }
                else
                {
                   cell.SetCellValue(dataTable.Rows[i][j].ToString());
-                  cell.CellStyle = style;
+                  cell.CellStyle = workBookConfiguration.BodyStyle;
                }
             }
          }

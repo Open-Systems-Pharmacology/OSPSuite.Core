@@ -27,6 +27,12 @@ namespace OSPSuite.Infrastructure.Export
 
          _exportExcelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _exportExcelFile);
 
+         //possibly unnecessary
+         if (File.Exists(_exportExcelFilePath))
+         {
+            File.Delete(_exportExcelFilePath);
+         }
+
          _dataTable = new DataTable(); ;
          _dataTable.Columns.Add("Column1");
          _dataTable.Columns.Add("Column2");
@@ -79,7 +85,7 @@ namespace OSPSuite.Infrastructure.Export
       [Test]
       public void should_have_created_data()
       {
-         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
+         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, true);
 
          var reader = new ExcelReader(_exportExcelFilePath);
          reader.MoveToNextSheet();
