@@ -60,7 +60,7 @@ namespace OSPSuite.Infrastructure.Export
 
       private static void exportDataTableToWorkBook(IWorkbook workBook, DataTable dataTable)
       {
-         Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+        // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
 
          var sheet = workBook.CreateSheet(dataTable.TableName);
 
@@ -68,15 +68,34 @@ namespace OSPSuite.Infrastructure.Export
          var columnCount = dataTable.Columns.Count;
 
          var row = sheet.CreateRow(0);
+
+         var font = workBook.CreateFont();
+         font.FontHeightInPoints = 11;
+         font.FontName = "Arial";
+         font.IsBold = true;
+
+         var style = workBook.CreateCellStyle();
+         style.SetFont(font);
+
+         row.RowStyle = style;
+
+
+
          for (var c = 0; c < columnCount; c++)
          {
             var cell = row.CreateCell(c);
             cell.SetCellValue(dataTable.Columns[c].ColumnName);
+            cell.CellStyle = style;
          }
+
+         row.RowStyle = style;
+
+         //font.IsBold = false; we need a new font for this. or we needto provide with the copy
 
          for (var i = 0; i < rowCount; i++)
          {
             row = sheet.CreateRow(i + 1);
+            row.RowStyle = style;
             for (var j = 0; j < columnCount; j++)
             {
                var cell = row.CreateCell(j);
@@ -85,10 +104,12 @@ namespace OSPSuite.Infrastructure.Export
                {
                   cell.SetCellType(CellType.Numeric);
                   cell.SetCellValue(value);
+                  cell.CellStyle = style;
                }
                else
                {
                   cell.SetCellValue(dataTable.Rows[i][j].ToString());
+                  cell.CellStyle = style;
                }
             }
          }

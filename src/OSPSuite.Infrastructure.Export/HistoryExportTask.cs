@@ -1,9 +1,5 @@
-using System;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Services;
-using OSPSuite.Utility;
 
 namespace OSPSuite.Infrastructure.Export
 {
