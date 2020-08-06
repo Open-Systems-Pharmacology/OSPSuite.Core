@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
-using OSPSuite.Utility.Format;
-using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Infrastructure;
+
 
 namespace OSPSuite.Infrastructure.Export
 {
@@ -23,8 +21,18 @@ namespace OSPSuite.Infrastructure.Export
 
       protected override void Context()
       {
+         //does it make sense to search and delete the file here? Cleanup should have taken care of this...
          sut = new ExportDataTableToExcelTask();
       }
+
+      public override void Cleanup()
+      {
+         if (File.Exists(_exportExcelFilePath))
+         {
+            File.Delete(_exportExcelFilePath);
+         }
+      }
+
    }
 
    public class When_exporting_a_dataTable : concern_for_ExportDataTableToExcelTask
@@ -50,22 +58,38 @@ namespace OSPSuite.Infrastructure.Export
 
          _dataTable.Rows.Add(row1);
          _dataTable.Rows.Add(row2);
-
-         if (File.Exists(_exportExcelFilePath))
-         {
-            File.Delete(_exportExcelFilePath); //just in case something went wrong and we did not clean up
-         }
       }
 
       [Test]
       public void should_create_export_file()
       {
-         _dataTable.TableName = "TestSheet";
-         sut.ExportDataTableToExcel( _dataTable, _exportExcelFilePath, false);
+         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
 
          File.Exists(_exportExcelFilePath).ShouldBeTrue();
-         File.Delete(_exportExcelFilePath);
+      }
 
+      [Test]
+      public void should_have_created_sheet()
+      {
+         _dataTable.TableName = "TestSheet";
+         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
+
+         var reader = new ExcelReader(_exportExcelFilePath);
+         reader.MoveToNextSheet();
+         reader.CurrentSheet.SheetName.ShouldBeEqualTo("TestSheet");
+      }
+
+      [Test]
+      public void should_have_created_data()
+      {
+         _dataTable.TableName = "TestSheet";
+         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
+
+         var reader = new ExcelReader(_exportExcelFilePath);
+         reader.MoveToNextSheet();
+         reader.MoveToNextRow();
+         reader.CurrentRow.ElementAt(0).ShouldBeEqualTo("Column1");
+         reader.CurrentRow.ElementAt(1).ShouldBeEqualTo("Column2");
       }
    }
 }
