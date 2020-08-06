@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -22,7 +20,6 @@ namespace OSPSuite.Infrastructure.Export
 
       protected override void Context()
       {
-         //does it make sense to search and delete the file here? Cleanup should have taken care of this...
          sut = new ExportDataTableToExcelTask();
 
          _exportExcelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _exportExcelFile);
@@ -53,10 +50,12 @@ namespace OSPSuite.Infrastructure.Export
 
       public override void Cleanup()
       {
+/*
          if (File.Exists(_exportExcelFilePath))
          {
             File.Delete(_exportExcelFilePath);
          }
+*/
       }
 
    }

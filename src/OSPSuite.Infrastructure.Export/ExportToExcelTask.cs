@@ -20,9 +20,10 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTable">Data Table to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel)
+      /// <param name="workBookConfiguration"></param>
+      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
-         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel);
+         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel,  workBookConfiguration );
       }
 
       /// <summary>
@@ -31,11 +32,12 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTables">Data Tables to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel)
+      /// <param name="workBookConfiguration"></param>
+      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
          var tables = dataTables.ToList();
-         var workBookConfiguration = new WorkbookConfiguration();
-         workBookConfiguration.SetHeadersBold();
+         if (workBookConfiguration == null) 
+            workBookConfiguration = new WorkbookConfiguration();
 
          for (var i = 0; i < tables.Count(); i++)
          {
