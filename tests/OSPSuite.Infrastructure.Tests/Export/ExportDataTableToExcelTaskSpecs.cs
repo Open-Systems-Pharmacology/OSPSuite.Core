@@ -18,11 +18,31 @@ namespace OSPSuite.Infrastructure.Export
    {
       protected string _exportExcelFilePath;
       protected string _exportExcelFile = "export.xlsx";
+      protected DataTable _dataTable;
 
       protected override void Context()
       {
          //does it make sense to search and delete the file here? Cleanup should have taken care of this...
          sut = new ExportDataTableToExcelTask();
+
+         _exportExcelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _exportExcelFile);
+
+         _dataTable = new DataTable(); ;
+         _dataTable.Columns.Add("Column1");
+         _dataTable.Columns.Add("Column2");
+
+         var row1 = _dataTable.NewRow();
+         row1["Column1"] = "str1";
+         row1["Column2"] = "str2";
+
+         var row2 = _dataTable.NewRow();
+         row2["Column1"] = "str3";
+         row2["Column2"] = "str4";
+
+         _dataTable.Rows.Add(row1);
+         _dataTable.Rows.Add(row2);
+
+         _dataTable.TableName = "TestSheet";
       }
 
       public override void Cleanup()
@@ -37,28 +57,6 @@ namespace OSPSuite.Infrastructure.Export
 
    public class When_exporting_a_dataTable : concern_for_ExportDataTableToExcelTask
    {
-      protected DataTable _dataTable = new DataTable();
-
-      protected override void Context()
-      {
-         base.Context();
-
-         _exportExcelFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _exportExcelFile);
-
-         _dataTable.Columns.Add("Column1");
-         _dataTable.Columns.Add("Column2");
-
-         var row1 = _dataTable.NewRow();
-         row1["Column1"] = "str1";
-         row1["Column2"] = "str2";
-
-         var row2 = _dataTable.NewRow();
-         row2["Column1"] = "str3";
-         row2["Column2"] = "str4";
-
-         _dataTable.Rows.Add(row1);
-         _dataTable.Rows.Add(row2);
-      }
 
       [Test]
       public void should_create_export_file()
@@ -71,7 +69,6 @@ namespace OSPSuite.Infrastructure.Export
       [Test]
       public void should_have_created_sheet()
       {
-         _dataTable.TableName = "TestSheet";
          sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
 
          var reader = new ExcelReader(_exportExcelFilePath);
@@ -82,7 +79,6 @@ namespace OSPSuite.Infrastructure.Export
       [Test]
       public void should_have_created_data()
       {
-         _dataTable.TableName = "TestSheet";
          sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
 
          var reader = new ExcelReader(_exportExcelFilePath);
