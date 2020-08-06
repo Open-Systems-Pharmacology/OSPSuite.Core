@@ -41,13 +41,13 @@ namespace OSPSuite.Infrastructure.Export
             exportDataTableToWorkBook(workBook, dataTable);
          }
 
-         SaveWorkbook(fileName, workBook);
+         saveWorkbook(fileName, workBook);
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
       }
 
-      public static void SaveWorkbook(string fileName, XSSFWorkbook workBook)
+      private static void saveWorkbook(string fileName, XSSFWorkbook workBook)
       {
          FileHelper.TrySaveFile(fileName, () =>
          {
