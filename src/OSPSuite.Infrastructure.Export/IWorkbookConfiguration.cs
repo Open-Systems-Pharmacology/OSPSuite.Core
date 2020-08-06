@@ -28,7 +28,7 @@ namespace OSPSuite.Infrastructure.Export
       {
          var font = WorkBook.CreateFont();
          font.FontHeightInPoints = 11;
-         font.FontName = "Times New Roman";
+         font.FontName = "Arial";
          font.IsBold = false;
 
          return font;
