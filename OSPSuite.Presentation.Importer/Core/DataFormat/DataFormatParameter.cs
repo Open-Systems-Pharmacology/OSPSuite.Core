@@ -13,6 +13,17 @@
       {
          return Data?.ToString();
       }
+
+      public override bool Equals(object obj)
+      {
+         var other = obj as ParameterConfiguration;
+         return other.Data.Equals(Data);
+      }
+
+      public override int GetHashCode()
+      {
+         return base.GetHashCode();
+      }
    }
 
    public abstract class DataFormatParameter
@@ -24,6 +35,17 @@
       protected DataFormatParameter(string columnName)
       {
          ColumnName = columnName;
+      }
+
+      public override bool Equals(object obj)
+      {
+         var other = obj as DataFormatParameter;
+         return other.ColumnName == ColumnName && ((Configuration == null && other.Configuration == null) || other.Configuration.Equals(Configuration));
+      }
+
+      public override int GetHashCode()
+      {
+         return base.GetHashCode();
       }
    }
 

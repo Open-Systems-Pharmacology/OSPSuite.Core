@@ -8,22 +8,26 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public interface IImporterTask
    {
-      int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings);
+      int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null);
    }
 
    public class ImporterTask : IImporterTask
    {
-      public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings)
+      public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null)
       {
          switch (parameter)
          {
             case MetaDataFormatParameter mp:
+               if (mappings == null)
+                  return ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
                return ApplicationIcons.IconIndex(
                   mappings
                      .Any(m => (m is MetaDataFormatParameter) && (m as MetaDataFormatParameter).MetaDataId == mp.MetaDataId)
                      ? ApplicationIcons.MetaData
                      : ApplicationIcons.MissingMetaData);
             case MappingDataFormatParameter mp:
+               if (mappings == null)
+                  return ApplicationIcons.IconIndex(ApplicationIcons.UnitInformation);
                return ApplicationIcons.IconIndex(
                   mappings
                      .Any(m => (m is MappingDataFormatParameter) &&
