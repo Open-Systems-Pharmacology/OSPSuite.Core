@@ -6,6 +6,12 @@ using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
+   public class ColumnMappingOption
+   {
+      public string Description { get; set; }
+      public int IconIndex { get; set; }
+   }
+
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings(
@@ -15,5 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       );
 
       void SetDataFormat(IDataFormat format);
+
+      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
    }
 }

@@ -18,6 +18,17 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          return $"{Name} [{Unit}]";
       }
+
+      public override bool Equals(object obj)
+      {
+         var other = obj as Column;
+         return other.Name == Name && other.Unit == Unit;
+      }
+
+      public override int GetHashCode()
+      {
+         return base.GetHashCode();
+      }
    }
 
    /// <summary>
