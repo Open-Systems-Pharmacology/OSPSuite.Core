@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Extensions;
@@ -8,10 +7,7 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
-using DevExpress.XtraRichEdit.Commands;
 using OSPSuite.Assets;
-using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
@@ -61,7 +57,7 @@ namespace OSPSuite.Presentation.Importer.Views
          _presenter = presenter;
       }
 
-      public void SetMappingSource(IEnumerable<ColumnMappingViewModel> mappings)
+      public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
       {
          uxGrid.DataSource = mappings;
 
@@ -158,6 +154,7 @@ namespace OSPSuite.Presentation.Importer.Views
          {
             editor.Properties.Items.Add(new ImageComboBoxItem(option.Description)
             {
+               Description = option.Label,
                ImageIndex = option.IconIndex
             });
          }
@@ -192,16 +189,12 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          var editor = sender as ImageComboBoxEdit;
          if (editor == null) return;
-
-         //var mappingRow = _contextMappingRow;
-         //if (mappingRow == null) return;
-
          if (editor.EditValue == null) return;
 
          if (e.Button.Caption == MenuNames.DeleteSubMenu)
          {
-            editor.EditValue = Captions.Importer.NoneEditorNullText;
-            //_contextMappingRow.Configuration = editor.EditValue?.ToString();
+            editor.EditValue = ColumnMappingFormatter.Ignored();
+            _presenter.ClearActiveRow();
             return;
          }
          else //unit information button
@@ -248,12 +241,11 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void createButtons(ButtonEdit editor)
       {
-         createDeleteButton(editor);
          editor.ButtonClick += onEditorButtonClick;
          var buttonsConfiguration = _presenter.ButtonsConfigurationForActiveRow();
          if (buttonsConfiguration.ShowButtons)
          {
-            // create unit information button
+            createDeleteButton(editor);
             createUnitInformationButton(editor, buttonsConfiguration.UnitActive);
          }
       }
@@ -276,7 +268,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onEditorEditValueChanged(object sender, EventArgs e)
       {
-         /*var editor = sender as ImageComboBoxEdit;
+         var editor = sender as ImageComboBoxEdit;
          if (editor == null) return;
 
          uxGrid.MainView.PostEditor();
@@ -284,8 +276,8 @@ namespace OSPSuite.Presentation.Importer.Views
          if (editor.EditValue != null && editor.EditValue.ToString() == editor.Properties.NullText)
             editor.EditValue = Captions.Importer.NoneEditorNullText;
 
-         _contextMappingRow.Configuration = editor.EditValue?.ToString();
-         refreshButtons(editor, _contextMappingRow);*/
+         _presenter.SetDescriptionForActiveRow(editor.EditValue?.ToString());
+         refreshButtons(editor);
       }
 
       private static void createDeleteButton(ButtonEdit editor)

@@ -1099,11 +1099,8 @@ namespace OSPSuite.Assets
       }
 
       public static readonly string MappingTitle = "Mapping";
-      public static readonly string MappingPrefix = "Mapping";
       public static readonly string GroupByTitle = "Group by";
-      public static readonly string GroupByPrefix = "Group by";
       public static readonly string MetaDataTitle = "Meta data";
-      public static readonly string MetaDataPrefix = "Meta data";
       public static readonly string IgnoredParameterTitle = "Ignored parameter";
       public static string MappingHint(string parameter, string target, string unit)
       {
@@ -1123,12 +1120,12 @@ namespace OSPSuite.Assets
       
       public static string MetaDataDescription(string metaDataId)
       { 
-         return $"{MetaDataPrefix} [{metaDataId}]"; 
+         return $"{metaDataId}";
       }
 
       public static string MappingDescription(string parameter, string unit)
       {
-         return $"{MappingPrefix} [{parameter}({unit})]";
+         return $"{parameter}({unit})";
       }
 
       public static readonly string UnitInformationCaption = "Unit Information";
@@ -1515,6 +1512,11 @@ namespace OSPSuite.Assets
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
 
       public static string TypeNotSupported(Type t)
+      {
+         return $"{t} is not currently been handled";
+      }
+
+      public static string TypeNotSupported(string t)
       {
          return $"{t} is not currently been handled";
       }

@@ -51,12 +51,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          A.CallTo(
             () => _view.SetMappingSource(
-               A<IEnumerable<ColumnMappingViewModel>>.That.Matches(l => 
+               A<IReadOnlyList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
-                  l.ElementAt(0).Equals(new ColumnMappingViewModel("Time", "Time [min]", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
-                  l.ElementAt(1).Equals(new ColumnMappingViewModel("Observation", "Concentration [mol/l]", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
-                  l.ElementAt(2).Equals(new ColumnMappingViewModel("Sp", "Species", new MetaDataFormatParameter("Sp", "Species"))) &&
-                  l.ElementAt(3).Equals(new ColumnMappingViewModel("Study id", "Group by", new GroupByDataFormatParameter("Study id"))))
+                  l.ElementAt(0).Equals(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
+                  l.ElementAt(1).Equals(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
+                  l.ElementAt(2).Equals(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"))) &&
+                  l.ElementAt(3).Equals(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"))))
             )).MustHaveHappened();
       }
    }
@@ -91,9 +91,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var options = sut.GetAvailableOptionsFor(0);
          options.Count().ShouldBeEqualTo(3);
-         options.ElementAt(0).Description.ShouldBeEqualTo("Time [min]");
-         options.ElementAt(1).Description.ShouldBeEqualTo("<None>");
-         options.ElementAt(2).Description.ShouldBeEqualTo("Group by");
+         options.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
+         options.ElementAt(1).Label.ShouldBeEqualTo("<None>");
+         options.ElementAt(2).Label.ShouldBeEqualTo("Group by");
       }
    }
 }

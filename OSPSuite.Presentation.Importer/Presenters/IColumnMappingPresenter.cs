@@ -8,8 +8,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class ColumnMappingOption
    {
-      public string Description { get; set; }
+      public string Label { get; set; }
       public int IconIndex { get; set; }
+      public string Description { get; set; }
+
+      public enum DescriptionType
+      {
+         Ignored,
+         GroupBy,
+         MetaData,
+         Mapping
+      }
    }
 
    public class ToolTipDescription
@@ -40,6 +49,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       ToolTipDescription ToolTipDescriptionFor(int index);
 
-      void SetDescription(int index, string description);
+      void SetDescriptionForActiveRow(string description);
+
+      void ClearActiveRow();
    }
 }
