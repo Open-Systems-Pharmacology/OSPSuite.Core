@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Org.BouncyCastle.Asn1.Cms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
@@ -20,6 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
+      private ColumnMappingViewModel _activeRow;
 
 
       public ColumnMappingPresenter(IColumnMappingControl view, IImporterTask importerTask) : base(view)
@@ -100,9 +102,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle)
       {
-         var mappingRow = _mappings.ElementAt(rowHandle);
+         _activeRow = _mappings.ElementAt(rowHandle);
          var options = new List<ColumnMappingOption>();
-         switch (mappingRow.Source)
+         switch (_activeRow.Source)
          {
             case IgnoredDataFormatParameter _:
                options.Add(generateIgnoredColumnMappingOption());
@@ -111,23 +113,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
                options.Add(generateGroupByColumnMappingOption());
                break;
             case MappingDataFormatParameter tm:
-               options.Add(generateMappingColumnMappingOption(mappingRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString()));
+               options.Add(generateMappingColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString()));
                break;
             case MetaDataFormatParameter tm:
-               options.Add(generateMetaDataColumnMappingOption(mappingRow.Description, tm.ColumnName, tm.MetaDataId));
+               options.Add(generateMetaDataColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MetaDataId));
                break;
             default:
-               throw new Exception(Error.TypeNotSupported(mappingRow.Source.GetType()));
+               throw new Exception(Error.TypeNotSupported(_activeRow.Source.GetType()));
          }
 
          //Ignored
-         if (!(mappingRow.Source is IgnoredDataFormatParameter))
+         if (!(_activeRow.Source is IgnoredDataFormatParameter))
          {
             options.Add(generateIgnoredColumnMappingOption());
          }
 
          //GroupBy
-         if (!(mappingRow.Source is GroupByDataFormatParameter))
+         if (!(_activeRow.Source is GroupByDataFormatParameter))
          {
             options.Add(generateGroupByColumnMappingOption());
          }
@@ -138,7 +140,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             if (!_mappings.Any(m =>
                m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
-               options.Add(generateMappingColumnMappingOption(Captions.MappingDescription(info.DisplayName, "?"), mappingRow.ColumnName, info.DisplayName));
+               options.Add(generateMappingColumnMappingOption(Captions.MappingDescription(info.DisplayName, "?"), _activeRow.ColumnName, info.DisplayName));
             }
          }
 
@@ -147,11 +149,64 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             if (!_mappings.Any(m => m.Source is MetaDataFormatParameter && (m.Source as MetaDataFormatParameter).MetaDataId == category.DisplayName))
             {
-               options.Add(generateMetaDataColumnMappingOption(Captions.MetaDataDescription(category.DisplayName), mappingRow.ColumnName, category.DisplayName));
+               options.Add(generateMetaDataColumnMappingOption(Captions.MetaDataDescription(category.DisplayName), _activeRow.ColumnName, category.DisplayName));
             }
          }
 
          return options;
+      }
+
+      public ColumnMappingViewModel MappingElementAt(int index)
+      {
+         return _mappings.ElementAt(index);
+      }
+
+      public ToolTipDescription ToolTipDescriptionFor(int index)
+      {
+         var element = _mappings.ElementAt(index).Source;
+         switch (element)
+         {
+            case MappingDataFormatParameter mp:
+               return new ToolTipDescription()
+               {
+                  Title = Captions.MappingTitle,
+                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name.ToString(), mp.MappedColumn.Unit)
+               };
+            case GroupByDataFormatParameter gp:
+               return new ToolTipDescription()
+               {
+                  Title = Captions.GroupByTitle,
+                  Description = Captions.GroupByHint(gp.ColumnName)
+               };
+            case MetaDataFormatParameter mp:
+               return new ToolTipDescription()
+               {
+                  Title = Captions.MetaDataTitle,
+                  Description = Captions.MetaDataHint(mp.ColumnName, mp.MetaDataId)
+               };
+            case IgnoredDataFormatParameter _:
+               return new ToolTipDescription()
+               {
+                  Title = Captions.IgnoredParameterTitle,
+                  Description = Captions.IgnoredParameterHint
+               };
+            default:
+               throw new Exception(Error.TypeNotSupported(element.GetType()));
+         }
+      }
+
+      public ButtonsConfiguration ButtonsConfigurationForActiveRow()
+      {
+         return new ButtonsConfiguration()
+         {
+            ShowButtons = !String.IsNullOrEmpty(_activeRow.ColumnName),
+            UnitActive = _activeRow.Source is MappingDataFormatParameter
+         };
+      }
+
+      public void SetDescription(int index, string description)
+      {
+
       }
    }
 }
