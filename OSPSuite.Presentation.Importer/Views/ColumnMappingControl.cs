@@ -8,6 +8,7 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraRichEdit.Commands;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
@@ -34,11 +35,9 @@ namespace OSPSuite.Presentation.Importer.Views
 
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
-      private IEnumerable<ColumnMappingViewModel> _mappings;
       private readonly IImageListRetriever _imageListRetriever;
-      private readonly Dictionary<string, ImageComboBoxEdit> _editorsForEditing = new Dictionary<string, ImageComboBoxEdit>();
+      private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
-      private ColumnMappingViewModel _contextMappingRow;
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -64,8 +63,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void SetMappingSource(IEnumerable<ColumnMappingViewModel> mappings)
       {
-         _mappings = mappings;
-         uxGrid.DataSource = _mappings;
+         uxGrid.DataSource = mappings;
 
          configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName), true, false);
          configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Description), true, true);
@@ -95,40 +93,20 @@ namespace OSPSuite.Presentation.Importer.Views
          var hitInfo = view.CalcHitInfo(e.ControlMousePosition);
 
          if (!hitInfo.InRow) return;
-         var mappingRow = _mappings.ElementAt(hitInfo.RowHandle);
-         e.Info = new ToolTipControlInfo(mappingRow, string.Empty)
+         e.Info = new ToolTipControlInfo(hitInfo.RowHandle, string.Empty)
          {
-            SuperTip = generateToolTipControlInfo(mappingRow.Source),
+            SuperTip = generateToolTipControlInfo(hitInfo.RowHandle),
             ToolTipType = ToolTipType.SuperTip
          };
          uxGrid.ToolTipController.ShowHint(e.Info);
       }
 
-      private SuperToolTip generateToolTipControlInfo(DataFormatParameter parameter)
+      private SuperToolTip generateToolTipControlInfo(int index)
       {
          var superToolTip = new SuperToolTip();
-         switch (parameter)
-         {
-            case MappingDataFormatParameter mp:
-               superToolTip.Items.AddTitle(Captions.MappingTitle);
-               superToolTip.Items.Add(Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name.ToString(), mp.MappedColumn.Unit));
-               break;
-            case GroupByDataFormatParameter gp:
-               superToolTip.Items.AddTitle(Captions.GroupByTitle);
-               superToolTip.Items.Add(Captions.GroupByHint(gp.ColumnName));
-               break;
-            case MetaDataFormatParameter mp:
-               superToolTip.Items.AddTitle(Captions.MetaDataTitle);
-               superToolTip.Items.Add(Captions.MetaDataHint(mp.ColumnName, mp.MetaDataId));
-               break;
-            case IgnoredDataFormatParameter _:
-               superToolTip.Items.AddTitle(Captions.IgnoredParameterTitle);
-               superToolTip.Items.Add(Captions.IgnoredParameterHint);
-               break;
-            default:
-               throw new Exception(Error.TypeNotSupported(parameter.GetType()));
-         }
-
+         var tooltip = _presenter.ToolTipDescriptionFor(index);
+         superToolTip.Items.AddTitle(tooltip.Title);
+         superToolTip.Items.Add(tooltip.Description);
          return superToolTip;
       }
 
@@ -138,7 +116,6 @@ namespace OSPSuite.Presentation.Importer.Views
          if (!e.Column.OptionsColumn.AllowEdit) return;
 
          var editorObject = new ImageComboBoxEdit();
-         // create individual list of values
          fillComboBoxItems(editorObject, _presenter.GetAvailableOptionsFor(e.RowHandle));
 
          if (editorObject.Properties.Items.Count == 0) return;
@@ -151,12 +128,7 @@ namespace OSPSuite.Presentation.Importer.Views
          if (view == null) return;
          if (!e.Column.OptionsColumn.AllowEdit) return;
 
-         var mappingRow = _mappings.ElementAt(e.RowHandle);
-
-         //the information of the current mappingRow is needed in both underlying event handlers.
-         _contextMappingRow = mappingRow;
-
-         var editorObject = _editorsForEditing.GetOrAdd(mappingRow.ColumnName, (index) =>
+         var editorObject = _editorsForEditing.GetOrAdd(e.RowHandle, (index) =>
          {
             var editorObj = new ImageComboBoxEdit();
             editorObj.EditValueChanged += onEditorEditValueChanged;
@@ -169,10 +141,9 @@ namespace OSPSuite.Presentation.Importer.Views
 
             return editorObj;
          });
-         editorObject.EditValue = mappingRow.ColumnName;
          // create individual list of values
          fillComboBoxItems(editorObject, _presenter.GetAvailableOptionsFor(e.RowHandle));
-         refreshButtons(editorObject, mappingRow);
+         refreshButtons(editorObject);
 
          if (editorObject.Properties.Items.Count == 0) return;
          e.RepositoryItem = editorObject.Properties;
@@ -198,37 +169,7 @@ namespace OSPSuite.Presentation.Importer.Views
          editor.Enabled = false;
       }
 
-      /*private ImageComboBoxItem generateGroupByComboBoxItem(string columnName)
-      {
-         return new ImageComboBoxItem(Captions.GroupByDescription)
-         {
-            ImageIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(columnName), _mappingsss.Select(m => m.Source)),
-         };
-      }
-
-      private ImageComboBoxItem generateMappingComboBoxItem(string columnName, Column column)
-      {
-         var imageIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, column), _mappingsss.Select(m => m.Source));
-         return new ImageComboBoxItem(Captions.MappingDescription(column.Name.ToString(), column.Unit))
-         {
-            ImageIndex = imageIndex,
-            Description = column.Name.ToString()
-         };
-      }
-
-      private ImageComboBoxItem generateMetaDataComboBoxItem(string columnName, string metaDataId)
-      {
-         var imageIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(columnName, metaDataId), _mappingsss.Select(m => m.Source));
-         return new ImageComboBoxItem(Captions.MetaDataDescription(metaDataId))
-         {
-            ImageIndex = imageIndex,
-            Description = metaDataId
-         };
-      }
-
-      
-      */
-      private void refreshButtons(ButtonEdit editor, ColumnMappingViewModel mappingRow)
+      private void refreshButtons(ButtonEdit editor)
       {
          for (var i = editor.Properties.Buttons.Count - 1; i >= 0; i--)
          {
@@ -244,7 +185,7 @@ namespace OSPSuite.Presentation.Importer.Views
                editor.Properties.Buttons.RemoveAt(i);
          }
 
-         createButtons(editor, mappingRow);
+         createButtons(editor);
       }
 
       private void onEditorButtonClick(object sender, ButtonPressedEventArgs e)
@@ -252,8 +193,8 @@ namespace OSPSuite.Presentation.Importer.Views
          var editor = sender as ImageComboBoxEdit;
          if (editor == null) return;
 
-         var mappingRow = _contextMappingRow;
-         if (mappingRow == null) return;
+         //var mappingRow = _contextMappingRow;
+         //if (mappingRow == null) return;
 
          if (editor.EditValue == null) return;
 
@@ -305,14 +246,15 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
 
-      private void createButtons(ButtonEdit editor, ColumnMappingViewModel mappingRow)
+      private void createButtons(ButtonEdit editor)
       {
          createDeleteButton(editor);
          editor.ButtonClick += onEditorButtonClick;
-         if (!String.IsNullOrEmpty(mappingRow.ColumnName))
+         var buttonsConfiguration = _presenter.ButtonsConfigurationForActiveRow();
+         if (buttonsConfiguration.ShowButtons)
          {
             // create unit information button
-            createUnitInformationButton(editor, false);
+            createUnitInformationButton(editor, buttonsConfiguration.UnitActive);
          }
       }
 

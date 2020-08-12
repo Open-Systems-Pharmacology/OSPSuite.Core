@@ -12,6 +12,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public int IconIndex { get; set; }
    }
 
+   public class ToolTipDescription
+   {
+      public string Title { get; set; }
+      public string Description { get; set; }
+   }
+
+   public class ButtonsConfiguration
+   {
+      public bool ShowButtons { get; set; }
+      public bool UnitActive { get; set; }
+   }
+
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings(
@@ -23,5 +35,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SetDataFormat(IDataFormat format);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
+
+      ButtonsConfiguration ButtonsConfigurationForActiveRow();
+
+      ToolTipDescription ToolTipDescriptionFor(int index);
+
+      void SetDescription(int index, string description);
    }
 }
