@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Extensions;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
@@ -250,9 +252,17 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
 
-      private void onMouseDown(object sender, MouseEventArgs e)
+      private void onMouseDown(object sender, MouseEventArgs mouseEventArgs)
       {
-         //TODO add context menu
+         if (mouseEventArgs.Button != MouseButtons.Right) return;
+         var mv = sender as GridView;
+         if (mv == null) return;
+
+         var menu = new GridViewColumnMenu(mv);
+         menu.Items.Clear();
+         menu.Items.Add(new DXMenuItem(Captions.Importer.ResetMapping, onCreateAutoMappingClick));
+         menu.Items.Add(new DXMenuItem(Captions.Importer.ClearMapping, onClearMappingClick));
+         menu.Show(mouseEventArgs.Location);
       }
 
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
@@ -304,6 +314,20 @@ namespace OSPSuite.Presentation.Importer.Views
             Enabled = visible
          };
          editor.Properties.Buttons.Add(unitInformationButton);
+      }
+
+      private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)
+      {
+         uxGridView.BeginUpdate();
+         _presenter.ResetMapping();
+         uxGridView.EndUpdate();
+      }
+
+      private void onClearMappingClick(object sender, EventArgs eventArgs)
+      {
+         uxGridView.BeginUpdate();
+         _presenter.ClearMapping();
+         uxGridView.EndUpdate();
       }
    }
 }
