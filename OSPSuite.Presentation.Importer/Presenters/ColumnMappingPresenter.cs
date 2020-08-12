@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class ColumnMappingPresenter : AbstractPresenter<IColumnMappingControl, IColumnMappingPresenter>, IColumnMappingPresenter
    {
       private IDataFormat _format;
-      private IEnumerable<ColumnMappingViewModel> _mappings;
+      private List<ColumnMappingViewModel> _mappings;
       private IReadOnlyList<ColumnInfo> _columnInfos; 
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
@@ -45,58 +45,54 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _format = format;
          _mappings = format.Parameters.Select(p =>
          {
-            var description = "";
-            switch (p)
-            {
-               case IgnoredDataFormatParameter _:
-                  description = Captions.Importer.NoneEditorNullText;
-                  break;
-               case GroupByDataFormatParameter _:
-                  description = Captions.GroupByTitle;
-                  break;
-               default:
-                  description = p.Configuration.ToString();
-                  break;
-            }
-            return new ColumnMappingViewModel(p.ColumnName, description, p);
-         });
+            return new ColumnMappingViewModel
+            (
+               p.ColumnName,
+               ColumnMappingFormatter.Stringify(p), 
+               p
+            );
+         }).ToList();
          View.SetMappingSource(_mappings);
       }
 
-      private ColumnMappingOption generateIgnoredColumnMappingOption()
+      private ColumnMappingOption generateIgnoredColumnMappingOption(string description)
       {
          return new ColumnMappingOption()
          {
-            Description = Captions.Importer.NoneEditorNullText,
+            Label = Captions.Importer.NoneEditorNullText,
+            Description = description,
             IconIndex = -1
          };
       }
 
-      private ColumnMappingOption generateGroupByColumnMappingOption()
+      private ColumnMappingOption generateGroupByColumnMappingOption(string description)
       {
          return new ColumnMappingOption()
          {
-            Description = Captions.GroupByTitle,
+            Label = Captions.GroupByTitle,
+            Description = description,
             IconIndex = _importerTask.GetImageIndex(new GroupByDataFormatParameter(""))
          };
       }
 
-      private ColumnMappingOption generateMappingColumnMappingOption(string description, string columnName, string mappingId)
+      private ColumnMappingOption generateMappingColumnMappingOption(string description, string columnName, string mappingId, string unit = "?")
       {
          var mappedColumnName = EnumHelper.ParseValue<Column.ColumnNames>(mappingId);
          return new ColumnMappingOption()
          {
+            Label = Captions.MappingDescription(mappingId, unit),
             Description = description,
             IconIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, new Column() { Name = mappedColumnName }), _mappings.Select(m => m.Source))
          };
       }
 
-      private ColumnMappingOption generateMetaDataColumnMappingOption(string description, string columnName, string metadataId)
+      private ColumnMappingOption generateMetaDataColumnMappingOption(string description, string columnName, string metaDataId)
       {
          return new ColumnMappingOption()
          {
+            Label = Captions.MetaDataDescription(metaDataId),
             Description = description,
-            IconIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(columnName, metadataId), _mappings.Select(m => m.Source))
+            IconIndex = _importerTask.GetImageIndex(new MetaDataFormatParameter(columnName, metaDataId), _mappings.Select(m => m.Source))
          };
       }
 
@@ -107,13 +103,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          switch (_activeRow.Source)
          {
             case IgnoredDataFormatParameter _:
-               options.Add(generateIgnoredColumnMappingOption());
+               options.Add(generateIgnoredColumnMappingOption(_activeRow.Description));
                break;
             case GroupByDataFormatParameter _:
-               options.Add(generateGroupByColumnMappingOption());
+               options.Add(generateGroupByColumnMappingOption(_activeRow.Description));
                break;
             case MappingDataFormatParameter tm:
-               options.Add(generateMappingColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString()));
+               options.Add(generateMappingColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(), tm.MappedColumn.Unit));
                break;
             case MetaDataFormatParameter tm:
                options.Add(generateMetaDataColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MetaDataId));
@@ -125,13 +121,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //Ignored
          if (!(_activeRow.Source is IgnoredDataFormatParameter))
          {
-            options.Add(generateIgnoredColumnMappingOption());
+            options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
          }
 
          //GroupBy
          if (!(_activeRow.Source is GroupByDataFormatParameter))
          {
-            options.Add(generateGroupByColumnMappingOption());
+            options.Add(generateGroupByColumnMappingOption(ColumnMappingFormatter.GroupBy()));
          }
 
          //Mappings only for missing columns
@@ -140,7 +136,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
             if (!_mappings.Any(m =>
                m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
             {
-               options.Add(generateMappingColumnMappingOption(Captions.MappingDescription(info.DisplayName, "?"), _activeRow.ColumnName, info.DisplayName));
+               options.Add(
+                  generateMappingColumnMappingOption(
+                     ColumnMappingFormatter.Mapping(info.DisplayName, "?"),
+                     _activeRow.ColumnName, 
+                     info.DisplayName
+                  )
+               );
             }
          }
 
@@ -149,16 +151,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             if (!_mappings.Any(m => m.Source is MetaDataFormatParameter && (m.Source as MetaDataFormatParameter).MetaDataId == category.DisplayName))
             {
-               options.Add(generateMetaDataColumnMappingOption(Captions.MetaDataDescription(category.DisplayName), _activeRow.ColumnName, category.DisplayName));
+               options.Add(
+                  generateMetaDataColumnMappingOption(
+                     ColumnMappingFormatter.MetaData(category.DisplayName),
+                     _activeRow.ColumnName,
+                     category.DisplayName
+                  )
+               );
             }
          }
 
          return options;
-      }
-
-      public ColumnMappingViewModel MappingElementAt(int index)
-      {
-         return _mappings.ElementAt(index);
       }
 
       public ToolTipDescription ToolTipDescriptionFor(int index)
@@ -199,14 +202,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          return new ButtonsConfiguration()
          {
-            ShowButtons = !String.IsNullOrEmpty(_activeRow.ColumnName),
+            ShowButtons = !String.IsNullOrEmpty(_activeRow.ColumnName) && _activeRow.Description != ColumnMappingFormatter.Ignored(),
             UnitActive = _activeRow.Source is MappingDataFormatParameter
          };
       }
 
-      public void SetDescription(int index, string description)
+      public void SetDescriptionForActiveRow(string description)
       {
+         _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, description);
+      }
 
+      public void ClearActiveRow()
+      {
+         _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, _activeRow.Description);
       }
    }
 }
