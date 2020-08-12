@@ -52,5 +52,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SetDescriptionForActiveRow(string description);
 
       void ClearActiveRow();
+
+      void ResetMapping();
+
+      void ClearMapping();
    }
 }

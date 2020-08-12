@@ -10,6 +10,7 @@ using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -215,6 +216,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ClearActiveRow()
       {
          _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, _activeRow.Description);
+      }
+
+      public void ResetMapping()
+      {
+         SetDataFormat(_format);
+      }
+
+      public void ClearMapping()
+      {
+         _mappings.Each(
+            m =>
+            {
+               m.Description = ColumnMappingFormatter.Ignored();
+               m.Source = ColumnMappingFormatter.Parse(m.Source.ColumnName, m.Description);
+            }
+         );
+         View.SetMappingSource(_mappings);
       }
    }
 }
