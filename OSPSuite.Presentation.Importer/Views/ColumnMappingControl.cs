@@ -213,39 +213,10 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else //unit information button
          {
-            //open edit view
-            //TODO: This should go in the presenter
-            var icon = (ParentForm == null) ? ApplicationIcons.EmptyIcon : ParentForm.Icon;
-            var activeRow = (_presenter.ActiveRow().Source as MappingDataFormatParameter).MappedColumn;
-            var frm = new SetUnitView(activeRow, _columnInfos.First(i => i.DisplayName == activeRow.Name.ToString()).DimensionInfos.Select(d => d.Dimension), _format) { StartPosition = FormStartPosition.CenterParent, Icon = icon };
-            frm.OnCopyUnitInfo += onCopyUnitInfo;
-
             uxGrid.BeginUpdate();
-            if (frm.ShowDialog() == DialogResult.OK)
-            {
-            }
+            _presenter.ChangeUnitsOnActiveRow();
             uxGrid.EndUpdate();
          }
-      }
-
-      void onCopyUnitInfo(object sender, SetUnitView.CopyUnitInfoEventArgs e)
-      {
-         /*foreach (var cm in Mapping)
-         {
-            if (cm.Target != _contextMappingRow.Target) continue;
-
-            var tableColumn = getTableColumn(cm);
-
-            if (tableColumn.Dimensions == null) continue;
-            tableColumn.ActiveDimension = DimensionHelper.FindDimension(tableColumn.Dimensions, e.Dimension.Name);
-            DimensionHelper.TakeOverInputParameters(e.Dimension, tableColumn.ActiveDimension);
-            cm.InputParameters = tableColumn.ActiveDimension.InputParameters;
-            tableColumn.ActiveUnit = tableColumn.ActiveDimension.FindUnit(e.Unit.Name);
-            tableColumn.IsUnitExplicitlySet = true;
-            cm.SelectedUnit = tableColumn.ActiveUnit;
-            cm.IsUnitExplicitlySet = tableColumn.IsUnitExplicitlySet;
-         }
-         _grid.MainView?.RefreshData();*/
       }
 
       private void createButtons(ButtonEdit editor)

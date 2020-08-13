@@ -4,7 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporterTask
    {
