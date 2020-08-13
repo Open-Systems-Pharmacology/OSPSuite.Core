@@ -40,8 +40,6 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly IImageListRetriever _imageListRetriever;
       private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
-      private IDataFormat _format;
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -63,12 +61,6 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AttachPresenter(IColumnMappingPresenter presenter)
       {
          _presenter = presenter;
-      }
-
-      public void SetSettings(IReadOnlyList<ColumnInfo> columnInfos, IDataFormat format)
-      {
-         _columnInfos = columnInfos;
-         _format = format;
       }
 
       public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
