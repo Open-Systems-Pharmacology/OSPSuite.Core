@@ -38,10 +38,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          extractGeneralParameters(keys, data);
       }
 
-      private string extractUnits(string description)
+      private IEnumerable<string> extractUnits(string description)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
-         return units.Substring(1, units.Length - 2).Trim();
+         return units.Substring(1, units.Length - 2).Trim().Split(',');
       }
 
       private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys)
@@ -52,7 +52,17 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), Unit = extractUnits(headerKey) }));
+               var units = extractUnits(headerKey);
+               Parameters.Add(new MappingDataFormatParameter
+               (
+                  headerKey,
+                  new Column()
+                  {
+                     Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header),
+                     Unit = units.Count() > 0 ? units.ElementAt(0) : "",
+                     AvailableUnits = units
+                  })
+               );
             }
             else
             {
@@ -76,7 +86,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               Parameters.Add(new MappingDataFormatParameter(headerKey, new Column() { Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), Unit = extractUnits(headerKey) }));
+               var units = extractUnits(headerKey);
+               Parameters.Add
+               (
+                  new MappingDataFormatParameter
+                  (
+                     headerKey, 
+                     new Column() 
+                     { 
+                        Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), 
+                        Unit = units.Count() > 0 ? units.ElementAt(0) : "",
+                        AvailableUnits = units
+                     }
+                  )
+               );
             }
          }
       }

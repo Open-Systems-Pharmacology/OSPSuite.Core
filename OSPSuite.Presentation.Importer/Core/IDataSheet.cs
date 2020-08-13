@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public ColumnNames Name { get; set; }
       public string Unit { get; set; }
+      public IEnumerable<string> AvailableUnits { get; set; }
 
       public override string ToString()
       {
