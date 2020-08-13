@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility;
@@ -65,9 +67,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
       }
 
-      public ColumnMappingViewModel ActiveRow()
+      public void ChangeUnitsOnActiveRow()
       {
-         return _activeRow;
+         var column = (_activeRow.Source as MappingDataFormatParameter).MappedColumn;
+         var frm = new SetUnitView
+         (
+            column, 
+            _columnInfos
+               .First(i => i.DisplayName == column.Name.ToString())
+               .DimensionInfos
+               .Select(d => d.Dimension), 
+            _format
+         ) 
+         { 
+            StartPosition = FormStartPosition.CenterParent 
+         };
+         frm.ShowDialog();
       }
 
       private ColumnMappingOption generateGroupByColumnMappingOption(string description)
@@ -237,11 +252,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             }
          );
          View.SetMappingSource(_mappings);
-      }
-
-      public IEnumerable<string> GetUnits()
-      {
-         return (_activeRow.Source as MappingDataFormatParameter).MappedColumn.AvailableUnits;
       }
    }
 }

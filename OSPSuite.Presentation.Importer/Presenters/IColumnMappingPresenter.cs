@@ -57,6 +57,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void ClearMapping();
 
-      ColumnMappingViewModel ActiveRow();
+      void ChangeUnitsOnActiveRow();
    }
 }
