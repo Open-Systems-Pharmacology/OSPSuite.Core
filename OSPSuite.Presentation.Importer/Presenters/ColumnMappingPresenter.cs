@@ -51,6 +51,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                p
             );
          }).ToList();
+         View.SetSettings(_columnInfos, _format);
          View.SetMappingSource(_mappings);
       }
 
@@ -62,6 +63,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
             Description = description,
             IconIndex = -1
          };
+      }
+
+      public ColumnMappingViewModel ActiveRow()
+      {
+         return _activeRow;
       }
 
       private ColumnMappingOption generateGroupByColumnMappingOption(string description)
@@ -231,6 +237,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
             }
          );
          View.SetMappingSource(_mappings);
+      }
+
+      public IEnumerable<string> GetUnits()
+      {
+         return (_activeRow.Source as MappingDataFormatParameter).MappedColumn.AvailableUnits;
       }
    }
 }

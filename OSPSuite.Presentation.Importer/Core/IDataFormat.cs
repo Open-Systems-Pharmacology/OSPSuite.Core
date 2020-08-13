@@ -10,5 +10,7 @@ namespace OSPSuite.Presentation.Importer.Core
       bool SetParameters(IUnformattedData rawData);
       IList<DataFormatParameter> Parameters { get; }
       IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data);
+
+      bool CheckConditions(Dictionary<string, string> conditions);
    }
 }

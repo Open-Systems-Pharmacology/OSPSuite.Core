@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Extensions;
@@ -10,6 +11,9 @@ using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
@@ -36,6 +40,8 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly IImageListRetriever _imageListRetriever;
       private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
+      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private IDataFormat _format;
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -57,6 +63,12 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AttachPresenter(IColumnMappingPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public void SetSettings(IReadOnlyList<ColumnInfo> columnInfos, IDataFormat format)
+      {
+         _columnInfos = columnInfos;
+         _format = format;
       }
 
       public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
@@ -201,44 +213,39 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else //unit information button
          {
-            /*if (String.IsNullOrEmpty(mappingRow.Target)) return;
-            var tableColumn = getTableColumn(mappingRow);
-            if (tableColumn?.Dimensions == null) return;
-            var sourceColumn = _sourceTable.Columns[mappingRow.SourceColumn];
-            var unit = _importerTask.GetUnit(sourceColumn);
-            if (!String.IsNullOrEmpty(unit) && tableColumn.SupportsUnit(unit) && !tableColumn.IsUnitExplicitlySet)
-            {
-               _importerTask.SetColumnUnit(tableColumn, unit, true);
-               mappingRow.IsUnitExplicitlySet = true;
-            }
-            else
-            {
-               if (mappingRow.SelectedUnit.Name != null)
-                  if (tableColumn.SupportsUnit(mappingRow.SelectedUnit.Name))
-                     _importerTask.SetColumnUnit(tableColumn, mappingRow.SelectedUnit.Name, mappingRow.IsUnitExplicitlySet);
-            }
-            if (mappingRow.InputParameters != null && tableColumn.ActiveDimension.InputParameters != null)
-               tableColumn.ActiveDimension.InputParameters = new List<InputParameter>(mappingRow.InputParameters);
-            if (mappingRow.MetaData != null)
-               tableColumn.MetaData = mappingRow.MetaData.Copy();
-
             //open edit view
+            //TODO: This should go in the presenter
             var icon = (ParentForm == null) ? ApplicationIcons.EmptyIcon : ParentForm.Icon;
-            var frm = new SetUnitView(tableColumn, _importerTask) { StartPosition = FormStartPosition.CenterParent, Icon = icon };
+            var activeRow = (_presenter.ActiveRow().Source as MappingDataFormatParameter).MappedColumn;
+            var frm = new SetUnitView(activeRow, _columnInfos.First(i => i.DisplayName == activeRow.Name.ToString()).DimensionInfos.Select(d => d.Dimension), _format) { StartPosition = FormStartPosition.CenterParent, Icon = icon };
             frm.OnCopyUnitInfo += onCopyUnitInfo;
+
+            uxGrid.BeginUpdate();
             if (frm.ShowDialog() == DialogResult.OK)
             {
-               if (tableColumn.ActiveDimension.InputParameters != null)
-                  mappingRow.InputParameters = new List<InputParameter>(tableColumn.ActiveDimension.InputParameters);
-
-               mappingRow.SelectedUnit = tableColumn.ActiveUnit;
-               mappingRow.IsUnitExplicitlySet = tableColumn.IsUnitExplicitlySet;
-
-               var item = editor.Properties.Items.GetItem(mappingRow.Target);
-               item.ImageIndex = _importerTask.GetImageIndex(tableColumn);
             }
-            */
+            uxGrid.EndUpdate();
          }
+      }
+
+      void onCopyUnitInfo(object sender, SetUnitView.CopyUnitInfoEventArgs e)
+      {
+         /*foreach (var cm in Mapping)
+         {
+            if (cm.Target != _contextMappingRow.Target) continue;
+
+            var tableColumn = getTableColumn(cm);
+
+            if (tableColumn.Dimensions == null) continue;
+            tableColumn.ActiveDimension = DimensionHelper.FindDimension(tableColumn.Dimensions, e.Dimension.Name);
+            DimensionHelper.TakeOverInputParameters(e.Dimension, tableColumn.ActiveDimension);
+            cm.InputParameters = tableColumn.ActiveDimension.InputParameters;
+            tableColumn.ActiveUnit = tableColumn.ActiveDimension.FindUnit(e.Unit.Name);
+            tableColumn.IsUnitExplicitlySet = true;
+            cm.SelectedUnit = tableColumn.ActiveUnit;
+            cm.IsUnitExplicitlySet = tableColumn.IsUnitExplicitlySet;
+         }
+         _grid.MainView?.RefreshData();*/
       }
 
       private void createButtons(ButtonEdit editor)
