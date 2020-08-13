@@ -53,7 +53,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
                p
             );
          }).ToList();
-         View.SetSettings(_columnInfos, _format);
          View.SetMappingSource(_mappings);
       }
 
