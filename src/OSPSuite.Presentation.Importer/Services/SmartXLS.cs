@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.DeprecatedImporter.Services
       public static WorkBook ReadExcelFile(string fileName)
       {
          if (String.IsNullOrEmpty(fileName)) return null;
-         var wb = new WorkBook();
+          var wb = new WorkBook();
 
          var extension = Path.GetExtension(fileName);
          if (extension != null && extension.ToUpper() == ".xlsx".ToUpper())

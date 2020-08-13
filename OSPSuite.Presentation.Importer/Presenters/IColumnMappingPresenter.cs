@@ -56,5 +56,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void ResetMapping();
 
       void ClearMapping();
+
+      ColumnMappingViewModel ActiveRow();
    }
 }

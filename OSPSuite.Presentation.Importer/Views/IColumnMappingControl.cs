@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using DevExpress.XtraRichEdit.Layout;
 using OSPSuite.Assets;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
@@ -108,5 +110,7 @@ namespace OSPSuite.Presentation.Importer.Views
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings);
+
+      void SetSettings(IReadOnlyList<ColumnInfo> columnInfos, IDataFormat format);
    }
 }
