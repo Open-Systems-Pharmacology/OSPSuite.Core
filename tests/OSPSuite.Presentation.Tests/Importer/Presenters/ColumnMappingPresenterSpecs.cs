@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Because()
       {
          base.Because();
-         sut.SetDataFormat(_basicFormat);
+         sut.SetDataFormat(_basicFormat, "");
       }
 
       [TestCase]
@@ -84,7 +84,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Because();
          sut.SetSettings(_metaDataCategories, _columnInfos, dataImporterSettings);
-         sut.SetDataFormat(_basicFormat);
+         sut.SetDataFormat(_basicFormat, "");
       }
 
       [TestCase]

@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void SetDataFormat(IDataFormat format);
+      void SetDataFormat(IDataFormat format, string sheetName);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
 
@@ -58,5 +58,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void ClearMapping();
 
       void ChangeUnitsOnActiveRow();
+
+      void ValidateMapping();
    }
 }

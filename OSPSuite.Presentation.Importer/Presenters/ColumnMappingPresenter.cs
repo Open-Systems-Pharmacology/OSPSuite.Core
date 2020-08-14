@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
       private ColumnMappingViewModel _activeRow;
-
+      private string _sheetName;
 
       public ColumnMappingPresenter(IColumnMappingControl view, IImporterTask importerTask) : base(view)
       {
@@ -41,9 +41,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataImporterSettings = dataImporterSettings;
       }
 
-      public void SetDataFormat(IDataFormat format)
+      public void SetDataFormat(IDataFormat format, string sheetName)
       {
          _format = format;
+         _sheetName = sheetName;
          _mappings = format.Parameters.Select(p =>
          {
             return new ColumnMappingViewModel
@@ -54,6 +55,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             );
          }).ToList();
          View.SetMappingSource(_mappings);
+         ValidateMapping();
       }
 
       private ColumnMappingOption generateIgnoredColumnMappingOption(string description)
@@ -238,7 +240,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ResetMapping()
       {
-         SetDataFormat(_format);
+         SetDataFormat(_format, _sheetName);
       }
 
       public void ClearMapping()
@@ -252,5 +254,51 @@ namespace OSPSuite.Presentation.Importer.Presenters
          );
          View.SetMappingSource(_mappings);
       }
+
+      public void ValidateMapping()
+      {
+         var missingColumn = _importerTask.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
+         if (missingColumn != null)
+         {
+            OnMissingMapping?.Invoke(this, new MissingMappingEventArgs { Message = missingColumn });
+         }
+         else
+         {
+            OnMappingCompleted?.Invoke(this, new MappingCompletedEventArgs { SheetName = _sheetName });
+         }
+      }
+
+      public class MappingCompletedEventArgs : EventArgs
+      {
+         public string SheetName { set; get; }
+      }
+
+      public delegate void MappingCompletedHandler(object sender, EventArgs e);
+
+      /// <summary>
+      /// Event raised when mapping is complete.
+      /// </summary>
+      public event MappingCompletedHandler OnMappingCompleted;
+
+      /// <summary>
+      /// Event arguments for OnMissingMapping event.
+      /// </summary>
+      public class MissingMappingEventArgs : EventArgs
+      {
+         /// <summary>
+         /// Message describing what is missed.
+         /// </summary>
+         public string Message { get; set; }
+      }
+
+      /// <summary>
+      /// Handler for OnMissingMapping event.
+      /// </summary>
+      public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
+
+      /// <summary>
+      /// Event raised when mapping is not complete.
+      /// </summary>
+      public event MissingMappingHandler OnMissingMapping;
    }
 }
