@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Views
          InitializeComponent();
          uxGridView.OptionsView.ShowGroupPanel = false;
          uxGridView.OptionsMenu.EnableColumnMenu = false;
-         //uxGridView.CellValueChanged += (s, e) => validateMapping();
+         uxGridView.CellValueChanged += (s, e) => _presenter.ValidateMapping();
 
          uxGridView.CustomRowCellEdit += onCustomRowCellEdit;
          uxGridView.CustomRowCellEditForEditing += onCustomRowCellEditForEditing;

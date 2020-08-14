@@ -126,7 +126,7 @@ namespace OSPSuite.Starter.Presenters
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings);
-            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format);
+            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format, source.DataSheets.ElementAt(0).Key);
          }
       }
 
