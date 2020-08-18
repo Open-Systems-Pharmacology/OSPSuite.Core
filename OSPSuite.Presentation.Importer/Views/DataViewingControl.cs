@@ -2,6 +2,7 @@
 using OSPSuite.UI.Controls;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
+using System.Windows.Forms;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -32,10 +33,14 @@ namespace OSPSuite.Presentation.Importer.Views
 
          //tempDataSourceFile.Path = "C:/Users/GeorgiosDaskalakis/Documents/GitHub/OSPSuite.Core/tests/OSPSuite.Presentation.Tests/Data/sample1.xlsx";
          //tempDataSourceFile.Path = "C:/Users/GeorgiosDaskalakis/Downloads/Midazolam.xlsx";  iv, 0.15 mgkg(Heizmann 1983)
-         tempDataSourceFile.Path = "C:/Users/GeorgiosDaskalakis/Downloads/ObservedData.xlsx";
+         var file = new OpenFileDialog();
+         if (file.ShowDialog() == DialogResult.OK)
+         {
+            tempDataSourceFile.Path = file.FileName;
+         }
 
          //tempDataSourceFile.Path = "C:/Users/GeorgiosDaskalakis/Downloads/Book1 (1).xlsx";
-         DataTable temp = tempDataSourceFile.DataSheets["Tabelle1"].RawData.AsDataTable();
+         DataTable temp = tempDataSourceFile.DataSheets["Sheet1"].RawData.AsDataTable();
          gridControl1.DataSource = temp;
          // gridView1.DataSource =temp();
       }

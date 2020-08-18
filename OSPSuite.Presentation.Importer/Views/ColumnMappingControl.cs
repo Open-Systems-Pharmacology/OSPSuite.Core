@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Extensions;
@@ -11,9 +10,6 @@ using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
-using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
@@ -205,10 +201,18 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else //unit information button
          {
-            uxGrid.BeginUpdate();
             _presenter.ChangeUnitsOnActiveRow();
-            uxGrid.EndUpdate();
          }
+      }
+
+      public void BeginUpdate()
+      {
+         uxGrid.BeginUpdate();
+      }
+
+      public void EndUpdate()
+      {
+         uxGrid.EndUpdate();
       }
 
       private void createButtons(ButtonEdit editor)
