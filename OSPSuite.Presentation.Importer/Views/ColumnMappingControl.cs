@@ -292,16 +292,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)
       {
-         uxGridView.BeginUpdate();
          _presenter.ResetMapping();
-         uxGridView.EndUpdate();
       }
 
       private void onClearMappingClick(object sender, EventArgs eventArgs)
       {
-         uxGridView.BeginUpdate();
          _presenter.ClearMapping();
-         uxGridView.EndUpdate();
       }
    }
 }
