@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.XtraRichEdit.Mouse;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.UI.Controls;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
@@ -25,7 +28,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private ColumnMappingViewModel _activeRow;
       private string _sheetName;
 
-      public ColumnMappingPresenter(IColumnMappingControl view, IImporterTask importerTask) : base(view)
+      public ColumnMappingPresenter
+      (
+         IColumnMappingControl view, 
+         IImporterTask importerTask
+      ) : base(view)
       {
          _importerTask = importerTask;
       }
@@ -70,20 +77,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ChangeUnitsOnActiveRow()
       {
+         var unitsEditorPresenter = EmptyDialog.Show<IUnitsEditorPresenter>(430, 180);
          var column = (_activeRow.Source as MappingDataFormatParameter).MappedColumn;
-         var frm = new SetUnitView
+         unitsEditorPresenter.SetParams
          (
-            column, 
+            column,
             _columnInfos
                .First(i => i.DisplayName == column.Name.ToString())
                .DimensionInfos
-               .Select(d => d.Dimension), 
-            _format
-         ) 
-         { 
-            StartPosition = FormStartPosition.CenterParent 
+               .Select(d => d.Dimension)
+         );
+         unitsEditorPresenter.View.OnOK += (units) =>
+         {
+            View.BeginUpdate();
+            column.Unit = units;
+            View.EndUpdate();
          };
-         frm.ShowDialog();
       }
 
       private ColumnMappingOption generateGroupByColumnMappingOption(string description)

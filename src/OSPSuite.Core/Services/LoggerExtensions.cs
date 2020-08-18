@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Services
 
       private static void addToLog(IOSPLogger logger, string message, LogLevel logLevel, string category)
       {
-         logger.AddToLog(message, logLevel, category);
+         logger?.AddToLog(message, logLevel, category);
       }
 
       private static void addToLog<T>(IOSPLogger logger, string message, LogLevel logLevel)

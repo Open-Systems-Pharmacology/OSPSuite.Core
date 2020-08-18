@@ -110,5 +110,9 @@ namespace OSPSuite.Presentation.Importer.Views
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings);
+
+      void BeginUpdate();
+
+      void EndUpdate();
    }
 }

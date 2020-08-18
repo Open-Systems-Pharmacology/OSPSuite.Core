@@ -164,6 +164,8 @@
     <Compile Include="Presenters\DataViewingPresenter.cs" />
     <Compile Include="Presenters\IDataViewingPresenter.cs" />
     <Compile Include="Presenters\IColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\IUnitsEditorPresenter.cs" />
+    <Compile Include="Presenters\UnitsEditorPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IImporter.cs" />
     <Compile Include="Services\IImporterTask.cs" />
@@ -179,13 +181,15 @@
     <Compile Include="Views\DataViewingControl.Designer.cs">
       <DependentUpon>DataViewingControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialog\EmptyDialog.cs" />
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
-    <Compile Include="Views\SetUnitView.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Views\IUnitsEditorView.cs" />
+    <Compile Include="Views\UnitsEditorView.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\SetUnitView.Designer.cs">
-      <DependentUpon>SetUnitView.cs</DependentUpon>
+    <Compile Include="Views\UnitsEditorView.Designer.cs">
+      <DependentUpon>UnitsEditorView.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -229,8 +233,8 @@
     <EmbeddedResource Include="Views\DataViewingControl.resx">
       <DependentUpon>DataViewingControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\SetUnitView.resx">
-      <DependentUpon>SetUnitView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\UnitsEditorView.resx">
+      <DependentUpon>UnitsEditorView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
