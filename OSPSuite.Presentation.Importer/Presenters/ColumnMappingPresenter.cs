@@ -249,11 +249,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ResetMapping()
       {
+         View.BeginUpdate();
          SetDataFormat(_format, _sheetName);
+         View.EndUpdate();
       }
 
       public void ClearMapping()
       {
+         View.BeginUpdate();
          _mappings.Each(
             m =>
             {
@@ -262,6 +265,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             }
          );
          View.SetMappingSource(_mappings);
+         View.EndUpdate();
       }
 
       public void ValidateMapping()
