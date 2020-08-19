@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                .DimensionInfos
                .Select(d => d.Dimension)
          );
-         unitsEditorPresenter.View.OnOK += (units) =>
+         unitsEditorPresenter.OnOK += (units) =>
          {
             View.BeginUpdate();
             column.Unit = units;

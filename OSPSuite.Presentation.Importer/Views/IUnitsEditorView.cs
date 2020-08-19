@@ -10,11 +10,20 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public delegate void OKHandler(string units);
-
+   public delegate void UnitChangeHandler(string unit);
+   public delegate void DimensionChangeHandler(string dimension);
+   public delegate void OKHandler();
    public interface IUnitsEditorView : IView<IUnitsEditorPresenter>
    {
-      void SetParams(Column importDataColumn, IEnumerable<IDimension> dimensions);
+      void SetParams(bool useDimensionSelector);
+
+      void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue);
+
+      void FillUnitComboBox(IEnumerable<Unit> units, string defaultValue);
+
+      event UnitChangeHandler OnUnitChange;
+
+      event DimensionChangeHandler OnDimensionChange;
 
       event OKHandler OnOK;
    }
