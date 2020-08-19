@@ -1,11 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
+   /// <summary>
+   /// Event arguments for OnMissingMapping event.
+   /// </summary>
+   public class MissingMappingEventArgs : EventArgs
+   {
+      /// <summary>
+      /// Message describing what is missed.
+      /// </summary>
+      public string Message { get; set; }
+   }
+   /// <summary>
+   /// Handler for OnMissingMapping event.
+   /// </summary>
+   public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
+
+   public class MappingCompletedEventArgs : EventArgs
+   {
+      public string SheetName { set; get; }
+   }
+
+   public delegate void MappingCompletedHandler(object sender, EventArgs e);
+
+   public class DataFormatParametersChangedArgs : EventArgs
+   {
+      public IEnumerable<DataFormatParameter> Parameters { get; set; }
+   }
+
+   public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
+
    public class ColumnMappingOption
    {
       public string Label { get; set; }
@@ -60,5 +91,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void ChangeUnitsOnActiveRow();
 
       void ValidateMapping();
+
+      event MappingCompletedHandler OnMappingCompleted;
+
+      event MissingMappingHandler OnMissingMapping;
+
+      event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
    }
 }
