@@ -64,6 +64,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public bool UnitActive { get; set; }
    }
 
+   public delegate void FormatChangedHandler(IDataFormat format);
+
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings(
@@ -72,7 +74,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void SetDataFormat(IDataFormat format, string sheetName);
+      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
 
@@ -97,5 +99,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event MissingMappingHandler OnMissingMapping;
 
       event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+
+      event FormatChangedHandler OnFormatChanged;
    }
 }

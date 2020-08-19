@@ -10,8 +10,12 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
+   public delegate void OKHandler(string units);
+
    public interface IUnitsEditorPresenter : IPresenter<IUnitsEditorView>
    {
       void SetParams(Column importDataColumn, IEnumerable<IDimension> dimensions);
+
+      event OKHandler OnOK;
    }
 }

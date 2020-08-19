@@ -16,21 +16,6 @@ using OSPSuite.UI.Services;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   static class ColumnMapping
-   {
-      public enum ColumnName
-      {
-         ColumnName,
-         Description,
-         Source
-      }
-
-      public static string GetName(ColumnName name)
-      {
-         return name.ToString();
-      }
-   }
-
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
       private readonly IImageListRetriever _imageListRetriever;
@@ -58,6 +43,24 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _presenter = presenter;
       }
+
+      public void SetFormats(IEnumerable<string> options, string selected)
+      {
+         comboBoxEdit1.Properties.Items.Clear();
+         foreach (var option in options)
+         {
+            comboBoxEdit1.Properties.Items.Add(option);
+         }
+         comboBoxEdit1.EditValue = selected;
+         comboBoxEdit1.TextChanged += onFormatChanged;
+      }
+
+      private void onFormatChanged(object sender, EventArgs e)
+      {
+         OnFormatChanged?.Invoke(comboBoxEdit1.EditValue as string);
+      }
+
+      public event FormatChangedHandler OnFormatChanged;
 
       public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
       {
@@ -298,6 +301,21 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onClearMappingClick(object sender, EventArgs eventArgs)
       {
          _presenter.ClearMapping();
+      }
+   }
+
+   static class ColumnMapping
+   {
+      public enum ColumnName
+      {
+         ColumnName,
+         Description,
+         Source
+      }
+
+      public static string GetName(ColumnName name)
+      {
+         return name.ToString();
       }
    }
 }
