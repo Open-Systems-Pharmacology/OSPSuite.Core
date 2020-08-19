@@ -3,10 +3,9 @@ using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   interface IImporterPresenter : IPresenter<IImporterPresenterView>, ICommandCollectorPresenter
+   public interface IImporterPresenter : IPresenter<IImporterView>, ICommandCollectorPresenter
    {
       IDataViewingPresenter DataViewingPresenter { get; }
       IColumnMappingPresenter ColumnMappingPresenter { get; }
-
    }
 }

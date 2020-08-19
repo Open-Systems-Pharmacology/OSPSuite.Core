@@ -15,7 +15,6 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DeprecatedImporter.Presenter;
 using OSPSuite.Presentation.DeprecatedImporter.Services;
 using OSPSuite.Presentation.DeprecatedImporter.View;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Importer.Services;

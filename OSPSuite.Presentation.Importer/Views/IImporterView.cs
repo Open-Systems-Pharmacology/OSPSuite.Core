@@ -3,11 +3,9 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   interface IImporterPresenterView : IView<IImporterPresenter>
+   public interface IImporterView : IView<IImporterPresenter>
    {
       void AddDataViewingControl(IDataViewingControl dataViewingControl);
       void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
    }
-
-  
 }
