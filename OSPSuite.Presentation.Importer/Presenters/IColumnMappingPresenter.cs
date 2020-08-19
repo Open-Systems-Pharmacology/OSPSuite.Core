@@ -64,6 +64,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public bool UnitActive { get; set; }
    }
 
+   public delegate void FormatChangedHandler(IDataFormat format);
+
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings(
@@ -97,5 +99,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event MissingMappingHandler OnMissingMapping;
 
       event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+
+      event FormatChangedHandler OnFormatChange;
    }
 }
