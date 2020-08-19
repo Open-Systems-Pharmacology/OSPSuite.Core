@@ -95,6 +95,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
             View.BeginUpdate();
             column.Unit = units;
             View.EndUpdate();
+            OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
+            { 
+               Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+            });
          };
       }
 
@@ -243,11 +247,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetDescriptionForActiveRow(string description)
       {
          _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, description);
+         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
+         { 
+            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+         });
       }
 
       public void ClearActiveRow()
       {
          _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, _activeRow.Description);
+         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
+         { 
+            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+         });
       }
 
       public void ResetMapping()
@@ -255,6 +267,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.BeginUpdate();
          SetDataFormat(_format, _sheetName);
          View.EndUpdate();
+         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
+         { 
+            Parameters = _mappings.Select(m => m.Source)
+         });
       }
 
       public void ClearMapping()
@@ -269,6 +285,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          );
          View.SetMappingSource(_mappings);
          View.EndUpdate();
+         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
+         {
+            Parameters = _mappings.Select(m => m.Source)
+         });
       }
 
       public void ValidateMapping()
@@ -284,37 +304,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      public class MappingCompletedEventArgs : EventArgs
-      {
-         public string SheetName { set; get; }
-      }
+      public event MappingCompletedHandler OnMappingCompleted;      
 
-      public delegate void MappingCompletedHandler(object sender, EventArgs e);
-
-      /// <summary>
-      /// Event raised when mapping is complete.
-      /// </summary>
-      public event MappingCompletedHandler OnMappingCompleted;
-
-      /// <summary>
-      /// Event arguments for OnMissingMapping event.
-      /// </summary>
-      public class MissingMappingEventArgs : EventArgs
-      {
-         /// <summary>
-         /// Message describing what is missed.
-         /// </summary>
-         public string Message { get; set; }
-      }
-
-      /// <summary>
-      /// Handler for OnMissingMapping event.
-      /// </summary>
-      public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
-
-      /// <summary>
-      /// Event raised when mapping is not complete.
-      /// </summary>
       public event MissingMappingHandler OnMissingMapping;
+
+      public event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
    }
 }
