@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public string Description { get; } = "Simple format with data identified by column data...";
 
-      public IList<DataFormatParameter> Parameters { get; private set; }
+      public IList<IDataFormatParameter> Parameters { get; private set; }
 
       public bool SetParameters(IUnformattedData data)
       {
@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (parameter == null)
                throw new Exception($"Unknown column {condition.Key}.");
 
-            valid = (parameter.Configuration.Data.ToString() == condition.Value);
+            valid = (parameter.DataAsString == condition.Value);
          }
          return valid;
       }
@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       private void setParameters(IUnformattedData data)
       {
          var keys = data.GetHeaders().ToList();
-         Parameters = new List<DataFormatParameter>();
+         Parameters = new List<IDataFormatParameter>();
 
          var missingKeys = new List<string>();
 

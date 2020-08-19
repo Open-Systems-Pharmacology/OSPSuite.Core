@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class DataFormatParametersChangedArgs : EventArgs
    {
-      public IEnumerable<DataFormatParameter> Parameters { get; set; }
+      public IEnumerable<IDataFormatParameter> Parameters { get; set; }
    }
 
    public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);

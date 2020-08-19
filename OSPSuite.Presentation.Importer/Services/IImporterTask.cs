@@ -9,14 +9,14 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporterTask
    {
-      int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null);
+      int GetImageIndex(IDataFormatParameter parameter, IEnumerable<IDataFormatParameter> mappings = null);
 
-      string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
+      string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<IDataFormatParameter> mappings);
    }
 
    public class ImporterTask : IImporterTask
    {
-      public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null)
+      public int GetImageIndex(IDataFormatParameter parameter, IEnumerable<IDataFormatParameter> mappings = null)
       {
          switch (parameter)
          {
@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Services
          }
       }
 
-      public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<IDataFormatParameter> mappings)
       {
          foreach (var col in dataColumns)
          {

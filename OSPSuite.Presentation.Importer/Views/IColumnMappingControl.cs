@@ -23,8 +23,8 @@ namespace OSPSuite.Presentation.Importer.Views
             _description = value;
          }
       }
-      public DataFormatParameter Source { get; set; }
-      public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source)
+      public IDataFormatParameter Source { get; set; }
+      public ColumnMappingViewModel(string columnName, string description, IDataFormatParameter source)
       {
          ColumnName = columnName;
          Description = description;
@@ -66,7 +66,7 @@ namespace OSPSuite.Presentation.Importer.Views
          return $"{ColumnMappingOption.DescriptionType.MetaData},{metaDataId}";
       }
 
-      public static string Stringify(DataFormatParameter model)
+      public static string Stringify(IDataFormatParameter model)
       {
          switch (model)
          {
@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
 
-      public static DataFormatParameter Parse(string columnName, string description)
+      public static IDataFormatParameter Parse(string columnName, string description)
       {
          var parsed = description.Split(',');
          if (parsed[0] == ColumnMappingOption.DescriptionType.Ignored.ToString())

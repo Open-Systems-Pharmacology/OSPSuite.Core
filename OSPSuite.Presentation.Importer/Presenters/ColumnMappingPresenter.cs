@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             View.EndUpdate();
             OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
             { 
-               Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+               Parameters = new List<IDataFormatParameter>() { _activeRow.Source } 
             });
          };
       }
@@ -257,7 +257,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, description);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
-            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+            Parameters = new List<IDataFormatParameter>() { _activeRow.Source } 
          });
       }
 
@@ -266,7 +266,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, _activeRow.Description);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
-            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+            Parameters = new List<IDataFormatParameter>() { _activeRow.Source } 
          });
       }
 

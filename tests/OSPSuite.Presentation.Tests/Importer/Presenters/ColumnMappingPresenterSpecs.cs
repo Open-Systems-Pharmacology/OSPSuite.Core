@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
+         A.CallTo(() => _basicFormat.Parameters).Returns(new List<IDataFormatParameter>() { 
                new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }),
                new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }),
                new MetaDataFormatParameter("Sp", "Species"),
