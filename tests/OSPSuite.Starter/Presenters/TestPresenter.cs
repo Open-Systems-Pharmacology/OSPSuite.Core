@@ -114,7 +114,7 @@ namespace OSPSuite.Starter.Presenters
       public void StartColumnMapping()
       {
          var starter = new TestStarter<IColumnMappingPresenter>();
-         starter.Start(700, 400);
+         starter.Start(660, 400);
          var file = new OpenFileDialog();
          if (file.ShowDialog() == DialogResult.OK)
          {
@@ -127,7 +127,7 @@ namespace OSPSuite.Starter.Presenters
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings);
-            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format, source.DataSheets.ElementAt(0).Key);
+            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format, source.DataSheets.ElementAt(0).Value.AvailableFormats, source.DataSheets.ElementAt(0).Key);
          }
       }
 

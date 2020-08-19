@@ -72,7 +72,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void SetDataFormat(IDataFormat format, string sheetName);
+      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
 

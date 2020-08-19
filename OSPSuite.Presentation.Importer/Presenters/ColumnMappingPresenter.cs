@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using DevExpress.XtraRichEdit.Mouse;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
@@ -11,7 +9,6 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.UI.Controls;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
@@ -28,6 +25,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private ColumnMappingViewModel _activeRow;
       private string _sheetName;
       private IEmptyDialog _emptyDialog;
+      private IEnumerable<IDataFormat> _availableFormats;
 
       public ColumnMappingPresenter
       (
@@ -38,6 +36,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerTask = importerTask;
          _emptyDialog = emptyDialog;
+         View.OnFormatChange += (format) => this.DoWithinExceptionHandler(() => 
+            SetDataFormat(_availableFormats.First(f => f.Name == format), _availableFormats, _sheetName)
+         );
       }
 
       public void SetSettings(
@@ -51,9 +52,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataImporterSettings = dataImporterSettings;
       }
 
-      public void SetDataFormat(IDataFormat format, string sheetName)
+      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName)
       {
          _format = format;
+         _availableFormats = availableFormats;
          _sheetName = sheetName;
          _mappings = format.Parameters.Select(p =>
          {
@@ -65,6 +67,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             );
          }).ToList();
          View.SetMappingSource(_mappings);
+         View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
          ValidateMapping();
       }
 
@@ -265,7 +268,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ResetMapping()
       {
          View.BeginUpdate();
-         SetDataFormat(_format, _sheetName);
+         SetDataFormat(_format, _availableFormats, _sheetName);
          View.EndUpdate();
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 

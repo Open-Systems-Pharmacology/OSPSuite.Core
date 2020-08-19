@@ -107,6 +107,8 @@ namespace OSPSuite.Presentation.Importer.Views
       }
    }
 
+   public delegate void FormatChangedHandler(string format);
+
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings);
@@ -114,5 +116,9 @@ namespace OSPSuite.Presentation.Importer.Views
       void BeginUpdate();
 
       void EndUpdate();
+
+      void SetFormats(IEnumerable<string> options, string selected);
+
+      event FormatChangedHandler OnFormatChange;
    }
 }
