@@ -7,6 +7,7 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Presentation.Importer.Views.Dialog;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         sut = new ColumnMappingPresenter(_view, _importerTask);
+         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IEmptyDialog>());
       }
    }
 

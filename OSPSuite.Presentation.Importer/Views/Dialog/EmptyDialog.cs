@@ -4,9 +4,9 @@ using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views.Dialog
 {
-   public static class EmptyDialog
+   public class EmptyDialog : IEmptyDialog
    {
-      public static TPresenter Show<TPresenter> (int width, int height) where TPresenter : IPresenter
+      public TPresenter Show<TPresenter> (int width, int height) where TPresenter : IPresenter
       {
          var presenter = Utility.Container.IoC.Resolve<TPresenter>();
          XtraForm form;

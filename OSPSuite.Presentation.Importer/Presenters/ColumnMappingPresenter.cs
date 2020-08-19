@@ -27,14 +27,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IImporterTask _importerTask;
       private ColumnMappingViewModel _activeRow;
       private string _sheetName;
+      private IEmptyDialog _emptyDialog;
 
       public ColumnMappingPresenter
       (
          IColumnMappingControl view, 
-         IImporterTask importerTask
+         IImporterTask importerTask,
+         IEmptyDialog emptyDialog
       ) : base(view)
       {
          _importerTask = importerTask;
+         _emptyDialog = emptyDialog;
       }
 
       public void SetSettings(
@@ -77,7 +80,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ChangeUnitsOnActiveRow()
       {
-         var unitsEditorPresenter = EmptyDialog.Show<IUnitsEditorPresenter>(430, 180);
+         var unitsEditorPresenter = _emptyDialog.Show<IUnitsEditorPresenter>(430, 180);
          var column = (_activeRow.Source as MappingDataFormatParameter).MappedColumn;
          unitsEditorPresenter.SetParams
          (
