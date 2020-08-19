@@ -30,12 +30,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          fillDimensions();
          fillUnits();
 
-         View.OnDimensionChange += (dimension) => this.DoWithinExceptionHandler(() =>
+         View.OnDimensionChanged += (dimension) => this.DoWithinExceptionHandler(() =>
          {
             _selectedUnit = _dimensions.First(d => d.Name == dimension).DefaultUnit.Name;
             fillUnits();
          });
-         View.OnUnitChange += (unit) => this.DoWithinExceptionHandler(() =>
+         View.OnUnitChanged += (unit) => this.DoWithinExceptionHandler(() =>
          {
             _selectedUnit = unit;
          });
