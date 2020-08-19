@@ -100,6 +100,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
 
-      event FormatChangedHandler OnFormatChange;
+      event FormatChangedHandler OnFormatChanged;
    }
 }

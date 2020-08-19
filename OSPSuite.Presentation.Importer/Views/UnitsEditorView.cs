@@ -49,20 +49,20 @@ namespace OSPSuite.Presentation.Importer.Views
          return comboBox;
       }
 
-      public event UnitChangeHandler OnUnitChange;
+      public event UnitChangeHandler OnUnitChanged;
 
-      public event DimensionChangeHandler OnDimensionChange;
+      public event DimensionChangeHandler OnDimensionChanged;
 
       private void onDimensionComboBoxTextChanged(object sender, EventArgs e)
       {
-         OnDimensionChange?.Invoke(_dimensionComboBox.EditValue as string);
+         OnDimensionChanged?.Invoke(_dimensionComboBox.EditValue as string);
          showInputParametersControl();
          enableButtons();
       }
 
       private void onUnitComboBoxTextChanged(object sender, EventArgs e)
       {
-         OnUnitChange?.Invoke(_unitComboBox.EditValue as string);
+         OnUnitChanged?.Invoke(_unitComboBox.EditValue as string);
          showInputParametersControl();
          enableButtons();
       }

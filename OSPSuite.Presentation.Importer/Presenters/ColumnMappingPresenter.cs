@@ -36,15 +36,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerTask = importerTask;
          _emptyDialog = emptyDialog;
-         View.OnFormatChange += (formatName) => this.DoWithinExceptionHandler(() =>
+         View.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
             SetDataFormat(format, _availableFormats, _sheetName);
-            OnFormatChange?.Invoke(format);
+            OnFormatChanged?.Invoke(format);
          });
       }
 
-      public event FormatChangedHandler OnFormatChange;
+      public event FormatChangedHandler OnFormatChanged;
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,

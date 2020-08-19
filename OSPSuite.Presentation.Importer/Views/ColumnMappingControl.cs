@@ -57,10 +57,10 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onFormatChanged(object sender, EventArgs e)
       {
-         OnFormatChange?.Invoke(comboBoxEdit1.EditValue as string);
+         OnFormatChanged?.Invoke(comboBoxEdit1.EditValue as string);
       }
 
-      public event FormatChangedHandler OnFormatChange;
+      public event FormatChangedHandler OnFormatChanged;
 
       public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
       {
