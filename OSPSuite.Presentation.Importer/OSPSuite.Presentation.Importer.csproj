@@ -164,6 +164,8 @@
     <Compile Include="Presenters\DataViewingPresenter.cs" />
     <Compile Include="Presenters\IDataViewingPresenter.cs" />
     <Compile Include="Presenters\IColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\IImporterPresenter.cs" />
+    <Compile Include="Presenters\ImporterPresenter.cs" />
     <Compile Include="Presenters\IUnitsEditorPresenter.cs" />
     <Compile Include="Presenters\UnitsEditorPresenter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -185,6 +187,7 @@
     <Compile Include="Views\Dialog\IEmptyDialog.cs" />
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
+    <Compile Include="Views\IImporterPresenterView.cs" />
     <Compile Include="Views\IUnitsEditorView.cs" />
     <Compile Include="Views\UnitsEditorView.cs">
       <SubType>UserControl</SubType>
