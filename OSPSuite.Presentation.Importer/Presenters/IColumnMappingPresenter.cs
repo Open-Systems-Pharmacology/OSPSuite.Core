@@ -76,21 +76,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName);
 
-      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
-
-      ButtonsConfiguration ButtonsConfigurationForActiveRow();
+      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
       ToolTipDescription ToolTipDescriptionFor(int index);
 
-      void SetDescriptionForActiveRow(string description);
+      void SetDescriptionForRow(ColumnMappingViewModel model);
 
-      void ClearActiveRow();
+      void ClearRow(ColumnMappingViewModel model);
 
       void ResetMapping();
 
       void ClearMapping();
 
-      void ChangeUnitsOnActiveRow();
+      void ChangeUnitsOnRow(ColumnMappingViewModel model);
 
       void ValidateMapping();
 

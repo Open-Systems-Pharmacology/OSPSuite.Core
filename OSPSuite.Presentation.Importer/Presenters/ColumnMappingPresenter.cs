@@ -22,7 +22,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
-      private ColumnMappingViewModel _activeRow;
       private string _sheetName;
       private IEmptyDialog _emptyDialog;
       private IEnumerable<IDataFormat> _availableFormats;
@@ -86,10 +85,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
       }
 
-      public void ChangeUnitsOnActiveRow()
+      public void ChangeUnitsOnRow(ColumnMappingViewModel model)
       {
          var unitsEditorPresenter = _emptyDialog.Show<IUnitsEditorPresenter>(430, 180);
-         var column = (_activeRow.Source as MappingDataFormatParameter).MappedColumn;
+         var activeRow = modelByColumnName(model.ColumnName);
+         var column = (activeRow.Source as MappingDataFormatParameter).MappedColumn;
          unitsEditorPresenter.SetParams
          (
             column,
@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             View.EndUpdate();
             OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
             { 
-               Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+               Parameters = new List<DataFormatParameter>() { activeRow.Source } 
             });
          };
       }
@@ -141,36 +141,36 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
       }
 
-      public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle)
+      public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model)
       {
-         _activeRow = _mappings.ElementAt(rowHandle);
+         var activeRow = modelByColumnName(model.ColumnName);
          var options = new List<ColumnMappingOption>();
-         switch (_activeRow.Source)
+         switch (activeRow.Source)
          {
             case IgnoredDataFormatParameter _:
-               options.Add(generateIgnoredColumnMappingOption(_activeRow.Description));
+               options.Add(generateIgnoredColumnMappingOption(activeRow.Description));
                break;
             case GroupByDataFormatParameter _:
-               options.Add(generateGroupByColumnMappingOption(_activeRow.Description));
+               options.Add(generateGroupByColumnMappingOption(activeRow.Description));
                break;
             case MappingDataFormatParameter tm:
-               options.Add(generateMappingColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(), tm.MappedColumn.Unit));
+               options.Add(generateMappingColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(), tm.MappedColumn.Unit));
                break;
             case MetaDataFormatParameter tm:
-               options.Add(generateMetaDataColumnMappingOption(_activeRow.Description, tm.ColumnName, tm.MetaDataId));
+               options.Add(generateMetaDataColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MetaDataId));
                break;
             default:
-               throw new Exception(Error.TypeNotSupported(_activeRow.Source.GetType()));
+               throw new Exception(Error.TypeNotSupported(activeRow.Source.GetType()));
          }
 
          //Ignored
-         if (!(_activeRow.Source is IgnoredDataFormatParameter))
+         if (!(activeRow.Source is IgnoredDataFormatParameter))
          {
             options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
          }
 
          //GroupBy
-         if (!(_activeRow.Source is GroupByDataFormatParameter))
+         if (!(activeRow.Source is GroupByDataFormatParameter))
          {
             options.Add(generateGroupByColumnMappingOption(ColumnMappingFormatter.GroupBy()));
          }
@@ -184,7 +184,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                options.Add(
                   generateMappingColumnMappingOption(
                      ColumnMappingFormatter.Mapping(info.DisplayName, "?"),
-                     _activeRow.ColumnName, 
+                     activeRow.ColumnName, 
                      info.DisplayName
                   )
                );
@@ -199,7 +199,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                options.Add(
                   generateMetaDataColumnMappingOption(
                      ColumnMappingFormatter.MetaData(category.DisplayName),
-                     _activeRow.ColumnName,
+                     activeRow.ColumnName,
                      category.DisplayName
                   )
                );
@@ -243,38 +243,36 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      public ButtonsConfiguration ButtonsConfigurationForActiveRow()
+      public void SetDescriptionForRow(ColumnMappingViewModel model)
       {
-         return new ButtonsConfiguration()
-         {
-            ShowButtons = !String.IsNullOrEmpty(_activeRow.ColumnName) && _activeRow.Description != ColumnMappingFormatter.Ignored(),
-            UnitActive = _activeRow.Source is MappingDataFormatParameter
-         };
-      }
-
-      public void SetDescriptionForActiveRow(string description)
-      {
-         _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, description);
+         var activeRow = modelByColumnName(model.ColumnName);
+         activeRow.Source = ColumnMappingFormatter.Parse(model.ColumnName, model.Description);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
-            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+            Parameters = new List<DataFormatParameter>() { activeRow.Source } 
          });
       }
 
-      public void ClearActiveRow()
+      public void ClearRow(ColumnMappingViewModel model)
       {
-         _activeRow.Source = ColumnMappingFormatter.Parse(_activeRow.Source.ColumnName, _activeRow.Description);
+         var activeRow = modelByColumnName(model.ColumnName);
+         View.BeginUpdate();
+         activeRow.Source = ColumnMappingFormatter.Parse(activeRow.Source.ColumnName, ColumnMappingFormatter.Ignored());
+         View.EndUpdate();
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
-            Parameters = new List<DataFormatParameter>() { _activeRow.Source } 
+            Parameters = new List<DataFormatParameter>() { activeRow.Source } 
          });
+      }
+
+      private ColumnMappingViewModel modelByColumnName(string columnName)
+      {
+         return _mappings.First(m => m.ColumnName == columnName);
       }
 
       public void ResetMapping()
       {
-         View.BeginUpdate();
          SetDataFormat(_format, _availableFormats, _sheetName);
-         View.EndUpdate();
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
             Parameters = _mappings.Select(m => m.Source)
@@ -283,16 +281,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ClearMapping()
       {
-         View.BeginUpdate();
-         _mappings.Each(
+         var mappings = _mappings.Select
+         (
             m =>
-            {
-               m.Description = ColumnMappingFormatter.Ignored();
-               m.Source = ColumnMappingFormatter.Parse(m.Source.ColumnName, m.Description);
-            }
-         );
-         View.SetMappingSource(_mappings);
-         View.EndUpdate();
+            new ColumnMappingViewModel
+            (
+               m.ColumnName,
+               ColumnMappingFormatter.Ignored(),
+               ColumnMappingFormatter.Parse(m.ColumnName, ColumnMappingFormatter.Ignored())
+            )
+         ).ToList();
+         _mappings = mappings;
+         View.SetMappingSource(mappings);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
          {
             Parameters = _mappings.Select(m => m.Source)

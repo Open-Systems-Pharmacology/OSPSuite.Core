@@ -38,17 +38,10 @@ namespace OSPSuite.Presentation.Importer.Core
    public interface IDataSheet
    {
       UnformattedData RawData { get; set; }
-      IDataFormat Format { get; set; }
-
-      IList<IDataFormat> AvailableFormats { get; set; }
    }
 
    public class DataSheet : IDataSheet
    {
-      public IDataFormat Format { get; set; }
-
-      public IList<IDataFormat> AvailableFormats { get; set; }
-
       public UnformattedData RawData { get; set; }
    }
 }

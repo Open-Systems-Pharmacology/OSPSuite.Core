@@ -10,11 +10,19 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       Dictionary<string, IDataSheet> DataSheets { get; }
 	   string Path { get; set; }
+
+      IDataFormat Format { get; set; }
+
+      IList<IDataFormat> AvailableFormats { get; set; }
    }
 
    public abstract class DataSourceFile : IDataSourceFile
    {
       protected readonly IImportLogger _logger; //not sure this is the correct logger implementetion
+
+      public IDataFormat Format { get; set; }
+
+      public IList<IDataFormat> AvailableFormats { get; set; }
 
       protected DataSourceFile(IImportLogger logger)
       {
