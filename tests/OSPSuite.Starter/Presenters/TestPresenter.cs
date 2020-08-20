@@ -121,13 +121,12 @@ namespace OSPSuite.Starter.Presenters
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings);
-            starter.Presenter.SetDataFormat(source.DataSheets.ElementAt(0).Value.Format, source.DataSheets.ElementAt(0).Value.AvailableFormats, source.DataSheets.ElementAt(0).Key);
+            starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats, source.DataSheets.ElementAt(0).Key);
          }
       }
 
       public void StartImporterExcelView()
       {
-         //startLarge<IDataViewingPresenter>();
          startLarge<IImporterPresenter>();
       }
    }

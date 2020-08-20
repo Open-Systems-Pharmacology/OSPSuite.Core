@@ -9,7 +9,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(string path);
-      IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets);
+      IDataSource ImportFromFile(IDataSourceFile dataSourceFile);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data);
    }
 
@@ -30,20 +30,18 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data));
       }
 
-      public IDataSource ImportFromFile(IEnumerable<IDataSheet> sheets)
+      public IDataSource ImportFromFile(IDataSourceFile dataSourceFile)
       {
-         return new DataSource() {DataSets = (IList<IDataSet>) sheets.Select(s => new DataSet() {Data = s.Format.Parse(s.RawData)}).ToList()};
+         return new DataSource() {DataSets = (IList<IDataSet>) dataSourceFile.DataSheets.Select(s => new DataSet() {Data = dataSourceFile.Format.Parse(s.Value.RawData)}).ToList()};
       }
 
       public IDataSourceFile LoadFile(string path)
       {
          var dataSource = _parser.For(path);
-         foreach (var sheet in dataSource.DataSheets)
-         {
-            sheet.Value.AvailableFormats = AvailableFormats(sheet.Value.RawData).ToList();
-            sheet.Value.Format = sheet.Value.AvailableFormats.FirstOrDefault();
-         }
-
+         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData).ToList();
+         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
+         //TODO: check that all sheets are supporting the formats...
+         
          return dataSource;
       }
    }

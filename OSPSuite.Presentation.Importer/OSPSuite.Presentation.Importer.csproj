@@ -126,6 +126,12 @@
     <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="OSPSuite.DataBinding, Version=3.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OSPSuite.DataBinding.3.0.0.4\lib\net462\OSPSuite.DataBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OSPSuite.DataBinding.DevExpress.4.0.0.1\lib\net462\OSPSuite.DataBinding.DevExpress.dll</HintPath>
+    </Reference>
     <Reference Include="OSPSuite.Utility, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OSPSuite.Utility.4.0.0.4\lib\netstandard2.0\OSPSuite.Utility.dll</HintPath>
     </Reference>
