@@ -46,6 +46,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _format = format;
          _availableFormats = availableFormats;
          _columnMappingPresenter.SetDataFormat(_format, _availableFormats);
+         View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
