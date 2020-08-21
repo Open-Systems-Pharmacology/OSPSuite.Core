@@ -10,24 +10,20 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
+   public class UnitsEditorPresenter : AbstractPresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {
       private Column _importDataColumn;
       private IEnumerable<IDimension> _dimensions;
-      public string SelectedUnit { get; private set; }
-      private bool _canClose = false;
+      private string _selectedUnit;
 
       public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
       {
+         
       }
 
-      public bool Canceled => _view.Canceled;
-
-      public override bool CanClose => base.CanClose && _canClose;
-
-      public void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions)
+      public void SetParams(Column importDataColumn, IEnumerable<IDimension> dimensions)
       {
-         SelectedUnit = importDataColumn.Unit;
+         _selectedUnit = importDataColumn.Unit;
          _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
@@ -36,22 +32,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          View.OnDimensionChanged += (dimension) => this.DoWithinExceptionHandler(() =>
          {
-            SelectedUnit = _dimensions.First(d => d.Name == dimension).DefaultUnit.Name;
+            _selectedUnit = _dimensions.First(d => d.Name == dimension).DefaultUnit.Name;
             fillUnits();
          });
          View.OnUnitChanged += (unit) => this.DoWithinExceptionHandler(() =>
          {
-            SelectedUnit = unit;
+            _selectedUnit = unit;
          });
          View.OnOK += () => this.DoWithinExceptionHandler(() =>
          {
-            OnOK(SelectedUnit);
-            _importDataColumn.Unit = SelectedUnit;
-            _canClose = true;
+            OnOK(_selectedUnit);
+            _importDataColumn.Unit = _selectedUnit;
          });
 
          View.SetParams(useDimensionSelector());
-         _view.Display();
       }
 
       private bool useDimensionSelector()
@@ -71,20 +65,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          if (useDimensionSelector())
          {
-            View.FillUnitComboBox(selectedDimension.Units, SelectedUnit);
+            View.FillUnitComboBox(selectedDimension.Units, _selectedUnit);
          }
 
          if (_dimensions == null || !_dimensions.Any())
             return;
 
-         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units), SelectedUnit);
+         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units), _selectedUnit);
       }
 
       private IDimension FindDimension()
       {
          foreach (var dimension in _dimensions)
          {
-            if (dimension.Units.FirstOrDefault(u => u.Name == SelectedUnit) != null) return dimension;
+            if (dimension.Units.FirstOrDefault(u => u.Name == _selectedUnit) != null) return dimension;
          }
          return _dimensions.First();
       }

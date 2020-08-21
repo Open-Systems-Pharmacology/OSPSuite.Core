@@ -29,60 +29,10 @@
       private void InitializeComponent()
       {
          this.panel1 = new System.Windows.Forms.Panel();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+         this.btnOK = new DevExpress.XtraEditors.SimpleButton();
+         this.btnAllOK = new DevExpress.XtraEditors.SimpleButton();
+         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          this.SuspendLayout();
-         // 
-         // btnCancel
-         // 
-         this.btnCancel.Location = new System.Drawing.Point(403, 14);
-         this.btnCancel.Size = new System.Drawing.Size(82, 27);
-         // 
-         // btnOk
-         // 
-         this.btnOk.Location = new System.Drawing.Point(303, 14);
-         this.btnOk.Size = new System.Drawing.Size(96, 27);
-         // 
-         // layoutControlBase
-         // 
-         this.layoutControlBase.Location = new System.Drawing.Point(0, 124);
-         this.layoutControlBase.Size = new System.Drawing.Size(498, 57);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
-         // 
-         // btnExtra
-         // 
-         this.btnExtra.Size = new System.Drawing.Size(141, 27);
-         // 
-         // layoutControlGroupBase
-         // 
-         this.layoutControlGroupBase.Size = new System.Drawing.Size(498, 57);
-         // 
-         // layoutItemOK
-         // 
-         this.layoutItemOK.Location = new System.Drawing.Point(290, 0);
-         this.layoutItemOK.Size = new System.Drawing.Size(100, 33);
-         // 
-         // layoutItemCancel
-         // 
-         this.layoutItemCancel.Location = new System.Drawing.Point(390, 0);
-         this.layoutItemCancel.Size = new System.Drawing.Size(86, 33);
-         // 
-         // emptySpaceItemBase
-         // 
-         this.emptySpaceItemBase.Location = new System.Drawing.Point(145, 0);
-         this.emptySpaceItemBase.Size = new System.Drawing.Size(145, 33);
-         // 
-         // layoutItemExtra
-         // 
-         this.layoutItemExtra.Size = new System.Drawing.Size(145, 33);
          // 
          // panel1
          // 
@@ -91,30 +41,40 @@
          this.panel1.Size = new System.Drawing.Size(482, 85);
          this.panel1.TabIndex = 0;
          // 
+         // btnOK
+         // 
+         this.btnOK.Location = new System.Drawing.Point(373, 120);
+         this.btnOK.Name = "btnOK";
+         this.btnOK.Size = new System.Drawing.Size(102, 31);
+         this.btnOK.TabIndex = 2;
+         this.btnOK.Text = "OK";
+         // 
+         // btnAllOK
+         // 
+         this.btnAllOK.Location = new System.Drawing.Point(263, 120);
+         this.btnAllOK.Name = "btnAllOK";
+         this.btnAllOK.Size = new System.Drawing.Size(102, 31);
+         this.btnAllOK.TabIndex = 3;
+         this.btnAllOK.Text = "OK to All";
+         // 
          // UnitsEditorView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(498, 181);
+         this.Controls.Add(this.btnAllOK);
+         this.Controls.Add(this.btnOK);
          this.Controls.Add(this.panel1);
          this.Name = "UnitsEditorView";
-         this.Controls.SetChildIndex(this.panel1, 0);
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
+         this.Size = new System.Drawing.Size(500, 168);
+         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          this.ResumeLayout(false);
-         this.PerformLayout();
 
       }
 
       #endregion
 
       private System.Windows.Forms.Panel panel1;
+      private DevExpress.XtraEditors.SimpleButton btnOK;
+      private DevExpress.XtraEditors.SimpleButton btnAllOK;
    }
 }

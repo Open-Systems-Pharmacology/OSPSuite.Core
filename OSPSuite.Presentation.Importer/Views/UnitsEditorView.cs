@@ -13,11 +13,10 @@ using DevExpress.Utils;
 using DevExpress.XtraLayout;
 using DevExpress.XtraEditors.Controls;
 using System.Collections.Generic;
-using OSPSuite.UI.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
+   public partial class UnitsEditorView : BaseUserControl, IUnitsEditorView
    {
       private ImageComboBoxEdit _unitComboBox;
       private ImageComboBoxEdit _dimensionComboBox;
@@ -27,6 +26,8 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          InitializeComponent();
          Text = Captions.Importer.PleaseEnterDimensionAndUnitInformation;
+         btnOK.Click += (o, e) => this.DoWithinExceptionHandler(onOkClick);
+         btnAllOK.Click += (o, e) => this.DoWithinExceptionHandler(onCopyClick);
 
          _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
          _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
@@ -35,6 +36,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public void SetParams(bool useDimensionSelector)
       {
          arrangeControls(useDimensionSelector);
+         enableButtons();
       }
 
       private ImageComboBoxEdit createComboBox(string name, EventHandler textChangedHandler)
@@ -55,12 +57,14 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          OnDimensionChanged?.Invoke(_dimensionComboBox.EditValue as string);
          showInputParametersControl();
+         enableButtons();
       }
 
       private void onUnitComboBoxTextChanged(object sender, EventArgs e)
       {
          OnUnitChanged?.Invoke(_unitComboBox.EditValue as string);
          showInputParametersControl();
+         enableButtons();
       }
 
       private void arrangeControls(bool useDimensionSelector)
@@ -134,6 +138,13 @@ namespace OSPSuite.Presentation.Importer.Views
             Description = unit.Name,
             Value = unit.Name
          });
+      }
+
+      private void enableButtons()
+      {
+         btnOK.Enabled = isEnabled();
+         btnAllOK.Enabled = btnOK.Enabled;
+         btnAllOK.Visible = (OnCopyUnitInfo != null);
       }
 
       private bool isEnabled()
