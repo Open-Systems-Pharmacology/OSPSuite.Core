@@ -19,6 +19,11 @@ namespace OSPSuite.Presentation.Importer.Views
          columnMappingPanelControl.FillWith(columnMappingControl);
       }
 
+      public void AddSourceFileControl(ISourceFileControl sourceFileControl)
+      {
+         sourceFilePanelControl.FillWith(sourceFileControl);
+      }
+
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
          dataViewingPanelControl.FillWith(dataViewingControl);

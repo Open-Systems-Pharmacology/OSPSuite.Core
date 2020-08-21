@@ -32,10 +32,12 @@
          this.columnMappingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.formatLabelControl = new DevExpress.XtraEditors.LabelControl();
          this.formatComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.sourceFilePanelControl = new DevExpress.XtraEditors.PanelControl();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).BeginInit();
          this.SuspendLayout();
          // 
          // dataViewingPanelControl
@@ -71,11 +73,19 @@
          this.formatComboBoxEdit.Size = new System.Drawing.Size(1514, 50);
          this.formatComboBoxEdit.TabIndex = 3;
          // 
+         // sourceFilePanelControl
+         // 
+         this.sourceFilePanelControl.Location = new System.Drawing.Point(19, 51);
+         this.sourceFilePanelControl.Name = "sourceFilePanelControl";
+         this.sourceFilePanelControl.Size = new System.Drawing.Size(3182, 85);
+         this.sourceFilePanelControl.TabIndex = 5;
+         // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "ImporterView";
+         this.Controls.Add(this.sourceFilePanelControl);
          this.Controls.Add(this.formatLabelControl);
          this.Controls.Add(this.formatComboBoxEdit);
          this.Controls.Add(this.columnMappingPanelControl);
@@ -86,6 +96,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -97,5 +108,6 @@
       private DevExpress.XtraEditors.PanelControl columnMappingPanelControl;
       private DevExpress.XtraEditors.LabelControl formatLabelControl;
       private DevExpress.XtraEditors.ComboBoxEdit formatComboBoxEdit;
+      private DevExpress.XtraEditors.PanelControl sourceFilePanelControl;
    }
 }

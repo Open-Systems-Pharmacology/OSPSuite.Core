@@ -8,7 +8,10 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       void AddDataViewingControl(IDataViewingControl dataViewingControl);
       void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
+      void AddSourceFileControl(ISourceFileControl sourceFileControl);
+
       void SetFormats(IEnumerable<string> options, string selected);
 
+      event FormatChangedHandler OnFormatChanged;
    }
 }
