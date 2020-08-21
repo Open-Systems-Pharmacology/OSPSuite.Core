@@ -194,8 +194,6 @@
     <Compile Include="Views\DataViewingControl.Designer.cs">
       <DependentUpon>DataViewingControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialog\EmptyDialog.cs" />
-    <Compile Include="Views\Dialog\IEmptyDialog.cs" />
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
     <Compile Include="Views\IImporterView.cs" />
