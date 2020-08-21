@@ -8,7 +8,6 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
