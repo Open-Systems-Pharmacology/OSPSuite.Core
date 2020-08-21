@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Linq;
 using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Importer.Views;

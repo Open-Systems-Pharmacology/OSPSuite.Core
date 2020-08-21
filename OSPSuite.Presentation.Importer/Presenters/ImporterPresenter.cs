@@ -19,19 +19,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IImporterView _importerView;
       private IDataViewingPresenter _dataViewingPresenter;
       private IColumnMappingPresenter _columnMappingPresenter;
+      private ISourceFilePresenter _sourceFilePresenter;
 
       private IDataFormat _format;
       private IEnumerable<IDataFormat> _availableFormats;
 
 
-      public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter) : base(view)
+      public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
       {
          _importerView = view;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
+         _view.AddSourceFileControl(sourceFilePresenter.View);
 
          _dataViewingPresenter = dataViewingPresenter;
          _columnMappingPresenter = columnMappingPresenter;
+         _sourceFilePresenter = sourceFilePresenter;
 
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
       }
