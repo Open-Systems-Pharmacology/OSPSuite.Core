@@ -13,10 +13,11 @@ using DevExpress.Utils;
 using DevExpress.XtraLayout;
 using DevExpress.XtraEditors.Controls;
 using System.Collections.Generic;
+using OSPSuite.UI.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public partial class UnitsEditorView : BaseUserControl, IUnitsEditorView
+   public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
    {
       private ImageComboBoxEdit _unitComboBox;
       private ImageComboBoxEdit _dimensionComboBox;

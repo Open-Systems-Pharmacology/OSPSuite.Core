@@ -31,7 +31,7 @@
          this.panel1 = new System.Windows.Forms.Panel();
          this.btnOK = new DevExpress.XtraEditors.SimpleButton();
          this.btnAllOK = new DevExpress.XtraEditors.SimpleButton();
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          this.SuspendLayout();
          // 
          // panel1
@@ -66,7 +66,7 @@
          this.Controls.Add(this.panel1);
          this.Name = "UnitsEditorView";
          this.Size = new System.Drawing.Size(500, 168);
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          this.ResumeLayout(false);
 
       }

@@ -8,6 +8,7 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -22,7 +23,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
-      private string _sheetName;
       private IEnumerable<IDataFormat> _availableFormats;
       private readonly IApplicationController _applicationController;
 
@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
-            SetDataFormat(format, _availableFormats, _sheetName);
+            SetDataFormat(format, _availableFormats);
             OnFormatChanged?.Invoke(format);
          });
       }
@@ -56,11 +56,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataImporterSettings = dataImporterSettings;
       }
 
-      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName)
+      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
          _format = format;
          _availableFormats = availableFormats;
-         _sheetName = sheetName;
          _mappings = format.Parameters.Select(p =>
          {
             return new ColumnMappingViewModel
@@ -274,7 +273,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ResetMapping()
       {
-         SetDataFormat(_format, _availableFormats, _sheetName);
+         SetDataFormat(_format, _availableFormats);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
             Parameters = _mappings.Select(m => m.Source)
@@ -310,7 +309,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
          else
          {
-            OnMappingCompleted?.Invoke(this, new MappingCompletedEventArgs { SheetName = _sheetName });
+            OnMappingCompleted?.Invoke(this);
          }
       }
 

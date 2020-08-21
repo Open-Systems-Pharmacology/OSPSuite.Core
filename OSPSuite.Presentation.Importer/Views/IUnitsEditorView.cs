@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Views
    public delegate void UnitChangeHandler(string unit);
    public delegate void DimensionChangeHandler(string dimension);
    public delegate void OKHandler();
-   public interface IUnitsEditorView : IView<IUnitsEditorPresenter>
+   public interface IUnitsEditorView : IModalView<IUnitsEditorPresenter>
    {
       void SetParams(bool useDimensionSelector);
 
