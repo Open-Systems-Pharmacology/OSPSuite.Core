@@ -12,10 +12,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public delegate void OKHandler(string units);
 
-   public interface IUnitsEditorPresenter : IPresenter<IUnitsEditorView>
+   public interface IUnitsEditorPresenter : IDisposablePresenter
    {
-      void SetParams(Column importDataColumn, IEnumerable<IDimension> dimensions);
+      void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions);
 
-      event OKHandler OnOK;
+      string SelectedUnit { get; }
+
+      bool Canceled { get; }
    }
 }
