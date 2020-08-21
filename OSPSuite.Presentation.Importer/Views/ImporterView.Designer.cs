@@ -49,7 +49,7 @@
          // 
          this.columnMappingPanelControl.Location = new System.Drawing.Point(1431, 154);
          this.columnMappingPanelControl.Name = "columnMappingPanelControl";
-         this.columnMappingPanelControl.Size = new System.Drawing.Size(1579, 1226);
+         this.columnMappingPanelControl.Size = new System.Drawing.Size(1770, 1226);
          this.columnMappingPanelControl.TabIndex = 1;
          // 
          // formatLabelControl
@@ -81,7 +81,7 @@
          this.Controls.Add(this.columnMappingPanelControl);
          this.Controls.Add(this.dataViewingPanelControl);
          this.Name = "ImporterView";
-         this.Size = new System.Drawing.Size(3032, 1543);
+         this.Size = new System.Drawing.Size(3266, 1732);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).EndInit();
