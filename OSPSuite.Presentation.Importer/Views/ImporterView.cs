@@ -1,6 +1,8 @@
 ﻿using OSPSuite.UI.Controls;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
+using System.Collections.Generic;
+using System;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -21,6 +23,24 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          dataViewingPanelControl.FillWith(dataViewingControl);
       }
+
+      public void SetFormats(IEnumerable<string> options, string selected)
+      {
+         formatComboBoxEdit.Properties.Items.Clear();
+         foreach (var option in options)
+         {
+            formatComboBoxEdit.Properties.Items.Add(option);
+         }
+         formatComboBoxEdit.EditValue = selected;
+         formatComboBoxEdit.TextChanged += onFormatChanged;
+      }
+
+      private void onFormatChanged(object sender, EventArgs e)
+      {
+         OnFormatChanged?.Invoke(formatComboBoxEdit.EditValue as string);
+      }
+
+      public event FormatChangedHandler OnFormatChanged;
 
       public void AttachPresenter(IImporterPresenter presenter)
       {

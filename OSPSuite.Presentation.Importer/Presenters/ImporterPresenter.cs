@@ -1,15 +1,27 @@
-﻿using OSPSuite.Presentation.Importer.Views;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    //internal - because of the accessibility of AbstractCommandCollectorPresenter
 
-   internal class ImporterPresenter : AbstractCommandCollectorPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
+   //THIS DOES NOT NEED TO BE A COMMANDCOLLECTOR PRESENTER -- to be honest not sure even if the abastractPresenter here
+   //is an overkill
+   internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterView _importerView;
-      public IDataViewingPresenter DataViewingPresenter { get; }
-      public IColumnMappingPresenter ColumnMappingPresenter { get; }
+      private IDataViewingPresenter _dataViewingPresenter;
+      private IColumnMappingPresenter _columnMappingPresenter;
+
+      private IDataFormat _format;
+      private IEnumerable<IDataFormat> _availableFormats;
 
 
       public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter) : base(view)
@@ -18,10 +30,44 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
 
-         DataViewingPresenter = dataViewingPresenter;
-         ColumnMappingPresenter = columnMappingPresenter;
+         _dataViewingPresenter = dataViewingPresenter;
+         _columnMappingPresenter = columnMappingPresenter;
 
-         AddSubPresenters(DataViewingPresenter, ColumnMappingPresenter);
+         AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
       }
+
+      public void InitializeWith(ICommandCollector initializer)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
+      {
+         _format = format;
+         _availableFormats = availableFormats;
+         _columnMappingPresenter.SetDataFormat(_format, _availableFormats);
+      }
+
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      {
+         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+      }
+
+      public void SetDataSource(string path)
+      {
+         _dataViewingPresenter.SetDataSource(path);
+      }
+
+      public void AddCommand(ICommand command)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public IEnumerable<ICommand> All()
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public ICommandCollector CommandCollector { get; }
    }
 }

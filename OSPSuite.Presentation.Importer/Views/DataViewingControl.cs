@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using OSPSuite.UI.Controls;
 using OSPSuite.Presentation.Importer.Presenters;
-using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
-using System.Windows.Forms;
+
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -19,22 +19,15 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          base.InitializeResources();
 
-         var tempDataSourceFile = new ExcelDataSourceFile(null);
-
-         var file = new OpenFileDialog();
-         if (file.ShowDialog() == DialogResult.OK)
-         {
-            tempDataSourceFile.Path = file.FileName;
-         }
-
-         var keys = tempDataSourceFile.DataSheets.Keys;
-         DataTable temp = tempDataSourceFile.DataSheets[keys.ElementAt(0)].RawData.AsDataTable();
-         gridControl1.DataSource = temp;
-         // gridView1.DataSource =temp();
       }
-         public void AttachPresenter(IDataViewingPresenter presenter)
+      public void AttachPresenter(IDataViewingPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public void SetGridSource()
+      {
+         gridControl1.DataSource = _presenter.GetFirstSheet(); //we should check that this here is not empty at initialization time
       }
    }
 }

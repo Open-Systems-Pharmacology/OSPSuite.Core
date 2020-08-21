@@ -121,13 +121,33 @@ namespace OSPSuite.Starter.Presenters
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings);
-            starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats, source.DataSheets.ElementAt(0).Key);
+            starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
          }
       }
 
       public void StartImporterExcelView()
       {
-         startLarge<IImporterPresenter>();
+         //startLarge<IImporterPresenter>();
+
+
+         var starter = new TestStarter<IImporterPresenter>();
+         starter.Start(660, 400);
+         var file = new OpenFileDialog();
+         if (file.ShowDialog() == DialogResult.OK)
+         {
+            var importer = IoC.Container.Resolve<IImporter>();
+            var source = importer.LoadFile(file.FileName);
+            var dataImporterSettings = new DataImporterSettings();
+            dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
+            dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+            starter.Presenter.SetSettings(
+               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings);
+            starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
+            starter.Presenter.SetDataSource(file.FileName);
+         }
+
       }
    }
 }

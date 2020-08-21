@@ -5,5 +5,6 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public interface IDataViewingControl : IView<IDataViewingPresenter>
    {
+      void SetGridSource();
    }
 }
