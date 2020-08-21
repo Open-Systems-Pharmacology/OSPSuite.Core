@@ -23,12 +23,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    /// </summary>
    public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
 
-   public class MappingCompletedEventArgs : EventArgs
-   {
-      public string SheetName { set; get; }
-   }
-
-   public delegate void MappingCompletedHandler(object sender, EventArgs e);
+   public delegate void MappingCompletedHandler(object sender);
 
    public class DataFormatParametersChangedArgs : EventArgs
    {
@@ -74,7 +69,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName);
+      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
