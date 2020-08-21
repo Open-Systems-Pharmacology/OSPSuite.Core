@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
@@ -22,22 +23,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
-      private IEmptyDialog _emptyDialog;
+      private string _sheetName;
       private IEnumerable<IDataFormat> _availableFormats;
+      private readonly IApplicationController _applicationController;
 
       public ColumnMappingPresenter
       (
          IColumnMappingControl view, 
          IImporterTask importerTask,
-         IEmptyDialog emptyDialog
+         IApplicationController applicationController
       ) : base(view)
       {
          _importerTask = importerTask;
-         _emptyDialog = emptyDialog;
+         _applicationController = applicationController;
          View.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
-            SetDataFormat(format, _availableFormats);
+            SetDataFormat(format, _availableFormats, _sheetName);
             OnFormatChanged?.Invoke(format);
          });
       }
@@ -55,10 +57,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataImporterSettings = dataImporterSettings;
       }
 
-      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
+      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName)
       {
          _format = format;
          _availableFormats = availableFormats;
+         _sheetName = sheetName;
          _mappings = format.Parameters.Select(p =>
          {
             return new ColumnMappingViewModel
@@ -85,27 +88,29 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ChangeUnitsOnRow(ColumnMappingViewModel model)
       {
-         var unitsEditorPresenter = _emptyDialog.Show<IUnitsEditorPresenter>(430, 180);
-         var activeRow = modelByColumnName(model.ColumnName);
-         var column = (activeRow.Source as MappingDataFormatParameter).MappedColumn;
-         unitsEditorPresenter.SetParams
-         (
-            column,
-            _columnInfos
-               .First(i => i.DisplayName == column.Name.ToString())
-               .DimensionInfos
-               .Select(d => d.Dimension)
-         );
-         unitsEditorPresenter.OnOK += (units) =>
+         using (var unitsEditorPresenter = _applicationController.Start<IUnitsEditorPresenter>())
          {
-            View.BeginUpdate();
-            column.Unit = units;
-            View.EndUpdate();
-            OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
-            { 
-               Parameters = new List<DataFormatParameter>() { activeRow.Source } 
-            });
-         };
+            var activeRow = modelByColumnName(model.ColumnName);
+            var column = (activeRow.Source as MappingDataFormatParameter).MappedColumn;
+            unitsEditorPresenter.ShowFor
+            (
+               column,
+               _columnInfos
+                  .First(i => i.DisplayName == column.Name.ToString())
+                  .DimensionInfos
+                  .Select(d => d.Dimension)
+            );
+            if (!unitsEditorPresenter.Canceled)
+            {
+               View.BeginUpdate();
+               column.Unit = unitsEditorPresenter.SelectedUnit;
+               View.EndUpdate();
+               OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
+               {
+                  Parameters = new List<DataFormatParameter>() { activeRow.Source }
+               });
+            };
+         }
       }
 
       private ColumnMappingOption generateGroupByColumnMappingOption(string description)
@@ -270,7 +275,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ResetMapping()
       {
-         SetDataFormat(_format, _availableFormats);
+         SetDataFormat(_format, _availableFormats, _sheetName);
          OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
          { 
             Parameters = _mappings.Select(m => m.Source)
@@ -306,7 +311,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
          else
          {
-            OnMappingCompleted?.Invoke(this);
+            OnMappingCompleted?.Invoke(this, new MappingCompletedEventArgs { SheetName = _sheetName });
          }
       }
 
