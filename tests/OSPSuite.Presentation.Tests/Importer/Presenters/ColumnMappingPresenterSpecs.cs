@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
@@ -36,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IEmptyDialog>());
+         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IApplicationController>());
       }
    }
 
