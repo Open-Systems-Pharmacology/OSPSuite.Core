@@ -8,97 +8,97 @@ using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-    /// <summary>
-    ///     Event arguments for OnMissingMapping event.
-    /// </summary>
-    public class MissingMappingEventArgs : EventArgs
-    {
-        /// <summary>
-        ///     Message describing what is missed.
-        /// </summary>
-        public string Message { get; set; }
-    }
+   /// <summary>
+   ///    Event arguments for OnMissingMapping event.
+   /// </summary>
+   public class MissingMappingEventArgs : EventArgs
+   {
+      /// <summary>
+      ///    Message describing what is missed.
+      /// </summary>
+      public string Message { get; set; }
+   }
 
-    /// <summary>
-    ///     Handler for OnMissingMapping event.
-    /// </summary>
-    public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
+   /// <summary>
+   ///    Handler for OnMissingMapping event.
+   /// </summary>
+   public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
 
-    public delegate void MappingCompletedHandler(object sender);
+   public delegate void MappingCompletedHandler(object sender);
 
-    public class DataFormatParametersChangedArgs : EventArgs
-    {
-        public IReadOnlyList<DataFormatParameter> Parameters { get; }
+   public class DataFormatParametersChangedArgs : EventArgs
+   {
+      public IReadOnlyList<DataFormatParameter> Parameters { get; }
 
-        public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
-        {
-            Parameters = new List<DataFormatParameter>(parameters);
-        }
-    }
+      public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
+      {
+         Parameters = new List<DataFormatParameter>(parameters);
+      }
+   }
 
-    public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
+   public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
 
-    public class ColumnMappingOption
-    {
-        public string Label { get; set; }
-        public int IconIndex { get; set; }
-        public string Description { get; set; }
+   public class ColumnMappingOption
+   {
+      public string Label { get; set; }
+      public int IconIndex { get; set; }
+      public string Description { get; set; }
 
-        public enum DescriptionType
-        {
-            Ignored,
-            GroupBy,
-            MetaData,
-            Mapping
-        }
-    }
+      public enum DescriptionType
+      {
+         Ignored,
+         GroupBy,
+         MetaData,
+         Mapping
+      }
+   }
 
-    public class ToolTipDescription
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-    }
+   public class ToolTipDescription
+   {
+      public string Title { get; set; }
+      public string Description { get; set; }
+   }
 
-    public class ButtonsConfiguration
-    {
-        public bool ShowButtons { get; set; }
-        public bool UnitActive { get; set; }
-    }
+   public class ButtonsConfiguration
+   {
+      public bool ShowButtons { get; set; }
+      public bool UnitActive { get; set; }
+   }
 
-    public delegate void FormatChangedHandler(IDataFormat format);
+   public delegate void FormatChangedHandler(IDataFormat format);
 
-    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
-    {
-        void SetSettings(
-            IReadOnlyList<MetaDataCategory> metaDataCategories,
-            IReadOnlyList<ColumnInfo> columnInfos,
-            DataImporterSettings dataImporterSettings
-        );
+   public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
+   {
+      void SetSettings(
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings
+      );
 
-        void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
+      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
-        IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
+      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
-        ToolTipDescription ToolTipDescriptionFor(int index);
+      ToolTipDescription ToolTipDescriptionFor(int index);
 
-        void SetDescriptionForRow(ColumnMappingViewModel model);
+      void SetDescriptionForRow(ColumnMappingViewModel model);
 
-        void ClearRow(ColumnMappingViewModel model);
+      void ClearRow(ColumnMappingViewModel model);
 
-        void ResetMapping();
+      void ResetMapping();
 
-        void ClearMapping();
+      void ClearMapping();
 
-        void ChangeUnitsOnRow(ColumnMappingViewModel model);
+      void ChangeUnitsOnRow(ColumnMappingViewModel model);
 
-        void ValidateMapping();
+      void ValidateMapping();
 
-        event MappingCompletedHandler OnMappingCompleted;
+      event MappingCompletedHandler OnMappingCompleted;
 
-        event MissingMappingHandler OnMissingMapping;
+      event MissingMappingHandler OnMissingMapping;
 
-        event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+      event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
 
-        event FormatChangedHandler OnFormatChanged;
-    }
+      event FormatChangedHandler OnFormatChanged;
+   }
 }
