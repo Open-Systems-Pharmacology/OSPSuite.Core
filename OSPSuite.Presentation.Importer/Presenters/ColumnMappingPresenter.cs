@@ -18,16 +18,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       private IDataFormat _format;
       private List<ColumnMappingViewModel> _mappings;
-      private IReadOnlyList<ColumnInfo> _columnInfos; 
+      private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private readonly IImporterTask _importerTask;
       private IEnumerable<IDataFormat> _availableFormats;
-      private readonly IApplicationController _applicationController;
-
+      private readonly IApplicationController _applicationController; 
       public ColumnMappingPresenter
       (
-         IColumnMappingControl view, 
+         IColumnMappingControl view,
          IImporterTask importerTask,
          IApplicationController applicationController
       ) : base(view)
@@ -64,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             return new ColumnMappingViewModel
             (
                p.ColumnName,
-               ColumnMappingFormatter.Stringify(p), 
+               ColumnMappingFormatter.Stringify(p),
                p
             );
          }).ToList();
@@ -103,7 +102,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
                OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
-            };
+            }
+
+            ;
          }
       }
 
@@ -124,7 +125,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             Label = Captions.MappingDescription(mappingId, unit),
             Description = description,
-            IconIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, new Column() { Name = mappedColumnName }), _mappings.Select(m => m.Source))
+            IconIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, new Column() {Name = mappedColumnName}),
+               _mappings.Select(m => m.Source))
          };
       }
 
@@ -151,7 +153,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
                options.Add(generateGroupByColumnMappingOption(activeRow.Description));
                break;
             case MappingDataFormatParameter tm:
-               options.Add(generateMappingColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(), tm.MappedColumn.Unit));
+               options.Add(generateMappingColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(),
+                  tm.MappedColumn.Unit));
                break;
             case MetaDataFormatParameter tm:
                options.Add(generateMetaDataColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MetaDataId));
@@ -181,7 +184,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                options.Add(
                   generateMappingColumnMappingOption(
                      ColumnMappingFormatter.Mapping(info.DisplayName, "?"),
-                     activeRow.ColumnName, 
+                     activeRow.ColumnName,
                      info.DisplayName
                   )
                );
@@ -272,12 +275,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var mappings = _mappings.Select
          (
             m =>
-            new ColumnMappingViewModel
-            (
-               m.ColumnName,
-               ColumnMappingFormatter.Ignored(),
-               ColumnMappingFormatter.Parse(m.ColumnName, ColumnMappingFormatter.Ignored())
-            )
+               new ColumnMappingViewModel
+               (
+                  m.ColumnName,
+                  ColumnMappingFormatter.Ignored(),
+                  ColumnMappingFormatter.Parse(m.ColumnName, ColumnMappingFormatter.Ignored())
+               )
          ).ToList();
          _mappings = mappings;
          View.SetMappingSource(mappings);
@@ -289,7 +292,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var missingColumn = _importerTask.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
          if (missingColumn != null)
          {
-            OnMissingMapping(this, new MissingMappingEventArgs { Message = missingColumn });
+            OnMissingMapping(this, new MissingMappingEventArgs {Message = missingColumn});
          }
          else
          {
