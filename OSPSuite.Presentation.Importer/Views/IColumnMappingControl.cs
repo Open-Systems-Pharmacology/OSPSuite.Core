@@ -23,8 +23,7 @@ namespace OSPSuite.Presentation.Importer.Views
          get => _description;
          set
          {
-            _description = value;
-            OnPropertyChanged(() => Description);
+            SetProperty(ref _description, value);
          }
       }
       public DataFormatParameter Source { get; set; }
