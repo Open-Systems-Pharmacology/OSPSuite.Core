@@ -8,91 +8,97 @@ using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   /// <summary>
-   /// Event arguments for OnMissingMapping event.
-   /// </summary>
-   public class MissingMappingEventArgs : EventArgs
-   {
-      /// <summary>
-      /// Message describing what is missed.
-      /// </summary>
-      public string Message { get; set; }
-   }
-   /// <summary>
-   /// Handler for OnMissingMapping event.
-   /// </summary>
-   public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
+    /// <summary>
+    ///     Event arguments for OnMissingMapping event.
+    /// </summary>
+    public class MissingMappingEventArgs : EventArgs
+    {
+        /// <summary>
+        ///     Message describing what is missed.
+        /// </summary>
+        public string Message { get; set; }
+    }
 
-   public delegate void MappingCompletedHandler(object sender);
+    /// <summary>
+    ///     Handler for OnMissingMapping event.
+    /// </summary>
+    public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
 
-   public class DataFormatParametersChangedArgs : EventArgs
-   {
-      public IEnumerable<DataFormatParameter> Parameters { get; set; }
-   }
+    public delegate void MappingCompletedHandler(object sender);
 
-   public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
+    public class DataFormatParametersChangedArgs : EventArgs
+    {
+        public IReadOnlyList<DataFormatParameter> Parameters { get; }
 
-   public class ColumnMappingOption
-   {
-      public string Label { get; set; }
-      public int IconIndex { get; set; }
-      public string Description { get; set; }
+        public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
+        {
+            Parameters = new List<DataFormatParameter>(parameters);
+        }
+    }
 
-      public enum DescriptionType
-      {
-         Ignored,
-         GroupBy,
-         MetaData,
-         Mapping
-      }
-   }
+    public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
 
-   public class ToolTipDescription
-   {
-      public string Title { get; set; }
-      public string Description { get; set; }
-   }
+    public class ColumnMappingOption
+    {
+        public string Label { get; set; }
+        public int IconIndex { get; set; }
+        public string Description { get; set; }
 
-   public class ButtonsConfiguration
-   {
-      public bool ShowButtons { get; set; }
-      public bool UnitActive { get; set; }
-   }
+        public enum DescriptionType
+        {
+            Ignored,
+            GroupBy,
+            MetaData,
+            Mapping
+        }
+    }
 
-   public delegate void FormatChangedHandler(IDataFormat format);
+    public class ToolTipDescription
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
 
-   public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
-   {
-      void SetSettings(
-         IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
-      );
+    public class ButtonsConfiguration
+    {
+        public bool ShowButtons { get; set; }
+        public bool UnitActive { get; set; }
+    }
 
-      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
+    public delegate void FormatChangedHandler(IDataFormat format);
 
-      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
+    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
+    {
+        void SetSettings(
+            IReadOnlyList<MetaDataCategory> metaDataCategories,
+            IReadOnlyList<ColumnInfo> columnInfos,
+            DataImporterSettings dataImporterSettings
+        );
 
-      ToolTipDescription ToolTipDescriptionFor(int index);
+        void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
-      void SetDescriptionForRow(ColumnMappingViewModel model);
+        IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
-      void ClearRow(ColumnMappingViewModel model);
+        ToolTipDescription ToolTipDescriptionFor(int index);
 
-      void ResetMapping();
+        void SetDescriptionForRow(ColumnMappingViewModel model);
 
-      void ClearMapping();
+        void ClearRow(ColumnMappingViewModel model);
 
-      void ChangeUnitsOnRow(ColumnMappingViewModel model);
+        void ResetMapping();
 
-      void ValidateMapping();
+        void ClearMapping();
 
-      event MappingCompletedHandler OnMappingCompleted;
+        void ChangeUnitsOnRow(ColumnMappingViewModel model);
 
-      event MissingMappingHandler OnMissingMapping;
+        void ValidateMapping();
 
-      event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+        event MappingCompletedHandler OnMappingCompleted;
 
-      event FormatChangedHandler OnFormatChanged;
-   }
+        event MissingMappingHandler OnMissingMapping;
+
+        event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+
+        event FormatChangedHandler OnFormatChanged;
+    }
 }

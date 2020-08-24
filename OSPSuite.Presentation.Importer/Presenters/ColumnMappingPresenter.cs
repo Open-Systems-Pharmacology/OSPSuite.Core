@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.DataProcessing;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
@@ -38,11 +39,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             var format = _availableFormats.First(f => f.Name == formatName);
             SetDataFormat(format, _availableFormats);
-            OnFormatChanged?.Invoke(format);
+            OnFormatChanged(format);
          });
       }
 
-      public event FormatChangedHandler OnFormatChanged;
+      public event FormatChangedHandler OnFormatChanged = delegate { };
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
@@ -101,10 +102,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             {
                column.Unit = unitsEditorPresenter.SelectedUnit;
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
-               OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
-               {
-                  Parameters = new List<DataFormatParameter>() { activeRow.Source }
-               });
+               _view.RefreshList();
+               OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
             };
          }
       }
@@ -246,10 +245,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var activeRow = modelByColumnName(model.ColumnName);
          activeRow.Source = ColumnMappingFormatter.Parse(model.ColumnName, model.Description);
-         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
-         { 
-            Parameters = new List<DataFormatParameter>() { activeRow.Source } 
-         });
+         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
       }
 
       public void ClearRow(ColumnMappingViewModel model)
@@ -258,10 +254,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.BeginUpdate();
          activeRow.Source = ColumnMappingFormatter.Parse(activeRow.Source.ColumnName, ColumnMappingFormatter.Ignored());
          View.EndUpdate();
-         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
-         { 
-            Parameters = new List<DataFormatParameter>() { activeRow.Source } 
-         });
+         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
       }
 
       private ColumnMappingViewModel modelByColumnName(string columnName)
@@ -272,10 +265,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ResetMapping()
       {
          SetDataFormat(_format, _availableFormats);
-         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs() 
-         { 
-            Parameters = _mappings.Select(m => m.Source)
-         });
+         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(_mappings.Select(m => m.Source).ToArray()));
       }
 
       public void ClearMapping()
@@ -292,10 +282,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ).ToList();
          _mappings = mappings;
          View.SetMappingSource(mappings);
-         OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
-         {
-            Parameters = _mappings.Select(m => m.Source)
-         });
+         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(_mappings.Select(m => m.Source).ToArray()));
       }
 
       public void ValidateMapping()
@@ -303,18 +290,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var missingColumn = _importerTask.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
          if (missingColumn != null)
          {
-            OnMissingMapping?.Invoke(this, new MissingMappingEventArgs { Message = missingColumn });
+            OnMissingMapping(this, new MissingMappingEventArgs { Message = missingColumn });
          }
          else
          {
-            OnMappingCompleted?.Invoke(this);
+            OnMappingCompleted(this);
          }
       }
 
-      public event MappingCompletedHandler OnMappingCompleted;      
+      public event MappingCompletedHandler OnMappingCompleted = delegate { };
 
-      public event MissingMappingHandler OnMissingMapping;
+      public event MissingMappingHandler OnMissingMapping = delegate { };
 
-      public event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
+      public event DataFormatParametersChangedHandler OnDataFormatParametersChanged = delegate { };
    }
 }
