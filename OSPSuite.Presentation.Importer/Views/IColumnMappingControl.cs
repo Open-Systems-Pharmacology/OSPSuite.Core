@@ -124,6 +124,6 @@ namespace OSPSuite.Presentation.Importer.Views
 
       event FormatChangedHandler OnFormatChanged;
 
-      void RefreshList();
+      void Rebind();
    }
 }
