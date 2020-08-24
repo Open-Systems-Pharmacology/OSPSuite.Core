@@ -3,9 +3,7 @@ using System.Linq;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Importer.Views.Dialog;
 using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters

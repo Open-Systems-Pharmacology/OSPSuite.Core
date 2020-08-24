@@ -44,7 +44,7 @@
          // flowLayoutPanel1
          // 
          this.flowLayoutPanel1.Controls.Add(this.label1);
-         this.flowLayoutPanel1.Controls.Add(this.uxGrid);
+         this.Controls.Add(this.uxGrid);
          this.flowLayoutPanel1.Location = new System.Drawing.Point(-2, 0);
          this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
          this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -72,6 +72,7 @@
          this.uxGrid.TabIndex = 1;
          this.uxGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.uxGridView});
+         this.uxGrid.Dock = System.Windows.Forms.DockStyle.Fill;
          // 
          // uxGridView
          // 
