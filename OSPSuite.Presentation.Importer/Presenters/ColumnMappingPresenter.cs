@@ -99,9 +99,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             );
             if (!unitsEditorPresenter.Canceled)
             {
-               View.BeginUpdate();
                column.Unit = unitsEditorPresenter.SelectedUnit;
-               View.EndUpdate();
+               model.Description = ColumnMappingFormatter.Stringify(model.Source);
                OnDataFormatParametersChanged?.Invoke(this, new DataFormatParametersChangedArgs()
                {
                   Parameters = new List<DataFormatParameter>() { activeRow.Source }
