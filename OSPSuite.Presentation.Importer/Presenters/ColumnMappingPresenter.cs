@@ -101,7 +101,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             {
                column.Unit = unitsEditorPresenter.SelectedUnit;
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
-               _view.RefreshList();
+               _view.Rebind();
                OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
             };
          }

@@ -139,7 +139,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
         public event FormatChangedHandler OnFormatChanged;
 
-        public void RefreshList()
+        public void Rebind()
         {
             _gridViewBinder.Rebind();
         }
