@@ -83,14 +83,16 @@ namespace OSPSuite.Presentation.Importer.Views
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
          _gridViewBinder.AddUnboundColumn()
+            .WithCaption("...")
             .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
             .WithRepository(removeRepository)
-            .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
+            .WithCaption("...")
             .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
             .WithRepository(unitRepository)
-            .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _removeButtonRepository.ButtonClick += (o, e) =>
          {
