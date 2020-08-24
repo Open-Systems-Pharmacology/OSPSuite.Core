@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.DataProcessing;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
