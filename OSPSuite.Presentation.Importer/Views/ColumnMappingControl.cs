@@ -194,16 +194,6 @@ namespace OSPSuite.Presentation.Importer.Views
          editor.Enabled = false;
       }
 
-      public void BeginUpdate()
-      {
-         uxGrid.BeginUpdate();
-      }
-
-      public void EndUpdate()
-      {
-         uxGrid.EndUpdate();
-      }
-
       private void onMouseDown(object sender, MouseEventArgs mouseEventArgs)
       {
          if (mouseEventArgs.Button != MouseButtons.Right) return;

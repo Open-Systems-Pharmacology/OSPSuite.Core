@@ -116,10 +116,6 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       void SetMappingSource(IList<ColumnMappingViewModel> mappings);
 
-      void BeginUpdate();
-
-      void EndUpdate();
-
       void SetFormats(IEnumerable<string> options, string selected);
 
       event FormatChangedHandler OnFormatChanged;
