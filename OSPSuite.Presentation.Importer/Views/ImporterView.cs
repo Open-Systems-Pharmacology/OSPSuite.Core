@@ -51,5 +51,10 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _presenter = presenter;
       }
+
+      private void xtraTabControl1_Click(object sender, EventArgs e)
+      {
+
+      }
    }
 }
