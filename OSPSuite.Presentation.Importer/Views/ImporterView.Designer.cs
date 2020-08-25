@@ -28,30 +28,19 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.dataViewingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.columnMappingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.formatLabelControl = new DevExpress.XtraEditors.LabelControl();
          this.formatComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
          this.sourceFilePanelControl = new DevExpress.XtraEditors.PanelControl();
-         this.xtraTabControl1 = new DevExpress.XtraTab.XtraTabControl();
-         this.xtraTabPage1 = new DevExpress.XtraTab.XtraTabPage();
-         this.xtraTabPage2 = new DevExpress.XtraTab.XtraTabPage();
+         this.TabControl = new DevExpress.XtraTab.XtraTabControl();
+         this.dataViewingPanelControl = new DevExpress.XtraEditors.PanelControl();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).BeginInit();
-         this.xtraTabControl1.SuspendLayout();
-         this.xtraTabPage1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.TabControl)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).BeginInit();
          this.SuspendLayout();
-         // 
-         // dataViewingPanelControl
-         // 
-         this.dataViewingPanelControl.Location = new System.Drawing.Point(3, 0);
-         this.dataViewingPanelControl.Name = "dataViewingPanelControl";
-         this.dataViewingPanelControl.Size = new System.Drawing.Size(1380, 1132);
-         this.dataViewingPanelControl.TabIndex = 0;
          // 
          // columnMappingPanelControl
          // 
@@ -86,37 +75,27 @@
          this.sourceFilePanelControl.Size = new System.Drawing.Size(3182, 85);
          this.sourceFilePanelControl.TabIndex = 5;
          // 
-         // xtraTabControl1
+         // TabControl
          // 
-         this.xtraTabControl1.Location = new System.Drawing.Point(19, 154);
-         this.xtraTabControl1.Name = "xtraTabControl1";
-         this.xtraTabControl1.SelectedTabPage = this.xtraTabPage1;
-         this.xtraTabControl1.Size = new System.Drawing.Size(1385, 1192);
-         this.xtraTabControl1.TabIndex = 0;
-         this.xtraTabControl1.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
-            this.xtraTabPage1,
-            this.xtraTabPage2});
-         this.xtraTabControl1.Click += new System.EventHandler(this.xtraTabControl1_Click);
+         //this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.TabControl.Location = new System.Drawing.Point(19, 154);
+         this.TabControl.Name = "TabControl";
+         this.TabControl.Size = new System.Drawing.Size(1385, 1192);
+         this.TabControl.TabIndex = 0;
          // 
-         // xtraTabPage1
+         // dataViewingPanelControl
          // 
-         this.xtraTabPage1.Controls.Add(this.dataViewingPanelControl);
-         this.xtraTabPage1.Name = "xtraTabPage1";
-         this.xtraTabPage1.Size = new System.Drawing.Size(1381, 1130);
-         this.xtraTabPage1.Text = "xtraTabPage1";
-         // 
-         // xtraTabPage2
-         // 
-         this.xtraTabPage2.Name = "xtraTabPage2";
-         this.xtraTabPage2.Size = new System.Drawing.Size(1381, 1130);
-         this.xtraTabPage2.Text = "xtraTabPage2";
+         this.dataViewingPanelControl.Location = new System.Drawing.Point(0, 83);
+         this.dataViewingPanelControl.Name = "dataViewingPanelControl";
+         this.dataViewingPanelControl.Size = new System.Drawing.Size(1385, 1109);
+         this.dataViewingPanelControl.TabIndex = 0;
          // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "ImporterView";
-         this.Controls.Add(this.xtraTabControl1);
+         this.Controls.Add(this.TabControl);
          this.Controls.Add(this.sourceFilePanelControl);
          this.Controls.Add(this.formatLabelControl);
          this.Controls.Add(this.formatComboBoxEdit);
@@ -124,14 +103,11 @@
          this.Name = "ImporterView";
          this.Size = new System.Drawing.Size(3266, 1732);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).EndInit();
-         this.xtraTabControl1.ResumeLayout(false);
-         this.xtraTabPage1.ResumeLayout(false);
-         this.xtraTabPage2.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.TabControl)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -139,13 +115,12 @@
 
       #endregion
 
-      private DevExpress.XtraEditors.PanelControl dataViewingPanelControl;
+      //private DevExpress.XtraEditors.PanelControl dataViewingPanelControl;
       private DevExpress.XtraEditors.PanelControl columnMappingPanelControl;
       private DevExpress.XtraEditors.LabelControl formatLabelControl;
       private DevExpress.XtraEditors.ComboBoxEdit formatComboBoxEdit;
       private DevExpress.XtraEditors.PanelControl sourceFilePanelControl;
-      private DevExpress.XtraTab.XtraTabControl xtraTabControl1;
-      private DevExpress.XtraTab.XtraTabPage xtraTabPage1;
-      private DevExpress.XtraTab.XtraTabPage xtraTabPage2;
+      //private DevExpress.XtraTab.XtraTabControl TabControl;
+      private DevExpress.XtraEditors.PanelControl dataViewingPanelControl;
    }
 }

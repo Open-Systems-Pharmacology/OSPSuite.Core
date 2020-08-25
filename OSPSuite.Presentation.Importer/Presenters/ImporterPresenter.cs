@@ -58,6 +58,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetDataSource(string path)
       {
          _dataViewingPresenter.SetDataSource(path);
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
+
+      public void SelectTab(string tabName)
+      {
+         _dataViewingPresenter.GetSheet(tabName);
       }
 
       public void AddCommand(ICommand command)

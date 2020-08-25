@@ -3,6 +3,9 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
+using DevExpress.XtraTab;
+using NPOI.OpenXmlFormats.Dml.Diagram;
+using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -12,6 +15,18 @@ namespace OSPSuite.Presentation.Importer.Views
       public ImporterView()
       {
          InitializeComponent();
+      }
+
+
+      public void AttachPresenter(IImporterPresenter presenter)
+      {
+         _presenter = presenter;
+         TabControl.SelectedPageChanging += onSelectedPageChanging;
+      }
+
+      private void onSelectedPageChanging(object sender, TabPageChangingEventArgs e)
+      {
+         OnEvent(() => _presenter.SelectTab(e.Page.Text));
       }
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
@@ -26,7 +41,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
-         dataViewingPanelControl.FillWith(dataViewingControl);
+         //dataViewingPanelControl.FillWith(dataViewingControl);
+         TabControl.FillWith(dataViewingControl);
       }
 
       public void SetFormats(IEnumerable<string> options, string selected)
@@ -47,14 +63,16 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public event FormatChangedHandler OnFormatChanged;
 
-      public void AttachPresenter(IImporterPresenter presenter)
+      public void AddTabs(List<string> sheetNames)
       {
-         _presenter = presenter;
+         //we should seek an alternative
+         foreach (var sheetName in sheetNames)
+         {
+            TabControl.TabPages.Add(sheetName);
+         }
       }
 
-      private void xtraTabControl1_Click(object sender, EventArgs e)
-      {
+      public XtraTabControl TabControl { get; private set; } //not sure we should keep this public
 
-      }
    }
 }

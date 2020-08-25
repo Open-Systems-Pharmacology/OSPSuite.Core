@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 
@@ -8,6 +9,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       void SetDataSource(string path);
 
-      DataTable GetFirstSheet();
+      List<string> GetSheetNames();
+      DataTable GetSheet(string tabName);
    }
 }

@@ -13,5 +13,7 @@ namespace OSPSuite.Presentation.Importer.Views
       void SetFormats(IEnumerable<string> options, string selected);
 
       event FormatChangedHandler OnFormatChanged;
+
+      void AddTabs(List<string> tabNames);
    }
 }
