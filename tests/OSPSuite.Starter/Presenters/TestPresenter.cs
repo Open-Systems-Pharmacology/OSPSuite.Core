@@ -130,6 +130,7 @@ namespace OSPSuite.Starter.Presenters
          //startLarge<IImporterPresenter>();
 
 
+         //inject IDialogCreator
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
          var file = new OpenFileDialog();

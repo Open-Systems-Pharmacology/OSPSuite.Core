@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Importer.Views;
@@ -20,10 +21,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.SetGridSource();
       }
 
-      public DataTable GetFirstSheet()
+      public List<string> GetSheetNames()
       {
-         var keys = _tempDataSourceFile.DataSheets.Keys;
-         return _tempDataSourceFile.DataSheets[keys.ElementAt(0)].RawData.AsDataTable();
+         return _tempDataSourceFile.DataSheets.Keys.ToList();
+      }
+      public DataTable GetSheet(string tabName)
+      {
+         return _tempDataSourceFile.DataSheets[tabName].RawData.AsDataTable();
       }
    }
 }

@@ -27,7 +27,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void SetGridSource()
       {
-         gridControl1.DataSource = _presenter.GetFirstSheet(); //we should check that this here is not empty at initialization time
+         var firstSheetName = _presenter.GetSheetNames().ElementAt(0);
+         gridControl1.DataSource = _presenter.GetSheet(firstSheetName); 
       }
    }
 }

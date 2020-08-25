@@ -18,5 +18,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       );
 
       void SetDataSource(string path);
+      void SelectTab(string tabName);
    }
 }
