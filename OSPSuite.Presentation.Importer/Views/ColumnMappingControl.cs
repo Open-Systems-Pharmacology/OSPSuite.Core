@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
-using DevExpress.Utils.Extensions;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
@@ -19,7 +17,6 @@ using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI;
 using OSPSuite.UI.Controls;
-using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 
@@ -33,7 +30,10 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly GridViewBinder<ColumnMappingViewModel> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
-      private readonly RepositoryItemButtonEdit _unitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation, Captions.UnitInformationDescription);
+
+      private readonly RepositoryItemButtonEdit _unitButtonRepository =
+         new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation, Captions.UnitInformationDescription);
+
       private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
@@ -61,10 +61,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private RepositoryItemImageComboBox valueRepository(ColumnMappingViewModel model)
       {
-         var repo =  new RepositoryItemImageComboBox();
-         repo.AutoComplete = true;
-         repo.AllowNullInput = DefaultBoolean.True;
-         repo.CloseUpKey = new KeyShortcut(Keys.Enter);
+         var repo = new RepositoryItemImageComboBox
+         {
+            AutoComplete = true,
+            AllowNullInput = DefaultBoolean.True,
+            CloseUpKey = new KeyShortcut(Keys.Enter)
+         };
          fillComboBoxItems(repo, _presenter.GetAvailableOptionsFor(model));
          return repo;
       }
@@ -83,13 +85,13 @@ namespace OSPSuite.Presentation.Importer.Views
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption("...")
+            .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
             .WithRepository(removeRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption("...")
+            .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
             .WithRepository(unitRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
@@ -125,6 +127,7 @@ namespace OSPSuite.Presentation.Importer.Views
          {
             comboBoxEdit1.Properties.Items.Add(option);
          }
+
          comboBoxEdit1.EditValue = selected;
          comboBoxEdit1.TextChanged += onFormatChanged;
       }
@@ -135,6 +138,11 @@ namespace OSPSuite.Presentation.Importer.Views
       }
 
       public event FormatChangedHandler OnFormatChanged;
+
+      public void Rebind()
+      {
+         _gridViewBinder.Rebind();
+      }
 
       public void SetMappingSource(IList<ColumnMappingViewModel> mappings)
       {

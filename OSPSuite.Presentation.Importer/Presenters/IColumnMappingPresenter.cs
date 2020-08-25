@@ -9,17 +9,18 @@ using OSPSuite.Presentation.Presenters;
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    /// <summary>
-   /// Event arguments for OnMissingMapping event.
+   ///    Event arguments for OnMissingMapping event.
    /// </summary>
    public class MissingMappingEventArgs : EventArgs
    {
       /// <summary>
-      /// Message describing what is missed.
+      ///    Message describing what is missed.
       /// </summary>
       public string Message { get; set; }
    }
+
    /// <summary>
-   /// Handler for OnMissingMapping event.
+   ///    Handler for OnMissingMapping event.
    /// </summary>
    public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
 
@@ -27,7 +28,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class DataFormatParametersChangedArgs : EventArgs
    {
-      public IEnumerable<DataFormatParameter> Parameters { get; set; }
+      public IReadOnlyList<DataFormatParameter> Parameters { get; }
+
+      public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
+      {
+         Parameters = new List<DataFormatParameter>(parameters);
+      }
    }
 
    public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
