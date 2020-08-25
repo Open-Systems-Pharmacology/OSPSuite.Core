@@ -28,8 +28,8 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl1 = new DevExpress.XtraGrid.GridControl();
-         this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
+         this.gridControl1 = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridView1 = new OSPSuite.UI.Controls.UxGridView();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -44,10 +44,12 @@
          this.gridControl1.TabIndex = 0;
          this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
+         this.gridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
          // 
          // gridView1
          // 
          this.gridView1.GridControl = this.gridControl1;
+         this.gridView1.OptionsView.ShowGroupPanel = false;
          this.gridView1.Name = "gridView1";
          // 
          // DataViewingControl
@@ -67,7 +69,7 @@
 
       #endregion
 
-      private DevExpress.XtraGrid.GridControl gridControl1;
-      private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
+      private UI.Controls.UxGridControl gridControl1;
+      private UI.Controls.UxGridView gridView1;
    }
 }
