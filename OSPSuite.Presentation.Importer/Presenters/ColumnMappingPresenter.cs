@@ -253,10 +253,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ClearRow(ColumnMappingViewModel model)
       {
          var activeRow = modelByColumnName(model.ColumnName);
-         View.BeginUpdate();
          activeRow.Source = ColumnMappingFormatter.Parse(activeRow.Source.ColumnName, ColumnMappingFormatter.Ignored());
-         View.EndUpdate();
          OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
+         _view.Rebind();
       }
 
       private ColumnMappingViewModel modelByColumnName(string columnName)
