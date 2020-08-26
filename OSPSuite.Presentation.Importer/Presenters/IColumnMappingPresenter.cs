@@ -96,9 +96,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
-
-      event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
-
-      event FormatChangedHandler OnFormatChanged;
    }
 }
