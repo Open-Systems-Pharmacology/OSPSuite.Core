@@ -37,11 +37,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             var format = _availableFormats.First(f => f.Name == formatName);
             SetDataFormat(format, _availableFormats);
-            OnFormatChanged(format);
          });
       }
-
-      public event FormatChangedHandler OnFormatChanged = delegate { };
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
@@ -101,7 +98,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
                column.Unit = unitsEditorPresenter.SelectedUnit;
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
-               OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
             }
 
             ;
@@ -247,14 +243,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var activeRow = modelByColumnName(model.ColumnName);
          activeRow.Source = ColumnMappingFormatter.Parse(model.ColumnName, model.Description);
-         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
       }
 
       public void ClearRow(ColumnMappingViewModel model)
       {
          var activeRow = modelByColumnName(model.ColumnName);
          activeRow.Source = ColumnMappingFormatter.Parse(activeRow.Source.ColumnName, ColumnMappingFormatter.Ignored());
-         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(activeRow.Source));
          _view.Rebind();
       }
 
@@ -266,7 +260,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ResetMapping()
       {
          SetDataFormat(_format, _availableFormats);
-         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(_mappings.Select(m => m.Source).ToArray()));
       }
 
       public void ClearMapping()
@@ -283,7 +276,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ).ToList();
          _mappings = mappings;
          View.SetMappingSource(mappings);
-         OnDataFormatParametersChanged(this, new DataFormatParametersChangedArgs(_mappings.Select(m => m.Source).ToArray()));
       }
 
       public void ValidateMapping()
@@ -302,7 +294,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public event MappingCompletedHandler OnMappingCompleted = delegate { };
 
       public event MissingMappingHandler OnMissingMapping = delegate { };
-
-      public event DataFormatParametersChangedHandler OnDataFormatParametersChanged = delegate { };
    }
 }
