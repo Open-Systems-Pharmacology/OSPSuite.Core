@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DevExpress.XtraTab;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
@@ -66,14 +65,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
       }
 
-      public void SetDataSource(string path)
+      public void SetDataSource(IDataSourceFile dataSourceFile)
       {
-         _dataViewingPresenter.SetDataSource(path);
+         _dataViewingPresenter.SetDataSource(dataSourceFile);
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
 
       public void SelectTab(string tabName)
       {
+         _dataViewingPresenter.SetTabData(tabName);
       }
 
       public void AddCommand(ICommand command)
