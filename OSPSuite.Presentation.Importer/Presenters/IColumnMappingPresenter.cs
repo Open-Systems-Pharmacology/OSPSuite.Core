@@ -93,7 +93,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void ValidateMapping();
 
-      event MappingCompletedHandler OnMappingCompleted;
+      event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
 
