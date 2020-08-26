@@ -3,8 +3,11 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
+using System.Data;
+using DevExpress.XtraGrid;
 using DevExpress.XtraTab;
 using NPOI.OpenXmlFormats.Dml.Diagram;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
@@ -12,6 +15,9 @@ namespace OSPSuite.Presentation.Importer.Views
    public partial class ImporterView : BaseUserControl , IImporterView
    {
       private IImporterPresenter _presenter;
+
+      private readonly GridViewBinder<DataTable> _gridViewBinder;
+
       public ImporterView()
       {
          InitializeComponent();
@@ -22,6 +28,7 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _presenter = presenter;
          TabControl.SelectedPageChanged += onSelectedPageChanged;
+         //_gridViewBinder.AutoBind()
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
@@ -34,6 +41,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
          columnMappingPanelControl.FillWith(columnMappingControl);
+         //columnMappingPanelControl.FillWith(new GridControl()); - OK, this is how we will do this
       }
 
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
@@ -75,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
 
-      public XtraTabControl TabControl { get; private set; } //not sure we should keep this public
+      //public XtraTabControl TabControl { get; private set; } //not sure we should keep this public
 
    }
 }

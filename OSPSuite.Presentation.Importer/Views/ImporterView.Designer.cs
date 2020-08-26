@@ -77,7 +77,6 @@
          // 
          // TabControl
          // 
-         //this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.TabControl.Location = new System.Drawing.Point(19, 154);
          this.TabControl.Name = "TabControl";
          this.TabControl.Size = new System.Drawing.Size(1385, 1192);
@@ -120,7 +119,7 @@
       private DevExpress.XtraEditors.LabelControl formatLabelControl;
       private DevExpress.XtraEditors.ComboBoxEdit formatComboBoxEdit;
       private DevExpress.XtraEditors.PanelControl sourceFilePanelControl;
-      //private DevExpress.XtraTab.XtraTabControl TabControl;
+      private DevExpress.XtraTab.XtraTabControl TabControl;
       private DevExpress.XtraEditors.PanelControl dataViewingPanelControl;
    }
 }

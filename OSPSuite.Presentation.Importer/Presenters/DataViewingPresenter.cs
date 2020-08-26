@@ -16,15 +16,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _tempDataSourceFile = new ExcelDataSourceFile(null);
       }
 
-      public void SetDataSource( string path ) //should be deleted actually
+      public void SetDataSource(IDataSourceFile dataSourceFile) //should be deleted actually
       {
-         _tempDataSourceFile.Path = path;
+         _tempDataSourceFile = dataSourceFile;
          View.SetGridSource();
       }
 
       public void SetTabData(string sheetName) //should be deleted actually
       {
-        // View.gridControl1.DataSource = _dataViewingPresenter.GetSheet(sheetName);
+         View.SetGridSource();
       }
 
       public List<string> GetSheetNames()
