@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public interface IDataViewingPresenter : IPresenter<IDataViewingControl>
    {
       void SetDataSource(string path);
-
+      void SetTabData(string sheetName);
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
    }

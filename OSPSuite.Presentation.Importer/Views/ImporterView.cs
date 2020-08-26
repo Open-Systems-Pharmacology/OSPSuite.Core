@@ -21,13 +21,15 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AttachPresenter(IImporterPresenter presenter)
       {
          _presenter = presenter;
-         TabControl.SelectedPageChanging += onSelectedPageChanging;
+         TabControl.SelectedPageChanged += onSelectedPageChanged;
       }
 
-      private void onSelectedPageChanging(object sender, TabPageChangingEventArgs e)
+      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         OnEvent(() => _presenter.SelectTab(e.Page.Text));
+         OnTabChanged?.Invoke(TabControl.SelectedTabPage.Text);
       }
+
+      public event TabChangedHandler OnTabChanged;
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
@@ -60,6 +62,7 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          OnFormatChanged?.Invoke(formatComboBoxEdit.EditValue as string);
       }
+
 
       public event FormatChangedHandler OnFormatChanged;
 

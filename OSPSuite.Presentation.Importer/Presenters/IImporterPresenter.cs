@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
+      event FormatChangedHandler OnFormatChanged;
       void SetDataSource(string path);
       void SelectTab(string tabName);
    }

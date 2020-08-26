@@ -14,6 +14,11 @@ namespace OSPSuite.Presentation.Importer.Views
 
       event FormatChangedHandler OnFormatChanged;
 
+      event TabChangedHandler OnTabChanged;
+
       void AddTabs(List<string> tabNames);
    }
+
+   public delegate void TabChangedHandler(string format);
+
 }

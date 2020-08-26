@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DevExpress.XtraTab;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -19,8 +21,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IColumnMappingPresenter _columnMappingPresenter;
       private ISourceFilePresenter _sourceFilePresenter;
 
-      private IDataFormat _format;
       private IEnumerable<IDataFormat> _availableFormats;
+
+      public event FormatChangedHandler OnFormatChanged = delegate { };
 
 
       public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
@@ -35,6 +38,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sourceFilePresenter = sourceFilePresenter;
 
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
+
+         _view.OnTabChanged +=  SelectTab;
+         _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
+         {
+            var format = _availableFormats.First(f => f.Name == formatName);
+            SetDataFormat(format, _availableFormats);
+            OnFormatChanged(format);
+         });
+
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -44,9 +56,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
-         _format = format;
          _availableFormats = availableFormats;
-         _columnMappingPresenter.SetDataFormat(_format, _availableFormats);
+         _columnMappingPresenter.SetDataFormat (format, _availableFormats);
          View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
       }
 
@@ -63,7 +74,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SelectTab(string tabName)
       {
-         _dataViewingPresenter.GetSheet(tabName);
       }
 
       public void AddCommand(ICommand command)
