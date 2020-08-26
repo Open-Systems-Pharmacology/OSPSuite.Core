@@ -40,18 +40,18 @@ namespace OSPSuite.Presentation.Importer.Services
 
       public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
+         var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
          foreach (var col in dataColumns)
          {
             if (!col.IsMandatory) continue;
             if
             (
-               mappings
-                  .OfType<MappingDataFormatParameter>()
+               subset
                   .Where
                   (
                      cm =>
                      cm.MappedColumn.Name.ToString() == col.Name
-                  ).FirstOrDefault() != null
+                  ).FirstOrDefault() == null
             )
                return col.Name;
          }
