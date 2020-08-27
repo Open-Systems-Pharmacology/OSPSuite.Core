@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class MissingMappingEventArgs : EventArgs
    {
       /// <summary>
-      ///    Message describing what is missed.
+      ///    FileName describing what is missed.
       /// </summary>
       public string Message { get; set; }
    }
@@ -93,7 +93,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void ValidateMapping();
 
-      event MappingCompletedHandler OnMappingCompleted;
+      event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
    }

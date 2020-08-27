@@ -3,16 +3,40 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
+using System.Data;
+using DevExpress.XtraGrid;
+using DevExpress.XtraTab;
+using NPOI.OpenXmlFormats.Dml.Diagram;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class ImporterView : BaseUserControl , IImporterView
    {
       private IImporterPresenter _presenter;
+
       public ImporterView()
       {
          InitializeComponent();
       }
+
+
+      public void AttachPresenter(IImporterPresenter presenter)
+      {
+         _presenter = presenter;
+         TabControl.SelectedPageChanged += onSelectedPageChanged;
+      }
+
+      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
+      {
+         if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
+            OnTabChanged?.Invoke(TabControl.SelectedTabPage.Text);
+      }
+
+      public event TabChangedHandler OnTabChanged;
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
@@ -26,7 +50,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
-         dataViewingPanelControl.FillWith(dataViewingControl);
+         TabControl.FillWith(dataViewingControl);
       }
 
       public void SetFormats(IEnumerable<string> options, string selected)
@@ -45,16 +69,24 @@ namespace OSPSuite.Presentation.Importer.Views
          OnFormatChanged?.Invoke(formatComboBoxEdit.EditValue as string);
       }
 
+
       public event FormatChangedHandler OnFormatChanged;
 
-      public void AttachPresenter(IImporterPresenter presenter)
+      public void AddTabs(List<string> sheetNames)
       {
-         _presenter = presenter;
+         //we should seek an alternative
+         foreach (var sheetName in sheetNames)
+         {
+            TabControl.TabPages.Add(sheetName);
+         }
       }
 
-      private void xtraTabControl1_Click(object sender, EventArgs e)
+      public void ClearTabs()
       {
-
+         for (var i= TabControl.TabPages.Count -1; i >= 0; i--)
+         {
+            TabControl.TabPages.RemoveAt(i);
+         }
       }
    }
 }

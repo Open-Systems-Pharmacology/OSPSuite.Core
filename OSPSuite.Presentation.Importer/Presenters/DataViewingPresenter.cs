@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
@@ -8,22 +10,30 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class DataViewingPresenter : AbstractPresenter<IDataViewingControl, IDataViewingPresenter>, IDataViewingPresenter
    {
-      private ExcelDataSourceFile _tempDataSourceFile;
+      private IDataSourceFile _tempDataSourceFile;
       public DataViewingPresenter(IDataViewingControl view) : base(view)
       {
          _tempDataSourceFile = new ExcelDataSourceFile(null);
       }
 
-      public void SetDataSource( string path )
+      public void SetDataSource(IDataSourceFile dataSourceFile)
       {
-         _tempDataSourceFile.Path = path;
+         _tempDataSourceFile = dataSourceFile;
          View.SetGridSource();
       }
 
-      public DataTable GetFirstSheet()
+      public void SetTabData(string sheetName)
       {
-         var keys = _tempDataSourceFile.DataSheets.Keys;
-         return _tempDataSourceFile.DataSheets[keys.ElementAt(0)].RawData.AsDataTable();
+         View.SetGridSource(sheetName);
+      }
+
+      public List<string> GetSheetNames()
+      {
+         return _tempDataSourceFile.DataSheets.Keys.ToList();
+      }
+      public DataTable GetSheet(string tabName)
+      {
+         return _tempDataSourceFile.DataSheets[tabName].RawData.AsDataTable();
       }
    }
 }

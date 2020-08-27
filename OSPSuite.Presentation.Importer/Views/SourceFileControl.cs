@@ -6,14 +6,21 @@ namespace OSPSuite.Presentation.Importer.Views
    public partial class SourceFileControl : BaseUserControl, ISourceFileControl
    {
       private ISourceFilePresenter _presenter;
+
       public SourceFileControl()
       {
          InitializeComponent();
+         openSourceFileButton.Click += (sender, args) => OnEvent(_presenter.OpenFileDialog);
       }
 
       public void AttachPresenter(ISourceFilePresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public void SetFilePath(string filePath)
+      {
+         sourceFileTextEdit.Text = filePath;
       }
    }
 }

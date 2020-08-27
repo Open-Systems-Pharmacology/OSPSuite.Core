@@ -29,8 +29,8 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.btnSelectExcelFile = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.btnSelectExcelFile = new DevExpress.XtraEditors.SimpleButton();
          this.txtExcelFile = new DevExpress.XtraEditors.TextEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemExcelFile = new DevExpress.XtraLayout.LayoutControlItem();
@@ -43,18 +43,6 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          this.SuspendLayout();
          // 
-         // btnSelectExcelFile
-         // 
-         this.btnSelectExcelFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-         this.btnSelectExcelFile.Location = new System.Drawing.Point(1088, 5);
-         this.btnSelectExcelFile.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
-         this.btnSelectExcelFile.Name = "btnSelectExcelFile";
-         this.btnSelectExcelFile.Size = new System.Drawing.Size(57, 56);
-         this.btnSelectExcelFile.StyleController = this.layoutControl1;
-         this.btnSelectExcelFile.TabIndex = 1;
-         this.btnSelectExcelFile.Text = "...";
-         this.btnSelectExcelFile.Click += new System.EventHandler(this.btnSelectExcelFileClick);
-         // 
          // layoutControl1
          // 
          this.layoutControl1.AllowCustomization = false;
@@ -62,7 +50,7 @@
          this.layoutControl1.Controls.Add(this.txtExcelFile);
          this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.layoutControl1.Margin = new System.Windows.Forms.Padding(8);
          this.layoutControl1.Name = "layoutControl1";
          this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(226, 121, 250, 350);
          this.layoutControl1.Root = this.layoutControlGroup1;
@@ -70,15 +58,27 @@
          this.layoutControl1.TabIndex = 6;
          this.layoutControl1.Text = "layoutControl1";
          // 
+         // btnSelectExcelFile
+         // 
+         this.btnSelectExcelFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+         this.btnSelectExcelFile.Location = new System.Drawing.Point(1085, 2);
+         this.btnSelectExcelFile.Margin = new System.Windows.Forms.Padding(8);
+         this.btnSelectExcelFile.Name = "btnSelectExcelFile";
+         this.btnSelectExcelFile.Size = new System.Drawing.Size(63, 62);
+         this.btnSelectExcelFile.StyleController = this.layoutControl1;
+         this.btnSelectExcelFile.TabIndex = 1;
+         this.btnSelectExcelFile.Text = "...";
+         this.btnSelectExcelFile.Click += new System.EventHandler(this.btnSelectExcelFileClick);
+         // 
          // txtExcelFile
          // 
          this.txtExcelFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-         this.txtExcelFile.Location = new System.Drawing.Point(241, 8);
-         this.txtExcelFile.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.txtExcelFile.Location = new System.Drawing.Point(236, 8);
+         this.txtExcelFile.Margin = new System.Windows.Forms.Padding(8);
          this.txtExcelFile.Name = "txtExcelFile";
          this.txtExcelFile.Properties.ReadOnly = true;
-         this.txtExcelFile.Size = new System.Drawing.Size(837, 50);
+         this.txtExcelFile.Size = new System.Drawing.Size(842, 50);
          this.txtExcelFile.StyleController = this.layoutControl1;
          this.txtExcelFile.TabIndex = 2;
          // 
@@ -123,7 +123,7 @@
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl1);
-         this.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.Margin = new System.Windows.Forms.Padding(8);
          this.Name = "OpenSourceFileControl";
          this.Size = new System.Drawing.Size(1150, 66);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();

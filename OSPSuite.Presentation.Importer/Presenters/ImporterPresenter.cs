@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -19,8 +21,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IColumnMappingPresenter _columnMappingPresenter;
       private ISourceFilePresenter _sourceFilePresenter;
 
-      private IDataFormat _format;
       private IEnumerable<IDataFormat> _availableFormats;
+
+      public event FormatChangedHandler OnFormatChanged = delegate { };
 
 
       public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
@@ -35,6 +38,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sourceFilePresenter = sourceFilePresenter;
 
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
+
+         _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
+         _view.OnTabChanged +=  SelectTab;
+         _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
+         {
+            var format = _availableFormats.First(f => f.Name == formatName); //hmmm...wrong. this probably takes just the first one
+            SetDataFormat(format, _availableFormats);
+            OnFormatChanged(format);
+         });
+
+      }
+
+      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e) //not sure we need this method here
+      //instead we could simply use the IDataSourceFile as paramater to the delegate and call directly SetDataSource
+      //should discuss with Abdel which of the 2 is the best solution
+      {
+         SetDataSource(e.FileName);
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -44,9 +64,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
-         _format = format;
          _availableFormats = availableFormats;
-         _columnMappingPresenter.SetDataFormat(_format, _availableFormats);
+         _columnMappingPresenter.SetDataFormat (format, _availableFormats);
          View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
       }
 
@@ -55,9 +74,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
       }
 
-      public void SetDataSource(string path)
+      public void SetDataSource(IDataSourceFile dataSourceFile)
       {
-         _dataViewingPresenter.SetDataSource(path);
+         _dataViewingPresenter.SetDataSource(dataSourceFile);
+         _sourceFilePresenter.SetFilePath(dataSourceFile.Path);
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
+
+      public void SelectTab(string tabName)
+      {
+         _dataViewingPresenter.SetTabData(tabName);
       }
 
       public void AddCommand(ICommand command)
