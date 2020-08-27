@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile();
+      IDataSourceFile LoadFile(string fileName = null);
       IDataSource ImportFromFile(IDataSourceFile dataSourceFile);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data);
    }
@@ -40,9 +40,9 @@ namespace OSPSuite.Presentation.Importer.Services
          return new DataSource() {DataSets = (IList<IDataSet>) dataSourceFile.DataSheets.Select(s => new DataSet() {Data = dataSourceFile.Format.Parse(s.Value.RawData)}).ToList()};
       }
 
-      public IDataSourceFile LoadFile()
+      public IDataSourceFile LoadFile(string fileName = null) //TODO add optional parameter to be able to use the "..." button
       {
-         var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
          var dataSource = _parser.For(filename);
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData).ToList();
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();

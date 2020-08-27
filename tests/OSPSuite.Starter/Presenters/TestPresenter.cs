@@ -119,15 +119,10 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
          starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
-         
       }
 
       public void StartImporterExcelView()
       {
-         //startLarge<IImporterPresenter>();
-
-
-         //inject IDialogCreator
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
          var importer = IoC.Container.Resolve<IImporter>();

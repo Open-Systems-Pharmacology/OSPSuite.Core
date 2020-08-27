@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       private IDataViewingPresenter _presenter;
       //private readonly GridViewBinder<DataTable> _gridViewBinder;
-      private  DataTable _sheetToView = new DataTable();
+      //private  DataTable _sheetToView = new DataTable();
 
       public DataViewingControl()
       {
@@ -25,8 +25,8 @@ namespace OSPSuite.Presentation.Importer.Views
       public override void InitializeBinding()
       {
          base.InitializeResources();
-         //_gridViewBinder.Bind(x => _sheetToView);
-         gridControl1.DataSource = _sheetToView;
+         //_gridViewBinder.BindToSource(_sheetToView);
+         //gridControl1.DataSource = _sheetToView;
 
       }
       public void AttachPresenter(IDataViewingPresenter presenter)
@@ -34,12 +34,12 @@ namespace OSPSuite.Presentation.Importer.Views
          _presenter = presenter;
       }
 
-      public void SetGridSource()
+      public void SetGridSource(string tabName = null)
       {
-         var sheetName = _presenter.GetSheetNames().ElementAt(0);
-         //gridControl1.DataSource = _presenter.GetSheet(firstSheetName);
-         _sheetToView = _presenter.GetSheet(sheetName);
-         gridControl1.DataSource = _sheetToView;
+         if (tabName == null)
+            tabName = _presenter.GetSheetNames().ElementAt(0);
+         //_sheetToView = _presenter.GetSheet(tabName); //in such a case do we really need to keep this as a member?
+         gridControl1.DataSource = _presenter.GetSheet(tabName);
       }
    }
 }

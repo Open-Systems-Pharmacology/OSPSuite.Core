@@ -44,9 +44,8 @@
          // flowLayoutPanel1
          // 
          this.flowLayoutPanel1.Controls.Add(this.label1);
-         this.Controls.Add(this.uxGrid);
          this.flowLayoutPanel1.Location = new System.Drawing.Point(-2, 0);
-         this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
          this.flowLayoutPanel1.Name = "flowLayoutPanel1";
          this.flowLayoutPanel1.Size = new System.Drawing.Size(1637, 825);
          this.flowLayoutPanel1.TabIndex = 0;
@@ -63,16 +62,16 @@
          // 
          // uxGrid
          // 
-         this.uxGrid.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-         this.uxGrid.Location = new System.Drawing.Point(6, 40);
+         this.uxGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.uxGrid.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
+         this.uxGrid.Location = new System.Drawing.Point(0, 0);
          this.uxGrid.MainView = this.uxGridView;
-         this.uxGrid.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.uxGrid.Margin = new System.Windows.Forms.Padding(6);
          this.uxGrid.Name = "uxGrid";
-         this.uxGrid.Size = new System.Drawing.Size(1622, 784);
+         this.uxGrid.Size = new System.Drawing.Size(1633, 923);
          this.uxGrid.TabIndex = 1;
          this.uxGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.uxGridView});
-         this.uxGrid.Dock = System.Windows.Forms.DockStyle.Fill;
          // 
          // uxGridView
          // 
@@ -93,7 +92,7 @@
          // comboBoxEdit1
          // 
          this.comboBoxEdit1.Location = new System.Drawing.Point(120, 844);
-         this.comboBoxEdit1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.comboBoxEdit1.Margin = new System.Windows.Forms.Padding(6);
          this.comboBoxEdit1.Name = "comboBoxEdit1";
          this.comboBoxEdit1.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
@@ -103,7 +102,7 @@
          // labelControl1
          // 
          this.labelControl1.Location = new System.Drawing.Point(9, 850);
-         this.labelControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.labelControl1.Margin = new System.Windows.Forms.Padding(6);
          this.labelControl1.Name = "labelControl1";
          this.labelControl1.Size = new System.Drawing.Size(85, 33);
          this.labelControl1.TabIndex = 2;
@@ -113,6 +112,7 @@
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.Controls.Add(this.uxGrid);
          this.Controls.Add(this.labelControl1);
          this.Controls.Add(this.comboBoxEdit1);
          this.Controls.Add(this.flowLayoutPanel1);
