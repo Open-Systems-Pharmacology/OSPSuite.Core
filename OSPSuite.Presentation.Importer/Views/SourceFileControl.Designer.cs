@@ -29,24 +29,34 @@
       private void InitializeComponent()
       {
          this.fileLabelControl = new DevExpress.XtraEditors.LabelControl();
+         this.openSourceFileButton = new DevExpress.XtraEditors.SimpleButton();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          this.SuspendLayout();
          // 
          // fileLabelControl
          // 
-         this.fileLabelControl.Location = new System.Drawing.Point(36, 54);
+         this.fileLabelControl.Location = new System.Drawing.Point(35, 27);
          this.fileLabelControl.Name = "fileLabelControl";
-         this.fileLabelControl.Size = new System.Drawing.Size(156, 33);
+         this.fileLabelControl.Size = new System.Drawing.Size(58, 33);
          this.fileLabelControl.TabIndex = 0;
          this.fileLabelControl.Text = "File: ";
+         // 
+         // openSourceFileButton
+         // 
+         this.openSourceFileButton.Location = new System.Drawing.Point(2494, 27);
+         this.openSourceFileButton.Name = "openSourceFileButton";
+         this.openSourceFileButton.Size = new System.Drawing.Size(60, 46);
+         this.openSourceFileButton.TabIndex = 1;
+         this.openSourceFileButton.Text = "...";
          // 
          // SourceFileControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.Controls.Add(this.openSourceFileButton);
          this.Controls.Add(this.fileLabelControl);
          this.Name = "SourceFileControl";
-         this.Size = new System.Drawing.Size(2589, 144);
+         this.Size = new System.Drawing.Size(2589, 105);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
@@ -56,5 +66,6 @@
       #endregion
 
       private DevExpress.XtraEditors.LabelControl fileLabelControl;
+      private DevExpress.XtraEditors.SimpleButton openSourceFileButton;
    }
 }

@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetTabData(string sheetName) //should be deleted actually
       {
-         View.SetGridSource();
+         View.SetGridSource(sheetName);
       }
 
       public List<string> GetSheetNames()
