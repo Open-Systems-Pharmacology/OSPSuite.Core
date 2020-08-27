@@ -3,8 +3,8 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public interface IDataViewingControl : IView<IDataViewingPresenter>
+   public interface ISourceFileControl : IView<ISourceFilePresenter>
    {
-      void SetGridSource(string tabName = null);
+      void SetFilePath(string filePath);
    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using DevExpress.XtraRichEdit.Layout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
@@ -8,19 +9,21 @@ using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public class ColumnMappingViewModel
+   public class ColumnMappingViewModel : Notifier
    {
       public string ColumnName { get; private set; }
       private string _description;
+
       public string Description 
       {
          get => _description;
          set
          {
-            _description = value;
+            SetProperty(ref _description, value);
          }
       }
       public IDataFormatParameter Source { get; set; }
@@ -111,14 +114,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
-      void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings);
-
-      void BeginUpdate();
-
-      void EndUpdate();
+      void SetMappingSource(IList<ColumnMappingViewModel> mappings);
 
       void SetFormats(IEnumerable<string> options, string selected);
 
       event FormatChangedHandler OnFormatChanged;
+
+      void Rebind();
    }
 }

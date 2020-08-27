@@ -9,30 +9,31 @@ using OSPSuite.Presentation.Presenters;
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    /// <summary>
-   /// Event arguments for OnMissingMapping event.
+   ///    Event arguments for OnMissingMapping event.
    /// </summary>
    public class MissingMappingEventArgs : EventArgs
    {
       /// <summary>
-      /// Message describing what is missed.
+      ///    FileName describing what is missed.
       /// </summary>
       public string Message { get; set; }
    }
+
    /// <summary>
-   /// Handler for OnMissingMapping event.
+   ///    Handler for OnMissingMapping event.
    /// </summary>
    public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
 
-   public class MappingCompletedEventArgs : EventArgs
-   {
-      public string SheetName { set; get; }
-   }
-
-   public delegate void MappingCompletedHandler(object sender, EventArgs e);
+   public delegate void MappingCompletedHandler(object sender);
 
    public class DataFormatParametersChangedArgs : EventArgs
    {
       public IEnumerable<IDataFormatParameter> Parameters { get; set; }
+
+      public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
+      {
+         Parameters = new List<DataFormatParameter>(parameters);
+      }
    }
 
    public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
@@ -74,32 +75,26 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats, string sheetName);
+      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
-      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(int rowHandle);
-
-      ButtonsConfiguration ButtonsConfigurationForActiveRow();
+      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
       ToolTipDescription ToolTipDescriptionFor(int index);
 
-      void SetDescriptionForActiveRow(string description);
+      void SetDescriptionForRow(ColumnMappingViewModel model);
 
-      void ClearActiveRow();
+      void ClearRow(ColumnMappingViewModel model);
 
       void ResetMapping();
 
       void ClearMapping();
 
-      void ChangeUnitsOnActiveRow();
+      void ChangeUnitsOnRow(ColumnMappingViewModel model);
 
       void ValidateMapping();
 
-      event MappingCompletedHandler OnMappingCompleted;
+      event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
-
-      event DataFormatParametersChangedHandler OnDataFormatParametersChanged;
-
-      event FormatChangedHandler OnFormatChanged;
    }
 }

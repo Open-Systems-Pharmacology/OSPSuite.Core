@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DevExpress.Utils;
-using DevExpress.Utils.Extensions;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Menu;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
+using OSPSuite.UI;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.Presentation.Importer.Views
@@ -21,27 +27,97 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly IImageListRetriever _imageListRetriever;
       private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
+      private readonly GridViewBinder<ColumnMappingViewModel> _gridViewBinder;
+      private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
+      private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
+
+      private readonly RepositoryItemButtonEdit _unitButtonRepository =
+         new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation, Captions.UnitInformationDescription);
+
+      private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
          _imageListRetriever = imageListRetriever;
          InitializeComponent();
+         _gridViewBinder = new GridViewBinder<ColumnMappingViewModel>(uxGridView);
          uxGridView.OptionsView.ShowGroupPanel = false;
          uxGridView.OptionsMenu.EnableColumnMenu = false;
          uxGridView.CellValueChanged += (s, e) => _presenter.ValidateMapping();
 
-         uxGridView.CustomRowCellEdit += onCustomRowCellEdit;
-         uxGridView.CustomRowCellEditForEditing += onCustomRowCellEditForEditing;
          uxGridView.OptionsView.ShowButtonMode = ShowButtonModeEnum.ShowOnlyInEditor;
          uxGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseUp;
          uxGridView.MouseDown += onMouseDown;
          uxGrid.ToolTipController = new ToolTipController();
          uxGrid.ToolTipController.GetActiveObjectInfo += onGetActiveObjectInfo;
+         var unitInformationTip = new SuperToolTip();
+         unitInformationTip.Items.Add(Captions.UnitInformationDescription);
       }
 
       public void AttachPresenter(IColumnMappingPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      private RepositoryItemImageComboBox valueRepository(ColumnMappingViewModel model)
+      {
+         var repo = new RepositoryItemImageComboBox
+         {
+            AutoComplete = true,
+            AllowNullInput = DefaultBoolean.True,
+            CloseUpKey = new KeyShortcut(Keys.Enter)
+         };
+         fillComboBoxItems(repo, _presenter.GetAvailableOptionsFor(model));
+         return repo;
+      }
+
+      public override void InitializeBinding()
+      {
+         base.InitializeBinding();
+         _gridViewBinder.AutoBind(x => x.ColumnName)
+            .WithCaption(Captions.Name)
+            .AsReadOnly();
+
+         _gridViewBinder.AutoBind(x => x.Description)
+            .WithCaption(Captions.Description)
+            .WithRepository(valueRepository)
+            .WithOnValueUpdating(onValueChanged)
+            .WithShowButton(ShowButtonModeEnum.ShowAlways);
+
+         _gridViewBinder.AddUnboundColumn()
+            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
+            .WithRepository(removeRepository)
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+
+         _gridViewBinder.AddUnboundColumn()
+            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
+            .WithRepository(unitRepository)
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+
+         _removeButtonRepository.ButtonClick += (o, e) =>
+         {
+            uxGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
+            _presenter.ClearRow(_gridViewBinder.FocusedElement);
+         };
+         _unitButtonRepository.ButtonClick += (o, e) => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement);
+         _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
+         _disabledUnitButtonRepository.Buttons[0].Enabled = false;
+      }
+
+      private RepositoryItem removeRepository(ColumnMappingViewModel model)
+      {
+         if (model.Source is IgnoredDataFormatParameter)
+            return _disabledRemoveButtonRepository;
+         return _removeButtonRepository;
+      }
+
+      private RepositoryItem unitRepository(ColumnMappingViewModel model)
+      {
+         if (model.Source is MappingDataFormatParameter)
+            return _unitButtonRepository;
+         return _disabledUnitButtonRepository;
       }
 
       public void SetFormats(IEnumerable<string> options, string selected)
@@ -51,6 +127,7 @@ namespace OSPSuite.Presentation.Importer.Views
          {
             comboBoxEdit1.Properties.Items.Add(option);
          }
+
          comboBoxEdit1.EditValue = selected;
          comboBoxEdit1.TextChanged += onFormatChanged;
       }
@@ -62,28 +139,14 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public event FormatChangedHandler OnFormatChanged;
 
-      public void SetMappingSource(IReadOnlyList<ColumnMappingViewModel> mappings)
+      public void Rebind()
       {
-         uxGrid.DataSource = mappings;
-
-         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.ColumnName), true, false);
-         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Description), true, true);
-         configureColumn(ColumnMapping.GetName(ColumnMapping.ColumnName.Source), false, false);
+         _gridViewBinder.Rebind();
       }
 
-      private void configureColumn(string columnName, bool visible, bool allowEdit = false)
+      public void SetMappingSource(IList<ColumnMappingViewModel> mappings)
       {
-         var col = uxGridView.Columns.ColumnByFieldName(columnName);
-         if (visible)
-         {
-            col.OptionsColumn.AllowEdit = allowEdit;
-            col.OptionsColumn.AllowGroup = DefaultBoolean.False;
-            col.OptionsColumn.AllowShowHide = false;
-            col.OptionsColumn.AllowSort = DefaultBoolean.False;
-            col.OptionsFilter.AllowFilter = false;
-         }
-         else
-            col.Visible = false;
+         _gridViewBinder.BindToSource(mappings);
       }
 
       private void onGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -111,122 +174,24 @@ namespace OSPSuite.Presentation.Importer.Views
          return superToolTip;
       }
 
-      private void onCustomRowCellEdit(object sender, CustomRowCellEditEventArgs e)
+      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<ColumnMappingOption> options)
       {
-         if (sender == null) return;
-         if (!e.Column.OptionsColumn.AllowEdit) return;
-
-         var editorObject = new ImageComboBoxEdit();
-         fillComboBoxItems(editorObject, _presenter.GetAvailableOptionsFor(e.RowHandle));
-
-         if (editorObject.Properties.Items.Count == 0) return;
-         e.RepositoryItem = editorObject.Properties;
-      }
-
-      private void onCustomRowCellEditForEditing(object sender, CustomRowCellEditEventArgs e)
-      {
-         var view = sender as GridView;
-         if (view == null) return;
-         if (!e.Column.OptionsColumn.AllowEdit) return;
-
-         var editorObject = _editorsForEditing.GetOrAdd(e.RowHandle, (index) =>
-         {
-            var editorObj = new ImageComboBoxEdit();
-            editorObj.EditValueChanged += onEditorEditValueChanged;
-            Controls.Add(editorObj);
-            var editor = editorObj.Properties;
-
-            editor.AutoComplete = true;
-            editor.AllowNullInput = DefaultBoolean.True;
-            editor.CloseUpKey = new KeyShortcut(Keys.Enter);
-
-            return editorObj;
-         });
-         // create individual list of values
-         fillComboBoxItems(editorObject, _presenter.GetAvailableOptionsFor(e.RowHandle));
-         refreshButtons(editorObject);
-
-         if (editorObject.Properties.Items.Count == 0) return;
-         e.RepositoryItem = editorObject.Properties;
-      }
-
-      private void fillComboBoxItems(ImageComboBoxEdit editor, IEnumerable<ColumnMappingOption> options)
-      {
-         editor.Properties.Items.Clear();
-         editor.Properties.SmallImages = _imageListRetriever.AllImages16x16;
-         editor.Properties.NullText = Captions.Importer.NoneEditorNullText;
+         editor.Items.Clear();
+         editor.SmallImages = _imageListRetriever.AllImages16x16;
+         editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Properties.Items.Add(new ImageComboBoxItem(option.Description)
+            editor.Items.Add(new ImageComboBoxItem(option.Description)
             {
                Description = option.Label,
                ImageIndex = option.IconIndex
             });
          }
 
-         editor.Properties.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
-         editor.SelectedIndex = 0;
-         if (editor.Properties.Items.Count != 0) return;
-         editor.Properties.NullText = Captions.Importer.NothingSelectableEditorNullText;
+         editor.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
+         if (editor.Items.Count != 0) return;
+         editor.NullText = Captions.Importer.NothingSelectableEditorNullText;
          editor.Enabled = false;
-      }
-
-      private void refreshButtons(ButtonEdit editor)
-      {
-         for (var i = editor.Properties.Buttons.Count - 1; i >= 0; i--)
-         {
-            var button = editor.Properties.Buttons[i];
-
-            if (button.Kind == ButtonPredefines.Delete)
-            {
-               editor.Properties.Buttons.RemoveAt(i);
-               editor.ButtonClick -= onEditorButtonClick;
-            }
-
-            if (button.Kind == ButtonPredefines.Glyph)
-               editor.Properties.Buttons.RemoveAt(i);
-         }
-
-         createButtons(editor);
-      }
-
-      private void onEditorButtonClick(object sender, ButtonPressedEventArgs e)
-      {
-         var editor = sender as ImageComboBoxEdit;
-         if (editor == null) return;
-         if (editor.EditValue == null) return;
-
-         if (e.Button.Caption == MenuNames.DeleteSubMenu)
-         {
-            editor.EditValue = ColumnMappingFormatter.Ignored();
-            _presenter.ClearActiveRow();
-            return;
-         }
-         else //unit information button
-         {
-            _presenter.ChangeUnitsOnActiveRow();
-         }
-      }
-
-      public void BeginUpdate()
-      {
-         uxGrid.BeginUpdate();
-      }
-
-      public void EndUpdate()
-      {
-         uxGrid.EndUpdate();
-      }
-
-      private void createButtons(ButtonEdit editor)
-      {
-         editor.ButtonClick += onEditorButtonClick;
-         var buttonsConfiguration = _presenter.ButtonsConfigurationForActiveRow();
-         if (buttonsConfiguration.ShowButtons)
-         {
-            createDeleteButton(editor);
-            createUnitInformationButton(editor, buttonsConfiguration.UnitActive);
-         }
       }
 
       private void onMouseDown(object sender, MouseEventArgs mouseEventArgs)
@@ -253,44 +218,9 @@ namespace OSPSuite.Presentation.Importer.Views
             view.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
       }
 
-      private void onEditorEditValueChanged(object sender, EventArgs e)
+      private void onValueChanged(ColumnMappingViewModel model, PropertyValueSetEventArgs<string> e)
       {
-         var editor = sender as ImageComboBoxEdit;
-         if (editor == null) return;
-
-         uxGrid.MainView.PostEditor();
-
-         if (editor.EditValue != null && editor.EditValue.ToString() == editor.Properties.NullText)
-            editor.EditValue = Captions.Importer.NoneEditorNullText;
-
-         _presenter.SetDescriptionForActiveRow(editor.EditValue?.ToString());
-         refreshButtons(editor);
-      }
-
-      private static void createDeleteButton(ButtonEdit editor)
-      {
-         var deleteButton = new EditorButton(ButtonPredefines.Delete)
-         {
-            Shortcut = new KeyShortcut(Keys.Control | Keys.D),
-            Caption = MenuNames.DeleteSubMenu,
-            Enabled = true
-         };
-         editor.Properties.Buttons.Add(deleteButton);
-      }
-
-      private static void createUnitInformationButton(ButtonEdit editor, bool visible)
-      {
-         var unitInformationTip = new SuperToolTip();
-         unitInformationTip.Items.Add(Captions.UnitInformationDescription);
-         var unitInformationButton = new EditorButton(ButtonPredefines.Glyph,
-                                                      ApplicationIcons.UnitInformation.ToImage(),
-                                                      unitInformationTip)
-         {
-            Shortcut = new KeyShortcut(Keys.Control | Keys.I),
-            Caption = Captions.UnitInformationCaption,
-            Enabled = visible
-         };
-         editor.Properties.Buttons.Add(unitInformationButton);
+         _presenter.SetDescriptionForRow(model);
       }
 
       private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)
@@ -301,21 +231,6 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onClearMappingClick(object sender, EventArgs eventArgs)
       {
          _presenter.ClearMapping();
-      }
-   }
-
-   static class ColumnMapping
-   {
-      public enum ColumnName
-      {
-         ColumnName,
-         Description,
-         Source
-      }
-
-      public static string GetName(ColumnName name)
-      {
-         return name.ToString();
       }
    }
 }

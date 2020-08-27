@@ -21,13 +21,7 @@ namespace OSPSuite.Presentation.Importer.Services
          switch (parameter)
          {
             case MetaDataFormatParameter mp:
-               if (mappings == null)
-                  return ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
-               return ApplicationIcons.IconIndex(
-                  mappings
-                     .Any(m => (m is MetaDataFormatParameter) && (m as MetaDataFormatParameter).MetaDataId == mp.MetaDataId)
-                     ? ApplicationIcons.MetaData
-                     : ApplicationIcons.MissingMetaData);
+               return ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
             case MappingDataFormatParameter mp:
                if (mappings == null)
                   return ApplicationIcons.IconIndex(ApplicationIcons.UnitInformation);
@@ -46,18 +40,18 @@ namespace OSPSuite.Presentation.Importer.Services
 
       public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<IDataFormatParameter> mappings)
       {
+         var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
          foreach (var col in dataColumns)
          {
             if (!col.IsMandatory) continue;
             if
             (
-               mappings
+               subset
                   .Where
                   (
                      cm =>
-                     cm is MappingDataFormatParameter &&
-                     (cm as MappingDataFormatParameter).MappedColumn.Name.ToString() == col.Name
-                  ).FirstOrDefault() != null
+                     cm.MappedColumn.Name.ToString() == col.Name
+                  ).FirstOrDefault() == null
             )
                return col.Name;
          }

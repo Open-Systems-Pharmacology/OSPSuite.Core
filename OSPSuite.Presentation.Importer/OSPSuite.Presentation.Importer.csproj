@@ -125,6 +125,12 @@
     <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="OSPSuite.DataBinding, Version=3.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OSPSuite.DataBinding.3.0.0.4\lib\net462\OSPSuite.DataBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="OSPSuite.DataBinding.DevExpress, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OSPSuite.DataBinding.DevExpress.4.0.0.1\lib\net462\OSPSuite.DataBinding.DevExpress.dll</HintPath>
+    </Reference>
     <Reference Include="OSPSuite.Utility, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OSPSuite.Utility.4.0.0.4\lib\netstandard2.0\OSPSuite.Utility.dll</HintPath>
     </Reference>
@@ -165,7 +171,9 @@
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="PresentationImporterRegister.cs" />
     <Compile Include="Presenters\ColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\SourceFilePresenter.cs" />
     <Compile Include="Presenters\DataViewingPresenter.cs" />
+    <Compile Include="Presenters\ISourceFilePresenter.cs" />
     <Compile Include="Presenters\IDataViewingPresenter.cs" />
     <Compile Include="Presenters\IColumnMappingPresenter.cs" />
     <Compile Include="Presenters\IImporterPresenter.cs" />
@@ -187,8 +195,6 @@
     <Compile Include="Views\DataViewingControl.Designer.cs">
       <DependentUpon>DataViewingControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialog\EmptyDialog.cs" />
-    <Compile Include="Views\Dialog\IEmptyDialog.cs" />
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
     <Compile Include="Views\IImporterView.cs" />
@@ -198,7 +204,14 @@
     <Compile Include="Views\ImporterView.Designer.cs">
       <DependentUpon>ImporterView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ISourceFileControl.cs" />
     <Compile Include="Views\IUnitsEditorView.cs" />
+    <Compile Include="Views\SourceFileControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\SourceFileControl.Designer.cs">
+      <DependentUpon>SourceFileControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\UnitsEditorView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -249,6 +262,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImporterView.resx">
       <DependentUpon>ImporterView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SourceFileControl.resx">
+      <DependentUpon>SourceFileControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\UnitsEditorView.resx">
       <DependentUpon>UnitsEditorView.cs</DependentUpon>

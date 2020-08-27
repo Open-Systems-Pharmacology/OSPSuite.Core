@@ -3,11 +3,11 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Importer.Views.Dialog;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IEmptyDialog>());
+         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IApplicationController>());
       }
    }
 
@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Because()
       {
          base.Because();
-         sut.SetDataFormat(_basicFormat, "");
+         sut.SetDataFormat(_basicFormat, new List<IDataFormat>() { _basicFormat });
       }
 
       [TestCase]
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          A.CallTo(
             () => _view.SetMappingSource(
-               A<IReadOnlyList<ColumnMappingViewModel>>.That.Matches(l => 
+               A<IList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
                   l.ElementAt(0).Equals(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
                   l.ElementAt(1).Equals(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
@@ -85,13 +85,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Because();
          sut.SetSettings(_metaDataCategories, _columnInfos, dataImporterSettings);
-         sut.SetDataFormat(_basicFormat, "");
+         sut.SetDataFormat(_basicFormat, new List<IDataFormat>() { _basicFormat });
       }
 
       [TestCase]
       public void fills_correct_options()
       {
-         var options = sut.GetAvailableOptionsFor(0);
+         var options = sut.GetAvailableOptionsFor(new ColumnMappingViewModel("Time", "", A.Fake<DataFormatParameter>()));
          options.Count().ShouldBeEqualTo(3);
          options.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
          options.ElementAt(1).Label.ShouldBeEqualTo("<None>");

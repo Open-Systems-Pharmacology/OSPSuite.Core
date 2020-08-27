@@ -1,27 +1,102 @@
-﻿using OSPSuite.Presentation.Importer.Views;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    //internal - because of the accessibility of AbstractCommandCollectorPresenter
 
-   internal class ImporterPresenter : AbstractCommandCollectorPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
+   //THIS DOES NOT NEED TO BE A COMMANDCOLLECTOR PRESENTER -- to be honest not sure even if the abastractPresenter here
+   //is an overkill
+   internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterView _importerView;
-      public IDataViewingPresenter DataViewingPresenter { get; }
-      public IColumnMappingPresenter ColumnMappingPresenter { get; }
+      private IDataViewingPresenter _dataViewingPresenter;
+      private IColumnMappingPresenter _columnMappingPresenter;
+      private ISourceFilePresenter _sourceFilePresenter;
+
+      private IEnumerable<IDataFormat> _availableFormats;
+
+      public event FormatChangedHandler OnFormatChanged = delegate { };
 
 
-      public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter) : base(view)
+      public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
       {
          _importerView = view;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
+         _view.AddSourceFileControl(sourceFilePresenter.View);
 
-         DataViewingPresenter = dataViewingPresenter;
-         ColumnMappingPresenter = columnMappingPresenter;
+         _dataViewingPresenter = dataViewingPresenter;
+         _columnMappingPresenter = columnMappingPresenter;
+         _sourceFilePresenter = sourceFilePresenter;
 
-         AddSubPresenters(DataViewingPresenter, ColumnMappingPresenter);
+         AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
+
+         _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
+         _view.OnTabChanged +=  SelectTab;
+         _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
+         {
+            var format = _availableFormats.First(f => f.Name == formatName); //hmmm...wrong. this probably takes just the first one
+            SetDataFormat(format, _availableFormats);
+            OnFormatChanged(format);
+         });
+
       }
+
+      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e) //not sure we need this method here
+      //instead we could simply use the IDataSourceFile as paramater to the delegate and call directly SetDataSource
+      //should discuss with Abdel which of the 2 is the best solution
+      {
+         SetDataSource(e.FileName);
+      }
+
+      public void InitializeWith(ICommandCollector initializer)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
+      {
+         _availableFormats = availableFormats;
+         _columnMappingPresenter.SetDataFormat (format, _availableFormats);
+         View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
+      }
+
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      {
+         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+      }
+
+      public void SetDataSource(IDataSourceFile dataSourceFile)
+      {
+         _dataViewingPresenter.SetDataSource(dataSourceFile);
+         _sourceFilePresenter.SetFilePath(dataSourceFile.Path);
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
+
+      public void SelectTab(string tabName)
+      {
+         _dataViewingPresenter.SetTabData(tabName);
+      }
+
+      public void AddCommand(ICommand command)
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public IEnumerable<ICommand> All()
+      {
+         throw new System.NotImplementedException();
+      }
+
+      public ICommandCollector CommandCollector { get; }
    }
 }

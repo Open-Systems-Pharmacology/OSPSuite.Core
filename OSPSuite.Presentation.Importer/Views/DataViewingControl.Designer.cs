@@ -28,8 +28,8 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl1 = new DevExpress.XtraGrid.GridControl();
-         this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
+         this.gridControl1 = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridView1 = new OSPSuite.UI.Controls.UxGridView();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -37,17 +37,19 @@
          // 
          // gridControl1
          // 
-         this.gridControl1.Location = new System.Drawing.Point(64, 155);
+         this.gridControl1.Location = new System.Drawing.Point(16, 25);
          this.gridControl1.MainView = this.gridView1;
          this.gridControl1.Name = "gridControl1";
-         this.gridControl1.Size = new System.Drawing.Size(856, 507);
+         this.gridControl1.Size = new System.Drawing.Size(1969, 1304);
          this.gridControl1.TabIndex = 0;
          this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
+         this.gridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
          // 
          // gridView1
          // 
          this.gridView1.GridControl = this.gridControl1;
+         this.gridView1.OptionsView.ShowGroupPanel = false;
          this.gridView1.Name = "gridView1";
          // 
          // DataViewingControl
@@ -57,7 +59,7 @@
          this.Caption = "DataViewingControl";
          this.Controls.Add(this.gridControl1);
          this.Name = "DataViewingControl";
-         this.Size = new System.Drawing.Size(1043, 759);
+         this.Size = new System.Drawing.Size(2023, 1351);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
@@ -67,7 +69,7 @@
 
       #endregion
 
-      private DevExpress.XtraGrid.GridControl gridControl1;
-      private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
+      private UI.Controls.UxGridControl gridControl1;
+      private UI.Controls.UxGridView gridView1;
    }
 }

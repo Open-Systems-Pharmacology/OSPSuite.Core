@@ -44,27 +44,31 @@
          // flowLayoutPanel1
          // 
          this.flowLayoutPanel1.Controls.Add(this.label1);
-         this.flowLayoutPanel1.Controls.Add(this.uxGrid);
-         this.flowLayoutPanel1.Location = new System.Drawing.Point(-1, 0);
+         this.flowLayoutPanel1.Location = new System.Drawing.Point(-2, 0);
+         this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
          this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-         this.flowLayoutPanel1.Size = new System.Drawing.Size(764, 400);
+         this.flowLayoutPanel1.Size = new System.Drawing.Size(1637, 825);
          this.flowLayoutPanel1.TabIndex = 0;
          // 
          // label1
          // 
          this.label1.AutoSize = true;
-         this.label1.Location = new System.Drawing.Point(3, 0);
+         this.label1.Location = new System.Drawing.Point(6, 0);
+         this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
          this.label1.Name = "label1";
-         this.label1.Size = new System.Drawing.Size(65, 17);
+         this.label1.Size = new System.Drawing.Size(132, 34);
          this.label1.TabIndex = 0;
          this.label1.Text = "Mappings";
          // 
          // uxGrid
          // 
-         this.uxGrid.Location = new System.Drawing.Point(3, 20);
+         this.uxGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.uxGrid.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
+         this.uxGrid.Location = new System.Drawing.Point(0, 0);
          this.uxGrid.MainView = this.uxGridView;
+         this.uxGrid.Margin = new System.Windows.Forms.Padding(6);
          this.uxGrid.Name = "uxGrid";
-         this.uxGrid.Size = new System.Drawing.Size(757, 380);
+         this.uxGrid.Size = new System.Drawing.Size(1633, 923);
          this.uxGrid.TabIndex = 1;
          this.uxGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.uxGridView});
@@ -72,7 +76,9 @@
          // uxGridView
          // 
          this.uxGridView.AllowsFiltering = true;
+         this.uxGridView.DetailHeight = 722;
          this.uxGridView.EnableColumnContextMenu = true;
+         this.uxGridView.FixedLineWidth = 4;
          this.uxGridView.GridControl = this.uxGrid;
          this.uxGridView.MultiSelect = true;
          this.uxGridView.Name = "uxGridView";
@@ -85,30 +91,34 @@
          // 
          // comboBoxEdit1
          // 
-         this.comboBoxEdit1.Location = new System.Drawing.Point(56, 409);
+         this.comboBoxEdit1.Location = new System.Drawing.Point(120, 844);
+         this.comboBoxEdit1.Margin = new System.Windows.Forms.Padding(6);
          this.comboBoxEdit1.Name = "comboBoxEdit1";
          this.comboBoxEdit1.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.comboBoxEdit1.Size = new System.Drawing.Size(703, 22);
+         this.comboBoxEdit1.Size = new System.Drawing.Size(1506, 50);
          this.comboBoxEdit1.TabIndex = 1;
          // 
          // labelControl1
          // 
-         this.labelControl1.Location = new System.Drawing.Point(4, 412);
+         this.labelControl1.Location = new System.Drawing.Point(9, 850);
+         this.labelControl1.Margin = new System.Windows.Forms.Padding(6);
          this.labelControl1.Name = "labelControl1";
-         this.labelControl1.Size = new System.Drawing.Size(41, 16);
+         this.labelControl1.Size = new System.Drawing.Size(85, 33);
          this.labelControl1.TabIndex = 2;
          this.labelControl1.Text = "Format";
          // 
          // ColumnMappingControl
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.Controls.Add(this.uxGrid);
          this.Controls.Add(this.labelControl1);
          this.Controls.Add(this.comboBoxEdit1);
          this.Controls.Add(this.flowLayoutPanel1);
+         this.Margin = new System.Windows.Forms.Padding(17, 16, 17, 16);
          this.Name = "ColumnMappingControl";
-         this.Size = new System.Drawing.Size(762, 433);
+         this.Size = new System.Drawing.Size(1633, 923);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          this.flowLayoutPanel1.ResumeLayout(false);
          this.flowLayoutPanel1.PerformLayout();

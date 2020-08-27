@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using DevExpress.Charts.Native;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -26,10 +25,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
 
       /// <summary>
-      ///    This method checks whether all conditions are fullfilled.
+      ///    This method checks whether all conditions are fulfilled.
       /// </summary>
       /// <param name="conditions">Dictionary of column name, value pairs.</param>
-      /// <returns>True, if all conditions are fullfilled.</returns>
+      /// <returns>True, if all conditions are fulfilled.</returns>
       public bool CheckConditions(Dictionary<string, string> conditions)
       {
          var valid = false;
@@ -44,7 +43,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return valid;
       }
 
-      //make this public and call every time SetParameters returns true OR rename SetParameters to CheckAndLoadFile
+      //make this public and call every time setParameters returns true OR rename SetParameters to CheckAndLoadFile
       private void setParameters(IUnformattedData data)
       {
          var keys = data.GetHeaders().ToList();
@@ -65,6 +64,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys)
       {
+         if (keys == null) throw new ArgumentNullException(nameof(keys));
          foreach (var header in Enum.GetNames(typeof(Column.ColumnNames)))
          {
             var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
@@ -72,14 +72,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                keys.Remove(headerKey);
                var units = extractUnits(headerKey);
+               var availableUnits = units.ToList();
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
                   new Column()
                   {
                      Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header),
-                     Unit = units.Count() > 0 ? units.ElementAt(0) : "",
-                     AvailableUnits = units
+                     Unit = availableUnits.Any() ? availableUnits.ElementAt(0) : "",
+                     AvailableUnits = availableUnits
                   })
                );
             }
@@ -92,39 +93,41 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data)
       {
+         if (keys == null) throw new ArgumentNullException(nameof(keys));
+         if (missingKeys == null) throw new ArgumentNullException(nameof(missingKeys));
+         if (data == null) throw new ArgumentNullException(nameof(data));
          foreach (var header in missingKeys)
          {
             var headerKey = keys.FirstOrDefault
                (h => 
                   data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric && 
                   Parameters
-                     .Where(p => p is MappingDataFormatParameter)
-                     .Select(p => p as MappingDataFormatParameter)
+                     .OfType<MappingDataFormatParameter>()
                      .All(m => m.ColumnName != h)
                );
-            if (headerKey != null)
-            {
-               keys.Remove(headerKey);
-               var units = extractUnits(headerKey);
-               Parameters.Add
+            if (headerKey == null) continue;
+            keys.Remove(headerKey);
+            var units = extractUnits(headerKey);
+            var availableUnits = units.ToList();
+            Parameters.Add
+            (
+               new MappingDataFormatParameter
                (
-                  new MappingDataFormatParameter
-                  (
-                     headerKey, 
-                     new Column() 
-                     { 
-                        Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), 
-                        Unit = units.Count() > 0 ? units.ElementAt(0) : "",
-                        AvailableUnits = units
-                     }
-                  )
-               );
-            }
+                  headerKey, 
+                  new Column() 
+                  { 
+                     Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), 
+                     Unit = availableUnits.Any() ? availableUnits.ElementAt(0) : "",
+                     AvailableUnits = availableUnits
+                  }
+               )
+            );
          }
       }
 
       private void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
+         if (keys == null) throw new ArgumentNullException(nameof(keys));
          var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
          foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count == 1))
          {
@@ -156,7 +159,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
 
       /// <summary>
-      /// Populates the datasets from the data recursively.
+      /// Populates the dataSets from the data recursively.
       /// </summary>
       /// <param name="data">The unformatted source data</param>
       /// <param name="parameters">Parameters of the format for grouping by</param>
@@ -164,15 +167,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       /// e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index 1,
       /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
       /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
-      /// <param name="dataSets">List to store the datasets</param>
+      /// <param name="dataSets">List to store the dataSets</param>
       private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets)
       {
-         if (indexes.Count() < parameters.Count()) //Still traversing the parameters
+         var valueTuples = parameters.ToList();
+         if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
          {
-            for (var i = 0; i < parameters.ElementAt(indexes.Count()).ExistingValues.Count(); i++) //For every existing value on the current parameter
+            for (var i = 0; i < valueTuples.ElementAt(indexes.Count()).ExistingValues.Count(); i++) //For every existing value on the current parameter
             {
                indexes.Push(i);
-               buildDataSetsRecursively(data, parameters, indexes, dataSets);
+               buildDataSetsRecursively(data, valueTuples, indexes, dataSets);
                indexes.Pop();
             }
          }
@@ -185,7 +189,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                row =>
                {
                   var index = 0;
-                  return parameters.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
+                  return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
                }
             );
             dataSets.Add(parseMappings(rawDataSet, data));
@@ -198,20 +202,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          //Add time mapping
          var mappingParameters = 
             Parameters
-               .Where(p => p is MappingDataFormatParameter)
-               .Select(p => p as MappingDataFormatParameter)
+               .OfType<MappingDataFormatParameter>()
                .ToList();
          var timeParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Time);
-         dictionary.Add(timeParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(timeParameter.ColumnName).Index))).ToList());
+         var dataSet = rawDataSet.ToList();
+         dictionary.Add(timeParameter.MappedColumn, dataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(timeParameter.ColumnName).Index))).ToList());
 
          //Add measurement mapping
          var measurementParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Concentration);
-         dictionary.Add(measurementParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(measurementParameter.ColumnName).Index))).ToList());
+         dictionary.Add(measurementParameter.MappedColumn, dataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(measurementParameter.ColumnName).Index))).ToList());
 
          //Add error mapping
          var errorParameter = mappingParameters.First(p => p.MappedColumn.Name == Column.ColumnNames.Error);
          if (errorParameter != null)
-            dictionary.Add(errorParameter.MappedColumn, rawDataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(errorParameter.ColumnName).Index))).ToList());
+            dictionary.Add(errorParameter.MappedColumn, dataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(errorParameter.ColumnName).Index))).ToList());
 
          return dictionary;
       }
