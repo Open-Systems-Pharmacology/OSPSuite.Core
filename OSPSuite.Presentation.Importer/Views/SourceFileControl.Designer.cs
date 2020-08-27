@@ -30,7 +30,9 @@
       {
          this.fileLabelControl = new DevExpress.XtraEditors.LabelControl();
          this.openSourceFileButton = new DevExpress.XtraEditors.SimpleButton();
+         this.sourceFileTextEdit = new DevExpress.XtraEditors.TextEdit();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFileTextEdit.Properties)).BeginInit();
          this.SuspendLayout();
          // 
          // fileLabelControl
@@ -49,15 +51,28 @@
          this.openSourceFileButton.TabIndex = 1;
          this.openSourceFileButton.Text = "...";
          // 
+         // sourceFileTextEdit
+         // 
+         this.sourceFileTextEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left));
+         this.sourceFileTextEdit.Location = new System.Drawing.Point(208, 22);
+         this.sourceFileTextEdit.Margin = new System.Windows.Forms.Padding(8);
+         this.sourceFileTextEdit.Properties.ReadOnly = true;
+         this.sourceFileTextEdit.Name = "sourceFileTextEdit";
+         this.sourceFileTextEdit.Size = new System.Drawing.Size(2229, 50);
+         this.sourceFileTextEdit.TabIndex = 2;
+
+         // 
          // SourceFileControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.Controls.Add(this.sourceFileTextEdit);
          this.Controls.Add(this.openSourceFileButton);
          this.Controls.Add(this.fileLabelControl);
          this.Name = "SourceFileControl";
          this.Size = new System.Drawing.Size(2589, 105);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFileTextEdit.Properties)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -67,5 +82,6 @@
 
       private DevExpress.XtraEditors.LabelControl fileLabelControl;
       private DevExpress.XtraEditors.SimpleButton openSourceFileButton;
+      private DevExpress.XtraEditors.TextEdit sourceFileTextEdit;
    }
 }

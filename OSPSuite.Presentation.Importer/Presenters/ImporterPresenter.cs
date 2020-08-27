@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
@@ -38,14 +39,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
 
+         _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
          _view.OnTabChanged +=  SelectTab;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName);
+            var format = _availableFormats.First(f => f.Name == formatName); //hmmm...wrong. this probably takes just the first one
             SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
 
+      }
+
+      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e) //not sure we need this method here
+      //instead we could simply use the IDataSourceFile as paramater to the delegate and call directly SetDataSource
+      //should discuss with Abdel which of the 2 is the best solution
+      {
+         SetDataSource(e.FileName);
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -68,6 +77,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetDataSource(IDataSourceFile dataSourceFile)
       {
          _dataViewingPresenter.SetDataSource(dataSourceFile);
+         _sourceFilePresenter.SetFilePath(dataSourceFile.Path);
+         View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
 
