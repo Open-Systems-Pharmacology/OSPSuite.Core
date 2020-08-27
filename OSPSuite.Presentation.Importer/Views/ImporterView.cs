@@ -18,8 +18,6 @@ namespace OSPSuite.Presentation.Importer.Views
    {
       private IImporterPresenter _presenter;
 
-      private readonly GridViewBinder<DataTable> _gridViewBinder;
-
       public ImporterView()
       {
          InitializeComponent();
@@ -30,12 +28,12 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _presenter = presenter;
          TabControl.SelectedPageChanged += onSelectedPageChanged;
-         //_gridViewBinder.AutoBind()
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         OnTabChanged?.Invoke(TabControl.SelectedTabPage.Text);
+         if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
+            OnTabChanged?.Invoke(TabControl.SelectedTabPage.Text);
       }
 
       public event TabChangedHandler OnTabChanged;
@@ -43,7 +41,6 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
          columnMappingPanelControl.FillWith(columnMappingControl);
-         //columnMappingPanelControl.FillWith(new GridControl()); - OK, this is how we will do this
       }
 
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
@@ -53,7 +50,6 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
-         //dataViewingPanelControl.FillWith(dataViewingControl);
          TabControl.FillWith(dataViewingControl);
       }
 
@@ -85,7 +81,12 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
 
-      //public XtraTabControl TabControl { get; private set; } //not sure we should keep this public
-
+      public void ClearTabs()
+      {
+         for (var i= TabControl.TabPages.Count -1; i >= 0; i--)
+         {
+            TabControl.TabPages.RemoveAt(i);
+         }
+      }
    }
 }
