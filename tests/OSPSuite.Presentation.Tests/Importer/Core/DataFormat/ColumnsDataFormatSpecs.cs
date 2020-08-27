@@ -16,13 +16,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _headers = headers;
       }
    }
-   public abstract class ConcernforColumnsDataFormat : ContextSpecification<ColumnsDataFormat>
+   public abstract class ConcernforColumnsDataFormat : ContextSpecification<DataFormat_TMetaData_C>
    {
       protected IUnformattedData _basicFormat;
 
       protected override void Context()
       {
-         sut = new ColumnsDataFormat();
+         sut = new DataFormat_TMetaData_C();
          _basicFormat = new TestUnformattedData
          (
             new Cache<string, ColumnDescription>()
