@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
-      protected DataImporterSettings dataImporterSettings;
+      protected DataImporterSettings _dataImporterSettings;
 
       protected override void Context()
       {
@@ -78,13 +78,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" }
          };
-         dataImporterSettings = A.Fake<DataImporterSettings>();
+         _dataImporterSettings = A.Fake<DataImporterSettings>();
       }
 
       protected override void Because()
       {
          base.Because();
-         sut.SetSettings(_metaDataCategories, _columnInfos, dataImporterSettings);
+         sut.SetSettings(_metaDataCategories, _columnInfos, _dataImporterSettings);
          sut.SetDataFormat(_basicFormat, new List<IDataFormat>() { _basicFormat });
       }
 
@@ -92,10 +92,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void fills_correct_options()
       {
          var options = sut.GetAvailableOptionsFor(new ColumnMappingViewModel("Time", "", A.Fake<DataFormatParameter>()));
-         options.Count().ShouldBeEqualTo(3);
-         options.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
-         options.ElementAt(1).Label.ShouldBeEqualTo("<None>");
-         options.ElementAt(2).Label.ShouldBeEqualTo("Group by");
+         var columnMappingOptions = options.ToList();
+         columnMappingOptions.Count().ShouldBeEqualTo(3);
+         columnMappingOptions.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
+         columnMappingOptions.ElementAt(1).Label.ShouldBeEqualTo("<None>");
+         columnMappingOptions.ElementAt(2).Label.ShouldBeEqualTo("Group by");
       }
    }
 }

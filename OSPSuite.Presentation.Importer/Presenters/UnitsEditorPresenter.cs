@@ -1,8 +1,6 @@
 ﻿using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Core.Importer;
-using System.Security.Cryptography.X509Certificates;
 using OSPSuite.Core.Domain.UnitSystem;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +78,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units), SelectedUnit);
       }
 
-      private IDimension FindDimension()
+      private IDimension findDimension()
       {
          foreach (var dimension in _dimensions)
          {
@@ -89,17 +87,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          return _dimensions.First();
       }
 
-      private IDimension selectedDimension
-      {
-         get
-         {
-            if (useDimensionSelector())
-            {
-               return FindDimension();
-            }
-            return _dimensions.ElementAt(0);
-         }
-      }
+      //TODO Resharper - do not really understand the problem here
+      private IDimension selectedDimension => useDimensionSelector() ? findDimension() : _dimensions.ElementAt(0);
 
       public event OKHandler OnOK = delegate { };
    }

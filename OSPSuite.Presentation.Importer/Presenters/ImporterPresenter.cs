@@ -16,10 +16,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
    //is an overkill
    internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
-      private readonly IImporterView _importerView;
-      private IDataViewingPresenter _dataViewingPresenter;
-      private IColumnMappingPresenter _columnMappingPresenter;
-      private ISourceFilePresenter _sourceFilePresenter;
+      private readonly IDataViewingPresenter _dataViewingPresenter;
+      private readonly IColumnMappingPresenter _columnMappingPresenter;
+      private readonly ISourceFilePresenter _sourceFilePresenter;
 
       private IEnumerable<IDataFormat> _availableFormats;
 
@@ -28,7 +27,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
       {
-         _importerView = view;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
@@ -59,14 +57,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void InitializeWith(ICommandCollector initializer)
       {
-         throw new System.NotImplementedException();
+         throw new NotImplementedException();
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
-         _availableFormats = availableFormats;
+         var dataFormats = availableFormats.ToList();
+         _availableFormats = dataFormats;
          _columnMappingPresenter.SetDataFormat (format, _availableFormats);
-         View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
+         View.SetFormats(dataFormats.Select(f => f.Name), format.Name);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)

@@ -4,7 +4,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Services;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
@@ -37,6 +36,7 @@ namespace OSPSuite.Presentation.Importer.Services
 
       public IDataSource ImportFromFile(IDataSourceFile dataSourceFile)
       {
+         //TODO Resharper
          return new DataSource() {DataSets = (IList<IDataSet>) dataSourceFile.DataSheets.Select(s => new DataSet() {Data = dataSourceFile.Format.Parse(s.Value.RawData)}).ToList()};
       }
 

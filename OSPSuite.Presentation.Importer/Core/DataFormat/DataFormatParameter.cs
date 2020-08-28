@@ -11,7 +11,7 @@
 
       public override string ToString()
       {
-         return Data?.ToString();
+         return Data?.ToString() ?? string.Empty;
       }
 
       public override bool Equals(object obj)
@@ -22,7 +22,7 @@
 
       public override int GetHashCode()
       {
-         return base.GetHashCode();
+         return base.GetHashCode(); //TODO Resharper
       }
    }
 
@@ -64,13 +64,7 @@
          Configuration = new ParameterConfiguration(metaDataId);
       }
 
-      public string MetaDataId
-      {
-         get
-         {
-            return Configuration.Data as string;
-         }
-      }
+      public string MetaDataId => Configuration.Data as string;
    }
 
    public class GroupByDataFormatParameter : DataFormatParameter
@@ -88,12 +82,6 @@
          Configuration = new ParameterConfiguration(mappedColumn);
       }
 
-      public Column MappedColumn 
-      { 
-         get
-         {
-            return Configuration.Data as Column;
-         }
-      }
+      public Column MappedColumn => Configuration.Data as Column;
    }
 }

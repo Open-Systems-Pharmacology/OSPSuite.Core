@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using DevExpress.XtraRichEdit.Layout;
 using OSPSuite.Assets;
-using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
@@ -21,10 +17,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public string Description 
       {
          get => _description;
-         set
-         {
-            SetProperty(ref _description, value);
-         }
+         set => SetProperty(ref _description, value);
       }
       public DataFormatParameter Source { get; set; }
       public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source)
@@ -36,19 +29,19 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public override bool Equals(object obj)
       {
-         var other = obj as ColumnMappingViewModel;
+         var other = obj as ColumnMappingViewModel; //TODO Resharper
          return ColumnName == other.ColumnName && Description == other.Description && Source.Equals(other.Source);
       }
 
       public override int GetHashCode()
       {
-         return base.GetHashCode();
+         return base.GetHashCode(); //TODO Resharper
       }
    }
 
    public static class ColumnMappingFormatter
    {
-      static private readonly string _ignored = $"{ColumnMappingOption.DescriptionType.Ignored}";
+      private static readonly string _ignored = $"{ColumnMappingOption.DescriptionType.Ignored}";
       public static string Ignored()
       {
          return _ignored;

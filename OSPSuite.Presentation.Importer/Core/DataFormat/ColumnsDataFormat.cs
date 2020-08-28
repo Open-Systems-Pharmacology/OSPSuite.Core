@@ -93,9 +93,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data)
       {
-         if (keys == null) throw new ArgumentNullException(nameof(keys));
-         if (missingKeys == null) throw new ArgumentNullException(nameof(missingKeys));
-         if (data == null) throw new ArgumentNullException(nameof(data));
          foreach (var header in missingKeys)
          {
             var headerKey = keys.FirstOrDefault

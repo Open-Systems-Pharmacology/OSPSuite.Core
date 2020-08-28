@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Importer.Core
       bool AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
       DataTable AsDataTable();
-      UnformattedDataRow getDataRow(int index);
+      UnformattedDataRow GetDataRow(int index);
    }
 
    public class UnformattedData : IUnformattedData
@@ -31,13 +31,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
       private IEnumerable<string> getColumn(int columnIndex)
       {
-         var resultList = new List<string>();
-
-         //change this
-         for (var i = 0; i < _rawDataTable.Count; i++)     //should have at least one row
-            resultList.Add(_rawDataTable[i][columnIndex]); //make sure the 2 indexes are correctly positioned here
-
-         return resultList;
+         return _rawDataTable.Select(column => column[columnIndex]).ToList();
       }
 
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
@@ -59,22 +53,17 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          var rowList = row.ToList();
          //the not empty row part we could check explicitly
-         if (_headers.Count == rowList.Count) //I suppose row.Count != 0, so we do not add Data to a DataSheet without column names
+         if (_headers.Count != rowList.Count) return false;
+         _rawDataTable.Add(rowList);
+
+         foreach (var header in _headers)
          {
-            _rawDataTable.Add(rowList);
-
-            foreach (var header in _headers)
-            {
-               if (header.Level == ColumnDescription.MeasurementLevel.Discrete)
-               {
-                  if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
-                     header.ExistingValues.Add(rowList.ElementAt(header.Index));
-               }
-            }
-            return true;
+            if (header.Level != ColumnDescription.MeasurementLevel.Discrete) continue;
+            if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
+               header.ExistingValues.Add(rowList.ElementAt(header.Index));
          }
+         return true;
 
-         return false;
       }
 
 
@@ -100,7 +89,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
          foreach (var itemList in _rawDataTable)
          {
-            resultTable.Rows.Add(itemList.ToArray());
+            resultTable.Rows.Add(itemList.ToArray()); //TODO Resharper
          }
 
          return resultTable;
@@ -121,7 +110,7 @@ namespace OSPSuite.Presentation.Importer.Core
          return _headers[columnName];
       }
 
-      public UnformattedDataRow getDataRow(int index)
+      public UnformattedDataRow GetDataRow(int index)
       {
          return new UnformattedDataRow(_rawDataTable[index], _headers);
       }

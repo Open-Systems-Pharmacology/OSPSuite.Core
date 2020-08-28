@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public abstract class DataSourceFile : IDataSourceFile
    {
-      protected readonly IImportLogger _logger; //not sure this is the correct logger implementetion
+      protected readonly IImportLogger _logger; //not sure this is the correct logger implementetion - could be we need to write our own
 
       public IDataFormat Format { get; set; }
 

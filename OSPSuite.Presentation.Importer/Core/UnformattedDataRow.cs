@@ -10,8 +10,8 @@ namespace OSPSuite.Presentation.Importer.Core
 {
    public class UnformattedDataRow :IEnumerable
    {
-      private IEnumerable<string> _row;
-      private Cache<string, ColumnDescription> _headers;
+      private readonly IEnumerable<string> _row;
+      private readonly Cache<string, ColumnDescription> _headers;
       public UnformattedDataRow(IEnumerable<string> row, Cache<string, ColumnDescription> headers)
       {
          _row = row;
