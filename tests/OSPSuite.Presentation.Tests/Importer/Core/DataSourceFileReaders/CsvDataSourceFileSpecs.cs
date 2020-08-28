@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public abstract class ConcernForCsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
    {
       protected string _csvFilePath;
-      private string _csvFile = "sample1.csv";
+      private readonly string _csvFile = "sample1.csv";
 
       protected override void Context()
       {
@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.getDataRow(0).Count().ShouldBeEqualTo(5);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetDataRow(0).Count().ShouldBeEqualTo(5); 
 
          //actually the problem here is the way we have written the test. this should be changed
          var headers = sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders();

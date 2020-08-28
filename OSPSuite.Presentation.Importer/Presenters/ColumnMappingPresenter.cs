@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private List<ColumnMappingViewModel> _mappings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private DataImporterSettings _dataImporterSettings;
+      private DataImporterSettings _dataImporterSettings; //TODO Resharper - if not needed let's delete
       private readonly IImporterTask _importerTask;
       private IEnumerable<IDataFormat> _availableFormats;
       private readonly IApplicationController _applicationController; 
@@ -54,18 +54,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
          _format = format;
-         _availableFormats = availableFormats;
-         _mappings = format.Parameters.Select(p =>
-         {
-            return new ColumnMappingViewModel
-            (
-               p.ColumnName,
-               ColumnMappingFormatter.Stringify(p),
-               p
-            );
-         }).ToList();
+         var dataFormats = availableFormats.ToList();
+         _availableFormats = dataFormats; //TODO Resharper - WHY IS THIS A PROBLEM? SHOULD WE DO IT A LIST???
+         _mappings = format.Parameters.Select(p => new ColumnMappingViewModel
+         (
+            p.ColumnName,
+            ColumnMappingFormatter.Stringify(p),
+            p
+         )).ToList();
          View.SetMappingSource(_mappings);
-         View.SetFormats(availableFormats.Select(f => f.Name), format.Name);
+         View.SetFormats(dataFormats.Select(f => f.Name), format.Name);
          ValidateMapping();
       }
 
@@ -84,7 +82,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          using (var unitsEditorPresenter = _applicationController.Start<IUnitsEditorPresenter>())
          {
             var activeRow = modelByColumnName(model.ColumnName);
-            var column = (activeRow.Source as MappingDataFormatParameter).MappedColumn;
+            var column = ((MappingDataFormatParameter) activeRow.Source).MappedColumn;
             unitsEditorPresenter.ShowFor
             (
                column,
@@ -99,8 +97,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
             }
-
-            ;
          }
       }
 

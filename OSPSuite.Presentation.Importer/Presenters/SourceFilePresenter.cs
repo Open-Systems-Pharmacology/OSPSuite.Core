@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.Presentation.Importer.Services;
+﻿using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 

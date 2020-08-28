@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -61,7 +62,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read_first_sheet()
       {
-         sut.DataSheets.ElementAt(0).Value.RawData.getDataRow(0).Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).Value.RawData.GetDataRow(0).Count().ShouldBeEqualTo(3);
          sut.DataSheets.ElementAt(0).Value.RawData.GetColumn("header1").Count().ShouldBeEqualTo(3);
 
          var headers = sut.DataSheets.ElementAt(0).Value.RawData.GetHeaders();
@@ -75,7 +76,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read_second_sheet()
       {
-         sut.DataSheets.ElementAt(1).Value.RawData.getDataRow(0).Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).Value.RawData.GetDataRow(0).Count().ShouldBeEqualTo(3);
          sut.DataSheets.ElementAt(1).Value.RawData.GetColumn("sheet2_header2").Count().ShouldBeEqualTo(2);
 
          var headers = sut.DataSheets.ElementAt(1).Value.RawData.GetHeaders();
@@ -113,7 +114,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void double_read_with_correct_precision()
       {
-         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString() });
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
       }
 
 

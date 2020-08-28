@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
                for (var i = 0; i < headers.Length; i++)
                   dataSheet.RawData.AddColumn(headers[i], i);
-               string[] currentRow = new string[csv.FieldCount];
+               var currentRow = new string[csv.FieldCount];
 
                while (csv.ReadNextRecord())
                {
@@ -68,7 +68,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             if (double.TryParse(item, System.Globalization.NumberStyles.Float,
                   System.Globalization.CultureInfo.InvariantCulture, out var doubleValueInvariant))
                resultList.Add(ColumnDescription.MeasurementLevel.NUMERIC);
-            else */if (Double.TryParse(item, out var doubleValue))
+            else */if (Double.TryParse(item, out var doubleValue)) //TODO Resharper
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.Discrete);

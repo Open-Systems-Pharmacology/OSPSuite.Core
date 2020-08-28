@@ -7,7 +7,6 @@ using OSPSuite.Presentation.Importer.Presenters;
 using DevExpress.XtraEditors;
 using OSPSuite.UI.Importer;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
 using DevExpress.Utils;
 using DevExpress.XtraLayout;
@@ -19,8 +18,8 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
    {
-      private ImageComboBoxEdit _unitComboBox;
-      private ImageComboBoxEdit _dimensionComboBox;
+      private readonly ImageComboBoxEdit _unitComboBox;
+      private readonly ImageComboBoxEdit _dimensionComboBox;
       private InputParametersControl _inputParametersControl;
       
       public UnitsEditorView()
@@ -30,6 +29,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
          _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
          _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
+      }
+
+      public sealed override string Text
+      {
+         get => base.Text;
+         set => base.Text = value;
       }
 
       public void SetParams(bool useDimensionSelector)
@@ -94,20 +99,21 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void showInputParametersControl()
       {
-         if (_inputParametersControl != null) _inputParametersControl.Dispose();
+         _inputParametersControl?.Dispose();
          _inputParametersControl = null;
       }
 
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)
       {
-         if (dimensions.Count() == 0)
+         var dimensionList = dimensions as IDimension[] ?? dimensions.ToArray();
+         if (!dimensionList.Any())
          {
             _dimensionComboBox.Visible = false;
             return;
          }
          _dimensionComboBox.Visible = true;
          _dimensionComboBox.Properties.Items.Clear();
-         foreach (var dimension in dimensions)
+         foreach (var dimension in dimensionList)
          {
             var newItem = new ImageComboBoxItem
             {
@@ -136,9 +142,9 @@ namespace OSPSuite.Presentation.Importer.Views
          });
       }
 
-      private bool isEnabled()
+      private bool isEnabled() //TODO Resharper
       {
-         return (_dimensionComboBox == null || _dimensionComboBox.Properties.Items.Count() == 0 || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null && (_inputParametersControl == null || _inputParametersControl.AreAllValuesEntered);
+         return (_dimensionComboBox == null || !_dimensionComboBox.Properties.Items.Any() || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null && (_inputParametersControl == null || _inputParametersControl.AreAllValuesEntered);
       }
 
       public event OKHandler OnOK;
@@ -149,7 +155,7 @@ namespace OSPSuite.Presentation.Importer.Views
          Parent.Hide();
       }
 
-      private void onCopyClick()
+      private void onCopyClick() //TODO Resharper
       {
          onOkClick();
 
@@ -187,7 +193,7 @@ namespace OSPSuite.Presentation.Importer.Views
       /// <summary>
       ///    Event raised when user clicks on copy button.
       /// </summary>
-      public event CopyUnitInfoHandler OnCopyUnitInfo = delegate { };
+      public event CopyUnitInfoHandler OnCopyUnitInfo = delegate { }; //TODO Resharper
 
       public void AttachPresenter(IUnitsEditorPresenter presenter)
       {

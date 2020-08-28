@@ -108,9 +108,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private RepositoryItem removeRepository(ColumnMappingViewModel model)
       {
-         if (model.Source is IgnoredDataFormatParameter)
-            return _disabledRemoveButtonRepository;
-         return _removeButtonRepository;
+         return model.Source is IgnoredDataFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
       }
 
       private RepositoryItem unitRepository(ColumnMappingViewModel model)
@@ -197,8 +195,7 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onMouseDown(object sender, MouseEventArgs mouseEventArgs)
       {
          if (mouseEventArgs.Button != MouseButtons.Right) return;
-         var mv = sender as GridView;
-         if (mv == null) return;
+         if (!(sender is GridView mv)) return;
 
          var menu = new GridViewColumnMenu(mv);
          menu.Items.Clear();

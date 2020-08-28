@@ -3,20 +3,15 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
-using System.Data;
-using DevExpress.XtraGrid;
 using DevExpress.XtraTab;
-using NPOI.OpenXmlFormats.Dml.Diagram;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Presentation.Importer.Services;
-using OSPSuite.Presentation.Views;
-using OSPSuite.Utility.Container;
+
 
 namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class ImporterView : BaseUserControl , IImporterView
    {
-      private IImporterPresenter _presenter;
+      private IImporterPresenter _presenter; //TODO - have to keep in mind if I need this at all
+                                             //the architecture of these classes should actually be restructured
 
       public ImporterView()
       {

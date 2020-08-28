@@ -75,7 +75,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          for (var i = _columnOffset; i < currentExcelRow.LastCellNum; i++)
          {
-            ICell cell = currentExcelRow.GetCell(i);
+            var cell = currentExcelRow.GetCell(i);
 
             CurrentRow.Add(cell == null ? "" : cell.ToString());
          }
@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          for (var i = _columnOffset; i < currentExcelRow.LastCellNum; i++)
          {
-            ICell cell = currentExcelRow.GetCell(i);
+            var cell = currentExcelRow.GetCell(i);
 
             if (cell == null)
                resultList.Add(ColumnDescription.MeasurementLevel.NotSet);
@@ -126,7 +126,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          for (var i = 0; i < currentExcelRow.LastCellNum; i++)
          {
-            ICell cell = currentExcelRow.GetCell(i);
+            var cell = currentExcelRow.GetCell(i);
 
             if (cell == null)
                tableStart++;

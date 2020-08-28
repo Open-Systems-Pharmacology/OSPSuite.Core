@@ -25,11 +25,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
             var reader = new ExcelReader(path);
 
+            IDataSheet dataSheet = new DataSheet();
             while (reader.MoveToNextSheet())
             {
                var sheetName = reader.CurrentSheet.SheetName;
                var headers = new List<string>();
-               IDataSheet dataSheet = new DataSheet();
                dataSheet.RawData = new UnformattedData();
 
                if (reader.MoveToNextRow())
