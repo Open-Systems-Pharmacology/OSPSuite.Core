@@ -19,17 +19,6 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          return $"{Name} [{Unit}]";
       }
-
-      public override bool Equals(object obj)
-      {
-         var other = obj as Column;
-         return other.Name == Name && other.Unit == Unit; //TODO Resharper
-      }
-
-      public override int GetHashCode()
-      {
-         return base.GetHashCode(); //TODO Resharper
-      }
    }
 
    /// <summary>

@@ -24,25 +24,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return true;
       }
 
-      /// <summary>
-      ///    This method checks whether all conditions are fulfilled.
-      /// </summary>
-      /// <param name="conditions">Dictionary of column name, value pairs.</param>
-      /// <returns>True, if all conditions are fulfilled.</returns>
-      public bool CheckConditions(Dictionary<string, string> conditions)
-      {
-         var valid = false;
-         foreach (var condition in conditions)
-         {
-            var parameter = Parameters.FirstOrDefault(p => p.ColumnName == condition.Key);
-            if (parameter == null)
-               throw new Exception($"Unknown column {condition.Key}.");
-
-            valid = (parameter.Configuration.Data.ToString() == condition.Value);
-         }
-         return valid;
-      }
-
       //make this public and call every time setParameters returns true OR rename SetParameters to CheckAndLoadFile
       private void setParameters(IUnformattedData data)
       {
