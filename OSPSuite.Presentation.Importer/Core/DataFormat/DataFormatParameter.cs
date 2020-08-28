@@ -13,75 +13,47 @@
       {
          return Data?.ToString() ?? string.Empty;
       }
-
-      public override bool Equals(object obj)
-      {
-         var other = obj as ParameterConfiguration;
-         return other.Data.Equals(Data);
-      }
-
-      public override int GetHashCode()
-      {
-         return base.GetHashCode(); //TODO Resharper
-      }
    }
 
    public abstract class DataFormatParameter
    {
       public string ColumnName { get; private set; }
 
-      public ParameterConfiguration Configuration { get; set; }
-
       protected DataFormatParameter(string columnName)
       {
          ColumnName = columnName;
-      }
-
-      public override bool Equals(object obj)
-      {
-         var other = obj as DataFormatParameter;
-         return other.ColumnName == ColumnName && ((Configuration == null && other.Configuration == null) || other.Configuration.Equals(Configuration));
-      }
-
-      public override int GetHashCode()
-      {
-         return base.GetHashCode();
       }
    }
 
    public class IgnoredDataFormatParameter : DataFormatParameter
    {
       public IgnoredDataFormatParameter(string columnName) : base(columnName)
-      {
-         Configuration = null;
-      }
+      { }
    }
 
    public class MetaDataFormatParameter : DataFormatParameter
    {
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(metaDataId);
+         MetaDataId = metaDataId;
       }
 
-      public string MetaDataId => Configuration.Data as string;
+      public string MetaDataId { get; private set; }
    }
 
    public class GroupByDataFormatParameter : DataFormatParameter
    {
       public GroupByDataFormatParameter(string columnName) : base(columnName)
-      {
-         Configuration = null;
-      }
+      { }
    }
 
    public class MappingDataFormatParameter : DataFormatParameter
    {
       public MappingDataFormatParameter(string columnName, Column mappedColumn) : base(columnName)
       {
-         Configuration = new ParameterConfiguration(mappedColumn);
+         MappedColumn = mappedColumn;
       }
 
-      public Column MappedColumn => Configuration.Data as Column;
+      public Column MappedColumn { get; private set; }
    }
 }

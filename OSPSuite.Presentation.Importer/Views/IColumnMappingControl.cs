@@ -26,17 +26,6 @@ namespace OSPSuite.Presentation.Importer.Views
          Description = description;
          Source = source;
       }
-
-      public override bool Equals(object obj)
-      {
-         var other = obj as ColumnMappingViewModel; //TODO Resharper
-         return ColumnName == other.ColumnName && Description == other.Description && Source.Equals(other.Source);
-      }
-
-      public override int GetHashCode()
-      {
-         return base.GetHashCode(); //TODO Resharper
-      }
    }
 
    public static class ColumnMappingFormatter

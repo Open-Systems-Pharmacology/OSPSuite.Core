@@ -55,11 +55,41 @@ namespace OSPSuite.Presentation.Importer.Presenters
             () => _view.SetMappingSource(
                A<IList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
-                  l.ElementAt(0).Equals(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
-                  l.ElementAt(1).Equals(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
-                  l.ElementAt(2).Equals(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"))) &&
-                  l.ElementAt(3).Equals(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"))))
+
+                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
+                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
+                  l.ElementAt(2).IsEquivalentTo(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"))) &&
+                  l.ElementAt(3).IsEquivalentTo(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"))))
             )).MustHaveHappened();
+      }
+   }
+
+   static public class ColumnMappingViewModelExtensions
+   {
+      static public bool IsEquivalentTo(this ColumnMappingViewModel self, ColumnMappingViewModel other)
+      {
+         if (self == null)
+            return other == null;
+         if (self.ColumnName != other.ColumnName || self.Description != other.Description)
+            return false;
+         switch (self.Source)
+         {
+            case MappingDataFormatParameter mp:
+               if (!(other.Source is MappingDataFormatParameter))
+                  return false;
+               var mmp = other.Source as MappingDataFormatParameter;
+               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.Unit == mmp.MappedColumn.Unit));
+            case MetaDataFormatParameter mp:
+               if (!(other.Source is MetaDataFormatParameter))
+                  return false;
+               var mdmp = other.Source as MetaDataFormatParameter;
+               return mp.ColumnName == mdmp.ColumnName && mp.MetaDataId == mdmp.MetaDataId;
+            case GroupByDataFormatParameter mp:
+               if (!(other.Source is GroupByDataFormatParameter))
+                  return false;
+               return mp.ColumnName == other.Source.ColumnName;
+         }
+         return false;
       }
    }
 
