@@ -5,11 +5,11 @@ using System;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public class ColumnsDataFormat : IDataFormat
+   public class DataFormat_TMetaData_C : IDataFormat
    {
-      public string Name { get; } = "ColumnsFormat";
+      public string Name { get; } = "015_TMetaData_C(E)";
 
-      public string Description { get; } = "Simple format with data identified by column data...";
+      public string Description { get; } = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639";
 
       public IList<DataFormatParameter> Parameters { get; private set; }
 
@@ -59,6 +59,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       private IEnumerable<string> extractUnits(string description)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
+         if (String.IsNullOrEmpty(units))
+            return new List<string>() { "?" };
          return units.Substring(1, units.Length - 2).Trim().Split(',');
       }
 

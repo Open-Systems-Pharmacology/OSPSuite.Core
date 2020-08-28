@@ -156,7 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
-    <Compile Include="Core\DataFormat\ColumnsDataFormat.cs" />
+    <Compile Include="Core\DataFormat\DataFormat_TMetaData_C.cs" />
     <Compile Include="Core\UnformattedDataRow.cs" />
     <Compile Include="Core\IDataSourceFileParser.cs" />
     <Compile Include="Core\DataSourceFileReaders\ExcelDataSourceFile.cs" />
