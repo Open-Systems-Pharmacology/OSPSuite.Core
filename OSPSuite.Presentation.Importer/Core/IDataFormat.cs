@@ -4,12 +4,17 @@ using OSPSuite.Core.Importer;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
+   public class ValueAndLloq
+   {
+      public double Value { get; set; }
+      public double? Lloq { get; set; }
+   }
    public interface IDataFormat
    {
       string Name { get; }
       string Description { get; }
       bool SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos);
       IList<DataFormatParameter> Parameters { get; }
-      IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+      IList<Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 }

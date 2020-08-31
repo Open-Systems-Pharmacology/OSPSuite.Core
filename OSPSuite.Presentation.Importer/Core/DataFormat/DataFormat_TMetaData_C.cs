@@ -122,7 +122,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      public IList<Dictionary<Column, IList<double>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      public IList<Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var groupByParams = 
             Parameters
@@ -132,9 +132,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return buildDataSets(data, groupByParams, columnInfos);
       }
 
-      private List<Dictionary<Column, IList<double>>> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
+      private List<Dictionary<Column, IList<ValueAndLloq>>> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var dataSets = new List<Dictionary<Column, IList<double>>>();
+         var dataSets = new List<Dictionary<Column, IList<ValueAndLloq>>>();
          buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets, columnInfos);
          return dataSets;
       }
@@ -149,7 +149,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
       /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
       /// <param name="dataSets">List to store the dataSets</param>
-      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<double>>> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
+      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<ValueAndLloq>>> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var valueTuples = parameters.ToList();
          if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
@@ -177,9 +177,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      private Dictionary<Column, IList<double>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      private Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var dictionary = new Dictionary<Column, IList<double>>();
+         var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
          //Add time mapping
          var mappingParameters = 
             Parameters
@@ -191,28 +191,34 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             var currentParameter = mappingParameters.First(p => p.MappedColumn.Name.ToString() == columnInfo.DisplayName);
             if (currentParameter != null)
-               dictionary.Add(currentParameter.MappedColumn, dataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index))).ToList());
-            /*
-             * if (currentParameter != null)
                dictionary.Add
                (
-                  currentParameter.MappedColumn, 
+                  currentParameter.MappedColumn,
                   dataSet.Select
                   (
                      row =>
                      {
-                        var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index);
+                        var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
                         if (double.TryParse(element, out double result))
-                           return result;
-                        else
+                           return new ValueAndLloq()
+                           {
+                              Value = result
+                           };
+                        if (element.StartsWith("<"))
                         {
-                           if 
+                           double.TryParse(element.Substring(1), out result);
+                           return new ValueAndLloq()
+                           {
+                              Lloq = result
+                           };
                         }
-                        return double.Parse();
+                        return new ValueAndLloq()
+                        {
+                           Value = double.NaN
+                        };
                      }
                   ).ToList()
                );
-             * */
          }
 
 
