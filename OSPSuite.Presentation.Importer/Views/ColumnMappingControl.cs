@@ -132,13 +132,13 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onFormatChanged(object sender, EventArgs e)
       {
-         OnFormatChanged?.Invoke(comboBoxEdit1.EditValue as string);
+         OnFormatChanged.Invoke(comboBoxEdit1.EditValue as string);
       }
 
-      public event FormatChangedHandler OnFormatChanged;
+      public event FormatChangedHandler OnFormatChanged = delegate { };
 
       public void Rebind()
-      {
+      { 
          _gridViewBinder.Rebind();
       }
 
