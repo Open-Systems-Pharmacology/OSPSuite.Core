@@ -83,6 +83,18 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return true;
       }
 
+      private bool isNumeric(ICell cell) //TODO write tests for the LLOQ
+      {
+         if (cell.CellType == CellType.Numeric)
+            return true;
+         
+         var value = cell.ToString().TrimStart();
+         if (value.IndexOf('<') == 0)
+            value = value.Substring(1);
+
+         return double.TryParse(value, out _);
+      }
+
       public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //IMPORTANT: should be called after headers have been read!!!!
       {
          var resultList = new List<ColumnDescription.MeasurementLevel>();
@@ -94,8 +106,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
             if (cell == null)
                resultList.Add(ColumnDescription.MeasurementLevel.NotSet);
-            //discuss with Abdel if we should keep this option here
-            else if ((cell.CellType == CellType.Numeric) || (Double.TryParse(cell.ToString(), out var doubleValue)))
+            else if (isNumeric(cell)) //TODO < and the rest numeric in the case of LLOQ
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.Discrete);
