@@ -3,6 +3,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Services;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
@@ -37,7 +38,24 @@ namespace OSPSuite.Presentation.Importer.Services
       public IDataSource ImportFromFile(IDataSourceFile dataSourceFile)
       {
          //TODO Resharper
-         return new DataSource() {DataSets = (IList<IDataSet>) dataSourceFile.DataSheets.Select(s => new DataSet() {Data = dataSourceFile.Format.Parse(s.Value.RawData)}).ToList()};
+         return new DataSource() 
+         {
+            DataSets = 
+               (IList<IDataSet>) dataSourceFile.DataSheets
+                  .Select(s => new DataSet() 
+                  {
+                     Data = dataSourceFile.Format.Parse
+                     (
+                        s.Value.RawData, 
+                        new List<ColumnInfo> 
+                        { 
+                           new ColumnInfo() { DisplayName = Column.ColumnNames.Time.ToString() },
+                           new ColumnInfo() { DisplayName = Column.ColumnNames.Concentration.ToString() },
+                           new ColumnInfo() { DisplayName = Column.ColumnNames.Error.ToString() }
+                        }
+                     ) 
+                  }).ToList()
+         };
       }
 
       public IDataSourceFile LoadFile(string fileName = null) //TODO add optional parameter to be able to use the "..." button
