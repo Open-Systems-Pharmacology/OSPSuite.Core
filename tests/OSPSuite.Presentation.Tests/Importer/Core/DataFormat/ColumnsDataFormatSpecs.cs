@@ -2,10 +2,13 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Importer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -19,9 +22,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforColumnsDataFormat : ContextSpecification<DataFormat_TMetaData_C>
    {
       protected IUnformattedData _basicFormat;
+      protected IReadOnlyList<ColumnInfo> _columnInfos;
 
       protected override void Context()
       {
+         _columnInfos = new List<ColumnInfo>()
+         {
+            new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
+         };
          sut = new DataFormat_TMetaData_C();
          _basicFormat = new TestUnformattedData
          (
@@ -117,7 +127,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_basic_format()
       {
-         sut.SetParameters(_basicFormat).ShouldBeTrue();
+         sut.SetParameters
+         (
+            _basicFormat,
+            _columnInfos
+         ).ShouldBeTrue();
       }
 
       [TestCase]
@@ -133,7 +147,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn).ShouldBeFalse();
+         sut.SetParameters
+         (
+            singleColumn,
+            _columnInfos
+         ).ShouldBeFalse();
       }
 
       [TestCase]
@@ -153,7 +171,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn).ShouldBeFalse();
+         sut.SetParameters(singleColumn, _columnInfos).ShouldBeFalse();
       }
    }
 
@@ -161,16 +179,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       protected override void Because()
       {
-         sut.SetParameters(_basicFormat);
+         sut.SetParameters(_basicFormat, _columnInfos);
       }
-      
+
       [TestCase]
       public void identify_time_column()
       {
          var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Time);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
       }
 
@@ -180,7 +198,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Error);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 
@@ -190,7 +208,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Concentration);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Concentration");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 
@@ -230,15 +248,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData);
+         sut.SetParameters(_mockedData, _columnInfos);
       }
 
       [TestCase]
       public void parse_basic_format()
       {
-         var data = sut.Parse(_mockedData);
+         var data = sut.Parse
+         (
+            _mockedData,
+            _columnInfos
+         );
          data.Count.ShouldBeEqualTo(10);
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H"})))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
@@ -248,6 +270,33 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "T2DM" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
+      }
+
+      [TestCase]
+      public void parse_lloq()
+      {
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+            param => new List<List<string>>()
+            {
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>" }
+            });
+
+         var data = sut.Parse
+         (
+            _mockedData,
+            _columnInfos
+         );
+         foreach (var dataset in data)
+         {
+            dataset.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
+            dataset.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
+            dataset.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
+            dataset.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
+            dataset.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
+         }
       }
    }
 }

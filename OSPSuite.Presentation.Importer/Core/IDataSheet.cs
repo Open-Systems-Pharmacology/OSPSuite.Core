@@ -4,14 +4,7 @@ namespace OSPSuite.Presentation.Importer.Core
 {
    public class Column
    {
-      public enum ColumnNames
-      {
-         Time,
-         Concentration,
-         Error
-      }
-
-      public ColumnNames Name { get; set; }
+      public string Name { get; set; }
       public string Unit { get; set; }
       public IEnumerable<string> AvailableUnits { get; set; }
 
