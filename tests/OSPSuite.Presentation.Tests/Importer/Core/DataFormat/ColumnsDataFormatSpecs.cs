@@ -257,12 +257,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var data = sut.Parse
          (
             _mockedData,
-            new List<ColumnInfo>
-            {
-               new ColumnInfo() { DisplayName = "Time" },
-               new ColumnInfo() { DisplayName = "Concentration" },
-               new ColumnInfo() { DisplayName = "Error" }
-            }
+            _columnInfos
          );
          data.Count.ShouldBeEqualTo(10);
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H" })))).MustHaveHappened();
@@ -277,5 +272,31 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
       }
 
+      [TestCase]
+      public void parse_lloq()
+      {
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+            param => new List<List<string>>()
+            {
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>" }
+            });
+
+         var data = sut.Parse
+         (
+            _mockedData,
+            _columnInfos
+         );
+         foreach (var dataset in data)
+         {
+            dataset.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
+            dataset.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
+            dataset.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
+            dataset.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
+            dataset.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
+         }
+      }
    }
 }
