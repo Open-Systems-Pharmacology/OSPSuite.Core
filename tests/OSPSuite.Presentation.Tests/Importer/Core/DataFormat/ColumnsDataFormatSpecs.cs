@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Importer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,7 +164,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          sut.SetParameters(_basicFormat);
       }
-      
+
       [TestCase]
       public void identify_time_column()
       {
@@ -236,9 +237,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void parse_basic_format()
       {
-         var data = sut.Parse(_mockedData);
+         var data = sut.Parse
+         (
+            _mockedData,
+            new List<ColumnInfo>
+            {
+               new ColumnInfo() { DisplayName = Column.ColumnNames.Time.ToString() },
+               new ColumnInfo() { DisplayName = Column.ColumnNames.Concentration.ToString() },
+               new ColumnInfo() { DisplayName = Column.ColumnNames.Error.ToString() }
+            }
+         );
          data.Count.ShouldBeEqualTo(10);
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H"})))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
