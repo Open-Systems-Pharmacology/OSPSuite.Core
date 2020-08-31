@@ -11,9 +11,9 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(string fileName = null);
+      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName = null);
       IDataSource ImportFromFile(IDataSourceFile dataSourceFile);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class Importer : IImporter
@@ -29,10 +29,10 @@ namespace OSPSuite.Presentation.Importer.Services
          _parser = parser;
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data)
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Where(x => x.SetParameters(data));
+            .Where(x => x.SetParameters(data, columnInfos));
       }
 
       public IDataSource ImportFromFile(IDataSourceFile dataSourceFile)
@@ -49,20 +49,20 @@ namespace OSPSuite.Presentation.Importer.Services
                         s.Value.RawData, 
                         new List<ColumnInfo> 
                         { 
-                           new ColumnInfo() { DisplayName = Column.ColumnNames.Time.ToString() },
-                           new ColumnInfo() { DisplayName = Column.ColumnNames.Concentration.ToString() },
-                           new ColumnInfo() { DisplayName = Column.ColumnNames.Error.ToString() }
+                           new ColumnInfo() { DisplayName = "Time" },
+                           new ColumnInfo() { DisplayName = "Concentration" },
+                           new ColumnInfo() { DisplayName = "Error" }
                         }
                      ) 
                   }).ToList()
          };
       }
 
-      public IDataSourceFile LoadFile(string fileName = null) //TODO add optional parameter to be able to use the "..." button
+      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName = null) //TODO add optional parameter to be able to use the "..." button
       {
          var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
          var dataSource = _parser.For(filename);
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData).ToList();
+         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData, columnInfos).ToList();
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          //TODO: check that all sheets are supporting the formats...
          

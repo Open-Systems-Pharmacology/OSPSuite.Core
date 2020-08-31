@@ -71,6 +71,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+         _sourceFilePresenter.SetColumnInfos(columnInfos);
       }
 
       public void SetDataSource(IDataSourceFile dataSourceFile)

@@ -81,8 +81,7 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            var column = EnumHelper.ParseValue<Core.Column.ColumnNames>(parsed[1]);
-            return new MappingDataFormatParameter(columnName, new Core.Column() { Name = column, Unit = parsed[2] });
+            return new MappingDataFormatParameter(columnName, new Core.Column() { Name = parsed[1], Unit = parsed[2] });
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {

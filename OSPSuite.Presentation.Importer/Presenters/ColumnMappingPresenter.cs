@@ -112,12 +112,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private ColumnMappingOption generateMappingColumnMappingOption(string description, string columnName, string mappingId, string unit = "?")
       {
-         var mappedColumnName = EnumHelper.ParseValue<Column.ColumnNames>(mappingId);
          return new ColumnMappingOption()
          {
             Label = Captions.MappingDescription(mappingId, unit),
             Description = description,
-            IconIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, new Column() {Name = mappedColumnName}),
+            IconIndex = _importerTask.GetImageIndex(new MappingDataFormatParameter(columnName, new Column() {Name = mappingId }),
                _mappings.Select(m => m.Source))
          };
       }
