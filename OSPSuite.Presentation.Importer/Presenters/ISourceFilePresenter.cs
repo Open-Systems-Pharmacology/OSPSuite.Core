@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
@@ -12,6 +14,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event SourceFileChangedHandler OnSourceFileChanged;
 
       void SetFilePath(string filePath);
+
+      void SetColumnInfos(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public delegate void SourceFileChangedHandler(object sender, SourceFileChangedEventArgs e);

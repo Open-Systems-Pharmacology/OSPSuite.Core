@@ -24,8 +24,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
-               new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }),
+               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }),
+               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }),
                new MetaDataFormatParameter("Sp", "Species"),
                new GroupByDataFormatParameter("Study id")
             });
@@ -56,8 +56,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
                A<IList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
 
-                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = Column.ColumnNames.Time, Unit = "min" }))) &&
-                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = Column.ColumnNames.Concentration, Unit = "mol/l" }))) &&
+                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }))) &&
+                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }))) &&
                   l.ElementAt(2).IsEquivalentTo(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"))) &&
                   l.ElementAt(3).IsEquivalentTo(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"))))
             )).MustHaveHappened();

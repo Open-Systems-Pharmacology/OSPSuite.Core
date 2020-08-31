@@ -14,26 +14,26 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public IList<DataFormatParameter> Parameters { get; private set; }
 
-      public bool SetParameters(IUnformattedData data)
+      public bool SetParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          if((data.GetHeaders()
             .Select(data.GetColumnDescription )
             .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) <2 )
             return false;
          
-         setParameters(data);
+         setParameters(data, columnInfos);
          return true;
       }
 
       //make this public and call every time setParameters returns true OR rename SetParameters to CheckAndLoadFile
-      private void setParameters(IUnformattedData data)
+      private void setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var keys = data.GetHeaders().ToList();
          Parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
 
-         extractQualifiedHeadings(keys, missingKeys);
+         extractQualifiedHeadings(keys, missingKeys, columnInfos);
          extractNonQualifiedHeadings(keys, missingKeys, data);
          extractGeneralParameters(keys, data);
       }
@@ -46,10 +46,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return units.Substring(1, units.Length - 2).Trim().Split(',');
       }
 
-      private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys)
+      private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos)
       {
          if (keys == null) throw new ArgumentNullException(nameof(keys));
-         foreach (var header in Enum.GetNames(typeof(Column.ColumnNames)))
+         foreach (var header in columnInfos.Select(ci => ci.DisplayName))
          {
             var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
             if (headerKey != null)
@@ -62,7 +62,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   headerKey,
                   new Column()
                   {
-                     Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header),
+                     Name = header,
                      Unit = availableUnits.Any() ? availableUnits.ElementAt(0) : "",
                      AvailableUnits = availableUnits
                   })
@@ -97,7 +97,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   headerKey, 
                   new Column() 
                   { 
-                     Name = Utility.EnumHelper.ParseValue<Column.ColumnNames>(header), 
+                     Name = header, 
                      Unit = availableUnits.Any() ? availableUnits.ElementAt(0) : "",
                      AvailableUnits = availableUnits
                   }
@@ -192,8 +192,30 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             var currentParameter = mappingParameters.First(p => p.MappedColumn.Name.ToString() == columnInfo.DisplayName);
             if (currentParameter != null)
                dictionary.Add(currentParameter.MappedColumn, dataSet.Select(row => double.Parse(row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index))).ToList());
+            /*
+             * if (currentParameter != null)
+               dictionary.Add
+               (
+                  currentParameter.MappedColumn, 
+                  dataSet.Select
+                  (
+                     row =>
+                     {
+                        var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index);
+                        if (double.TryParse(element, out double result))
+                           return result;
+                        else
+                        {
+                           if 
+                        }
+                        return double.Parse();
+                     }
+                  ).ToList()
+               );
+             * */
          }
-         
+
+
          return dictionary;
       }
    }

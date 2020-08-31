@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -20,9 +22,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforColumnsDataFormat : ContextSpecification<DataFormat_TMetaData_C>
    {
       protected IUnformattedData _basicFormat;
+      protected IReadOnlyList<ColumnInfo> _columnInfos;
 
       protected override void Context()
       {
+         _columnInfos = new List<ColumnInfo>()
+         {
+            new ColumnInfo() { DisplayName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration" },
+            new ColumnInfo() { DisplayName = "Error" }
+         };
          sut = new DataFormat_TMetaData_C();
          _basicFormat = new TestUnformattedData
          (
@@ -118,7 +127,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_basic_format()
       {
-         sut.SetParameters(_basicFormat).ShouldBeTrue();
+         sut.SetParameters
+         (
+            _basicFormat,
+            _columnInfos
+         ).ShouldBeTrue();
       }
 
       [TestCase]
@@ -134,7 +147,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn).ShouldBeFalse();
+         sut.SetParameters
+         (
+            singleColumn,
+            _columnInfos
+         ).ShouldBeFalse();
       }
 
       [TestCase]
@@ -154,7 +171,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn).ShouldBeFalse();
+         sut.SetParameters(singleColumn, _columnInfos).ShouldBeFalse();
       }
    }
 
@@ -162,7 +179,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       protected override void Because()
       {
-         sut.SetParameters(_basicFormat);
+         sut.SetParameters(_basicFormat, _columnInfos);
       }
 
       [TestCase]
@@ -171,7 +188,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Time);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
       }
 
@@ -181,7 +198,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Error);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 
@@ -191,7 +208,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
-         mapping.MappedColumn.Name.ShouldBeEqualTo(Column.ColumnNames.Concentration);
+         mapping.MappedColumn.Name.ShouldBeEqualTo("Concentration");
          mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
       }
 
@@ -231,7 +248,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData);
+         sut.SetParameters(_mockedData, _columnInfos);
       }
 
       [TestCase]
@@ -242,9 +259,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _mockedData,
             new List<ColumnInfo>
             {
-               new ColumnInfo() { DisplayName = Column.ColumnNames.Time.ToString() },
-               new ColumnInfo() { DisplayName = Column.ColumnNames.Concentration.ToString() },
-               new ColumnInfo() { DisplayName = Column.ColumnNames.Error.ToString() }
+               new ColumnInfo() { DisplayName = "Time" },
+               new ColumnInfo() { DisplayName = "Concentration" },
+               new ColumnInfo() { DisplayName = "Error" }
             }
          );
          data.Count.ShouldBeEqualTo(10);
@@ -259,5 +276,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
       }
+
    }
 }
