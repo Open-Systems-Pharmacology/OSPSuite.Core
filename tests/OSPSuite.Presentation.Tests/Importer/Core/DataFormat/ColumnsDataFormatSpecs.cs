@@ -28,9 +28,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          _columnInfos = new List<ColumnInfo>()
          {
-            new ColumnInfo() { DisplayName = "Time" },
-            new ColumnInfo() { DisplayName = "Concentration" },
-            new ColumnInfo() { DisplayName = "Error" }
+            new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
          };
          sut = new DataFormat_TMetaData_C();
          _basicFormat = new TestUnformattedData

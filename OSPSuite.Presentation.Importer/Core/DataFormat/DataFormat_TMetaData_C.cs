@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          if((data.GetHeaders()
             .Select(data.GetColumnDescription )
-            .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) <2 )
+            .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) < columnInfos.Count(ci => ci.IsMandatory))
             return false;
          
          setParameters(data, columnInfos);
