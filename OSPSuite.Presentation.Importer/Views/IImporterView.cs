@@ -16,9 +16,17 @@ namespace OSPSuite.Presentation.Importer.Views
 
       event TabChangedHandler OnTabChanged;
 
+      event ImportSingleSheetHandler OnImportSingleSheet;
+
+      event ImportAllSheetsHandler OnImportAllSheets;
+
       void AddTabs(List<string> tabNames);
       void ClearTabs();
    }
+
+   public delegate void ImportSingleSheetHandler(string sheetName);
+
+   public delegate void ImportAllSheetsHandler();
 
    public delegate void TabChangedHandler(string format);
 
