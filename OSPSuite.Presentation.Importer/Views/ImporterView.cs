@@ -23,15 +23,31 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _presenter = presenter;
          TabControl.SelectedPageChanged += onSelectedPageChanged;
+         btnImport.Click += onButtonImportClicked;
+         btnImportAll.Click += onButtonImportAllClicked;
+      }
+
+      private void onButtonImportAllClicked(object sender, EventArgs e)
+      {
+         OnButtonImportAllClicked.Invoke();
+      }
+
+      private void onButtonImportClicked(object sender, EventArgs e)
+      {
+         OnButtonImportClicked.Invoke(TabControl.SelectedTabPage.Text);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
          if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
-            OnTabChanged?.Invoke(TabControl.SelectedTabPage.Text);
+            OnTabChanged.Invoke(TabControl.SelectedTabPage.Text);
       }
 
-      public event TabChangedHandler OnTabChanged;
+      public event TabChangedHandler OnTabChanged = delegate {};
+      public event FormatChangedHandler OnFormatChanged = delegate {};
+      public event ImportSingleSheetHandler OnButtonImportClicked = delegate { };
+      public event ImportAllSheetsHandler OnButtonImportAllClicked = delegate { };
+
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
@@ -61,11 +77,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onFormatChanged(object sender, EventArgs e)
       {
-         OnFormatChanged?.Invoke(formatComboBoxEdit.EditValue as string);
+         OnFormatChanged.Invoke(formatComboBoxEdit.EditValue as string);
       }
-
-
-      public event FormatChangedHandler OnFormatChanged;
 
       public void AddTabs(List<string> sheetNames)
       {

@@ -34,6 +34,8 @@
          this.sourceFilePanelControl = new DevExpress.XtraEditors.PanelControl();
          this.TabControl = new DevExpress.XtraTab.XtraTabControl();
          this.dataViewingPanelControl = new DevExpress.XtraEditors.PanelControl();
+         this.btnImport = new DevExpress.XtraEditors.SimpleButton();
+         this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).BeginInit();
@@ -89,11 +91,29 @@
          this.dataViewingPanelControl.Size = new System.Drawing.Size(1385, 1109);
          this.dataViewingPanelControl.TabIndex = 0;
          // 
+         // btnImport
+         // 
+         this.btnImport.Location = new System.Drawing.Point(2638, 1629);
+         this.btnImport.Name = "btnImport";
+         this.btnImport.Size = new System.Drawing.Size(187, 57);
+         this.btnImport.TabIndex = 6;
+         this.btnImport.Text = "Import(1)";
+         // 
+         // btnImportAll
+         // 
+         this.btnImportAll.Location = new System.Drawing.Point(2445, 1629);
+         this.btnImportAll.Name = "btnImportAll";
+         this.btnImportAll.Size = new System.Drawing.Size(187, 57);
+         this.btnImportAll.TabIndex = 7;
+         this.btnImportAll.Text = "Import All";
+         // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "ImporterView";
+         this.Controls.Add(this.btnImportAll);
+         this.Controls.Add(this.btnImport);
          this.Controls.Add(this.TabControl);
          this.Controls.Add(this.sourceFilePanelControl);
          this.Controls.Add(this.formatLabelControl);
@@ -121,5 +141,7 @@
       private DevExpress.XtraEditors.PanelControl sourceFilePanelControl;
       private DevExpress.XtraTab.XtraTabControl TabControl;
       private DevExpress.XtraEditors.PanelControl dataViewingPanelControl;
+      private DevExpress.XtraEditors.SimpleButton btnImport;
+      private DevExpress.XtraEditors.SimpleButton btnImportAll;
    }
 }
