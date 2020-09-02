@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Services
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new Importer(_dialogCreator, _container, _parser);
+         sut = new Importer(_container, _parser);
       }
    }
 
