@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public SourceFileControl()
       {
          InitializeComponent();
-         openSourceFileButton.Click += (sender, args) => OnEvent(_presenter.OpenFileDialog);
+         openSourceFileButton.Click += (sender, args) => _presenter.OpenFileDialog(sourceFileTextEdit.Text);
       }
 
       public void AttachPresenter(ISourceFilePresenter presenter)

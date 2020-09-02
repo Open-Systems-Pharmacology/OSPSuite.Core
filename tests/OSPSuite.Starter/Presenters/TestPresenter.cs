@@ -110,7 +110,7 @@ namespace OSPSuite.Starter.Presenters
          var starter = new TestStarter<IColumnMappingPresenter>();
          starter.Start(660, 400);
          var importer = IoC.Container.Resolve<IImporter>();
-         var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
+         //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
@@ -118,7 +118,7 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
-         starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
+         //starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
       }
 
       public void StartImporterExcelView()
@@ -126,7 +126,7 @@ namespace OSPSuite.Starter.Presenters
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
          var importer = IoC.Container.Resolve<IImporter>();
-         var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
+         //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
@@ -134,8 +134,8 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
-         starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
-         starter.Presenter.SetDataSource(source);
+         //starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
+        // starter.Presenter.SetDataSource(source.Path);
       }
    }
 }

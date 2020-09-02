@@ -28,8 +28,12 @@ namespace OSPSuite.Presentation.Importer.Views
          gridControl1.DataSource = null;
          gridView1.Columns.Clear();
 
+         //should this logic be moved to presenter?
+         //======= presentation notes
          if (tabName == null)
             tabName = _presenter.GetSheetNames().ElementAt(0);
+         //========================================
+
          gridControl1.DataSource = _presenter.GetSheet(tabName);
       }
    }

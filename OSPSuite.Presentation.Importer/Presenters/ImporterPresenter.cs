@@ -7,6 +7,7 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Presentation.Importer.Services;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -19,17 +20,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
+      private readonly IImporter _importer;
+      private IReadOnlyList<ColumnInfo> _columnInfos;
+
+
 
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
 
 
-      public ImporterPresenter(IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
+      public ImporterPresenter(IImporter importer, IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
       {
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
+         _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
          _columnMappingPresenter = columnMappingPresenter;
@@ -41,16 +47,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnTabChanged +=  SelectTab;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName); //hmmm...wrong. this probably takes just the first one
+            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...wrong. this probably takes just the first one
             SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
 
       }
 
-      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e) //not sure we need this method here
-      //instead we could simply use the IDataSourceFile as paramater to the delegate and call directly SetDataSource
-      //should discuss with Abdel which of the 2 is the best solution
+      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
       }
@@ -71,13 +75,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-         _sourceFilePresenter.SetColumnInfos(columnInfos);
+         _columnInfos = columnInfos;
       }
 
-      public void SetDataSource(IDataSourceFile dataSourceFile)
+      public void SetDataSource(string dataSourceFileName)
       {
-         _dataViewingPresenter.SetDataSource(dataSourceFile);
-         _sourceFilePresenter.SetFilePath(dataSourceFile.Path);
+         if (dataSourceFileName == "") return;
+         var sourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
+         _dataViewingPresenter.SetDataSource(sourceFile);
+         _sourceFilePresenter.SetFilePath(dataSourceFileName);
+         _columnMappingPresenter.SetDataFormat(sourceFile.Format, sourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
