@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public interface IImportConfirmationView : IModalView<IUnitsEditorPresenter>
+   public interface IImportConfirmationView : IModalView<IImportConfirmationPresenter>
    {
+      void SetDataSetNames(IEnumerable<string> names);
    }
 }
