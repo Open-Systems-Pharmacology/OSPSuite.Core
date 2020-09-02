@@ -44,6 +44,8 @@ namespace OSPSuite.Presentation.Importer.Views
       }
 
       public event TabChangedHandler OnTabChanged = delegate {};
+      public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
+      public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
       public event FormatChangedHandler OnFormatChanged = delegate {};
       public event ImportSingleSheetHandler OnButtonImportClicked = delegate { };
       public event ImportAllSheetsHandler OnButtonImportAllClicked = delegate { };
