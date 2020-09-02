@@ -223,7 +223,7 @@
       <DependentUpon>SourceFileControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\UnitsEditorView.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\UnitsEditorView.Designer.cs">
       <DependentUpon>UnitsEditorView.cs</DependentUpon>

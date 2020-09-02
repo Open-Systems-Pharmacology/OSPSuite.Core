@@ -76,7 +76,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
-         SetDataSource(e.FileName.Path);
+         SetDataSource(e.FileName);
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -100,11 +100,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetDataSource(string dataSourceFileName)
       {
-         if (!string.IsNullOrEmpty(dataSourceFileName)) return;
+         if (string.IsNullOrEmpty(dataSourceFileName)) return;
          _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }

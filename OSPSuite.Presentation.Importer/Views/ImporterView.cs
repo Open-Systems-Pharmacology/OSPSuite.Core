@@ -48,8 +48,6 @@ namespace OSPSuite.Presentation.Importer.Views
       public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
       public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
       public event FormatChangedHandler OnFormatChanged = delegate {};
-      public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
-      public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
       
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
