@@ -109,15 +109,10 @@ namespace OSPSuite.Starter.Presenters
       {
          var starter = new TestStarter<IColumnMappingPresenter>();
          starter.Start(660, 400);
-         var importer = IoC.Container.Resolve<IImporter>();
          //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
-         var dataImporterSettings = new DataImporterSettings();
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
          starter.Presenter.SetSettings(
             _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings);
+            _dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          //starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
       }
 
@@ -125,7 +120,6 @@ namespace OSPSuite.Starter.Presenters
       {
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
-         var importer = IoC.Container.Resolve<IImporter>();
          //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);

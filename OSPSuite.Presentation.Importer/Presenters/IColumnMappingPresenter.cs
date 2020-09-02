@@ -71,8 +71,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         IReadOnlyList<ColumnInfo> columnInfos
       );
 
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
