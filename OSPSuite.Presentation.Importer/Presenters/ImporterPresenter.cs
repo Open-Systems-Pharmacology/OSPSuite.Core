@@ -9,6 +9,7 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Presentation.Importer.Services;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -46,6 +47,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
+         _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
          _columnMappingPresenter = columnMappingPresenter;
@@ -57,7 +59,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnTabChanged +=  SelectTab;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName); //hmmm...wrong. this probably takes just the first one
+            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...wrong. this probably takes just the first one
             SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
@@ -72,11 +74,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e) //not sure we need this method here
-      //instead we could simply use the IDataSourceFile as paramater to the delegate and call directly SetDataSource
-      //should discuss with Abdel which of the 2 is the best solution
+      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
-         SetDataSource(e.FileName.Path);
+         SetDataSource(e.FileName);
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -95,21 +95,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-         _sourceFilePresenter.SetColumnInfos(columnInfos);
          _columnInfos = columnInfos;
       }
 
       public void SetDataSource(string dataSourceFileName)
       {
-         if (!string.IsNullOrEmpty(dataSourceFileName))
-         {
-            var dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName);
-            _dataViewingPresenter.SetDataSource(dataSourceFile);
-            _sourceFilePresenter.SetFilePath(dataSourceFile.Path);
-            View.ClearTabs();
-            View.AddTabs(_dataViewingPresenter.GetSheetNames());
-            _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFile.Path);
-         }
+         if (string.IsNullOrEmpty(dataSourceFileName)) return;
+         _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
+         _dataViewingPresenter.SetDataSource(_dataSourceFile);
+         _sourceFilePresenter.SetFilePath(dataSourceFileName);
+         _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
 
       public void SelectTab(string tabName)
