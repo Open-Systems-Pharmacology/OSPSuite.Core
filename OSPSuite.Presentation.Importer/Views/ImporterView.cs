@@ -4,7 +4,7 @@ using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
 using DevExpress.XtraTab;
-
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public ImporterView()
       {
          InitializeComponent();
+         this.btnImportAll.Click += (e, a) => this.DoWithinExceptionHandler(_presenter.ShowImportConfirmation);
       }
 
 
@@ -29,12 +30,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onButtonImportAllClicked(object sender, EventArgs e)
       {
-         OnButtonImportAllClicked.Invoke();
+         OnImportAllSheets.Invoke();
       }
 
       private void onButtonImportClicked(object sender, EventArgs e)
       {
-         OnButtonImportClicked.Invoke(TabControl.SelectedTabPage.Text);
+         OnImportSingleSheet.Invoke(TabControl.SelectedTabPage.Text);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
@@ -45,10 +46,9 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public event TabChangedHandler OnTabChanged = delegate {};
       public event FormatChangedHandler OnFormatChanged = delegate {};
-      public event ImportSingleSheetHandler OnButtonImportClicked = delegate { };
-      public event ImportAllSheetsHandler OnButtonImportAllClicked = delegate { };
-
-
+      public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
+      public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
+      
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
          columnMappingPanelControl.FillWith(columnMappingControl);
