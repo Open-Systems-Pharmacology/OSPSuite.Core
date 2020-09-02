@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
-      IDataSource ImportFromFile(IDataSourceFile dataSourceFile);
+      IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 
@@ -33,26 +33,22 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public IDataSource ImportFromFile(IDataSourceFile dataSourceFile)
+      public IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos)
       {
+         IList<IDataSet> dataSets = 
+            dataSourceFile
+               .DataSheets
+               .Select
+               (
+                  s => new DataSet() 
+                  { 
+                     Data = dataSourceFile.Format.Parse(s.Value.RawData, columnInfos) 
+                  } as IDataSet
+               ).ToList();
          //TODO Resharper
          return new DataSource() 
          {
-            DataSets = 
-               (IList<IDataSet>) dataSourceFile.DataSheets
-                  .Select(s => new DataSet() 
-                  {
-                     Data = dataSourceFile.Format.Parse
-                     (
-                        s.Value.RawData, 
-                        new List<ColumnInfo> 
-                        { 
-                           new ColumnInfo() { DisplayName = "Time" },
-                           new ColumnInfo() { DisplayName = "Concentration" },
-                           new ColumnInfo() { DisplayName = "Error" }
-                        }
-                     ) 
-                  }).ToList()
+            DataSets = dataSets
          };
       }
 

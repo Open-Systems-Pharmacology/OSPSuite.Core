@@ -10,6 +10,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public interface IImportConfirmationPresenter : IDisposablePresenter
    {
-      void Show(IDataSource dataSource);
+      void Show(IDataSource dataSource, IEnumerable<string> names);
    }
 }

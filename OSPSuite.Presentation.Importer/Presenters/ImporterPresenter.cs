@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
@@ -21,17 +23,27 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IImporter _importer;
+      private readonly IApplicationController _applicationController;
+      private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
-
-
 
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
 
 
-      public ImporterPresenter(IImporter importer, IImporterView view, IDataViewingPresenter dataViewingPresenter, IColumnMappingPresenter columnMappingPresenter, ISourceFilePresenter sourceFilePresenter) : base(view)
+      public ImporterPresenter
+      (
+         IImporterView view, 
+         IDataViewingPresenter dataViewingPresenter, 
+         IColumnMappingPresenter columnMappingPresenter, 
+         ISourceFilePresenter sourceFilePresenter,
+         IApplicationController applicationController,
+         IImporter importer
+      ) : base(view)
       {
+         _importer = importer;
+         _applicationController = applicationController;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
@@ -54,9 +66,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       }
 
+      public void ShowImportConfirmation()
+      {
+         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
+         {
+            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile, _columnInfos), _dataSourceFile.DataSheets.Keys);
+         }
+      }
+
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
-         SetDataSource(e.FileName);
+         SetDataSource(e.FileName.Path);
       }
 
       public void InitializeWith(ICommandCollector initializer)
@@ -80,11 +100,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetDataSource(string dataSourceFileName)
       {
-         if (dataSourceFileName == "") return;
-         var sourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
-         _dataViewingPresenter.SetDataSource(sourceFile);
+         if (!string.IsNullOrEmpty(dataSourceFileName)) return;
+         _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
+         _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
-         _columnMappingPresenter.SetDataFormat(sourceFile.Format, sourceFile.AvailableFormats);
+         _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }

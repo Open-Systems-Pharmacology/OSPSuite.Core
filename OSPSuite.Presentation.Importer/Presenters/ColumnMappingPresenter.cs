@@ -10,6 +10,7 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
@@ -82,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          using (var unitsEditorPresenter = _applicationController.Start<IUnitsEditorPresenter>())
          {
             var activeRow = modelByColumnName(model.ColumnName);
-            var column = ((MappingDataFormatParameter) activeRow.Source).MappedColumn;
+            var column = ((MappingDataFormatParameter)activeRow.Source).MappedColumn;
             unitsEditorPresenter.ShowFor
             (
                column,
