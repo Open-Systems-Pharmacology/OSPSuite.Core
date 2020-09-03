@@ -1,4 +1,4 @@
-﻿using OSPSuite.Utility.Extensions;
+﻿using DevExpress.XtraEditors.Controls;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -72,6 +72,7 @@ namespace OSPSuite.Presentation.Importer.Views
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.formatComboBoxEdit.Size = new System.Drawing.Size(707, 22);
          this.formatComboBoxEdit.TabIndex = 3;
+         this.formatComboBoxEdit.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
          // 
          // sourceFilePanelControl
          // 
