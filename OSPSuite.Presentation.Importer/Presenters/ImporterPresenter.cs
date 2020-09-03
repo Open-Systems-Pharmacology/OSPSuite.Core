@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
@@ -7,6 +8,8 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain;
+
 
 namespace OSPSuite.Presentation.Importer.Presenters
 { 
@@ -47,6 +50,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataViewingPresenter = dataViewingPresenter;
          _columnMappingPresenter = columnMappingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
+
+         _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
+         _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
+         _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
 
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
 
