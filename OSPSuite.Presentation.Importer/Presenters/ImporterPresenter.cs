@@ -63,8 +63,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnImportSingleSheet += ShowImportConfirmation;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...this throws an error if I try to edit the format name
-            SetDataFormat(format, _availableFormats); //dropbox should not be editable
+            var format = _availableFormats.First(f => f.Name == formatName);
+            SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
          _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() =>
