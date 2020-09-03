@@ -1,7 +1,8 @@
-﻿using OSPSuite.Presentation.Importer.Views;
+﻿using System.IO;
+using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Services;
-
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -24,9 +25,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void OpenFileDialog( string initFileName)
       {
-         //consider whether this should be part of the code
-         //var initDirectoryName = Path.GetDirectoryName(initFileName);
-         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs() { FileName = _dialogCreator.AskForFileToOpen(Title, Filter, DirectoryKey, initFileName) });
+         string initDirectoryName = null;
+         if (!initFileName.IsNullOrEmpty()) 
+            initDirectoryName = Path.GetDirectoryName(initFileName);
+         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs() { FileName = _dialogCreator.AskForFileToOpen(Title, Filter, DirectoryKey, null, initDirectoryName) });
       }
 
       public event SourceFileChangedHandler OnSourceFileChanged =  delegate {};
