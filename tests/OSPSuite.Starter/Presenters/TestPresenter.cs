@@ -8,8 +8,7 @@ using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-using System.Linq;
-using System.Windows.Forms;
+using OSPSuite.Core.Services;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -45,10 +44,13 @@ namespace OSPSuite.Starter.Presenters
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
+      private readonly IDialogCreator _dialogCreator;
+
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
-         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator) : base(view)
+         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
+         IDialogCreator dialogCreator) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -57,6 +59,8 @@ namespace OSPSuite.Starter.Presenters
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
          _dataGenerator = dataGenerator;
+         _dialogCreator = dialogCreator;
+
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter

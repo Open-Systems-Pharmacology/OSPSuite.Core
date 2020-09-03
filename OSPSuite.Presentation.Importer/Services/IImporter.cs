@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Assets;
-using OSPSuite.Core.Services;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using IoC = OSPSuite.Utility.Container.IContainer;
@@ -11,8 +8,8 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName = null);
-      IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos);
+      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
+      IDataSource ImportFromFile(IDataFormat format, IEnumerable<IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 
@@ -20,11 +17,9 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       private readonly IoC _container;
       private readonly IDataSourceFileParser _parser;
-      private readonly IDialogCreator _dialogCreator;
 
-      public Importer(IDialogCreator dialogCreator, IoC container, IDataSourceFileParser parser)
+      public Importer( IoC container, IDataSourceFileParser parser)
       {
-         _dialogCreator = dialogCreator;
          _container = container;
          _parser = parser;
       }
@@ -35,16 +30,15 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos)
+      public IDataSource ImportFromFile(IDataFormat format, IEnumerable<IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         IList<IDataSet> dataSets = 
-            dataSourceFile
-               .DataSheets
+         IList<IDataSet> dataSets =
+            dataSheets
                .Select
                (
                   s => new DataSet() 
                   { 
-                     Data = dataSourceFile.Format.Parse(s.Value.RawData, columnInfos) 
+                     Data = format.Parse(s.RawData, columnInfos) 
                   } as IDataSet
                ).ToList();
          //TODO Resharper
@@ -54,10 +48,13 @@ namespace OSPSuite.Presentation.Importer.Services
          };
       }
 
-      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName = null) //TODO add optional parameter to be able to use the "..." button
+      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName)
       {
-         var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
-         var dataSource = _parser.For(filename);
+         //var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
+         //in the presenter : if string == "" (Cancel clicked), then do not try to parse
+
+
+         var dataSource = _parser.For(fileName);
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData, columnInfos).ToList();
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          //TODO: check that all sheets are supporting the formats...
