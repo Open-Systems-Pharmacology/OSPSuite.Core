@@ -75,11 +75,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ShowImportConfirmation()
       {
          startImport(_dataSourceFile.DataSheets.Values, _dataSourceFile.DataSheets.Keys);
-         /*
-         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
-         {
-            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile.Format, _dataSourceFile.DataSheets.Values, _columnInfos), _dataSourceFile.DataSheets.Keys);
-         }*/
       }
       public void ShowImportConfirmation( string sheetName )
       {
@@ -87,18 +82,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IEnumerable<string> sheetNames = new[] {sheetName};
 
          startImport(sheets, sheetNames);
-         
-         /*
-         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
-         {
-            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos), sheetNames);
-            
-            if (!importConfirmationPresenter.Canceled)
-               OnTriggerImport.Invoke(_importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos));
-           
-            //in the test presenter listen to this event and just open a dialog. 
-         }
-*/
       }
 
       private void startImport( IEnumerable<IDataSheet> sheets, IEnumerable<string> sheetNames)
@@ -155,17 +138,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _dataViewingPresenter.SetTabData(tabName);
       }
-
-      public void AddCommand(ICommand command)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public IEnumerable<ICommand> All()
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public ICommandCollector CommandCollector { get; }
    }
 }
