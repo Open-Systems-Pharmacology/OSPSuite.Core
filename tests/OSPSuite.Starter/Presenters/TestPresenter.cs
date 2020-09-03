@@ -9,6 +9,7 @@ using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -124,7 +125,6 @@ namespace OSPSuite.Starter.Presenters
       {
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
-         //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
@@ -132,6 +132,12 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
+         starter.Presenter.OnTriggerImport += startImportSuccessDialog;
+      }
+
+      private void startImportSuccessDialog(IDataSource dataSource)
+      {
+         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Count + " data sets successfully imported");
       }
    }
 }
