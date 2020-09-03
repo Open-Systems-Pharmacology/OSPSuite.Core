@@ -27,6 +27,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
 
+      private string _namingConvention;
+
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
@@ -65,7 +67,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
             SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
-
+         _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() =>
+         {
+            _namingConvention = namingConvention;
+         });
       }
       public void ShowImportConfirmation()
       {
@@ -129,7 +134,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
-         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+         View.SetNamingConventions(dataImporterSettings.NamingConventions);
+         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _columnInfos = columnInfos;
       }
 

@@ -21,7 +21,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private List<ColumnMappingViewModel> _mappings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private DataImporterSettings _dataImporterSettings; //TODO Resharper - if not needed let's delete
       private readonly IImporterTask _importerTask;
       private IEnumerable<IDataFormat> _availableFormats;
       private readonly IApplicationController _applicationController; 
@@ -43,13 +42,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         IReadOnlyList<ColumnInfo> columnInfos
       )
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
-         _dataImporterSettings = dataImporterSettings;
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
