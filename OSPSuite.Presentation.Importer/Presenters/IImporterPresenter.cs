@@ -6,7 +6,7 @@ using OSPSuite.Core.Importer;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public interface IImporterPresenter : IPresenter<IImporterView>, ICommandCollectorPresenter
+   public interface IImporterPresenter : IPresenter<IImporterView>
    {
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
