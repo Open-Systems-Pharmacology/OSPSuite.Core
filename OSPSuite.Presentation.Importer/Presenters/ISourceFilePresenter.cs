@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 
@@ -13,6 +11,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event SourceFileChangedHandler OnSourceFileChanged;
 
       void SetFilePath(string filePath);
+
+      string Title { get; set; }
+      string Filter { get; set; }
+      string DirectoryKey { get; set; }
    }
 
    public delegate void SourceFileChangedHandler(object sender, SourceFileChangedEventArgs e);
