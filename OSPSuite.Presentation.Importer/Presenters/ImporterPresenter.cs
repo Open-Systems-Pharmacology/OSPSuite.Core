@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
@@ -9,14 +7,9 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Presentation.Importer.Services;
 
 namespace OSPSuite.Presentation.Importer.Presenters
-{
-   //internal - because of the accessibility of AbstractCommandCollectorPresenter
-
-   //THIS DOES NOT NEED TO BE A COMMANDCOLLECTOR PRESENTER -- to be honest not sure even if the abastractPresenter here
-   //is an overkill
+{ 
    internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
@@ -63,8 +56,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnImportSingleSheet += ShowImportConfirmation;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...wrong. this probably takes just the first one
-            SetDataFormat(format, _availableFormats);
+            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...this throws an error if I try to edit the format name
+            SetDataFormat(format, _availableFormats); //dropbox should not be editable
             OnFormatChanged(format);
          });
          _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() =>
@@ -100,11 +93,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
-      }
-
-      public void InitializeWith(ICommandCollector initializer)
-      {
-         throw new NotImplementedException();
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)

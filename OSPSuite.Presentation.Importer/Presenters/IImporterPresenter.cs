@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
-      //comes from ColumnMappingPresenter. Not sure if it really needs to be here
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
