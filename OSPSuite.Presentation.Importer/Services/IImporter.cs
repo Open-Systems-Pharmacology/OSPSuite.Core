@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Assets;
-using OSPSuite.Core.Services;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using IoC = OSPSuite.Utility.Container.IContainer;
@@ -12,7 +9,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
-      IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos);
+      IDataSource ImportFromFile(IDataFormat format, IEnumerable<IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 
@@ -33,16 +30,15 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public IDataSource ImportFromFile(IDataSourceFile dataSourceFile, IReadOnlyList<ColumnInfo> columnInfos)
+      public IDataSource ImportFromFile(IDataFormat format, IEnumerable<IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         IList<IDataSet> dataSets = 
-            dataSourceFile
-               .DataSheets
+         IList<IDataSet> dataSets =
+            dataSheets
                .Select
                (
                   s => new DataSet() 
                   { 
-                     Data = dataSourceFile.Format.Parse(s.Value.RawData, columnInfos) 
+                     Data = format.Parse(s.RawData, columnInfos) 
                   } as IDataSet
                ).ToList();
          //TODO Resharper

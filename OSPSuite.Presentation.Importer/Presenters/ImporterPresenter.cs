@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
-
+      public event OnTriggerImportHandler OnTriggerImport = delegate { };
 
       public ImporterPresenter
       (
@@ -57,6 +57,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
          _view.OnTabChanged +=  SelectTab;
+         _view.OnImportAllSheets += ShowImportConfirmation;
+         _view.OnImportSingleSheet += ShowImportConfirmation;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...wrong. this probably takes just the first one
@@ -65,12 +67,45 @@ namespace OSPSuite.Presentation.Importer.Presenters
          });
 
       }
-
       public void ShowImportConfirmation()
       {
+         startImport(_dataSourceFile.DataSheets.Values, _dataSourceFile.DataSheets.Keys);
+         /*
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
          {
-            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile, _columnInfos), _dataSourceFile.DataSheets.Keys);
+            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile.Format, _dataSourceFile.DataSheets.Values, _columnInfos), _dataSourceFile.DataSheets.Keys);
+         }*/
+      }
+      public void ShowImportConfirmation( string sheetName )
+      {
+         IEnumerable<IDataSheet> sheets = new[] {_dataSourceFile.DataSheets[sheetName]};
+         IEnumerable<string> sheetNames = new[] {sheetName};
+
+         startImport(sheets, sheetNames);
+         
+         /*
+         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
+         {
+            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos), sheetNames);
+            
+            if (!importConfirmationPresenter.Canceled)
+               OnTriggerImport.Invoke(_importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos));
+           
+            //in the test presenter listen to this event and just open a dialog. 
+         }
+*/
+      }
+
+      private void startImport( IEnumerable<IDataSheet> sheets, IEnumerable<string> sheetNames)
+      {
+         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
+
+         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
+         {
+            importConfirmationPresenter.Show(dataSource, sheetNames);
+
+            if (!importConfirmationPresenter.Canceled)
+               OnTriggerImport.Invoke(dataSource);
          }
       }
 

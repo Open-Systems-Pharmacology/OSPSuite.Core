@@ -16,16 +16,15 @@ namespace OSPSuite.Presentation.Importer.Views
       public ImporterView()
       {
          InitializeComponent();
-         this.btnImportAll.Click += (e, a) => this.DoWithinExceptionHandler(_presenter.ShowImportConfirmation);
+         btnImport.Click += onButtonImportClicked;
+         btnImportAll.Click += onButtonImportAllClicked;
+         TabControl.SelectedPageChanged += onSelectedPageChanged;
       }
 
 
       public void AttachPresenter(IImporterPresenter presenter)
       {
          _presenter = presenter;
-         TabControl.SelectedPageChanged += onSelectedPageChanged;
-         btnImport.Click += onButtonImportClicked;
-         btnImportAll.Click += onButtonImportAllClicked;
       }
 
       private void onButtonImportAllClicked(object sender, EventArgs e)

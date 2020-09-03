@@ -17,10 +17,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          DataImporterSettings dataImporterSettings
       );
 
-      void ShowImportConfirmation();
-
       event FormatChangedHandler OnFormatChanged;
+
+      event OnTriggerImportHandler OnTriggerImport;
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
    }
+
+   public delegate void OnTriggerImportHandler( IDataSource dataSource);
+
 }
