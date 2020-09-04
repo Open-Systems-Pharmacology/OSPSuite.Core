@@ -15,6 +15,7 @@ namespace OSPSuite.Infrastructure
             scan.AssemblyContainingType<InfrastructureRegister>();
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
             scan.ExcludeType<OSPLogger>();
+            scan.ExcludeType<LoggerCreator>(); ;
          });
 
          registerThirdPartyComponents(container);
