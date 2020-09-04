@@ -8,8 +8,8 @@ using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-using System.Linq;
-using System.Windows.Forms;
+using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -45,10 +45,13 @@ namespace OSPSuite.Starter.Presenters
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
+      private readonly IDialogCreator _dialogCreator;
+
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
-         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator) : base(view)
+         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
+         IDialogCreator dialogCreator) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -57,6 +60,8 @@ namespace OSPSuite.Starter.Presenters
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
          _dataGenerator = dataGenerator;
+         _dialogCreator = dialogCreator;
+
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
@@ -120,7 +125,6 @@ namespace OSPSuite.Starter.Presenters
       {
          var starter = new TestStarter<IImporterPresenter>();
          starter.Start(660, 400);
-         //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
@@ -128,6 +132,12 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
+         starter.Presenter.OnTriggerImport += startImportSuccessDialog;
+      }
+
+      private void startImportSuccessDialog(IDataSource dataSource)
+      {
+         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Count + " data sets successfully imported");
       }
    }
 }

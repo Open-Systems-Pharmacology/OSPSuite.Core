@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return true;
       }
 
-      private bool isNumeric(ICell cell) //TODO write tests for the LLOQ
+      private bool isNumeric(ICell cell)
       {
          if (cell.CellType == CellType.Numeric)
             return true;
@@ -106,7 +106,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
             if (cell == null)
                resultList.Add(ColumnDescription.MeasurementLevel.NotSet);
-            else if (isNumeric(cell)) //TODO < and the rest numeric in the case of LLOQ
+            else if (isNumeric(cell))
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.Discrete);

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Commands.Core;
+using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
@@ -9,14 +8,11 @@ using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Presentation.Importer.Services;
+using OSPSuite.Core.Domain;
+
 
 namespace OSPSuite.Presentation.Importer.Presenters
-{
-   //internal - because of the accessibility of AbstractCommandCollectorPresenter
-
-   //THIS DOES NOT NEED TO BE A COMMANDCOLLECTOR PRESENTER -- to be honest not sure even if the abastractPresenter here
-   //is an overkill
+{ 
    internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
@@ -32,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
-
+      public event OnTriggerImportHandler OnTriggerImport = delegate { };
 
       public ImporterPresenter
       (
@@ -55,13 +51,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnMappingPresenter = columnMappingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
 
+         _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
+         _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
+         _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
+
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
 
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
          _view.OnTabChanged +=  SelectTab;
+         _view.OnImportAllSheets += ShowImportConfirmation;
+         _view.OnImportSingleSheet += ShowImportConfirmation;
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
-            var format = _availableFormats.First(f => f.Name == formatName); //TODO hmmm...wrong. this probably takes just the first one
+            var format = _availableFormats.First(f => f.Name == formatName);
             SetDataFormat(format, _availableFormats);
             OnFormatChanged(format);
          });
@@ -70,23 +72,34 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _namingConvention = namingConvention;
          });
       }
-
       public void ShowImportConfirmation()
       {
+         startImport(_dataSourceFile.DataSheets.Values, _dataSourceFile.DataSheets.Keys);
+      }
+      public void ShowImportConfirmation( string sheetName )
+      {
+         IEnumerable<IDataSheet> sheets = new[] {_dataSourceFile.DataSheets[sheetName]};
+         IEnumerable<string> sheetNames = new[] {sheetName};
+
+         startImport(sheets, sheetNames);
+      }
+
+      private void startImport( IEnumerable<IDataSheet> sheets, IEnumerable<string> sheetNames)
+      {
+         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
+
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
          {
-            importConfirmationPresenter.Show(_importer.ImportFromFile(_dataSourceFile, _columnInfos), _dataSourceFile.DataSheets.Keys);
+            importConfirmationPresenter.Show(dataSource, sheetNames);
+
+            if (!importConfirmationPresenter.Canceled)
+               OnTriggerImport.Invoke(dataSource);
          }
       }
 
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
-      }
-
-      public void InitializeWith(ICommandCollector initializer)
-      {
-         throw new NotImplementedException();
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
@@ -120,17 +133,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _dataViewingPresenter.SetTabData(tabName);
       }
-
-      public void AddCommand(ICommand command)
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public IEnumerable<ICommand> All()
-      {
-         throw new System.NotImplementedException();
-      }
-
-      public ICommandCollector CommandCollector { get; }
    }
 }

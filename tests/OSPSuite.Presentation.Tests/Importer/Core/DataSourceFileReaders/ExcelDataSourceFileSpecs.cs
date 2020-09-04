@@ -92,6 +92,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("Double").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("integer").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("string").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("not available").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
       }
 
       [TestCase]

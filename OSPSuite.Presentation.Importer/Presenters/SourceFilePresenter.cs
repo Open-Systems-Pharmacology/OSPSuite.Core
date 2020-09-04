@@ -1,31 +1,34 @@
-﻿using OSPSuite.Core.Importer;
-using OSPSuite.Core.Domain;
+﻿using System.IO;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
-using System.Collections.Generic;
-using System.IO;
-using OSPSuite.Assets;
 using OSPSuite.Core.Services;
-
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class SourceFilePresenter : AbstractPresenter<ISourceFileControl, ISourceFilePresenter>, ISourceFilePresenter
    {
       private readonly IDialogCreator _dialogCreator;
+      
+      public string Title  { get; set;} 
+      public string Filter { get; set; }
+      public string DirectoryKey { get; set; }
 
 
       public SourceFilePresenter(IDialogCreator dialogCreator, ISourceFileControl view) : base(view)
       {
          _dialogCreator = dialogCreator;
+         Title = string.Empty;
+         Filter = string.Empty;
+         DirectoryKey = string.Empty;
       }
 
       public void OpenFileDialog( string initFileName)
       {
-         //var initDirectoryName = Path.GetDirectoryName(initFileName);
-
-         //the constants here should come as parameters if we are to use this dialog for other things too
-         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs() { FileName = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, initFileName) });
+         string initDirectoryName = null;
+         if (!initFileName.IsNullOrEmpty()) 
+            initDirectoryName = Path.GetDirectoryName(initFileName);
+         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs() { FileName = _dialogCreator.AskForFileToOpen(Title, Filter, DirectoryKey, null, initDirectoryName) });
       }
 
       public event SourceFileChangedHandler OnSourceFileChanged =  delegate {};

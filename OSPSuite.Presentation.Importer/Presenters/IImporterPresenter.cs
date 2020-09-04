@@ -6,21 +6,23 @@ using OSPSuite.Core.Importer;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public interface IImporterPresenter : IPresenter<IImporterView>, ICommandCollectorPresenter
+   public interface IImporterPresenter : IPresenter<IImporterView>
    {
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 
-      //comes from ColumnMappingPresenter. Not sure if it really needs to be here
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
 
-      void ShowImportConfirmation();
-
       event FormatChangedHandler OnFormatChanged;
+
+      event OnTriggerImportHandler OnTriggerImport;
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
    }
+
+   public delegate void OnTriggerImportHandler( IDataSource dataSource);
+
 }

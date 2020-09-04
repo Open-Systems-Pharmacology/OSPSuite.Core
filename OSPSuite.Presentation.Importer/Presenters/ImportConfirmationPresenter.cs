@@ -17,9 +17,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void Show(IDataSource dataSource, IEnumerable<string> names)
       {
-         var i = 0;
          _view.SetDataSetNames(names);
          _view.Display();
       }
+
+      public bool Canceled => _view.Canceled;
    }
 }

@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
                sut.MoveToNextSheet();
             for (var i = 0; i < 2; i++)
                sut.MoveToNextRow();
-            sut.GetMeasurementLevels().ShouldBeEqualTo(new List<ColumnDescription.MeasurementLevel>() {ColumnDescription.MeasurementLevel.Numeric, ColumnDescription.MeasurementLevel.Discrete, ColumnDescription.MeasurementLevel.Numeric, ColumnDescription.MeasurementLevel.Numeric });
+            sut.GetMeasurementLevels().ShouldBeEqualTo(new List<ColumnDescription.MeasurementLevel>() {ColumnDescription.MeasurementLevel.Numeric, ColumnDescription.MeasurementLevel.Discrete, ColumnDescription.MeasurementLevel.Numeric, ColumnDescription.MeasurementLevel.Numeric, ColumnDescription.MeasurementLevel.Numeric });
          }
       }
 
