@@ -114,7 +114,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Because()
       {
          base.Because();
-         sut.SetSettings(_metaDataCategories, _columnInfos, _dataImporterSettings);
+         sut.SetSettings(_metaDataCategories, _columnInfos);
          sut.SetDataFormat(_basicFormat, new List<IDataFormat>() { _basicFormat });
       }
 
