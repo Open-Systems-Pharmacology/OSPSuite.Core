@@ -4,8 +4,6 @@ using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
 using DevExpress.XtraTab;
-using OSPSuite.Utility.Extensions;
-using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -48,7 +46,6 @@ namespace OSPSuite.Presentation.Importer.Views
       public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
       public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
       public event FormatChangedHandler OnFormatChanged = delegate {};
-      public event NamingConventionChangedHandler OnNamingConventionChanged = delegate {};
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
@@ -76,29 +73,9 @@ namespace OSPSuite.Presentation.Importer.Views
          formatComboBoxEdit.TextChanged += onFormatChanged;
       }
 
-      public void SetNamingConventions(IEnumerable<string> options, string selected = null)
-      {
-         namingConventionComboBoxEdit.Properties.Items.Clear();
-         namingConventionComboBoxEdit.Properties.Items.AddRange(options.ToArray());
-         if (selected != null)
-         {
-            namingConventionComboBoxEdit.EditValue = selected;
-         }
-         else
-         {
-            namingConventionComboBoxEdit.EditValue = options.First();
-         }
-         namingConventionComboBoxEdit.TextChanged += onNamingConventionChanged;
-      }
-
       private void onFormatChanged(object sender, EventArgs e)
       {
          OnFormatChanged.Invoke(formatComboBoxEdit.EditValue as string);
-      }
-
-      private void onNamingConventionChanged(object sender, EventArgs e)
-      {
-         OnNamingConventionChanged.Invoke(namingConventionComboBoxEdit.EditValue as string);
       }
 
       public void AddTabs(List<string> sheetNames)

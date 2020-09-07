@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public bool UnitActive { get; set; }
    }
 
-   public delegate void FormatChangedHandler(IDataFormat format);
+   public delegate void ParameterChangedHandler(string columnName, DataFormatParameter parameter);
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
@@ -74,7 +74,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IReadOnlyList<ColumnInfo> columnInfos
       );
 
-      void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
+      void SetDataFormat(IDataFormat format);
 
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
 
@@ -95,5 +95,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
+      
+      event ParameterChangedHandler OnParameterChanged;
    }
 }

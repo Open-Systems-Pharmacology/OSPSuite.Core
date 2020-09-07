@@ -195,6 +195,11 @@
     <Compile Include="Views\DataViewingControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Views\ColumnMappingControl.cs" />
+    <Compile Include="Views\ColumnMappingControl.Designer.cs">
+      <DependentUpon>ColumnMappingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataViewingControl.cs" />
     <Compile Include="Views\DataViewingControl.Designer.cs">
       <DependentUpon>DataViewingControl.cs</DependentUpon>
     </Compile>
@@ -211,6 +216,11 @@
     <Compile Include="Views\ImporterView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Views\ImportConfirmationView.cs" />
+    <Compile Include="Views\ImportConfirmationView.Designer.cs">
+      <DependentUpon>ImportConfirmationView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImporterView.cs" />
     <Compile Include="Views\ImporterView.Designer.cs">
       <DependentUpon>ImporterView.cs</DependentUpon>
     </Compile>
@@ -225,6 +235,11 @@
     <Compile Include="Views\UnitsEditorView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Views\SourceFileControl.cs" />
+    <Compile Include="Views\SourceFileControl.Designer.cs">
+      <DependentUpon>SourceFileControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UnitsEditorView.cs" />
     <Compile Include="Views\UnitsEditorView.Designer.cs">
       <DependentUpon>UnitsEditorView.cs</DependentUpon>
     </Compile>

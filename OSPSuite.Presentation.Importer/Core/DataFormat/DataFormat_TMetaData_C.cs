@@ -122,19 +122,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      public IList<Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      public IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var groupByParams = 
             Parameters
-               .Where(p => p is GroupByDataFormatParameter)
+               .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter)
                .Select(p => (p.ColumnName, data.GetColumnDescription(p.ColumnName).ExistingValues));
          var dataSets = new List<Dictionary<Column, IList<double>>>();
          return buildDataSets(data, groupByParams, columnInfos);
       }
 
-      private List<Dictionary<Column, IList<ValueAndLloq>>> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
+      private Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var dataSets = new List<Dictionary<Column, IList<ValueAndLloq>>>();
+         var dataSets = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>();
          buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets, columnInfos);
          return dataSets;
       }
@@ -149,7 +149,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
       /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
       /// <param name="dataSets">List to store the dataSets</param>
-      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<Dictionary<Column, IList<ValueAndLloq>>> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
+      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var valueTuples = parameters.ToList();
          if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
@@ -173,7 +173,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
                }
             );
-            dataSets.Add(parseMappings(rawDataSet, data, columnInfos));
+            dataSets.Add(
+               valueTuples.Select(p =>
+                  new InstanstiatedMetaData()
+                  {
+                     Id = data.GetColumnDescription(p.ColumnName).Index,
+                     Value = rawDataSet.First().ElementAt(data.GetColumnDescription(p.ColumnName).Index)
+                  }
+               ),
+               parseMappings(rawDataSet, data, columnInfos)
+            );
          }
       }
 

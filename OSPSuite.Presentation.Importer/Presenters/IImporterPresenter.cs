@@ -23,6 +23,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SelectTab(string tabName);
    }
 
+   public delegate void FormatChangedHandler(string format);
+
    public delegate void OnTriggerImportHandler( IDataSource dataSource);
 
 }

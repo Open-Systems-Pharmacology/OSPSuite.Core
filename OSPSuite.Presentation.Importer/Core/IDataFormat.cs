@@ -15,6 +15,6 @@ namespace OSPSuite.Presentation.Importer.Core
       string Description { get; }
       bool SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos);
       IList<DataFormatParameter> Parameters { get; }
-      IList<Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+      IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 }

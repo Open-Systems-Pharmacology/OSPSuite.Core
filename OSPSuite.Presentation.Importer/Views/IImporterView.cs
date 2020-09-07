@@ -12,11 +12,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       void SetFormats(IEnumerable<string> options, string selected);
 
-      void SetNamingConventions(IEnumerable<string> options, string selected = null);
-
       event FormatChangedHandler OnFormatChanged;
-
-      event NamingConventionChangedHandler OnNamingConventionChanged;
 
       event TabChangedHandler OnTabChanged;
 
@@ -33,7 +29,4 @@ namespace OSPSuite.Presentation.Importer.Views
    public delegate void ImportAllSheetsHandler();
 
    public delegate void TabChangedHandler(string format);
-
-   public delegate void NamingConventionChangedHandler(string namingConvention);
-
 }

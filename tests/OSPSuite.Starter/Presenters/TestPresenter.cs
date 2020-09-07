@@ -10,6 +10,7 @@ using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Importer.Core;
+using System.Linq;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -137,7 +138,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void startImportSuccessDialog(IDataSource dataSource)
       {
-         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Count + " data sets successfully imported");
+         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Values.Select(d => d.Data.Count).Sum() + " data sets successfully imported");
       }
    }
 }

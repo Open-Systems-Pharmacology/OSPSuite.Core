@@ -22,7 +22,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporterTask _importerTask;
-      private IEnumerable<IDataFormat> _availableFormats;
       private readonly IApplicationController _applicationController; 
       public ColumnMappingPresenter
       (
@@ -33,11 +32,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerTask = importerTask;
          _applicationController = applicationController;
-         View.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
-         {
-            var format = _availableFormats.First(f => f.Name == formatName);
-            SetDataFormat(format, _availableFormats);
-         });
       }
 
       public void SetSettings(
@@ -49,11 +43,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _metaDataCategories = metaDataCategories;
       }
 
-      public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
+      public void SetDataFormat(IDataFormat format)
       {
          _format = format;
-         var dataFormats = availableFormats.ToList();
-         _availableFormats = dataFormats; //TODO Resharper - WHY IS THIS A PROBLEM? SHOULD WE DO IT A LIST???
          _mappings = format.Parameters.Select(p => new ColumnMappingViewModel
          (
             p.ColumnName,
@@ -61,7 +53,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             p
          )).ToList();
          View.SetMappingSource(_mappings);
-         View.SetFormats(dataFormats.Select(f => f.Name), format.Name);
          ValidateMapping();
       }
 
@@ -236,13 +227,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var activeRow = modelByColumnName(model.ColumnName);
          activeRow.Source = ColumnMappingFormatter.Parse(model.ColumnName, model.Description);
+         OnParameterChanged.Invoke(model.ColumnName, model.Source);
       }
+
+      public event ParameterChangedHandler OnParameterChanged = delegate { };
 
       public void ClearRow(ColumnMappingViewModel model)
       {
          var activeRow = modelByColumnName(model.ColumnName);
          activeRow.Source = ColumnMappingFormatter.Parse(activeRow.Source.ColumnName, ColumnMappingFormatter.Ignored());
-         _view.Rebind();
+         OnParameterChanged.Invoke(model.ColumnName, model.Source);
+         View.Rebind();
       }
 
       private ColumnMappingViewModel modelByColumnName(string columnName)
@@ -252,7 +247,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ResetMapping()
       {
-         SetDataFormat(_format, _availableFormats);
+         SetDataFormat(_format);
       }
 
       public void ClearMapping()

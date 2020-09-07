@@ -2,16 +2,22 @@
 
 namespace OSPSuite.Presentation.Importer.Core
 {
+   public class InstanstiatedMetaData
+   {
+      public int Id { get; set; }
+      public string Value { get; set; }
+   }
+
    /// <summary>
    /// Data from a single experiment
    /// </summary>
    public interface IDataSet
    {
-      IList<Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
+      IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData> ,Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
    }
 
    public class DataSet : IDataSet
    {
-      public IList<Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
+      public IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
    }
 }
