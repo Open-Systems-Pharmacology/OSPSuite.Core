@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Importer.Views
             case MetaDataFormatParameter mp:
                return MetaData(mp.MetaDataId);
             default:
-               throw new Exception(Error.TypeNotSupported(model.GetType()));
+               return Ignored();
          }
       }
 
