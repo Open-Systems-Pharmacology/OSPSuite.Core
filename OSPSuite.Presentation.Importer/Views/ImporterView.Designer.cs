@@ -38,14 +38,12 @@ namespace OSPSuite.Presentation.Importer.Views
          this.dataViewingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.btnImport = new DevExpress.XtraEditors.SimpleButton();
          this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();
-         this.namingConventionComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.TabControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.namingConventionComboBoxEdit.Properties)).BeginInit();
          this.SuspendLayout();
          // 
          // columnMappingPanelControl
@@ -113,21 +111,11 @@ namespace OSPSuite.Presentation.Importer.Views
          this.btnImportAll.TabIndex = 7;
          this.btnImportAll.Text = "Import All";
          // 
-         // namingConventionComboBoxEdit
-         // 
-         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(79, 758);
-         this.namingConventionComboBoxEdit.Name = "namingConventionComboBoxEdit";
-         this.namingConventionComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(432, 22);
-         this.namingConventionComboBoxEdit.TabIndex = 8;
-         // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "ImporterView";
-         this.Controls.Add(this.namingConventionComboBoxEdit);
          this.Controls.Add(this.btnImportAll);
          this.Controls.Add(this.btnImport);
          this.Controls.Add(this.TabControl);
@@ -144,7 +132,6 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.TabControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingPanelControl)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.namingConventionComboBoxEdit.Properties)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -160,6 +147,5 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraTab.XtraTabControl TabControl;
       private DevExpress.XtraEditors.SimpleButton btnImport;
       private DevExpress.XtraEditors.SimpleButton btnImportAll;
-      private DevExpress.XtraEditors.ComboBoxEdit namingConventionComboBoxEdit;
    }
 }

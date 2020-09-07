@@ -118,25 +118,6 @@ namespace OSPSuite.Presentation.Importer.Views
          return _disabledUnitButtonRepository;
       }
 
-      public void SetFormats(IEnumerable<string> options, string selected)
-      {
-         comboBoxEdit1.Properties.Items.Clear();
-         foreach (var option in options)
-         {
-            comboBoxEdit1.Properties.Items.Add(option);
-         }
-
-         comboBoxEdit1.EditValue = selected;
-         comboBoxEdit1.TextChanged += onFormatChanged;
-      }
-
-      private void onFormatChanged(object sender, EventArgs e)
-      {
-         OnFormatChanged.Invoke(comboBoxEdit1.EditValue as string);
-      }
-
-      public event FormatChangedHandler OnFormatChanged = delegate { };
-
       public void Rebind()
       { 
          _gridViewBinder.Rebind();

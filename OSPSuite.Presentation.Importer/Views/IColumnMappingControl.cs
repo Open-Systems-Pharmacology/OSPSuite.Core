@@ -19,7 +19,16 @@ namespace OSPSuite.Presentation.Importer.Views
          get => _description;
          set => SetProperty(ref _description, value);
       }
-      public DataFormatParameter Source { get; set; }
+      private DataFormatParameter _source;
+      public DataFormatParameter Source 
+      {
+         get => _source;
+         set
+         {
+            _source = value;
+            Description = ColumnMappingFormatter.Stringify(value);
+         }
+      }
       public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source)
       {
          ColumnName = columnName;
@@ -91,15 +100,9 @@ namespace OSPSuite.Presentation.Importer.Views
       }
    }
 
-   public delegate void FormatChangedHandler(string format);
-
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingViewModel> mappings);
-
-      void SetFormats(IEnumerable<string> options, string selected);
-
-      event FormatChangedHandler OnFormatChanged;
 
       void Rebind();
    }

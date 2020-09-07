@@ -9,7 +9,7 @@ using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
-
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 { 
@@ -22,8 +22,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IApplicationController _applicationController;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
-
-      private string _namingConvention;
+      private DataImporterSettings _dataImporterSettings;
 
       private IEnumerable<IDataFormat> _availableFormats;
 
@@ -65,32 +64,49 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             var format = _availableFormats.First(f => f.Name == formatName);
             SetDataFormat(format, _availableFormats);
-            OnFormatChanged(format);
+            OnFormatChanged(format.Name);
          });
-         _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() =>
+         _columnMappingPresenter.OnParameterChanged += (columnName, parameter) => this.DoWithinExceptionHandler(() => 
          {
-            _namingConvention = namingConvention;
+
+            var old = _dataSourceFile.Format.Parameters.First(p => p.ColumnName == columnName);
+            var index = _dataSourceFile.Format.Parameters.IndexOf(old);
+            _dataSourceFile.Format.Parameters[index] = parameter;
          });
       }
       public void ShowImportConfirmation()
       {
-         startImport(_dataSourceFile.DataSheets.Values, _dataSourceFile.DataSheets.Keys);
+         startImport(_dataSourceFile.DataSheets);
       }
-      public void ShowImportConfirmation( string sheetName )
+      public void ShowImportConfirmation(string sheetName)
       {
-         IEnumerable<IDataSheet> sheets = new[] {_dataSourceFile.DataSheets[sheetName]};
-         IEnumerable<string> sheetNames = new[] {sheetName};
-
-         startImport(sheets, sheetNames);
+         startImport(new Dictionary<string, IDataSheet>() { { sheetName, _dataSourceFile.DataSheets[sheetName] } });
       }
 
-      private void startImport( IEnumerable<IDataSheet> sheets, IEnumerable<string> sheetNames)
+      private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
       {
          var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
 
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
          {
-            importConfirmationPresenter.Show(dataSource, sheetNames);
+            importConfirmationPresenter.Show
+            (
+               _dataSourceFile.Path.Split('\\').Last(),
+               dataSource,
+               _dataImporterSettings.NamingConventions,
+               _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter() 
+               {
+                  Id = md.MetaDataId,
+                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.MetaDataId).Index
+               }).Union
+               (
+                  _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+                  {
+                     Id = md.ColumnName,
+                     Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+                  })
+               )
+            );
 
             if (!importConfirmationPresenter.Canceled)
                OnTriggerImport.Invoke(dataSource);
@@ -106,13 +122,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var dataFormats = availableFormats.ToList();
          _availableFormats = dataFormats;
-         _columnMappingPresenter.SetDataFormat (format, _availableFormats);
+         _columnMappingPresenter.SetDataFormat(format);
          View.SetFormats(dataFormats.Select(f => f.Name), format.Name);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
-         View.SetNamingConventions(dataImporterSettings.NamingConventions);
+         _dataImporterSettings = dataImporterSettings;
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _columnInfos = columnInfos;
       }
@@ -123,7 +139,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
-         _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
