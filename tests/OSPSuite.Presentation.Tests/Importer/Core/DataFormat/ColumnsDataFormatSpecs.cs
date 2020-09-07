@@ -260,16 +260,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _columnInfos
          );
          data.Count.ShouldBeEqualTo(10);
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GLP-1_7-36 total", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucose", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Insuline", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "GIP_total", "", "", "", "", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "", "", "", "", "Glucagon", "", "", "", "", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GLP-1_7-36 total", "", "", "", "po", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucose", "", "", "", "po", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Insuline", "", "", "", "po", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GIP_total", "", "", "", "po", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucagon", "", "", "", "po", "H" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GLP-1_7-36 total", "", "", "", "po", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucose", "", "", "", "po", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Insuline", "", "", "", "po", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GIP_total", "", "", "", "po", "T2DM" })))).MustHaveHappened();
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucagon", "", "", "", "po", "T2DM" })))).MustHaveHappened();
       }
 
       [TestCase]
@@ -290,12 +290,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          );
          foreach (var dataset in data)
          {
-            dataset.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
-            dataset.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
-            dataset.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
-            dataset.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
-            dataset.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
-            dataset.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
+            dataset.Value.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
+            dataset.Value.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
+            dataset.Value.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
+            dataset.Value.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
+            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.Value.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
       }
    }
