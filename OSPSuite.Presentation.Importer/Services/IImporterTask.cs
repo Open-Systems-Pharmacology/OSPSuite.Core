@@ -9,28 +9,21 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporterTask
    {
-      int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null);
+      int GetImageIndex(DataFormatParameter parameter);
 
       string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
    }
 
    public class ImporterTask : IImporterTask
    {
-      public int GetImageIndex(DataFormatParameter parameter, IEnumerable<DataFormatParameter> mappings = null)
+      public int GetImageIndex(DataFormatParameter parameter)
       {
          switch (parameter)
          {
             case MetaDataFormatParameter mp:
                return ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
             case MappingDataFormatParameter mp:
-               if (mappings == null)
-                  return ApplicationIcons.IconIndex(ApplicationIcons.UnitInformation);
-               return ApplicationIcons.IconIndex(
-                  mappings
-                     .Any(m => (m is MappingDataFormatParameter) &&
-                               (m as MappingDataFormatParameter)?.MappedColumn.Name == mp.MappedColumn.Name)
-                     ? ApplicationIcons.UnitInformation
-                     : ApplicationIcons.MissingUnitInformation);
+               return ApplicationIcons.IconIndex(ApplicationIcons.UnitInformation);
             case GroupByDataFormatParameter gp:
                return ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
             default:

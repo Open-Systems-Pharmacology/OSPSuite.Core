@@ -63,15 +63,37 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
-            SetDataFormat(format, _availableFormats);
+            //SetDataFormat(format, _availableFormats);
             OnFormatChanged(format.Name);
          });
+         _columnMappingPresenter.OnFormatPropertiesChanged += (parameters) => this.DoWithinExceptionHandler(() =>
+         {
+            _dataSourceFile.Format.Parameters.Clear();
+            foreach (var parameter in parameters)
+            {
+               _dataSourceFile.Format.Parameters.Add(parameter);
+            }
+         });
+
          _columnMappingPresenter.OnParameterChanged += (columnName, parameter) => this.DoWithinExceptionHandler(() => 
          {
-
-            var old = _dataSourceFile.Format.Parameters.First(p => p.ColumnName == columnName);
-            var index = _dataSourceFile.Format.Parameters.IndexOf(old);
-            _dataSourceFile.Format.Parameters[index] = parameter;
+            var old = _dataSourceFile.Format.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
+            if (old == null || old is GroupByDataFormatParameter)
+            {
+               if (old != null)
+               {
+                  _dataSourceFile.Format.Parameters.Remove(old);
+               }
+               else
+               {
+                  _dataSourceFile.Format.Parameters.Add(parameter);
+               }
+            }
+            else
+            {
+               var index = _dataSourceFile.Format.Parameters.IndexOf(old);
+               _dataSourceFile.Format.Parameters[index] = parameter;
+            }
          });
       }
       public void ShowImportConfirmation()

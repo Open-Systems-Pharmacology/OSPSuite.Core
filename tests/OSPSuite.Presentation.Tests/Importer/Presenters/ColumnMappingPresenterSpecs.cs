@@ -56,10 +56,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
                A<IList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
 
-                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }))) &&
-                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }))) &&
-                  l.ElementAt(2).IsEquivalentTo(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"))) &&
-                  l.ElementAt(3).IsEquivalentTo(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"))))
+                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel("Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }), 0)) &&
+                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel("Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }), 0)) &&
+                  l.ElementAt(2).IsEquivalentTo(new ColumnMappingViewModel("Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"), 0)) &&
+                  l.ElementAt(3).IsEquivalentTo(new ColumnMappingViewModel("Study id", "GroupBy", new GroupByDataFormatParameter("Study id"), 0)))
             )).MustHaveHappened();
       }
    }
@@ -70,7 +70,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          if (self == null)
             return other == null;
-         if (self.ColumnName != other.ColumnName || self.Description != other.Description)
+         if (self.MappingName != other.MappingName || self.Description != other.Description)
             return false;
          switch (self.Source)
          {
@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void fills_correct_options()
       {
-         var options = sut.GetAvailableOptionsFor(new ColumnMappingViewModel("Time", "", A.Fake<DataFormatParameter>()));
+         var options = sut.GetAvailableOptionsFor(new ColumnMappingViewModel("Time", "", A.Fake<DataFormatParameter>(), 0));
          var columnMappingOptions = options.ToList();
          columnMappingOptions.Count().ShouldBeEqualTo(3);
          columnMappingOptions.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
