@@ -173,16 +173,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
                }
             );
-            dataSets.Add(
-               valueTuples.Select(p =>
-                  new InstanstiatedMetaData()
-                  {
-                     Id = data.GetColumnDescription(p.ColumnName).Index,
-                     Value = rawDataSet.First().ElementAt(data.GetColumnDescription(p.ColumnName).Index)
-                  }
-               ),
-               parseMappings(rawDataSet, data, columnInfos)
-            );
+            if (rawDataSet.Count() > 0)
+            {
+               dataSets.Add(
+                  valueTuples.Select(p =>
+                     new InstanstiatedMetaData()
+                     {
+                        Id = data.GetColumnDescription(p.ColumnName).Index,
+                        Value = rawDataSet.First().ElementAt(data.GetColumnDescription(p.ColumnName).Index)
+                     }
+                  ),
+                  parseMappings(rawDataSet, data, columnInfos)
+               );
+            }
          }
       }
 

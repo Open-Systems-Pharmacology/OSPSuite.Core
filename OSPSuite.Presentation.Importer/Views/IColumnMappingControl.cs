@@ -4,14 +4,13 @@ using OSPSuite.Assets;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Utility;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
    public class ColumnMappingViewModel : Notifier
    {
-      public string ColumnName { get; private set; }
+      public string MappingName { get; private set; }
       private string _description;
 
       public string Description 
@@ -29,11 +28,13 @@ namespace OSPSuite.Presentation.Importer.Views
             Description = ColumnMappingFormatter.Stringify(value);
          }
       }
-      public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source)
+      public int Icon { get; set; }
+      public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source, int icon)
       {
-         ColumnName = columnName;
+         MappingName = columnName;
          Description = description;
          Source = source;
+         Icon = icon;
       }
    }
 
@@ -58,6 +59,23 @@ namespace OSPSuite.Presentation.Importer.Views
       public static string MetaData(string metaDataId)
       {
          return $"{ColumnMappingOption.DescriptionType.MetaData},{metaDataId}";
+      }
+
+      public static string MappingName(DataFormatParameter model)
+      {
+         switch (model)
+         {
+            case IgnoredDataFormatParameter _:
+               return Ignored();
+            case GroupByDataFormatParameter _:
+               return Captions.GroupByDescription;
+            case MappingDataFormatParameter mp:
+               return Captions.MappingDescription(mp.MappedColumn.Name.ToString(), mp.MappedColumn.Unit);
+            case MetaDataFormatParameter mp:
+               return Captions.MetaDataDescription(mp.MetaDataId);
+            default:
+               return Ignored();
+         }
       }
 
       public static string Stringify(DataFormatParameter model)

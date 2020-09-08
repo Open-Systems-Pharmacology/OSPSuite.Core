@@ -1102,8 +1102,10 @@ namespace OSPSuite.Assets
 
       public static readonly string MappingTitle = "Mapping";
       public static readonly string GroupByTitle = "Group by";
+      public static readonly string AddGroupByTitle = "Add group by";
       public static readonly string MetaDataTitle = "Meta data";
       public static readonly string IgnoredParameterTitle = "Ignored parameter";
+      public static readonly string NotConfiguredField = "Field not configured yet";
       public static string MappingHint(string parameter, string target, string unit)
       {
          return $"The column {parameter} will be mapped into {target} with units as {unit}";

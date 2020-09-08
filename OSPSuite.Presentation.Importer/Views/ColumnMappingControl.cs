@@ -19,6 +19,7 @@ using OSPSuite.UI;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -49,7 +50,7 @@ namespace OSPSuite.Presentation.Importer.Views
          uxGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseUp;
          uxGridView.MouseDown += onMouseDown;
          uxGrid.ToolTipController = new ToolTipController();
-         uxGrid.ToolTipController.GetActiveObjectInfo += onGetActiveObjectInfo;
+         uxGrid.ToolTipController.GetActiveObjectInfo += (o, e) => this.DoWithinExceptionHandler(() => onGetActiveObjectInfo(o, e));
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.UnitInformationDescription);
       }
@@ -71,11 +72,31 @@ namespace OSPSuite.Presentation.Importer.Views
          return repo;
       }
 
+      private RepositoryItemImageComboBox nameRepository(ColumnMappingViewModel model)
+      {
+         var repo = new RepositoryItemImageComboBox
+         {
+            AllowNullInput = DefaultBoolean.True
+         };
+         fillComboBoxItem
+         (
+            repo, 
+            new ColumnMappingOption() 
+            { 
+               Label = model.MappingName, 
+               IconIndex = model.Icon,
+               Description = model.MappingName
+            } 
+         );
+         return repo;
+      }
+
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _gridViewBinder.AutoBind(x => x.ColumnName)
+         _gridViewBinder.AutoBind(x => x.MappingName)
             .WithCaption(Captions.Name)
+            .WithRepository(nameRepository)
             .AsReadOnly();
 
          _gridViewBinder.AutoBind(x => x.Description)
@@ -108,7 +129,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private RepositoryItem removeRepository(ColumnMappingViewModel model)
       {
-         return model.Source is IgnoredDataFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
+         return model.Source == null || model.Source is IgnoredDataFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
       }
 
       private RepositoryItem unitRepository(ColumnMappingViewModel model)
@@ -153,17 +174,28 @@ namespace OSPSuite.Presentation.Importer.Views
          return superToolTip;
       }
 
-      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<ColumnMappingOption> options)
+      private void fillComboBoxItem(RepositoryItemImageComboBox editor, ColumnMappingOption option)
       {
          editor.Items.Clear();
          editor.SmallImages = _imageListRetriever.AllImages16x16;
+         editor.NullText = Captions.Importer.NoneEditorNullText;
+
+         editor.Items.Add(new ImageComboBoxItem(option.Description)
+         {
+            Description = option.Label,
+            ImageIndex = option.IconIndex
+         });
+      }
+
+      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<ColumnMappingOption> options)
+      {
+         editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
             editor.Items.Add(new ImageComboBoxItem(option.Description)
             {
                Description = option.Label,
-               ImageIndex = option.IconIndex
             });
          }
 
