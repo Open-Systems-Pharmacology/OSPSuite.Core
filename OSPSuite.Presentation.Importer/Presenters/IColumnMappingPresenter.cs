@@ -49,7 +49,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Ignored,
          GroupBy,
          MetaData,
-         Mapping
+         Mapping,
+         AddGroupBy
       }
    }
 
@@ -85,6 +86,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SetDescriptionForRow(ColumnMappingViewModel model);
 
       void ClearRow(ColumnMappingViewModel model);
+
+      void AddGroupBy(AddGroupByFormatParameter source);
 
       void ResetMapping();
 

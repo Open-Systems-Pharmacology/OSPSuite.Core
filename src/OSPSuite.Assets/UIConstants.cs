@@ -1106,6 +1106,7 @@ namespace OSPSuite.Assets
       public static readonly string MetaDataTitle = "Meta data";
       public static readonly string IgnoredParameterTitle = "Ignored parameter";
       public static readonly string NotConfiguredField = "Field not configured yet";
+      public static readonly string AddGroupBy = "Add a new grouping by";
       public static string MappingHint(string parameter, string target, string unit)
       {
          return $"The column {parameter} will be mapped into {target} with units as {unit}";
@@ -1114,6 +1115,7 @@ namespace OSPSuite.Assets
       {
          return $"The column {parameter} will be used for grouping by";
       }
+      public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
       public static string MetaDataHint(string parameter, string target)
       {
          return $"The column {parameter} will be used as meta data to extract the following data: {target}";
@@ -1134,6 +1136,7 @@ namespace OSPSuite.Assets
 
       public static readonly string UnitInformationCaption = "Unit Information";
       public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns. CRTL-I";
+      public static readonly string AddInformationDescription = "Add a new grouping by field";
    }
 
    public static class Error

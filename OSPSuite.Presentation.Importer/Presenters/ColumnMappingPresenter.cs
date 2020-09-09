@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using Microsoft.SqlServer.Server;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
@@ -48,6 +50,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             var target = formatParameters.OfType<MappingDataFormatParameter>().FirstOrDefault(m => m.MappedColumn.Name.ToString() == c.Name);
             return new ColumnMappingViewModel
             (
+               ColumnMappingViewModel.ColumnType.Mapping,
                c.Name,
                ColumnMappingFormatter.Stringify(target),
                target,
@@ -60,6 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                var target = formatParameters.OfType<MetaDataFormatParameter>().FirstOrDefault(m => m.MetaDataId == md.Name);
                return new ColumnMappingViewModel
                (
+                  ColumnMappingViewModel.ColumnType.MetaData,
                   md.Name,
                   ColumnMappingFormatter.Stringify(target),
                   target,
@@ -72,6 +76,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                gb =>
                {
                   return new ColumnMappingViewModel(
+                     ColumnMappingViewModel.ColumnType.GroupBy,
                      Captions.GroupByTitle,
                      ColumnMappingFormatter.Stringify(gb),
                      gb,
@@ -82,9 +87,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ).Append
          (
             new ColumnMappingViewModel(
+               ColumnMappingViewModel.ColumnType.AddGroupBy,
                Captions.AddGroupByTitle,
                null,
-               new IgnoredDataFormatParameter(""),
+               new AddGroupByFormatParameter("", ""),
                _importerTask.GetImageIndex(new GroupByDataFormatParameter(""))
             )
          ).ToList();
@@ -112,13 +118,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          using (var unitsEditorPresenter = _applicationController.Start<IUnitsEditorPresenter>())
          {
-            var activeRow = modelByMappingName(model.MappingName);
-            var column = ((MappingDataFormatParameter)activeRow.Source).MappedColumn;
+            var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
             unitsEditorPresenter.ShowFor
             (
                column,
                _columnInfos
-                  .First(i => i.DisplayName == column.Name.ToString())
+                  .First(i => i.DisplayName == model.MappingName)
                   .DimensionInfos
                   .Select(d => d.Dimension)
             );
@@ -131,11 +136,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      private ColumnMappingOption generateGroupByColumnMappingOption(string description)
+      private ColumnMappingOption generateGroupByColumnMappingOption(string description, string columnName)
       {
          return new ColumnMappingOption()
          {
-            Label = Captions.GroupByTitle,
+            Label = columnName,
+            Description = description
+         };
+      }
+
+      private ColumnMappingOption generateAddGroupByColumnMappingOption(string description, string columnName)
+      {
+         return new ColumnMappingOption()
+         {
+            Label = columnName,
             Description = description
          };
       }
@@ -160,73 +174,83 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model)
       {
-         var activeRow = modelByMappingName(model.MappingName);
          var options = new List<ColumnMappingOption>();
-         if (activeRow == null)
+         if (model == null)
             return new List<ColumnMappingOption>();
-         if (activeRow != null && activeRow.Source != null)
+         if (model.Source != null)
          {
-            switch (activeRow.Source)
+            switch (model.Source)
             {
-               case IgnoredDataFormatParameter _:
-                  options.Add(generateIgnoredColumnMappingOption(activeRow.Description));
-                  break;
                case GroupByDataFormatParameter _:
-                  options.Add(generateGroupByColumnMappingOption(activeRow.Description));
+                  options.Add(generateGroupByColumnMappingOption(model.Description, model.Source.ColumnName));
                   break;
                case MappingDataFormatParameter tm:
-                  options.Add(generateMappingColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(),
+                  options.Add(generateMappingColumnMappingOption(model.Description, tm.ColumnName, tm.MappedColumn.Name.ToString(),
                      tm.MappedColumn.Unit));
                   break;
                case MetaDataFormatParameter tm:
-                  options.Add(generateMetaDataColumnMappingOption(activeRow.Description, tm.ColumnName, tm.MetaDataId));
+                  options.Add(generateMetaDataColumnMappingOption(model.Description, tm.ColumnName, tm.MetaDataId));
+                  break;
+               case IgnoredDataFormatParameter _:
+               case AddGroupByFormatParameter _:
                   break;
                default:
-                  throw new Exception(Error.TypeNotSupported(activeRow.Source.GetType()));
-            }
-
-            //Ignored
-            if (!(activeRow.Source is IgnoredDataFormatParameter))
-            {
-               options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
-            }
-
-            //GroupBy
-            if (!(activeRow.Source is GroupByDataFormatParameter))
-            {
-               options.Add(generateGroupByColumnMappingOption(ColumnMappingFormatter.GroupBy()));
+                  throw new Exception(Error.TypeNotSupported(model.Source.GetType()));
             }
          }
-         //Mappings only for missing columns
-         foreach (var info in _columnInfos)
+         options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
+         switch (model.CurrentColumnType)
          {
-            if (!_mappings.Any(m =>
-               m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter)?.MappedColumn.Name.ToString() == info.DisplayName))
-            {
-               options.Add(
-                  generateMappingColumnMappingOption(
-                     ColumnMappingFormatter.Mapping(info.DisplayName, "?"),
-                     activeRow.MappingName,
-                     info.DisplayName
-                  )
-               );
-            }
+            case ColumnMappingViewModel.ColumnType.Mapping:
+               foreach (var column in _format.Parameters.OfType<IgnoredDataFormatParameter>())
+               {
+                  options.Add(
+                     generateMappingColumnMappingOption(
+                        ColumnMappingFormatter.Mapping(column.ColumnName, "?"),
+                        model.MappingName,
+                        column.ColumnName
+                     )
+                  );
+               }
+               break;
+            case ColumnMappingViewModel.ColumnType.MetaData:
+               foreach (var column in _format.Parameters.OfType<IgnoredDataFormatParameter>())
+               {
+                  options.Add(
+                     generateMetaDataColumnMappingOption(
+                        ColumnMappingFormatter.MetaData(column.ColumnName),
+                        model.MappingName,
+                        column.ColumnName
+                     )
+                  );
+               }
+               break;
+            case ColumnMappingViewModel.ColumnType.GroupBy:
+               //GroupBy only for missing columns
+               foreach (var column in _format.Parameters.OfType<IgnoredDataFormatParameter>())
+               {
+                  options.Add(
+                     generateGroupByColumnMappingOption(
+                        ColumnMappingFormatter.GroupBy(column.ColumnName),
+                        column.ColumnName
+                     )
+                  );
+               }
+               break;
+            case ColumnMappingViewModel.ColumnType.AddGroupBy:
+               //GroupBy only for missing columns
+               foreach (var column in _format.Parameters.OfType<IgnoredDataFormatParameter>())
+               {
+                  options.Add(
+                     generateAddGroupByColumnMappingOption(
+                        ColumnMappingFormatter.AddGroupBy(column.ColumnName),
+                        column.ColumnName
+                     )
+                  );
+               }
+               break;
          }
-
-         //MetaData only for missing data
-         foreach (var category in _metaDataCategories)
-         {
-            if (!_mappings.Any(m => m.Source is MetaDataFormatParameter && (m.Source as MetaDataFormatParameter).MetaDataId == category.DisplayName))
-            {
-               options.Add(
-                  generateMetaDataColumnMappingOption(
-                     ColumnMappingFormatter.MetaData(category.DisplayName),
-                     activeRow.MappingName,
-                     category.DisplayName
-                  )
-               );
-            }
-         }
+         
 
          return options;
       }
@@ -265,6 +289,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   Title = Captions.IgnoredParameterTitle,
                   Description = Captions.IgnoredParameterHint
                };
+            case AddGroupByFormatParameter _:
+               return new ToolTipDescription()
+               {
+                  Title = Captions.AddGroupByTitle,
+                  Description = Captions.AddGroupByHint
+               };
             default:
                throw new Exception(Error.TypeNotSupported(element.GetType()));
          }
@@ -272,8 +302,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SetDescriptionForRow(ColumnMappingViewModel model)
       {
-         var activeRow = modelByMappingName(model.MappingName);
-         activeRow.Source = ColumnMappingFormatter.Parse(model.MappingName, model.Description);
+         var newParam = ColumnMappingFormatter.Parse(model.MappingName, model.Description);
+         var index = _format.Parameters.IndexOf(model.Source);
+         _format.Parameters[index] = newParam;
+         model.Source = newParam;
          OnParameterChanged.Invoke(model.MappingName, model.Source);
       }
 
@@ -285,6 +317,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          if (activeRow.Source is GroupByDataFormatParameter)
          {
             _mappings.Remove(activeRow);
+            _format.Parameters.Remove(activeRow.Source);
          }
          else
          {
@@ -292,6 +325,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
          OnParameterChanged.Invoke(model.Source.ColumnName, model.Source);
          View.Rebind();
+      }
+
+      public void AddGroupBy(AddGroupByFormatParameter source)
+      {
+         var parameter = new GroupByDataFormatParameter(source.GroupingByColumn);
+         _format.Parameters.Insert(_format.Parameters.Count-2, parameter);new GroupByDataFormatParameter(source.GroupingByColumn);
+         setDataFormat(_mappings
+            .Where(f => !(f.Source is IgnoredDataFormatParameter || f.Source is AddGroupByFormatParameter))
+            .Select(f => f.Source)
+            .Append(parameter)
+            .ToList());
       }
 
       private ColumnMappingViewModel modelByMappingName(string mappingName)
@@ -307,6 +351,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void ResetMapping()
       {
          setDataFormat(_originalFormat);
+         if (_format != null)
+         {
+            _format.Parameters.Clear();
+            foreach (var p in _originalFormat)
+               _format.Parameters.Add(p);
+         }
          OnFormatPropertiesChanged.Invoke(_originalFormat);
       }
 
@@ -314,6 +364,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var format = _format.Parameters.Select(p => new IgnoredDataFormatParameter(p.ColumnName) as DataFormatParameter).ToList();
          setDataFormat(format);
+         _format.Parameters.Clear();
+         foreach (var p in format)
+            _format.Parameters.Add(p);
          OnFormatPropertiesChanged.Invoke(format);
       }
 

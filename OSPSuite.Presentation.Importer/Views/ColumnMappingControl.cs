@@ -35,7 +35,8 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly RepositoryItemButtonEdit _unitButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation, Captions.UnitInformationDescription);
 
-      private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation);
+      private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
+      private readonly RepositoryItemButtonEdit _addButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -123,19 +124,22 @@ namespace OSPSuite.Presentation.Importer.Views
             _presenter.ClearRow(_gridViewBinder.FocusedElement);
          };
          _unitButtonRepository.ButtonClick += (o, e) => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement);
+         _addButtonRepository.ButtonClick += (o, e) => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter);
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
       }
 
       private RepositoryItem removeRepository(ColumnMappingViewModel model)
       {
-         return model.Source == null || model.Source is IgnoredDataFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
+         return model.Source == null || model.Source is IgnoredDataFormatParameter || model.Source is AddGroupByFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
       }
 
       private RepositoryItem unitRepository(ColumnMappingViewModel model)
       {
          if (model.Source is MappingDataFormatParameter)
             return _unitButtonRepository;
+         if (model.Source is AddGroupByFormatParameter)
+            return _addButtonRepository;
          return _disabledUnitButtonRepository;
       }
 
