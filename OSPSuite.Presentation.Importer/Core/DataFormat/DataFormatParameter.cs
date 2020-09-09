@@ -31,6 +31,16 @@
       { }
    }
 
+   public class AddGroupByFormatParameter : DataFormatParameter
+   {
+      public AddGroupByFormatParameter(string columnName, string groupingByColumn) : base(columnName)
+      {
+         GroupingByColumn = groupingByColumn;
+      }
+
+      public string GroupingByColumn { get; private set; }
+   }
+
    public class MetaDataFormatParameter : DataFormatParameter
    {
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)

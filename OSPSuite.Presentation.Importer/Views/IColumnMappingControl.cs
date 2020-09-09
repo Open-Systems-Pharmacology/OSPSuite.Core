@@ -29,8 +29,17 @@ namespace OSPSuite.Presentation.Importer.Views
          }
       }
       public int Icon { get; set; }
-      public ColumnMappingViewModel(string columnName, string description, DataFormatParameter source, int icon)
+      public enum ColumnType
       {
+         Mapping,
+         MetaData,
+         GroupBy,
+         AddGroupBy
+      }
+      public ColumnType CurrentColumnType { get; set; }
+      public ColumnMappingViewModel(ColumnType columnType, string columnName, string description, DataFormatParameter source, int icon)
+      {
+         CurrentColumnType = columnType;
          MappingName = columnName;
          Description = description;
          Source = source;
@@ -46,9 +55,14 @@ namespace OSPSuite.Presentation.Importer.Views
          return _ignored;
       }
 
-      public static string GroupBy()
+      public static string GroupBy(string columnName)
       {
-         return $"{ColumnMappingOption.DescriptionType.GroupBy}";
+         return $"{ColumnMappingOption.DescriptionType.GroupBy},{columnName}";
+      }
+
+      public static string AddGroupBy(string columnName)
+      {
+         return $"{ColumnMappingOption.DescriptionType.AddGroupBy},{columnName}";
       }
 
       public static string Mapping(string mappingId, string unit)
@@ -84,12 +98,14 @@ namespace OSPSuite.Presentation.Importer.Views
          {
             case IgnoredDataFormatParameter _:
                return Ignored();
-            case GroupByDataFormatParameter _:
-               return GroupBy();
+            case GroupByDataFormatParameter gb:
+               return GroupBy(gb.ColumnName);
             case MappingDataFormatParameter mp:
                return Mapping(mp.MappedColumn.Name.ToString(), mp.MappedColumn.Unit);
             case MetaDataFormatParameter mp:
                return MetaData(mp.MetaDataId);
+            case AddGroupByFormatParameter ag:
+               return AddGroupBy(ag.GroupingByColumn);
             default:
                return Ignored();
          }
@@ -113,6 +129,10 @@ namespace OSPSuite.Presentation.Importer.Views
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {
             return new MetaDataFormatParameter(columnName, parsed[1]);
+         }
+         else if (parsed[0] == ColumnMappingOption.DescriptionType.AddGroupBy.ToString())
+         {
+            return new AddGroupByFormatParameter(columnName, parsed[1]);
          }
          throw new Exception(Error.TypeNotSupported(parsed[0]));
       }
