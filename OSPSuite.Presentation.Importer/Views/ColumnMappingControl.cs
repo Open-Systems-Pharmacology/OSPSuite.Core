@@ -137,9 +137,17 @@ namespace OSPSuite.Presentation.Importer.Views
       private RepositoryItem unitRepository(ColumnMappingViewModel model)
       {
          if (model.Source is MappingDataFormatParameter)
+         {
             return _unitButtonRepository;
+         }
          if (model.Source is AddGroupByFormatParameter)
+         {
+            if (string.IsNullOrEmpty(model.Source.ColumnName))
+            {
+               return _disabledUnitButtonRepository;
+            }
             return _addButtonRepository;
+         }
          return _disabledUnitButtonRepository;
       }
 

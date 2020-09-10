@@ -50,29 +50,31 @@ namespace OSPSuite.Presentation.Importer.Views
    public static class ColumnMappingFormatter
    {
       private static readonly string _ignored = $"{ColumnMappingOption.DescriptionType.Ignored}";
-      public static string Ignored()
+      public static string Ignored(IgnoredDataFormatParameter model = null)
       {
-         return _ignored;
+         if (model == null)
+            return _ignored;
+         return $"{_ignored},{model.ColumnName}";
       }
 
-      public static string GroupBy(string columnName)
+      public static string GroupBy(GroupByDataFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.GroupBy},{columnName}";
+         return $"{ColumnMappingOption.DescriptionType.GroupBy},{model.ColumnName}";
       }
 
-      public static string AddGroupBy(string columnName)
+      public static string AddGroupBy(AddGroupByFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.AddGroupBy},{columnName}";
+         return $"{ColumnMappingOption.DescriptionType.AddGroupBy},{model.ColumnName}";
       }
 
-      public static string Mapping(string mappingId, string unit)
+      public static string Mapping(MappingDataFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.Mapping},{mappingId},{unit}";
+         return $"{ColumnMappingOption.DescriptionType.Mapping},{model.ColumnName},{model.MappedColumn.Name},{model.MappedColumn.Unit}";
       }
 
-      public static string MetaData(string metaDataId)
+      public static string MetaData(MetaDataFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.MetaData},{metaDataId}";
+         return $"{ColumnMappingOption.DescriptionType.MetaData},{model.ColumnName},{model.MetaDataId}";
       }
 
       public static string MappingName(DataFormatParameter model)
@@ -96,43 +98,43 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          switch (model)
          {
-            case IgnoredDataFormatParameter _:
-               return Ignored();
+            case IgnoredDataFormatParameter m:
+               return Ignored(m);
             case GroupByDataFormatParameter gb:
-               return GroupBy(gb.ColumnName);
+               return GroupBy(gb);
             case MappingDataFormatParameter mp:
-               return Mapping(mp.MappedColumn.Name.ToString(), mp.MappedColumn.Unit);
+               return Mapping(mp);
             case MetaDataFormatParameter mp:
-               return MetaData(mp.MetaDataId);
+               return MetaData(mp);
             case AddGroupByFormatParameter ag:
-               return AddGroupBy(ag.GroupingByColumn);
+               return AddGroupBy(ag);
             default:
                return Ignored();
          }
       }
 
-      public static DataFormatParameter Parse(string columnName, string description)
+      public static DataFormatParameter Parse(string description)
       {
          var parsed = description.Split(',');
          if (parsed[0] == ColumnMappingOption.DescriptionType.Ignored.ToString())
          {
-            return new IgnoredDataFormatParameter(columnName);
+            return new IgnoredDataFormatParameter(parsed.Length == 2 ? parsed[1] : "");
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.GroupBy.ToString())
          {
-            return new GroupByDataFormatParameter(columnName);
+            return new GroupByDataFormatParameter(parsed[1]);
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            return new MappingDataFormatParameter(columnName, new Core.Column() { Name = parsed[1], Unit = parsed[2] });
+            return new MappingDataFormatParameter(parsed[1], new Core.Column() { Name = parsed[2], Unit = parsed[3] });
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {
-            return new MetaDataFormatParameter(columnName, parsed[1]);
+            return new MetaDataFormatParameter(parsed[1], parsed[2]);
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.AddGroupBy.ToString())
          {
-            return new AddGroupByFormatParameter(columnName, parsed[1]);
+            return new AddGroupByFormatParameter(parsed[1]);
          }
          throw new Exception(Error.TypeNotSupported(parsed[0]));
       }

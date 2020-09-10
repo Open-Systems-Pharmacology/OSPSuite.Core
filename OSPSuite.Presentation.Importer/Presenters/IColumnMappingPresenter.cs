@@ -26,18 +26,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public delegate void MappingCompletedHandler(object sender);
 
-   public class DataFormatParametersChangedArgs : EventArgs
-   {
-      public IReadOnlyList<DataFormatParameter> Parameters { get; }
-
-      public DataFormatParametersChangedArgs(params DataFormatParameter[] parameters)
-      {
-         Parameters = new List<DataFormatParameter>(parameters);
-      }
-   }
-
-   public delegate void DataFormatParametersChangedHandler(object sender, DataFormatParametersChangedArgs e);
-
    public class ColumnMappingOption
    {
       public string Label { get; set; }
@@ -66,16 +54,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public bool UnitActive { get; set; }
    }
 
-   public delegate void ParameterChangedHandler(string columnName, DataFormatParameter parameter);
-
-   public delegate void FormatPropertiesChangedHandler(IEnumerable<DataFormatParameter> parameters);
-
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos
       );
+
+      IDataFormat GetDataFormat();
 
       void SetDataFormat(IDataFormat format);
 
@@ -100,9 +86,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event MappingCompletedHandler OnMappingCompleted; //status: you can import
 
       event MissingMappingHandler OnMissingMapping;
-      
-      event ParameterChangedHandler OnParameterChanged;
-
-      event FormatPropertiesChangedHandler OnFormatPropertiesChanged;
    }
 }
