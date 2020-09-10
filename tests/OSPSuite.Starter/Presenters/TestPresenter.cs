@@ -33,7 +33,7 @@ namespace OSPSuite.Starter.Presenters
       void StartHistogramTest();
       void StartMatrixTest();
       void StartEmptyFormTest();
-      void StartColumnMapping();
+      void StartTiledImporter();
       void StartImporterExcelView();
    }
 
@@ -111,14 +111,11 @@ namespace OSPSuite.Starter.Presenters
          this.DoWithinExceptionHandler(() => parameter.Value = 10);
       }
 
-      public void StartColumnMapping()
+      public void StartTiledImporter()
       {
-         var starter = new TestStarter<IColumnMappingPresenter>();
+         var starter = new TestStarter<IImporterTiledPresenter>();
          starter.Start(660, 400);
          //var source = importer.LoadFile(_dataGenerator.DefaultPKSimConcentrationImportConfiguration());
-         starter.Presenter.SetSettings(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration());
          //starter.Presenter.SetDataFormat(source.Format, source.AvailableFormats);
       }
 
