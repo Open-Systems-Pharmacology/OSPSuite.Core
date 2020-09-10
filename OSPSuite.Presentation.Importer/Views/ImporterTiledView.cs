@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Presentation.Importer.Presenters;
+using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -14,6 +15,11 @@ namespace OSPSuite.Presentation.Importer.Views
       public void AttachPresenter(IImporterTiledPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public void AddImporterView(IImporterView importerView)
+      {
+         centralPanelControl.FillWith(importerView);
       }
    }
 }

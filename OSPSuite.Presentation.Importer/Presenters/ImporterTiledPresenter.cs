@@ -10,8 +10,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
    {
-      public ImporterTiledPresenter(IImporterTiledView view) : base(view)
+      private IImporterPresenter _importerPresenter;
+      public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter) : base(view)
       {
+         _importerPresenter = importerPresenter;
+         _view.AddImporterView(_importerPresenter.View);
       }
    }
 }
