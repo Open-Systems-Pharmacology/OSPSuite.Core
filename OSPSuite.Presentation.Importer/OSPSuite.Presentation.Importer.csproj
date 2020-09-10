@@ -172,7 +172,9 @@
     <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="PresentationImporterRegister.cs" />
     <Compile Include="Presenters\ColumnMappingPresenter.cs" />
+    <Compile Include="Presenters\ImporterTiledPresenter.cs" />
     <Compile Include="Presenters\IImportConfirmationPresenter.cs" />
+    <Compile Include="Presenters\IImporterTiledPresenter.cs" />
     <Compile Include="Presenters\ImportConfirmationPresenter.cs" />
     <Compile Include="Presenters\SourceFilePresenter.cs" />
     <Compile Include="Presenters\DataViewingPresenter.cs" />
@@ -206,12 +208,19 @@
     <Compile Include="Views\IDataViewingControl.cs" />
     <Compile Include="Views\IColumnMappingControl.cs" />
     <Compile Include="Views\IImportConfirmationView.cs" />
+    <Compile Include="Views\IImporterTiledView.cs" />
     <Compile Include="Views\IImporterView.cs" />
     <Compile Include="Views\ImportConfirmationView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\ImportConfirmationView.Designer.cs">
       <DependentUpon>ImportConfirmationView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImporterTiledView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\ImporterTiledView.Designer.cs">
+      <DependentUpon>ImporterTiledView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ImporterView.cs">
       <SubType>UserControl</SubType>
@@ -287,6 +296,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImportConfirmationView.resx">
       <DependentUpon>ImportConfirmationView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ImporterTiledView.resx">
+      <DependentUpon>ImporterTiledView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImporterView.resx">
       <DependentUpon>ImporterView.cs</DependentUpon>

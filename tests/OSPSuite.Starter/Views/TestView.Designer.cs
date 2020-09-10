@@ -30,7 +30,7 @@
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.startImporterExcelViewButton = new DevExpress.XtraEditors.SimpleButton();
-         this.startColumnMapping = new System.Windows.Forms.Button();
+         this.startTiledImporter = new System.Windows.Forms.Button();
          this.startEmptyFormButton = new DevExpress.XtraEditors.SimpleButton();
          this.startMatrixTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startHistogramTestButton = new DevExpress.XtraEditors.SimpleButton();
@@ -97,7 +97,7 @@
          // 
          this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.startImporterExcelViewButton);
-         this.layoutControl.Controls.Add(this.startColumnMapping);
+         this.layoutControl.Controls.Add(this.startTiledImporter);
          this.layoutControl.Controls.Add(this.startEmptyFormButton);
          this.layoutControl.Controls.Add(this.startMatrixTestButton);
          this.layoutControl.Controls.Add(this.startHistogramTestButton);
@@ -134,15 +134,15 @@
          this.startImporterExcelViewButton.TabIndex = 22;
          this.startImporterExcelViewButton.Text = "startImporterExcelView";
          // 
-         // startColumnMapping
+         // startTiledImporter
          // 
-         this.startColumnMapping.BackColor = System.Drawing.Color.White;
-         this.startColumnMapping.Location = new System.Drawing.Point(6, 499);
-         this.startColumnMapping.Name = "startColumnMapping";
-         this.startColumnMapping.Size = new System.Drawing.Size(485, 40);
-         this.startColumnMapping.TabIndex = 21;
-         this.startColumnMapping.Text = "startColumnMapping";
-         this.startColumnMapping.UseVisualStyleBackColor = false;
+         this.startTiledImporter.BackColor = System.Drawing.Color.White;
+         this.startTiledImporter.Location = new System.Drawing.Point(6, 499);
+         this.startTiledImporter.Name = "startTiledImporter";
+         this.startTiledImporter.Size = new System.Drawing.Size(485, 40);
+         this.startTiledImporter.TabIndex = 21;
+         this.startTiledImporter.Text = "startTiledImporter";
+         this.startTiledImporter.UseVisualStyleBackColor = false;
          // 
          // startEmptyFormButton
          // 
@@ -497,7 +497,7 @@
          // 
          // layoutControlItem18
          // 
-         this.layoutControlItem18.Control = this.startColumnMapping;
+         this.layoutControlItem18.Control = this.startTiledImporter;
          this.layoutControlItem18.Location = new System.Drawing.Point(0, 493);
          this.layoutControlItem18.Name = "layoutControlItem18";
          this.layoutControlItem18.Size = new System.Drawing.Size(487, 42);
@@ -585,7 +585,7 @@
       private DevExpress.XtraEditors.SimpleButton startEmptyFormButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem17;
       private UI.Controls.UxLayoutControl layoutControl;
-      private System.Windows.Forms.Button startColumnMapping;
+      private System.Windows.Forms.Button startTiledImporter;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem18;
       private DevExpress.XtraEditors.SimpleButton startImporterExcelViewButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem19;
