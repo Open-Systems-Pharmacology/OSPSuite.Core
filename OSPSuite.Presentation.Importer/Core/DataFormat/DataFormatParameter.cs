@@ -23,6 +23,11 @@
       {
          ColumnName = columnName;
       }
+
+      public virtual bool EquivalentTo(DataFormatParameter other)
+      {
+         return other.GetType() == GetType();
+      }
    }
 
    public class IgnoredDataFormatParameter : DataFormatParameter
@@ -33,12 +38,9 @@
 
    public class AddGroupByFormatParameter : DataFormatParameter
    {
-      public AddGroupByFormatParameter(string columnName, string groupingByColumn) : base(columnName)
+      public AddGroupByFormatParameter(string columnName) : base(columnName)
       {
-         GroupingByColumn = groupingByColumn;
       }
-
-      public string GroupingByColumn { get; private set; }
    }
 
    public class MetaDataFormatParameter : DataFormatParameter
@@ -49,12 +51,22 @@
       }
 
       public string MetaDataId { get; private set; }
+
+      public override bool EquivalentTo(DataFormatParameter other)
+      {
+         return base.EquivalentTo(other) && MetaDataId == (other as MetaDataFormatParameter).MetaDataId;
+      }
    }
 
    public class GroupByDataFormatParameter : DataFormatParameter
    {
       public GroupByDataFormatParameter(string columnName) : base(columnName)
       { }
+
+      public override bool EquivalentTo(DataFormatParameter other)
+      {
+         return base.EquivalentTo(other) && ColumnName == (other as GroupByDataFormatParameter).ColumnName;
+      }
    }
 
    public class MappingDataFormatParameter : DataFormatParameter
@@ -65,5 +77,10 @@
       }
 
       public Column MappedColumn { get; private set; }
+
+      public override bool EquivalentTo(DataFormatParameter other)
+      {
+         return base.EquivalentTo(other) && MappedColumn.Name == (other as MappingDataFormatParameter).MappedColumn.Name;
+      }
    }
 }

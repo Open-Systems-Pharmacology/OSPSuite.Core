@@ -66,35 +66,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             //SetDataFormat(format, _availableFormats);
             OnFormatChanged(format.Name);
          });
-         _columnMappingPresenter.OnFormatPropertiesChanged += (parameters) => this.DoWithinExceptionHandler(() =>
-         {
-            _dataSourceFile.Format.Parameters.Clear();
-            foreach (var parameter in parameters)
-            {
-               _dataSourceFile.Format.Parameters.Add(parameter);
-            }
-         });
-
-         _columnMappingPresenter.OnParameterChanged += (columnName, parameter) => this.DoWithinExceptionHandler(() => 
-         {
-            var old = _dataSourceFile.Format.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
-            if (old == null || old is GroupByDataFormatParameter)
-            {
-               if (old != null)
-               {
-                  _dataSourceFile.Format.Parameters.Remove(old);
-               }
-               else
-               {
-                  _dataSourceFile.Format.Parameters.Add(parameter);
-               }
-            }
-            else
-            {
-               var index = _dataSourceFile.Format.Parameters.IndexOf(old);
-               _dataSourceFile.Format.Parameters[index] = parameter;
-            }
-         });
       }
       public void ShowImportConfirmation()
       {
@@ -107,6 +78,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
       {
+         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
          var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
 
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
@@ -119,7 +91,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter() 
                {
                   Id = md.MetaDataId,
-                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.MetaDataId).Index
+                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
                }).Union
                (
                   _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
