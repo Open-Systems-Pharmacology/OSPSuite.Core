@@ -143,5 +143,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _dataViewingPresenter.SetTabData(tabName);
       }
+
+      public void RemoveTab(string tabName) //IMPORTANT it seems that in MS Excel you cannot have 2 sheets
+      //with the same name. Still we should be checking this...
+      {
+         _dataViewingPresenter.RemoveTabData(tabName);
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
    }
 }

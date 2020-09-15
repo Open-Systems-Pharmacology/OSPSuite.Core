@@ -4,6 +4,7 @@ using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
 using DevExpress.XtraTab;
+using DevExpress.XtraTab.ViewInfo;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -18,6 +19,7 @@ namespace OSPSuite.Presentation.Importer.Views
          btnImport.Click += onButtonImportClicked;
          btnImportAll.Click += onButtonImportAllClicked;
          TabControl.SelectedPageChanged += onSelectedPageChanged;
+         TabControl.CloseButtonClick += onCloseTab;
       }
 
 
@@ -31,6 +33,17 @@ namespace OSPSuite.Presentation.Importer.Views
          OnImportAllSheets.Invoke();
       }
 
+      private void onCloseTab(object sender, EventArgs e)
+      {
+         //from DataSetControl.cs
+         var eventArgs = e as ClosePageButtonEventArgs;
+         if (eventArgs == null) return;
+         var page = eventArgs.Page as XtraTabPage;
+         if (page == null) return;
+         //deleteTable(page);
+         //TabControl.TabPages.Remove(page);
+         _presenter.RemoveTab(page.Text);
+      }
       private void onButtonImportClicked(object sender, EventArgs e)
       {
          OnImportSingleSheet.Invoke(TabControl.SelectedTabPage.Text);

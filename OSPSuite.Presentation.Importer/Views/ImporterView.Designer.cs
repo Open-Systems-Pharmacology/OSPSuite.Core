@@ -1,4 +1,6 @@
-﻿using DevExpress.XtraEditors.Controls;
+﻿using System.Windows.Forms;
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraTab;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -87,6 +89,12 @@ namespace OSPSuite.Presentation.Importer.Views
          this.TabControl.Name = "TabControl";
          this.TabControl.Size = new System.Drawing.Size(646, 578);
          this.TabControl.TabIndex = 0;
+         TabControl.ClosePageButtonShowMode = ClosePageButtonShowMode.InAllTabPageHeaders;
+
+         
+         TabControl.ContextMenu = new ContextMenu();
+         TabControl.ContextMenu.MenuItems.Add("Test 1");
+         TabControl.ContextMenu.MenuItems.Add("Test 2");
          // 
          // dataViewingPanelControl
          // 

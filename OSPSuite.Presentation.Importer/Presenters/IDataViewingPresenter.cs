@@ -12,5 +12,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SetTabData(string sheetName);
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
+      void RemoveTabData(string tabName);
    }
 }
