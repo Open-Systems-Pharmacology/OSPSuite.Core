@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class DataViewingPresenter : AbstractPresenter<IDataViewingControl, IDataViewingPresenter>, IDataViewingPresenter
    {
-      private IDataSourceFile _tempDataSourceFile;
+      private IDataSourceFile _tempDataSourceFile; //this should not really be called temp...
       public DataViewingPresenter(IDataViewingControl view) : base(view)
       {
          _tempDataSourceFile = new ExcelDataSourceFile(null);
@@ -34,6 +34,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public DataTable GetSheet(string tabName)
       {
          return _tempDataSourceFile.DataSheets[tabName].RawData.AsDataTable();
+      }
+
+      public void RemoveTabData(string tabName)
+      {
+         _tempDataSourceFile.DataSheets.Remove(tabName);
       }
    }
 }

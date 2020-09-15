@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       event OnTriggerImportHandler OnTriggerImport;
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
+      void RemoveTab(string tabName);
    }
 
    public delegate void FormatChangedHandler(string format);
