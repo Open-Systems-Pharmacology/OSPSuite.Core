@@ -22,6 +22,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
+      void RemoveAllButThisTab(string tabName);
+
    }
 
    public delegate void FormatChangedHandler(string format);
