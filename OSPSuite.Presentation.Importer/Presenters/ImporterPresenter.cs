@@ -153,5 +153,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
+
+      public void RemoveAllButThisTab(string tabName)
+      {
+         View.ClearTabs();
+         _dataViewingPresenter.RemoveAllButThisTabData(tabName);
+         //those under here could go in a private called refresh (is there maybe smthing like this already existing????)
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
    }
 }

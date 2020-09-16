@@ -3,15 +3,20 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
+using System.Drawing;
+using System.Windows.Forms;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
+using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class ImporterView : BaseUserControl , IImporterView
    {
-      private IImporterPresenter _presenter; //TODO - have to keep in mind if I need this at all
-                                             //the architecture of these classes should actually be restructured
+      private IImporterPresenter _presenter; //TODO - have to keep in mind if I need this at all the architecture of these classes should actually be restructured
+
+      private string _contextMenuSelectedTab;
 
       public ImporterView()
       {
@@ -20,6 +25,8 @@ namespace OSPSuite.Presentation.Importer.Views
          btnImportAll.Click += onButtonImportAllClicked;
          TabControl.SelectedPageChanged += onSelectedPageChanged;
          TabControl.CloseButtonClick += onCloseTab;
+         TabControl.MouseDown += onTabControlMouseDown;
+         _contextMenuSelectedTab = "";
       }
 
 
@@ -33,6 +40,31 @@ namespace OSPSuite.Presentation.Importer.Views
          OnImportAllSheets.Invoke();
       }
 
+      //still, we should not the context menu if we click at smthing that is not a page
+      private void onTabControlMouseDown(object sender, MouseEventArgs e)
+      {
+         if (e.Button == MouseButtons.Right)
+         {
+            //this HERE DOES NOT REALLY WORK, hitTest returns none
+            //XtraTabControl tabCtrl = sender as XtraTabControl;
+            Point pt = MousePosition;
+            //XtraTabHitInfo info = tabCtrl.CalcHitInfo(tabCtrl.PointToClient(pt));
+            //if (info.HitTest == XtraTabHitTest.PageHeader)
+            //{
+            XtraTabHitInfo hi = TabControl.CalcHitInfo(e.Location);
+            if (hi.HitTest == XtraTabHitTest.PageHeader)
+            {
+
+               var contextMenu = new DXPopupMenu();
+               contextMenu.Items.Clear();
+               contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
+               contextMenu.ShowPopup(TabControl, e.Location);
+               _contextMenuSelectedTab = hi.Page.Text;
+            }
+
+            //}
+         }
+      }
       private void onCloseTab(object sender, EventArgs e)
       {
          //from DataSetControl.cs
@@ -44,6 +76,12 @@ namespace OSPSuite.Presentation.Importer.Views
          //TabControl.TabPages.Remove(page);
          _presenter.RemoveTab(page.Text);
       }
+
+      private void onCloseAllButThisTab(object sender, EventArgs e)
+      {
+         _presenter.RemoveAllButThisTab(_contextMenuSelectedTab);
+      }
+
       private void onButtonImportClicked(object sender, EventArgs e)
       {
          OnImportSingleSheet.Invoke(TabControl.SelectedTabPage.Text);
