@@ -20,4 +20,5 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       public IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
    }
+
 }
