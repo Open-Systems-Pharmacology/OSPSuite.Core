@@ -1,5 +1,6 @@
 ﻿using Org.BouncyCastle.Asn1.Cms;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
@@ -13,14 +14,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class ImportConfirmationPresenter : AbstractDisposablePresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
    {
+      private IImporter _importer;
       private string _namingConvention { get; set; }
       private string _fileName;
       private IDataSource _dataSource;
       private IEnumerable<Dictionary<Column, IList<ValueAndLloq>>> _plainData;
       private IEnumerable<MetaDataMappingConverter> _mappings;
 
-      public ImportConfirmationPresenter(IImportConfirmationView view) : base(view)
+      public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
       {
+         _importer = importer;
       }
 
       public void Show(string fileName, IDataSource dataSource, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
@@ -42,24 +45,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _namingConvention = namingConvention;
          _view.SetDataSetNames
          (
-            _dataSource.DataSets
-               .SelectMany(ds => ds.Value.Data.Select(s => fromNamingConvention(ds.Key, s.Key)))
+            _importer.NamesFromConvention(_namingConvention, _fileName, _dataSource.DataSets, _mappings)
          );
-      }
-
-      private string fromNamingConvention(string dataSheet, IEnumerable<InstanstiatedMetaData> metaDataList)
-      {
-         return _mappings.Aggregate
-         (
-            new MetaDataMappingConverter()
-            {
-               Id = _namingConvention.Replace("{File}", _fileName).Replace("{Sheet}", dataSheet)
-            },
-            (acc, x) => new MetaDataMappingConverter()
-            {
-               Id = acc.Id.Replace($"{{{x.Id}}}", $"{metaDataList.FirstOrDefault(md => md.Id == x.Index(dataSheet))?.Value}")
-            }
-         ).Id;
       }
 
       public bool Canceled => _view.Canceled;

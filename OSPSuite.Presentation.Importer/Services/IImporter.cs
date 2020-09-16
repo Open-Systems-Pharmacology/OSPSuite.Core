@@ -11,6 +11,14 @@ namespace OSPSuite.Presentation.Importer.Services
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
       IDataSource ImportFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+
+      IEnumerable<string> NamesFromConvention
+      (
+         string namingConvention,
+         string fileName,
+         IReadOnlyDictionary<string, IDataSet> dataSets,
+         IEnumerable<MetaDataMappingConverter> mappings
+      );
    }
 
    public class Importer : IImporter
@@ -61,6 +69,29 @@ namespace OSPSuite.Presentation.Importer.Services
          //TODO: check that all sheets are supporting the formats...
          
          return dataSource;
+      }
+
+      public IEnumerable<string> NamesFromConvention
+      (
+         string namingConvention,
+         string fileName,
+         IReadOnlyDictionary<string, IDataSet> dataSets,
+         IEnumerable<MetaDataMappingConverter> mappings
+      )
+      {
+         return dataSets.SelectMany(ds => ds.Value.Data.Select(s =>
+            mappings.Aggregate
+            (
+               new MetaDataMappingConverter()
+               {
+                  Id = namingConvention.Replace("{File}", fileName).Replace("{Sheet}", ds.Key)
+               },
+               (acc, x) => new MetaDataMappingConverter()
+               {
+                  Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Key.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
+               }
+            ).Id
+         ));
       }
    }
 }
