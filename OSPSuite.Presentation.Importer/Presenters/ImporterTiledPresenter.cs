@@ -23,7 +23,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void AddConfirmationView()
       {
-       //  _view.AddConfirmationView(_confirmationPresenter.View);
+         //_confirmationPresenter.Show();
+         _view.AddConfirmationView(_confirmationPresenter.View);
       }
 
       public void AddDataMappingView()

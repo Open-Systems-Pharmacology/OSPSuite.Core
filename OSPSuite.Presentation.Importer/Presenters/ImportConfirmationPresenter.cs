@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public class ImportConfirmationPresenter : AbstractDisposablePresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
+   public class ImportConfirmationPresenter : AbstractPresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
    {
       private IImporter _importer;
       private string _namingConvention { get; set; }
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
          //_plainData.SelectMany(d => d.Select(vlloq => { vlloq.Key.Name, vlloq.Key.Unit, vlloq.Value. }))
          //_view.OnSelectedDataSetChanged += (index) => this.DoWithinExceptionHandler(() => );
-         _view.Display();
+         //_view.Display();
       }
 
       private void setNames(string namingConvention)
@@ -49,6 +49,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          );
       }
 
-      public bool Canceled => _view.Canceled;
+      //public bool Canceled => _view.Canceled;
    }
 }
