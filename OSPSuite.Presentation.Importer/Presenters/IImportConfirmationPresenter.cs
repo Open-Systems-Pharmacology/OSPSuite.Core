@@ -6,9 +6,10 @@ using OSPSuite.Presentation.Importer.Views;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public interface IImportConfirmationPresenter : IDisposablePresenter//<IImportConfirmationView>
+   public interface IImportConfirmationPresenter : IPresenter<IImportConfirmationView>
+
    {
       void Show(string fileName, IDataSource dataSource, IEnumerable<string> names, IEnumerable<MetaDataMappingConverter> mappings);
-      bool Canceled { get; }
+     // bool Canceled { get; }
    }
 }

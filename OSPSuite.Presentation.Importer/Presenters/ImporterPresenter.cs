@@ -81,6 +81,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
          var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
 
+         /*
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
          {
             importConfirmationPresenter.Show
@@ -101,10 +102,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   })
                )
             );
-
-            if (!importConfirmationPresenter.Canceled)
-               OnTriggerImport.Invoke(dataSource);
-         }
+*/
+         //   if (!importConfirmationPresenter.Canceled)
+           //    OnTriggerImport.Invoke(dataSource);
+         //}
       }
 
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)

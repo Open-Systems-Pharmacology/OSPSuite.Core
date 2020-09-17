@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public interface IImportConfirmationView : IModalView<IImportConfirmationPresenter>
+   public interface IImportConfirmationView : IView<IImportConfirmationPresenter> //IModalView<IImportConfirmationPresenter>
    {
       event NamingConventionChangedHandler OnNamingConventionChanged;
 
