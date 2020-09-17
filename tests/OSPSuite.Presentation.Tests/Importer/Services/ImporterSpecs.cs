@@ -50,4 +50,89 @@ namespace OSPSuite.Presentation.Importer.Services
          formats.Count().ShouldBeEqualTo(1);
       }
    }
+
+   public class When_getting_name_from_convention : ConcernForImporter
+   {
+      private string _fileName;
+      private IReadOnlyDictionary<string, IDataSet> _dataSets;
+      private IEnumerable<MetaDataMappingConverter> _mappings;
+      private string _prefix;
+      private string _postfix;
+
+      protected override void Because()
+      {
+         base.Because();
+         _fileName = "file.xls";
+         _dataSets = new Dictionary<string, IDataSet>()
+         {
+            {
+               "key1", 
+               new DataSet()
+               {
+                  Data = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  {
+                     { 
+                        new List<InstanstiatedMetaData>()
+                        {
+                           new InstanstiatedMetaData()
+                           {
+                              Id = 0,
+                              Value = "Value1"
+                           },
+                           new InstanstiatedMetaData()
+                           {
+                              Id = 1,
+                              Value = "Value2"
+                           }
+                        },
+                        A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
+                     }
+                  }
+               }
+            }
+         };
+         _mappings = new List<MetaDataMappingConverter>()
+         {
+            new MetaDataMappingConverter()
+            {
+               Id = "Id1",
+               Index = (dataSheet) => 0
+            },
+            new MetaDataMappingConverter()
+            {
+               Id = "Id2",
+               Index = (dataSheet) => 1
+            }
+         };
+         _prefix = "prefix";
+         _postfix = "postfix";
+      }
+
+      [TestCase]
+      public void replaces_filename()
+      {
+         var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, _fileName, _dataSets, _mappings);
+         names.Count().ShouldBeEqualTo(1);
+         names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
+      }
+
+      [TestCase]
+      public void replaces_sheetname()
+      {
+         var names = sut.NamesFromConvention(_prefix + "{Sheet}" + _postfix, _fileName, _dataSets, _mappings);
+         names.Count().ShouldBeEqualTo(1);
+         names.ElementAt(0).ShouldBeEqualTo(_prefix + "key1" + _postfix);
+      }
+
+      [TestCase]
+      public void replaces_metadata()
+      {
+         for (var i = 1; i < 3; i++)
+         {
+            var names = sut.NamesFromConvention(_prefix + $"{{Id{i}}}" + _postfix, _fileName, _dataSets, _mappings);
+            names.Count().ShouldBeEqualTo(1);
+            names.ElementAt(0).ShouldBeEqualTo(_prefix + $"Value{i}" + _postfix);
+         }
+      }
+   }
 }
