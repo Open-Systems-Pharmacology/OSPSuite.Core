@@ -85,7 +85,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             importConfirmationPresenter.Show
             (
-               _dataSourceFile.Path.Split('\\').Last(),
+               _dataSourceFile.Path,
                dataSource,
                _dataImporterSettings.NamingConventions,
                _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter() 

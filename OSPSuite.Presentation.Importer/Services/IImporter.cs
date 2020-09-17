@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
@@ -79,6 +80,7 @@ namespace OSPSuite.Presentation.Importer.Services
          IEnumerable<MetaDataMappingConverter> mappings
       )
       {
+         fileName = Path.GetFileNameWithoutExtension(fileName);
          return dataSets.SelectMany(ds => ds.Value.Data.Select(s =>
             mappings.Aggregate
             (

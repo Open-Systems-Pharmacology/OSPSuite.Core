@@ -54,6 +54,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public class When_getting_name_from_convention : ConcernForImporter
    {
       private string _fileName;
+      private string _fileExtension;
       private IReadOnlyDictionary<string, IDataSet> _dataSets;
       private IEnumerable<MetaDataMappingConverter> _mappings;
       private string _prefix;
@@ -62,7 +63,8 @@ namespace OSPSuite.Presentation.Importer.Services
       protected override void Because()
       {
          base.Because();
-         _fileName = "file.xls";
+         _fileName = "file";
+         _fileExtension = "xls";
          _dataSets = new Dictionary<string, IDataSet>()
          {
             {
@@ -133,6 +135,14 @@ namespace OSPSuite.Presentation.Importer.Services
             names.Count().ShouldBeEqualTo(1);
             names.ElementAt(0).ShouldBeEqualTo(_prefix + $"Value{i}" + _postfix);
          }
+      }
+
+      [TestCase]
+      public void replaces_filename_without_extension()
+      {
+         var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, $"{_fileName}.{_fileExtension}", _dataSets, _mappings);
+         names.Count().ShouldBeEqualTo(1);
+         names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
       }
    }
 }
