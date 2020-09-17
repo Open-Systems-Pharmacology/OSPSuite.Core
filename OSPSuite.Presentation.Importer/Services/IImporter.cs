@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using DevExpress.Utils.Extensions;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using IoC = OSPSuite.Utility.Container.IContainer;
@@ -79,19 +81,26 @@ namespace OSPSuite.Presentation.Importer.Services
          IEnumerable<MetaDataMappingConverter> mappings
       )
       {
+         fileName = Path.GetFileNameWithoutExtension(fileName);
+         var counters = new Dictionary<string, int>();
          return dataSets.SelectMany(ds => ds.Value.Data.Select(s =>
-            mappings.Aggregate
+         {
+            var key = mappings.Aggregate
             (
                new MetaDataMappingConverter()
                {
                   Id = namingConvention.Replace("{File}", fileName).Replace("{Sheet}", ds.Key)
                },
-               (acc, x) => new MetaDataMappingConverter()
-               {
-                  Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Key.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
-               }
-            ).Id
-         ));
+               (acc, x) =>
+                  new MetaDataMappingConverter()
+                  {
+                     Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Key.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
+                  }
+            ).Id;
+            var counter = counters.GetOrAdd(key, (_) => 0);
+            counters[key]++;
+            return key + (counter > 0 ? $"_{counter}" : "");
+         })).ToList();
       }
    }
 }

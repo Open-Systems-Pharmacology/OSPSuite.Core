@@ -54,6 +54,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public class When_getting_name_from_convention : ConcernForImporter
    {
       private string _fileName;
+      private string _fileExtension;
       private IReadOnlyDictionary<string, IDataSet> _dataSets;
       private IEnumerable<MetaDataMappingConverter> _mappings;
       private string _prefix;
@@ -62,7 +63,8 @@ namespace OSPSuite.Presentation.Importer.Services
       protected override void Because()
       {
          base.Because();
-         _fileName = "file.xls";
+         _fileName = "file";
+         _fileExtension = "xls";
          _dataSets = new Dictionary<string, IDataSet>()
          {
             {
@@ -72,6 +74,31 @@ namespace OSPSuite.Presentation.Importer.Services
                   Data = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
                   {
                      { 
+                        new List<InstanstiatedMetaData>()
+                        {
+                           new InstanstiatedMetaData()
+                           {
+                              Id = 0,
+                              Value = "Value1"
+                           },
+                           new InstanstiatedMetaData()
+                           {
+                              Id = 1,
+                              Value = "Value2"
+                           }
+                        },
+                        A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
+                     }
+                  }
+               }
+            },
+            {
+               "key2",
+               new DataSet()
+               {
+                  Data = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  {
+                     {
                         new List<InstanstiatedMetaData>()
                         {
                            new InstanstiatedMetaData()
@@ -112,7 +139,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public void replaces_filename()
       {
          var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, _fileName, _dataSets, _mappings);
-         names.Count().ShouldBeEqualTo(1);
+         names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
       }
 
@@ -120,7 +147,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public void replaces_sheetname()
       {
          var names = sut.NamesFromConvention(_prefix + "{Sheet}" + _postfix, _fileName, _dataSets, _mappings);
-         names.Count().ShouldBeEqualTo(1);
+         names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldBeEqualTo(_prefix + "key1" + _postfix);
       }
 
@@ -130,9 +157,25 @@ namespace OSPSuite.Presentation.Importer.Services
          for (var i = 1; i < 3; i++)
          {
             var names = sut.NamesFromConvention(_prefix + $"{{Id{i}}}" + _postfix, _fileName, _dataSets, _mappings);
-            names.Count().ShouldBeEqualTo(1);
+            names.Count().ShouldBeEqualTo(2);
             names.ElementAt(0).ShouldBeEqualTo(_prefix + $"Value{i}" + _postfix);
          }
+      }
+
+      [TestCase]
+      public void replaces_filename_without_extension()
+      {
+         var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, $"{_fileName}.{_fileExtension}", _dataSets, _mappings);
+         names.Count().ShouldBeEqualTo(2);
+         names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
+      }
+
+      [TestCase]
+      public void names_should_be_different()
+      {
+         var names = sut.NamesFromConvention(_prefix + "{File}.{Id1}-{Id2}" + _postfix, _fileName, _dataSets, _mappings);
+         names.Count().ShouldBeEqualTo(2);
+         names.ElementAt(0).ShouldNotBeEqualTo(names.ElementAt(1));
       }
    }
 }
