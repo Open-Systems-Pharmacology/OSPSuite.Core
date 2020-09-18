@@ -13,12 +13,12 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSet
    {
-      IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData> ,Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
+      IDictionary<IEnumerable<InstanstiatedMetaData> ,Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
    }
 
    public class DataSet : IDataSet
    {
-      public IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
+      public IDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; } = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>();
    }
 
 }
