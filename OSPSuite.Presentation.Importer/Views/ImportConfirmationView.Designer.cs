@@ -37,6 +37,9 @@
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.gridControl1 = new DevExpress.XtraGrid.GridControl();
          this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
+
+
+         /*
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
          this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
@@ -45,6 +48,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+*/
+
          ((System.ComponentModel.ISupportInitialize)(this.listBoxControl1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
          this.layoutControl1.SuspendLayout();
@@ -56,6 +61,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
          this.SuspendLayout();
+
+         /*
          // 
          // btnCancel
          // 
@@ -101,6 +108,7 @@
          // layoutItemExtra
          // 
          this.layoutItemExtra.Size = new System.Drawing.Size(382, 31);
+         */
          // 
          // listBoxControl1
          // 
@@ -191,9 +199,10 @@
          this.Controls.Add(this.gridControl1);
          this.Controls.Add(this.layoutControl1);
          this.Name = "ImportConfirmationView";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
+         //this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.layoutControl1, 0);
          this.Controls.SetChildIndex(this.gridControl1, 0);
+         /*
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
          this.layoutControlBase.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
@@ -202,6 +211,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
+*/
          ((System.ComponentModel.ISupportInitialize)(this.listBoxControl1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
          this.layoutControl1.ResumeLayout(false);

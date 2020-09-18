@@ -83,8 +83,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var dataSource = new DataSource();
          _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
 
-         using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
-         {
+         /*
             importConfirmationPresenter.Show
             (
                _dataSourceFile.Path,
@@ -103,10 +102,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   })
                )
             );
-
-            if (!importConfirmationPresenter.Canceled)
-               OnTriggerImport.Invoke(dataSource);
-         }
+*/
+         //   if (!importConfirmationPresenter.Canceled)
+           //    OnTriggerImport.Invoke(dataSource);
+         //}
       }
 
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
@@ -152,6 +151,40 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataViewingPresenter.RemoveTabData(tabName);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
+
+      public void RemoveAllButThisTab(string tabName)
+      {
+         View.ClearTabs();
+         _dataViewingPresenter.RemoveAllButThisTabData(tabName);
+         //those under here could go in a private called refresh (is there maybe smthing like this already existing????)
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+      }
+
+      public void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter)
+      {
+         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
+         var sheets = _dataSourceFile.DataSheets;
+
+         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
+         confirmationPresenter.Show
+         (
+            _dataSourceFile.Path,
+            dataSource,
+            _dataImporterSettings.NamingConventions,
+            _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            {
+               Id = md.MetaDataId,
+               Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            }).Union
+            (
+               _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+               {
+                  Id = md.ColumnName,
+                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               })
+            )
+         );
       }
    }
 }

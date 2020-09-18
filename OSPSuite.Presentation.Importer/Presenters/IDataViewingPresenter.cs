@@ -13,5 +13,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
       void RemoveTabData(string tabName);
+      void RemoveAllButThisTabData(string tabName);
    }
 }

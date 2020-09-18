@@ -10,10 +10,11 @@ using System.Windows.Forms;
 using OSPSuite.UI.Views;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Assets;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public partial class ImportConfirmationView : BaseModalView, IImportConfirmationView
+   public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
       public ImportConfirmationView()
       {

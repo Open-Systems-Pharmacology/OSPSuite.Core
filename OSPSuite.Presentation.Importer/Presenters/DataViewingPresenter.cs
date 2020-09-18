@@ -40,5 +40,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _tempDataSourceFile.DataSheets.Remove(tabName);
       }
+
+      public void RemoveAllButThisTabData(string tabName)
+      {
+         var remainingSheet = _tempDataSourceFile.DataSheets[tabName];
+         _tempDataSourceFile.DataSheets.Clear();
+         _tempDataSourceFile.DataSheets.Add(tabName, remainingSheet);
+      }
    }
 }
