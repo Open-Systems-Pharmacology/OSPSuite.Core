@@ -79,7 +79,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
       {
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
-         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
+
+         var dataSource = new DataSource();
+         _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
 
          using (var importConfirmationPresenter = _applicationController.Start<IImportConfirmationPresenter>())
          {

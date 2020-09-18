@@ -122,7 +122,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      public IReadOnlyDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      public IDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var groupByParams = 
             Parameters

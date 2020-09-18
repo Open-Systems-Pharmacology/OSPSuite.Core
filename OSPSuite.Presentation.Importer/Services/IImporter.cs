@@ -11,14 +11,14 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
-      IDataSource ImportFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
+      void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, DataSource alreadyExisiting);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
 
       IEnumerable<string> NamesFromConvention
       (
          string namingConvention,
          string fileName,
-         IReadOnlyDictionary<string, IDataSet> dataSets,
+         IDictionary<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
    }
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public IDataSource ImportFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
+      public void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, DataSource alreadyExisiting)
       {
          var dataSets =
             dataSheets
@@ -53,10 +53,11 @@ namespace OSPSuite.Presentation.Importer.Services
                         Data = format.Parse(s.Value.RawData, columnInfos)
                      } as IDataSet
                );
-         return new DataSource() 
+         foreach (var element in dataSets)
          {
-            DataSets = dataSets
-         };
+            var current = alreadyExisiting.DataSets.GetOrAdd(element.Key, _ => new DataSet());
+            current.Data = current.Data.Union(element.Value.Data).ToDictionary(s => s.Key, s => s.Value);
+         }
       }
 
       public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName)
@@ -77,7 +78,7 @@ namespace OSPSuite.Presentation.Importer.Services
       (
          string namingConvention,
          string fileName,
-         IReadOnlyDictionary<string, IDataSet> dataSets,
+         IDictionary<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       )
       {

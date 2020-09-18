@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       private string _fileName;
       private string _fileExtension;
-      private IReadOnlyDictionary<string, IDataSet> _dataSets;
+      private IDictionary<string, IDataSet> _dataSets;
       private IEnumerable<MetaDataMappingConverter> _mappings;
       private string _prefix;
       private string _postfix;
