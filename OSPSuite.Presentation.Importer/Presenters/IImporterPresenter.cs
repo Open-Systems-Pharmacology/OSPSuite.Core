@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
-
+      void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter);
    }
 
    public delegate void FormatChangedHandler(string format);
