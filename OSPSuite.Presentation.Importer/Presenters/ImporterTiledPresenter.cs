@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
    {
       private readonly IImporterPresenter _importerPresenter;
-      private readonly IImportConfirmationPresenter _confirmationPresenter;
+      private IImportConfirmationPresenter _confirmationPresenter;
       public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter) : base(view)
       {
          _importerPresenter = importerPresenter;
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void AddConfirmationView()
       {
-         //_confirmationPresenter.Show();
+         _importerPresenter.FillConfirmationView(ref _confirmationPresenter); //not sure about this method
          _view.AddConfirmationView(_confirmationPresenter.View);
       }
 
