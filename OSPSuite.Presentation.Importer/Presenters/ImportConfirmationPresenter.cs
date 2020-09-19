@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importer = importer;
       }
 
+      //we could simply pass the dataSource and then let everything be done by the ConfirmationPresenter
       public void Show(string fileName, IDataSource dataSource, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
       {
          _fileName = fileName;

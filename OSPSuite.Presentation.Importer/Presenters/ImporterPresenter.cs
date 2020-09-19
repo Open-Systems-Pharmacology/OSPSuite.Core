@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
-            SetDataFormat(format, _availableFormats);
+            //SetDataFormat(format, _availableFormats);
             OnFormatChanged(format.Name);
          });
       }
@@ -145,12 +145,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataViewingPresenter.SetTabData(tabName);
       }
 
-      public void RemoveTab(string tabName) //IMPORTANT it seems that in MS Excel you cannot have 2 sheets
-      //with the same name. Still we should be checking this...
+      public void RemoveTab(string tabName)
       {
          _dataViewingPresenter.RemoveTabData(tabName);
-         View.ClearTabs();
-         View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
 
       public void RemoveAllButThisTab(string tabName)
@@ -166,8 +163,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
          var sheets = _dataSourceFile.DataSheets;
 
-         var dataSource = new DataSource();
-         _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
+         /*
+         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
          confirmationPresenter.Show
          (
             _dataSourceFile.Path,
@@ -186,6 +183,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
                })
             )
          );
+*/
+      }
+
+      public void RefreshTabs()
+      {
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
    }
 }
