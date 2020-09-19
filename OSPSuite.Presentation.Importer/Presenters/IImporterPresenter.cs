@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
       void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter);
+      void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
    }
 
    public delegate void FormatChangedHandler(string format);

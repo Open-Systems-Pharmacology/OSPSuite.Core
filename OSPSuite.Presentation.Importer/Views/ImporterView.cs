@@ -58,6 +58,7 @@ namespace OSPSuite.Presentation.Importer.Views
                var contextMenu = new DXPopupMenu();
                contextMenu.Items.Clear();
                contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
+               contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
                contextMenu.ShowPopup(TabControl, e.Location);
                _contextMenuSelectedTab = hi.Page.Text;
             }
@@ -75,11 +76,26 @@ namespace OSPSuite.Presentation.Importer.Views
          //deleteTable(page);
          //TabControl.TabPages.Remove(page);
          _presenter.RemoveTab(page.Text);
+         _presenter.RefreshTabs();
       }
 
       private void onCloseAllButThisTab(object sender, EventArgs e)
       {
          _presenter.RemoveAllButThisTab(_contextMenuSelectedTab);
+      }
+
+      private void onCloseAllTabsToTheRight(object sender, EventArgs e)
+      {
+         var removePage = false;
+         foreach (XtraTabPage tabName in TabControl.TabPages)
+         {
+            if (removePage)
+               _presenter.RemoveTab(tabName.Text);
+
+            if (tabName.Text == _contextMenuSelectedTab)
+               removePage = true;
+         }
+         _presenter.RefreshTabs();
       }
 
       private void onButtonImportClicked(object sender, EventArgs e)
