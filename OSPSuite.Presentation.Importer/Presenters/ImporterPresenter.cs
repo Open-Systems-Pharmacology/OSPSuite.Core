@@ -57,6 +57,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
 
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
+         _columnMappingPresenter.OnMissingMapping += onMissingMapping;
+         _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          _view.OnTabChanged +=  SelectTab;
          _view.OnImportAllSheets += ShowImportConfirmation;
          _view.OnImportSingleSheet += ShowImportConfirmation;
@@ -108,9 +110,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //}
       }
 
+      //do we really need the arguments in this case???
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
+      }
+
+      private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
+      {
+         View.DisableImportButtons();
+      }
+      private void onCompletedMapping(object sender)
+      {
+         View.EnableImportButtons();
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)

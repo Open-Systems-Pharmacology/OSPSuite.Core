@@ -35,6 +35,18 @@ namespace OSPSuite.Presentation.Importer.Views
          _presenter = presenter;
       }
 
+      public void EnableImportButtons()
+      {
+         btnImport.Enabled = true;
+         btnImportAll.Enabled = true;
+      }
+
+      public void DisableImportButtons()
+      {
+         btnImport.Enabled = false;
+         btnImportAll.Enabled = false;
+      }
+
       private void onButtonImportAllClicked(object sender, EventArgs e)
       {
          OnImportAllSheets.Invoke();
