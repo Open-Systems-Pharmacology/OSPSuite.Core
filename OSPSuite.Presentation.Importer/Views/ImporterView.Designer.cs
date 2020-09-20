@@ -105,6 +105,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.btnImport.Size = new System.Drawing.Size(187, 57);
          this.btnImport.TabIndex = 6;
          this.btnImport.Text = "Import current sheet";
+         this.btnImport.Enabled = false;
          // 
          // btnImportAll
          // 
@@ -113,6 +114,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.btnImportAll.Size = new System.Drawing.Size(187, 57);
          this.btnImportAll.TabIndex = 7;
          this.btnImportAll.Text = "Import All";
+         this.btnImportAll.Enabled = false;
          // 
          // ImporterView
          // 
