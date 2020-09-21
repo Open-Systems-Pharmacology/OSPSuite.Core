@@ -82,6 +82,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.confirmationTile.Elements.Add(tileItemElement2);
          this.confirmationTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.confirmationTile.Name = "confirmationTile";
+         this.confirmationTile.Enabled = false;
          // 
          // centralPanelControl
          // 

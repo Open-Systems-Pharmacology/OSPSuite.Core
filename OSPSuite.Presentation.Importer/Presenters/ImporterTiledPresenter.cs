@@ -45,17 +45,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
       {
-         IEnumerable<string> namingConventions;
-         IEnumerable<MetaDataMappingConverter> mappings;
-         IDataFormat format;
-         string fileName;
-         IReadOnlyList<ColumnInfo> columnInfos;
-         _importerPresenter.GetDataForImport(out fileName, out format, out columnInfos, out namingConventions, out mappings);
-
+         _importerPresenter.GetDataForImport(out var fileName, out var format, out var columnInfos, out var namingConventions, out var mappings);
          _confirmationPresenter.ImportDataForConfirmation(fileName, format, sheets, columnInfos, namingConventions, mappings);
 
          //_importerPresenter.FillConfirmationView(ref _confirmationPresenter); //not sure about this method
          AddConfirmationView();
+         View.EnableConfirmationView();
       }
 
       public void AddDataMappingView()
