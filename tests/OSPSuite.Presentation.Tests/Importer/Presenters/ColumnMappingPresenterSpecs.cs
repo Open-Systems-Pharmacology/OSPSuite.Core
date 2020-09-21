@@ -24,8 +24,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
-               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }),
+               new MappingDataFormatParameter("Time", new Column() { Name = "Time", SelectedUnit = "min" }),
+               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", SelectedUnit = "mol/l" }),
                new MetaDataFormatParameter("Sp", "Species"),
                new GroupByDataFormatParameter("Study id")
             });
@@ -56,8 +56,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
                A<IList<ColumnMappingViewModel>>.That.Matches(l => 
                   l.Count() == 4 &&
 
-                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.Mapping, "Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = "min" }), 0)) &&
-                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.Mapping, "Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = "mol/l" }), 0)) &&
+                  l.ElementAt(0).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.Mapping, "Time", "Mapping,Time,min", new MappingDataFormatParameter("Time", new Column() { Name = "Time", SelectedUnit = "min" }), 0)) &&
+                  l.ElementAt(1).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.Mapping, "Observation", "Mapping,Concentration,mol/l", new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", SelectedUnit = "mol/l" }), 0)) &&
                   l.ElementAt(2).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.MetaData, "Sp", "MetaData,Species", new MetaDataFormatParameter("Sp", "Species"), 0)) &&
                   l.ElementAt(3).IsEquivalentTo(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.GroupBy, "Study id", "GroupBy", new GroupByDataFormatParameter("Study id"), 0)))
             )).MustHaveHappened();
@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                if (!(other.Source is MappingDataFormatParameter))
                   return false;
                var mmp = other.Source as MappingDataFormatParameter;
-               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.Unit == mmp.MappedColumn.Unit));
+               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.SelectedUnit == mmp.MappedColumn.SelectedUnit));
             case MetaDataFormatParameter mp:
                if (!(other.Source is MetaDataFormatParameter))
                   return false;

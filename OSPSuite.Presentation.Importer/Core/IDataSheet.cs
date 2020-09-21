@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
    public class Column
    {
       public string Name { get; set; }
-      public string Unit { get; set; }
-      public IEnumerable<string> AvailableUnits { get; set; }
+      public Func<int, string> Units { get; set; }
+
+      public string SelectedUnit { get; set; }
 
       public override string ToString()
       {
-         return $"{Name} [{Unit}]";
+         return $"{Name} [{SelectedUnit}]";
       }
    }
 

@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             );
             if (!unitsEditorPresenter.Canceled)
             {
-               column.Unit = unitsEditorPresenter.SelectedUnit;
+               column.SelectedUnit = unitsEditorPresenter.SelectedUnit;
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
             }
@@ -191,7 +191,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   break;
                case MappingDataFormatParameter tm:
                   options.Add(generateMappingColumnMappingOption(model.Description, model.Source.ColumnName,
-                     tm.MappedColumn.Unit));
+                     tm.MappedColumn.SelectedUnit));
                   break;
                case MetaDataFormatParameter tm:
                   options.Add(generateMetaDataColumnMappingOption(model.Description, model.Source.ColumnName));
@@ -221,7 +221,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                {
                   options.Add(
                      generateMappingColumnMappingOption(
-                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, Unit = "?" })),
+                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, SelectedUnit = "?" })),
                         column
                      )
                   );
@@ -282,7 +282,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                return new ToolTipDescription()
                {
                   Title = Captions.MappingTitle,
-                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name.ToString(), mp.MappedColumn.Unit)
+                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name.ToString(), mp.MappedColumn.SelectedUnit)
                };
             case GroupByDataFormatParameter gp:
                return new ToolTipDescription()
