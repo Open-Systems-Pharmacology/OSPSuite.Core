@@ -110,6 +110,60 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //}
       }
 
+      //TODO: Function to be deleted if we keep the current logic
+      public void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter)
+      {
+         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
+         
+         var sheets = _dataSourceFile.DataSheets; //sheets should actually be an argument
+
+         confirmationPresenter.ImportDataForConfirmation(_dataSourceFile.Path, _dataSourceFile.Format, sheets, _columnInfos, _dataImporterSettings.NamingConventions,
+           _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+           {
+              Id = md.MetaDataId,
+              Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+           }).Union
+           (
+              _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+              {
+                 Id = md.ColumnName,
+                 Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+              })
+           )
+        );
+      }
+
+      public void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos,
+         out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings)
+      {
+         fileName = _dataSourceFile.Path;
+         format = _columnMappingPresenter.GetDataFormat();
+         columnInfos = _columnInfos;
+         namingConventions = _dataImporterSettings.NamingConventions;
+         mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         {
+            Id = md.MetaDataId,
+            Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+         }).Union
+         (
+            _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            {
+               Id = md.ColumnName,
+               Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            })
+         );
+      }
+
+      public IReadOnlyDictionary<string, IDataSheet> GetAllSheets()
+      {
+         return _dataSourceFile.DataSheets;
+      }
+
+      public IDataSheet GetSingleSheet(string sheetName)
+      {
+         return _dataSourceFile.DataSheets[sheetName];
+      }
+
       //do we really need the arguments in this case???
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
@@ -168,34 +222,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataViewingPresenter.RemoveAllButThisTabData(tabName);
          //those under here could go in a private called refresh (is there maybe smthing like this already existing????)
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
-      }
-
-      public void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter)
-      {
-         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
-         var sheets = _dataSourceFile.DataSheets;
-
-         /*
-         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
-         confirmationPresenter.Show
-         (
-            _dataSourceFile.Path,
-            dataSource,
-            _dataImporterSettings.NamingConventions,
-            _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.MetaDataId,
-               Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-            }).Union
-            (
-               _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-               {
-                  Id = md.ColumnName,
-                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-               })
-            )
-         );
-*/
       }
 
       public void RefreshTabs()
