@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
+         _importerPresenter.View.OnImportAllSheets += AddConfirmationView;
          _view.AddImporterView(_importerPresenter.View);
       }
 

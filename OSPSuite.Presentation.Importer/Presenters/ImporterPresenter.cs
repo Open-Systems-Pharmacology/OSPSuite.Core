@@ -57,6 +57,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
 
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
+         _columnMappingPresenter.OnMissingMapping += onMissingMapping;
+         _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          _view.OnTabChanged +=  SelectTab;
          _view.OnImportAllSheets += ShowImportConfirmation;
          _view.OnImportSingleSheet += ShowImportConfirmation;
@@ -108,9 +110,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //}
       }
 
+      //do we really need the arguments in this case???
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
+      }
+
+      private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
+      {
+         View.DisableImportButtons();
+      }
+      private void onCompletedMapping(object sender)
+      {
+         View.EnableImportButtons();
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
@@ -145,12 +157,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataViewingPresenter.SetTabData(tabName);
       }
 
-      public void RemoveTab(string tabName) //IMPORTANT it seems that in MS Excel you cannot have 2 sheets
-      //with the same name. Still we should be checking this...
+      public void RemoveTab(string tabName)
       {
          _dataViewingPresenter.RemoveTabData(tabName);
-         View.ClearTabs();
-         View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
 
       public void RemoveAllButThisTab(string tabName)
@@ -166,8 +175,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
          var sheets = _dataSourceFile.DataSheets;
 
-         var dataSource = new DataSource();
-         _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
+         /*
+         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
          confirmationPresenter.Show
          (
             _dataSourceFile.Path,
@@ -186,6 +195,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
                })
             )
          );
+*/
+      }
+
+      public void RefreshTabs()
+      {
+         View.ClearTabs();
+         View.AddTabs(_dataViewingPresenter.GetSheetNames());
       }
    }
 }

@@ -20,6 +20,9 @@ namespace OSPSuite.Presentation.Importer.Views
 
       event ImportAllSheetsHandler OnImportAllSheets;
 
+      void EnableImportButtons();
+      void DisableImportButtons();
+      
       void AddTabs(List<string> tabNames);
       void ClearTabs();
    }
