@@ -33,7 +33,6 @@ namespace OSPSuite.Starter.Presenters
       void StartHistogramTest();
       void StartMatrixTest();
       void StartEmptyFormTest();
-      void StartTiledImporter();
       void StartImporterExcelView();
    }
 
@@ -111,7 +110,7 @@ namespace OSPSuite.Starter.Presenters
          this.DoWithinExceptionHandler(() => parameter.Value = 10);
       }
 
-      public void StartTiledImporter()
+      public void StartImporterExcelView()
       {
          var starter = new TestStarter<IImporterTiledPresenter>();
          starter.Start(660, 400);
@@ -123,20 +122,6 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings);
-      }
-
-      public void StartImporterExcelView()
-      {
-         var starter = new TestStarter<IImporterPresenter>();
-         starter.Start(660, 400);
-         var dataImporterSettings = new DataImporterSettings();
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         starter.Presenter.SetSettings(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings);
-         starter.Presenter.OnTriggerImport += startImportSuccessDialog;
       }
 
       private void startImportSuccessDialog(IDataSource dataSource)
