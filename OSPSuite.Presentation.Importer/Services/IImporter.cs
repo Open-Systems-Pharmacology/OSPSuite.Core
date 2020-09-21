@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
-      void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, DataSource alreadyExisiting);
+      void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
 
       IEnumerable<string> NamesFromConvention
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, DataSource alreadyExisiting)
+      public void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
       {
          var dataSets =
             dataSheets
@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Importer.Services
                );
          foreach (var element in dataSets)
          {
-            var current = alreadyExisiting.DataSets.GetOrAdd(element.Key, _ => new DataSet());
+            var current = alreadyExisting.DataSets.GetOrAdd(element.Key, _ => new DataSet());
             current.Data = current.Data.Union(element.Value.Data).ToDictionary(s => s.Key, s => s.Value);
          }
       }

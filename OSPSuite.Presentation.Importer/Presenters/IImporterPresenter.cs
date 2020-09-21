@@ -24,6 +24,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
       void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter);
+      void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos, out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings);
+      IReadOnlyDictionary<string, IDataSheet> GetAllSheets();
+      IDataSheet GetSingleSheet(string sheetName);
       void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
    }
 

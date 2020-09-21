@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using OSPSuite.Core.Importer;
 using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.Importer.Presenters
@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
       {
          _importer = importer;
+         _dataSource = new DataSource();
       }
 
       //we could simply pass the dataSource and then let everything be done by the ConfirmationPresenter
@@ -39,6 +40,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //_plainData.SelectMany(d => d.Select(vlloq => { vlloq.Key.Name, vlloq.Key.Unit, vlloq.Value. }));
          //_view.OnSelectedDataSetChanged += (index) => this.DoWithinExceptionHandler(() => );
          //_view.Display();
+      }
+
+      public void ImportDataForConfirmation(string fileName, IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
+      {
+         _fileName = fileName; //should we set this every time?
+         _mappings = mappings;
+         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
+
+         _view.SetNamingConventions(namingConventions);
+         _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() => setNames(namingConvention));
+         setNames(namingConventions.First());
+         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
+
+
       }
 
       private void setNames(string namingConvention)
