@@ -37,5 +37,11 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          centralPanelControl.FillWith(confirmationView);
       }
+
+      public void EnableConfirmationView()
+      {
+         if (!confirmationTile.Enabled)
+            confirmationTile.Enabled = true;
+      }
    }
 }
