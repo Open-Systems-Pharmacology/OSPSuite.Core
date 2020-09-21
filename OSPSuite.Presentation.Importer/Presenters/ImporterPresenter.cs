@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
          {
             var format = _availableFormats.First(f => f.Name == formatName);
-            //SetDataFormat(format, _availableFormats);
+            SetDataFormat(format, _availableFormats);
             OnFormatChanged(format.Name);
          });
       }
@@ -166,7 +166,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
          var sheets = _dataSourceFile.DataSheets;
 
-         var dataSource = _importer.ImportFromFile(_dataSourceFile.Format, sheets, _columnInfos);
+         var dataSource = new DataSource();
+         _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
          confirmationPresenter.Show
          (
             _dataSourceFile.Path,

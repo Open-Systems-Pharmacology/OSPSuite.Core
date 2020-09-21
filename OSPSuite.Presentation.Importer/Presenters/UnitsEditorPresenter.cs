@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions)
       {
-         SelectedUnit = importDataColumn.Unit;
+         SelectedUnit = importDataColumn.SelectedUnit;
          _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.OnOK += () => this.DoWithinExceptionHandler(() =>
          {
             OnOK(SelectedUnit);
-            _importDataColumn.Unit = SelectedUnit;
+            _importDataColumn.SelectedUnit = SelectedUnit;
             _canClose = true;
          });
 

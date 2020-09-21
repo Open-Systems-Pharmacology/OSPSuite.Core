@@ -155,8 +155,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DataFormat\AbstractColumnsDataFormat.cs" />
     <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
-    <Compile Include="Core\DataFormat\DataFormat_DVOriented.cs" />
+    <Compile Include="Core\DataFormat\DataFormat_Nonmem.cs" />
     <Compile Include="Core\DataFormat\DataFormat_TMetaData_C.cs" />
     <Compile Include="Core\MetaDataMappingConverter.cs" />
     <Compile Include="Core\UnformattedDataRow.cs" />

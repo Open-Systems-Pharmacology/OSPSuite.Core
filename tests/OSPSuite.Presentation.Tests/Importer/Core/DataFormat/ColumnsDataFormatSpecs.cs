@@ -189,7 +189,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
-         mapping.MappedColumn.Unit.ShouldBeEqualTo("min");
+         mapping.MappedColumn.SelectedUnit.ShouldBeEqualTo("min");
       }
 
       [TestCase]
@@ -199,7 +199,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
-         mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
+         mapping.MappedColumn.SelectedUnit.ShouldBeEqualTo("pmol/l");
       }
 
       [TestCase]
@@ -209,7 +209,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Concentration");
-         mapping.MappedColumn.Unit.ShouldBeEqualTo("pmol/l");
+         mapping.MappedColumn.SelectedUnit.ShouldBeEqualTo("pmol/l");
       }
 
       [TestCase]
