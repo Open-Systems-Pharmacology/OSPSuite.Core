@@ -101,7 +101,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      private void extractGeneralParameters(List<string> keys, IUnformattedData data)
+      protected virtual void extractGeneralParameters(List<string> keys, IUnformattedData data)
       {
          if (keys == null) throw new ArgumentNullException(nameof(keys));
          var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
@@ -184,52 +184,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      private Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
-      {
-         var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
-         //Add time mapping
-         var mappingParameters =
-            Parameters
-               .OfType<MappingDataFormatParameter>()
-               .ToList();
-
-         var dataSet = rawDataSet.ToList();
-         foreach (var columnInfo in columnInfos)
-         {
-            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name.ToString() == columnInfo.DisplayName);
-            if (currentParameter != null)
-               dictionary.Add
-               (
-                  currentParameter.MappedColumn,
-                  dataSet.Select
-                  (
-                     row =>
-                     {
-                        var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-                        if (double.TryParse(element, out double result))
-                           return new ValueAndLloq()
-                           {
-                              Value = result
-                           };
-                        if (element.StartsWith("<"))
-                        {
-                           double.TryParse(element.Substring(1), out result);
-                           return new ValueAndLloq()
-                           {
-                              Lloq = result
-                           };
-                        }
-                        return new ValueAndLloq()
-                        {
-                           Value = double.NaN
-                        };
-                     }
-                  ).ToList()
-               );
-         }
-
-
-         return dictionary;
-      }
+      protected abstract Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
 }
