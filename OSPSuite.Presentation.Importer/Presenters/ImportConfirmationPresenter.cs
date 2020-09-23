@@ -1,14 +1,12 @@
-﻿using Org.BouncyCastle.Asn1.Cms;
-using OSPSuite.Presentation.Importer.Core;
+﻿using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Importer;
-using System.Threading.Tasks;
+
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -27,7 +25,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = new DataSource();
       }
 
-      //we could simply pass the dataSource and then let everything be done by the ConfirmationPresenter
       public void Show(string fileName, IDataSource dataSource, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
       {
          _fileName = fileName;
@@ -64,7 +61,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _importer.NamesFromConvention(_namingConvention, _fileName, _dataSource.DataSets, _mappings)
          );
       }
-
-      //public bool Canceled => _view.Canceled;
    }
 }

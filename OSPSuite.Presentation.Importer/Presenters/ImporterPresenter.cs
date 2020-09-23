@@ -78,60 +78,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
          startImport(new Dictionary<string, IDataSheet>() { { sheetName, _dataSourceFile.DataSheets[sheetName] } });
       }
 
+      //this actually does nothing at all currently
       private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
       {
          _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
 
          var dataSource = new DataSource();
          _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
-
-         /*
-            importConfirmationPresenter.Show
-            (
-               _dataSourceFile.Path,
-               dataSource,
-               _dataImporterSettings.NamingConventions,
-               _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter() 
-               {
-                  Id = md.MetaDataId,
-                  Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-               }).Union
-               (
-                  _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-                  {
-                     Id = md.ColumnName,
-                     Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-                  })
-               )
-            );
-*/
-         //   if (!importConfirmationPresenter.Canceled)
-           //    OnTriggerImport.Invoke(dataSource);
-         //}
       }
 
-      //TODO: Function to be deleted if we keep the current logic
-      public void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter)
-      {
-         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
-         
-         var sheets = _dataSourceFile.DataSheets; //sheets should actually be an argument
-
-         confirmationPresenter.ImportDataForConfirmation(_dataSourceFile.Path, _dataSourceFile.Format, sheets, _columnInfos, _dataImporterSettings.NamingConventions,
-           _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-           {
-              Id = md.MetaDataId,
-              Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-           }).Union
-           (
-              _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-              {
-                 Id = md.ColumnName,
-                 Index = sheetName => sheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-              })
-           )
-        );
-      }
 
       public void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos,
          out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings)
