@@ -21,7 +21,9 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly ImageComboBoxEdit _unitComboBox;
       private readonly ImageComboBoxEdit _dimensionComboBox;
       private InputParametersControl _inputParametersControl;
-      
+      private IUnitsEditorPresenter _presenter;
+
+
       public UnitsEditorView()
       {
          InitializeComponent();
@@ -52,19 +54,15 @@ namespace OSPSuite.Presentation.Importer.Views
          return comboBox;
       }
 
-      public event UnitChangeHandler OnUnitChanged;
-
-      public event DimensionChangeHandler OnDimensionChanged;
-
       private void onDimensionComboBoxTextChanged(object sender, EventArgs e)
       {
-         OnDimensionChanged?.Invoke(_dimensionComboBox.EditValue as string);
+         _presenter.SelectDimension(_dimensionComboBox.EditValue as string);
          showInputParametersControl();
       }
 
       private void onUnitComboBoxTextChanged(object sender, EventArgs e)
       {
-         OnUnitChanged?.Invoke(_unitComboBox.EditValue as string);
+         _presenter.SelectUnit(_unitComboBox.EditValue as string);
          showInputParametersControl();
       }
 
@@ -151,7 +149,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onOkClick()
       {
-         OnOK?.Invoke();
+         _presenter.TriggerOk();
          Parent.Hide();
       }
 
@@ -197,6 +195,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void AttachPresenter(IUnitsEditorPresenter presenter)
       {
+         _presenter = presenter;
       }
    }
 }
