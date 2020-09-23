@@ -267,12 +267,36 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
       private IUnformattedData _mockedData;
+      private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
+      private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
          _mockedData = A.Fake<IUnformattedData>();
          A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         foreach (var molecule in _molecules)
+            foreach (var groupId in _groupIds)
+               for (var time = 0; time < 10; time++)
+               {
+                  _basicFormat.AddRow(new List<string>()
+                  {
+                     "PeripheralVenousBlood",
+                     "Arterialized",
+                     "Human",
+                     "75 [g] glucose",
+                     molecule,
+                     $"time",
+                     "0",
+                     "0",
+                     "po",
+                     groupId,
+                     "min",
+                     "pmol/l",
+                     "pmol/l",
+                     $"{0.01}"
+                  });
+               }
       }
 
       protected override void Because()
@@ -285,20 +309,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var data = sut.Parse
          (
-            _mockedData,
+            _basicFormat,
             _columnInfos
          );
          data.Count.ShouldBeEqualTo(10);
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GLP-1_7-36 total", "", "", "", "po", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucose", "", "", "", "po", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Insuline", "", "", "", "po", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GIP_total", "", "", "", "po", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucagon", "", "", "", "po", "H" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GLP-1_7-36 total", "", "", "", "po", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucose", "", "", "", "po", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Insuline", "", "", "", "po", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "GIP_total", "", "", "", "po", "T2DM" })))).MustHaveHappened();
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.That.Matches(f => f.Invoke(new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "Glucagon", "", "", "", "po", "T2DM" })))).MustHaveHappened();
+         for (var molecule = 0; molecule < _molecules.Length; molecule++)
+            for (var groupId = 0; groupId < _groupIds.Length; groupId++)
+            {
+               data.Keys.ElementAt(molecule * _groupIds.Length + groupId).ElementAt(5).Value.ShouldBeEqualTo(_molecules[molecule]);
+               data.Keys.ElementAt(molecule * _groupIds.Length + groupId).ElementAt(6).Value.ShouldBeEqualTo(_groupIds[groupId]);
+            }
       }
 
       [TestCase]
