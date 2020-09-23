@@ -10,7 +10,14 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public abstract class ConcernforDataFormat_TMetaData_C : ContextSpecification<DataFormat_TMetaData_C>
+   internal class TestUnformattedData : UnformattedData
+   {
+      public TestUnformattedData(Cache<string, ColumnDescription> headers)
+      {
+         _headers = headers;
+      }
+   }
+   public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormat_Nonmem>
    {
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -23,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
          };
-         sut = new DataFormat_TMetaData_C();
+         sut = new DataFormat_Nonmem();
          _basicFormat = new TestUnformattedData
          (
             new Cache<string, ColumnDescription>()
@@ -69,7 +76,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                },
                {
-                  "Time [min]",
+                  "Time",
                   new ColumnDescription(5)
                   {
                      Level = ColumnDescription.MeasurementLevel.Numeric,
@@ -77,7 +84,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                },
                {
-                  "Concentration (molar) [pmol/l]",
+                  "Concentration",
                   new ColumnDescription(6)
                   {
                      Level = ColumnDescription.MeasurementLevel.Numeric,
@@ -85,7 +92,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                },
                {
-                  "Error [pmol/l]",
+                  "Error",
                   new ColumnDescription(7)
                   {
                      Level = ColumnDescription.MeasurementLevel.Numeric,
@@ -107,13 +114,44 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                      Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "H", "T2DM" }
                   }
+               },
+               {
+                  "Time_unit",
+                  new ColumnDescription(10)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "min" }
+                  }
+               },
+               {
+                  "Concentration_unit",
+                  new ColumnDescription(11)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               },
+               {
+                  "Error_unit",
+                  new ColumnDescription(12)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               },
+               {
+                  "lloq",
+                  new ColumnDescription(13)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric
+                  }
                }
             }
          );
       }
    }
 
-   public class When_checking_format : ConcernforDataFormat_TMetaData_C
+   public class When_Nonmem_is_checking_format : ConcernforDataFormat_Nonmem
    {
       [TestCase]
       public void identify_basic_format()
@@ -157,8 +195,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   _basicFormat.GetColumnDescription("Organ")
                },
                {
-                  "Time [min]",
-                  _basicFormat.GetColumnDescription("Time [min]")
+                  "Time",
+                  _basicFormat.GetColumnDescription("Time")
                }
             }
          );
@@ -166,7 +204,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_listing_parameters : ConcernforDataFormat_TMetaData_C
+   public class When_Nonmem_is_listing_parameters : ConcernforDataFormat_Nonmem
    {
       protected override void Because()
       {
@@ -176,7 +214,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_time_column()
       {
-         var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time [min]");
+         var timeParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Time");
          (timeParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = timeParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Time");
@@ -186,7 +224,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_error_column()
       {
-         var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
+         var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error");
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
@@ -196,7 +234,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_measurement_column_without_the_name_on_the_headings()
       {
-         var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
+         var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration");
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Concentration");
@@ -226,7 +264,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_parsing_format : ConcernforDataFormat_TMetaData_C
+   public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
       private IUnformattedData _mockedData;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
@@ -252,7 +290,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                      "0",
                      "0",
                      "po",
-                     groupId
+                     groupId,
+                     "min",
+                     "pmol/l",
+                     "pmol/l",
+                     $"{0.01}"
                   });
                }
       }
@@ -285,9 +327,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<List<string>>()
             {
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>" }
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $"{0.01}" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $" {0.01}" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", "0" }
             });
 
          var data = sut.Parse
@@ -301,7 +343,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Value.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
             dataset.Value.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
             dataset.Value.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
-            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeEqualTo(0);
             dataset.Value.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
       }
