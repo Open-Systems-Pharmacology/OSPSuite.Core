@@ -16,15 +16,17 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
+      private IImportConfirmationPresenter _presenter;
       public ImportConfirmationView()
       {
          InitializeComponent();
          layoutControlItem1.Text = Captions.Importer.NamingPattern;
-         listBoxControl1.TextChanged += (s, v) => OnSelectedDataSetChanged.Invoke(listBoxControl1.SelectedIndex);
+         //listBoxControl1.TextChanged += (s, v) => OnSelectedDataSetChanged.Invoke(listBoxControl1.SelectedIndex);
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
       {
+         _presenter = presenter;
       }
 
       public void SetNamingConventions(IEnumerable<string> options, string selected = null)
@@ -51,12 +53,9 @@ namespace OSPSuite.Presentation.Importer.Views
       public void SetDataValues()
       { }
 
-      public event NamingConventionChangedHandler OnNamingConventionChanged = delegate { };
-      public event SelectedDataSetChangedHandler OnSelectedDataSetChanged = delegate { };
-
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
-         OnNamingConventionChanged.Invoke(namingConventionComboBoxEdit.EditValue as string);
+         _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string);
       }
    }
 }
