@@ -3,19 +3,16 @@ using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Importer.Services;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
    {
       private readonly IImporterPresenter _importerPresenter;
-      private readonly IImporter _importer;
-      private IImportConfirmationPresenter _confirmationPresenter;
+      private readonly IImportConfirmationPresenter _confirmationPresenter;
       
-      public ImporterTiledPresenter(IImporter importer, IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter) : base(view)
+      public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter) : base(view)
       {
-         _importer = importer;
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
          _importerPresenter.View.OnImportAllSheets += ImportAllSheets; //should we actually be doing this? subscribing to the view directly?
@@ -49,7 +46,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importerPresenter.GetDataForImport(out var fileName, out var format, out var columnInfos, out var namingConventions, out var mappings);
          _confirmationPresenter.ImportDataForConfirmation(fileName, format, sheets, columnInfos, namingConventions, mappings);
 
-         //_importerPresenter.FillConfirmationView(ref _confirmationPresenter); //not sure about this method
          AddConfirmationView();
          View.EnableConfirmationView();
       }
