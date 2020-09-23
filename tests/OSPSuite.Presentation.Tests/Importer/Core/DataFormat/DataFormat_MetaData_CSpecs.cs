@@ -125,7 +125,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(10)
+                  new ColumnDescription(11)
                   {
                      Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "pmol/l" }
@@ -133,7 +133,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                },
                {
                   "Error_unit",
-                  new ColumnDescription(10)
+                  new ColumnDescription(12)
                   {
                      Level = ColumnDescription.MeasurementLevel.Discrete,
                      ExistingValues = new List<string>() { "pmol/l" }
@@ -141,7 +141,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                },
                {
                   "lloq",
-                  new ColumnDescription(11)
+                  new ColumnDescription(13)
                   {
                      Level = ColumnDescription.MeasurementLevel.Numeric
                   }
@@ -307,9 +307,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<List<string>>()
             {
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>" }
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $"{0.01}" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $" {0.01}" },
+               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", "0" }
             });
 
          var data = sut.Parse
@@ -323,7 +323,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Value.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
             dataset.Value.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
             dataset.Value.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
-            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeEqualTo(0);
             dataset.Value.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
       }
