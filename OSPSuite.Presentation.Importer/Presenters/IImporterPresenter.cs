@@ -23,7 +23,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
-      void FillConfirmationView(ref IImportConfirmationPresenter confirmationPresenter);
       void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos, out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings);
       IReadOnlyDictionary<string, IDataSheet> GetAllSheets();
       IDataSheet GetSingleSheet(string sheetName);
