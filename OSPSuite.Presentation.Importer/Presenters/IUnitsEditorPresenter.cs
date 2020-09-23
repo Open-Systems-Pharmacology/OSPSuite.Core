@@ -14,5 +14,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       string SelectedUnit { get; }
 
       bool Canceled { get; }
+
+      void TriggerOk();
+
+      void SelectDimension(string dimension);
+
+      void SelectUnit(string unit);
    }
 }

@@ -32,24 +32,25 @@ namespace OSPSuite.Presentation.Importer.Presenters
          fillDimensions();
          fillUnits();
 
-         View.OnDimensionChanged += (dimension) => this.DoWithinExceptionHandler(() =>
+         View.SetParams(useDimensionSelector());
+         _view.Display();
+      }
+
+      public void SelectDimension(string dimension)
+      {
+         this.DoWithinExceptionHandler(() =>
          {
             SelectedUnit = _dimensions.First(d => d.Name == dimension).DefaultUnit.Name;
             fillUnits();
          });
-         View.OnUnitChanged += (unit) => this.DoWithinExceptionHandler(() =>
+      }
+
+      public void SelectUnit(string unit)
+      {
+         this.DoWithinExceptionHandler(() =>
          {
             SelectedUnit = unit;
          });
-         View.OnOK += () => this.DoWithinExceptionHandler(() =>
-         {
-            OnOK(SelectedUnit);
-            _importDataColumn.SelectedUnit = SelectedUnit;
-            _canClose = true;
-         });
-
-         View.SetParams(useDimensionSelector());
-         _view.Display();
       }
 
       private bool useDimensionSelector()
@@ -91,5 +92,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IDimension selectedDimension => useDimensionSelector() ? findDimension() : _dimensions.ElementAt(0);
 
       public event OKHandler OnOK = delegate { };
+
+      public void TriggerOk()
+      {
+         this.DoWithinExceptionHandler(() =>
+         {
+            OnOK(SelectedUnit);
+            _importDataColumn.SelectedUnit = SelectedUnit;
+            _canClose = true;
+         });
+      }
    }
 }
