@@ -25,18 +25,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = new DataSource();
       }
 
+      public void TriggerNamingConventionChanged(string namingConvention)
+      {
+         this.DoWithinExceptionHandler(() => setNames(namingConvention));
+      }
+
       public void Show(string fileName, IDataSource dataSource, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
       {
          _fileName = fileName;
          _mappings = mappings;
          _dataSource = dataSource;
          _view.SetNamingConventions(namingConventions);
-         _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() => setNames(namingConvention));
          setNames(namingConventions.First());
          _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
-         //_plainData.SelectMany(d => d.Select(vlloq => { vlloq.Key.Name, vlloq.Key.Unit, vlloq.Value. }));
-         //_view.OnSelectedDataSetChanged += (index) => this.DoWithinExceptionHandler(() => );
-         //_view.Display();
       }
 
       public void ImportDataForConfirmation(string fileName, IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
@@ -46,11 +47,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
 
          _view.SetNamingConventions(namingConventions);
-         _view.OnNamingConventionChanged += (namingConvention) => this.DoWithinExceptionHandler(() => setNames(namingConvention));
          setNames(namingConventions.First());
          _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
-
-
       }
 
       private void setNames(string namingConvention)
