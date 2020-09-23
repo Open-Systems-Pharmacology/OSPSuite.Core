@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
          keys.Remove(unitKey);
          var units = data.GetColumn(unitKey).ToList();
-         var def = units.FirstOrDefault(u => !string.IsNullOrEmpty(u));
+         var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
          return i => (i > 0) ? units[i] : def;
       }
 

@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importerPresenter.View.OnImportAllSheets += ImportAllSheets; //should we actually be doing this? subscribing to the view directly?
          _importerPresenter.View.OnImportSingleSheet += ImportSingleSheet; //should we actually be doing this? subscribing to the view directly?
          _view.AddImporterView(_importerPresenter.View);
+         AddSubPresenters(_importerPresenter, _confirmationPresenter); 
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
