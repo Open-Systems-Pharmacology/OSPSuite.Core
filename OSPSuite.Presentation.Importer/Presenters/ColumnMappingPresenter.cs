@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using Microsoft.SqlServer.Server;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;

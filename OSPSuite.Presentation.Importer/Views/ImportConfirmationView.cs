@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using OSPSuite.UI.Views;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Assets;
 using OSPSuite.UI.Controls;

@@ -1,9 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using DevExpress.XtraTreeList;
-using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core
