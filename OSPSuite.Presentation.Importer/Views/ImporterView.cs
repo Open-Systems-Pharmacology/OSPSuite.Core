@@ -8,13 +8,12 @@ using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
-using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class ImporterView : BaseUserControl , IImporterView
    {
-      private IImporterPresenter _presenter; //TODO - have to keep in mind if I need this at all the architecture of these classes should actually be restructured
+      private IImporterPresenter _presenter;
 
       private string _contextMenuSelectedTab;
 
@@ -49,20 +48,14 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onButtonImportAllClicked(object sender, EventArgs e)
       {
-         OnImportAllSheets.Invoke();
+         _presenter.ImportDataForConfirmation();
       }
 
-      //still, we should not the context menu if we click at smthing that is not a page
       private void onTabControlMouseDown(object sender, MouseEventArgs e)
       {
          if (e.Button == MouseButtons.Right)
          {
-            //this HERE DOES NOT REALLY WORK, hitTest returns none
-            //XtraTabControl tabCtrl = sender as XtraTabControl;
             Point pt = MousePosition;
-            //XtraTabHitInfo info = tabCtrl.CalcHitInfo(tabCtrl.PointToClient(pt));
-            //if (info.HitTest == XtraTabHitTest.PageHeader)
-            //{
             XtraTabHitInfo hi = TabControl.CalcHitInfo(e.Location);
             if (hi.HitTest == XtraTabHitTest.PageHeader)
             {
@@ -112,19 +105,14 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onButtonImportClicked(object sender, EventArgs e)
       {
-         OnImportSingleSheet.Invoke(TabControl.SelectedTabPage.Text);
+         _presenter.ImportDataForConfirmation(TabControl.SelectedTabPage.Text);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
          if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
-            OnTabChanged.Invoke(TabControl.SelectedTabPage.Text);
+            _presenter.SelectTab(TabControl.SelectedTabPage.Text);
       }
-
-      public event TabChangedHandler OnTabChanged = delegate {};
-      public event ImportSingleSheetHandler OnImportSingleSheet = delegate { };
-      public event ImportAllSheetsHandler OnImportAllSheets = delegate { };
-      public event FormatChangedHandler OnFormatChanged = delegate {};
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
@@ -154,7 +142,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onFormatChanged(object sender, EventArgs e)
       {
-         OnFormatChanged.Invoke(formatComboBoxEdit.EditValue as string);
+         _presenter.SetNewFormat(formatComboBoxEdit.EditValue as string);
       }
 
       public void AddTabs(List<string> sheetNames)

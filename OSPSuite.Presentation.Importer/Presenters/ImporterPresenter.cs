@@ -7,7 +7,6 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 
@@ -27,6 +26,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IEnumerable<IDataFormat> _availableFormats;
 
       public event FormatChangedHandler OnFormatChanged = delegate { };
+      public event ImportSingleSheetHandler OnImportSingleSheet;
+      public event ImportAllSheetsHandler OnImportAllSheets;
       public event OnTriggerImportHandler OnTriggerImport = delegate { };
 
       public ImporterPresenter
@@ -59,34 +60,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
-         _view.OnTabChanged +=  SelectTab;
-         _view.OnImportAllSheets += ShowImportConfirmation;
-         _view.OnImportSingleSheet += ShowImportConfirmation;
-         _view.OnFormatChanged += (formatName) => this.DoWithinExceptionHandler(() =>
-         {
-            var format = _availableFormats.First(f => f.Name == formatName);
-            //SetDataFormat(format, _availableFormats);
-            OnFormatChanged(format.Name);
-         });
       }
-      public void ShowImportConfirmation()
+      public void ImportDataForConfirmation()
       {
-         startImport(_dataSourceFile.DataSheets);
+         OnImportAllSheets.Invoke();
       }
-      public void ShowImportConfirmation(string sheetName)
+      public void ImportDataForConfirmation(string sheetName)
       {
-         startImport(new Dictionary<string, IDataSheet>() { { sheetName, _dataSourceFile.DataSheets[sheetName] } });
+
+         OnImportSingleSheet.Invoke(sheetName);
       }
 
-      //this actually does nothing at all currently
-      private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
+      public void SetNewFormat(string formatName)
       {
-         _dataSourceFile.Format = _columnMappingPresenter.GetDataFormat();
-
-         var dataSource = new DataSource();
-         _importer.AddFromFile(_dataSourceFile.Format, sheets, _columnInfos, dataSource);
+         var format = _availableFormats.First(f => f.Name == formatName);
+         SetDataFormat(format, _availableFormats);
+         OnFormatChanged(format.Name);
       }
-
 
       public void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos,
          out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings)

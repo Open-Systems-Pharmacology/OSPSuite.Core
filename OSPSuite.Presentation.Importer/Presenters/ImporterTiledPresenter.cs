@@ -15,8 +15,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
-         _importerPresenter.View.OnImportAllSheets += ImportAllSheets; //should we actually be doing this? subscribing to the view directly?
-         _importerPresenter.View.OnImportSingleSheet += ImportSingleSheet; //should we actually be doing this? subscribing to the view directly?
+         _importerPresenter.OnImportAllSheets += ImportAllSheets;
+         _importerPresenter.OnImportSingleSheet += ImportSingleSheet;
          _view.AddImporterView(_importerPresenter.View);
          AddSubPresenters(_importerPresenter, _confirmationPresenter); 
       }

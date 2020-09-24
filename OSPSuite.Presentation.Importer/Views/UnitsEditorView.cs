@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.UI.Controls;
 using OSPSuite.Presentation.Importer.Presenters;
 using DevExpress.XtraEditors;
 using OSPSuite.UI.Importer;
