@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                while (reader.MoveToNextRow())
                {
                   //the first two could even be done only once
-                  var levels = reader.GetMeasurementLevels();
+                  var levels = reader.GetMeasurementLevels(headers.Count);
                   dataSheet.RawData.CalculateColumnDescription(levels);
                   dataSheet.RawData.AddRow(reader.CurrentRow);
                }

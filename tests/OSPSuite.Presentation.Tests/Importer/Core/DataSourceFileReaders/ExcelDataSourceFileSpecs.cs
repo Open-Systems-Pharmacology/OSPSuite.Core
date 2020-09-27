@@ -93,6 +93,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("integer").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("string").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("not available").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumnDescription("empty row").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
       }
 
       [TestCase]
@@ -116,6 +117,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public void double_read_with_correct_precision()
       {
          sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
+      }
+
+
+      [TestCase]
+      public void rightmost_column_with_empty_rows_read_correctly()
+      {
+         sut.DataSheets.ElementAt(2).Value.RawData.GetColumn("empty row").ShouldBeEqualTo(new List<string>() { "", "21"});
       }
 
 
