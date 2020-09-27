@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.Importer.Core
       string GetCell(string columnName, int rowIndex);
       IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
 
-      bool AddRow(IEnumerable<string> row);
+      void AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
       DataTable AsDataTable();
       UnformattedDataRow GetDataRow(int index);
@@ -43,16 +43,22 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          _headers.Each(header =>
          {
-            if (header.Level == ColumnDescription.MeasurementLevel.NotSet) //hell, we could even not check here
+            if (header.Level == ColumnDescription.MeasurementLevel.NotSet)
                header.Level = levels[header.Index];
          });
       }
 
-      public bool AddRow( IEnumerable<string> row)
+      public void AddRow( IEnumerable<string> row)
       {
          var rowList = row.ToList();
-         //the not empty row part we could check explicitly
-         if (_headers.Count != rowList.Count) return false;
+
+         //could it actually 
+         if (_headers.Count > rowList.Count)
+         {
+            for ( var i = rowList.Count; i < _headers.Count; i++  )
+               rowList.Add("");
+         }
+
          _rawDataTable.Add(rowList);
 
          foreach (var header in _headers)
@@ -61,8 +67,6 @@ namespace OSPSuite.Presentation.Importer.Core
             if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
                header.ExistingValues.Add(rowList.ElementAt(header.Index));
          }
-         return true;
-
       }
 
 

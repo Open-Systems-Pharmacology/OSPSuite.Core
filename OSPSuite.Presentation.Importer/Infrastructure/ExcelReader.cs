@@ -94,12 +94,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          return double.TryParse(value, out _);
       }
 
-      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels() //IMPORTANT: should be called after headers have been read!!!!
+      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels(int rowLength) //IMPORTANT: should be called after headers have been read!!!!
       {
          var resultList = new List<ColumnDescription.MeasurementLevel>();
          var currentExcelRow = getCurrentExcelRow(_rowEnumerator);
 
-         for (var i = _columnOffset; i < currentExcelRow.LastCellNum; i++)
+         for (var i = _columnOffset; i < rowLength + _columnOffset; i++)
          {
             var cell = currentExcelRow.GetCell(i);
 
