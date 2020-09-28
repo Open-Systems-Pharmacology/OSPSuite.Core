@@ -36,6 +36,8 @@ namespace OSPSuite.Presentation.Importer.Core
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
          //the list of headers is somehow the definition of the table
       {
+         if (_headers.Keys.Contains(columnName))
+            columnName = Guid.NewGuid().ToString();
          _headers.Add(columnName, new ColumnDescription(columnIndex));
       }
 
@@ -57,6 +59,10 @@ namespace OSPSuite.Presentation.Importer.Core
          {
             for ( var i = rowList.Count; i < _headers.Count; i++  )
                rowList.Add("");
+         }
+         if (rowList.Count > _headers.Count)
+         {
+            rowList = rowList.GetRange(0, _headers.Count);
          }
 
          _rawDataTable.Add(rowList);
