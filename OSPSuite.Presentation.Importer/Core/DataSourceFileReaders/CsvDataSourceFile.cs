@@ -38,6 +38,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                   dataSheet.RawData.AddRow(rowList);
                }
 
+               dataSheet.RawData.RemoveEmptyColumns();
+
                var loadedData = new Dictionary<string, IDataSheet>
                {
                   { "", dataSheet }
