@@ -8,20 +8,21 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public abstract class AbstractColumnsDataFormat : IDataFormat
    {
+      const int _columnNotFound = -1;
       public abstract string Name { get; }
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
 
       public bool SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         if (notCompatible(rawData, columnInfos))
+         if (NotCompatible(rawData, columnInfos))
             return false;
 
          setParameters(rawData, columnInfos);
          return true;
       }
 
-      protected bool notCompatible(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      protected bool NotCompatible(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          return (data.GetHeaders()
             .Select(data.GetColumnDescription)
@@ -37,21 +38,21 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          extractQualifiedHeadings(keys, missingKeys, columnInfos, data);
          extractNonQualifiedHeadings(keys, missingKeys, data);
-         extractGeneralParameters(keys, data);
+         ExtractGeneralParameters(keys, data);
       }
 
-      protected abstract Func<int, string> extractUnits(string description, IUnformattedData data, List<string> keys);
+      protected abstract Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys);
 
       private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data)
       {
-         if (keys == null) throw new ArgumentNullException(nameof(keys));
+         var upperKey = keys.Select(h => h.ToUpper()).ToList();
          foreach (var header in columnInfos.Select(ci => ci.DisplayName))
          {
-            var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
+            var headerKey = upperKey.FirstOrDefault(h => h.Contains(header.ToUpper()));
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = extractUnits(headerKey, data, keys);
+               var units = ExtractUnits(headerKey, data, keys);
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
@@ -59,7 +60,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   {
                      Name = header,
                      Units = units,
-                     SelectedUnit = units(-1)
+                     SelectedUnit = units(_columnNotFound)
                   })
                );
             }
@@ -83,7 +84,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = extractUnits(headerKey, data, keys);
+            var units = ExtractUnits(headerKey, data, keys);
             Parameters.Add
             (
                new MappingDataFormatParameter
@@ -93,16 +94,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   {
                      Name = header,
                      Units = units,
-                     SelectedUnit = units(-1)
+                     SelectedUnit = units(_columnNotFound)
                   }
                )
             );
          }
       }
 
-      protected virtual void extractGeneralParameters(List<string> keys, IUnformattedData data)
+      protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data)
       {
-         if (keys == null) throw new ArgumentNullException(nameof(keys));
          var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
          foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count == 1))
          {
@@ -116,7 +116,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      public IDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      public IDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Parse(IUnformattedData data,
+         IReadOnlyList<ColumnInfo> columnInfos)
       {
          var groupByParams =
             Parameters
@@ -154,32 +155,32 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                buildDataSetsRecursively(data, valueTuples, indexes, dataSets, columnInfos);
                indexes.Pop();
             }
+
+            return;
          }
-         else //Fully traversed the parameters list
-         {
-            //Filter based on the parameters
-            var indexesCopy = indexes.ToList();
-            indexesCopy.Reverse();
-            var rawDataSet = data.GetRows(
-               row =>
-               {
-                  var index = 0;
-                  return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
-               }
-            );
-            if (rawDataSet.Count() > 0)
+
+         //Filter based on the parameters
+         var indexesCopy = indexes.ToList();
+         indexesCopy.Reverse();
+         var rawDataSet = data.GetRows(
+            row =>
             {
-               dataSets.Add(
-                  valueTuples.Select(p =>
-                     new InstanstiatedMetaData()
-                     {
-                        Id = data.GetColumnDescription(p.ColumnName).Index,
-                        Value = rawDataSet.First().ElementAt(data.GetColumnDescription(p.ColumnName).Index)
-                     }
-                  ),
-                  parseMappings(rawDataSet, data, columnInfos)
-               );
+               var index = 0;
+               return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
             }
+         );
+         if (rawDataSet.Count() > 0)
+         {
+            dataSets.Add(
+               valueTuples.Select(p =>
+                  new InstanstiatedMetaData()
+                  {
+                     Id = data.GetColumnDescription(p.ColumnName).Index,
+                     Value = rawDataSet.First().ElementAt(data.GetColumnDescription(p.ColumnName).Index)
+                  }
+               ),
+               parseMappings(rawDataSet, data, columnInfos)
+            );
          }
       }
 
