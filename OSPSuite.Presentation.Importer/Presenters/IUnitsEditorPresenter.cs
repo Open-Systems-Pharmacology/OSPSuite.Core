@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public delegate void OKHandler(string units);
-
    public interface IUnitsEditorPresenter : IDisposablePresenter
    {
       void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions);
@@ -15,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       bool Canceled { get; }
 
-      void TriggerOk();
+      void SetUnit();
 
       void SelectDimension(string dimension);
 

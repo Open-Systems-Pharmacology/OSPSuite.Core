@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Assets;
 using OSPSuite.UI.Controls;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -48,7 +49,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
-         _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string);
+         this.DoWithinExceptionHandler( () => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
       }
    }
 }

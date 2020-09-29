@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
@@ -28,7 +29,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public event FormatChangedHandler OnFormatChanged = delegate { };
       public event ImportSingleSheetHandler OnImportSingleSheet;
       public event ImportAllSheetsHandler OnImportAllSheets;
-      public event OnTriggerImportHandler OnTriggerImport = delegate { };
+      public event ImportTriggeredHandler OnTriggerImport = delegate { };
 
       public ImporterPresenter
       (
@@ -109,7 +110,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          return _dataSourceFile.DataSheets[sheetName];
       }
 
-      //do we really need the arguments in this case???
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
@@ -119,7 +119,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          View.DisableImportButtons();
       }
-      private void onCompletedMapping(object sender)
+      private void onCompletedMapping(object sender, EventArgs e)
       {
          View.EnableImportButtons();
       }

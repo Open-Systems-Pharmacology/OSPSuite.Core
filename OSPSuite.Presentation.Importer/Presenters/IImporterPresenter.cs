@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       
       event ImportAllSheetsHandler OnImportAllSheets;
 
-      event OnTriggerImportHandler OnTriggerImport;
+      event ImportTriggeredHandler OnTriggerImport;
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public delegate void FormatChangedHandler(string format);
 
-   public delegate void OnTriggerImportHandler( IDataSource dataSource);
+   public delegate void ImportTriggeredHandler( IDataSource dataSource);
 
    public delegate void ImportSingleSheetHandler(string sheetName);
 

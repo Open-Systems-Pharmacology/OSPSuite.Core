@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using DevExpress.Utils.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Utility.Collections;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
@@ -90,7 +92,7 @@ namespace OSPSuite.Presentation.Importer.Services
             (
                new MetaDataMappingConverter()
                {
-                  Id = namingConvention.Replace("{File}", fileName).Replace("{Sheet}", ds.Key)
+                  Id = namingConvention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", ds.Key)
                },
                (acc, x) =>
                   new MetaDataMappingConverter()

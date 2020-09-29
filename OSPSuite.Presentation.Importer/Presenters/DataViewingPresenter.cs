@@ -10,15 +10,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public class DataViewingPresenter : AbstractPresenter<IDataViewingControl, IDataViewingPresenter>, IDataViewingPresenter
    {
-      private IDataSourceFile _tempDataSourceFile; //this should not really be called temp...
+      private IDataSourceFile _dataSourceFile;
       public DataViewingPresenter(IDataViewingControl view) : base(view)
       {
-         _tempDataSourceFile = new ExcelDataSourceFile(null);
+         _dataSourceFile = new ExcelDataSourceFile(null);
       }
 
       public void SetDataSource(IDataSourceFile dataSourceFile)
       {
-         _tempDataSourceFile = dataSourceFile;
+         _dataSourceFile = dataSourceFile;
          View.SetGridSource();
       }
 
@@ -29,23 +29,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public List<string> GetSheetNames()
       {
-         return _tempDataSourceFile.DataSheets.Keys.ToList();
+         return _dataSourceFile.DataSheets.Keys.ToList();
       }
       public DataTable GetSheet(string tabName)
       {
-         return _tempDataSourceFile.DataSheets[tabName].RawData.AsDataTable();
+         return _dataSourceFile.DataSheets[tabName].RawData.AsDataTable();
       }
 
       public void RemoveTabData(string tabName)
       {
-         _tempDataSourceFile.DataSheets.Remove(tabName);
+         _dataSourceFile.DataSheets.Remove(tabName);
       }
 
       public void RemoveAllButThisTabData(string tabName)
       {
-         var remainingSheet = _tempDataSourceFile.DataSheets[tabName];
-         _tempDataSourceFile.DataSheets.Clear();
-         _tempDataSourceFile.DataSheets.Add(tabName, remainingSheet);
+         var remainingSheet = _dataSourceFile.DataSheets[tabName];
+         _dataSourceFile.DataSheets.Clear();
+         _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
       }
    }
 }

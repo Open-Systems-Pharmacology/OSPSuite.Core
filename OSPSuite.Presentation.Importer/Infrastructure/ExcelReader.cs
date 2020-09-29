@@ -10,6 +10,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 {
    public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into extensions
    {
+      private const string _xlsxExtension = ".xlsx";
       //we could get this info here or in getCurrentRow, but make sure we do it once
       private IWorkbook _book;
       private IEnumerator<ISheet> _sheetEnumerator;
@@ -27,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          _columnOffsetOn = columnOffsetOn;
          _sheetEnumerator = _book.GetEnumerator();
-         _isTypeXlsx = Path.GetExtension(path).Equals(".xlsx");
+         _isTypeXlsx = Path.GetExtension(path).Equals(_xlsxExtension);
       }
 
       public ExcelReader(bool columnOffsetOn = true)
@@ -47,7 +48,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
          _sheetEnumerator = _book.GetEnumerator();
          _columnOffsetOn = columnOffsetOn;
-         _isTypeXlsx = Path.GetExtension(path).Equals(".xlsx");
+         _isTypeXlsx = Path.GetExtension(path).Equals(_xlsxExtension);
       }
 
       public bool MoveToNextSheet()
@@ -149,17 +150,12 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
       private IRow getCurrentExcelRow(IEnumerator enumerator)
       {
-         IRow row;
          if (_isTypeXlsx)
          {
-            row = (XSSFRow) enumerator.Current;
+            return (XSSFRow) enumerator.Current;
          }
-         else
-         {
-            row = (HSSFRow) enumerator.Current;
-         }
-
-         return row;
+         
+         return (HSSFRow) enumerator.Current;
       }
    }
 }

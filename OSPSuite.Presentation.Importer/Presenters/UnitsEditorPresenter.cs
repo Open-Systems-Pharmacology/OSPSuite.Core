@@ -88,16 +88,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          return _dimensions.First();
       }
 
-      //TODO Resharper - do not really understand the problem here
       private IDimension selectedDimension => useDimensionSelector() ? findDimension() : _dimensions.ElementAt(0);
 
-      public event OKHandler OnOK = delegate { };
-
-      public void TriggerOk()
+      public void SetUnit()
       {
          this.DoWithinExceptionHandler(() =>
          {
-            OnOK(SelectedUnit);
             _importDataColumn.SelectedUnit = SelectedUnit;
             _canClose = true;
          });

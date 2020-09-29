@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
          var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
-         return (from col in dataColumns where col.IsMandatory where subset.FirstOrDefault(cm => cm.MappedColumn.Name.ToString() == col.Name) == null select col.Name).FirstOrDefault();
+         return dataColumns.Where(col => col.IsMandatory && subset.All(cm => cm.MappedColumn.Name != col.Name)).Select(col => col.Name).FirstOrDefault();
       }
    }
 }

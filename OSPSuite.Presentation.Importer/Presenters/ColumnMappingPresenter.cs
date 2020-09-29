@@ -409,12 +409,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
          else
          {
-            OnMappingCompleted(this);
+            OnMappingCompleted(this, new EventArgs());
          }
       }
 
-      public event MappingCompletedHandler OnMappingCompleted = delegate { };
+      public event EventHandler OnMappingCompleted = delegate { };
 
-      public event MissingMappingHandler OnMissingMapping = delegate { };
+      public event EventHandler<MissingMappingEventArgs> OnMissingMapping = delegate { };
    }
 }
