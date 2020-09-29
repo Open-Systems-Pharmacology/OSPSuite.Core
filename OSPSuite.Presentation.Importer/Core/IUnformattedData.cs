@@ -19,11 +19,13 @@ namespace OSPSuite.Presentation.Importer.Core
       void AddColumn(string columnName, int columnIndex);
       DataTable AsDataTable();
       UnformattedDataRow GetDataRow(int index);
+      void RemoveEmptyColumns();
    }
 
    public class UnformattedData : IUnformattedData
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
+      private List<string> _emptyColumns = new List<string>();
 
       protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
@@ -36,8 +38,11 @@ namespace OSPSuite.Presentation.Importer.Core
       public void AddColumn(string columnName, int columnIndex) //it seems to me there is little sense in adding column after column
          //the list of headers is somehow the definition of the table
       {
-         if (_headers.Keys.Contains(columnName))
+         if (columnName.IsNullOrEmpty())
+         {
             columnName = Guid.NewGuid().ToString();
+            _emptyColumns.Add(columnName);
+         }
          _headers.Add(columnName, new ColumnDescription(columnIndex));
       }
 
@@ -89,6 +94,7 @@ namespace OSPSuite.Presentation.Importer.Core
       public DataTable AsDataTable()
       {
          var resultTable = new DataTable();
+         var indexList = _headers.Select( h => h.Index);
 
          // Add columns.
          foreach (var header in _headers.Keys)
@@ -96,9 +102,20 @@ namespace OSPSuite.Presentation.Importer.Core
             resultTable.Columns.Add(header, typeof(string));
          }
 
+         Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
+
+         if (_headers.Count != _rawDataTable.First().Count)
+         {
+            maskFunction = (inputList) => inputList.Where((v, i) => indexList.Contains(i));
+         }
+         else
+         {
+            maskFunction = (inputList) => inputList;
+         }
+
          foreach (var itemList in _rawDataTable)
          {
-            resultTable.Rows.Add(itemList.ToArray()); //TODO Resharper
+            resultTable.Rows.Add(maskFunction(itemList).ToArray());
          }
 
          return resultTable;
@@ -122,6 +139,14 @@ namespace OSPSuite.Presentation.Importer.Core
       public UnformattedDataRow GetDataRow(int index)
       {
          return new UnformattedDataRow(_rawDataTable[index], _headers);
+      }
+
+      public void RemoveEmptyColumns()
+      {
+         foreach (var headerName in _emptyColumns)
+         {
+            _headers.Remove(headerName);
+         }
       }
    }
 }
