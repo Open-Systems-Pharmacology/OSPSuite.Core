@@ -2,7 +2,10 @@
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-   public class InstanstiatedMetaData
+   //When parsing the DataSets we  group by metadata and we need to remember the values,
+   //so we can use them for the naming conventions. This way an instantiated metadata represents
+   //the value of a metadata (Id) on each group
+   public class InstantiatedMetaData
    {
       public int Id { get; set; }
       public string Value { get; set; }
@@ -13,12 +16,12 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSet
    {
-      IDictionary<IEnumerable<InstanstiatedMetaData> ,Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
+      IDictionary<IEnumerable<InstantiatedMetaData> ,Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; }
    }
 
    public class DataSet : IDataSet
    {
-      public IDictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; } = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>();
+      public IDictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>> Data { get; set; } = new Dictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>();
    }
 
 }

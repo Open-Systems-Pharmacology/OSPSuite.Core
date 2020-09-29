@@ -46,7 +46,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var dataSet = rawDataSet.ToList();
          foreach (var columnInfo in columnInfos)
          {
-            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name.ToString() == columnInfo.DisplayName);
+            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
             dictionary.Add
             (

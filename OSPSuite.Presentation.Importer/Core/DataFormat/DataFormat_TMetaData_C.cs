@@ -8,16 +8,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public class DataFormat_TMetaData_C : AbstractColumnsDataFormat
    {
-      public override string Name { get; } = "015_TMetaData_C(E)";
+      private const string _tMetaDataName = "015_TMetaData_C(E)";
+      private const string _tMetaDataDescription = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639";
+      public override string Name { get; } = _tMetaDataName;
 
-      public override string Description { get; } = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639";
+      public override string Description { get; } = _tMetaDataDescription;
 
       protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (String.IsNullOrEmpty(units))
             return _ => "?";
-         var unit = units.Substring(1, units.Length - 2).Trim().Split(',').FirstOrDefault()??"?";
+         var unit = units
+            .Substring(1, units.Length - 2) //remove the brackets
+            .Trim() //remove whitespace
+            .Split(',') //split comma separated list
+            .FirstOrDefault()??"?"; //default = ?
          return _ => unit;
       }
 
@@ -34,35 +40,36 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          foreach (var columnInfo in columnInfos)
          {
             var currentParameter = mappingParameters.First(p => p.MappedColumn.Name.ToString() == columnInfo.DisplayName);
-            if (currentParameter != null)
-               dictionary.Add
+            if (currentParameter == null) continue;
+            dictionary.Add
+            (
+               currentParameter.MappedColumn,
+               dataSet.Select
                (
-                  currentParameter.MappedColumn,
-                  dataSet.Select
-                  (
-                     row =>
-                     {
-                        var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-                        if (double.TryParse(element, out double result))
-                           return new ValueAndLloq()
-                           {
-                              Value = result
-                           };
-                        if (element.StartsWith("<"))
-                        {
-                           double.TryParse(element.Substring(1), out result);
-                           return new ValueAndLloq()
-                           {
-                              Lloq = result
-                           };
-                        }
+                  row =>
+                  {
+                     var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+                     if (double.TryParse(element, out double result))
                         return new ValueAndLloq()
                         {
-                           Value = double.NaN
+                           Value = result
+                        };
+                     if (element.StartsWith("<"))
+                     {
+                        double.TryParse(element.Substring(1), out result);
+                        return new ValueAndLloq()
+                        {
+                           Lloq = result
                         };
                      }
-                  ).ToList()
-               );
+
+                     return new ValueAndLloq()
+                     {
+                        Value = double.NaN
+                     };
+                  }
+               ).ToList()
+            );
          }
 
 
