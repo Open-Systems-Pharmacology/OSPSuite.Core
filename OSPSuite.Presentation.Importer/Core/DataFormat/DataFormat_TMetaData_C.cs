@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public override string Description { get; } = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639";
 
-      protected override Func<int, string> extractUnits(string description, IUnformattedData data, List<string> keys)
+      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (String.IsNullOrEmpty(units))
