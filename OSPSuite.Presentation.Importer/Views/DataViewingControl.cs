@@ -25,8 +25,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void SetGridSource(string tabName = null)
       {
-         gridControl1.DataSource = null;
-         gridView1.Columns.Clear();
+         dataViewingGridControl.DataSource = null;
+         dataViewingGridView.Columns.Clear();
 
          //should this logic be moved to presenter?
          //======= presentation notes
@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Views
             tabName = _presenter.GetSheetNames().ElementAt(0);
          //========================================
 
-         gridControl1.DataSource = _presenter.GetSheet(tabName);
+         dataViewingGridControl.DataSource = _presenter.GetSheet(tabName);
       }
    }
 }

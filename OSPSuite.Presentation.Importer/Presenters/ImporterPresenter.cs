@@ -26,10 +26,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private IEnumerable<IDataFormat> _availableFormats;
 
-      public event FormatChangedHandler OnFormatChanged = delegate { };
-      public event ImportSingleSheetHandler OnImportSingleSheet;
-      public event ImportAllSheetsHandler OnImportAllSheets;
-      public event ImportTriggeredHandler OnTriggerImport = delegate { };
+
+      public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
+
+      public event EventHandler<ImportSingleSheetEventArgs> OnImportSingleSheet = delegate { };
+
+      public event EventHandler OnImportAllSheets = delegate { };
+
+      public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
 
       public ImporterPresenter
       (
@@ -64,19 +68,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
       public void ImportDataForConfirmation()
       {
-         OnImportAllSheets.Invoke();
+         OnImportAllSheets.Invoke(this, EventArgs.Empty);
       }
       public void ImportDataForConfirmation(string sheetName)
       {
 
-         OnImportSingleSheet.Invoke(sheetName);
+         OnImportSingleSheet.Invoke(this, new ImportSingleSheetEventArgs { SheetName = sheetName });
       }
 
       public void SetNewFormat(string formatName)
       {
          var format = _availableFormats.First(f => f.Name == formatName);
          SetDataFormat(format, _availableFormats);
-         OnFormatChanged(format.Name);
+         OnFormatChanged.Invoke(this, new FormatChangedEventArgs {Format = format.Name});
       }
 
       public void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos,

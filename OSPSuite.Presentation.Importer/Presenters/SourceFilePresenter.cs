@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Services;
@@ -31,7 +32,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs() { FileName = _dialogCreator.AskForFileToOpen(Title, Filter, DirectoryKey, null, initDirectoryName) });
       }
 
-      public event SourceFileChangedHandler OnSourceFileChanged =  delegate {};
+      public event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged =  delegate {};
       public void SetFilePath(string filePath)
       {
          View.SetFilePath(filePath);
