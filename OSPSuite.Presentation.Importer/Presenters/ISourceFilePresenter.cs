@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       void OpenFileDialog(string initFileName);
 
-      event SourceFileChangedHandler OnSourceFileChanged;
+      event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
 
       void SetFilePath(string filePath);
 
@@ -16,8 +16,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       string Filter { get; set; }
       string DirectoryKey { get; set; }
    }
-
-   public delegate void SourceFileChangedHandler(object sender, SourceFileChangedEventArgs e);
 
    public class SourceFileChangedEventArgs : EventArgs
    {

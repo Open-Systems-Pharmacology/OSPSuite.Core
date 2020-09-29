@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
@@ -32,13 +33,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
 
 
-      public void ImportAllSheets()
+      public void ImportAllSheets(object sender, EventArgs e)
       {
          startImport(_importerPresenter.GetAllSheets());
       }
-      public void ImportSingleSheet(string sheetName)
+      public void ImportSingleSheet(object sender, ImportSingleSheetEventArgs args)
       {
-         startImport(new Dictionary<string, IDataSheet>() { { sheetName, _importerPresenter.GetSingleSheet(sheetName) } });
+         startImport(new Dictionary<string, IDataSheet>() { { args.SheetName, _importerPresenter.GetSingleSheet(args.SheetName) } });
       }
 
       private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)

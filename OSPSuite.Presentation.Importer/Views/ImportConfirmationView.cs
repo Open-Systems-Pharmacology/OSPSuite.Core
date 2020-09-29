@@ -15,7 +15,6 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          InitializeComponent();
          layoutControlItem1.Text = Captions.Importer.NamingPattern;
-         //listBoxControl1.TextChanged += (s, v) => OnSelectedDataSetChanged.Invoke(listBoxControl1.SelectedIndex);
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)

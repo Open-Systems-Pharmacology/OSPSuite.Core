@@ -98,7 +98,7 @@ namespace OSPSuite.Presentation.Importer.Core
          // Add columns.
          foreach (var header in _headers.Keys)
          {
-            resultTable.Columns.Add(header, typeof(string));
+            resultTable.AddColumn(header, typeof(string));
          }
 
          Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
