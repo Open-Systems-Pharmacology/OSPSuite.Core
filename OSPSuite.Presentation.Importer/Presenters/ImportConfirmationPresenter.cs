@@ -5,6 +5,7 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.DataProcessing;
 using OSPSuite.Core.Importer;
 
 
@@ -27,17 +28,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void TriggerNamingConventionChanged(string namingConvention)
       {
-         this.DoWithinExceptionHandler(() => setNames(namingConvention));
-      }
-
-      public void Show(string fileName, IDataSource dataSource, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
-      {
-         _fileName = fileName;
-         _mappings = mappings;
-         _dataSource = dataSource;
-         _view.SetNamingConventions(namingConventions);
-         setNames(namingConventions.First());
-         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
+         setNames(namingConvention);
       }
 
       public void ImportDataForConfirmation(string fileName, IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
@@ -46,8 +37,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _mappings = mappings;
          _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
 
-         _view.SetNamingConventions(namingConventions);
-         setNames(namingConventions.First());
+         if (namingConventions == null)
+            throw new NullNamingConventionsException();
+
+         var conventions = namingConventions.ToList();
+
+         if (conventions.Count == 0)
+            throw new EmptyNamingConventionsException();
+
+         _view.SetNamingConventions(conventions);
+         setNames(conventions.First());
          _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
       }
 

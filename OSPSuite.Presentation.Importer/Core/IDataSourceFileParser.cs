@@ -1,4 +1,5 @@
-﻿using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
+﻿using System.Linq;
+using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -9,6 +10,9 @@ namespace OSPSuite.Presentation.Importer.Core
 
    public class DataSourceFileParser : IDataSourceFileParser
    {
+      readonly string[] _csvExtensions = { ".csv" };
+      readonly string[] _excelExtensions = { ".xls", ".xlsx" };
+
       private readonly ICsvDataSourceFile _csvDataSourceFile;
       private readonly IExcelDataSourceFile _excelDataSourceFile;
 
@@ -20,12 +24,12 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public IDataSourceFile For(string path)
       {
-         if (path.EndsWith(".csv"))
+         if (_csvExtensions.Any(path.EndsWith))
          {
             _csvDataSourceFile.Path = path;
             return _csvDataSourceFile;
          }
-         else if (path.EndsWith(".xls") || path.EndsWith(".xlsx"))
+         else if (_excelExtensions.Any(path.EndsWith))
          {
             _excelDataSourceFile.Path = path;
             return _excelDataSourceFile;

@@ -144,11 +144,9 @@ namespace OSPSuite.Presentation.Importer.Views
          return (_dimensionComboBox == null || !_dimensionComboBox.Properties.Items.Any() || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null && (_inputParametersControl == null || _inputParametersControl.AreAllValuesEntered);
       }
 
-      public event OKHandler OnOK;
-
       private void onOkClick()
       {
-         _presenter.TriggerOk();
+         _presenter.SetUnit();
          Parent.Hide();
       }
 

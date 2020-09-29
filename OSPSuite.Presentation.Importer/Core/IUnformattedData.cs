@@ -59,7 +59,6 @@ namespace OSPSuite.Presentation.Importer.Core
       {
          var rowList = row.ToList();
 
-         //could it actually 
          if (_headers.Count > rowList.Count)
          {
             for ( var i = rowList.Count; i < _headers.Count; i++  )

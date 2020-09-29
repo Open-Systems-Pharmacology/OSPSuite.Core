@@ -19,11 +19,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public string Message { get; set; }
    }
 
-   /// <summary>
-   ///    Handler for OnMissingMapping event.
-   /// </summary>
-   public delegate void MissingMappingHandler(object sender, MissingMappingEventArgs e);
-
    public delegate void MappingCompletedHandler(object sender);
 
    public class ColumnMappingOption
@@ -56,10 +51,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
-      void SetSettings(
-         IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
-      );
+      void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos);
 
       IDataFormat GetDataFormat();
 
@@ -83,8 +75,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void ValidateMapping();
 
-      event MappingCompletedHandler OnMappingCompleted; //status: you can import
+      event EventHandler OnMappingCompleted; //status: you can import
 
-      event MissingMappingHandler OnMissingMapping;
+      event EventHandler<MissingMappingEventArgs> OnMissingMapping;
    }
 }
