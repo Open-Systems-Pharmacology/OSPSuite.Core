@@ -45,10 +45,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data)
       {
-         var upperKey = keys.Select(h => h.ToUpper()).ToList();
          foreach (var header in columnInfos.Select(ci => ci.DisplayName))
          {
-            var headerKey = upperKey.FirstOrDefault(h => h.Contains(header.ToUpper()));
+            var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
             if (headerKey != null)
             {
                keys.Remove(headerKey);
