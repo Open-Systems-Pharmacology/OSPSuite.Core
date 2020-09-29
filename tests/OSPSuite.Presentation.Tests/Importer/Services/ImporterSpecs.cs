@@ -71,17 +71,17 @@ namespace OSPSuite.Presentation.Importer.Services
                "key1", 
                new DataSet()
                {
-                  Data = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  Data = new Dictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
                   {
                      { 
-                        new List<InstanstiatedMetaData>()
+                        new List<InstantiatedMetaData>()
                         {
-                           new InstanstiatedMetaData()
+                           new InstantiatedMetaData()
                            {
                               Id = 0,
                               Value = "Value1"
                            },
-                           new InstanstiatedMetaData()
+                           new InstantiatedMetaData()
                            {
                               Id = 1,
                               Value = "Value2"
@@ -96,17 +96,17 @@ namespace OSPSuite.Presentation.Importer.Services
                "key2",
                new DataSet()
                {
-                  Data = new Dictionary<IEnumerable<InstanstiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  Data = new Dictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
                   {
                      {
-                        new List<InstanstiatedMetaData>()
+                        new List<InstantiatedMetaData>()
                         {
-                           new InstanstiatedMetaData()
+                           new InstantiatedMetaData()
                            {
                               Id = 0,
                               Value = "Value1"
                            },
-                           new InstanstiatedMetaData()
+                           new InstantiatedMetaData()
                            {
                               Id = 1,
                               Value = "Value2"

@@ -27,15 +27,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
             while (reader.MoveToNextSheet())
             {
+               if (!reader.MoveToNextRow()) continue;
+
                var sheetName = reader.CurrentSheet.SheetName;
-               var headers = new List<string>();
                IDataSheet dataSheet = new DataSheet();
                dataSheet.RawData = new UnformattedData();
-
-               if (reader.MoveToNextRow())
-                  headers = reader.CurrentRow;
-               //else probably throw exception
-
+               var headers = reader.CurrentRow;
+     
                for (var j = 0; j < headers.Count; j++)
                   dataSheet.RawData.AddColumn(headers[j], j);
 
