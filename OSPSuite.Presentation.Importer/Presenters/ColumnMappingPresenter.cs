@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class ColumnMappingPresenter : AbstractPresenter<IColumnMappingControl, IColumnMappingPresenter>, IColumnMappingPresenter
    {
       private IDataFormat _format;
-      private List<ColumnMappingViewModel> _mappings;
+      private List<ColumnMappingDTO> _mappings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporterTask _importerTask;
@@ -51,9 +51,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _mappings = _columnInfos.Select(c =>
          {
             var target = formatParameters.OfType<MappingDataFormatParameter>().FirstOrDefault(m => m.MappedColumn.Name.ToString() == c.Name);
-            return new ColumnMappingViewModel
+            return new ColumnMappingDTO
             (
-               ColumnMappingViewModel.ColumnType.Mapping,
+               ColumnMappingDTO.ColumnType.Mapping,
                c.Name,
                ColumnMappingFormatter.Stringify(target),
                target,
@@ -64,9 +64,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _metaDataCategories.Select(md =>
             {
                var target = formatParameters.OfType<MetaDataFormatParameter>().FirstOrDefault(m => m.MetaDataId == md.Name);
-               return new ColumnMappingViewModel
+               return new ColumnMappingDTO
                (
-                  ColumnMappingViewModel.ColumnType.MetaData,
+                  ColumnMappingDTO.ColumnType.MetaData,
                   md.Name,
                   ColumnMappingFormatter.Stringify(target),
                   target,
@@ -78,8 +78,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             formatParameters.OfType<GroupByDataFormatParameter>().Select(
                gb =>
                {
-                  return new ColumnMappingViewModel(
-                     ColumnMappingViewModel.ColumnType.GroupBy,
+                  return new ColumnMappingDTO(
+                     ColumnMappingDTO.ColumnType.GroupBy,
                      Captions.GroupByTitle,
                      ColumnMappingFormatter.Stringify(gb),
                      gb,
@@ -89,8 +89,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             )
          ).Append
          (
-            new ColumnMappingViewModel(
-               ColumnMappingViewModel.ColumnType.AddGroupBy,
+            new ColumnMappingDTO(
+               ColumnMappingDTO.ColumnType.AddGroupBy,
                Captions.AddGroupByTitle,
                null,
                new AddGroupByFormatParameter(""),
@@ -117,7 +117,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
       }
 
-      public void ChangeUnitsOnRow(ColumnMappingViewModel model)
+      public void ChangeUnitsOnRow(ColumnMappingDTO model)
       {
          using (var unitsEditorPresenter = _applicationController.Start<IUnitsEditorPresenter>())
          {
@@ -175,7 +175,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
       }
 
-      public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model)
+      public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)
       {
          var options = new List<ColumnMappingOption>();
          if (model == null)
@@ -214,7 +214,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                );
          switch (model.CurrentColumnType)
          {
-            case ColumnMappingViewModel.ColumnType.Mapping:
+            case ColumnMappingDTO.ColumnType.Mapping:
                foreach (var column in availableColumns)
                {
                   options.Add(
@@ -225,7 +225,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   );
                }
                break;
-            case ColumnMappingViewModel.ColumnType.MetaData:
+            case ColumnMappingDTO.ColumnType.MetaData:
                foreach (var column in availableColumns)
                {
                   options.Add(
@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   );
                }
                break;
-            case ColumnMappingViewModel.ColumnType.GroupBy:
+            case ColumnMappingDTO.ColumnType.GroupBy:
                //GroupBy only for missing columns
                foreach (var column in availableColumns)
                {
@@ -248,7 +248,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   );
                }
                break;
-            case ColumnMappingViewModel.ColumnType.AddGroupBy:
+            case ColumnMappingDTO.ColumnType.AddGroupBy:
                //GroupBy only for missing columns
                foreach (var column in availableColumns)
                {
@@ -311,7 +311,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      public void SetDescriptionForRow(ColumnMappingViewModel model)
+      public void SetDescriptionForRow(ColumnMappingDTO model)
       {
          if (model.Source is AddGroupByFormatParameter)
          {
@@ -348,7 +348,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
       }
 
-      public void ClearRow(ColumnMappingViewModel model)
+      public void ClearRow(ColumnMappingDTO model)
       {
          if (model.Source is GroupByDataFormatParameter)
          {

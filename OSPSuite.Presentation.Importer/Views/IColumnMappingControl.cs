@@ -8,7 +8,7 @@ using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
-   public class ColumnMappingViewModel : Notifier
+   public class ColumnMappingDTO : Notifier
    {
       public string MappingName { get; private set; }
       private string _description;
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Views
          AddGroupBy
       }
       public ColumnType CurrentColumnType { get; set; }
-      public ColumnMappingViewModel(ColumnType columnType, string columnName, string description, DataFormatParameter source, int icon)
+      public ColumnMappingDTO(ColumnType columnType, string columnName, string description, DataFormatParameter source, int icon)
       {
          CurrentColumnType = columnType;
          MappingName = columnName;
@@ -142,7 +142,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
-      void SetMappingSource(IList<ColumnMappingViewModel> mappings);
+      void SetMappingSource(IList<ColumnMappingDTO> mappings);
 
       void Rebind();
    }

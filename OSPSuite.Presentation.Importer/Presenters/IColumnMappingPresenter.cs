@@ -57,13 +57,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void SetDataFormat(IDataFormat format);
 
-      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingViewModel model);
+      IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
 
       ToolTipDescription ToolTipDescriptionFor(int index);
 
-      void SetDescriptionForRow(ColumnMappingViewModel model);
+      void SetDescriptionForRow(ColumnMappingDTO model);
 
-      void ClearRow(ColumnMappingViewModel model);
+      void ClearRow(ColumnMappingDTO model);
 
       void AddGroupBy(AddGroupByFormatParameter source);
 
@@ -71,7 +71,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void ClearMapping();
 
-      void ChangeUnitsOnRow(ColumnMappingViewModel model);
+      void ChangeUnitsOnRow(ColumnMappingDTO model);
 
       void ValidateMapping();
 

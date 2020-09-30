@@ -80,17 +80,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          A.CallTo(
             () => _view.SetMappingSource(
-               A<IList<ColumnMappingViewModel>>.That.Matches(l => 
-                  l.Count(m => m.CurrentColumnType == ColumnMappingViewModel.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Time") == 1 &&
-                  l.Count(m => m.CurrentColumnType == ColumnMappingViewModel.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Concentration") == 1 &&
-                  l.Count(m => m.CurrentColumnType == ColumnMappingViewModel.ColumnType.GroupBy && m.Source is GroupByDataFormatParameter && (m.Source as GroupByDataFormatParameter).ColumnName == "Study id") == 1
+               A<IList<ColumnMappingDTO>>.That.Matches(l => 
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Time") == 1 &&
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Concentration") == 1 &&
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy && m.Source is GroupByDataFormatParameter && (m.Source as GroupByDataFormatParameter).ColumnName == "Study id") == 1
             ))).MustHaveHappened();
       }
    }
 
    static public class ColumnMappingViewModelExtensions
    {
-      static public bool IsEquivalentTo(this ColumnMappingViewModel self, ColumnMappingViewModel other)
+      static public bool IsEquivalentTo(this ColumnMappingDTO self, ColumnMappingDTO other)
       {
          if (self == null)
             return other == null;
@@ -145,7 +145,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       /*[TestCase]
       public void fills_correct_options()
       {
-         var options = sut.GetAvailableOptionsFor(new ColumnMappingViewModel(ColumnMappingViewModel.ColumnType.Mapping, "Time", "", A.Fake<DataFormatParameter>(), 0));
+         var options = sut.GetAvailableOptionsFor(new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Time", "", A.Fake<DataFormatParameter>(), 0));
          var columnMappingOptions = options.ToList();
          columnMappingOptions.Count().ShouldBeEqualTo(3);
          columnMappingOptions.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
