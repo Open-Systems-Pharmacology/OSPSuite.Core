@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          catch (Exception ex)
          {
             _logger.AddError(ex.ToString());
-            return null;
+            throw new InvalidFileException();
          }
       }
    }
