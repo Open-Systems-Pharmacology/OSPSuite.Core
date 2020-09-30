@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using OSPSuite.Presentation.Importer.Core.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          foreach (var header in columnInfos.Select(ci => ci.DisplayName))
          {
-            var headerKey = keys.FirstOrDefault(h => h.ToUpper().Contains(header.ToUpper()));
+            var headerKey = keys.FindHeader(header);
             if (headerKey != null)
             {
                keys.Remove(headerKey);
