@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly IImageListRetriever _imageListRetriever;
       private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
-      private readonly GridViewBinder<ColumnMappingViewModel> _gridViewBinder;
+      private readonly GridViewBinder<ColumnMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
 
@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _imageListRetriever = imageListRetriever;
          InitializeComponent();
-         _gridViewBinder = new GridViewBinder<ColumnMappingViewModel>(uxGridView);
+         _gridViewBinder = new GridViewBinder<ColumnMappingDTO>(uxGridView);
          uxGridView.OptionsView.ShowGroupPanel = false;
          uxGridView.OptionsMenu.EnableColumnMenu = false;
          uxGridView.CellValueChanged += (s, e) => _presenter.ValidateMapping();
@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation.Importer.Views
          _presenter = presenter;
       }
 
-      private RepositoryItemImageComboBox valueRepository(ColumnMappingViewModel model)
+      private RepositoryItemImageComboBox valueRepository(ColumnMappingDTO model)
       {
          var repo = new RepositoryItemImageComboBox
          {
@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Importer.Views
          return repo;
       }
 
-      private RepositoryItemImageComboBox nameRepository(ColumnMappingViewModel model)
+      private RepositoryItemImageComboBox nameRepository(ColumnMappingDTO model)
       {
          var repo = new RepositoryItemImageComboBox
          {
@@ -129,12 +129,12 @@ namespace OSPSuite.Presentation.Importer.Views
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
       }
 
-      private RepositoryItem removeRepository(ColumnMappingViewModel model)
+      private RepositoryItem removeRepository(ColumnMappingDTO model)
       {
          return model.Source == null || model.Source is IgnoredDataFormatParameter || model.Source is AddGroupByFormatParameter ? _disabledRemoveButtonRepository : _removeButtonRepository;
       }
 
-      private RepositoryItem unitRepository(ColumnMappingViewModel model)
+      private RepositoryItem unitRepository(ColumnMappingDTO model)
       {
          if (model.Source is MappingDataFormatParameter)
          {
@@ -156,7 +156,7 @@ namespace OSPSuite.Presentation.Importer.Views
          _gridViewBinder.Rebind();
       }
 
-      public void SetMappingSource(IList<ColumnMappingViewModel> mappings)
+      public void SetMappingSource(IList<ColumnMappingDTO> mappings)
       {
          _gridViewBinder.BindToSource(mappings);
       }
@@ -240,7 +240,7 @@ namespace OSPSuite.Presentation.Importer.Views
             view.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
       }
 
-      private void onValueChanged(ColumnMappingViewModel model, PropertyValueSetEventArgs<string> e)
+      private void onValueChanged(ColumnMappingDTO model, PropertyValueSetEventArgs<string> e)
       {
          _presenter.SetDescriptionForRow(model);
       }

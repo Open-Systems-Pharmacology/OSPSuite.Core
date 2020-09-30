@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
+using NPOI.OpenXmlFormats.Dml;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -53,23 +54,19 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onTabControlMouseDown(object sender, MouseEventArgs e)
       {
-         if (e.Button == MouseButtons.Right)
-         {
-            Point pt = MousePosition;
-            XtraTabHitInfo hi = TabControl.CalcHitInfo(e.Location);
-            if (hi.HitTest == XtraTabHitTest.PageHeader)
-            {
+         if (e.Button != MouseButtons.Right)
+            return;
+         XtraTabHitInfo hi = TabControl.CalcHitInfo(e.Location);
+         if (hi.HitTest != XtraTabHitTest.PageHeader)
+            return;
+         
+         var contextMenu = new DXPopupMenu();
+         contextMenu.Items.Clear();
+         contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
+         contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
+         contextMenu.ShowPopup(TabControl, e.Location);
+         _contextMenuSelectedTab = hi.Page.Text;
 
-               var contextMenu = new DXPopupMenu();
-               contextMenu.Items.Clear();
-               contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
-               contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
-               contextMenu.ShowPopup(TabControl, e.Location);
-               _contextMenuSelectedTab = hi.Page.Text;
-            }
-
-            //}
-         }
       }
       private void onCloseTab(object sender, EventArgs e)
       {
