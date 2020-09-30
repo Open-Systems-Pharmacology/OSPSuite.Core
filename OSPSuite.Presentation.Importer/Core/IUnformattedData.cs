@@ -114,6 +114,7 @@ namespace OSPSuite.Presentation.Importer.Core
 
          foreach (var itemList in _rawDataTable)
          {
+            // ReSharper disable once CoVariantArrayConversion
             resultTable.Rows.Add(maskFunction(itemList).ToArray());
          }
 

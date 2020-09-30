@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Importer.Views
             case GroupByDataFormatParameter _:
                return Captions.GroupByDescription;
             case MappingDataFormatParameter mp:
-               return Captions.MappingDescription(mp.MappedColumn.Name.ToString(), mp.MappedColumn.SelectedUnit);
+               return Captions.MappingDescription(mp.MappedColumn.Name, mp.MappedColumn.SelectedUnit);
             case MetaDataFormatParameter mp:
                return Captions.MetaDataDescription(mp.MetaDataId);
             default:

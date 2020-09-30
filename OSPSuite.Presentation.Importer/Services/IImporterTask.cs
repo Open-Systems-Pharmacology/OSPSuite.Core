@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporterTask
    {
       int GetImageIndex(DataFormatParameter parameter);
-
       string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
    }
 

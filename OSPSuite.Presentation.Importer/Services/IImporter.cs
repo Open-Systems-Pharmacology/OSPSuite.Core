@@ -5,7 +5,6 @@ using DevExpress.Utils.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Utility.Collections;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
