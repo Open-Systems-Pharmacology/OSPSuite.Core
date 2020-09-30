@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OSPSuite.Presentation.Importer.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,14 +19,14 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected override void ExtractGeneralParameters(List<string> keys, IUnformattedData data)
       {
          base.ExtractGeneralParameters(keys, data);
-         var lloq = data.GetHeaders().FirstOrDefault(h => h.ToUpper() == "LLOQ");
+         var lloq = data.GetHeaders().FindHeader("lloq");
          if (lloq != null)
             _lloqIndex = data.GetColumnDescription(lloq).Index;
       }
 
       protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
       {
-         var unitKey = data.GetHeaders().FirstOrDefault(h => h.ToUpper() == (description.ToUpper() + "_UNIT"));
+         var unitKey = data.GetHeaders().FindHeader("_UNIT");
          if (unitKey == null)
          {
             return _ => "?";
