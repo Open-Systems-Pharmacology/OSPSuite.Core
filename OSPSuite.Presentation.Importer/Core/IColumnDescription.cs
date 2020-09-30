@@ -3,15 +3,6 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-   public interface IColumnDescription
-   {
-      int Index { get; set; } //the unparsed name
-
-      IList<string> ExistingValues { get; set; }
-
-      Type ColumnDataType { get; set; } //this could even be an enum of our choosing
-   }
-
    public class ColumnDescription
    {
       public enum MeasurementLevel

@@ -122,7 +122,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             Parameters
                .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter)
                .Select(p => (p.ColumnName, data.GetColumnDescription(p.ColumnName).ExistingValues));
-         var dataSets = new List<Dictionary<Column, IList<double>>>();
          return buildDataSets(data, groupByParams, columnInfos);
       }
 

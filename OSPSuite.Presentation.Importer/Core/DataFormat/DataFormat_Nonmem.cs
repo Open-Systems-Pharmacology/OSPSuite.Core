@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
       {
-         var unitKey = data.GetHeaders().FindHeader("_UNIT");
+         var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
             return _ => "?";

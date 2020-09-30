@@ -50,7 +50,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _mappings = _columnInfos.Select(c =>
          {
-            var target = formatParameters.OfType<MappingDataFormatParameter>().FirstOrDefault(m => m.MappedColumn.Name.ToString() == c.Name);
+            var target = formatParameters.OfType<MappingDataFormatParameter>().FirstOrDefault(m => m.MappedColumn.Name == c.Name);
             return new ColumnMappingDTO
             (
                ColumnMappingDTO.ColumnType.Mapping,
@@ -280,7 +280,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                return new ToolTipDescription()
                {
                   Title = Captions.MappingTitle,
-                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name.ToString(), mp.MappedColumn.SelectedUnit)
+                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name, mp.MappedColumn.SelectedUnit)
                };
             case GroupByDataFormatParameter gp:
                return new ToolTipDescription()
