@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
       public DataTable GetSheet(string tabName)
       {
-         return _dataSourceFile.DataSheets[tabName].RawData.AsDataTable();
+         return _dataSourceFile.DataSheets.TryGetValue(tabName, out var value) ? value.RawData.AsDataTable() : new DataTable();
       }
 
       public void RemoveTabData(string tabName)
