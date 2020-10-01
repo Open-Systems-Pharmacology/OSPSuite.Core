@@ -14,9 +14,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IEnumerable<IDimension> _dimensions;
       public string SelectedUnit { get; private set; }
       private bool _canClose = false;
+      private IDimensionFactory _dimensionFactory;
 
-      public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
+      public UnitsEditorPresenter(IUnitsEditorView view, IDimensionFactory dimensionFactory) : base(view)
       {
+         _dimensionFactory = dimensionFactory;
       }
 
       public bool Canceled => _view.Canceled;
@@ -61,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private void fillDimensions()
       {
          if (useDimensionSelector())
-            View.FillDimensionComboBox(_dimensions, selectedDimension.Name);
+            View.FillDimensionComboBox(_dimensions, findSelectedOrDefaultDimension().Name);
          else
             View.FillDimensionComboBox(new List<IDimension>(), "");
       }
@@ -70,7 +72,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          if (useDimensionSelector())
          {
-            View.FillUnitComboBox(selectedDimension.Units, SelectedUnit);
+            View.FillUnitComboBox(findSelectedOrDefaultDimension().Units, SelectedUnit);
          }
 
          if (_dimensions == null || !_dimensions.Any())
@@ -79,16 +81,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units), SelectedUnit);
       }
 
-      private IDimension findDimension()
+      private IDimension findSelectedOrDefaultDimension()
       {
-         foreach (var dimension in _dimensions)
-         {
-            if (dimension.Units.FirstOrDefault(u => u.Name == SelectedUnit) != null) return dimension;
-         }
-         return _dimensions.First();
+         return _dimensionFactory.DimensionForUnit(SelectedUnit) ?? _dimensions.First();
       }
-
-      private IDimension selectedDimension => useDimensionSelector() ? findDimension() : _dimensions.ElementAt(0);
 
       public void SetUnit()
       {
