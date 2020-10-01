@@ -85,14 +85,19 @@ namespace OSPSuite.Presentation.Importer.Services
       {
          fileName = Path.GetFileNameWithoutExtension(fileName);
          var counters = new Dictionary<string, int>();
+         // Iterate over the list of datasets to generate a unique name for each one based on the naming convention
          return dataSets.SelectMany(ds => ds.Value.Data.Select(s =>
          {
+            // Obtain the key first before checking if it already is taken by any other dataset
             var key = mappings.Aggregate
             (
+               // Start with the namingConvention replacing {file} and {sheet} by their names
                new MetaDataMappingConverter()
                {
                   Id = namingConvention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", ds.Key)
                },
+               // Aggregates then by iterating on mappings (which contains all valid keys, e.g. metadata) and replacing any text
+               // {id} with id being the id of the current key by the value stored for such a key when the data was parsed
                (acc, x) =>
                   new MetaDataMappingConverter()
                   {
@@ -101,6 +106,7 @@ namespace OSPSuite.Presentation.Importer.Services
             ).Id;
             var counter = counters.GetOrAdd(key, (_) => 0);
             counters[key]++;
+            // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
          })).ToList();
       }
