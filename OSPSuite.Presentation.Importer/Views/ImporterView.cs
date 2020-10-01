@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
          if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
-            _presenter.SelectTab(TabControl.SelectedTabPage.Text);
+            _presenter.SelectTab(e.Page.Text);
       }
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
@@ -153,10 +153,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void ClearTabs()
       {
-         for (var i= TabControl.TabPages.Count -1; i >= 0; i--)
-         {
-            TabControl.TabPages.RemoveAt(i);
-         }
+         TabControl.TabPages.Clear();
       }
    }
 }
