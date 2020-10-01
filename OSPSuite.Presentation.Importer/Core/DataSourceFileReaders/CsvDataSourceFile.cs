@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
       public CsvDataSourceFile(IImportLogger logger) : base(logger) { }
-      protected override Dictionary<string, IDataSheet> LoadFromFile(string path)
+      protected override Cache<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
                dataSheet.RawData.RemoveEmptyColumns();
 
-               var loadedData = new Dictionary<string, IDataSheet>
+               var loadedData = new Cache<string, IDataSheet>()
                {
                   { "", dataSheet }
                };

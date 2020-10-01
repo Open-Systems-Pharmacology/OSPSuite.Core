@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Importer.Infrastructure;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -16,11 +17,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
       }
 
-      protected override Dictionary<string, IDataSheet> LoadFromFile(string path)
+      protected override Cache<string, IDataSheet> LoadFromFile(string path)
       {
          try
          {
-            var loadedData = new Dictionary<string, IDataSheet>();
+            var loadedData = new Cache<string, IDataSheet>();
 
 
             var reader = new ExcelReader(path);
