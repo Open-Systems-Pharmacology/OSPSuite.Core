@@ -106,7 +106,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public IReadOnlyDictionary<string, IDataSheet> GetAllSheets()
       {
-         return _dataSourceFile.DataSheets;
+         return _dataSourceFile.DataSheets.ToDictionary();
       }
 
       public IDataSheet GetSingleSheet(string sheetName)

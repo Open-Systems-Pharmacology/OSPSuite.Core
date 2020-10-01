@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Infrastructure.Import.Services;
 using System.Collections.Generic;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -8,7 +9,7 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Dictionary<string, IDataSheet> DataSheets { get; }
+      Cache<string, IDataSheet> DataSheets { get; }
 	   string Path { get; set; }
 
       IDataFormat Format { get; set; }
@@ -29,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core
          _logger = logger;
       }
       
-      public Dictionary<string, IDataSheet> DataSheets 
+      public Cache<string, IDataSheet> DataSheets 
       { 
          get;
          protected set; 
@@ -43,6 +44,6 @@ namespace OSPSuite.Presentation.Importer.Core
          set { _path = value; DataSheets = LoadFromFile(value); }
       }
 
-      protected abstract Dictionary<string, IDataSheet> LoadFromFile(string path);
+      protected abstract Cache<string, IDataSheet> LoadFromFile(string path);
    }
 }

@@ -68,7 +68,7 @@ namespace OSPSuite.Presentation.Importer.Services
 
 
          var dataSource = _parser.For(fileName);
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).Value.RawData, columnInfos).ToList();
+         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos).ToList();
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          //TODO: check that all sheets are supporting the formats...
          
