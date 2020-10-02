@@ -161,6 +161,7 @@
     <Compile Include="Core\DataFormat\DataFormat_TMetaData_C.cs" />
     <Compile Include="Core\Extensions\HeadersExtensions.cs" />
     <Compile Include="Core\InvalidFileException.cs" />
+    <Compile Include="Core\IParsedDataSet.cs" />
     <Compile Include="Core\MetaDataMappingConverter.cs" />
     <Compile Include="Core\UnformattedDataRow.cs" />
     <Compile Include="Core\IDataSourceFileParser.cs" />

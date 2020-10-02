@@ -64,9 +64,9 @@ namespace OSPSuite.Presentation.Importer.Services
             else
             {
                current = new DataSet();
-               alreadyExisting.DataSets.Add(current);
+               alreadyExisting.DataSets.Add(element.Key, current);
             }
-            current.Data = current.Data.Union(element.Value.Data).ToDictionary(s => s.Key, s => s.Value);
+            current.Data = current.Data.Union(element.Value.Data);
          }
       }
 
@@ -110,7 +110,7 @@ namespace OSPSuite.Presentation.Importer.Services
                (acc, x) =>
                   new MetaDataMappingConverter()
                   {
-                     Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Key.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
+                     Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Description.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
                   }
             ).Id;
             var counter = counters.GetOrAdd(key, (_) => 0);

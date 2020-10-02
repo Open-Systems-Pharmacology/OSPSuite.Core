@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return i => (i > 0) ? units[i] : def;
       }
 
-      protected override Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<OSPSuite.Core.Importer.ColumnInfo> columnInfos)
+      protected override Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<OSPSuite.Core.Importer.ColumnInfo> columnInfos)
       {
          var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
 

@@ -270,12 +270,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _basicFormat,
             _columnInfos
          );
-         data.Count.ShouldBeEqualTo(10);
+         data.Count().ShouldBeEqualTo(10);
          for (var molecule = 0; molecule < _molecules.Length; molecule++)
             for (var groupId = 0; groupId < _groupIds.Length; groupId++)
             {
-               data.Keys.ElementAt(molecule * _groupIds.Length + groupId).ElementAt(5).Value.ShouldBeEqualTo(_molecules[molecule]);
-               data.Keys.ElementAt(molecule * _groupIds.Length + groupId).ElementAt(6).Value.ShouldBeEqualTo(_groupIds[groupId]);
+               data.ElementAt(molecule * _groupIds.Length + groupId).Description.ElementAt(5).Value.ShouldBeEqualTo(_molecules[molecule]);
+               data.ElementAt(molecule * _groupIds.Length + groupId).Description.ElementAt(6).Value.ShouldBeEqualTo(_groupIds[groupId]);
             }
       }
 
@@ -297,12 +297,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          );
          foreach (var dataset in data)
          {
-            dataset.Value.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
-            dataset.Value.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
-            dataset.Value.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
-            dataset.Value.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
-            dataset.Value.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
-            dataset.Value.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
+            dataset.Data.ElementAt(1).Value.First().Lloq.ShouldBeEqualTo(0.01);
+            dataset.Data.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
+            dataset.Data.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
+            dataset.Data.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
+            dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.Data.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
       }
    }
