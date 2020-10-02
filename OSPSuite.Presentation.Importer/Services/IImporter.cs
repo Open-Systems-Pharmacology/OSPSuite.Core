@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
-      void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
+      void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
 
       IEnumerable<string> NamesFromConvention
@@ -42,31 +42,30 @@ namespace OSPSuite.Presentation.Importer.Services
             .Where(x => x.SetParameters(data, columnInfos));
       }
 
-      public void AddFromFile(IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
       {
-         var dataSets =
-            dataSheets
-               .ToDictionary
-               (
-                  s => s.Key,
-                  s =>
-                     new DataSet()
-                     {
-                        Data = format.Parse(s.Value.RawData, columnInfos)
-                     } as IDataSet
-               );
-         foreach (var element in dataSets)
+         var dataSets = new Cache<string, IDataSet>();
+
+         foreach (var s in dataSheets.KeyValues)
+         {
+            dataSets.Add(s.Key, new DataSet()
+            {
+               Data = format.Parse(s.Value.RawData, columnInfos)
+            });
+         }
+
+         foreach (var key in dataSets.Keys)
          {
             //TODO implement GetOrAdd() as a method for Cache, in order not to be doing this all the time
             IDataSet current;
-            if (alreadyExisting.DataSets.Contains(element.Key))
-               current = alreadyExisting.DataSets[element.Key];
+            if (alreadyExisting.DataSets.Contains(key))
+               current = alreadyExisting.DataSets[key];
             else
             {
                current = new DataSet();
-               alreadyExisting.DataSets.Add(element.Key, current);
+               alreadyExisting.DataSets.Add(key, current);
             }
-            current.Data = current.Data.Union(element.Value.Data);
+            current.Data = current.Data.Union(dataSets[key].Data);
          }
       }
 

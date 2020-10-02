@@ -4,6 +4,7 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Importer.Core;
 using System.Collections.Generic;
 using OSPSuite.Core.Importer;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -42,7 +43,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
       void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos, out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings);
-      IReadOnlyDictionary<string, IDataSheet> GetAllSheets();
+      Cache<string, IDataSheet> GetAllSheets();
       IDataSheet GetSingleSheet(string sheetName);
       void ImportDataForConfirmation();
       void ImportDataForConfirmation(string sheetName);

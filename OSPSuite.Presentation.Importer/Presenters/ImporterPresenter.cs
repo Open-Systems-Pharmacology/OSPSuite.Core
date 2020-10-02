@@ -10,6 +10,7 @@ using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 { 
@@ -104,9 +105,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          );
       }
 
-      public IReadOnlyDictionary<string, IDataSheet> GetAllSheets()
+      public Cache<string, IDataSheet> GetAllSheets()
       {
-         return _dataSourceFile.DataSheets.ToDictionary();
+         return _dataSourceFile.DataSheets;
       }
 
       public IDataSheet GetSingleSheet(string sheetName)
