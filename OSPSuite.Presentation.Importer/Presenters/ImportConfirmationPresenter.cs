@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DevExpress.DataProcessing;
 using OSPSuite.Core.Importer;
-
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          setNames(namingConvention);
       }
 
-      public void ImportDataForConfirmation(string fileName, IDataFormat format, IReadOnlyDictionary<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
+      public void ImportDataForConfirmation(string fileName, IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
       {
          _fileName = fileName; //should we set this every time?
          _mappings = mappings;

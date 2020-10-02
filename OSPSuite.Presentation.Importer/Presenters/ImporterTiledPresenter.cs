@@ -4,6 +4,7 @@ using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -39,10 +40,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
       public void ImportSingleSheet(object sender, ImportSingleSheetEventArgs args)
       {
-         startImport(new Dictionary<string, IDataSheet>() { { args.SheetName, _importerPresenter.GetSingleSheet(args.SheetName) } });
+         startImport(new Cache<string, IDataSheet>() { { args.SheetName, _importerPresenter.GetSingleSheet(args.SheetName) } });
       }
 
-      private void startImport(IReadOnlyDictionary<string, IDataSheet> sheets)
+      private void startImport(Cache<string, IDataSheet> sheets)
       {
          _importerPresenter.GetDataForImport(out var fileName, out var format, out var columnInfos, out var namingConventions, out var mappings);
          _confirmationPresenter.ImportDataForConfirmation(fileName, format, sheets, columnInfos, namingConventions, mappings);
