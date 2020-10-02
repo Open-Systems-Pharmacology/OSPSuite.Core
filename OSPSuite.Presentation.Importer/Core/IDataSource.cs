@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -7,11 +8,11 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSource
    {
-      IDictionary<string, IDataSet> DataSets { get; }
+      Cache<string, IDataSet> DataSets { get; }
    }
 
    public class DataSource : IDataSource
    {
-      public IDictionary<string, IDataSet> DataSets { get; } = new Dictionary<string, IDataSet>();
+      public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
    }
 }

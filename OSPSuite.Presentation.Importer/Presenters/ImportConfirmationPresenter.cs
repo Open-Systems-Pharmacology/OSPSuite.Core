@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          _view.SetNamingConventions(conventions);
          setNames(conventions.First());
-         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Value.Data.Values);
+         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Data.Values);
       }
 
       private void setNames(string namingConvention)
