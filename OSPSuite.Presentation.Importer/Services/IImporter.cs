@@ -5,6 +5,7 @@ using DevExpress.Utils.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Utility.Collections;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Importer.Services
@@ -19,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Services
       (
          string namingConvention,
          string fileName,
-         IDictionary<string, IDataSet> dataSets,
+         Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
    }
@@ -56,7 +57,15 @@ namespace OSPSuite.Presentation.Importer.Services
                );
          foreach (var element in dataSets)
          {
-            var current = alreadyExisting.DataSets.GetOrAdd(element.Key, _ => new DataSet());
+            //TODO implement GetOrAdd() as a method for Cache, in order not to be doing this all the time
+            IDataSet current;
+            if (alreadyExisting.DataSets.Contains(element.Key))
+               current = alreadyExisting.DataSets[element.Key];
+            else
+            {
+               current = new DataSet();
+               alreadyExisting.DataSets.Add(current);
+            }
             current.Data = current.Data.Union(element.Value.Data).ToDictionary(s => s.Key, s => s.Value);
          }
       }
@@ -79,14 +88,14 @@ namespace OSPSuite.Presentation.Importer.Services
       (
          string namingConvention,
          string fileName,
-         IDictionary<string, IDataSet> dataSets,
+         Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       )
       {
          fileName = Path.GetFileNameWithoutExtension(fileName);
          var counters = new Dictionary<string, int>();
          // Iterate over the list of datasets to generate a unique name for each one based on the naming convention
-         return dataSets.SelectMany(ds => ds.Value.Data.Select(s =>
+         return dataSets.KeyValues.SelectMany(ds => ds.Value.Data.Select(s =>
          {
             // Obtain the key first before checking if it already is taken by any other dataset
             var key = mappings.Aggregate

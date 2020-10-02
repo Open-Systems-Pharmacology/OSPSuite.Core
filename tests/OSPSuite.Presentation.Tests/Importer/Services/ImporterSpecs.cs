@@ -8,6 +8,7 @@ using OSPSuite.Core.Importer;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Services 
 {
@@ -55,7 +56,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       private string _fileName;
       private string _fileExtension;
-      private IDictionary<string, IDataSet> _dataSets;
+      private Cache<string, IDataSet> _dataSets;
       private IEnumerable<MetaDataMappingConverter> _mappings;
       private string _prefix;
       private string _postfix;
@@ -65,7 +66,7 @@ namespace OSPSuite.Presentation.Importer.Services
          base.Because();
          _fileName = "file";
          _fileExtension = "xls";
-         _dataSets = new Dictionary<string, IDataSet>()
+         _dataSets = new Cache<string, IDataSet>()
          {
             {
                "key1", 

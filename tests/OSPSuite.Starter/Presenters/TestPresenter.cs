@@ -126,7 +126,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void startImportSuccessDialog(IDataSource dataSource)
       {
-         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Values.Select(d => d.Data.Count).Sum() + " data sets successfully imported");
+         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Select(d => d.Data.Count).Sum() + " data sets successfully imported");
       }
    }
 }
