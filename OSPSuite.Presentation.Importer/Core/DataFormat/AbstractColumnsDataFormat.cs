@@ -76,7 +76,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h =>
-                  data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
+                  //TODO: Only add this if we make a robust decision on what columns are numeric
+                  //data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
                   Parameters
                      .OfType<MappingDataFormatParameter>()
                      .All(m => m.ColumnName != h)
