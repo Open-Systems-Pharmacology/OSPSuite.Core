@@ -72,10 +72,11 @@ namespace OSPSuite.Presentation.Importer.Services
                "key1", 
                new DataSet()
                {
-                  Data = new Dictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  Data = new List<IParsedDataSet>()
                   {
+                     new ParsedDataSet()
                      { 
-                        new List<InstantiatedMetaData>()
+                        Description = new List<InstantiatedMetaData>()
                         {
                            new InstantiatedMetaData()
                            {
@@ -88,7 +89,7 @@ namespace OSPSuite.Presentation.Importer.Services
                               Value = "Value2"
                            }
                         },
-                        A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
+                        Data = A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
                      }
                   }
                }
@@ -97,10 +98,11 @@ namespace OSPSuite.Presentation.Importer.Services
                "key2",
                new DataSet()
                {
-                  Data = new Dictionary<IEnumerable<InstantiatedMetaData>, Dictionary<Column, IList<ValueAndLloq>>>()
+                  Data = new List<IParsedDataSet>()
                   {
+                     new ParsedDataSet()
                      {
-                        new List<InstantiatedMetaData>()
+                        Description = new List<InstantiatedMetaData>()
                         {
                            new InstantiatedMetaData()
                            {
@@ -113,7 +115,7 @@ namespace OSPSuite.Presentation.Importer.Services
                               Value = "Value2"
                            }
                         },
-                        A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
+                        Data = A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
                      }
                   }
                }

@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return _ => unit;
       }
 
-      protected override Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      protected override Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
          //Add time mapping
@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var dataSet = rawDataSet.ToList();
          foreach (var columnInfo in columnInfos)
          {
-            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
+            var currentParameter = mappingParameters.FirstOrDefault(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
             dictionary.Add
             (
