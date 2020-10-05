@@ -8,6 +8,7 @@ using System.Linq;
 using DevExpress.DataProcessing;
 using OSPSuite.Core.Importer;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -35,6 +36,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _fileName = fileName; //should we set this every time?
          _mappings = mappings;
+         var keys = new List<string>()
+         {
+            Constants.FILE,
+            Constants.SHEET
+         };
+         keys.AddRange(_mappings.Select(m => m.Id));
+         View.SetNamingConventionKeys(keys);
          _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
 
          if (namingConventions == null)

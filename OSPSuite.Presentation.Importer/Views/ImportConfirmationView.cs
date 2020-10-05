@@ -11,11 +11,14 @@ namespace OSPSuite.Presentation.Importer.Views
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
       private IImportConfirmationPresenter _presenter;
+
       public ImportConfirmationView()
       {
          InitializeComponent();
-         layoutControlItem1.Text = Captions.Importer.NamingPattern;
-      }
+         namingConventionLayout.Text = Captions.Importer.NamingPattern;
+         buttonAdd.Click += (s, a) => this.DoWithinExceptionHandler(() =>
+            namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}")));
+}
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
       {
@@ -39,8 +42,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void SetDataSetNames(IEnumerable<string> names)
       {
-         listBoxControl1.Items.Clear();
-         listBoxControl1.Items.AddRange(names.ToArray());
+         namesListBox.Items.Clear();
+         namesListBox.Items.AddRange(names.ToArray());
       }
 
       public void SetDataValues()
@@ -49,6 +52,12 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
          this.DoWithinExceptionHandler( () => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
+      }
+
+      public void SetNamingConventionKeys(IEnumerable<string> keys)
+      {
+         keysListBox.Items.Clear();
+         keysListBox.Items.AddRange(keys.ToArray());
       }
    }
 }
