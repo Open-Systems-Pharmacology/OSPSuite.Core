@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using DevExpress.Utils.Extensions;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Collections;
@@ -98,21 +97,7 @@ namespace OSPSuite.Presentation.Importer.Services
          return dataSets.KeyValues.SelectMany(ds => ds.Value.Data.Select(s =>
          {
             // Obtain the key first before checking if it already is taken by any other dataset
-            var key = mappings.Aggregate
-            (
-               // Start with the namingConvention replacing {file} and {sheet} by their names
-               new MetaDataMappingConverter()
-               {
-                  Id = namingConvention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", ds.Key)
-               },
-               // Aggregates then by iterating on mappings (which contains all valid keys, e.g. metadata) and replacing any text
-               // {id} with id being the id of the current key by the value stored for such a key when the data was parsed
-               (acc, x) =>
-                  new MetaDataMappingConverter()
-                  {
-                     Id = acc.Id.Replace($"{{{x.Id}}}", $"{s.Description.FirstOrDefault(md => md.Id == x.Index(ds.Key))?.Value}")
-                  }
-            ).Id;
+            var key = s.NameFromConvention(mappings, namingConvention, fileName, ds.Key);
             var counter = counters.GetOrAdd(key, (_) => 0);
             counters[key]++;
             // Only add a number (for making it unique) to the name if the key already existed in the counters

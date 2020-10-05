@@ -16,12 +16,12 @@ namespace OSPSuite.Presentation.Importer.Core
    /// </summary>
    public interface IDataSet
    {
-      IEnumerable<IParsedDataSet> Data { get; set; }
+      IEnumerable<ParsedDataSet> Data { get; set; }
    }
 
    public class DataSet : IDataSet
    {
-      public IEnumerable<IParsedDataSet> Data { get; set; } = new List<IParsedDataSet>();
+      public IEnumerable<ParsedDataSet> Data { get; set; } = new List<ParsedDataSet>();
    }
 
 }

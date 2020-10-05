@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private string _namingConvention { get; set; }
       private string _fileName;
       private IDataSource _dataSource;
-      private IEnumerable<Dictionary<Column, IList<ValueAndLloq>>> _plainData;
+      private IEnumerable<IReadOnlyDictionary<Column, IList<ValueAndLloq>>> _plainData;
       private IEnumerable<MetaDataMappingConverter> _mappings;
 
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
