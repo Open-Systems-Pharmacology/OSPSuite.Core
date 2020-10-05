@@ -9,5 +9,7 @@ namespace OSPSuite.Presentation.Importer.Views
       void SetDataSetNames(IEnumerable<string> names);
 
       void SetNamingConventions(IEnumerable<string> options, string selected = null);
+
+      void SetNamingConventionKeys(IEnumerable<string> keys);
    }
 }
