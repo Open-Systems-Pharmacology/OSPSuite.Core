@@ -311,13 +311,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (
             _basicFormat,
             _columnInfos
-         );
+         ).ToList();
          data.Count().ShouldBeEqualTo(10);
          for (var molecule = 0; molecule < _molecules.Length; molecule++)
             for (var groupId = 0; groupId < _groupIds.Length; groupId++)
             {
-               data.ElementAt(molecule * _groupIds.Length + groupId).Description.ElementAt(5).Value.ShouldBeEqualTo(_molecules[molecule]);
-               data.ElementAt(molecule * _groupIds.Length + groupId).Description.ElementAt(6).Value.ShouldBeEqualTo(_groupIds[groupId]);
+               data[molecule * _groupIds.Length + groupId].ValueForColumn(4).ShouldBeEqualTo(_molecules[molecule]);
+               data[molecule * _groupIds.Length + groupId].ValueForColumn(9).ShouldBeEqualTo(_groupIds[groupId]);
             }
       }
 

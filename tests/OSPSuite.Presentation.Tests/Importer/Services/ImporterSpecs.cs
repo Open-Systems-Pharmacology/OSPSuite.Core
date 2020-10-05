@@ -7,11 +7,29 @@ using OSPSuite.Utility.Container;
 using OSPSuite.Core.Importer;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.XtraCharts.Designer.Native;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Services 
 {
+   class ParsedDataSetTest : ParsedDataSet
+   {
+      public ParsedDataSetTest() : base
+         (
+            new List<(string ColumnName, IList<string> ExistingValues)>(), 
+            A.Fake<IUnformattedData>(), 
+            new List<IEnumerable<string>>(), 
+            new Dictionary<Column, IList<ValueAndLloq>>())
+      {
+      }
+
+      public void SetDataAndDescription(Dictionary<Column, IList<ValueAndLloq>> data, List<InstantiatedMetaData> description)
+      {
+         Data = data;
+         Description = description;
+      }
+   }
    public abstract class ConcernForImporter : ContextSpecification<Importer>
    {
       protected IUnformattedData _basicFormat;
@@ -60,37 +78,57 @@ namespace OSPSuite.Presentation.Importer.Services
       private IEnumerable<MetaDataMappingConverter> _mappings;
       private string _prefix;
       private string _postfix;
-
+      
       protected override void Because()
       {
          base.Because();
          _fileName = "file";
          _fileExtension = "xls";
+         var parsedDataSet1 = new ParsedDataSetTest();
+         parsedDataSet1.SetDataAndDescription
+         (
+            A.Fake<Dictionary<Column, IList<ValueAndLloq>>>(),
+            new List<InstantiatedMetaData>()
+            {
+               new InstantiatedMetaData()
+               {
+                  Id = 0,
+                  Value = "Value1"
+               },
+               new InstantiatedMetaData()
+               {
+                  Id = 1,
+                  Value = "Value2"
+               }
+            }
+         );
+         var parsedDataSet2 = new ParsedDataSetTest();
+         parsedDataSet1.SetDataAndDescription
+         (
+            A.Fake<Dictionary<Column, IList<ValueAndLloq>>>(),
+            new List<InstantiatedMetaData>()
+            {
+               new InstantiatedMetaData()
+               {
+                  Id = 0,
+                  Value = "Value1"
+               },
+               new InstantiatedMetaData()
+               {
+                  Id = 1,
+                  Value = "Value2"
+               }
+            }
+         );
          _dataSets = new Cache<string, IDataSet>()
          {
             {
                "key1", 
                new DataSet()
                {
-                  Data = new List<IParsedDataSet>()
+                  Data = new List<ParsedDataSet>()
                   {
-                     new ParsedDataSet()
-                     { 
-                        Description = new List<InstantiatedMetaData>()
-                        {
-                           new InstantiatedMetaData()
-                           {
-                              Id = 0,
-                              Value = "Value1"
-                           },
-                           new InstantiatedMetaData()
-                           {
-                              Id = 1,
-                              Value = "Value2"
-                           }
-                        },
-                        Data = A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
-                     }
+                     parsedDataSet1
                   }
                }
             },
@@ -98,25 +136,9 @@ namespace OSPSuite.Presentation.Importer.Services
                "key2",
                new DataSet()
                {
-                  Data = new List<IParsedDataSet>()
+                  Data = new List<ParsedDataSet>()
                   {
-                     new ParsedDataSet()
-                     {
-                        Description = new List<InstantiatedMetaData>()
-                        {
-                           new InstantiatedMetaData()
-                           {
-                              Id = 0,
-                              Value = "Value1"
-                           },
-                           new InstantiatedMetaData()
-                           {
-                              Id = 1,
-                              Value = "Value2"
-                           }
-                        },
-                        Data = A.Fake<Dictionary<Column, IList<ValueAndLloq>>>()
-                     }
+                     parsedDataSet2
                   }
                }
             }
