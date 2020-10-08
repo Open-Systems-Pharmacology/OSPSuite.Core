@@ -118,11 +118,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_basic_format()
       {
-         sut.SetParameters
-         (
-            _basicFormat,
-            _columnInfos
-         ).ShouldBeEqualTo(1);
+         (sut.SetParameters(_basicFormat, _columnInfos) > 0).ShouldBeTrue();
       }
 
       [TestCase]
