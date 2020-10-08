@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -16,15 +17,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       private int _lloqIndex = _lloqColumnIndex;
 
-      protected override void ExtractGeneralParameters(List<string> keys, IUnformattedData data)
+      protected override void ExtractGeneralParameters(List<string> keys, IUnformattedData data, ref double rank)
       {
-         base.ExtractGeneralParameters(keys, data);
+         base.ExtractGeneralParameters(keys, data, ref rank);
          var lloq = data.GetHeaders().FindHeader("lloq");
          if (lloq != null)
+         {
+            rank++;
             _lloqIndex = data.GetColumnDescription(lloq).Index;
+         }
       }
 
-      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
+      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
@@ -34,6 +38,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          keys.Remove(unitKey);
          var units = data.GetColumn(unitKey).ToList();
          var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
+         rank++; 
          return i => (i > 0) ? units[i] : def;
       }
 

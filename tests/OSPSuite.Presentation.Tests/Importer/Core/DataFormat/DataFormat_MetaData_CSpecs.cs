@@ -122,7 +122,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (
             _basicFormat,
             _columnInfos
-         ).ShouldBeTrue();
+         ).ShouldBeEqualTo(1);
       }
 
       [TestCase]
@@ -142,7 +142,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          (
             singleColumn,
             _columnInfos
-         ).ShouldBeFalse();
+         ).ShouldBeEqualTo(0);
       }
 
       [TestCase]
@@ -162,7 +162,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn, _columnInfos).ShouldBeFalse();
+         sut.SetParameters(singleColumn, _columnInfos).ShouldBeEqualTo(0);
       }
    }
 
