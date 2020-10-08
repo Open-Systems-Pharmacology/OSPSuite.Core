@@ -77,8 +77,8 @@ namespace OSPSuite.Starter
          container.Register<IDataSourceFileParser, DataSourceFileParser>();
          container.Register<ICsvDataSourceFile, CsvDataSourceFile>();
          container.Register<IImportLogger, ImportLogger>();
-         container.Register<IDataFormat, DataFormat_TMetaData_C>("ColumnsDataFormat.v1");
-         container.Register<IDataFormat, DataFormat_Nonmem>("ColumnsDataFormat.v2");
+         container.Register<IDataFormat, DataFormatHeadersWithUnits>("ColumnsDataFormat.v1");
+         container.Register<IDataFormat, DataFormatNonmem>("ColumnsDataFormat.v2");
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();

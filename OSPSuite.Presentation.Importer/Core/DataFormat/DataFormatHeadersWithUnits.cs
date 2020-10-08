@@ -6,9 +6,9 @@ using OSPSuite.Core.Importer;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public class DataFormat_TMetaData_C : AbstractColumnsDataFormat
+   public class DataFormatHeadersWithUnits : AbstractColumnsDataFormat
    {
-      private const string _tMetaDataName = "015_TMetaData_C(E)";
+      private const string _tMetaDataName = "Headers with units";
       private const string _tMetaDataDescription = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639";
       public override string Name { get; } = _tMetaDataName;
 

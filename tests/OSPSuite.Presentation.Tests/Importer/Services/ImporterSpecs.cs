@@ -226,7 +226,7 @@ namespace OSPSuite.Presentation.Importer.Services
             new ColumnInfo() { DisplayName = "Error" }
          };
 
-         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormat_TMetaData_C(), new DataFormat_Nonmem() });
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem() });
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
          sut = new Importer(_container, _parser);
@@ -281,7 +281,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public void rank_columns_format_highest_for_its_format()
       {
          var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
-         formats.First().ShouldBeAnInstanceOf(typeof(DataFormat_TMetaData_C));
+         formats.First().ShouldBeAnInstanceOf(typeof(DataFormatHeadersWithUnits));
       }
    }
 
@@ -365,7 +365,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public void rank_nonmem_highest_for_its_format()
       {
          var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
-         formats.First().ShouldBeAnInstanceOf(typeof(DataFormat_Nonmem));
+         formats.First().ShouldBeAnInstanceOf(typeof(DataFormatNonmem));
       }
    }
 }
