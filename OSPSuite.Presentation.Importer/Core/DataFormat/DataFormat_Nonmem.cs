@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {

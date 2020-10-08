@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraCharts.Designer.Native;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Services 
@@ -201,6 +202,170 @@ namespace OSPSuite.Presentation.Importer.Services
          var names = sut.NamesFromConvention(_prefix + "{File}.{Id1}-{Id2}" + _postfix, _fileName, _dataSets, _mappings);
          names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldNotBeEqualTo(names.ElementAt(1));
+      }
+   }
+
+   public abstract class ConcernForImporter2 : ContextSpecification<Importer>
+   {
+      protected IUnformattedData _basicFormat;
+      protected IContainer _container;
+      protected IDataSourceFileParser _parser;
+      protected IDialogCreator _dialogCreator;
+      protected IReadOnlyList<ColumnInfo> _columnInfos;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _container = A.Fake<IContainer>();
+         _dialogCreator = A.Fake<IDialogCreator>();
+         var dataFormat = A.Fake<IDataFormat>();
+         _columnInfos = new List<ColumnInfo>()
+         {
+            new ColumnInfo() { DisplayName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration" },
+            new ColumnInfo() { DisplayName = "Error" }
+         };
+
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormat_TMetaData_C(), new DataFormat_Nonmem() });
+         _parser = A.Fake<IDataSourceFileParser>();
+         A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
+         sut = new Importer(_container, _parser);
+      }
+   }
+
+   public class When_listing_available_formats_on_simple_format : ConcernForImporter2
+   {
+      protected override void Because()
+      {
+         _basicFormat = new TestUnformattedData
+         (
+            new Cache<string, ColumnDescription>()
+            {
+               {
+                  "Organ",
+                  new ColumnDescription(0)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
+                  }
+               },
+               {
+                  "Time [min]",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Concentration [pmol/l]",
+                  new ColumnDescription(6)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Error [pmol/l]",
+                  new ColumnDescription(7)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               }
+            }
+         );
+      }
+
+      [TestCase]
+      public void rank_columns_format_highest_for_its_format()
+      {
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
+         formats.First().ShouldBeAnInstanceOf(typeof(DataFormat_TMetaData_C));
+      }
+   }
+
+   public class When_listing_available_formats_on_nonmem_format : ConcernForImporter2
+   {
+      protected override void Because()
+      {
+         _basicFormat = new TestUnformattedData
+         (
+            new Cache<string, ColumnDescription>()
+            {
+               {
+                  "Organ",
+                  new ColumnDescription(0)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
+                  }
+               },
+               {
+                  "Time",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Time_unit",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "min" }
+                  }
+               },
+               {
+                  "lloq",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Concentration",
+                  new ColumnDescription(6)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Concentration_unit",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               },
+               {
+                  "Error",
+                  new ColumnDescription(7)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Error_unit",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               }
+            }
+         );
+      }
+
+      [TestCase]
+      public void rank_nonmem_highest_for_its_format()
+      {
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
+         formats.First().ShouldBeAnInstanceOf(typeof(DataFormat_Nonmem));
       }
    }
 }
