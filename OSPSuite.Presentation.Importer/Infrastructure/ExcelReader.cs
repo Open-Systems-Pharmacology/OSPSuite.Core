@@ -104,7 +104,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          {
             var cell = currentExcelRow.GetCell(i);
 
-            if (cell == null)
+            if (cell == null || cell.CellType == CellType.Blank)
                resultList.Add(ColumnDescription.MeasurementLevel.NotSet);
             else if (isNumeric(cell))
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
