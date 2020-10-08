@@ -157,8 +157,8 @@
   <ItemGroup>
     <Compile Include="Core\DataFormat\AbstractColumnsDataFormat.cs" />
     <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
-    <Compile Include="Core\DataFormat\DataFormat_Nonmem.cs" />
-    <Compile Include="Core\DataFormat\DataFormat_TMetaData_C.cs" />
+    <Compile Include="Core\DataFormat\DataFormatNonmem.cs" />
+    <Compile Include="Core\DataFormat\DataFormatHeadersWithUnits.cs" />
     <Compile Include="Core\Extensions\HeadersExtensions.cs" />
     <Compile Include="Core\InvalidFileException.cs" />
     <Compile Include="Core\IParsedDataSet.cs" />

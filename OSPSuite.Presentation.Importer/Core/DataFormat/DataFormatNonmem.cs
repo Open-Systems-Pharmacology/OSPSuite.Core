@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public class DataFormat_Nonmem : AbstractColumnsDataFormat
+   public class DataFormatNonmem : AbstractColumnsDataFormat
    {
-      private const string _nameNonMem = "Nonmem Oriented";
+      private const string _nameNonMem = "Nonmem";
       private const string _descriptionNonMem = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
       private const int _lloqColumnIndex = -1;
       public override string Name => _nameNonMem;

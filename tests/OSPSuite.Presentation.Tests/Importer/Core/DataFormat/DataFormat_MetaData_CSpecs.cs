@@ -10,7 +10,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public abstract class ConcernforDataFormat_TMetaData_C : ContextSpecification<DataFormat_TMetaData_C>
+   public abstract class ConcernforDataFormat_TMetaData_C : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
          };
-         sut = new DataFormat_TMetaData_C();
+         sut = new DataFormatHeadersWithUnits();
          _basicFormat = new TestUnformattedData
          (
             new Cache<string, ColumnDescription>()
