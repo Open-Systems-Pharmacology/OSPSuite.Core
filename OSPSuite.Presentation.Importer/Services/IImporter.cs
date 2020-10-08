@@ -38,7 +38,10 @@ namespace OSPSuite.Presentation.Importer.Services
       public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Where(x => x.SetParameters(data, columnInfos));
+            .Select(x => (x, x.SetParameters(data, columnInfos)))
+            .Where(p => p.Item2 > 0)
+            .OrderByDescending(p => p.Item2)
+            .Select(p => p.x);
       }
 
       public void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)

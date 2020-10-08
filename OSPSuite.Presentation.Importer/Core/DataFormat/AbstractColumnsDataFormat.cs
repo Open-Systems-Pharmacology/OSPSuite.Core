@@ -8,18 +8,17 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public abstract class AbstractColumnsDataFormat : IDataFormat
    {
-      const int _columnNotFound = -1;
+      private const int COLUMN_NOT_FOUND = -1;
       public abstract string Name { get; }
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
 
-      public bool SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos)
+      public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos)
       {
          if (NotCompatible(rawData, columnInfos))
-            return false;
+            return 0;
 
-         setParameters(rawData, columnInfos);
-         return true;
+         return 1 + setParameters(rawData, columnInfos);
       }
 
       protected bool NotCompatible(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
@@ -29,21 +28,23 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) < columnInfos.Count(ci => ci.IsMandatory);
       }
 
-      private void setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      private double setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var keys = data.GetHeaders().ToList();
          Parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
 
-         extractQualifiedHeadings(keys, missingKeys, columnInfos, data);
-         extractNonQualifiedHeadings(keys, missingKeys, data);
-         ExtractGeneralParameters(keys, data);
+         var totalRank = 0.0;
+         ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
+         ExtractNonQualifiedHeadings(keys, missingKeys, data, ref totalRank);
+         ExtractGeneralParameters(keys, data, ref totalRank);
+         return totalRank;
       }
 
-      protected abstract Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys);
+      protected abstract Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
 
-      private void extractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data)
+      protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
          foreach (var header in columnInfos.Select(ci => ci.DisplayName))
          {
@@ -51,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, data, keys);
+               var units = ExtractUnits(headerKey, data, keys, ref rank);
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
@@ -59,7 +60,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   {
                      Name = header,
                      Units = units,
-                     SelectedUnit = units(_columnNotFound)
+                     SelectedUnit = units(COLUMN_NOT_FOUND)
                   })
                );
             }
@@ -70,7 +71,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      private void extractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data)
+      protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data, ref double rank)
       {
          foreach (var header in missingKeys)
          {
@@ -84,7 +85,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, data, keys);
+            var units = ExtractUnits(headerKey, data, keys, ref rank);
             Parameters.Add
             (
                new MappingDataFormatParameter
@@ -94,14 +95,14 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   {
                      Name = header,
                      Units = units,
-                     SelectedUnit = units(_columnNotFound)
+                     SelectedUnit = units(COLUMN_NOT_FOUND)
                   }
                )
             );
          }
       }
 
-      protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data)
+      protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, ref double rank)
       {
          var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
          foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count == 1))

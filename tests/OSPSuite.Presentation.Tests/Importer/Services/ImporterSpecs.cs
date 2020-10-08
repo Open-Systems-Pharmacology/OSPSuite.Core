@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Services
             new ColumnInfo() { DisplayName = "Error" }
          };
 
-         A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos)).Returns(true);
+         A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos)).Returns(1);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);

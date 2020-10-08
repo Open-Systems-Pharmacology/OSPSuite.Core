@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public override string Description { get; } = _tMetaDataDescription;
 
-      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys)
+      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (String.IsNullOrEmpty(units))
@@ -24,6 +24,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             .Trim() //remove whitespace
             .Split(',') //split comma separated list
             .FirstOrDefault()??"?"; //default = ?
+         if (unit != "?")
+         {
+            rank++;
+         }
          return _ => unit;
       }
 
