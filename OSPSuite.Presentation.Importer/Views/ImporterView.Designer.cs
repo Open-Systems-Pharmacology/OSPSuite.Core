@@ -31,7 +31,6 @@ namespace OSPSuite.Presentation.Importer.Views
       private void InitializeComponent()
       {
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.columnMappingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.ImporterTabControl = new DevExpress.XtraTab.XtraTabControl();
          this.formatComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
          this.sourceFilePanelControl = new DevExpress.XtraEditors.PanelControl();
@@ -39,14 +38,13 @@ namespace OSPSuite.Presentation.Importer.Views
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.formatLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
+         this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+         this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.ImporterTabControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).BeginInit();
@@ -54,15 +52,15 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
-         this.rootLayoutControl.Controls.Add(this.columnMappingPanelControl);
+         this.rootLayoutControl.Controls.Add(this.panelControl1);
          this.rootLayoutControl.Controls.Add(this.ImporterTabControl);
          this.rootLayoutControl.Controls.Add(this.formatComboBoxEdit);
          this.rootLayoutControl.Controls.Add(this.sourceFilePanelControl);
@@ -74,13 +72,6 @@ namespace OSPSuite.Presentation.Importer.Views
          this.rootLayoutControl.Size = new System.Drawing.Size(2414, 2122);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
-         // 
-         // columnMappingPanelControl
-         // 
-         this.columnMappingPanelControl.Location = new System.Drawing.Point(12, 1719);
-         this.columnMappingPanelControl.Name = "columnMappingPanelControl";
-         this.columnMappingPanelControl.Size = new System.Drawing.Size(2390, 391);
-         this.columnMappingPanelControl.TabIndex = 7;
          // 
          // ImporterTabControl
          // 
@@ -115,10 +106,9 @@ namespace OSPSuite.Presentation.Importer.Views
             this.emptySpaceItem1,
             this.formatLayoutControlItem,
             this.sourceFileLayoutControlItem,
-            this.emptySpaceItem2,
             this.layoutControlItem1,
-            this.layoutControlItem2,
-            this.splitterItem1});
+            this.splitterItem1,
+            this.layoutControlItem3});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(2414, 2122);
          this.Root.TextVisible = false;
@@ -128,7 +118,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.emptySpaceItem1.AllowHotTrack = false;
          this.emptySpaceItem1.Location = new System.Drawing.Point(0, 1274);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(2394, 433);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(2394, 828);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // formatLayoutControlItem
@@ -147,14 +137,6 @@ namespace OSPSuite.Presentation.Importer.Views
          this.sourceFileLayoutControlItem.Size = new System.Drawing.Size(2394, 257);
          this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(339, 33);
          // 
-         // emptySpaceItem2
-         // 
-         this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.Location = new System.Drawing.Point(1113, 311);
-         this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(1281, 963);
-         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
-         // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.ImporterTabControl;
@@ -164,21 +146,28 @@ namespace OSPSuite.Presentation.Importer.Views
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
-         // layoutControlItem2
-         // 
-         this.layoutControlItem2.Control = this.columnMappingPanelControl;
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 1707);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(2394, 395);
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
-         // 
          // splitterItem1
          // 
          this.splitterItem1.AllowHotTrack = true;
          this.splitterItem1.Location = new System.Drawing.Point(1088, 311);
          this.splitterItem1.Name = "splitterItem1";
          this.splitterItem1.Size = new System.Drawing.Size(25, 963);
+         // 
+         // panelControl1
+         // 
+         this.panelControl1.Location = new System.Drawing.Point(1125, 323);
+         this.panelControl1.Name = "panelControl1";
+         this.panelControl1.Size = new System.Drawing.Size(1277, 959);
+         this.panelControl1.TabIndex = 8;
+         // 
+         // layoutControlItem3
+         // 
+         this.layoutControlItem3.Control = this.panelControl1;
+         this.layoutControlItem3.Location = new System.Drawing.Point(1113, 311);
+         this.layoutControlItem3.Name = "layoutControlItem3";
+         this.layoutControlItem3.Size = new System.Drawing.Size(1281, 963);
+         this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem3.TextVisible = false;
          // 
          // ImporterView
          // 
@@ -192,7 +181,6 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.ImporterTabControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFilePanelControl)).EndInit();
@@ -200,10 +188,10 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -217,11 +205,10 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraLayout.LayoutControlItem formatLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem sourceFileLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
-      private DevExpress.XtraEditors.PanelControl columnMappingPanelControl;
       private DevExpress.XtraTab.XtraTabControl ImporterTabControl;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
       private DevExpress.XtraLayout.SplitterItem splitterItem1;
+      private DevExpress.XtraEditors.PanelControl panelControl1;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
    }
 }
