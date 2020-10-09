@@ -3,7 +3,6 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
