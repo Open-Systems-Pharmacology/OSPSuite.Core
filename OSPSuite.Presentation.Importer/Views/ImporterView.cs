@@ -3,7 +3,6 @@ using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Extensions;
 using System.Collections.Generic;
 using System;
-using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
@@ -22,9 +21,9 @@ namespace OSPSuite.Presentation.Importer.Views
          InitializeComponent();
          btnImport.Click += onButtonImportClicked;
          btnImportAll.Click += onButtonImportAllClicked;
-         TabControl.SelectedPageChanged += onSelectedPageChanged;
-         TabControl.CloseButtonClick += onCloseTab;
-         TabControl.MouseDown += onTabControlMouseDown;
+         ImporterTabControl.SelectedPageChanged += onSelectedPageChanged;
+         ImporterTabControl.CloseButtonClick += onCloseTab;
+         ImporterTabControl.MouseDown += onTabControlMouseDown;
          _contextMenuSelectedTab = "";
       }
 
@@ -55,7 +54,7 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          if (e.Button != MouseButtons.Right)
             return;
-         XtraTabHitInfo hi = TabControl.CalcHitInfo(e.Location);
+         XtraTabHitInfo hi = ImporterTabControl.CalcHitInfo(e.Location);
          if (hi.HitTest != XtraTabHitTest.PageHeader)
             return;
          
@@ -63,7 +62,7 @@ namespace OSPSuite.Presentation.Importer.Views
          contextMenu.Items.Clear();
          contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
          contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
-         contextMenu.ShowPopup(TabControl, e.Location);
+         contextMenu.ShowPopup(ImporterTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
 
       }
@@ -75,7 +74,7 @@ namespace OSPSuite.Presentation.Importer.Views
          var page = eventArgs.Page as XtraTabPage;
          if (page == null) return;
          //deleteTable(page);
-         //TabControl.TabPages.Remove(page);
+         //ImporterTabControl.TabPages.Remove(page);
          _presenter.RemoveTab(page.Text);
          _presenter.RefreshTabs();
       }
@@ -88,7 +87,7 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onCloseAllTabsToTheRight(object sender, EventArgs e)
       {
          var removePage = false;
-         foreach (XtraTabPage tabName in TabControl.TabPages)
+         foreach (XtraTabPage tabName in ImporterTabControl.TabPages)
          {
             if (removePage)
                _presenter.RemoveTab(tabName.Text);
@@ -101,12 +100,12 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onButtonImportClicked(object sender, EventArgs e)
       {
-         _presenter.ImportDataForConfirmation(TabControl.SelectedTabPage.Text);
+         _presenter.ImportDataForConfirmation(ImporterTabControl.SelectedTabPage.Text);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         if (TabControl.SelectedTabPage != null) //not the best solution in the world this check here....
+         if (ImporterTabControl.SelectedTabPage != null) //not the best solution in the world this check here....
             _presenter.SelectTab(e.Page.Text);
       }
 
@@ -122,7 +121,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
-         TabControl.FillWith(dataViewingControl);
+         ImporterTabControl.FillWith(dataViewingControl);
       }
 
       public void SetFormats(IEnumerable<string> options, string selected)
@@ -146,13 +145,13 @@ namespace OSPSuite.Presentation.Importer.Views
          //we should seek an alternative
          foreach (var sheetName in sheetNames)
          {
-            TabControl.TabPages.Add(sheetName);
+            ImporterTabControl.TabPages.Add(sheetName);
          }
       }
 
       public void ClearTabs()
       {
-         TabControl.TabPages.Clear();
+         ImporterTabControl.TabPages.Clear();
       }
    }
 }
