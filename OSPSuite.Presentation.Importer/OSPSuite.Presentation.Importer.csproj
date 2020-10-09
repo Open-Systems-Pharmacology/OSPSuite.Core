@@ -259,12 +259,6 @@
     <Compile Include="Views\SourceFileControl.Designer.cs">
       <DependentUpon>SourceFileControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\test2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\test2.Designer.cs">
-      <DependentUpon>test2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\UnitsEditorView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -275,12 +269,6 @@
     <Compile Include="Views\UnitsEditorView.cs" />
     <Compile Include="Views\UnitsEditorView.Designer.cs">
       <DependentUpon>UnitsEditorView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\XtraUserControl1.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\XtraUserControl1.Designer.cs">
-      <DependentUpon>XtraUserControl1.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -343,14 +331,8 @@
     <EmbeddedResource Include="Views\SourceFileControl.resx">
       <DependentUpon>SourceFileControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\test2.resx">
-      <DependentUpon>test2.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Views\UnitsEditorView.resx">
       <DependentUpon>UnitsEditorView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\XtraUserControl1.resx">
-      <DependentUpon>XtraUserControl1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
