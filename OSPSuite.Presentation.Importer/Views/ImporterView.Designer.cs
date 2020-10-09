@@ -38,6 +38,12 @@ namespace OSPSuite.Presentation.Importer.Views
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.formatLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.panelControl2 = new DevExpress.XtraEditors.PanelControl();
+         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -47,27 +53,36 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
+         this.rootLayoutControl.Controls.Add(this.panelControl2);
+         this.rootLayoutControl.Controls.Add(this.panelControl1);
          this.rootLayoutControl.Controls.Add(this.formatComboBoxEdit);
          this.rootLayoutControl.Controls.Add(this.sourceFilePanelControl);
+         this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
          this.rootLayoutControl.Name = "rootLayoutControl";
+         this.rootLayoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(11551, 879, 1625, 1000);
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(2138, 2006);
+         this.rootLayoutControl.Size = new System.Drawing.Size(2414, 2122);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
-         this.rootLayoutControl.Dock = DockStyle.Fill;
          // 
          // formatComboBoxEdit
          // 
-         this.formatComboBoxEdit.Location = new System.Drawing.Point(354, 258);
+         this.formatComboBoxEdit.Location = new System.Drawing.Point(354, 269);
          this.formatComboBoxEdit.Name = "formatComboBoxEdit";
          this.formatComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.formatComboBoxEdit.Size = new System.Drawing.Size(1772, 50);
+         this.formatComboBoxEdit.Size = new System.Drawing.Size(2048, 50);
          this.formatComboBoxEdit.StyleController = this.rootLayoutControl;
          this.formatComboBoxEdit.TabIndex = 4;
          // 
@@ -76,7 +91,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.sourceFilePanelControl.Location = new System.Drawing.Point(354, 12);
          this.sourceFilePanelControl.Margin = new System.Windows.Forms.Padding(2);
          this.sourceFilePanelControl.Name = "sourceFilePanelControl";
-         this.sourceFilePanelControl.Size = new System.Drawing.Size(1772, 242);
+         this.sourceFilePanelControl.Size = new System.Drawing.Size(2048, 253);
          this.sourceFilePanelControl.TabIndex = 5;
          // 
          // Root
@@ -86,25 +101,29 @@ namespace OSPSuite.Presentation.Importer.Views
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.emptySpaceItem1,
             this.formatLayoutControlItem,
-            this.sourceFileLayoutControlItem});
+            this.sourceFileLayoutControlItem,
+            this.emptySpaceItem2,
+            this.layoutControlItem1,
+            this.layoutControlItem2,
+            this.splitterItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(2138, 2006);
+         this.Root.Size = new System.Drawing.Size(2414, 2122);
          this.Root.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 300);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 1274);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(2118, 1686);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(2394, 433);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // formatLayoutControlItem
          // 
          this.formatLayoutControlItem.Control = this.formatComboBoxEdit;
-         this.formatLayoutControlItem.Location = new System.Drawing.Point(0, 246);
-         this.formatLayoutControlItem.Name = Captions.Importer.Format;
-         this.formatLayoutControlItem.Size = new System.Drawing.Size(2118, 54);
+         this.formatLayoutControlItem.Location = new System.Drawing.Point(0, 257);
+         this.formatLayoutControlItem.Name = "formatLayoutControlItem";
+         this.formatLayoutControlItem.Size = new System.Drawing.Size(2394, 54);
          this.formatLayoutControlItem.TextSize = new System.Drawing.Size(339, 33);
          // 
          // sourceFileLayoutControlItem
@@ -112,8 +131,55 @@ namespace OSPSuite.Presentation.Importer.Views
          this.sourceFileLayoutControlItem.Control = this.sourceFilePanelControl;
          this.sourceFileLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.sourceFileLayoutControlItem.Name = "sourceFileLayoutControlItem";
-         this.sourceFileLayoutControlItem.Size = new System.Drawing.Size(2118, 246);
+         this.sourceFileLayoutControlItem.Size = new System.Drawing.Size(2394, 257);
          this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(339, 33);
+         // 
+         // emptySpaceItem2
+         // 
+         this.emptySpaceItem2.AllowHotTrack = false;
+         this.emptySpaceItem2.Location = new System.Drawing.Point(1113, 311);
+         this.emptySpaceItem2.Name = "emptySpaceItem2";
+         this.emptySpaceItem2.Size = new System.Drawing.Size(1281, 963);
+         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // panelControl1
+         // 
+         this.panelControl1.Location = new System.Drawing.Point(12, 323);
+         this.panelControl1.Name = "panelControl1";
+         this.panelControl1.Size = new System.Drawing.Size(1084, 959);
+         this.panelControl1.TabIndex = 6;
+         // 
+         // layoutControlItem1
+         // 
+         this.layoutControlItem1.Control = this.panelControl1;
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 311);
+         this.layoutControlItem1.Name = "layoutControlItem1";
+         this.layoutControlItem1.Size = new System.Drawing.Size(1088, 963);
+         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem1.TextVisible = false;
+         // 
+         // panelControl2
+         // 
+         this.panelControl2.Location = new System.Drawing.Point(12, 1719);
+         this.panelControl2.Name = "panelControl2";
+         this.panelControl2.Size = new System.Drawing.Size(2390, 391);
+         this.panelControl2.TabIndex = 7;
+         // 
+         // layoutControlItem2
+         // 
+         this.layoutControlItem2.Control = this.panelControl2;
+         this.layoutControlItem2.Location = new System.Drawing.Point(0, 1707);
+         this.layoutControlItem2.Name = "layoutControlItem2";
+         this.layoutControlItem2.Size = new System.Drawing.Size(2394, 395);
+         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem2.TextVisible = false;
+         // 
+         // splitterItem1
+         // 
+         this.splitterItem1.AllowHotTrack = true;
+         this.splitterItem1.Location = new System.Drawing.Point(1088, 311);
+         this.splitterItem1.Name = "splitterItem1";
+         this.splitterItem1.Size = new System.Drawing.Size(25, 963);
          // 
          // ImporterView
          // 
@@ -133,6 +199,12 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.panelControl2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -146,5 +218,11 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraLayout.LayoutControlItem formatLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem sourceFileLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
+      private DevExpress.XtraEditors.PanelControl panelControl2;
+      private DevExpress.XtraEditors.PanelControl panelControl1;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+      private DevExpress.XtraLayout.SplitterItem splitterItem1;
    }
 }
