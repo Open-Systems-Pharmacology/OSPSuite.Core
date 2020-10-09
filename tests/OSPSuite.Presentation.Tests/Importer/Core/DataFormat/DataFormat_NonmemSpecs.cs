@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _headers = headers;
       }
    }
-   public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormat_Nonmem>
+   public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormatNonmem>
    {
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
          };
-         sut = new DataFormat_Nonmem();
+         sut = new DataFormatNonmem();
          _basicFormat = new TestUnformattedData
          (
             new Cache<string, ColumnDescription>()
