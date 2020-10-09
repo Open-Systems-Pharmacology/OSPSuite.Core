@@ -62,14 +62,14 @@
          // 
          this.dataLayout.Location = new System.Drawing.Point(0, 0);
          this.dataLayout.Name = "namesLayout";
-         this.dataLayout.Size = new System.Drawing.Size(1166, 198);
+         this.dataLayout.Size = new System.Drawing.Size(1166, 609);
          this.dataLayout.TextSize = new System.Drawing.Size(157, 33);
          // 
          // sourceFileLayout
          // 
-         this.sourceFileLayout.Location = new System.Drawing.Point(0, 198);
+         this.sourceFileLayout.Location = new System.Drawing.Point(0, 609);
          this.sourceFileLayout.Name = "namesLayout";
-         this.sourceFileLayout.Size = new System.Drawing.Size(1166, 1021);
+         this.sourceFileLayout.Size = new System.Drawing.Size(1166, 610);
          this.sourceFileLayout.TextSize = new System.Drawing.Size(157, 33);
          // 
          // XtraUserControl1
