@@ -185,36 +185,36 @@
          this.layoutControlSourceTab.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1081, 366, 506, 554);
          this.layoutControlSourceTab.OptionsView.UseDefaultDragAndDropRendering = false;
          this.layoutControlSourceTab.Root = this.layoutControlGroupSourceTab;
-         this.layoutControlSourceTab.Size = new System.Drawing.Size(4725, 3485);
+         this.layoutControlSourceTab.Size = new System.Drawing.Size(1890, 1394);
          this.layoutControlSourceTab.TabIndex = 0;
          this.layoutControlSourceTab.Text = "layoutControl1";
          // 
          // btnImport
          // 
-         this.btnImport.Location = new System.Drawing.Point(8678, 8548);
+         this.btnImport.Location = new System.Drawing.Point(1387, 1328);
          this.btnImport.Margin = new System.Windows.Forms.Padding(8);
          this.btnImport.Name = "btnImport";
-         this.btnImport.Size = new System.Drawing.Size(3105, 135);
+         this.btnImport.Size = new System.Drawing.Size(491, 54);
          this.btnImport.StyleController = this.layoutControlSourceTab;
          this.btnImport.TabIndex = 11;
          this.btnImport.Text = "btnImport";
          // 
          // btnImportAll
          // 
-         this.btnImportAll.Location = new System.Drawing.Point(7495, 8548);
+         this.btnImportAll.Location = new System.Drawing.Point(1199, 1328);
          this.btnImportAll.Margin = new System.Windows.Forms.Padding(8);
          this.btnImportAll.Name = "btnImportAll";
-         this.btnImportAll.Size = new System.Drawing.Size(1173, 135);
+         this.btnImportAll.Size = new System.Drawing.Size(184, 54);
          this.btnImportAll.StyleController = this.layoutControlSourceTab;
          this.btnImportAll.TabIndex = 10;
          this.btnImportAll.Text = "btnImportAll";
          // 
          // btnSelectRange
          // 
-         this.btnSelectRange.Location = new System.Drawing.Point(30, 8548);
+         this.btnSelectRange.Location = new System.Drawing.Point(12, 1328);
          this.btnSelectRange.Margin = new System.Windows.Forms.Padding(8);
          this.btnSelectRange.Name = "btnSelectRange";
-         this.btnSelectRange.Size = new System.Drawing.Size(4733, 135);
+         this.btnSelectRange.Size = new System.Drawing.Size(750, 54);
          this.btnSelectRange.StyleController = this.layoutControlSourceTab;
          this.btnSelectRange.TabIndex = 9;
          this.btnSelectRange.Text = "btnSelectRange";
@@ -224,15 +224,15 @@
          this.openSourceFileControlPanel.Location = new System.Drawing.Point(25, 25);
          this.openSourceFileControlPanel.Margin = new System.Windows.Forms.Padding(8);
          this.openSourceFileControlPanel.Name = "openSourceFileControlPanel";
-         this.openSourceFileControlPanel.Size = new System.Drawing.Size(11688, 180);
+         this.openSourceFileControlPanel.Size = new System.Drawing.Size(1840, 72);
          this.openSourceFileControlPanel.TabIndex = 5;
          // 
          // columnMappingControlPanel
          // 
-         this.columnMappingControlPanel.Location = new System.Drawing.Point(6250, 375);
+         this.columnMappingControlPanel.Location = new System.Drawing.Point(1016, 150);
          this.columnMappingControlPanel.Margin = new System.Windows.Forms.Padding(8);
          this.columnMappingControlPanel.Name = "columnMappingControlPanel";
-         this.columnMappingControlPanel.Size = new System.Drawing.Size(5533, 8163);
+         this.columnMappingControlPanel.Size = new System.Drawing.Size(862, 1174);
          this.columnMappingControlPanel.TabIndex = 7;
          // 
          // sourceFilePreviewControlPanel
@@ -240,7 +240,7 @@
          this.sourceFilePreviewControlPanel.Location = new System.Drawing.Point(12, 150);
          this.sourceFilePreviewControlPanel.Margin = new System.Windows.Forms.Padding(8);
          this.sourceFilePreviewControlPanel.Name = "sourceFilePreviewControlPanel";
-         this.sourceFilePreviewControlPanel.Size = new System.Drawing.Size(6148, 8163);
+         this.sourceFilePreviewControlPanel.Size = new System.Drawing.Size(975, 1174);
          this.sourceFilePreviewControlPanel.TabIndex = 6;
          // 
          // layoutControlGroupSourceTab
@@ -258,16 +258,16 @@
             this.layoutItemImportAll,
             this.layoutItemImport});
          this.layoutControlGroupSourceTab.Name = "Root";
-         this.layoutControlGroupSourceTab.Size = new System.Drawing.Size(4725, 3485);
+         this.layoutControlGroupSourceTab.Size = new System.Drawing.Size(1890, 1394);
          this.layoutControlGroupSourceTab.TextVisible = false;
          // 
          // Mapping
          // 
          this.Mapping.Control = this.columnMappingControlPanel;
          this.Mapping.CustomizationFormText = "ColumnMappingCaption";
-         this.Mapping.Location = new System.Drawing.Point(2488, 102);
+         this.Mapping.Location = new System.Drawing.Point(1004, 102);
          this.Mapping.Name = "Mapping";
-         this.Mapping.Size = new System.Drawing.Size(2217, 3305);
+         this.Mapping.Size = new System.Drawing.Size(866, 1214);
          this.Mapping.TextLocation = DevExpress.Utils.Locations.Top;
          this.Mapping.TextSize = new System.Drawing.Size(101, 33);
          // 
@@ -277,7 +277,7 @@
          this.Preview.CustomizationFormText = "layoutControlItem3";
          this.Preview.Location = new System.Drawing.Point(0, 102);
          this.Preview.Name = "Preview";
-         this.Preview.Size = new System.Drawing.Size(2463, 3305);
+         this.Preview.Size = new System.Drawing.Size(979, 1214);
          this.Preview.TextLocation = DevExpress.Utils.Locations.Top;
          this.Preview.TextSize = new System.Drawing.Size(101, 33);
          // 
@@ -285,9 +285,9 @@
          // 
          this.splitterItem.AllowHotTrack = true;
          this.splitterItem.CustomizationFormText = "splitterItem";
-         this.splitterItem.Location = new System.Drawing.Point(2463, 102);
+         this.splitterItem.Location = new System.Drawing.Point(979, 102);
          this.splitterItem.Name = "splitterItem";
-         this.splitterItem.Size = new System.Drawing.Size(25, 3305);
+         this.splitterItem.Size = new System.Drawing.Size(25, 1214);
          // 
          // layoutControlGroup2
          // 
@@ -296,7 +296,7 @@
             this.layoutControlItem2});
          this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup2.Name = "layoutControlGroup2";
-         this.layoutControlGroup2.Size = new System.Drawing.Size(4705, 102);
+         this.layoutControlGroup2.Size = new System.Drawing.Size(1870, 102);
          this.layoutControlGroup2.TextVisible = false;
          // 
          // layoutControlItem2
@@ -307,7 +307,7 @@
          this.layoutControlItem2.MaxSize = new System.Drawing.Size(0, 76);
          this.layoutControlItem2.MinSize = new System.Drawing.Size(260, 76);
          this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(4679, 76);
+         this.layoutControlItem2.Size = new System.Drawing.Size(1844, 76);
          this.layoutControlItem2.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
          this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem2.TextVisible = false;
@@ -315,35 +315,35 @@
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(1897, 3407);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(754, 1316);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1089, 58);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(433, 58);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutItemSelectRange
          // 
          this.layoutItemSelectRange.Control = this.btnSelectRange;
-         this.layoutItemSelectRange.Location = new System.Drawing.Point(0, 3407);
+         this.layoutItemSelectRange.Location = new System.Drawing.Point(0, 1316);
          this.layoutItemSelectRange.Name = "layoutItemSelectRange";
-         this.layoutItemSelectRange.Size = new System.Drawing.Size(1897, 58);
+         this.layoutItemSelectRange.Size = new System.Drawing.Size(754, 58);
          this.layoutItemSelectRange.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemSelectRange.TextVisible = false;
          // 
          // layoutItemImportAll
          // 
          this.layoutItemImportAll.Control = this.btnImportAll;
-         this.layoutItemImportAll.Location = new System.Drawing.Point(2986, 3407);
+         this.layoutItemImportAll.Location = new System.Drawing.Point(1187, 1316);
          this.layoutItemImportAll.Name = "layoutItemImportAll";
-         this.layoutItemImportAll.Size = new System.Drawing.Size(473, 58);
+         this.layoutItemImportAll.Size = new System.Drawing.Size(188, 58);
          this.layoutItemImportAll.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportAll.TextVisible = false;
          // 
          // layoutItemImport
          // 
          this.layoutItemImport.Control = this.btnImport;
-         this.layoutItemImport.Location = new System.Drawing.Point(3459, 3407);
+         this.layoutItemImport.Location = new System.Drawing.Point(1375, 1316);
          this.layoutItemImport.Name = "layoutItemImport";
-         this.layoutItemImport.Size = new System.Drawing.Size(1246, 58);
+         this.layoutItemImport.Size = new System.Drawing.Size(495, 58);
          this.layoutItemImport.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImport.TextVisible = false;
          // 
