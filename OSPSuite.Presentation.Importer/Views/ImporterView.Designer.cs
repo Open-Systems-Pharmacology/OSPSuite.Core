@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.btnImport.Size = new System.Drawing.Size(294, 54);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
-         this.btnImport.Text = "btnImport";
+         this.btnImport.Text = Captions.Importer.Import;
          // 
          // btnImportAll
          // 
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Views
          this.btnImportAll.Size = new System.Drawing.Size(289, 54);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
-         this.btnImportAll.Text = "btnImportAll";
+         this.btnImportAll.Text = Captions.Importer.ImportAll;
          // 
          // columnMappingPanelControl
          // 
