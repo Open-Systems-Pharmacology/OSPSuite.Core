@@ -40,8 +40,8 @@
          this.buttonAddLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.keysLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.namesLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
+         this.gridLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.splitterItem = new DevExpress.XtraLayout.SplitterItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -55,8 +55,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.gridLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem)).BeginInit();
          this.SuspendLayout();
          // 
          // namesListBox
@@ -143,8 +143,8 @@
             this.buttonAddLayout,
             this.keysLayout,
             this.namesLayout,
-            this.layoutControlItem1,
-            this.splitterItem1});
+            this.gridLayoutControlItem,
+            this.splitterItem});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(3662, 2726);
          this.Root.TextVisible = false;
@@ -184,21 +184,21 @@
          this.namesLayout.TextSize = new System.Drawing.Size(0, 0);
          this.namesLayout.TextVisible = false;
          // 
-         // layoutControlItem1
+         // gridLayoutControlItem
          // 
-         this.layoutControlItem1.Control = this.gridControl;
-         this.layoutControlItem1.Location = new System.Drawing.Point(1955, 0);
-         this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1687, 2706);
-         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem1.TextVisible = false;
+         this.gridLayoutControlItem.Control = this.gridControl;
+         this.gridLayoutControlItem.Location = new System.Drawing.Point(1955, 0);
+         this.gridLayoutControlItem.Name = "gridLayoutControlItem";
+         this.gridLayoutControlItem.Size = new System.Drawing.Size(1687, 2706);
+         this.gridLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.gridLayoutControlItem.TextVisible = false;
          // 
-         // splitterItem1
+         // splitterItem
          // 
-         this.splitterItem1.AllowHotTrack = true;
-         this.splitterItem1.Location = new System.Drawing.Point(1930, 0);
-         this.splitterItem1.Name = "splitterItem1";
-         this.splitterItem1.Size = new System.Drawing.Size(25, 2706);
+         this.splitterItem.AllowHotTrack = true;
+         this.splitterItem.Location = new System.Drawing.Point(1930, 0);
+         this.splitterItem.Name = "splitterItem1";
+         this.splitterItem.Size = new System.Drawing.Size(25, 2706);
          // 
          // ImportConfirmationView
          // 
@@ -221,8 +221,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.gridLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -240,7 +240,7 @@
       private DevExpress.XtraEditors.SimpleButton buttonAdd;
       private DevExpress.XtraLayout.LayoutControlItem buttonAddLayout;
       private DevExpress.XtraLayout.LayoutControlItem namesLayout;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
-      private DevExpress.XtraLayout.SplitterItem splitterItem1;
+      private DevExpress.XtraLayout.LayoutControlItem gridLayoutControlItem;
+      private DevExpress.XtraLayout.SplitterItem splitterItem;
    }
 }

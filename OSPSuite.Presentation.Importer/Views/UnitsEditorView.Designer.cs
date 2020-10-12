@@ -28,7 +28,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.panel1 = new System.Windows.Forms.Panel();
+         this.unitPanel = new System.Windows.Forms.Panel();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
          this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
@@ -84,21 +84,21 @@
          // 
          this.layoutItemExtra.Size = new System.Drawing.Size(145, 33);
          // 
-         // panel1
+         // unitPanel
          // 
-         this.panel1.Location = new System.Drawing.Point(7, 24);
-         this.panel1.Name = "panel1";
-         this.panel1.Size = new System.Drawing.Size(482, 85);
-         this.panel1.TabIndex = 0;
+         this.unitPanel.Location = new System.Drawing.Point(7, 24);
+         this.unitPanel.Name = "unitPanel";
+         this.unitPanel.Size = new System.Drawing.Size(482, 85);
+         this.unitPanel.TabIndex = 0;
          // 
          // UnitsEditorView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.ClientSize = new System.Drawing.Size(498, 181);
-         this.Controls.Add(this.panel1);
+         this.Controls.Add(this.unitPanel);
          this.Name = "UnitsEditorView";
-         this.Controls.SetChildIndex(this.panel1, 0);
+         this.Controls.SetChildIndex(this.unitPanel, 0);
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
          this.layoutControlBase.ResumeLayout(false);
@@ -115,6 +115,6 @@
 
       #endregion
 
-      private System.Windows.Forms.Panel panel1;
+      private System.Windows.Forms.Panel unitPanel;
    }
 }

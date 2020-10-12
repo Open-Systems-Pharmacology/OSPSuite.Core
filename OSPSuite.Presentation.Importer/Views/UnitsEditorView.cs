@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Views
       public void SetParams(bool columnMapping, bool useDimensionSelector)
       {
          var lc = new LayoutControl { Name = "LayoutControl" };
-         panel1.Controls.Add(lc);
+         unitPanel.Controls.Add(lc);
          lc.Dock = DockStyle.Fill;
          lc.AllowCustomization = false;
 
@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Importer.Views
             _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
             _dimensionComboBox = createComboBox("Dimension", (s, e) => { });
             _unitComboBox = createComboBox("Unit", (s, e) => { });
-            panel1.Size = new Size(panel1.Size.Width, 50);
+            unitPanel.Size = new Size(unitPanel.Size.Width, 50);
             addControlItem(lc, "Column", _columnComboBox);
             _unitComboBox.Visible = false;
             _dimensionComboBox.Visible = false;
@@ -58,13 +58,13 @@ namespace OSPSuite.Presentation.Importer.Views
             _columnComboBox = createComboBox("Column", (s, e) => { });
             if (useDimensionSelector)
             {
-               panel1.Size = new Size(panel1.Size.Width, 85);
+               unitPanel.Size = new Size(unitPanel.Size.Width, 85);
                addControlItem(lc, "Dimension", _dimensionComboBox);
                _dimensionComboBox.Visible = true;
             }
             else
             {
-               panel1.Size = new Size(panel1.Size.Width, 50);
+               unitPanel.Size = new Size(unitPanel.Size.Width, 50);
                _dimensionComboBox.Visible = false;
             }
             _unitComboBox.Visible = true;

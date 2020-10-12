@@ -28,89 +28,89 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-         this.label1 = new System.Windows.Forms.Label();
-         this.uxGrid = new OSPSuite.UI.Controls.UxGridControl();
-         this.uxGridView = new OSPSuite.UI.Controls.UxGridView();
-         this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
+         this.mappingFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+         this.mappingsLabel = new System.Windows.Forms.Label();
+         this.columnMappingGrid = new OSPSuite.UI.Controls.UxGridControl();
+         this.columnMappingGridView = new OSPSuite.UI.Controls.UxGridView();
+         this.formaLabelControl = new DevExpress.XtraEditors.LabelControl();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         this.flowLayoutPanel1.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGrid)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGridView)).BeginInit();
+         this.mappingFlowLayoutPanel.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingGrid)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingGridView)).BeginInit();
          this.SuspendLayout();
          // 
-         // flowLayoutPanel1
+         // mappingFlowLayoutPanel
          // 
-         this.flowLayoutPanel1.Controls.Add(this.label1);
-         this.flowLayoutPanel1.Location = new System.Drawing.Point(-2, 0);
-         this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
-         this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-         this.flowLayoutPanel1.Size = new System.Drawing.Size(1637, 825);
-         this.flowLayoutPanel1.TabIndex = 0;
+         this.mappingFlowLayoutPanel.Controls.Add(this.mappingsLabel);
+         this.mappingFlowLayoutPanel.Location = new System.Drawing.Point(-2, 0);
+         this.mappingFlowLayoutPanel.Margin = new System.Windows.Forms.Padding(6);
+         this.mappingFlowLayoutPanel.Name = "mappingFlowLayoutPanel";
+         this.mappingFlowLayoutPanel.Size = new System.Drawing.Size(1637, 825);
+         this.mappingFlowLayoutPanel.TabIndex = 0;
          // 
-         // label1
+         // mappingsLabel
          // 
-         this.label1.AutoSize = true;
-         this.label1.Location = new System.Drawing.Point(6, 0);
-         this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-         this.label1.Name = "label1";
-         this.label1.Size = new System.Drawing.Size(132, 34);
-         this.label1.TabIndex = 0;
-         this.label1.Text = "Mappings";
+         this.mappingsLabel.AutoSize = true;
+         this.mappingsLabel.Location = new System.Drawing.Point(6, 0);
+         this.mappingsLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+         this.mappingsLabel.Name = "mappingsLabel";
+         this.mappingsLabel.Size = new System.Drawing.Size(132, 34);
+         this.mappingsLabel.TabIndex = 0;
+         this.mappingsLabel.Text = "Mappings";
          // 
-         // uxGrid
+         // columnMappingGrid
          // 
-         this.uxGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.uxGrid.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
-         this.uxGrid.Location = new System.Drawing.Point(0, 0);
-         this.uxGrid.MainView = this.uxGridView;
-         this.uxGrid.Margin = new System.Windows.Forms.Padding(6);
-         this.uxGrid.Name = "uxGrid";
-         this.uxGrid.Size = new System.Drawing.Size(1633, 923);
-         this.uxGrid.TabIndex = 1;
-         this.uxGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.uxGridView});
+         this.columnMappingGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.columnMappingGrid.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
+         this.columnMappingGrid.Location = new System.Drawing.Point(0, 0);
+         this.columnMappingGrid.MainView = this.columnMappingGridView;
+         this.columnMappingGrid.Margin = new System.Windows.Forms.Padding(6);
+         this.columnMappingGrid.Name = "columnMappingGrid";
+         this.columnMappingGrid.Size = new System.Drawing.Size(1633, 923);
+         this.columnMappingGrid.TabIndex = 1;
+         this.columnMappingGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.columnMappingGridView});
          // 
-         // uxGridView
+         // columnMappingGridView
          // 
-         this.uxGridView.AllowsFiltering = true;
-         this.uxGridView.DetailHeight = 722;
-         this.uxGridView.EnableColumnContextMenu = true;
-         this.uxGridView.FixedLineWidth = 4;
-         this.uxGridView.GridControl = this.uxGrid;
-         this.uxGridView.MultiSelect = true;
-         this.uxGridView.Name = "uxGridView";
-         this.uxGridView.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.MouseDown;
-         this.uxGridView.OptionsNavigation.AutoFocusNewRow = true;
-         this.uxGridView.OptionsSelection.EnableAppearanceFocusedCell = false;
-         this.uxGridView.OptionsSelection.EnableAppearanceFocusedRow = false;
-         this.uxGridView.OptionsSelection.MultiSelect = true;
-         this.uxGridView.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CellSelect;
+         this.columnMappingGridView.AllowsFiltering = true;
+         this.columnMappingGridView.DetailHeight = 722;
+         this.columnMappingGridView.EnableColumnContextMenu = true;
+         this.columnMappingGridView.FixedLineWidth = 4;
+         this.columnMappingGridView.GridControl = this.columnMappingGrid;
+         this.columnMappingGridView.MultiSelect = true;
+         this.columnMappingGridView.Name = "columnMappingGridView";
+         this.columnMappingGridView.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.MouseDown;
+         this.columnMappingGridView.OptionsNavigation.AutoFocusNewRow = true;
+         this.columnMappingGridView.OptionsSelection.EnableAppearanceFocusedCell = false;
+         this.columnMappingGridView.OptionsSelection.EnableAppearanceFocusedRow = false;
+         this.columnMappingGridView.OptionsSelection.MultiSelect = true;
+         this.columnMappingGridView.OptionsSelection.MultiSelectMode = DevExpress.XtraGrid.Views.Grid.GridMultiSelectMode.CellSelect;
          // 
-         // labelControl1
+         // formaLabelControl
          // 
-         this.labelControl1.Location = new System.Drawing.Point(9, 850);
-         this.labelControl1.Margin = new System.Windows.Forms.Padding(6);
-         this.labelControl1.Name = "labelControl1";
-         this.labelControl1.Size = new System.Drawing.Size(85, 33);
-         this.labelControl1.TabIndex = 2;
-         this.labelControl1.Text = "Format";
+         this.formaLabelControl.Location = new System.Drawing.Point(9, 850);
+         this.formaLabelControl.Margin = new System.Windows.Forms.Padding(6);
+         this.formaLabelControl.Name = "formaLabelControl";
+         this.formaLabelControl.Size = new System.Drawing.Size(85, 33);
+         this.formaLabelControl.TabIndex = 2;
+         this.formaLabelControl.Text = "Format";
          // 
          // ColumnMappingControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.uxGrid);
-         this.Controls.Add(this.labelControl1);
-         this.Controls.Add(this.flowLayoutPanel1);
+         this.Controls.Add(this.columnMappingGrid);
+         this.Controls.Add(this.formaLabelControl);
+         this.Controls.Add(this.mappingFlowLayoutPanel);
          this.Margin = new System.Windows.Forms.Padding(17, 16, 17, 16);
          this.Name = "ColumnMappingControl";
          this.Size = new System.Drawing.Size(1633, 923);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         this.flowLayoutPanel1.ResumeLayout(false);
-         this.flowLayoutPanel1.PerformLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGrid)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.uxGridView)).EndInit();
+         this.mappingFlowLayoutPanel.ResumeLayout(false);
+         this.mappingFlowLayoutPanel.PerformLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingGrid)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingGridView)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
 
@@ -118,10 +118,10 @@
 
       #endregion
 
-      private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-      private System.Windows.Forms.Label label1;
-      private UI.Controls.UxGridControl uxGrid;
-      private UI.Controls.UxGridView uxGridView;
-      private DevExpress.XtraEditors.LabelControl labelControl1;
+      private System.Windows.Forms.FlowLayoutPanel mappingFlowLayoutPanel;
+      private System.Windows.Forms.Label mappingsLabel;
+      private UI.Controls.UxGridControl columnMappingGrid;
+      private UI.Controls.UxGridView columnMappingGridView;
+      private DevExpress.XtraEditors.LabelControl formaLabelControl;
    }
 }
