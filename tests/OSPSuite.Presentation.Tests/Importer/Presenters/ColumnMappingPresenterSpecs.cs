@@ -26,8 +26,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
-               new MappingDataFormatParameter("Time", new Column() { Name = "Time", SelectedUnit = "min" }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", SelectedUnit = "mol/l" }),
+               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
                //new MetaDataFormatParameter("Sp", "Species"),
                new GroupByDataFormatParameter("Study id")
             });
@@ -102,7 +102,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                if (!(other.Source is MappingDataFormatParameter))
                   return false;
                var mmp = other.Source as MappingDataFormatParameter;
-               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.SelectedUnit == mmp.MappedColumn.SelectedUnit));
+               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.Unit.SelectedUnit == mmp.MappedColumn.Unit.SelectedUnit));
             case MetaDataFormatParameter mp:
                if (!(other.Source is MetaDataFormatParameter))
                   return false;

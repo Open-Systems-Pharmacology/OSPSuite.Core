@@ -14,11 +14,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public override string Description { get; } = _tMetaDataDescription;
 
-      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (String.IsNullOrEmpty(units))
-            return _ => "?";
+            return new UnitDescription("?");
          var unit = units
             .Substring(1, units.Length - 2) //remove the brackets
             .Trim() //remove whitespace
@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          {
             rank++;
          }
-         return _ => unit;
+         return new UnitDescription(unit);
       }
 
       protected override Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)

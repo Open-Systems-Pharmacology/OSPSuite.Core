@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return totalRank;
       }
 
-      protected abstract Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
+      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
@@ -59,8 +59,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   new Column()
                   {
                      Name = header,
-                     Units = units,
-                     SelectedUnit = units(COLUMN_NOT_FOUND)
+                     Unit = units
                   })
                );
             }
@@ -94,8 +93,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   new Column()
                   {
                      Name = header,
-                     Units = units,
-                     SelectedUnit = units(COLUMN_NOT_FOUND)
+                     Unit = units
                   }
                )
             );
