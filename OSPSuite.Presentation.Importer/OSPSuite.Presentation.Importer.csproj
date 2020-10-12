@@ -245,12 +245,6 @@
     <Compile Include="Views\ImporterView.Designer.cs">
       <DependentUpon>ImporterView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\ImporterWorkflowView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\ImporterWorkflowView.Designer.cs">
-      <DependentUpon>ImporterWorkflowView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\ISourceFileControl.cs" />
     <Compile Include="Views\IUnitsEditorView.cs" />
     <Compile Include="Views\SourceFileControl.cs">
@@ -324,9 +318,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ImporterView.resx">
       <DependentUpon>ImporterView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\ImporterWorkflowView.resx">
-      <DependentUpon>ImporterWorkflowView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\SourceFileControl.resx">
       <DependentUpon>SourceFileControl.cs</DependentUpon>
