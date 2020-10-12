@@ -28,35 +28,35 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.rootLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.openSourceFileButton = new DevExpress.XtraEditors.SimpleButton();
          this.sourceFileTextEdit = new DevExpress.XtraEditors.TextEdit();
-         this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.centralLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemExcelFile = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.buttonLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
+         this.rootLayoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileTextEdit.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.centralLayoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemExcelFile)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.buttonLayoutControlItem)).BeginInit();
          this.SuspendLayout();
          // 
-         // layoutControl1
+         // rootLayoutControl
          // 
-         this.layoutControl1.AllowCustomization = false;
-         this.layoutControl1.Controls.Add(this.openSourceFileButton);
-         this.layoutControl1.Controls.Add(this.sourceFileTextEdit);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Margin = new System.Windows.Forms.Padding(8);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(226, 121, 250, 350);
-         this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(1150, 66);
-         this.layoutControl1.TabIndex = 6;
-         this.layoutControl1.Text = "layoutControl1";
+         this.rootLayoutControl.AllowCustomization = false;
+         this.rootLayoutControl.Controls.Add(this.openSourceFileButton);
+         this.rootLayoutControl.Controls.Add(this.sourceFileTextEdit);
+         this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
+         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(8);
+         this.rootLayoutControl.Name = "rootLayoutControl";
+         this.rootLayoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(226, 121, 250, 350);
+         this.rootLayoutControl.Root = this.centralLayoutControlGroup;
+         this.rootLayoutControl.Size = new System.Drawing.Size(1150, 66);
+         this.rootLayoutControl.TabIndex = 6;
+         this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // openSourceFileButton
          // 
@@ -65,7 +65,7 @@
          this.openSourceFileButton.Margin = new System.Windows.Forms.Padding(8);
          this.openSourceFileButton.Name = "openSourceFileButton";
          this.openSourceFileButton.Size = new System.Drawing.Size(63, 62);
-         this.openSourceFileButton.StyleController = this.layoutControl1;
+         this.openSourceFileButton.StyleController = this.rootLayoutControl;
          this.openSourceFileButton.TabIndex = 1;
          this.openSourceFileButton.Text = "...";
          // 
@@ -78,21 +78,21 @@
          this.sourceFileTextEdit.Name = "sourceFileTextEdit";
          this.sourceFileTextEdit.Properties.ReadOnly = true;
          this.sourceFileTextEdit.Size = new System.Drawing.Size(1004, 50);
-         this.sourceFileTextEdit.StyleController = this.layoutControl1;
+         this.sourceFileTextEdit.StyleController = this.rootLayoutControl;
          this.sourceFileTextEdit.TabIndex = 2;
          // 
-         // layoutControlGroup1
+         // centralLayoutControlGroup
          // 
-         this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
-         this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.layoutControlGroup1.GroupBordersVisible = false;
-         this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.centralLayoutControlGroup.CustomizationFormText = "centralLayoutControlGroup";
+         this.centralLayoutControlGroup.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.centralLayoutControlGroup.GroupBordersVisible = false;
+         this.centralLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutItemExcelFile,
-            this.layoutControlItem2});
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutControlGroup1.Size = new System.Drawing.Size(1150, 66);
-         this.layoutControlGroup1.TextVisible = false;
+            this.buttonLayoutControlItem});
+         this.centralLayoutControlGroup.Name = "centralLayoutControlGroup";
+         this.centralLayoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
+         this.centralLayoutControlGroup.Size = new System.Drawing.Size(1150, 66);
+         this.centralLayoutControlGroup.TextVisible = false;
          // 
          // layoutItemExcelFile
          // 
@@ -105,33 +105,33 @@
          this.layoutItemExcelFile.Text = "File:  ";
          this.layoutItemExcelFile.TextSize = new System.Drawing.Size(66, 33);
          // 
-         // layoutControlItem2
+         // buttonLayoutControlItem
          // 
-         this.layoutControlItem2.Control = this.openSourceFileButton;
-         this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
-         this.layoutControlItem2.Location = new System.Drawing.Point(1083, 0);
-         this.layoutControlItem2.MaxSize = new System.Drawing.Size(67, 66);
-         this.layoutControlItem2.MinSize = new System.Drawing.Size(67, 66);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(67, 66);
-         this.layoutControlItem2.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
+         this.buttonLayoutControlItem.Control = this.openSourceFileButton;
+         this.buttonLayoutControlItem.CustomizationFormText = "buttonLayoutControlItem";
+         this.buttonLayoutControlItem.Location = new System.Drawing.Point(1083, 0);
+         this.buttonLayoutControlItem.MaxSize = new System.Drawing.Size(67, 66);
+         this.buttonLayoutControlItem.MinSize = new System.Drawing.Size(67, 66);
+         this.buttonLayoutControlItem.Name = "buttonLayoutControlItem";
+         this.buttonLayoutControlItem.Size = new System.Drawing.Size(67, 66);
+         this.buttonLayoutControlItem.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
+         this.buttonLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.buttonLayoutControlItem.TextVisible = false;
          // 
          // SourceFileControl
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.layoutControl1);
+         this.Controls.Add(this.rootLayoutControl);
          this.Name = "SourceFileControl";
          this.Size = new System.Drawing.Size(1150, 66);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
+         this.rootLayoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileTextEdit.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.centralLayoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemExcelFile)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.buttonLayoutControlItem)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -140,9 +140,9 @@
 
       private DevExpress.XtraEditors.SimpleButton openSourceFileButton;
       private DevExpress.XtraEditors.TextEdit sourceFileTextEdit;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
+      private DevExpress.XtraLayout.LayoutControlGroup centralLayoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemExcelFile;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-      private UI.Controls.UxLayoutControl layoutControl1;
+      private DevExpress.XtraLayout.LayoutControlItem buttonLayoutControlItem;
+      private UI.Controls.UxLayoutControl rootLayoutControl;
    }
 }

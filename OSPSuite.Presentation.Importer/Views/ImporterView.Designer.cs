@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraTab;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Importer.Views
 {
@@ -41,11 +40,11 @@ namespace OSPSuite.Presentation.Importer.Views
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.importerTabLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
-         this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.columnMappingLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.importAllBtnLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.importBtnLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem4 = new DevExpress.XtraLayout.EmptySpaceItem();
@@ -62,11 +61,11 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importerTabLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importAllBtnLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importBtnLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).BeginInit();
@@ -149,11 +148,11 @@ namespace OSPSuite.Presentation.Importer.Views
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.emptySpaceItem1,
             this.sourceFileLayoutControlItem,
-            this.layoutControlItem1,
+            this.importerTabLayoutControlItem,
             this.splitterItem1,
-            this.layoutControlItem3,
-            this.layoutControlItem2,
-            this.layoutControlItem4,
+            this.columnMappingLayoutControlItem,
+            this.importAllBtnLayoutControlItem,
+            this.importBtnLayoutControlItem,
             this.emptySpaceItem2,
             this.emptySpaceItem3,
             this.emptySpaceItem4,
@@ -181,14 +180,14 @@ namespace OSPSuite.Presentation.Importer.Views
          this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.sourceFileLayoutControlItem.TextVisible = false;
          // 
-         // layoutControlItem1
+         // importerTabLayoutControlItem
          // 
-         this.layoutControlItem1.Control = this.ImporterTabControl;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 159);
-         this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1094, 1765);
-         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem1.TextVisible = false;
+         this.importerTabLayoutControlItem.Control = this.ImporterTabControl;
+         this.importerTabLayoutControlItem.Location = new System.Drawing.Point(0, 159);
+         this.importerTabLayoutControlItem.Name = "importerTabLayoutControlItem";
+         this.importerTabLayoutControlItem.Size = new System.Drawing.Size(1094, 1765);
+         this.importerTabLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.importerTabLayoutControlItem.TextVisible = false;
          // 
          // splitterItem1
          // 
@@ -197,32 +196,32 @@ namespace OSPSuite.Presentation.Importer.Views
          this.splitterItem1.Name = "splitterItem1";
          this.splitterItem1.Size = new System.Drawing.Size(25, 1765);
          // 
-         // layoutControlItem3
+         // columnMappingLayoutControlItem
          // 
-         this.layoutControlItem3.Control = this.columnMappingPanelControl;
-         this.layoutControlItem3.Location = new System.Drawing.Point(1119, 265);
-         this.layoutControlItem3.Name = "layoutControlItem3";
-         this.layoutControlItem3.Size = new System.Drawing.Size(1275, 1659);
-         this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem3.TextVisible = false;
+         this.columnMappingLayoutControlItem.Control = this.columnMappingPanelControl;
+         this.columnMappingLayoutControlItem.Location = new System.Drawing.Point(1119, 265);
+         this.columnMappingLayoutControlItem.Name = "columnMappingLayoutControlItem";
+         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(1275, 1659);
+         this.columnMappingLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.columnMappingLayoutControlItem.TextVisible = false;
          // 
-         // layoutControlItem2
+         // importAllBtnLayoutControlItem
          // 
-         this.layoutControlItem2.Control = this.btnImportAll;
-         this.layoutControlItem2.Location = new System.Drawing.Point(2101, 2003);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(293, 58);
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
+         this.importAllBtnLayoutControlItem.Control = this.btnImportAll;
+         this.importAllBtnLayoutControlItem.Location = new System.Drawing.Point(2101, 2003);
+         this.importAllBtnLayoutControlItem.Name = "importAllBtnLayoutControlItem";
+         this.importAllBtnLayoutControlItem.Size = new System.Drawing.Size(293, 58);
+         this.importAllBtnLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.importAllBtnLayoutControlItem.TextVisible = false;
          // 
-         // layoutControlItem4
+         // importBtnLayoutControlItem
          // 
-         this.layoutControlItem4.Control = this.btnImport;
-         this.layoutControlItem4.Location = new System.Drawing.Point(1742, 2003);
-         this.layoutControlItem4.Name = "layoutControlItem4";
-         this.layoutControlItem4.Size = new System.Drawing.Size(298, 58);
-         this.layoutControlItem4.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem4.TextVisible = false;
+         this.importBtnLayoutControlItem.Control = this.btnImport;
+         this.importBtnLayoutControlItem.Location = new System.Drawing.Point(1742, 2003);
+         this.importBtnLayoutControlItem.Name = "importBtnLayoutControlItem";
+         this.importBtnLayoutControlItem.Size = new System.Drawing.Size(298, 58);
+         this.importBtnLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.importBtnLayoutControlItem.TextVisible = false;
          // 
          // emptySpaceItem2
          // 
@@ -291,11 +290,11 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importerTabLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importAllBtnLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.importBtnLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).EndInit();
@@ -315,14 +314,14 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraLayout.LayoutControlItem sourceFileLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraTab.XtraTabControl ImporterTabControl;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraLayout.LayoutControlItem importerTabLayoutControlItem;
       private DevExpress.XtraLayout.SplitterItem splitterItem1;
       private DevExpress.XtraEditors.PanelControl columnMappingPanelControl;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+      private DevExpress.XtraLayout.LayoutControlItem columnMappingLayoutControlItem;
       private DevExpress.XtraEditors.SimpleButton btnImport;
       private DevExpress.XtraEditors.SimpleButton btnImportAll;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
+      private DevExpress.XtraLayout.LayoutControlItem importAllBtnLayoutControlItem;
+      private DevExpress.XtraLayout.LayoutControlItem importBtnLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem3;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem4;

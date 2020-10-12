@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-using DevExpress.XtraBars.Navigation;
-using DevExpress.XtraRichEdit.Model;
+﻿using DevExpress.XtraBars.Navigation;
 using OSPSuite.UI.Controls;
 
 

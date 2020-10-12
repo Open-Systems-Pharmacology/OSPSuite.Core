@@ -42,16 +42,16 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          _imageListRetriever = imageListRetriever;
          InitializeComponent();
-         _gridViewBinder = new GridViewBinder<ColumnMappingDTO>(uxGridView);
-         uxGridView.OptionsView.ShowGroupPanel = false;
-         uxGridView.OptionsMenu.EnableColumnMenu = false;
-         uxGridView.CellValueChanged += (s, e) => _presenter.ValidateMapping();
+         _gridViewBinder = new GridViewBinder<ColumnMappingDTO>(columnMappingGridView);
+         columnMappingGridView.OptionsView.ShowGroupPanel = false;
+         columnMappingGridView.OptionsMenu.EnableColumnMenu = false;
+         columnMappingGridView.CellValueChanged += (s, e) => _presenter.ValidateMapping();
 
-         uxGridView.OptionsView.ShowButtonMode = ShowButtonModeEnum.ShowOnlyInEditor;
-         uxGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseUp;
-         uxGridView.MouseDown += onMouseDown;
-         uxGrid.ToolTipController = new ToolTipController();
-         uxGrid.ToolTipController.GetActiveObjectInfo += (o, e) => this.DoWithinExceptionHandler(() => onGetActiveObjectInfo(o, e));
+         columnMappingGridView.OptionsView.ShowButtonMode = ShowButtonModeEnum.ShowOnlyInEditor;
+         columnMappingGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseUp;
+         columnMappingGridView.MouseDown += onMouseDown;
+         columnMappingGrid.ToolTipController = new ToolTipController();
+         columnMappingGrid.ToolTipController.GetActiveObjectInfo += (o, e) => this.DoWithinExceptionHandler(() => onGetActiveObjectInfo(o, e));
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.UnitInformationDescription);
       }
@@ -120,7 +120,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
          _removeButtonRepository.ButtonClick += (o, e) =>
          {
-            uxGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
+            columnMappingGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
             _presenter.ClearRow(_gridViewBinder.FocusedElement);
          };
          _unitButtonRepository.ButtonClick += (o, e) => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement);
@@ -163,8 +163,8 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private void onGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
       {
-         if (sender != uxGrid.ToolTipController) return;
-         var view = uxGrid.GetViewAt(e.ControlMousePosition) as GridView;
+         if (sender != columnMappingGrid.ToolTipController) return;
+         var view = columnMappingGrid.GetViewAt(e.ControlMousePosition) as GridView;
          if (view == null) return;
          var hitInfo = view.CalcHitInfo(e.ControlMousePosition);
 
@@ -174,7 +174,7 @@ namespace OSPSuite.Presentation.Importer.Views
             SuperTip = generateToolTipControlInfo(hitInfo.RowHandle),
             ToolTipType = ToolTipType.SuperTip
          };
-         uxGrid.ToolTipController.ShowHint(e.Info);
+         columnMappingGrid.ToolTipController.ShowHint(e.Info);
       }
 
       private SuperToolTip generateToolTipControlInfo(int index)
