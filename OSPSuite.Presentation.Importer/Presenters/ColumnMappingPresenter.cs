@@ -22,6 +22,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IApplicationController _applicationController;
       private IList<DataFormatParameter> _originalFormat;
       private IList<string> _extraColumns;
+      private UnformattedData _rawData;
       public ColumnMappingPresenter
       (
          IColumnMappingControl view,
@@ -114,6 +115,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
          setDataFormat(format.Parameters);
       }
 
+      public void SetRawData(UnformattedData rawData)
+      {
+         _rawData = rawData;
+      }
+
       private ColumnMappingOption generateIgnoredColumnMappingOption(string description)
       {
          return new ColumnMappingOption()
@@ -140,6 +146,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
             if (!unitsEditorPresenter.Canceled)
             {
                column.Unit = unitsEditorPresenter.Unit;
+               if (column.Unit.ColumnName != null)
+               {
+                  column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
+               }
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
             }

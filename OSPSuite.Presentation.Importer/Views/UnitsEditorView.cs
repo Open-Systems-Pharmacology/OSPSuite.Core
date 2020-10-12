@@ -17,9 +17,9 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
    {
-      private readonly ImageComboBoxEdit _unitComboBox;
-      private readonly ImageComboBoxEdit _dimensionComboBox;
-      private readonly ImageComboBoxEdit _columnComboBox;
+      private ImageComboBoxEdit _unitComboBox;
+      private ImageComboBoxEdit _dimensionComboBox;
+      private ImageComboBoxEdit _columnComboBox;
       private IUnitsEditorPresenter _presenter;
 
 
@@ -27,10 +27,6 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          InitializeComponent();
          Text = Captions.Importer.PleaseEnterDimensionAndUnitInformation;
-
-         _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
-         _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
-         _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
       }
 
       public sealed override string Text
@@ -48,6 +44,9 @@ namespace OSPSuite.Presentation.Importer.Views
 
          if (columnMapping)
          {
+            _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
+            _dimensionComboBox = createComboBox("Dimension", (s, e) => { });
+            _unitComboBox = createComboBox("Unit", (s, e) => { });
             panel1.Size = new Size(panel1.Size.Width, 50);
             addControlItem(lc, "Column", _columnComboBox);
             _unitComboBox.Visible = false;
@@ -56,6 +55,9 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else
          {
+            _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
+            _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
+            _columnComboBox = createComboBox("Column", (s, e) => { });
             if (useDimensionSelector)
             {
                panel1.Size = new Size(panel1.Size.Width, 85);

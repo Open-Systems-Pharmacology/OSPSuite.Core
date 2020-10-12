@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
@@ -18,11 +20,19 @@ namespace OSPSuite.Presentation.Importer.Core
          SelectedUnit = selectedUnit;
       }
 
-      public Func<int, string> Units { get; }
+      public Func<int, string> Units { get; private set; }
 
-      public string SelectedUnit { get; }
+      public string SelectedUnit { get; private set; }
 
       public string ColumnName { get; }
+
+      public void AttachUnitFunction(IEnumerable<string> column)
+      {
+         var units = column.ToList();
+         var def = units.First(c => !string.IsNullOrWhiteSpace(c));
+         Units = i => (i > 0) ? units[i] : def;
+         SelectedUnit = def;
+      }
 
       public override string ToString()
       {
