@@ -132,7 +132,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             );
             if (!unitsEditorPresenter.Canceled)
             {
-               column.SelectedUnit = unitsEditorPresenter.SelectedUnit;
+               column.Unit = new UnitDescription(unitsEditorPresenter.SelectedUnit);
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
             }
@@ -189,7 +189,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   break;
                case MappingDataFormatParameter tm:
                   options.Add(generateMappingColumnMappingOption(model.Description, model.Source.ColumnName,
-                     tm.MappedColumn.SelectedUnit));
+                     tm.MappedColumn.Unit.SelectedUnit));
                   break;
                case MetaDataFormatParameter tm:
                   options.Add(generateMetaDataColumnMappingOption(model.Description, model.Source.ColumnName));
@@ -219,7 +219,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                {
                   options.Add(
                      generateMappingColumnMappingOption(
-                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, SelectedUnit = "?" })),
+                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, Unit = new UnitDescription("?") })),
                         column
                      )
                   );
@@ -280,7 +280,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                return new ToolTipDescription()
                {
                   Title = Captions.MappingTitle,
-                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name, mp.MappedColumn.SelectedUnit)
+                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
                };
             case GroupByDataFormatParameter gp:
                return new ToolTipDescription()

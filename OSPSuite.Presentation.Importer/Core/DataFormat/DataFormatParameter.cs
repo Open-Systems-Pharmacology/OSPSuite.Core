@@ -76,7 +76,7 @@
          MappedColumn = mappedColumn;
       }
 
-      public Column MappedColumn { get; private set; }
+      public Column MappedColumn { get; }
 
       public override bool EquivalentTo(DataFormatParameter other)
       {

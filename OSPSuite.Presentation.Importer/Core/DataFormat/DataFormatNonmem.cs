@@ -27,18 +27,18 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      protected override Func<int, string> ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
-            return _ => "?";
+            return new UnitDescription(_ => "?");
          }
          keys.Remove(unitKey);
          var units = data.GetColumn(unitKey).ToList();
          var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
          rank++; 
-         return i => (i > 0) ? units[i] : def;
+         return new UnitDescription(i => (i > 0) ? units[i] : def, unitKey);
       }
 
       protected override Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<OSPSuite.Core.Importer.ColumnInfo> columnInfos)
