@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Importer;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Presentation.Importer.Core.Extensions;

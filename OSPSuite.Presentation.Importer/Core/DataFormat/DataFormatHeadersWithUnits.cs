@@ -75,8 +75,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                ).ToList()
             );
          }
-
-
          return dictionary;
       }
    }

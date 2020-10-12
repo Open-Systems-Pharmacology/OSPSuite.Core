@@ -79,7 +79,6 @@ namespace OSPSuite.Presentation.Importer.Core
          }
       }
 
-
       public IEnumerable<string> GetColumn(string columnName)
       {
          return getColumn(_headers[columnName].Index);

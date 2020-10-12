@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Presentation.Importer.Core.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,9 +10,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       private const string _descriptionNonMem = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
       private const int _lloqColumnIndex = -1;
       public override string Name => _nameNonMem;
-
       public override string Description => _descriptionNonMem;
-
       private int _lloqIndex = _lloqColumnIndex;
 
       protected override void ExtractGeneralParameters(List<string> keys, IUnformattedData data, ref double rank)
@@ -79,7 +76,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                ).ToList()
             );
          }
-
 
          return dictionary;
       }
