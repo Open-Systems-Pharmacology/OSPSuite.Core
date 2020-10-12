@@ -150,7 +150,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
-         _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
@@ -158,6 +157,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public void SelectTab(string tabName)
       {
+         _columnMappingPresenter.SetRawData(_dataSourceFile.DataSheets[tabName].RawData);
          _dataViewingPresenter.SetTabData(tabName);
       }
 

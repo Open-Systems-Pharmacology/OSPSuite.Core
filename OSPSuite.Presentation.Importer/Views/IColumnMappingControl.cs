@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
@@ -69,7 +70,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       public static string Mapping(MappingDataFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.Mapping},{model.ColumnName},{model.MappedColumn.Name},{model.MappedColumn.SelectedUnit}";
+         return $"{ColumnMappingOption.DescriptionType.Mapping},{model.ColumnName},{model.MappedColumn.Name},{model.MappedColumn.Unit.SelectedUnit}";
       }
 
       public static string MetaData(MetaDataFormatParameter model)
@@ -86,7 +87,7 @@ namespace OSPSuite.Presentation.Importer.Views
             case GroupByDataFormatParameter _:
                return Captions.GroupByDescription;
             case MappingDataFormatParameter mp:
-               return Captions.MappingDescription(mp.MappedColumn.Name, mp.MappedColumn.SelectedUnit);
+               return Captions.MappingDescription(mp.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit);
             case MetaDataFormatParameter mp:
                return Captions.MetaDataDescription(mp.MetaDataId);
             default:
@@ -126,7 +127,7 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            return new MappingDataFormatParameter(parsed[1], new Core.Column() { Name = parsed[2], SelectedUnit = parsed[3] });
+            return new MappingDataFormatParameter(parsed[1], new Core.Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]) });
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {

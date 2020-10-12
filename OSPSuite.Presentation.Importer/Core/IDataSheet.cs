@@ -1,17 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Core
 {
-   public class Column
+   public class UnitDescription
    {
-      public string Name { get; set; }
-      public Func<int, string> Units { get; set; }
+      public UnitDescription(Func<int, string> units, string columnName = "")
+      {
+         Units = units;
+         ColumnName = columnName;
+         SelectedUnit = units(-1);
+      }
 
-      public string SelectedUnit { get; set; }
+      public UnitDescription(string selectedUnit)
+      {
+         Units = _ => selectedUnit;
+         ColumnName = null;
+         SelectedUnit = selectedUnit;
+      }
+
+      public Func<int, string> Units { get; private set; }
+
+      public string SelectedUnit { get; private set; }
+
+      public string ColumnName { get; }
+
+      public void AttachUnitFunction(IEnumerable<string> column)
+      {
+         var units = column.ToList();
+         var def = units.First(c => !string.IsNullOrWhiteSpace(c));
+         Units = i => (i > 0) ? units[i] : def;
+         SelectedUnit = def;
+      }
 
       public override string ToString()
       {
-         return $"{Name} [{SelectedUnit}]";
+         return SelectedUnit;
+      }
+   }
+
+   public class Column
+   {
+      public string Name { get; set; }
+
+      public UnitDescription Unit { get; set; }
+
+      public override string ToString()
+      {
+         return $"{Name} [{Unit}]";
       }
    }
 

@@ -7,9 +7,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public interface IUnitsEditorPresenter : IDisposablePresenter
    {
-      void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions);
+      void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
 
-      string SelectedUnit { get; }
+      UnitDescription Unit { get; }
 
       bool Canceled { get; }
 
@@ -18,5 +18,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SelectDimension(string dimension);
 
       void SelectUnit(string unit);
+
+      void SelectColumn(string column);
    }
 }

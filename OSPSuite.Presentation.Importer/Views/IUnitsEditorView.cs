@@ -7,10 +7,12 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public interface IUnitsEditorView : IModalView<IUnitsEditorPresenter>
    {
-      void SetParams(bool useDimensionSelector);
+      void SetParams(bool columnMapping, bool useDimensionSelector);
 
       void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue);
 
       void FillUnitComboBox(IEnumerable<Unit> units, string defaultValue);
+
+      void FillColumnComboBox(IEnumerable<string> columns);
    }
 }

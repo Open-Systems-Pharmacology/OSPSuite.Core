@@ -57,6 +57,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       void SetDataFormat(IDataFormat format);
 
+      void SetRawData(UnformattedData rawData);
+
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
 
       ToolTipDescription ToolTipDescriptionFor(int index);

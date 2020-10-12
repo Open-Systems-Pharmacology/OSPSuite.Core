@@ -17,9 +17,9 @@ namespace OSPSuite.Presentation.Importer.Views
 {
    public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
    {
-      private readonly ImageComboBoxEdit _unitComboBox;
-      private readonly ImageComboBoxEdit _dimensionComboBox;
-      private InputParametersControl _inputParametersControl;
+      private ImageComboBoxEdit _unitComboBox;
+      private ImageComboBoxEdit _dimensionComboBox;
+      private ImageComboBoxEdit _columnComboBox;
       private IUnitsEditorPresenter _presenter;
 
 
@@ -27,9 +27,6 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          InitializeComponent();
          Text = Captions.Importer.PleaseEnterDimensionAndUnitInformation;
-
-         _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
-         _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
       }
 
       public sealed override string Text
@@ -38,9 +35,45 @@ namespace OSPSuite.Presentation.Importer.Views
          set => base.Text = value;
       }
 
-      public void SetParams(bool useDimensionSelector)
+      public void SetParams(bool columnMapping, bool useDimensionSelector)
       {
-         arrangeControls(useDimensionSelector);
+         var lc = new LayoutControl { Name = "LayoutControl" };
+         panel1.Controls.Add(lc);
+         lc.Dock = DockStyle.Fill;
+         lc.AllowCustomization = false;
+
+         if (columnMapping)
+         {
+            _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
+            _dimensionComboBox = createComboBox("Dimension", (s, e) => { });
+            _unitComboBox = createComboBox("Unit", (s, e) => { });
+            panel1.Size = new Size(panel1.Size.Width, 50);
+            addControlItem(lc, "Column", _columnComboBox);
+            _unitComboBox.Visible = false;
+            _dimensionComboBox.Visible = false;
+            _columnComboBox.Visible = true;
+         }
+         else
+         {
+            _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
+            _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
+            _columnComboBox = createComboBox("Column", (s, e) => { });
+            if (useDimensionSelector)
+            {
+               panel1.Size = new Size(panel1.Size.Width, 85);
+               addControlItem(lc, "Dimension", _dimensionComboBox);
+               _dimensionComboBox.Visible = true;
+            }
+            else
+            {
+               panel1.Size = new Size(panel1.Size.Width, 50);
+               _dimensionComboBox.Visible = false;
+            }
+            _unitComboBox.Visible = true;
+            _columnComboBox.Visible = false;
+
+            addControlItem(lc, "Unit", _unitComboBox);
+         }
       }
 
       private ImageComboBoxEdit createComboBox(string name, EventHandler textChangedHandler)
@@ -56,35 +89,16 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onDimensionComboBoxTextChanged(object sender, EventArgs e)
       {
          _presenter.SelectDimension(_dimensionComboBox.EditValue as string);
-         showInputParametersControl();
       }
 
       private void onUnitComboBoxTextChanged(object sender, EventArgs e)
       {
          _presenter.SelectUnit(_unitComboBox.EditValue as string);
-         showInputParametersControl();
       }
 
-      private void arrangeControls(bool useDimensionSelector)
+      private void onColumnComboBoxTextChanged(object sender, EventArgs e)
       {
-         var lc = new LayoutControl { Name = "LayoutControl" };
-         panel1.Controls.Add(lc);
-         lc.Dock = DockStyle.Fill;
-         lc.AllowCustomization = false;
-
-         if (useDimensionSelector)
-         {
-            panel1.Size = new Size(panel1.Size.Width, 85);
-            addControlItem(lc, "Dimension", _dimensionComboBox);
-         }
-         else
-         {
-            panel1.Size = new Size(panel1.Size.Width, 50);
-         }
-
-         addControlItem(lc, "Unit", _unitComboBox);
-
-         showInputParametersControl();
+         _presenter.SelectColumn(_columnComboBox.EditValue as string);
       }
 
       private void addControlItem(LayoutControl lc, string name, Control control)
@@ -94,10 +108,17 @@ namespace OSPSuite.Presentation.Importer.Views
          colItem.Control = control;
       }
 
-      private void showInputParametersControl()
+      public void FillColumnComboBox(IEnumerable<string> cols)
       {
-         _inputParametersControl?.Dispose();
-         _inputParametersControl = null;
+         var columns = cols.ToList();
+         _columnComboBox.Properties.Items.Clear();
+         foreach (var column in columns)
+            _columnComboBox.Properties.Items.Add(new ImageComboBoxItem
+            {
+               Description = column,
+               Value = column
+            });
+         _columnComboBox.EditValue = columns.First();
       }
 
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)
@@ -105,10 +126,8 @@ namespace OSPSuite.Presentation.Importer.Views
          var dimensionList = dimensions as IDimension[] ?? dimensions.ToArray();
          if (!dimensionList.Any())
          {
-            _dimensionComboBox.Visible = false;
             return;
          }
-         _dimensionComboBox.Visible = true;
          _dimensionComboBox.Properties.Items.Clear();
          foreach (var dimension in dimensionList)
          {
@@ -141,7 +160,7 @@ namespace OSPSuite.Presentation.Importer.Views
 
       private bool isEnabled() //TODO Resharper
       {
-         return (_dimensionComboBox == null || !_dimensionComboBox.Properties.Items.Any() || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null && (_inputParametersControl == null || _inputParametersControl.AreAllValuesEntered);
+         return (_dimensionComboBox == null || !_dimensionComboBox.Properties.Items.Any() || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null;
       }
 
       private void onOkClick()
