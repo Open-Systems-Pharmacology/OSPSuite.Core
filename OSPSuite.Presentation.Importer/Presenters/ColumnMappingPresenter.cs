@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IImporterTask _importerTask;
       private readonly IApplicationController _applicationController;
       private IList<DataFormatParameter> _originalFormat;
+      private IList<string> _extraColumns;
       public ColumnMappingPresenter
       (
          IColumnMappingControl view,
@@ -105,6 +106,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _format = format;
          _originalFormat = _format.Parameters.ToList();
+         _extraColumns = _originalFormat
+               .OfType<MappingDataFormatParameter>()
+               .Where(m => m.MappedColumn?.Unit?.ColumnName != null)
+               .Select(m => m.MappedColumn.Unit.ColumnName)
+               .ToList();
          setDataFormat(format.Parameters);
       }
 
@@ -128,11 +134,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
                _columnInfos
                   .First(i => i.DisplayName == model.MappingName)
                   .DimensionInfos
-                  .Select(d => d.Dimension)
+                  .Select(d => d.Dimension),
+               new List<string>() { column.Unit.ColumnName }.Union(availableColumns())
             );
             if (!unitsEditorPresenter.Canceled)
             {
-               column.Unit = new UnitDescription(unitsEditorPresenter.SelectedUnit);
+               column.Unit = unitsEditorPresenter.Unit;
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                _view.Rebind();
             }
@@ -202,16 +209,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             }
          }
          options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
-         var availableColumns =
-            _originalFormat
-               .Select(f => f.ColumnName)
-               .Where
-               (
-                  cn =>
-                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn) &&
-                  _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
-                  _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
-               );
+         var availableColumns = this.availableColumns();
          switch (model.CurrentColumnType)
          {
             case ColumnMappingDTO.ColumnType.Mapping:
@@ -264,6 +262,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
          
 
          return options;
+      }
+
+      private IEnumerable<string> availableColumns()
+      {
+         return _originalFormat
+            .Select(f => f.ColumnName)
+            .Union(_extraColumns)
+            .Where
+            (
+               cn =>
+                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn) &&
+                  _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
+                  _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
+            );
       }
 
       public ToolTipDescription ToolTipDescriptionFor(int index)
