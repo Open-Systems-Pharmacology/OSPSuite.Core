@@ -9,9 +9,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void OpenFileDialog(string initFileName);
 
       event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
-
       void SetFilePath(string filePath);
-
       string Title { get; set; }
       string Filter { get; set; }
       string DirectoryKey { get; set; }
@@ -24,6 +22,4 @@ namespace OSPSuite.Presentation.Importer.Presenters
       /// </summary>
       public string FileName { get; set; }
    }
-
-
 }

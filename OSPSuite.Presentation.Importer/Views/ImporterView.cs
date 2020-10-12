@@ -28,7 +28,6 @@ namespace OSPSuite.Presentation.Importer.Views
          _contextMenuSelectedTab = "";
       }
 
-
       public void AttachPresenter(IImporterPresenter presenter)
       {
          _presenter = presenter;

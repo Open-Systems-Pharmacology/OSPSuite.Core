@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace OSPSuite.Presentation.Importer.Views
+﻿namespace OSPSuite.Presentation.Importer.Views
 {
    partial class ImportConfirmationView
    {

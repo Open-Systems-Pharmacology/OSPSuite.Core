@@ -52,29 +52,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
    {
       void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos);
-
       IDataFormat GetDataFormat();
-
       void SetDataFormat(IDataFormat format);
-
       void SetRawData(UnformattedData rawData);
-
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
-
       ToolTipDescription ToolTipDescriptionFor(int index);
-
       void SetDescriptionForRow(ColumnMappingDTO model);
-
       void ClearRow(ColumnMappingDTO model);
-
       void AddGroupBy(AddGroupByFormatParameter source);
-
       void ResetMapping();
-
       void ClearMapping();
-
       void ChangeUnitsOnRow(ColumnMappingDTO model);
-
       void ValidateMapping();
 
       event EventHandler OnMappingCompleted; //status: you can import
