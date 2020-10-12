@@ -32,20 +32,25 @@ namespace OSPSuite.Presentation.Importer.Views
       {
          this.namesListBox = new DevExpress.XtraEditors.ListBoxControl();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.gridControl = new DevExpress.XtraGrid.GridControl();
+         this.gridView = new DevExpress.XtraGrid.Views.Grid.GridView();
          this.buttonAdd = new DevExpress.XtraEditors.SimpleButton();
          this.keysListBox = new DevExpress.XtraEditors.ListBoxControl();
          this.namingConventionComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.namingConventionLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.namesLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.keysLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.buttonAddLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.gridControl = new DevExpress.XtraGrid.GridControl();
-         this.gridView = new DevExpress.XtraGrid.Views.Grid.GridView();
+         this.keysLayout = new DevExpress.XtraLayout.LayoutControlItem();
+         this.namesLayout = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysListBox)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namingConventionComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
@@ -53,65 +58,83 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
          this.SuspendLayout();
          // 
-         // NamesListBox
+         // namesListBox
          // 
-         this.namesListBox.Location = new System.Drawing.Point(12, 279);
-         this.namesListBox.Name = "NamesListBox";
-         this.namesListBox.Size = new System.Drawing.Size(578, 399);
+         this.namesListBox.Location = new System.Drawing.Point(12, 792);
+         this.namesListBox.Margin = new System.Windows.Forms.Padding(6);
+         this.namesListBox.Name = "namesListBox";
+         this.namesListBox.Size = new System.Drawing.Size(1926, 1922);
          this.namesListBox.StyleController = this.layoutControl;
          this.namesListBox.TabIndex = 4;
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.gridControl);
          this.layoutControl.Controls.Add(this.buttonAdd);
          this.layoutControl.Controls.Add(this.keysListBox);
          this.layoutControl.Controls.Add(this.namingConventionComboBoxEdit);
          this.layoutControl.Controls.Add(this.namesListBox);
-         this.layoutControl.Location = new System.Drawing.Point(7, 5);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl.Margin = new System.Windows.Forms.Padding(6);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(600, 690);
+         this.layoutControl.Size = new System.Drawing.Size(3662, 2726);
          this.layoutControl.TabIndex = 38;
          this.layoutControl.Text = "layoutControl";
          // 
-         // simpleButton1
+         // gridControl
          // 
-         this.buttonAdd.Location = new System.Drawing.Point(12, 38);
+         this.gridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
+         this.gridControl.Location = new System.Drawing.Point(1977, 12);
+         this.gridControl.MainView = this.gridView;
+         this.gridControl.Margin = new System.Windows.Forms.Padding(6);
+         this.gridControl.Name = "gridControl";
+         this.gridControl.Size = new System.Drawing.Size(1673, 2702);
+         this.gridControl.TabIndex = 39;
+         this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.gridView});
+         // 
+         // gridView
+         // 
+         this.gridView.DetailHeight = 722;
+         this.gridView.FixedLineWidth = 4;
+         this.gridView.GridControl = this.gridControl;
+         this.gridView.Name = "gridView";
+         // 
+         // buttonAdd
+         // 
+         this.buttonAdd.Location = new System.Drawing.Point(12, 734);
+         this.buttonAdd.Margin = new System.Windows.Forms.Padding(6);
          this.buttonAdd.Name = "buttonAdd";
-         this.buttonAdd.Size = new System.Drawing.Size(576, 27);
+         this.buttonAdd.Size = new System.Drawing.Size(1926, 54);
          this.buttonAdd.StyleController = this.layoutControl;
          this.buttonAdd.TabIndex = 10;
          this.buttonAdd.Text = "Add";
          // 
-         // layoutControlItem
+         // keysListBox
          // 
-         this.keysLayout.Control = this.keysListBox;
-         this.keysLayout.Location = new System.Drawing.Point(0, 0);
-         this.keysLayout.Name = "namesLayout";
-         this.keysLayout.Size = new System.Drawing.Size(580, 26);
-         this.keysLayout.TextSize = new System.Drawing.Size(101, 16);
-         // 
-         // KeysListBox
-         // 
-         this.keysListBox.Location = new System.Drawing.Point(12, 82);
-         this.keysListBox.Name = "KeysListBox";
-         this.keysListBox.Size = new System.Drawing.Size(578, 190);
+         this.keysListBox.Location = new System.Drawing.Point(12, 66);
+         this.keysListBox.Margin = new System.Windows.Forms.Padding(6);
+         this.keysListBox.Name = "keysListBox";
+         this.keysListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+         this.keysListBox.Size = new System.Drawing.Size(1926, 664);
          this.keysListBox.StyleController = this.layoutControl;
          this.keysListBox.TabIndex = 9;
-         this.keysLayout.TextVisible = false;
-         this.keysListBox.SelectionMode = SelectionMode.MultiExtended;
          // 
          // namingConventionComboBoxEdit
          // 
-         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(116, 12);
+         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(315, 12);
+         this.namingConventionComboBoxEdit.Margin = new System.Windows.Forms.Padding(6);
          this.namingConventionComboBoxEdit.Name = "namingConventionComboBoxEdit";
          this.namingConventionComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(472, 22);
+         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(1623, 50);
          this.namingConventionComboBoxEdit.StyleController = this.layoutControl;
          this.namingConventionComboBoxEdit.TabIndex = 8;
          // 
@@ -123,65 +146,87 @@ namespace OSPSuite.Presentation.Importer.Views
             this.namingConventionLayout,
             this.buttonAddLayout,
             this.keysLayout,
-            this.namesLayout
-         });
+            this.namesLayout,
+            this.layoutControlItem1,
+            this.emptySpaceItem1,
+            this.splitterItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(600, 690);
+         this.Root.Size = new System.Drawing.Size(3662, 2726);
          this.Root.TextVisible = false;
          // 
-         // layoutControlItem
+         // namingConventionLayout
          // 
          this.namingConventionLayout.Control = this.namingConventionComboBoxEdit;
          this.namingConventionLayout.Location = new System.Drawing.Point(0, 0);
          this.namingConventionLayout.Name = "namingConventionLayout";
-         this.namingConventionLayout.Size = new System.Drawing.Size(580, 26);
-         this.namingConventionLayout.TextSize = new System.Drawing.Size(101, 16);
+         this.namingConventionLayout.Size = new System.Drawing.Size(1930, 54);
+         this.namingConventionLayout.TextSize = new System.Drawing.Size(300, 33);
          // 
-         // layoutControlItem1
+         // buttonAddLayout
          // 
          this.buttonAddLayout.Control = this.buttonAdd;
-         this.buttonAddLayout.Location = new System.Drawing.Point(0, 0);
-         this.buttonAddLayout.Name = "";
-         this.buttonAddLayout.Size = new System.Drawing.Size(50, 40);
+         this.buttonAddLayout.Location = new System.Drawing.Point(0, 722);
+         this.buttonAddLayout.Name = "buttonAddLayout";
+         this.buttonAddLayout.Size = new System.Drawing.Size(1930, 58);
          this.buttonAddLayout.TextSize = new System.Drawing.Size(0, 0);
          this.buttonAddLayout.TextVisible = false;
          // 
-         // layoutControlItem
+         // keysLayout
+         // 
+         this.keysLayout.Control = this.keysListBox;
+         this.keysLayout.Location = new System.Drawing.Point(0, 54);
+         this.keysLayout.Name = "namesLayout";
+         this.keysLayout.Size = new System.Drawing.Size(1930, 668);
+         this.keysLayout.TextSize = new System.Drawing.Size(0, 0);
+         this.keysLayout.TextVisible = false;
+         // 
+         // namesLayout
          // 
          this.namesLayout.Control = this.namesListBox;
-         this.namesLayout.Location = new System.Drawing.Point(10, 100);
+         this.namesLayout.Location = new System.Drawing.Point(0, 780);
          this.namesLayout.Name = "namesLayout";
-         this.namesLayout.Size = new System.Drawing.Size(580, 26);
-         this.namesLayout.TextSize = new System.Drawing.Size(101, 16);
+         this.namesLayout.Size = new System.Drawing.Size(1930, 1926);
+         this.namesLayout.TextSize = new System.Drawing.Size(0, 0);
          this.namesLayout.TextVisible = false;
          // 
-         // gridControl
+         // layoutControlItem1
          // 
-         this.gridControl.Location = new System.Drawing.Point(618, 20);
-         this.gridControl.MainView = this.gridView;
-         this.gridControl.Name = "gridControl";
-         this.gridControl.Size = new System.Drawing.Size(697, 665);
-         this.gridControl.TabIndex = 39;
-         this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.gridView});
+         this.layoutControlItem1.Control = this.gridControl;
+         this.layoutControlItem1.Location = new System.Drawing.Point(1965, 0);
+         this.layoutControlItem1.Name = "layoutControlItem1";
+         this.layoutControlItem1.Size = new System.Drawing.Size(1677, 2706);
+         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem1.TextVisible = false;
          // 
-         // gridView
+         // emptySpaceItem1
          // 
-         this.gridView.GridControl = this.gridControl;
-         this.gridView.Name = "gridView";
+         this.emptySpaceItem1.AllowHotTrack = false;
+         this.emptySpaceItem1.Location = new System.Drawing.Point(1955, 0);
+         this.emptySpaceItem1.Name = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(10, 2706);
+         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // splitterItem1
+         // 
+         this.splitterItem1.AllowHotTrack = true;
+         this.splitterItem1.Location = new System.Drawing.Point(1930, 0);
+         this.splitterItem1.Name = "splitterItem1";
+         this.splitterItem1.Size = new System.Drawing.Size(25, 2706);
          // 
          // ImportConfirmationView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.gridControl);
          this.Controls.Add(this.layoutControl);
+         this.Margin = new System.Windows.Forms.Padding(17, 16, 17, 16);
          this.Name = "ImportConfirmationView";
-         this.Size = new System.Drawing.Size(1318, 688);
+         this.Size = new System.Drawing.Size(3662, 2726);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.gridControl)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.gridView)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysListBox)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namingConventionComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
@@ -189,8 +234,9 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.gridControl)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.gridView)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -201,12 +247,15 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraLayout.LayoutControlItem namingConventionLayout;
-      private DevExpress.XtraLayout.LayoutControlItem namesLayout;
       private DevExpress.XtraLayout.LayoutControlItem keysLayout;
       private DevExpress.XtraGrid.GridControl gridControl;
       private DevExpress.XtraGrid.Views.Grid.GridView gridView;
       private DevExpress.XtraEditors.ListBoxControl keysListBox;
       private DevExpress.XtraEditors.SimpleButton buttonAdd;
       private DevExpress.XtraLayout.LayoutControlItem buttonAddLayout;
+      private DevExpress.XtraLayout.LayoutControlItem namesLayout;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private DevExpress.XtraLayout.SplitterItem splitterItem1;
    }
 }
