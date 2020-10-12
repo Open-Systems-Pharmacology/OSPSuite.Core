@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Importer.Infrastructure;

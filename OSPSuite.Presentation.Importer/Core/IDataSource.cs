@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Utility.Collections;
+﻿using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core
 {

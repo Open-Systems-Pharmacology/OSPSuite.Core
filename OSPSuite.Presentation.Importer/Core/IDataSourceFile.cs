@@ -36,7 +36,6 @@ namespace OSPSuite.Presentation.Importer.Core
          protected set; 
       }
 
-
       private string _path;
       public string Path 
       {
