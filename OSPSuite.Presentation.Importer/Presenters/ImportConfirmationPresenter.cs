@@ -2,10 +2,8 @@
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Utility.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.DataProcessing;
 using OSPSuite.Core.Importer;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Domain;

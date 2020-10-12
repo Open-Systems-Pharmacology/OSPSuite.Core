@@ -270,7 +270,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
                break;
          }
          
-
          return options;
       }
 

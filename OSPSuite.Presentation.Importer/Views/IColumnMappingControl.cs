@@ -144,7 +144,6 @@ namespace OSPSuite.Presentation.Importer.Views
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
-
       void Rebind();
    }
 }

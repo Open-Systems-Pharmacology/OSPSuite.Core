@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Views
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => this.DoWithinExceptionHandler(() =>
             namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}")));
-}
+      }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
       {

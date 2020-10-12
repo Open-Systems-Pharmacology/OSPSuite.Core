@@ -10,11 +10,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class SourceFilePresenter : AbstractPresenter<ISourceFileControl, ISourceFilePresenter>, ISourceFilePresenter
    {
       private readonly IDialogCreator _dialogCreator;
-      
       public string Title  { get; set;} 
       public string Filter { get; set; }
       public string DirectoryKey { get; set; }
-
 
       public SourceFilePresenter(IDialogCreator dialogCreator, ISourceFileControl view) : base(view)
       {
