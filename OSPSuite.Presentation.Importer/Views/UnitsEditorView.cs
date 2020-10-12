@@ -21,7 +21,6 @@ namespace OSPSuite.Presentation.Importer.Views
       private ImageComboBoxEdit _columnComboBox;
       private IUnitsEditorPresenter _presenter;
 
-
       public UnitsEditorView()
       {
          InitializeComponent();
