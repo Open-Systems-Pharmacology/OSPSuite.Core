@@ -43,7 +43,6 @@ namespace OSPSuite.Presentation.Importer.Views
          this.keysLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.namesLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
@@ -59,7 +58,6 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
          this.SuspendLayout();
          // 
@@ -91,11 +89,11 @@ namespace OSPSuite.Presentation.Importer.Views
          // gridControl
          // 
          this.gridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(6);
-         this.gridControl.Location = new System.Drawing.Point(1977, 12);
+         this.gridControl.Location = new System.Drawing.Point(1967, 12);
          this.gridControl.MainView = this.gridView;
          this.gridControl.Margin = new System.Windows.Forms.Padding(6);
          this.gridControl.Name = "gridControl";
-         this.gridControl.Size = new System.Drawing.Size(1673, 2702);
+         this.gridControl.Size = new System.Drawing.Size(1683, 2702);
          this.gridControl.TabIndex = 39;
          this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView});
@@ -148,7 +146,6 @@ namespace OSPSuite.Presentation.Importer.Views
             this.keysLayout,
             this.namesLayout,
             this.layoutControlItem1,
-            this.emptySpaceItem1,
             this.splitterItem1});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(3662, 2726);
@@ -192,19 +189,11 @@ namespace OSPSuite.Presentation.Importer.Views
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.gridControl;
-         this.layoutControlItem1.Location = new System.Drawing.Point(1965, 0);
+         this.layoutControlItem1.Location = new System.Drawing.Point(1955, 0);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1677, 2706);
+         this.layoutControlItem1.Size = new System.Drawing.Size(1687, 2706);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
-         // 
-         // emptySpaceItem1
-         // 
-         this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(1955, 0);
-         this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(10, 2706);
-         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // splitterItem1
          // 
@@ -235,7 +224,6 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
          this.ResumeLayout(false);
 
@@ -255,7 +243,6 @@ namespace OSPSuite.Presentation.Importer.Views
       private DevExpress.XtraLayout.LayoutControlItem buttonAddLayout;
       private DevExpress.XtraLayout.LayoutControlItem namesLayout;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.SplitterItem splitterItem1;
    }
 }
