@@ -12,10 +12,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
-
       void AddConfirmationView();
       void AddDataMappingView();
-
-
    }
 }

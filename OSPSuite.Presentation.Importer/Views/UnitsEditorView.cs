@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows.Forms;
 using OSPSuite.Presentation.Importer.Presenters;
 using DevExpress.XtraEditors;
-using OSPSuite.UI.Importer;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
 using DevExpress.Utils;
