@@ -1,4 +1,5 @@
 ﻿using DevExpress.XtraBars.Navigation;
+using OSPSuite.Assets;
 using OSPSuite.UI.Controls;
 
 
@@ -63,7 +64,6 @@ namespace OSPSuite.Presentation.Importer.Views
          this.rootLayoutControl.Root = this.Root;
          this.rootLayoutControl.Size = new System.Drawing.Size(1271, 1216);
          this.rootLayoutControl.TabIndex = 0;
-         this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // centralPanelControl
          // 
@@ -82,7 +82,6 @@ namespace OSPSuite.Presentation.Importer.Views
          this.navigationTileBar.ScrollMode = DevExpress.XtraEditors.TileControlScrollMode.ScrollButtons;
          this.navigationTileBar.Size = new System.Drawing.Size(1247, 229);
          this.navigationTileBar.TabIndex = 4;
-         this.navigationTileBar.Text = "navigationTileBar";
          this.navigationTileBar.WideTileWidth = 300;
          // 
          // navigationTileBarGroup
@@ -97,7 +96,7 @@ namespace OSPSuite.Presentation.Importer.Views
          tileItemElement1.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
          tileItemElement1.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
          tileItemElement1.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement1.Text = "Data Mapping";
+         tileItemElement1.Text = Captions.Importer.DataMapping;
          this.dataMappingTile.Elements.Add(tileItemElement1);
          this.dataMappingTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.dataMappingTile.Name = "dataMappingTile";
@@ -109,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Views
          tileItemElement2.ImageOptions.ImageAlignment = DevExpress.XtraEditors.TileItemContentAlignment.TopLeft;
          tileItemElement2.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
          tileItemElement2.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement2.Text = "Confirmation";
+         tileItemElement2.Text = Captions.Importer.Confirmation;
          this.confirmationTile.Elements.Add(tileItemElement2);
          this.confirmationTile.Enabled = false;
          this.confirmationTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
@@ -148,7 +147,6 @@ namespace OSPSuite.Presentation.Importer.Views
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Caption = "ImporterTiledView";
          this.Controls.Add(this.rootLayoutControl);
          this.Name = "ImporterTiledView";
          this.Size = new System.Drawing.Size(1271, 1216);

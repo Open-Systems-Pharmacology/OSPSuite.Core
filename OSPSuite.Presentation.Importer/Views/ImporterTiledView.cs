@@ -17,9 +17,9 @@ namespace OSPSuite.Presentation.Importer.Views
       private void onTileBarClicked(object sender, EventArgs e)
       {
          var eventArgs = e as DevExpress.XtraEditors.TileItemEventArgs;
-         if (eventArgs.Item.Name == "dataMappingTile")
+         if (eventArgs.Item == dataMappingTile)
             _presenter.AddDataMappingView();
-         else if (eventArgs.Item.Name == "confirmationTile")
+         else if (eventArgs.Item == confirmationTile)
             _presenter.AddConfirmationView();
       }
 

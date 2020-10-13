@@ -86,7 +86,6 @@
          this.layoutControl.Root = this.Root;
          this.layoutControl.Size = new System.Drawing.Size(1709, 1322);
          this.layoutControl.TabIndex = 38;
-         this.layoutControl.Text = "layoutControl";
          // 
          // gridControl
          // 
