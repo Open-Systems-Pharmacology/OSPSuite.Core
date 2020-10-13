@@ -140,7 +140,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                },
                {
-                  "lloq",
+                  "Concentration_lloq",
                   new ColumnDescription(13)
                   {
                      Level = ColumnDescription.MeasurementLevel.Numeric
