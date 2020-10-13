@@ -356,6 +356,7 @@ namespace OSPSuite.Assets
          public static readonly string ResetMapping = "Reset Mapping";
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
+         public static readonly string AddKeys = "Add keys";
 
          public class ToolTips
          {
