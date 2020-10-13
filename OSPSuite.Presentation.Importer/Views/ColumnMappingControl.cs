@@ -38,6 +38,10 @@ namespace OSPSuite.Presentation.Importer.Views
       private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
       private readonly RepositoryItemButtonEdit _addButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
 
+      private readonly RepositoryItemButtonEdit _lloqButtonRepository =
+         new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
+      private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
+
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
          _imageListRetriever = imageListRetriever;
@@ -118,6 +122,12 @@ namespace OSPSuite.Presentation.Importer.Views
             .WithRepository(unitRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
+         _gridViewBinder.AddUnboundColumn()
+            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
+            .WithRepository(lloqRepository)
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+
          _removeButtonRepository.ButtonClick += (o, e) =>
          {
             columnMappingGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
@@ -127,6 +137,8 @@ namespace OSPSuite.Presentation.Importer.Views
          _addButtonRepository.ButtonClick += (o, e) => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter);
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
+         _lloqButtonRepository.ButtonClick += (o, e) => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement);
+         _disabledLloqButtonRepository.Buttons[0].Enabled = false;
       }
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
@@ -149,6 +161,15 @@ namespace OSPSuite.Presentation.Importer.Views
             return _addButtonRepository;
          }
          return _disabledUnitButtonRepository;
+      }
+
+      private RepositoryItem lloqRepository(ColumnMappingDTO model)
+      {
+         if (model.Source is MappingDataFormatParameter && (model.Source as MappingDataFormatParameter).MappedColumn?.LloqColumn != null)
+         {
+            return _lloqButtonRepository;
+         }
+         return _disabledLloqButtonRepository;
       }
 
       public void Rebind()

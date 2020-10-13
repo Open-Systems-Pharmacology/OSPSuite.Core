@@ -357,6 +357,7 @@ namespace OSPSuite.Assets
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add keys";
+         public static readonly string Columns = "Columns";
 
          public class ToolTips
          {
@@ -1137,8 +1138,9 @@ namespace OSPSuite.Assets
       }
 
       public static readonly string UnitInformationCaption = "Unit Information";
-      public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns. CRTL-I";
+      public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
       public static readonly string AddInformationDescription = "Add a new grouping by field";
+      public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
    }
 
    public static class Error

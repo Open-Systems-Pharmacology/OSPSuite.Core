@@ -13,15 +13,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public override string Description => _descriptionNonMem;
       private int _lloqIndex = _lloqColumnIndex;
 
-      protected override void ExtractGeneralParameters(List<string> keys, IUnformattedData data, ref double rank)
+      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
-         base.ExtractGeneralParameters(keys, data, ref rank);
-         var lloq = data.GetHeaders().FindHeader("lloq");
-         if (lloq != null)
+         var lloqKey = data.GetHeaders().FindHeader(description + "_LLOQ");
+         if (lloqKey == null)
          {
-            rank++;
-            _lloqIndex = data.GetColumnDescription(lloq).Index;
+            return "";
          }
+         keys.Remove(lloqKey);
+         rank++;
+         return lloqKey;
       }
 
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)

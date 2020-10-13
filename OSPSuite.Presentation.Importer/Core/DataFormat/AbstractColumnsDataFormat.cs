@@ -41,6 +41,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          return totalRank;
       }
 
+      protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
+
       protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
@@ -52,13 +54,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                keys.Remove(headerKey);
                var units = ExtractUnits(headerKey, data, keys, ref rank);
+
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
                   new Column()
                   {
                      Name = header,
-                     Unit = units
+                     Unit = units,
+                     LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                   })
                );
             }
@@ -92,7 +96,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   new Column()
                   {
                      Name = header,
-                     Unit = units
+                     Unit = units,
+                     LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                   }
                )
             );

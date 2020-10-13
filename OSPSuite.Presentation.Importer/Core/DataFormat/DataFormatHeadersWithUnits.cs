@@ -14,6 +14,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public override string Description { get; } = _tMetaDataDescription;
 
+      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
+      {
+         return null;
+      }
+
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
