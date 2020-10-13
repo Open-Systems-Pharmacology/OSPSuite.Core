@@ -21,8 +21,8 @@ namespace OSPSuite.Presentation.Importer.Views
       private void InitializeComponent()
       {
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.ColumnsComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.rootLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
@@ -35,8 +35,8 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.ColumnsComboBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Views
          // 
          // layoutControlBase
          // 
-         this.layoutControlBase.Location = new System.Drawing.Point(0, 59);
+         this.layoutControlBase.Location = new System.Drawing.Point(0, 67);
          this.layoutControlBase.Size = new System.Drawing.Size(528, 57);
          this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
          this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
@@ -93,9 +93,20 @@ namespace OSPSuite.Presentation.Importer.Views
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(528, 59);
+         this.rootLayoutControl.Size = new System.Drawing.Size(528, 67);
          this.rootLayoutControl.TabIndex = 38;
          this.rootLayoutControl.Text = "rootLayoutControl";
+         // 
+         // ColumnsComboBox
+         // 
+         this.ColumnsComboBox.Location = new System.Drawing.Point(64, 12);
+         this.ColumnsComboBox.Name = "ColumnsComboBox";
+         this.ColumnsComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.ColumnsComboBox.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+         this.ColumnsComboBox.Size = new System.Drawing.Size(452, 22);
+         this.ColumnsComboBox.StyleController = this.rootLayoutControl;
+         this.ColumnsComboBox.TabIndex = 4;
          // 
          // Root
          // 
@@ -105,40 +116,29 @@ namespace OSPSuite.Presentation.Importer.Views
             this.rootLayoutControlItem,
             this.emptySpaceItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(528, 59);
+         this.Root.Size = new System.Drawing.Size(528, 67);
          this.Root.TextVisible = false;
-         // 
-         // ColumnsComboBox
-         // 
-         this.ColumnsComboBox.Location = new System.Drawing.Point(123, 12);
-         this.ColumnsComboBox.Name = "ColumnsComboBox";
-         this.ColumnsComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.ColumnsComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
-         this.ColumnsComboBox.Size = new System.Drawing.Size(393, 22);
-         this.ColumnsComboBox.StyleController = this.rootLayoutControl;
-         this.ColumnsComboBox.TabIndex = 4;
          // 
          // rootLayoutControlItem
          // 
          this.rootLayoutControlItem.Control = this.ColumnsComboBox;
          this.rootLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.rootLayoutControlItem.Name = Captions.Importer.Columns;
+         this.rootLayoutControlItem.Name = "Columns";
          this.rootLayoutControlItem.Size = new System.Drawing.Size(508, 26);
-         this.rootLayoutControlItem.TextSize = new System.Drawing.Size(108, 16);
+         this.rootLayoutControlItem.TextSize = new System.Drawing.Size(49, 16);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
          this.emptySpaceItem1.Location = new System.Drawing.Point(0, 26);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(508, 13);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(508, 21);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // LloqEditorView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
-         this.ClientSize = new System.Drawing.Size(528, 116);
+         this.ClientSize = new System.Drawing.Size(528, 124);
          this.Controls.Add(this.rootLayoutControl);
          this.Name = "LloqEditorView";
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
@@ -153,13 +153,13 @@ namespace OSPSuite.Presentation.Importer.Views
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.ColumnsComboBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
-
+         this.Text = Captions.Importer.LloqColumnEditorTitle;
       }
    }
 }
