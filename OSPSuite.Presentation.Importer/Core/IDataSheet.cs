@@ -46,6 +46,8 @@ namespace OSPSuite.Presentation.Importer.Core
 
       public UnitDescription Unit { get; set; }
 
+      public string LloqColumn { get; set; }
+
       public override string ToString()
       {
          return $"{Name} [{Unit}]";

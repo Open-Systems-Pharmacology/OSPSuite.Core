@@ -111,6 +111,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
                .OfType<MappingDataFormatParameter>()
                .Where(m => m.MappedColumn?.Unit?.ColumnName != null)
                .Select(m => m.MappedColumn.Unit.ColumnName)
+               .Union(
+                  _originalFormat
+                  .OfType<MappingDataFormatParameter>()
+                  .Where(m => m.MappedColumn?.LloqColumn != null)
+                  .Select(m => m.MappedColumn.LloqColumn)
+               )
                .ToList();
          setDataFormat(format.Parameters);
       }
@@ -127,6 +133,30 @@ namespace OSPSuite.Presentation.Importer.Presenters
             Label = Captions.Importer.NoneEditorNullText,
             Description = description
          };
+      }
+
+      public void ChangeLloqOnRow(ColumnMappingDTO model)
+      {
+         using (var lloqEditorPresenter = _applicationController.Start<ILloqEditorPresenter>())
+         {
+            var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
+            var columns = new List<string>() { column.LloqColumn };
+            if (column.LloqColumn != "")
+            {
+               columns.Add("");
+            }
+            columns.AddRange(availableColumns());
+            lloqEditorPresenter.ShowFor
+            (
+               columns,
+               column.LloqColumn
+            );
+            if (!lloqEditorPresenter.Canceled)
+            {
+               column.LloqColumn = lloqEditorPresenter.LloqColumn;
+               _view.Rebind();
+            }
+         }
       }
 
       public void ChangeUnitsOnRow(ColumnMappingDTO model)
@@ -281,7 +311,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             .Where
             (
                cn =>
-                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn) &&
+                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
                   _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
                   _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
