@@ -8,11 +8,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       private const string _nameNonMem = "Nonmem";
       private const string _descriptionNonMem = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
-      private const int _lloqColumnIndex = -1;
       public override string Name => _nameNonMem;
       public override string Description => _descriptionNonMem;
-      private int _lloqIndex = _lloqColumnIndex;
-
+      
       protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var lloqKey = data.GetHeaders().FindHeader(description + "_LLOQ");
@@ -59,6 +57,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   row =>
                   {
                      double lloq;
+                     var _lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn) ? -1 : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
                      if (_lloqIndex < 0 || !double.TryParse(row.ElementAt(_lloqIndex).Trim(), out lloq))
                         lloq = double.NaN;
                      var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
