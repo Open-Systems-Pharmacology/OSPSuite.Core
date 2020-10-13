@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Presentation.Importer.Views
+﻿using OSPSuite.Assets;
+
+namespace OSPSuite.Presentation.Importer.Views
 {
    partial class ColumnMappingControl
    {
@@ -56,7 +58,7 @@
          this.mappingsLabel.Name = "mappingsLabel";
          this.mappingsLabel.Size = new System.Drawing.Size(132, 34);
          this.mappingsLabel.TabIndex = 0;
-         this.mappingsLabel.Text = "Mappings";
+         this.mappingsLabel.Text = Captions.Importer.Mappings;
          // 
          // columnMappingGrid
          // 
@@ -94,7 +96,7 @@
          this.formaLabelControl.Name = "formaLabelControl";
          this.formaLabelControl.Size = new System.Drawing.Size(85, 33);
          this.formaLabelControl.TabIndex = 2;
-         this.formaLabelControl.Text = "Format";
+         this.formaLabelControl.Text = Captions.Importer.Format;
          // 
          // ColumnMappingControl
          // 
