@@ -26,6 +26,8 @@ namespace OSPSuite.Presentation.Importer.Views
          ImporterTabControl.CloseButtonClick += onCloseTab;
          ImporterTabControl.MouseDown += onTabControlMouseDown;
          _contextMenuSelectedTab = "";
+         btnImport.Enabled = false;
+         btnImportAll.Enabled = false;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
