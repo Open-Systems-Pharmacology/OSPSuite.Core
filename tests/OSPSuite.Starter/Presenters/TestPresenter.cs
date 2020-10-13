@@ -113,7 +113,7 @@ namespace OSPSuite.Starter.Presenters
       public void StartImporterExcelView()
       {
          var starter = new TestStarter<IImporterTiledPresenter>();
-         starter.Start(660, 400);
+         starter.Start(1000, 600);
 
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);

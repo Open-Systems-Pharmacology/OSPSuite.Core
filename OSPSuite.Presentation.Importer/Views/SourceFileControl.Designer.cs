@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Presentation.Importer.Views
+﻿using OSPSuite.Assets;
+
+namespace OSPSuite.Presentation.Importer.Views
 {
    partial class SourceFileControl
    {
@@ -56,7 +58,6 @@
          this.rootLayoutControl.Root = this.centralLayoutControlGroup;
          this.rootLayoutControl.Size = new System.Drawing.Size(1150, 66);
          this.rootLayoutControl.TabIndex = 6;
-         this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // openSourceFileButton
          // 
@@ -67,7 +68,7 @@
          this.openSourceFileButton.Size = new System.Drawing.Size(63, 62);
          this.openSourceFileButton.StyleController = this.rootLayoutControl;
          this.openSourceFileButton.TabIndex = 1;
-         this.openSourceFileButton.Text = "...";
+         this.openSourceFileButton.Text = Captions.Importer.ThreeDots;
          // 
          // sourceFileTextEdit
          // 
@@ -97,12 +98,12 @@
          // layoutItemExcelFile
          // 
          this.layoutItemExcelFile.Control = this.sourceFileTextEdit;
-         this.layoutItemExcelFile.CustomizationFormText = "File: ";
+         this.layoutItemExcelFile.CustomizationFormText = Captions.Importer.File;
          this.layoutItemExcelFile.Location = new System.Drawing.Point(0, 0);
          this.layoutItemExcelFile.Name = "layoutItemExcelFile";
          this.layoutItemExcelFile.Padding = new DevExpress.XtraLayout.Utils.Padding(5, 5, 8, 5);
          this.layoutItemExcelFile.Size = new System.Drawing.Size(1083, 66);
-         this.layoutItemExcelFile.Text = "File:  ";
+         this.layoutItemExcelFile.Text = Captions.Importer.File;
          this.layoutItemExcelFile.TextSize = new System.Drawing.Size(66, 33);
          // 
          // buttonLayoutControlItem

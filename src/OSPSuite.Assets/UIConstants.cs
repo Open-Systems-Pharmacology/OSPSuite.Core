@@ -357,6 +357,12 @@ namespace OSPSuite.Assets
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add keys";
+         public static readonly string Mappings = "Mappings";
+         public static readonly string FormatPlain = "Format";
+         public static readonly string DataMapping = "Data Mapping";
+         public static readonly string Confirmation = "Confirmation";
+         public static readonly string ThreeDots = "...";
+         public static readonly string File = "File:  ";
 
          public class ToolTips
          {
