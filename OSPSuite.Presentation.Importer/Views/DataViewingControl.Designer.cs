@@ -51,6 +51,7 @@
          this.dataViewingGridView.GridControl = this.dataViewingGridControl;
          this.dataViewingGridView.OptionsView.ShowGroupPanel = false;
          this.dataViewingGridView.Name = "dataViewingGridView";
+         this.dataViewingGridView.OptionsBehavior.Editable = false;
          // 
          // DataViewingControl
          // 
