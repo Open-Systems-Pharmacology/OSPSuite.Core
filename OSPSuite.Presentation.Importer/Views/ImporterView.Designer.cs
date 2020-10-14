@@ -118,6 +118,7 @@ namespace OSPSuite.Presentation.Importer.Views
          // 
          // ImporterTabControl
          // 
+         this.ImporterTabControl.ClosePageButtonShowMode = DevExpress.XtraTab.ClosePageButtonShowMode.InAllTabPageHeaders;
          this.ImporterTabControl.Location = new System.Drawing.Point(12, 171);
          this.ImporterTabControl.Name = "ImporterTabControl";
          this.ImporterTabControl.Size = new System.Drawing.Size(1090, 1761);
