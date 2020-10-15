@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Importer.Core
    {
       string Name { get; }
       string Description { get; }
-      double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos);
+      double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
       IList<DataFormatParameter> Parameters { get; }
       IEnumerable<ParsedDataSet> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }

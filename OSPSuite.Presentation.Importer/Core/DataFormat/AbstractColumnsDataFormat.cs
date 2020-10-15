@@ -12,12 +12,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
 
-      public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos)
+      public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawData, columnInfos))
             return 0;
 
-         return 1 + setParameters(rawData, columnInfos);
+         return 1 + setParameters(rawData, columnInfos, metaDataCategories);
       }
 
       protected bool NotCompatible(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) < columnInfos.Count(ci => ci.IsMandatory);
       }
 
-      private double setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      private double setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var keys = data.GetHeaders().ToList();
          Parameters = new List<DataFormatParameter>();
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          var totalRank = 0.0;
          ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractNonQualifiedHeadings(keys, missingKeys, data, ref totalRank);
-         ExtractGeneralParameters(keys, data, ref totalRank);
+         ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
          return totalRank;
       }
 
@@ -104,15 +104,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          }
       }
 
-      protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, ref double rank)
+      protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, IReadOnlyList<MetaDataCategory> metaDataCategories, ref double rank)
       {
          var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
-         foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count == 1))
+         foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
             Parameters.Add(new MetaDataFormatParameter(header, header));
          }
-         foreach (var header in discreteColumns.Where(h => data.GetColumnDescription(h).ExistingValues.Count > 1))
+         foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
          {
             keys.Remove(header);
             Parameters.Add(new GroupByDataFormatParameter(header));
