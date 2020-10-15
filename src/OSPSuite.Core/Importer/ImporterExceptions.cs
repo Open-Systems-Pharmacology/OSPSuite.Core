@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Importer
       {
       }
    }
+
    public class NullNamingConventionsException : OSPSuiteException
    {
       public NullNamingConventionsException() : base("Column naming conventions cannot be null.")

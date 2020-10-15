@@ -1,10 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
+   public class ImportTriggeredEventArgs : EventArgs
+   {
+      public IDataSource DataSource { get; set; }
+   }
+
    public interface IImporterTiledPresenter : IPresenter<IImporterTiledView>
    {
       void SetSettings(
@@ -14,5 +21,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       );
       void AddConfirmationView();
       void AddDataMappingView();
+
+      event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
    }
 }

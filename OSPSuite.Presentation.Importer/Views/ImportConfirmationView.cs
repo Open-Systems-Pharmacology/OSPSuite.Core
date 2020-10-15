@@ -18,6 +18,7 @@ namespace OSPSuite.Presentation.Importer.Views
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => this.DoWithinExceptionHandler(() =>
             namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}")));
+         //importButton.Click += 
          keysListBox.SelectedIndexChanged += (s, a) => buttonAdd.Enabled = keysListBox.SelectedItems.Any();
          buttonAdd.Enabled = false;
       }

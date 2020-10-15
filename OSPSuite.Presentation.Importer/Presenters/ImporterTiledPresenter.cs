@@ -65,5 +65,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _view.AddImporterView(_importerPresenter.View);
       }
+
+      public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
    }
 }

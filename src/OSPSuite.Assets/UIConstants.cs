@@ -365,6 +365,7 @@ namespace OSPSuite.Assets
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:  ";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
+         public static readonly string ConfirmationImport = "Import";
 
          public class ToolTips
          {

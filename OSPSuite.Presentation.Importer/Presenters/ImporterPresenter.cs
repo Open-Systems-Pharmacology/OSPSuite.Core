@@ -33,8 +33,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       public event EventHandler OnImportAllSheets = delegate { };
 
-      public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
-
       public ImporterPresenter
       (
          IImporterView view, 
