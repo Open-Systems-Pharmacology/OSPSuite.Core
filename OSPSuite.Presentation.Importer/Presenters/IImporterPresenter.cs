@@ -8,11 +8,6 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public class ImportTriggeredEventArgs : EventArgs
-   {
-      public IDataSource DataSource { get; set; }
-   }
-
    public class ImportSingleSheetEventArgs : EventArgs
    {
       public string SheetName { get; set; }
@@ -37,7 +32,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       
       event EventHandler OnImportAllSheets;
 
-      event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
