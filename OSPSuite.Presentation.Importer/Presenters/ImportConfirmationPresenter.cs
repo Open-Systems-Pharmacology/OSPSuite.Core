@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          setNames(namingConvention);
       }
 
-      public void ImportDataForConfirmation(string fileName, IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
+      public void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings)
       {
          _fileName = fileName; //should we set this every time?
          _mappings = mappings;
@@ -41,8 +41,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          keys.AddRange(_mappings.Select(m => m.Id));
          View.SetNamingConventionKeys(keys);
-         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
+      }
 
+      public void AddSheets(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
+         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Data.Select(p => p.Data)); //todo clarify if this here is in the correct place
+      }
+
+      public void SetNamingConventions (IEnumerable<string> namingConventions)
+      {
          if (namingConventions == null)
             throw new NullNamingConventionsException();
 
@@ -53,6 +61,38 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          _view.SetNamingConventions(conventions);
          setNames(conventions.First());
+      }
+      public void ImportDataForConfirmation(string fileName, IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
+      {
+         //Set mappings ( string fileName, IEnumerable<MetaDataMappingConverter> mappings)
+         _fileName = fileName; //should we set this every time?
+         _mappings = mappings;
+         var keys = new List<string>()
+         {
+            Constants.FILE,
+            Constants.SHEET
+         };
+         keys.AddRange(_mappings.Select(m => m.Id));
+         View.SetNamingConventionKeys(keys);
+         //---------------
+
+
+         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
+
+         //Set naming conventions
+         if (namingConventions == null)
+            throw new NullNamingConventionsException();
+
+         var conventions = namingConventions.ToList();
+
+         if (conventions.Count == 0)
+            throw new EmptyNamingConventionsException();
+
+         _view.SetNamingConventions(conventions);
+         setNames(conventions.First());
+         //---------------
+
+
          _plainData = _dataSource.DataSets.SelectMany(ds => ds.Data.Select(p => p.Data));
       }
 

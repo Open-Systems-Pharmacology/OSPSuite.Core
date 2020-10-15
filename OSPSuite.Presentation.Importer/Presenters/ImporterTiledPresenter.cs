@@ -45,8 +45,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       private void startImport(Cache<string, IDataSheet> sheets)
       {
+         //i think the best choice here is really to make everything public....i do not see anything else that would make sense
+         //otherwise we could pass the _confirmationPresenter to the _importerPresenter (too coupled)
+         //or break down the getData to 3 functions (meaningless) or pack everything in an object (also do not like)
          _importerPresenter.GetDataForImport(out var fileName, out var format, out var columnInfos, out var namingConventions, out var mappings);
-         _confirmationPresenter.ImportDataForConfirmation(fileName, format, sheets, columnInfos, namingConventions, mappings);
+
+         
+         _confirmationPresenter.SetMappings(fileName, mappings);
+         _confirmationPresenter.AddSheets(format, sheets, columnInfos);
+         _confirmationPresenter.SetNamingConventions(namingConventions);
+
+         //_confirmationPresenter.ImportDataForConfirmation(fileName, format, sheets, columnInfos, namingConventions, mappings);
 
          AddConfirmationView();
          View.EnableConfirmationView();

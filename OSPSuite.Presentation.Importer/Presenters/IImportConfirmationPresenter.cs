@@ -11,5 +11,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       void ImportDataForConfirmation(string fileName,  IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings);
       void TriggerNamingConventionChanged(string namingConvention);
+      void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
+      void AddSheets(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
+      void SetNamingConventions(IEnumerable<string> namingConventions);
    }
 }
