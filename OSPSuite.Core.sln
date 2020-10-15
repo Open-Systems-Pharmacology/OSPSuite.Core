@@ -29,13 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Core.IntegrationTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation", "src\OSPSuite.Presentation\OSPSuite.Presentation.csproj", "{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.DeprecatedImporter", "src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.DeprecatedImporter.csproj", "{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Presentation.Tests", "tests\OSPSuite.Presentation.Tests\OSPSuite.Presentation.Tests.csproj", "{4B2DDBFB-6DC8-45D0-B24E-0B64FB74B93C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.UI", "src\OSPSuite.UI\OSPSuite.UI.csproj", "{AC617E4A-028B-4BFF-993C-3EA34EB042B4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.UI.Importer", "src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj", "{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.UI.Tests", "tests\OSPSuite.UI.Tests\OSPSuite.UI.Tests.csproj", "{D17000A2-5981-44EE-85FA-FDE93DF8D8D3}"
 EndProject
@@ -103,10 +99,6 @@ Global
 		{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9ABCE50-65D6-4E4C-A4F1-730A4FEECC46}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B2DDBFB-6DC8-45D0-B24E-0B64FB74B93C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B2DDBFB-6DC8-45D0-B24E-0B64FB74B93C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B2DDBFB-6DC8-45D0-B24E-0B64FB74B93C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -115,10 +107,6 @@ Global
 		{AC617E4A-028B-4BFF-993C-3EA34EB042B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC617E4A-028B-4BFF-993C-3EA34EB042B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC617E4A-028B-4BFF-993C-3EA34EB042B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D17000A2-5981-44EE-85FA-FDE93DF8D8D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D17000A2-5981-44EE-85FA-FDE93DF8D8D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17000A2-5981-44EE-85FA-FDE93DF8D8D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
