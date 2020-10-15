@@ -5,8 +5,10 @@ using DevExpress.XtraEditors;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
+using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
 
 namespace OSPSuite.Starter.Presenters
@@ -23,30 +25,40 @@ namespace OSPSuite.Starter.Presenters
 
    public class ImporterTestPresenter : AbstractPresenter<IImporterTestView, IImporterTestPresenter>, IImporterTestPresenter
    {
-      private readonly IDataImporter _importer;
+      private readonly IImporterTiledPresenter _importer;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
 
-      public ImporterTestPresenter(IImporterTestView view, IDataImporter importer, IImporterConfigurationDataGenerator dataGenerator)
+      public ImporterTestPresenter(IImporterTestView view, IImporterTiledPresenter importer, IImporterConfigurationDataGenerator dataGenerator)
          : base(view)
       {
          _importer = importer;
          _dataGenerator = dataGenerator;
       }
 
+      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
+      {
+         var starter = new TestStarter<IImporterTiledPresenter>();
+         starter.Start(1000, 600);
+         starter.Presenter.SetSettings(categories, columns, settings);
+      }
+
       public void StartWithTestForGroupBySettings()
       {
-         promptForImports(_importer.ImportDataSets(
-            _dataGenerator.DefaultGroupByTestMetaDataCategories(),
+         StartImporterExcelView
+         (
+            _dataGenerator.DefaultGroupByTestMetaDataCategories(), 
             _dataGenerator.DefaultGroupByConcentrationImportConfiguration(),
-            new DataImporterSettings()).ToList());
+            new DataImporterSettings()
+         );
       }
 
       public void StartWithTestSettings()
       {
-         promptForImports(_importer.ImportDataSets(
+         StartImporterExcelView(
             _dataGenerator.DefaultTestMetaDataCategories(),
             _dataGenerator.DefaultTestConcentrationImportConfiguration(),
-            new DataImporterSettings()).ToList());
+            new DataImporterSettings()
+         );
       }
 
       public void StartWithMoBiSettings()
@@ -56,12 +68,13 @@ namespace OSPSuite.Starter.Presenters
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
 
-         var dataSets = _importer.ImportDataSets(
+         StartImporterExcelView(
             _dataGenerator.DefaultMoBiMetaDataCategories(),
             _dataGenerator.DefaultMoBiConcentrationImportConfiguration(),
-            dataImporterSettings).ToList();
+            dataImporterSettings
+         );
 
-         promptForImports(dataSets);
+         //promptForImports(dataSets);
       }
 
       public void StartWithPKSimSettings()
@@ -69,12 +82,12 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var dataSets = _importer.ImportDataSets(
+         StartImporterExcelView
+         (
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings).ToList();
-
-         promptForImports(dataSets);
+            dataImporterSettings
+         );
       }
 
       public void StartPKSimSingleMode()
@@ -82,12 +95,13 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var dataSet = _importer.ImportDataSet(
+         StartImporterExcelView(
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings);
+            dataImporterSettings
+         );
 
-         promptForImports(new List<DataRepository> { dataSet });
+         //promptForImports(new List<DataRepository> { dataSet });
       }
 
       private static void promptForImports(List<DataRepository> dataSets)
@@ -104,8 +118,11 @@ namespace OSPSuite.Starter.Presenters
             Caption = "PK-Sim - Import Ontogeny"
          };
 
-         var dataSets = _importer.ImportDataSets(new List<MetaDataCategory>(), _dataGenerator.GetOntogenyColumnInfo(), dataImporterSettings);
-         promptForImports(dataSets.ToList());
+         StartImporterExcelView(
+            new List<MetaDataCategory>(), 
+            _dataGenerator.GetOntogenyColumnInfo(), 
+            dataImporterSettings
+         );
       }
    }
 }
