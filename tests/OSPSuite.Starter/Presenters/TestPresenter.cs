@@ -44,7 +44,6 @@ namespace OSPSuite.Starter.Presenters
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
-      private readonly IDialogCreator _dialogCreator;
 
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
@@ -59,8 +58,6 @@ namespace OSPSuite.Starter.Presenters
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
          _dataGenerator = dataGenerator;
-         _dialogCreator = dialogCreator;
-
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
@@ -107,11 +104,6 @@ namespace OSPSuite.Starter.Presenters
       {
          Parameter parameter = null;
          this.DoWithinExceptionHandler(() => parameter.Value = 10);
-      }
-
-      private void startImportSuccessDialog(IDataSource dataSource)
-      {
-         _dialogCreator.MessageBoxInfo( dataSource.DataSets.Select(d => d.Data.Count()).Sum() + " data sets successfully imported");
       }
    }
 }

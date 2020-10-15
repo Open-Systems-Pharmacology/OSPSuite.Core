@@ -5,6 +5,8 @@ using DevExpress.XtraEditors;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Importer;
+using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
@@ -26,13 +28,15 @@ namespace OSPSuite.Starter.Presenters
    public class ImporterTestPresenter : AbstractPresenter<IImporterTestView, IImporterTestPresenter>, IImporterTestPresenter
    {
       private readonly IImporterTiledPresenter _importer;
+      private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
 
-      public ImporterTestPresenter(IImporterTestView view, IImporterTiledPresenter importer, IImporterConfigurationDataGenerator dataGenerator)
+      public ImporterTestPresenter(IImporterTestView view, IImporterTiledPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator)
          : base(view)
       {
          _importer = importer;
          _dataGenerator = dataGenerator;
+         _dialogCreator = dialogCreator;
       }
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
@@ -40,6 +44,7 @@ namespace OSPSuite.Starter.Presenters
          var starter = new TestStarter<IImporterTiledPresenter>();
          starter.Start(1000, 600);
          starter.Presenter.SetSettings(categories, columns, settings);
+         starter.Presenter.OnTriggerImport += startImportSuccessDialog;
       }
 
       public void StartWithTestForGroupBySettings()
@@ -110,6 +115,10 @@ namespace OSPSuite.Starter.Presenters
             XtraMessageBox.Show($"Transferred {dataSets.Count} Data Sets!");
       }
 
+      private void startImportSuccessDialog(object sender, ImportTriggeredEventArgs importTriggeredEventArgs)
+      {
+         _dialogCreator.MessageBoxInfo(importTriggeredEventArgs.DataSource.DataSets.Select(d => d.Data.Count()).Sum() + " data sets successfully imported");
+      }
 
       public void StartWithOntogenySettings()
       {
