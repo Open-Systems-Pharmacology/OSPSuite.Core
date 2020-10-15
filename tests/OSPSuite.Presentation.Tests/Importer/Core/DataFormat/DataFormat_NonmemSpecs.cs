@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
       protected override void Context()
       {
@@ -30,6 +31,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
          };
+         _metaDataCategories = new List<MetaDataCategory>()
+         {
+            new MetaDataCategory() {Name = "Organ"},
+            new MetaDataCategory() {Name = "Compartment"},
+            new MetaDataCategory() {Name = "Species"},
+            new MetaDataCategory() {Name = "Dose"},
+            new MetaDataCategory() {Name = "Molecule"},
+            new MetaDataCategory() {Name = "Route"}
+         };
+
          sut = new DataFormatNonmem();
          _basicFormat = new TestUnformattedData
          (
@@ -156,7 +167,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_basic_format()
       {
-         (sut.SetParameters(_basicFormat, _columnInfos) > 0).ShouldBeTrue();
+         (sut.SetParameters(_basicFormat, _columnInfos, _metaDataCategories) > 0).ShouldBeTrue();
       }
 
       [TestCase]
@@ -175,7 +186,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          sut.SetParameters
          (
             singleColumn,
-            _columnInfos
+            _columnInfos,
+            _metaDataCategories
          ).ShouldBeEqualTo(0);
       }
 
@@ -196,7 +208,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
-         sut.SetParameters(singleColumn, _columnInfos).ShouldBeEqualTo(0);
+         sut.SetParameters(singleColumn, _columnInfos, _metaDataCategories).ShouldBeEqualTo(0);
       }
    }
 
@@ -204,7 +216,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    {
       protected override void Because()
       {
-         sut.SetParameters(_basicFormat, _columnInfos);
+         sut.SetParameters(_basicFormat, _columnInfos, _metaDataCategories);
       }
 
       [TestCase]
@@ -241,8 +253,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_metadata_parameters()
       {
          var metadataParameters = sut.Parameters.Where(p => p is MetaDataFormatParameter).ToList();
-         metadataParameters.Count.ShouldBeEqualTo(5);
-         foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route" })
+         metadataParameters.Count.ShouldBeEqualTo(6);
+         foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route", "Molecule" })
          {
             metadataParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
          }
@@ -252,8 +264,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_groupBy_parameters()
       {
          var groupByParameters = sut.Parameters.Where(p => p is GroupByDataFormatParameter).ToList();
-         groupByParameters.Count.ShouldBeEqualTo(2);
-         foreach (var name in new[] { "Groupe Id", "Molecule" })
+         groupByParameters.Count.ShouldBeEqualTo(1);
+         foreach (var name in new[] { "Groupe Id" })
          {
             groupByParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
          }
@@ -297,7 +309,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData, _columnInfos);
+         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
       }
 
       [TestCase]

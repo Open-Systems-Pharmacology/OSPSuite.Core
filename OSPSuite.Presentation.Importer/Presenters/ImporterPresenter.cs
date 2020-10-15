@@ -22,6 +22,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
+      private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
 
       private IEnumerable<IDataFormat> _availableFormats;
@@ -137,12 +138,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataImporterSettings = dataImporterSettings;
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _columnInfos = columnInfos;
+         _metaDataCategories = metaDataCategories;
       }
 
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName);
+         _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);

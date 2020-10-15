@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Services
             new ColumnInfo() { DisplayName = "Error" }
          };
 
-         A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos)).Returns(1);
+         A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos, null)).Returns(1);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
@@ -66,7 +66,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void identify_basic_format()
       {
-         var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos, null);
          formats.Count().ShouldBeEqualTo(1);
       }
    }
@@ -212,6 +212,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDataSourceFileParser _parser;
       protected IDialogCreator _dialogCreator;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
       public override void GlobalContext()
       {
@@ -224,6 +225,15 @@ namespace OSPSuite.Presentation.Importer.Services
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" },
             new ColumnInfo() { DisplayName = "Error" }
+         };
+         _metaDataCategories = new List<MetaDataCategory>()
+         {
+            new MetaDataCategory() {Name = "Organ"},
+            new MetaDataCategory() {Name = "Compartment"},
+            new MetaDataCategory() {Name = "Species"},
+            new MetaDataCategory() {Name = "Dose"},
+            new MetaDataCategory() {Name = "Molecule"},
+            new MetaDataCategory() {Name = "Route"}
          };
 
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem() });
@@ -280,7 +290,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void rank_columns_format_highest_for_its_format()
       {
-         var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
          formats.First().ShouldBeAnInstanceOf(typeof(DataFormatHeadersWithUnits));
       }
    }
@@ -364,7 +374,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void rank_nonmem_highest_for_its_format()
       {
-         var formats = sut.AvailableFormats(_basicFormat, _columnInfos);
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
          formats.First().ShouldBeAnInstanceOf(typeof(DataFormatNonmem));
       }
    }

@@ -11,9 +11,9 @@ namespace OSPSuite.Presentation.Importer.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName);
+      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
       void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
       IEnumerable<string> NamesFromConvention
       (
@@ -35,10 +35,10 @@ namespace OSPSuite.Presentation.Importer.Services
          _parser = parser;
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Select(x => (x, x.SetParameters(data, columnInfos)))
+            .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
             .Where(p => p.Item2 > 0)
             .OrderByDescending(p => p.Item2)
             .Select(p => p.x);
@@ -71,14 +71,14 @@ namespace OSPSuite.Presentation.Importer.Services
          }
       }
 
-      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName)
+      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          //var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
          //in the presenter : if string == "" (Cancel clicked), then do not try to parse
 
 
          var dataSource = _parser.For(fileName);
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos).ToList();
+         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos, metaDataCategories).ToList();
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          //TODO: check that all sheets are supporting the formats...
          
