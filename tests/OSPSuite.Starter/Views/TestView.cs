@@ -31,7 +31,6 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
          startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
          startEmptyFormButton.Click += (sender, args) => OnEvent(_presenter.StartEmptyFormTest);
-         startImporterExcelViewButton.Click += (sender, args) => OnEvent(_presenter.StartImporterExcelView);
       }
 
       public override void InitializeResources()
@@ -54,7 +53,6 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
          startEmptyFormButton.Text = "Start Empty Form";
-         startImporterExcelViewButton.Text = "Start Importer View";
       }
 
       public void AttachPresenter(ITestPresenter presenter)

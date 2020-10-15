@@ -33,7 +33,6 @@ namespace OSPSuite.Starter.Presenters
       void StartHistogramTest();
       void StartMatrixTest();
       void StartEmptyFormTest();
-      void StartImporterExcelView();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -108,20 +107,6 @@ namespace OSPSuite.Starter.Presenters
       {
          Parameter parameter = null;
          this.DoWithinExceptionHandler(() => parameter.Value = 10);
-      }
-
-      public void StartImporterExcelView()
-      {
-         var starter = new TestStarter<IImporterTiledPresenter>();
-         starter.Start(1000, 600);
-
-         var dataImporterSettings = new DataImporterSettings();
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         starter.Presenter.SetSettings(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings);
       }
 
       private void startImportSuccessDialog(IDataSource dataSource)
