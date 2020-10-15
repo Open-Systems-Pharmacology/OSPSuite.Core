@@ -20,7 +20,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IImporter _importer;
-      private readonly IApplicationController _applicationController;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private DataImporterSettings _dataImporterSettings;
@@ -42,12 +41,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IDataViewingPresenter dataViewingPresenter, 
          IColumnMappingPresenter columnMappingPresenter, 
          ISourceFilePresenter sourceFilePresenter,
-         IApplicationController applicationController,
          IImporter importer
       ) : base(view)
       {
          _importer = importer;
-         _applicationController = applicationController;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
