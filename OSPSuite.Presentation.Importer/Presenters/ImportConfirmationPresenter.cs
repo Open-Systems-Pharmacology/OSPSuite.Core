@@ -1,4 +1,5 @@
-﻿using OSPSuite.Presentation.Importer.Core;
+﻿using System;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
@@ -18,6 +19,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IDataSource _dataSource;
       private IEnumerable<IReadOnlyDictionary<Column, IList<ValueAndLloq>>> _plainData;
       private IEnumerable<MetaDataMappingConverter> _mappings;
+
+      public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
       {
@@ -62,6 +65,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.SetNamingConventions(conventions);
          setNames(conventions.First());
       }
+
+      public void ImportData()
+      {
+         OnImportData.Invoke(this, new ImportDataEventArgs { DataSource = _dataSource });
+      }
+
       public void ImportDataForConfirmation(string fileName, IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
       {
          //Set mappings ( string fileName, IEnumerable<MetaDataMappingConverter> mappings)
