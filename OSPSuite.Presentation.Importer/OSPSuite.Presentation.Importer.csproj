@@ -296,10 +296,6 @@
       <Project>{5CBFB5CA-1F1B-44CB-9C51-0C7904B12AD5}</Project>
       <Name>OSPSuite.Presentation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj">
-      <Project>{6B501AF0-ACC0-4051-8FDE-9E8A92DB22D8}</Project>
-      <Name>OSPSuite.UI.Importer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\src\OSPSuite.UI\OSPSuite.UI.csproj">
       <Project>{AC617E4A-028B-4BFF-993C-3EA34EB042B4}</Project>
       <Name>OSPSuite.UI</Name>
