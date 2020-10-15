@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
+         _confirmationPresenter.OnImportData += ImportData;
          _importerPresenter.OnImportAllSheets += ImportAllSheets;
          _importerPresenter.OnImportSingleSheet += ImportSingleSheet;
          _view.AddImporterView(_importerPresenter.View);
@@ -33,11 +34,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view.AddConfirmationView(_confirmationPresenter.View);
       }
 
+      public void ImportData(object sender, ImportDataEventArgs e)
+      {
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = e.DataSource });
+      }
 
       public void ImportAllSheets(object sender, EventArgs e)
       {
          startImport(_importerPresenter.GetAllSheets());
       }
+
       public void ImportSingleSheet(object sender, ImportSingleSheetEventArgs args)
       {
          startImport(new Cache<string, IDataSheet>() { { args.SheetName, _importerPresenter.GetSingleSheet(args.SheetName) } });
