@@ -80,14 +80,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs {Format = format.Name});
       }
 
-      public void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos,
-         out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings)
+
+      public IEnumerable<string> GetNamingConventions()
       {
-         fileName = _dataSourceFile.Path;
-         format = _columnMappingPresenter.GetDataFormat();
-         columnInfos = _columnInfos;
-         namingConventions = _dataImporterSettings.NamingConventions;
-         mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         return _dataImporterSettings.NamingConventions;
+      }
+
+      public IDataSource GetDataSource(Cache<string, IDataSheet> sheets)
+      {
+         var dataSource = new DataSource(_importer);
+
+         var mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
             Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
@@ -99,6 +102,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
                Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
          );
+
+         dataSource.SetMappings(_dataSourceFile.Path, mappings);
+         dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
+         dataSource.AddSheets( sheets, _columnInfos);
+
+         return dataSource;
       }
 
       public Cache<string, IDataSheet> GetAllSheets()

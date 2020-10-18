@@ -13,11 +13,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public IDataSource DataSource { get; set; }
    }
    public interface IImportConfirmationPresenter : IPresenter<IImportConfirmationView>
-   {
-      void ImportDataForConfirmation(string fileName,  IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings);
-      void TriggerNamingConventionChanged(string namingConvention);
-      void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
-      void AddSheets(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
+   {void TriggerNamingConventionChanged(string namingConvention);
+      void SetDataSource(IDataSource dataSource);
       void SetNamingConventions(IEnumerable<string> namingConventions);
       void ImportData();
 
