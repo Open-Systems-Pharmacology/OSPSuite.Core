@@ -36,7 +36,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
-      void GetDataForImport(out string fileName, out IDataFormat format, out IReadOnlyList<ColumnInfo> columnInfos, out IEnumerable<string> namingConventions, out IEnumerable<MetaDataMappingConverter> mappings);
+      IEnumerable<string> GetNamingConventions();
+
+      //todo refactor GetDataSource
+      IDataSource GetDataSource(Cache<string, IDataSheet> sheets); //temporary solution, we should not need to provide back the sheets
       Cache<string, IDataSheet> GetAllSheets();
       IDataSheet GetSingleSheet(string sheetName);
       void ImportDataForConfirmation();

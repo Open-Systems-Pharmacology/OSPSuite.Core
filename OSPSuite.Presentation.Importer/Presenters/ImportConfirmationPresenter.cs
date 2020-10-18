@@ -14,18 +14,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class ImportConfirmationPresenter : AbstractPresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
    {
       private IImporter _importer;
-      private string _namingConvention { get; set; }
-      private string _fileName;
       private IDataSource _dataSource;
-      private IEnumerable<IReadOnlyDictionary<Column, IList<ValueAndLloq>>> _plainData;
-      private IEnumerable<MetaDataMappingConverter> _mappings;
+      
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
       {
          _importer = importer;
-         _dataSource = new DataSource();
+         _dataSource = new DataSource(_importer); //we re just initializing to empty...
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
@@ -33,23 +30,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          setNames(namingConvention);
       }
 
-      public void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings)
+      public void SetDataSource(IDataSource dataSource)
       {
-         _fileName = fileName; //should we set this every time?
-         _mappings = mappings;
-         var keys = new List<string>()
-         {
-            Constants.FILE,
-            Constants.SHEET
-         };
-         keys.AddRange(_mappings.Select(m => m.Id));
-         View.SetNamingConventionKeys(keys);
-      }
-
-      public void AddSheets(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
-      {
-         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
-         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Data.Select(p => p.Data)); //todo clarify if this here is in the correct place
+         _dataSource = dataSource;
       }
 
       public void SetNamingConventions (IEnumerable<string> namingConventions)
@@ -71,47 +54,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          OnImportData.Invoke(this, new ImportDataEventArgs { DataSource = _dataSource });
       }
 
-      public void ImportDataForConfirmation(string fileName, IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IEnumerable<string> namingConventions, IEnumerable<MetaDataMappingConverter> mappings)
-      {
-         //Set mappings ( string fileName, IEnumerable<MetaDataMappingConverter> mappings)
-         _fileName = fileName; //should we set this every time?
-         _mappings = mappings;
-         var keys = new List<string>()
-         {
-            Constants.FILE,
-            Constants.SHEET
-         };
-         keys.AddRange(_mappings.Select(m => m.Id));
-         View.SetNamingConventionKeys(keys);
-         //---------------
-
-
-         _importer.AddFromFile(format, dataSheets, columnInfos, _dataSource);
-
-         //Set naming conventions
-         if (namingConventions == null)
-            throw new NullNamingConventionsException();
-
-         var conventions = namingConventions.ToList();
-
-         if (conventions.Count == 0)
-            throw new EmptyNamingConventionsException();
-
-         _view.SetNamingConventions(conventions);
-         setNames(conventions.First());
-         //---------------
-
-
-         _plainData = _dataSource.DataSets.SelectMany(ds => ds.Data.Select(p => p.Data));
-      }
-
       private void setNames(string namingConvention)
       {
-         _namingConvention = namingConvention;
-         _view.SetDataSetNames
-         (
-            _importer.NamesFromConvention(_namingConvention, _fileName, _dataSource.DataSets, _mappings)
-         );
+         _dataSource.SetNamingConvention(namingConvention);
+         _view.SetDataSetNames(_dataSource.NamesFromConvention());
       }
    }
 }
