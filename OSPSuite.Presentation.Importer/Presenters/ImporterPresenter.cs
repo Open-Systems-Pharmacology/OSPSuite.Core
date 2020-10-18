@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;

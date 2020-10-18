@@ -3,8 +3,7 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
 using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Core.Importer;
-using OSPSuite.Utility.Collections;
+
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {

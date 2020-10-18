@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OSPSuite.Presentation.Importer.Core
+﻿namespace OSPSuite.Presentation.Importer.Core
 {
    class ImporterConfiguration 
    {

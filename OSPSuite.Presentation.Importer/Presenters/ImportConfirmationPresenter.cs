@@ -6,8 +6,7 @@ using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Importer;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Domain;
+
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
