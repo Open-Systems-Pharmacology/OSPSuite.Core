@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
-using OSPSuite.Presentation.Importer.Presenters;
-using OSPSuite.Presentation.Views;
+using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Utility.Reflection;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.Presentation.Views.Importer
 {
    public class ColumnMappingDTO : Notifier
    {

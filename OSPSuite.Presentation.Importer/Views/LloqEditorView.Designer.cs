@@ -1,7 +1,7 @@
 ﻿using DevExpress.XtraEditors.Controls;
-using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI.Views;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Presentation.Importer.Views
 {

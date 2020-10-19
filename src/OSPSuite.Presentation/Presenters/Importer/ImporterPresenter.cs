@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 { 
    internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {

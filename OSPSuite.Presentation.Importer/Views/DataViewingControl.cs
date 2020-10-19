@@ -1,6 +1,7 @@
 ﻿using System.Linq;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
-using OSPSuite.Presentation.Importer.Presenters;
 
 namespace OSPSuite.Presentation.Importer.Views
 {

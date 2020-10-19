@@ -1,11 +1,9 @@
 ﻿using System;
-using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Utility.Collections;
+using OSPSuite.Presentation.Views.Importer;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class ImportSheetsEventArgs : EventArgs
    {

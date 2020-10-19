@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
-using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
+using OSPSuite.Presentation.Views.Importer;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    /// <summary>
    ///    Event arguments for OnMissingMapping event.

@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Presentation.Importer.Presenters;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -10,6 +9,7 @@ using DevExpress.Utils;
 using DevExpress.XtraLayout;
 using DevExpress.XtraEditors.Controls;
 using System.Collections.Generic;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Views;
 
 namespace OSPSuite.Presentation.Importer.Views

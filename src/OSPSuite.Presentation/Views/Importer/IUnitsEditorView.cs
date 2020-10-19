@@ -1,9 +1,8 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Presentation.Importer.Presenters;
-using OSPSuite.Presentation.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Presentation.Presenters.Importer;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.Presentation.Views.Importer
 {
    public interface IUnitsEditorView : IModalView<IUnitsEditorPresenter>
    {
