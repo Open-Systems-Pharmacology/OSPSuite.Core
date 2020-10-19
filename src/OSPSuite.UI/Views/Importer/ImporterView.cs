@@ -1,15 +1,15 @@
-﻿using OSPSuite.UI.Controls;
-using OSPSuite.UI.Extensions;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    public partial class ImporterView : BaseUserControl , IImporterView
    {

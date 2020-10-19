@@ -7,7 +7,7 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {

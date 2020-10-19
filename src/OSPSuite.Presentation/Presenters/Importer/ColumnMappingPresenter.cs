@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private List<ColumnMappingDTO> _mappings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private readonly IImporterTask _importerTask;
+      private readonly IImporter _importer;
       private readonly IApplicationController _applicationController;
       private IList<DataFormatParameter> _originalFormat;
       private IList<string> _extraColumns;
@@ -24,11 +24,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public ColumnMappingPresenter
       (
          IColumnMappingControl view,
-         IImporterTask importerTask,
+         IImporter importer,
          IApplicationController applicationController
       ) : base(view)
       {
-         _importerTask = importerTask;
+         _importer = importer;
          _applicationController = applicationController;
       }
 
@@ -57,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                c.Name,
                ColumnMappingFormatter.Stringify(target),
                target,
-               _importerTask.GetImageIndex(new MappingDataFormatParameter("", null))
+               _importer.GetImageIndex(new MappingDataFormatParameter("", null))
             );
          }).Union
          (
@@ -70,7 +70,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   md.Name,
                   ColumnMappingFormatter.Stringify(target),
                   target,
-                  _importerTask.GetImageIndex(new MetaDataFormatParameter("", ""))
+                  _importer.GetImageIndex(new MetaDataFormatParameter("", ""))
                );
             })
          ).Union
@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      Captions.GroupByTitle,
                      ColumnMappingFormatter.Stringify(gb),
                      gb,
-                     _importerTask.GetImageIndex(gb)
+                     _importer.GetImageIndex(gb)
                   );
                }
             )
@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                Captions.AddGroupByTitle,
                null,
                new AddGroupByFormatParameter(""),
-               _importerTask.GetImageIndex(new GroupByDataFormatParameter(""))
+               _importer.GetImageIndex(new GroupByDataFormatParameter(""))
             )
          ).ToList();
          View.SetMappingSource(_mappings);
@@ -451,7 +451,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ValidateMapping()
       {
-         var missingColumn = _importerTask.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
+         var missingColumn = _importer.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
          if (missingColumn != null)
          {
             OnMissingMapping(this, new MissingMappingEventArgs {Message = missingColumn});
