@@ -1,7 +1,7 @@
 ﻿using System;
-using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Importer.Views;
 
 

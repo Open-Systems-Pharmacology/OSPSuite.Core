@@ -23,11 +23,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NPOI" Version="2.5.1" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
     <PackageReference Include="LumenWorksCsvReader" Version="4.0.0" />
   </ItemGroup>
@@ -46,6 +48,15 @@
       <PackagePath></PackagePath>
       <Pack>True</Pack>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Core\MetaDataColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Core\MetaDataTable.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
 
 

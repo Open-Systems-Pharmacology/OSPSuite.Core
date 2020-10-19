@@ -10,6 +10,9 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Services;
@@ -21,10 +24,7 @@ using OSPSuite.Starter.Views;
 using OSPSuite.UI.Services;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer;
 
 namespace OSPSuite.Starter

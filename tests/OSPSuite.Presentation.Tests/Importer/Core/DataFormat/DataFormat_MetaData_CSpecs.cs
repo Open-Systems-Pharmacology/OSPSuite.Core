@@ -2,10 +2,11 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Importer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat

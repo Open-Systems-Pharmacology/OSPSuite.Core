@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 

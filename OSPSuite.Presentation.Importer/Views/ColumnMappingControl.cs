@@ -13,7 +13,7 @@ using OSPSuite.Assets;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.UI;
 using OSPSuite.UI.Controls;

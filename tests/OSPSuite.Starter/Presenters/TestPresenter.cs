@@ -1,7 +1,5 @@
 ﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Importer.Presenters;
-using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Tasks.Starters;
@@ -9,7 +7,6 @@ using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Importer.Core;
 using System.Linq;
 
 namespace OSPSuite.Starter.Presenters
