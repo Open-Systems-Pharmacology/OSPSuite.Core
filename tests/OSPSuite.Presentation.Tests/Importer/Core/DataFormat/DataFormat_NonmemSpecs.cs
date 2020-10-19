@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Core.Importer.DataFormat
+namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    internal class TestUnformattedData : UnformattedData
    {

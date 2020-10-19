@@ -1,0 +1,110 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using DevExpress.Utils.Extensions;
+using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
+using OSPSuite.Utility.Collections;
+using IoC = OSPSuite.Utility.Container.IContainer;
+
+namespace OSPSuite.Presentation.Importer.Services
+{
+   public interface IImporter
+   {
+      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+
+      IEnumerable<string> NamesFromConvention
+      (
+         string namingConvention,
+         string fileName,
+         Cache<string, IDataSet> dataSets,
+         IEnumerable<MetaDataMappingConverter> mappings
+      );
+   }
+
+   public class Importer : IImporter
+   {
+      private readonly IoC _container;
+      private readonly IDataSourceFileParser _parser;
+
+      public Importer( IoC container, IDataSourceFileParser parser)
+      {
+         _container = container;
+         _parser = parser;
+      }
+
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         return _container.ResolveAll<IDataFormat>()
+            .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
+            .Where(p => p.Item2 > 0)
+            .OrderByDescending(p => p.Item2)
+            .Select(p => p.x);
+      }
+
+      public void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
+      {
+         var dataSets = new Cache<string, IDataSet>();
+
+         foreach (var s in dataSheets.KeyValues)
+         {
+            dataSets.Add(s.Key, new DataSet()
+            {
+               Data = format.Parse(s.Value.RawData, columnInfos)
+            });
+         }
+
+         foreach (var key in dataSets.Keys)
+         {
+            //TODO implement GetOrAdd() as a method for Cache, in order not to be doing this all the time
+            IDataSet current;
+            if (alreadyExisting.DataSets.Contains(key))
+               current = alreadyExisting.DataSets[key];
+            else
+            {
+               current = new DataSet();
+               alreadyExisting.DataSets.Add(key, current);
+            }
+            current.Data = current.Data.Union(dataSets[key].Data);
+         }
+      }
+
+      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         //var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
+         //in the presenter : if string == "" (Cancel clicked), then do not try to parse
+
+
+         var dataSource = _parser.For(fileName);
+         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos, metaDataCategories).ToList();
+         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
+         //TODO: check that all sheets are supporting the formats...
+         
+         return dataSource;
+      }
+
+      public IEnumerable<string> NamesFromConvention
+      (
+         string namingConvention,
+         string fileName,
+         Cache<string, IDataSet> dataSets,
+         IEnumerable<MetaDataMappingConverter> mappings
+      )
+      {
+         fileName = Path.GetFileNameWithoutExtension(fileName);
+         var counters = new Dictionary<string, int>();
+         // Iterate over the list of datasets to generate a unique name for each one based on the naming convention
+         return dataSets.KeyValues.SelectMany(ds => ds.Value.Data.Select(s =>
+         {
+            // Obtain the key first before checking if it already is taken by any other dataset
+            var key = s.NameFromConvention(mappings, namingConvention, fileName, ds.Key);
+            var counter = counters.GetOrAdd(key, (_) => 0);
+            counters[key]++;
+            // Only add a number (for making it unique) to the name if the key already existed in the counters
+            return key + (counter > 0 ? $"_{counter}" : "");
+         })).ToList();
+      }
+   }
+}

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using LumenWorks.Framework.IO.Csv;
 
-namespace OSPSuite.Core.Importer.Services
+namespace OSPSuite.Infrastructure.Import.Services
 {
    public class CsvReaderDisposer : IDisposable
    {

@@ -2,14 +2,14 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace OSPSuite.Core.Importer.DataSourceFileReaders
+namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
 
    public abstract class ConcernForExcelDataSourceFile : ContextSpecification<ExcelDataSourceFile>
