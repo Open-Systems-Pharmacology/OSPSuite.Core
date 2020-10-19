@@ -2,17 +2,17 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Core.Importer;
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraCharts.Designer.Native;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Importer.DataFormat;
+using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Core.Importer.Services 
+namespace OSPSuite.Presentation.Importer.Services 
 {
    class ParsedDataSetTest : ParsedDataSet
    {

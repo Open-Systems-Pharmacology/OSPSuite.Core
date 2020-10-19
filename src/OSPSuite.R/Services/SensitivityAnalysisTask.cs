@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Extensions;

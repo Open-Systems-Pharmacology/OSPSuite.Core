@@ -11,7 +11,7 @@ using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Importer.Services
+namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IIndividualValuesCacheImporter
    {

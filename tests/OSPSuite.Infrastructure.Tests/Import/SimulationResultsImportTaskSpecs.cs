@@ -10,7 +10,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Infrastructure.Import

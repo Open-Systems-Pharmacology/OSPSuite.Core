@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Core.Importer.Services
+﻿namespace OSPSuite.Infrastructure.Import.Services
 {
    public class SimulationResultsImportFile : ImportLogger
    {

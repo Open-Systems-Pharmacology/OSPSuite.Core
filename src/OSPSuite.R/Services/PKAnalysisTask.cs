@@ -3,7 +3,7 @@ using System.Threading;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility.Extensions;
 using ICorePKAnalysisTask = OSPSuite.Core.Domain.Services.IPKAnalysesTask;

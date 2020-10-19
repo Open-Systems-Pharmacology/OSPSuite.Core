@@ -3,7 +3,7 @@ using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 
-namespace OSPSuite.Core.Importer.Services
+namespace OSPSuite.Infrastructure.Import.Services
 {
    public class SensitivityAnalysisRunResultsImport : ImportLogger
    {

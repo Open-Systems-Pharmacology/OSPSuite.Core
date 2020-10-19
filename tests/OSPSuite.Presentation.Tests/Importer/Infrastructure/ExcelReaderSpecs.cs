@@ -4,9 +4,9 @@ using OSPSuite.BDDHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using OSPSuite.Core.Importer;
+using OSPSuite.Presentation.Importer.Core;
 
-namespace OSPSuite.Core.Importer.Readers
+namespace OSPSuite.Presentation.Importer.Infrastructure
 {
    public abstract class ConcernForExcelReader : ContextSpecification<ExcelReader>
    {

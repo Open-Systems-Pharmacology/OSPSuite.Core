@@ -6,7 +6,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Importer.Services
+namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IImportLogger : IOSPLogger
    {

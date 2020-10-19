@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;

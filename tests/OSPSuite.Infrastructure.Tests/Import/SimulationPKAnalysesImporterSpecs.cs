@@ -6,7 +6,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
-using OSPSuite.Core.Importer.Services;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import

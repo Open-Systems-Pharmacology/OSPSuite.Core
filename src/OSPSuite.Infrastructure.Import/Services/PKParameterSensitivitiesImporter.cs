@@ -10,7 +10,7 @@ using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants.SensitivityAnalysisResults;
 
-namespace OSPSuite.Core.Importer.Services
+namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IPKParameterSensitivitiesImporter
    {

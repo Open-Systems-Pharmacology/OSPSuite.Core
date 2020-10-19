@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Core.Importer.DataFormat
+namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public abstract class ConcernforDataFormat_TMetaData_C : ContextSpecification<DataFormatHeadersWithUnits>
    {

@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Export\OSPSuite.Infrastructure.Export.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
