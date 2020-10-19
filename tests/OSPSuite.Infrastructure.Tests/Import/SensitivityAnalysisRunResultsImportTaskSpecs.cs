@@ -8,7 +8,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Core.Importer.Services;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Infrastructure.Import

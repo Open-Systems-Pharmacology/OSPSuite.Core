@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.Infrastructure.Import.Services
+namespace OSPSuite.Core.Importer.Services
 {
    public interface ISimulationPKParametersImportTask
    {

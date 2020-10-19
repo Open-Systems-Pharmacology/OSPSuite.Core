@@ -6,8 +6,8 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Services;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Infrastructure;
+using OSPSuite.Core.Importer;
+using OSPSuite.Core.Importer.Readers;
 
 
 namespace OSPSuite.Infrastructure.Export

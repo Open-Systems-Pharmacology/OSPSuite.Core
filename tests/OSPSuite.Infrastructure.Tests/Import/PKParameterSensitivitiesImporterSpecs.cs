@@ -6,7 +6,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Helpers;
-using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Core.Importer.Services;
 
 namespace OSPSuite.Infrastructure.Import
 {

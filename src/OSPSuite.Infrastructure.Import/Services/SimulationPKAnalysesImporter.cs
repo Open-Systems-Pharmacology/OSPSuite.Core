@@ -13,7 +13,7 @@ using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants.Dimension;
 
-namespace OSPSuite.Infrastructure.Import.Services
+namespace OSPSuite.Core.Importer.Services
 {
    public interface ISimulationPKAnalysesImporter
    {

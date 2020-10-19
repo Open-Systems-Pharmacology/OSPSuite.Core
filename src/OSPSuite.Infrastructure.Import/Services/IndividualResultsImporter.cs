@@ -13,7 +13,7 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Infrastructure.Import.Services
+namespace OSPSuite.Core.Importer.Services
 {
    public interface IIndividualResultsImporter
    {
