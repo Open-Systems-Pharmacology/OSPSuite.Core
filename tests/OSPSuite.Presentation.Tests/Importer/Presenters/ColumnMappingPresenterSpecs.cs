@@ -4,14 +4,14 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Importer;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
-using OSPSuite.Presentation.Importer.Services;
-using OSPSuite.Presentation.Importer.Views;
+using OSPSuite.Core.Importer;
+using OSPSuite.Core.Importer.DataFormat;
+using OSPSuite.Core.Importer.Services;
+using OSPSuite.UI.Views.Importer;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OSPSuite.Presentation.Importer.Presenters 
+namespace OSPSuite.Presentation.Importer 
 {
    public abstract class ConcernForColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
    {

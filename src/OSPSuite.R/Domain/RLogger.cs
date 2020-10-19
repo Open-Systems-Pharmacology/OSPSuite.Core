@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
-using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Core.Importer.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain

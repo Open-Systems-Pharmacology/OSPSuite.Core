@@ -3,7 +3,7 @@ using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 
-namespace OSPSuite.Infrastructure.Import.Services
+namespace OSPSuite.Core.Importer.Services
 {
    public class SimulationResultsImport : ImportLogger
    {

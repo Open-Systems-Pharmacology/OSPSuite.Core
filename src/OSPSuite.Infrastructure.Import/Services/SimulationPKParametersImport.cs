@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 
-namespace OSPSuite.Infrastructure.Import.Services
+namespace OSPSuite.Core.Importer.Services
 {
    public class SimulationPKParametersImport : ImportLogger
    {

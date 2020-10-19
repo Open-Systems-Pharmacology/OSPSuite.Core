@@ -21,10 +21,10 @@ using OSPSuite.Starter.Views;
 using OSPSuite.UI.Services;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataSourceFileReaders;
-using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Core.Importer;
+using OSPSuite.Core.Importer.DataSourceFileReaders;
+using OSPSuite.Core.Importer.Services;
+using OSPSuite.Core.Importer.DataFormat;
 using OSPSuite.Presentation.Importer;
 
 namespace OSPSuite.Starter

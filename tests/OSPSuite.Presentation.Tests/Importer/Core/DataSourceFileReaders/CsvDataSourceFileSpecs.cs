@@ -2,13 +2,13 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Core.Importer.Services;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
+namespace OSPSuite.Core.Importer.DataSourceFileReaders
 {
    public abstract class ConcernForCsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
    {
