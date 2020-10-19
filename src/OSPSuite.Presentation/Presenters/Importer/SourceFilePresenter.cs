@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
-using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class SourceFilePresenter : AbstractPresenter<ISourceFileControl, ISourceFilePresenter>, ISourceFilePresenter
    {

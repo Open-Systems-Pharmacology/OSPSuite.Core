@@ -1,7 +1,6 @@
-﻿using OSPSuite.Presentation.Views;
-using OSPSuite.Presentation.Importer.Presenters;
+﻿using OSPSuite.Presentation.Presenters.Importer;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.Presentation.Views.Importer
 {
    public interface IImporterTiledView : IView<IImporterTiledPresenter>
    {

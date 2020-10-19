@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Extensions;
 

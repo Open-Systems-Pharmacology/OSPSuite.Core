@@ -1,9 +1,8 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Presentation.Presenters;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IUnitsEditorPresenter : IDisposablePresenter
    {

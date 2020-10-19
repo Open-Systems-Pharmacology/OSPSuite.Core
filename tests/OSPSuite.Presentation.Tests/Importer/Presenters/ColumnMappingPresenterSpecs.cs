@@ -12,6 +12,8 @@ using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {

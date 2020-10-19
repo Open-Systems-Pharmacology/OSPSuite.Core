@@ -1,12 +1,11 @@
-﻿using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
-using OSPSuite.Core.Domain.UnitSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {

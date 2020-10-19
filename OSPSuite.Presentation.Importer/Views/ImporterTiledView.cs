@@ -1,6 +1,7 @@
-﻿using OSPSuite.Presentation.Importer.Presenters;
-using OSPSuite.UI.Extensions;
+﻿using OSPSuite.UI.Extensions;
 using System;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Importer.Views
 {

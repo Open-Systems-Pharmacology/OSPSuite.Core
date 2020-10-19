@@ -1,11 +1,6 @@
-﻿using OSPSuite.Presentation.Presenters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface ILloqEditorPresenter : IDisposablePresenter
    {

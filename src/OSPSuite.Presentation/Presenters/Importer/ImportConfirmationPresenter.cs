@@ -1,12 +1,11 @@
 ﻿using System;
-using OSPSuite.Presentation.Importer.Views;
-using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Views.Importer;
 
-namespace OSPSuite.Presentation.Importer.Presenters
+namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class ImportConfirmationPresenter : AbstractPresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
    {
