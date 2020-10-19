@@ -156,28 +156,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\DataFormat\AbstractColumnsDataFormat.cs" />
-    <Compile Include="Core\DataFormat\DataFormatParameter.cs" />
-    <Compile Include="Core\DataFormat\DataFormatNonmem.cs" />
-    <Compile Include="Core\DataFormat\DataFormatHeadersWithUnits.cs" />
-    <Compile Include="Core\Extensions\HeadersExtensions.cs" />
-    <Compile Include="Core\IImporterConfiguration.cs" />
-    <Compile Include="Core\InvalidFileException.cs" />
-    <Compile Include="Core\IParsedDataSet.cs" />
-    <Compile Include="Core\MetaDataMappingConverter.cs" />
-    <Compile Include="Core\UnformattedDataRow.cs" />
-    <Compile Include="Core\IDataSourceFileParser.cs" />
-    <Compile Include="Core\DataSourceFileReaders\ExcelDataSourceFile.cs" />
-    <Compile Include="Core\DataSourceFileReaders\CsvDataSourceFile.cs" />
-    <Compile Include="Core\IColumnDescription.cs" />
-    <Compile Include="Core\IDataSet.cs" />
-    <Compile Include="Core\IDataSource.cs" />
-    <Compile Include="Core\IDataSourceFile.cs" />
-    <Compile Include="Core\IDataSheet.cs" />
-    <Compile Include="Core\IDataFormat.cs" />
-    <Compile Include="Core\IUnformattedData.cs" />
-    <Compile Include="Core\UnsupportedFormatException.cs" />
-    <Compile Include="Infrastructure\ExcelReader.cs" />
     <Compile Include="PresentationImporterRegister.cs" />
     <Compile Include="Presenters\ColumnMappingPresenter.cs" />
     <Compile Include="Presenters\ILloqEditorPresenter.cs" />
@@ -201,8 +179,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\IImporter.cs" />
-    <Compile Include="Services\IImporterTask.cs" />
     <Compile Include="Views\ColumnMappingControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -1,12 +1,10 @@
 ﻿using System;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Importer;
-
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {

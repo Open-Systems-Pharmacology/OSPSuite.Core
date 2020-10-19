@@ -4,6 +4,8 @@ using OSPSuite.BDDHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure

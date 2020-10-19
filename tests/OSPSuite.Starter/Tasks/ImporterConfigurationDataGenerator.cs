@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Importer;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 

@@ -7,6 +7,8 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {

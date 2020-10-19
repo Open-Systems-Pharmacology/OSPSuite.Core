@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Services;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters

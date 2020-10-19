@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using OSPSuite.Core.Importer;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Views;
 using OSPSuite.Presentation.Presenters;
 

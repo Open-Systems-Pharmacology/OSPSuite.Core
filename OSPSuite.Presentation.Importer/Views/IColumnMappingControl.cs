@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Presentation.Importer.Core;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility.Reflection;
@@ -127,7 +127,7 @@ namespace OSPSuite.Presentation.Importer.Views
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            return new MappingDataFormatParameter(parsed[1], new Core.Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]) });
+            return new MappingDataFormatParameter(parsed[1], new Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]) });
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {

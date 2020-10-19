@@ -4,11 +4,12 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
-using OSPSuite.Core.Importer;
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraCharts.Designer.Native;
 using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
@@ -31,7 +32,7 @@ namespace OSPSuite.Presentation.Importer.Services
          Description = description;
       }
    }
-   public abstract class ConcernForImporter : ContextSpecification<Importer>
+   public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
       protected IUnformattedData _basicFormat;
       protected IContainer _container;
@@ -57,7 +58,7 @@ namespace OSPSuite.Presentation.Importer.Services
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new Importer(_container, _parser);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser);
       }
    }
 
@@ -205,7 +206,7 @@ namespace OSPSuite.Presentation.Importer.Services
       }
    }
 
-   public abstract class ConcernForImporter2 : ContextSpecification<Importer>
+   public abstract class ConcernForImporter2 : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
       protected IUnformattedData _basicFormat;
       protected IContainer _container;
@@ -239,7 +240,7 @@ namespace OSPSuite.Presentation.Importer.Services
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem() });
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new Importer(_container, _parser);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser);
       }
    }
 
