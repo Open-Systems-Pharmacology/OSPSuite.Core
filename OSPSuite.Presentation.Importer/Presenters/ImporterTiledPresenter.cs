@@ -18,8 +18,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
          _confirmationPresenter.OnImportData += ImportData;
-         _importerPresenter.OnImportAllSheets += ImportAllSheets;
-         _importerPresenter.OnImportSingleSheet += ImportSingleSheet;
+         _importerPresenter.OnImportSheets += ImportSheets;
          _view.AddImporterView(_importerPresenter.View);
          AddSubPresenters(_importerPresenter, _confirmationPresenter); 
       }
@@ -39,19 +38,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = e.DataSource });
       }
 
-      public void ImportAllSheets(object sender, EventArgs e)
-      {
-         startImport(_importerPresenter.GetAllSheets());
-      }
 
-      public void ImportSingleSheet(object sender, ImportSingleSheetEventArgs args)
+      public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
-         startImport(new Cache<string, IDataSheet>() { { args.SheetName, _importerPresenter.GetSingleSheet(args.SheetName) } });
-      }
-
-      private void startImport(Cache<string, IDataSheet> sheets)
-      {
-         _confirmationPresenter.SetDataSource(_importerPresenter.GetDataSource(sheets));
+         _confirmationPresenter.SetDataSource(args.DataSource);
          _confirmationPresenter.SetNamingConventions(_importerPresenter.GetNamingConventions());
          AddConfirmationView();
          View.EnableConfirmationView();

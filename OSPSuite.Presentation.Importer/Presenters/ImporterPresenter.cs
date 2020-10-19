@@ -23,15 +23,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
-
       private IEnumerable<IDataFormat> _availableFormats;
 
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
 
-      public event EventHandler<ImportSingleSheetEventArgs> OnImportSingleSheet = delegate { };
-
-      public event EventHandler OnImportAllSheets = delegate { };
+      public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
 
       public ImporterPresenter
       (
@@ -64,12 +61,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
       public void ImportDataForConfirmation()
       {
-         OnImportAllSheets.Invoke(this, EventArgs.Empty);
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(getAllSheets()) });
       }
       public void ImportDataForConfirmation(string sheetName)
       {
-
-         OnImportSingleSheet.Invoke(this, new ImportSingleSheetEventArgs { SheetName = sheetName });
+         var sheets = new Cache<string, IDataSheet>();
+         sheets.Add(sheetName, getSingleSheet(sheetName));
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
       }
 
       public void SetNewFormat(string formatName)
@@ -85,7 +83,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          return _dataImporterSettings.NamingConventions;
       }
 
-      public IDataSource GetDataSource(Cache<string, IDataSheet> sheets)
+      private IDataSource getDataSource(Cache<string, IDataSheet> sheets)
       {
          var dataSource = new DataSource(_importer);
 
@@ -109,12 +107,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          return dataSource;
       }
 
-      public Cache<string, IDataSheet> GetAllSheets()
+      private Cache<string, IDataSheet> getAllSheets()
       {
          return _dataSourceFile.DataSheets;
       }
 
-      public IDataSheet GetSingleSheet(string sheetName)
+      private IDataSheet getSingleSheet(string sheetName)
       {
          return _dataSourceFile.DataSheets[sheetName];
       }

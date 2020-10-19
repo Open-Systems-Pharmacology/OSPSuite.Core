@@ -8,9 +8,9 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public class ImportSingleSheetEventArgs : EventArgs
+   public class ImportSheetsEventArgs : EventArgs
    {
-      public string SheetName { get; set; }
+      public IDataSource DataSource { get; set; }
    }
    public class FormatChangedEventArgs : EventArgs
    {
@@ -28,20 +28,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;
 
-      event EventHandler<ImportSingleSheetEventArgs> OnImportSingleSheet;
-      
-      event EventHandler OnImportAllSheets;
+      event EventHandler<ImportSheetsEventArgs> OnImportSheets;
 
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
       IEnumerable<string> GetNamingConventions();
-
-      //todo refactor GetDataSource
-      IDataSource GetDataSource(Cache<string, IDataSheet> sheets); //temporary solution, we should not need to provide back the sheets
-      Cache<string, IDataSheet> GetAllSheets();
-      IDataSheet GetSingleSheet(string sheetName);
       void ImportDataForConfirmation();
       void ImportDataForConfirmation(string sheetName);
       void SetNewFormat(string formatName);
