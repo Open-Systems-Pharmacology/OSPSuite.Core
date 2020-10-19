@@ -16,13 +16,12 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.UI;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {

@@ -1,9 +1,7 @@
-﻿using DevExpress.XtraEditors.Controls;
-using OSPSuite.UI.Views;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    partial class LloqEditorView : BaseModalView
    {

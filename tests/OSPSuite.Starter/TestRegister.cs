@@ -25,7 +25,6 @@ using OSPSuite.UI.Services;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Importer;
 
 namespace OSPSuite.Starter
 {
@@ -74,8 +73,6 @@ namespace OSPSuite.Starter
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
 
-         container.Register<IDataSourceFileParser, DataSourceFileParser>();
-         container.Register<ICsvDataSourceFile, CsvDataSourceFile>();
          container.Register<IImportLogger, ImportLogger>();
          container.Register<IDataFormat, DataFormatHeadersWithUnits>("ColumnsDataFormat.v1");
          container.Register<IDataFormat, DataFormatNonmem>("ColumnsDataFormat.v2");

@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Presentation.Importer.Views
+﻿namespace OSPSuite.UI.Views.Importer
 {
    partial class DataViewingControl
    {

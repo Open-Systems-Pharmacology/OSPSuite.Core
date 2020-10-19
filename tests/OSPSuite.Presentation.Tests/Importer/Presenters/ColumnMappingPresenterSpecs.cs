@@ -6,7 +6,6 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Presentation.Importer.Services;
-using OSPSuite.Presentation.Importer.Views;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
@@ -21,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected IDataFormat _basicFormat;
       protected IColumnMappingControl _view;
-      protected IImporterTask _importerTask;
+      protected IImporter _importer;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
@@ -36,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                new GroupByDataFormatParameter("Study id")
             });
          _view = A.Fake<IColumnMappingControl>();
-         _importerTask = A.Fake<IImporterTask>();
+         _importer = A.Fake<IImporter>();
       }
 
       protected override void Context()
@@ -66,7 +65,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                IsMandatory = false
             }
          };
-         sut = new ColumnMappingPresenter(_view, _importerTask, A.Fake<IApplicationController>());
+         sut = new ColumnMappingPresenter(_view, _importer, A.Fake<IApplicationController>());
       }
    }
 

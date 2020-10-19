@@ -1,19 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.Utils;
 using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
-using DevExpress.Utils;
-using DevExpress.XtraLayout;
-using DevExpress.XtraEditors.Controls;
-using System.Collections.Generic;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.UI.Views;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
    {

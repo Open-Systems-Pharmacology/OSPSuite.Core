@@ -3,8 +3,7 @@ using OSPSuite.Assets;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 
-
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    partial class ImporterTiledView : BaseUserControl, IImporterTiledView
    {

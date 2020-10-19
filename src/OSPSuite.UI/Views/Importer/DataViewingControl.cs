@@ -3,7 +3,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 
-namespace OSPSuite.Presentation.Importer.Views
+namespace OSPSuite.UI.Views.Importer
 {
    public partial class DataViewingControl : BaseUserControl, IDataViewingControl
    {

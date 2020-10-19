@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
@@ -20,6 +23,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
+
+      int GetImageIndex(DataFormatParameter parameter);
+      string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
    }
 
    public class Importer : IImporter
@@ -112,6 +118,27 @@ namespace OSPSuite.Infrastructure.Import.Services
             // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
          })).ToList();
+      }
+
+      public int GetImageIndex(DataFormatParameter parameter)
+      {
+         switch (parameter)
+         {
+            case MetaDataFormatParameter mp:
+               return ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
+            case MappingDataFormatParameter mp:
+               return ApplicationIcons.IconIndex(ApplicationIcons.UnitInformation);
+            case GroupByDataFormatParameter gp:
+               return ApplicationIcons.IconIndex(ApplicationIcons.GroupBy);
+            default:
+               throw new Exception($"{parameter.GetType()} is not currently been handled");
+         }
+      }
+
+      public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      {
+         var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
+         return dataColumns.Where(col => col.IsMandatory && subset.All(cm => cm.MappedColumn.Name != col.Name)).Select(col => col.Name).FirstOrDefault();
       }
    }
 }

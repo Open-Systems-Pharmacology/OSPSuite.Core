@@ -6,7 +6,6 @@ using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.XtraCharts.Designer.Native;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
