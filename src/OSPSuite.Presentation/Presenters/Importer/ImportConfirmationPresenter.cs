@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -29,6 +30,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(IDataSource dataSource)
       {
          _dataSource = dataSource;
+         var keys = new List<string>()
+         {
+            Constants.FILE,
+            Constants.SHEET
+         };
+         keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
+         View.SetNamingConventionKeys(keys);
       }
 
       public void SetNamingConventions (IEnumerable<string> namingConventions)
