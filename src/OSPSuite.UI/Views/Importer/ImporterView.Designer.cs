@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Windows.Forms;
+using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -51,6 +52,8 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem5 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.formatLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem6 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.descriptionRichTextBox = new System.Windows.Forms.RichTextBox();
+         this.descriptionLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -72,10 +75,12 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.descriptionLayoutControlItem)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
+         this.rootLayoutControl.Controls.Add(this.descriptionRichTextBox);
          this.rootLayoutControl.Controls.Add(this.btnImport);
          this.rootLayoutControl.Controls.Add(this.btnImportAll);
          this.rootLayoutControl.Controls.Add(this.columnMappingPanelControl);
@@ -98,7 +103,7 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImport.Size = new System.Drawing.Size(294, 54);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
-         this.btnImport.Text = Captions.Importer.Import;
+         this.btnImport.Text = "Import";
          // 
          // btnImportAll
          // 
@@ -107,13 +112,13 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImportAll.Size = new System.Drawing.Size(289, 54);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
-         this.btnImportAll.Text = Captions.Importer.ImportAll;
+         this.btnImportAll.Text = "Import All";
          // 
          // columnMappingPanelControl
          // 
-         this.columnMappingPanelControl.Location = new System.Drawing.Point(1131, 277);
+         this.columnMappingPanelControl.Location = new System.Drawing.Point(1131, 422);
          this.columnMappingPanelControl.Name = "columnMappingPanelControl";
-         this.columnMappingPanelControl.Size = new System.Drawing.Size(1271, 1655);
+         this.columnMappingPanelControl.Size = new System.Drawing.Size(1271, 1510);
          this.columnMappingPanelControl.TabIndex = 8;
          // 
          // ImporterTabControl
@@ -126,11 +131,11 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // formatComboBoxEdit
          // 
-         this.formatComboBoxEdit.Location = new System.Drawing.Point(1237, 171);
+         this.formatComboBoxEdit.Location = new System.Drawing.Point(1363, 171);
          this.formatComboBoxEdit.Name = "formatComboBoxEdit";
          this.formatComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.formatComboBoxEdit.Size = new System.Drawing.Size(1165, 50);
+         this.formatComboBoxEdit.Size = new System.Drawing.Size(1039, 50);
          this.formatComboBoxEdit.StyleController = this.rootLayoutControl;
          this.formatComboBoxEdit.TabIndex = 4;
          // 
@@ -159,7 +164,8 @@ namespace OSPSuite.UI.Views.Importer
             this.emptySpaceItem4,
             this.emptySpaceItem5,
             this.formatLayoutControlItem,
-            this.emptySpaceItem6});
+            this.emptySpaceItem6,
+            this.descriptionLayoutControlItem});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(2414, 2122);
          this.Root.TextVisible = false;
@@ -200,9 +206,9 @@ namespace OSPSuite.UI.Views.Importer
          // columnMappingLayoutControlItem
          // 
          this.columnMappingLayoutControlItem.Control = this.columnMappingPanelControl;
-         this.columnMappingLayoutControlItem.Location = new System.Drawing.Point(1119, 265);
+         this.columnMappingLayoutControlItem.Location = new System.Drawing.Point(1119, 410);
          this.columnMappingLayoutControlItem.Name = "columnMappingLayoutControlItem";
-         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(1275, 1659);
+         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(1275, 1514);
          this.columnMappingLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.columnMappingLayoutControlItem.TextVisible = false;
          // 
@@ -262,15 +268,33 @@ namespace OSPSuite.UI.Views.Importer
          this.formatLayoutControlItem.Location = new System.Drawing.Point(1119, 159);
          this.formatLayoutControlItem.Name = "Format: ";
          this.formatLayoutControlItem.Size = new System.Drawing.Size(1275, 54);
-         this.formatLayoutControlItem.TextSize = new System.Drawing.Size(103, 33);
+         this.formatLayoutControlItem.TextSize = new System.Drawing.Size(229, 33);
          // 
          // emptySpaceItem6
          // 
          this.emptySpaceItem6.AllowHotTrack = false;
-         this.emptySpaceItem6.Location = new System.Drawing.Point(1119, 213);
+         this.emptySpaceItem6.Location = new System.Drawing.Point(1119, 380);
          this.emptySpaceItem6.Name = "emptySpaceItem6";
-         this.emptySpaceItem6.Size = new System.Drawing.Size(1275, 52);
+         this.emptySpaceItem6.Size = new System.Drawing.Size(1275, 30);
          this.emptySpaceItem6.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // descriptionRichTextBox
+         // 
+         this.descriptionRichTextBox.Location = new System.Drawing.Point(1363, 225);
+         this.descriptionRichTextBox.Name = "descriptionRichTextBox";
+         this.descriptionRichTextBox.Size = new System.Drawing.Size(1039, 163);
+         this.descriptionRichTextBox.TabIndex = 11;
+         this.descriptionRichTextBox.Text = "";
+         this.descriptionRichTextBox.ReadOnly = true;
+         // 
+         // descriptionLayoutControlItem
+         // 
+         this.descriptionLayoutControlItem.Control = this.descriptionRichTextBox;
+         this.descriptionLayoutControlItem.Location = new System.Drawing.Point(1119, 213);
+         this.descriptionLayoutControlItem.Name = "descriptionLayoutControlItem";
+         this.descriptionLayoutControlItem.Size = new System.Drawing.Size(1275, 167);
+         this.descriptionLayoutControlItem.TextSize = new System.Drawing.Size(229, 33);
+         this.descriptionLayoutControlItem.TextVisible = false;
          // 
          // ImporterView
          // 
@@ -302,6 +326,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.formatLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.descriptionLayoutControlItem)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -329,5 +354,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem5;
       private DevExpress.XtraLayout.LayoutControlItem formatLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem6;
+      private RichTextBox descriptionRichTextBox;
+      private DevExpress.XtraLayout.LayoutControlItem descriptionLayoutControlItem;
    }
 }
