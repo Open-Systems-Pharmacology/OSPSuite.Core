@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using OSPSuite.Infrastructure.Import.Core.Extensions;
+using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Infrastructure.Import.Core.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
    public abstract class AbstractColumnsDataFormat : IDataFormat
    {
-      private const int COLUMN_NOT_FOUND = -1;
       public abstract string Name { get; }
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
@@ -173,9 +172,90 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (!rawDataSet.Any())
             return;
 
-         dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, ParseMappings(rawDataSet, data, columnInfos)));
+         dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, parseMappings(rawDataSet, data, columnInfos)));
       }
 
-      protected abstract Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+      private Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data,
+         IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
+
+         //Add time mapping
+         var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
+
+         var dataSet = rawDataSet.ToList();
+         foreach (var columnInfo in columnInfos)
+         {
+            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
+            if (currentParameter == null) continue;
+            dictionary.Add
+            (
+               currentParameter.MappedColumn,
+               currentParameter.MappedColumn.LloqColumn == null ?
+                  parseMappingOnSameColumn(currentParameter, data, dataSet) :
+                  parseMappingOnSameGivenColumn(currentParameter, data, dataSet)
+            );
+         }
+
+         return dictionary;
+      }
+
+      private IList<ValueAndLloq> parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, IReadOnlyList<IEnumerable<string>> dataSet)
+      {
+         return dataSet.Select
+         (
+            row =>
+            {
+               var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+               if (double.TryParse(element, out var result))
+                  return new ValueAndLloq()
+                  {
+                     Value = result
+                  };
+               if (element.StartsWith("<"))
+               {
+                  double.TryParse(element.Substring(1), out result);
+                  return new ValueAndLloq()
+                  {
+                     Lloq = result
+                  };
+               }
+
+               return new ValueAndLloq()
+               {
+                  Value = double.NaN
+               };
+            }
+         ).ToList();
+      }
+
+      private IList<ValueAndLloq> parseMappingOnSameGivenColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, IReadOnlyList<IEnumerable<string>> dataSet)
+      {
+         return dataSet.Select
+         (
+            row =>
+            {
+               var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
+                  ? -1
+                  : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
+
+               if (lloqIndex < 0 || !double.TryParse(row.ElementAt(lloqIndex).Trim(), out var lloq))
+                  lloq = double.NaN;
+
+               var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+               if (double.TryParse(element, out var result))
+                  return new ValueAndLloq()
+                  {
+                     Value = result,
+                     Lloq = lloq
+                  };
+               return new ValueAndLloq()
+               {
+                  Value = double.NaN,
+                  Lloq = lloq
+               };
+            }
+         ).ToList();
+      }
    }
 }

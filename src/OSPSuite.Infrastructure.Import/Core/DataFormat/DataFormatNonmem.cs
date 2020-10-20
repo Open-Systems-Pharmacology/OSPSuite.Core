@@ -6,11 +6,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
    public class DataFormatNonmem : AbstractColumnsDataFormat
    {
-      private const string _nameNonMem = "Nonmem";
-      private const string _descriptionNonMem = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
-      public override string Name => _nameNonMem;
-      public override string Description => _descriptionNonMem;
-      
+      private const string _name = "Nonmem";
+      private const string _description = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
+      public override string Name => _name;
+      public override string Description => _description;
+
       protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          var lloqKey = data.GetHeaders().FindHeader(description + "_LLOQ");
@@ -18,6 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             return "";
          }
+
          keys.Remove(lloqKey);
          rank++;
          return lloqKey;
@@ -30,54 +31,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             return new UnitDescription(_ => "?");
          }
+
          keys.Remove(unitKey);
          var units = data.GetColumn(unitKey).ToList();
          var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
-         rank++; 
+         rank++;
          return new UnitDescription(i => (i > 0) ? units[i] : def, unitKey);
-      }
-
-      protected override Dictionary<Column, IList<ValueAndLloq>> ParseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos)
-      {
-         var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
-
-         //Add time mapping
-         var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
-
-         var dataSet = rawDataSet.ToList();
-         foreach (var columnInfo in columnInfos)
-         {
-            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
-            if (currentParameter == null) continue;
-            dictionary.Add
-            (
-               currentParameter.MappedColumn,
-               dataSet.Select
-               (
-                  row =>
-                  {
-                     double lloq;
-                     var _lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn) ? -1 : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
-                     if (_lloqIndex < 0 || !double.TryParse(row.ElementAt(_lloqIndex).Trim(), out lloq))
-                        lloq = double.NaN;
-                     var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-                     if (double.TryParse(element, out double result))
-                        return new ValueAndLloq()
-                        {
-                           Value = result,
-                           Lloq = lloq
-                        };
-                     return new ValueAndLloq()
-                     {
-                        Value = double.NaN,
-                        Lloq = lloq
-                     };
-                  }
-               ).ToList()
-            );
-         }
-
-         return dictionary;
       }
    }
 }

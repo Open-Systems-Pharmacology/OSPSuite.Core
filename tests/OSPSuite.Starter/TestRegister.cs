@@ -76,6 +76,7 @@ namespace OSPSuite.Starter
          container.Register<IImportLogger, ImportLogger>();
          container.Register<IDataFormat, DataFormatHeadersWithUnits>("ColumnsDataFormat.v1");
          container.Register<IDataFormat, DataFormatNonmem>("ColumnsDataFormat.v2");
+         container.Register<IDataFormat, MixColumnsDataFormat>("ColumnsDataFormat.v3");
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
