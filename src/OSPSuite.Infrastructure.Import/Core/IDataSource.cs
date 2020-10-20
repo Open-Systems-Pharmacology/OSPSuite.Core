@@ -13,6 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       void SetNamingConvention(string namingConvention);
       void AddSheets( Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
+      IEnumerable<MetaDataMappingConverter> GetMappings();
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
    }
@@ -47,6 +48,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          _configuration.FileName = fileName;
          _mappings = mappings;
+      }
+
+      public IEnumerable<MetaDataMappingConverter> GetMappings()
+      {
+         return _mappings;
       }
 
       private IEnumerable<MetaDataMappingConverter> _mappings;
