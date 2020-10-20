@@ -134,7 +134,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var dataFormats = availableFormats.ToList();
          _availableFormats = dataFormats;
          _columnMappingPresenter.SetDataFormat(format);
-         View.SetFormats(dataFormats.Select(f => f.Name), format.Name);
+         
+         View.SetFormats(dataFormats.Select(f => f.Name), format.Name, format.Description);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)

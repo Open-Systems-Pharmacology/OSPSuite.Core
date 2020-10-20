@@ -126,7 +126,7 @@ namespace OSPSuite.UI.Views.Importer
          ImporterTabControl.FillWith(dataViewingControl);
       }
 
-      public void SetFormats(IEnumerable<string> options, string selected)
+      public void SetFormats(IEnumerable<string> options, string selected, string description)
       {
          formatComboBoxEdit.Properties.Items.Clear();
          foreach (var option in options)
@@ -135,6 +135,7 @@ namespace OSPSuite.UI.Views.Importer
          }
          formatComboBoxEdit.EditValue = selected;
          formatComboBoxEdit.TextChanged += onFormatChanged;
+         descriptionRichTextBox.Text = description;
       }
 
       private void onFormatChanged(object sender, EventArgs e)
