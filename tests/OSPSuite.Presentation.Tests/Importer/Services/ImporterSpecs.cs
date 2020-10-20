@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Importer.Services
             new MetaDataCategory() {Name = "Route"}
          };
 
-         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem() });
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat() });
          _parser = A.Fake<IDataSourceFileParser>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
          sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser);
@@ -376,6 +376,82 @@ namespace OSPSuite.Presentation.Importer.Services
       {
          var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
          formats.First().ShouldBeAnInstanceOf(typeof(DataFormatNonmem));
+      }
+   }
+
+   public class When_listing_available_formats_on_mixin_format : ConcernForImporter2
+   {
+      protected override void Because()
+      {
+         _basicFormat = new TestUnformattedData
+         (
+            new Cache<string, ColumnDescription>()
+            {
+               {
+                  "Organ",
+                  new ColumnDescription(0)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
+                  }
+               },
+               {
+                  "Time [min]",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "lloq",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Concentration",
+                  new ColumnDescription(6)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Concentration_unit",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               },
+               {
+                  "Error",
+                  new ColumnDescription(7)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Numeric,
+                     ExistingValues = null
+                  }
+               },
+               {
+                  "Error_unit",
+                  new ColumnDescription(5)
+                  {
+                     Level = ColumnDescription.MeasurementLevel.Discrete,
+                     ExistingValues = new List<string>() { "pmol/l" }
+                  }
+               }
+            }
+         );
+      }
+
+      [TestCase]
+      public void rank_mixin_highest_for_its_format()
+      {
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
+         formats.First().ShouldBeAnInstanceOf(typeof(MixColumnsDataFormat));
       }
    }
 }
