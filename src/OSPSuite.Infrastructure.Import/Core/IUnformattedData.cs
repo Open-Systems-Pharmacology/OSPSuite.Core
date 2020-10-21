@@ -7,13 +7,23 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
+   public class UnformattedRow
+   {
+      public int Index { get; private set; }
+      public IEnumerable<string> Data { get; private set; }
+      public UnformattedRow(int index, IEnumerable<string> data)
+      {
+         Index = index;
+         Data = data;
+      }
+   }
    public interface IUnformattedData
    {
       IEnumerable<string> GetColumn(string columnName);
       ColumnDescription GetColumnDescription(string columnName);
       IEnumerable<string> GetHeaders();
       string GetCell(string columnName, int rowIndex);
-      IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter);
+      IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter);
 
       void AddRow(IEnumerable<string> row);
       void AddColumn(string columnName, int columnIndex);
@@ -84,9 +94,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          return getColumn(_headers[columnName].Index);
       }
 
-      public IEnumerable<IEnumerable<string>> GetRows(Func<IEnumerable<string>, bool> filter)
+      public IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter)
       {
-         return _rawDataTable.Where(filter);
+         return _rawDataTable.Select((data, index) => new UnformattedRow(index, data)).Where(row => filter(row.Data));
       }
 
       public DataTable AsDataTable()

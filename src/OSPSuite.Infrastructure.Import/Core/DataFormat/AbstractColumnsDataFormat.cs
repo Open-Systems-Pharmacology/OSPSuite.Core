@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Infrastructure.Import.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -175,10 +176,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, parseMappings(rawDataSet, data, columnInfos)));
       }
 
-      private Dictionary<Column, IList<ValueAndLloq>> parseMappings(IEnumerable<IEnumerable<string>> rawDataSet, IUnformattedData data,
+      private Dictionary<Column, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var dictionary = new Dictionary<Column, IList<ValueAndLloq>>();
+         var dictionary = new Dictionary<Column, IList<SimulationPoint>>();
 
          //Add time mapping
          var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
@@ -188,74 +189,74 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
+            Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser = 
+               currentParameter.MappedColumn.LloqColumn == null ? 
+                  (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn : 
+                  parseMappingOnSameGivenColumn;
             dictionary.Add
             (
                currentParameter.MappedColumn,
-               currentParameter.MappedColumn.LloqColumn == null ?
-                  parseMappingOnSameColumn(currentParameter, data, dataSet) :
-                  parseMappingOnSameGivenColumn(currentParameter, data, dataSet)
+               dataSet.Select
+               (
+                  row => mappingsParser(currentParameter, data, row)
+               ).ToList()
             );
          }
 
          return dictionary;
       }
 
-      private IList<ValueAndLloq> parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, IReadOnlyList<IEnumerable<string>> dataSet)
+      private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
-         return dataSet.Select
-         (
-            row =>
+         var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+         var unit = currentParameter.MappedColumn.Unit.Units(row.Index);
+         if (double.TryParse(element, out var result))
+            return new SimulationPoint()
             {
-               var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-               if (double.TryParse(element, out var result))
-                  return new ValueAndLloq()
-                  {
-                     Value = result
-                  };
-               if (element.StartsWith("<"))
-               {
-                  double.TryParse(element.Substring(1), out result);
-                  return new ValueAndLloq()
-                  {
-                     Lloq = result
-                  };
-               }
+               Value = result,
+               Unit = unit
+            };
+         if (element.StartsWith("<"))
+         {
+            double.TryParse(element.Substring(1), out result);
+            return new SimulationPoint()
+            {
+               Lloq = result,
+               Unit = unit
+            };
+         }
 
-               return new ValueAndLloq()
-               {
-                  Value = double.NaN
-               };
-            }
-         ).ToList();
+         return new SimulationPoint()
+         {
+            Value = double.NaN,
+            Unit = unit
+         };
       }
 
-      private IList<ValueAndLloq> parseMappingOnSameGivenColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, IReadOnlyList<IEnumerable<string>> dataSet)
+      private SimulationPoint parseMappingOnSameGivenColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
-         return dataSet.Select
-         (
-            row =>
+         var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
+            ? -1
+            : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
+         var unit = currentParameter.MappedColumn.Unit.Units(row.Index);
+
+         if (lloqIndex < 0 || !double.TryParse(row.Data.ElementAt(lloqIndex).Trim(), out var lloq))
+            lloq = double.NaN;
+
+         var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+         if (double.TryParse(element, out var result))
+            return new SimulationPoint()
             {
-               var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
-                  ? -1
-                  : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
-
-               if (lloqIndex < 0 || !double.TryParse(row.ElementAt(lloqIndex).Trim(), out var lloq))
-                  lloq = double.NaN;
-
-               var element = row.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-               if (double.TryParse(element, out var result))
-                  return new ValueAndLloq()
-                  {
-                     Value = result,
-                     Lloq = lloq
-                  };
-               return new ValueAndLloq()
-               {
-                  Value = double.NaN,
-                  Lloq = lloq
-               };
-            }
-         ).ToList();
+               Value = result,
+               Lloq = lloq,
+               Unit = unit
+            };
+         return new SimulationPoint()
+         {
+            Value = double.NaN,
+            Lloq = lloq,
+            Unit = unit
+         };
       }
    }
 }

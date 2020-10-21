@@ -20,12 +20,12 @@ namespace OSPSuite.Presentation.Importer.Services
          (
             new List<(string ColumnName, IList<string> ExistingValues)>(), 
             A.Fake<IUnformattedData>(), 
-            new List<IEnumerable<string>>(), 
-            new Dictionary<Column, IList<ValueAndLloq>>())
+            new List<UnformattedRow>(), 
+            new Dictionary<Column, IList<SimulationPoint>>())
       {
       }
 
-      public void SetDataAndDescription(Dictionary<Column, IList<ValueAndLloq>> data, List<InstantiatedMetaData> description)
+      public void SetDataAndDescription(Dictionary<Column, IList<SimulationPoint>> data, List<InstantiatedMetaData> description)
       {
          Data = data;
          Description = description;
@@ -88,7 +88,7 @@ namespace OSPSuite.Presentation.Importer.Services
          var parsedDataSet1 = new ParsedDataSetTest();
          parsedDataSet1.SetDataAndDescription
          (
-            A.Fake<Dictionary<Column, IList<ValueAndLloq>>>(),
+            A.Fake<Dictionary<Column, IList<SimulationPoint>>>(),
             new List<InstantiatedMetaData>()
             {
                new InstantiatedMetaData()
@@ -106,7 +106,7 @@ namespace OSPSuite.Presentation.Importer.Services
          var parsedDataSet2 = new ParsedDataSetTest();
          parsedDataSet1.SetDataAndDescription
          (
-            A.Fake<Dictionary<Column, IList<ValueAndLloq>>>(),
+            A.Fake<Dictionary<Column, IList<SimulationPoint>>>(),
             new List<InstantiatedMetaData>()
             {
                new InstantiatedMetaData()
