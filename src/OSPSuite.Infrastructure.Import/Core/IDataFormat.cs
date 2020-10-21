@@ -3,10 +3,11 @@ using OSPSuite.Infrastructure.Import.Core.DataFormat;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class ValueAndLloq
+   public class SimulationPoint
    {
       public double Value { get; set; }
       public double? Lloq { get; set; }
+      public string Unit { get; set; }
    }
    public interface IDataFormat
    {

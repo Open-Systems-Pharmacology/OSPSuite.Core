@@ -334,11 +334,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void parse_lloq()
       {
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
-            param => new List<List<string>>()
+            param => new List<UnformattedRow>()
             {
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $"{0.01}" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $" {0.01}" },
-               new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", "0" }
+               new UnformattedRow(0, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $"{0.01}" }),
+               new UnformattedRow(1, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $" {0.01}" }),
+               new UnformattedRow(2, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", "0" })
             });
 
          var data = sut.Parse

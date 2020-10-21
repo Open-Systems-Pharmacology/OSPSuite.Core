@@ -8,20 +8,20 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       protected IEnumerable<InstantiatedMetaData> Description { get; set; }
 
-      public IReadOnlyDictionary<Column, IList<ValueAndLloq>> Data { get; protected set; }
+      public IReadOnlyDictionary<Column, IList<SimulationPoint>> Data { get; protected set; }
 
       public ParsedDataSet(
          IEnumerable<(string ColumnName, IList<string> ExistingValues)> mappings,
          IUnformattedData columnHandler,
-         IEnumerable<IEnumerable<string>> rawData,
-         Dictionary<Column, IList<ValueAndLloq>> parsedData
+         IEnumerable<UnformattedRow> rawData,
+         Dictionary<Column, IList<SimulationPoint>> parsedData
       )
       {
          Description = mappings.Select(p =>
             new InstantiatedMetaData()
             {
                Id = columnHandler.GetColumnDescription(p.ColumnName).Index,
-               Value = rawData.First().ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index)
+               Value = rawData.First().Data.ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index)
             }
          );
          Data = parsedData;
