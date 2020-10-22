@@ -10,10 +10,7 @@ namespace OSPSuite.Core.Domain
    {
       public static IParameter Parameter(this IContainer container, string parameterName)
       {
-         if (container == null)
-            return null;
-
-         return container.GetSingleChildByName<IParameter>(parameterName);
+         return container?.GetSingleChildByName<IParameter>(parameterName);
       }
 
       public static IEnumerable<IParameter> AllParameters(this IContainer container)
@@ -177,10 +174,7 @@ namespace OSPSuite.Core.Domain
 
       public static TChild GetSingleChild<TChild>(this IContainer container) where TChild : class, IEntity
       {
-         if (container == null)
-            return null;
-
-         return container.GetSingleChild<TChild>(x => true);
+         return container?.GetSingleChild<TChild>(x => true);
       }
    }
 }
