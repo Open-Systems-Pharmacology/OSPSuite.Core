@@ -27,13 +27,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (string.IsNullOrEmpty(units))
-            return new UnitDescription("?");
+            return new UnitDescription();
          var unit = units
             .Substring(1, units.Length - 2) //remove the brackets
             .Trim() //remove whitespace
             .Split(',') //split comma separated list
-            .FirstOrDefault()??"?"; //default = ?
-         if (unit != "?")
+            .FirstOrDefault() ?? UnitDescription.InvalidUnit; //default = ?
+         if (unit != UnitDescription.InvalidUnit)
          {
             rank++;
          }

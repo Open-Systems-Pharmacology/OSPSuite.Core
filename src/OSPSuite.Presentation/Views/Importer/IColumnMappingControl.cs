@@ -45,6 +45,14 @@ namespace OSPSuite.Presentation.Views.Importer
          Source = source;
          Icon = icon;
       }
+      public enum MappingStatus
+      {
+         NotSet,
+         Valid,
+         Invalid,
+         InvalidUnit
+      }
+      public MappingStatus Status { get; set; }
    }
 
    public static class ColumnMappingFormatter

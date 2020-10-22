@@ -38,7 +38,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                .Substring(1, units.Length - 2) //remove the brackets
                .Trim()                         //remove whitespace
                .Split(',')                     //split comma separated list
-               .FirstOrDefault() ?? "?";       //default = ?
+               .FirstOrDefault() ?? UnitDescription.InvalidUnit;     //default = ?
             rank++;
             return new UnitDescription(unit);
          }
@@ -46,7 +46,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
-            return new UnitDescription(_ => "?");
+            return new UnitDescription(_ => UnitDescription.InvalidUnit);
          }
          keys.Remove(unitKey);
          var unitValues = data.GetColumn(unitKey).ToList();

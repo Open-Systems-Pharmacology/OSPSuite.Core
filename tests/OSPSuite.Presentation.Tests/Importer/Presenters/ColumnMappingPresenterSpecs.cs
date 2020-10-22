@@ -148,7 +148,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       /*[TestCase]
       public void fills_correct_options()
       {
-         var options = sut.GetAvailableOptionsFor(new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Time", "", A.Fake<DataFormatParameter>(), 0));
+         var options = sut.GetAvailableOptionsFor(
+      (ColumnMappingDTO.ColumnType.Mapping, "Time", "", A.Fake<DataFormatParameter>(), 0));
          var columnMappingOptions = options.ToList();
          columnMappingOptions.Count().ShouldBeEqualTo(3);
          columnMappingOptions.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");

@@ -29,7 +29,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
-            return new UnitDescription(_ => "?");
+            return new UnitDescription(_ => UnitDescription.InvalidUnit);
          }
 
          keys.Remove(unitKey);

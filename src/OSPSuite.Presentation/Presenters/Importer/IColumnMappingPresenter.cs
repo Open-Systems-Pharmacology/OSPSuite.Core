@@ -12,9 +12,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class MissingMappingEventArgs : EventArgs
    {
       /// <summary>
-      ///    FileName describing what is missed.
+      ///    Message describing what is missed.
       /// </summary>
       public string Message { get; set; }
+
+      public string RowName { get; set; }
    }
 
    public delegate void MappingCompletedHandler(object sender);

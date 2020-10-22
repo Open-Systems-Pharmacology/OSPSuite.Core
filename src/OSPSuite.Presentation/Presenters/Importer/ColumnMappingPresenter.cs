@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IList<DataFormatParameter> _originalFormat;
       private IList<string> _extraColumns;
       private UnformattedData _rawData;
+      private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       public ColumnMappingPresenter
       (
          IColumnMappingControl view,
@@ -179,6 +180,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
                }
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
+               ValidateMapping();
                _view.Rebind();
             }
          }
@@ -255,7 +257,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   options.Add(
                      generateMappingColumnMappingOption(
-                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, Unit = new UnitDescription("?") })),
+                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) })),
                         column
                      )
                   );
@@ -317,6 +319,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public ToolTipDescription ToolTipDescriptionFor(int index)
       {
+         var description = _mappings.ElementAt(index).MappingName;
+         if (_mappingProblem.MissingMapping.Contains(description))
+         {
+            return new ToolTipDescription()
+            {
+               Title = Captions.MissingMandatoryMapping
+            };
+         }
          var element = _mappings.ElementAt(index).Source;
          if (element == null)
             return new ToolTipDescription()
@@ -326,6 +336,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          switch (element)
          {
             case MappingDataFormatParameter mp:
+               if (_mappingProblem.MissingUnit.Contains(mp.MappedColumn.Name))
+               {
+                  return new ToolTipDescription()
+                  {
+                     Title = Captions.MissingUnit
+                  };
+               }
                return new ToolTipDescription()
                {
                   Title = Captions.MappingTitle,
@@ -449,12 +466,37 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _format.Parameters.Add(p);
       }
 
+      private void setStatuses()
+      {
+         foreach (var m in _mappings)
+         {
+            if (_mappingProblem.MissingMapping.Contains(m.MappingName))
+            {
+               m.Status = ColumnMappingDTO.MappingStatus.Invalid;
+               continue;
+            }
+            if (m.Source == null)
+            {
+               m.Status = ColumnMappingDTO.MappingStatus.NotSet;
+               continue;
+            }
+            if (_mappingProblem.MissingUnit.Contains((m.Source as MappingDataFormatParameter)?.MappedColumn.Name))
+            {
+               m.Status = ColumnMappingDTO.MappingStatus.InvalidUnit;
+               continue;
+            }
+
+            m.Status = ColumnMappingDTO.MappingStatus.Valid;
+         }
+      }
+
       public void ValidateMapping()
       {
-         var missingColumn = _importer.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
-         if (missingColumn != null)
+         _mappingProblem = _importer.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
+         setStatuses();
+         if (_mappingProblem.MissingMapping.Count != 0 || _mappingProblem.MissingUnit.Count != 0)
          {
-            OnMissingMapping(this, new MissingMappingEventArgs {Message = missingColumn});
+            OnMissingMapping(this, new MissingMappingEventArgs {Message = _mappingProblem.MissingMapping.FirstOrDefault() ?? _mappingProblem.MissingUnit.FirstOrDefault() });
          }
          else
          {

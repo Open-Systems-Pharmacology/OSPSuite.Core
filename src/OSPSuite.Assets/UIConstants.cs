@@ -1118,6 +1118,8 @@ namespace OSPSuite.Assets
       public static readonly string IgnoredParameterTitle = "Ignored parameter";
       public static readonly string NotConfiguredField = "Field not configured yet";
       public static readonly string AddGroupBy = "Add a new grouping by";
+      public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
+      public static readonly string MissingUnit = "Field most contain a valid unit description";
       public static string MappingHint(string parameter, string target, string unit)
       {
          return $"The column {parameter} will be mapped into {target} with units as {unit}";

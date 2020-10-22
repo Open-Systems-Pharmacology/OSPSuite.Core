@@ -26,7 +26,6 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
       private readonly IImageListRetriever _imageListRetriever;
-      private readonly Dictionary<int, ImageComboBoxEdit> _editorsForEditing = new Dictionary<int, ImageComboBoxEdit>();
       private IColumnMappingPresenter _presenter;
       private readonly GridViewBinder<ColumnMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
@@ -41,6 +40,10 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _lloqButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
       private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
+      private readonly RepositoryItemButtonEdit _errorIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Exit);
+      private readonly RepositoryItemButtonEdit _errorUnitIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.MissingData);
+      private readonly RepositoryItemButtonEdit _okIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.OK);
+      private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -99,6 +102,12 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeBinding()
       {
          base.InitializeBinding();
+         _gridViewBinder.AddUnboundColumn()
+            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithShowButton(ShowButtonModeEnum.ShowOnlyInEditor)
+            .WithRepository(invalidRepository)
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+
          _gridViewBinder.AutoBind(x => x.MappingName)
             .WithCaption(Captions.Name)
             .WithRepository(nameRepository)
@@ -139,6 +148,7 @@ namespace OSPSuite.UI.Views.Importer
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
          _lloqButtonRepository.ButtonClick += (o, e) => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement);
          _disabledLloqButtonRepository.Buttons[0].Enabled = false;
+         _emptyIconRepository.Buttons[0].Enabled = false;
       }
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
@@ -161,6 +171,21 @@ namespace OSPSuite.UI.Views.Importer
             return _addButtonRepository;
          }
          return _disabledUnitButtonRepository;
+      }
+
+      private RepositoryItem invalidRepository(ColumnMappingDTO model)
+      {
+         switch (model.Status)
+         {
+            case ColumnMappingDTO.MappingStatus.Valid:
+               return _okIconRepository;
+            case ColumnMappingDTO.MappingStatus.Invalid:
+               return _errorIconRepository;
+            case ColumnMappingDTO.MappingStatus.InvalidUnit:
+               return _errorUnitIconRepository;
+            default:
+               return _emptyIconRepository;
+         }
       }
 
       private RepositoryItem lloqRepository(ColumnMappingDTO model)
