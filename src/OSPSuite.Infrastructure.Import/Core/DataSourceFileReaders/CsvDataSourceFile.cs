@@ -39,6 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                }
 
                dataSheet.RawData.RemoveEmptyColumns();
+               dataSheet.RawData.RemoveEmptyRows();
 
                var loadedData = new Cache<string, IDataSheet>()
                {
