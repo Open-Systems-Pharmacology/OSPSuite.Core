@@ -15,7 +15,6 @@ namespace OSPSuite.Infrastructure.Import.Services
       IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
       void AddFromFile(IDataFormat format, Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
-
       IEnumerable<string> NamesFromConvention
       (
          string namingConvention,
@@ -23,9 +22,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
-
       int GetImageIndex(DataFormatParameter parameter);
-      string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
+      MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
    }
 
    public class Importer : IImporter
@@ -135,10 +133,25 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public string CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      public MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
          var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
-         return dataColumns.Where(col => col.IsMandatory && subset.All(cm => cm.MappedColumn.Name != col.Name)).Select(col => col.Name).FirstOrDefault();
+
+         return new MappingProblem()
+         {
+            MissingMapping = dataColumns
+               .Where(col => col.IsMandatory && subset.All(cm =>
+                  cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
+               .ToList(),
+            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit).Select(cm => cm.MappedColumn.Name)
+               .ToList()
+         };
       }
+   }
+
+   public class MappingProblem
+   {
+      public IReadOnlyList<string> MissingMapping { get; set; }
+      public IReadOnlyList<string> MissingUnit { get; set; }
    }
 }

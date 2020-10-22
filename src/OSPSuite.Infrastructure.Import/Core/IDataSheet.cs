@@ -1,11 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
    public class UnitDescription
    {
+      public static readonly string InvalidUnit = "?";
+
+      public UnitDescription()
+      {
+         Units = _ => InvalidUnit;
+         ColumnName = null;
+         SelectedUnit = InvalidUnit;
+      }
       public UnitDescription(Func<int, string> units, string columnName = "")
       {
          Units = units;
