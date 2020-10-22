@@ -30,6 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       DataTable AsDataTable();
       UnformattedDataRow GetDataRow(int index);
       void RemoveEmptyColumns();
+      void RemoveEmptyRows();
    }
 
    public class UnformattedData : IUnformattedData
@@ -157,5 +158,22 @@ namespace OSPSuite.Infrastructure.Import.Core
             _headers.Remove(headerName);
          }
       }
+
+      public void RemoveEmptyRows()
+      {
+         for (var i = _rawDataTable.Count -1; i >= 0; i--)
+         {
+            if (_rawDataTable[i].TrueForAll(IsEmpty))
+               _rawDataTable.RemoveAt(i);
+            else
+               break;
+         }
+      }
+
+      private static bool IsEmpty(string s)
+      {
+         return s.IsNullOrEmpty();
+      }
+
    }
 }
