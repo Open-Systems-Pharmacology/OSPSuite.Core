@@ -128,20 +128,20 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetFormats(IEnumerable<string> options, string selected, string description)
       {
-         formatComboBoxEdit.Properties.Items.Clear();
+         /*formatComboBoxEdit.Properties.Items.Clear();
          foreach (var option in options)
          {
             formatComboBoxEdit.Properties.Items.Add(option);
          }
          formatComboBoxEdit.EditValue = selected;
-         formatComboBoxEdit.TextChanged += onFormatChanged;
+         formatComboBoxEdit.TextChanged += onFormatChanged;*/
          descriptionRichTextBox.Text = description;
       }
 
-      private void onFormatChanged(object sender, EventArgs e)
+      /*private void onFormatChanged(object sender, EventArgs e)
       {
          _presenter.SetNewFormat(formatComboBoxEdit.EditValue as string);
-      }
+      }*/
 
       public void AddTabs(List<string> sheetNames)
       {
