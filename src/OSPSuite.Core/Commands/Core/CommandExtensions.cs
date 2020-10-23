@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Commands.Core
       public static bool IsEmptyMacro(this ICommand command)
       {
          var macroCommand = command as IMacroCommand;
-         return macroCommand != null && macroCommand.IsEmtpy;
+         return macroCommand != null && macroCommand.IsEmpty;
       }
 
       public static T AsHidden<T>(this T command) where T : ICommand

@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Commands
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = _metaDataChanged.NewName, Value = _metaDataChanged.NewValue });
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new ChangeObservedDataMetaDataCommand(_observedData,
             new MetaDataChanged { NewName = _metaDataChanged.OldName, NewValue = _metaDataChanged.OldValue, OldValue = _metaDataChanged.NewValue, OldName = _metaDataChanged.NewName });

@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Commands
          _dataRepository = null;
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new RenameObservedDataCommand(_dataRepository, _oldName).AsInverseFor(this);
       }

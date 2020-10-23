@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Commands
          context.PublishEvent(new ObservedDataTableChangedEvent(_observedData));
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new RemoveObservedDataRowCommand(_observedData, _observedData.BaseGrid.RightIndexOf(_dataRowAdded.BaseGridValue)).AsInverseFor(this);
       }

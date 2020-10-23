@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Commands
          _observedData = null;
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new AddObservedDataToProjectCommand(_observedData).AsInverseFor(this);
       }
