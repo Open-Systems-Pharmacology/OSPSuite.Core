@@ -6,6 +6,7 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
+using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -14,20 +15,26 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IImporter _importer;
       private IDataSource _dataSource;
       private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly ISimpleChartPresenter _chartPresenter;
 
+      //maybe better seperate concerns here
       public void DataSetToDataRepository(string key, int index)
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, index, key);
+         View.ShowSelectedDataSet(dataRepository);
+         _chartPresenter.PlotObservedData(dataRepository);
       }
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
-      public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer, IDataSetToDataRepositoryMapper dataRepositoryMapper) : base(view)
+      public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer, IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         ISimpleChartPresenter chartPresenter) : base(view)
       {
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
          _dataRepositoryMapper = dataRepositoryMapper;
-         _dataSource.
+         _chartPresenter = chartPresenter;
+         View.AddChartView(_chartPresenter.View);
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
