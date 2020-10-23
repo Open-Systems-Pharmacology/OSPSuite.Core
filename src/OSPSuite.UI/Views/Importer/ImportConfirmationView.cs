@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -20,6 +21,7 @@ namespace OSPSuite.UI.Views.Importer
          buttonAdd.Click += (s, a) => this.DoWithinExceptionHandler(() =>
             namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}")));
          importButton.Click += onButtonImportClick;
+         namesListBox.SelectedIndexChanged += onDataSetNameSelected;
          keysListBox.SelectedIndexChanged += (s, a) => buttonAdd.Enabled = keysListBox.SelectedItems.Any();
          buttonAdd.Enabled = false;
       }
@@ -67,6 +69,12 @@ namespace OSPSuite.UI.Views.Importer
       {
          keysListBox.Items.Clear();
          keysListBox.Items.AddRange(keys.ToArray());
+      }
+
+      private void onDataSetNameSelected(object sender, EventArgs eventArgs)
+      {
+         var listBox = sender as ListBoxControl;
+         _presenter.DataSetToDataRepository(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
       }
    }
 }

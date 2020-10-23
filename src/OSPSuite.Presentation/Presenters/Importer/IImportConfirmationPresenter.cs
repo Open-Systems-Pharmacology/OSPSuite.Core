@@ -10,10 +10,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public IDataSource DataSource { get; set; }
    }
    public interface IImportConfirmationPresenter : IPresenter<IImportConfirmationView>
-   {void TriggerNamingConventionChanged(string namingConvention);
+   {
+      void TriggerNamingConventionChanged(string namingConvention);
       void SetDataSource(IDataSource dataSource);
       void SetNamingConventions(IEnumerable<string> namingConventions);
       void ImportData();
+      void DataSetToDataRepository(string key, int index); 
 
       event EventHandler<ImportDataEventArgs> OnImportData;
    }

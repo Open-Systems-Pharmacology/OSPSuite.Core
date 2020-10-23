@@ -5,6 +5,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain;
+using OSPSuite.Infrastructure.Import.Core.Mappers;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -12,14 +13,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IImporter _importer;
       private IDataSource _dataSource;
-      
+      private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+
+      public void DataSetToDataRepository(string key, int index)
+      {
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataTable(_dataSource, index, key);
+      }
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
-      public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer) : base(view)
+      public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer, IDataSetToDataRepositoryMapper dataRepositoryMapper) : base(view)
       {
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
+         _dataRepositoryMapper = dataRepositoryMapper;
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
