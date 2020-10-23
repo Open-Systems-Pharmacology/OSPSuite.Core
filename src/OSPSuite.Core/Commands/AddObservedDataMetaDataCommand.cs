@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Commands
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = _metaDataKeyValue.Key, Value = _metaDataKeyValue.Value });
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new RemoveObservedDataMetaDataCommand(_observedData,
             new MetaDataKeyValue { Key = _metaDataKeyValue.Key, Value = _metaDataKeyValue.Value }).AsInverseFor(this);

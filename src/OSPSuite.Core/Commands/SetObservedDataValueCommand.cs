@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Commands
          context.PublishEvent(new ObservedDataValueChangedEvent(_observedData));
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          var inverseCellValueChanged = _cellValueChanged.Clone();
          inverseCellValueChanged.NewValue = _cellValueChanged.OldValue;

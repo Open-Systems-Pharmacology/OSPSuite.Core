@@ -31,7 +31,7 @@ namespace OSPSuite.Starter.Tasks
             
         }
 
-        public IReversibleCommand<MyContext> InverseCommand(MyContext context)
+        public ICommand<MyContext> InverseCommand(MyContext context)
         {
             return new ParameterValueSetCommand(_parameter,_oldValue){_oldValue = _newValue}.AsInverseFor(this);
         }

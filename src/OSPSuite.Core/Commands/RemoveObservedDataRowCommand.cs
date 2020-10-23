@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Commands
          context.PublishEvent(new ObservedDataTableChangedEvent(_observedData));
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new AddObservedDataRowCommand(_observedData, _dataRowData).AsInverseFor(this);
       }

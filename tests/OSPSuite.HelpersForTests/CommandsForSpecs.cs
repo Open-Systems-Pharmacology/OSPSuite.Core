@@ -24,7 +24,7 @@ namespace OSPSuite.Helpers
       {
       }
 
-      public IReversibleCommand<MyContext> InverseCommand(MyContext context)
+      public ICommand<MyContext> InverseCommand(MyContext context)
       {
          return new MyReversibleCommand().AsInverseFor(this);
       }

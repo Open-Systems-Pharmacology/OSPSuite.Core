@@ -392,9 +392,9 @@ namespace OSPSuite.Core.Commands
       private IMacroCommand<MyContext> _command3;
       private IReversibleCommand<MyContext> _command31;
       private IReversibleCommand<MyContext> _command32;
-      private IReversibleCommand<MyContext> _inverseCommand32;
-      private IReversibleCommand<MyContext> _inverseCommand31;
-      private IReversibleCommand<MyContext> _inverseCommand2;
+      private ICommand<MyContext> _inverseCommand32;
+      private ICommand<MyContext> _inverseCommand31;
+      private ICommand<MyContext> _inverseCommand2;
       private IReversibleCommand<MyContext> _command0;
       //1    2    3         4 
       //  C1   C2   C31 C32    roll back to 1
