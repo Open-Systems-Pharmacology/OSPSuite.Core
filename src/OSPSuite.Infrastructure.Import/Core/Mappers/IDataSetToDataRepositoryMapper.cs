@@ -10,18 +10,23 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
    public interface IDataSetToDataRepositoryMapper
    {
-      DataRepository ConvertImportDataTable(IDataSource dataSource, int dataSetIndex, string dataSetName);
+      DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName);
    }
 
    class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
-      public DataRepository ConvertImportDataTable(IDataSource dataSource, int dataSetIndex, string dataSetName)
+      public DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName)
       {
          //var dataSet = dataSource.DataSets.ElementAt(dataSetIndex);
          var ParsedDataSet = GetDataSet(dataSource, dataSetIndex, out var sheetIndex);
-         var sheetName = dataSource.DataSets.Keys.ElementAt(sheetIndex);
+         
+         var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
+         var sheetName = dataSetPair.Key;
+         var dataSet = dataSetPair.Value;
          var dataRepository = new DataRepository { Name = dataSetName };
          var configuration = dataSource.GetImporterConfiguration();
+
+
          //var colInfos = columnInfos as IList<ColumnInfo> ?? columnInfos.ToList();
 
          //do we actually need to sort our IDataSet somehow?
@@ -29,7 +34,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
 
-        // addExtendedPropertiesForMetaData(configuration.Format, dataSet, dataRepository);
+         addExtendedPropertiesForMetaData(configuration.Format, dataSet, dataRepository);
 
 
          /*

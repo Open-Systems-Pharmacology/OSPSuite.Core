@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void DataSetToDataRepository(string key, int index)
       {
-         var dataRepository = _dataRepositoryMapper.ConvertImportDataTable(_dataSource, index, key);
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, index, key);
       }
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
@@ -27,6 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
          _dataRepositoryMapper = dataRepositoryMapper;
+         _dataSource.
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
