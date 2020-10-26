@@ -37,30 +37,45 @@
          // 
          // dataViewingGridControl
          // 
-         this.dataViewingGridControl.Location = new System.Drawing.Point(16, 25);
+         this.dataViewingGridControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.dataViewingGridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+         this.dataViewingGridControl.Location = new System.Drawing.Point(0, 0);
          this.dataViewingGridControl.MainView = this.dataViewingGridView;
+         this.dataViewingGridControl.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
          this.dataViewingGridControl.Name = "dataViewingGridControl";
-         this.dataViewingGridControl.Size = new System.Drawing.Size(1969, 1304);
+         this.dataViewingGridControl.Size = new System.Drawing.Size(944, 655);
          this.dataViewingGridControl.TabIndex = 0;
          this.dataViewingGridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.dataViewingGridView});
-         this.dataViewingGridControl.Dock = System.Windows.Forms.DockStyle.Fill;
          // 
          // dataViewingGridView
          // 
+         this.dataViewingGridView.AllowsFiltering = true;
+         this.dataViewingGridView.ColumnPanelRowHeight = 0;
+         this.dataViewingGridView.DetailHeight = 170;
+         this.dataViewingGridView.EnableColumnContextMenu = true;
+         this.dataViewingGridView.FixedLineWidth = 1;
+         this.dataViewingGridView.FooterPanelHeight = 0;
          this.dataViewingGridView.GridControl = this.dataViewingGridControl;
-         this.dataViewingGridView.OptionsView.ShowGroupPanel = false;
+         this.dataViewingGridView.GroupRowHeight = 0;
+         this.dataViewingGridView.LevelIndent = 0;
+         this.dataViewingGridView.MultiSelect = false;
          this.dataViewingGridView.Name = "dataViewingGridView";
          this.dataViewingGridView.OptionsBehavior.Editable = false;
+         this.dataViewingGridView.OptionsView.ShowGroupPanel = false;
+         this.dataViewingGridView.PreviewIndent = 0;
+         this.dataViewingGridView.RowHeight = 0;
+         this.dataViewingGridView.ViewCaptionHeight = 0;
          // 
          // DataViewingControl
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "DataViewingControl";
          this.Controls.Add(this.dataViewingGridControl);
+         this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
          this.Name = "DataViewingControl";
-         this.Size = new System.Drawing.Size(2023, 1351);
+         this.Size = new System.Drawing.Size(944, 655);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).EndInit();

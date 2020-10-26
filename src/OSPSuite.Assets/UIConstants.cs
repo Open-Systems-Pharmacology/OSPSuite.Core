@@ -366,6 +366,11 @@ namespace OSPSuite.Assets
          public static readonly string File = "File:  ";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
          public static readonly string ConfirmationImport = "Import";
+         public static readonly string NanAction = "Action";
+         public static readonly string NanActionThrowsError = "Error";
+         public static readonly string NanActionIgnoreRow = "Ignore the row";
+         public static readonly string NanIndicator = "NaN indicator";
+         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
 
          public class ToolTips
          {

@@ -27,7 +27,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
          _dataRepositoryMapper = dataRepositoryMapper;
-         _dataSource.
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NPOI.XWPF.UserModel;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -10,7 +12,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public abstract string Name { get; }
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
-
+      
       public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawData, columnInfos))

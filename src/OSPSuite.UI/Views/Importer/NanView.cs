@@ -1,0 +1,59 @@
+﻿using DevExpress.XtraEditors;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using DevExpress.XtraEditors.Controls;
+using OSPSuite.Assets;
+using OSPSuite.Infrastructure.Import.Core;
+
+namespace OSPSuite.UI.Views.Importer
+{
+   public partial class NanView : BaseUserControl, INanView
+   {
+      private INanPresenter _presenter;
+      
+      public NanView()
+      {
+         InitializeComponent();
+         fillNanOptions();
+         actionImageComboBoxEdit.SelectedValueChanged += (s, a) =>
+         {
+            _presenter.Settings.Action = (NanSettings.ActionType) actionImageComboBoxEdit.SelectedIndex;
+         };
+         indicatorLayoutControlItem.TextChanged += (s, a) =>
+         {
+            _presenter.Settings.Indicator = indicatorTextEdit.Text;
+         };
+      }
+
+      private void fillNanOptions()
+      {
+         actionImageComboBoxEdit.Properties.Items.Clear();
+         actionImageComboBoxEdit.Properties.Items.Add(new ImageComboBoxItem(NanSettings.ActionType.IgnoreRow)
+         {
+            Description = Captions.Importer.NanActionIgnoreRow,
+            ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.UncheckAll)
+         });
+         actionImageComboBoxEdit.Properties.Items.Add(new ImageComboBoxItem(NanSettings.ActionType.Throw)
+         {
+            Description = Captions.Importer.NanActionThrowsError,
+            ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.Exit)
+         });
+         actionImageComboBoxEdit.SelectedIndex = 0;
+      }
+
+      public void AttachPresenter(INanPresenter presenter)
+      {
+         _presenter = presenter;
+      }
+   }
+}
