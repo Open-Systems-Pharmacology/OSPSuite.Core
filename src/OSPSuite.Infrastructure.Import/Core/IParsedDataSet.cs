@@ -8,13 +8,14 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       protected IEnumerable<InstantiatedMetaData> Description { get; set; }
 
-      public IReadOnlyDictionary<Column, IList<SimulationPoint>> Data { get; protected set; }
+      //new class with column AND everything I need from the colInfo
+      public IReadOnlyDictionary<ExtendedColumn, IList<SimulationPoint>> Data { get; protected set; }
 
       public ParsedDataSet(
          IEnumerable<(string ColumnName, IList<string> ExistingValues)> mappings,
          IUnformattedData columnHandler,
          IEnumerable<UnformattedRow> rawData,
-         Dictionary<Column, IList<SimulationPoint>> parsedData
+         Dictionary<ExtendedColumn, IList<SimulationPoint>> parsedData
       )
       {
          Description = mappings.Select(p =>
