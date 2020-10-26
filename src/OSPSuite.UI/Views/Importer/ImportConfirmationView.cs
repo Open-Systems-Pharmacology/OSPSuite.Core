@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
@@ -69,6 +72,16 @@ namespace OSPSuite.UI.Views.Importer
       {
          keysListBox.Items.Clear();
          keysListBox.Items.AddRange(keys.ToArray());
+      }
+
+      public void ShowSelectedDataSet(DataRepository dataRepository)
+      {
+         datagridControl.DataSource = dataRepository;
+      }
+
+      public void AddChartView(ISimpleChartView chartView)
+      {
+         chartPanelControl.FillWith(chartView);
       }
 
       private void onDataSetNameSelected(object sender, EventArgs eventArgs)

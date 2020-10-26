@@ -97,24 +97,24 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private static void addExtendedPropertiesForMetaData(IDataFormat format,IDataSet dataSet, DataRepository dataRepository)
       {
          //null check?
+         /*
+                  foreach (MetaDataFormatParameter parameter in format.Parameters)
+                  {
+                     var name = parameter.MetaDataId;
 
-         foreach (MetaDataFormatParameter parameter in format.Parameters)
-         {
-            var name = parameter.MetaDataId;
-            /*
-            var value = importDataTable.MetaData.Rows.ItemByIndex(0)[metaData];
-            parameter.
-            if (value == DBNull.Value && !metaData.Required) continue;
+                     var value = importDataTable.MetaData.Rows.ItemByIndex(0)[metaData];
+                     parameter.
+                     if (value == DBNull.Value && !metaData.Required) continue;
 
-            // add extended property
-            var extendedProperty = Activator.CreateInstance(typeof(ExtendedProperty<>).MakeGenericType(metaData.DataType))
-               as IExtendedProperty;
-            if (extendedProperty == null) continue;
-            extendedProperty.Name = parameter.ColumnName;
-            extendedProperty.ValueAsObject = value;
-            dataRepository.ExtendedProperties.Add(extendedProperty);
-*/
-         }
-      }
+                     // add extended property
+                     var extendedProperty = Activator.CreateInstance(typeof(ExtendedProperty<>).MakeGenericType(metaData.DataType))
+                        as IExtendedProperty;
+                     if (extendedProperty == null) continue;
+                     extendedProperty.Name = parameter.ColumnName;
+                     extendedProperty.ValueAsObject = value;
+                     dataRepository.ExtendedProperties.Add(extendedProperty);
+         */
+      //}
+   }
    }
 }
