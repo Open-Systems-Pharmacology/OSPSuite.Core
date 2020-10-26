@@ -178,10 +178,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, parseMappings(rawDataSet, data, columnInfos)));
       }
 
-      private Dictionary<Column, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
+      private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var dictionary = new Dictionary<Column, IList<SimulationPoint>>();
+         var dictionary = new Dictionary<ExtendedColumn, IList<SimulationPoint>>();
 
          //Add time mapping
          var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
@@ -197,7 +197,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   parseMappingOnSameGivenColumn;
             dictionary.Add
             (
-               currentParameter.MappedColumn,
+               new ExtendedColumn(currentParameter.MappedColumn, columnInfo.BaseGridName),
                dataSet.Select
                (
                   row => mappingsParser(currentParameter, data, row)
