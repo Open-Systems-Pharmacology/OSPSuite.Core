@@ -17,7 +17,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _confirmationPresenter.OnImportData += ImportData;
          _importerPresenter.OnImportSheets += ImportSheets;
          _view.AddImporterView(_importerPresenter.View);
-         AddSubPresenters(_importerPresenter, _confirmationPresenter); 
+         AddSubPresenters(_importerPresenter, _confirmationPresenter);
+         _importerPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)

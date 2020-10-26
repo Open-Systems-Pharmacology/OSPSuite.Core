@@ -30,6 +30,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
 
+      public event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged = delegate { };
+
       public ImporterPresenter
       (
          IImporterView view, 
@@ -126,6 +128,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
       {
          SetDataSource(e.FileName);
+         OnSourceFileChanged.Invoke(sender, e);
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
@@ -157,6 +160,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
+         _dataSource = new DataSource(_importer);
          _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);

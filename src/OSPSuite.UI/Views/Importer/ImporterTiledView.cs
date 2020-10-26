@@ -44,5 +44,10 @@ namespace OSPSuite.UI.Views.Importer
          if (!confirmationTile.Enabled)
             confirmationTile.Enabled = true;
       }
+
+      public void DisableConfirmationView()
+      {
+         confirmationTile.Enabled = false;
+      }
    }
 }
