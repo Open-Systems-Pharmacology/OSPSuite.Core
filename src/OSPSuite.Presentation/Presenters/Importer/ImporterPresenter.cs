@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
       private IEnumerable<IDataFormat> _availableFormats;
+      private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
 
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -68,12 +69,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public void ImportDataForConfirmation()
       {
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(getAllSheets()) });
+         var sheets = getAllSheets();
+         _sheets.Add(sheets);
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
       }
       public void ImportDataForConfirmation(string sheetName)
       {
          var sheets = new Cache<string, IDataSheet>();
          sheets.Add(sheetName, getSingleSheet(sheetName));
+         _sheets.Add(sheets);
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
       }
 
@@ -92,8 +96,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IDataSource getDataSource(Cache<string, IDataSheet> sheets)
       {
-         
-
          var mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
@@ -138,6 +140,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onCompletedMapping(object sender, EventArgs e)
       {
          View.EnableImportButtons();
+         _dataSource.DataSets.Clear();
+         foreach (var sheet in _sheets)
+         {
+            getDataSource(sheet);
+         }
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
@@ -160,8 +167,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         _dataSource = new DataSource(_importer);
-         _dataSourceFile =  _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
+         _dataSource.DataSets.Clear();
+         _sheets = new List<Cache<string, IDataSheet>>();
+         _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
          _sourceFilePresenter.SetFilePath(dataSourceFileName);
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
