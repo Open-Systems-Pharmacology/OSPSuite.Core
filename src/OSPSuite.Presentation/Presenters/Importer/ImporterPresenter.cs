@@ -18,6 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly INanPresenter _nanPresenter;
       private readonly IImporter _importer;
+      private DataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
@@ -60,6 +61,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
+
+         _dataSource = new DataSource(_importer);
       }
       public void ImportDataForConfirmation()
       {
@@ -87,7 +90,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IDataSource getDataSource(Cache<string, IDataSheet> sheets)
       {
-         var dataSource = new DataSource(_importer);
+         
 
          var mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
@@ -102,12 +105,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
             })
          );
 
-         dataSource.SetMappings(_dataSourceFile.Path, mappings);
-         dataSource.NanSettings = _nanPresenter.Settings;
-         dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         dataSource.AddSheets( sheets, _columnInfos);
+         _dataSource.SetMappings(_dataSourceFile.Path, mappings);
+         _dataSource.NanSettings = _nanPresenter.Settings;
+         _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
+         _dataSource.AddSheets( sheets, _columnInfos);
 
-         return dataSource;
+         return _dataSource;
       }
 
       private Cache<string, IDataSheet> getAllSheets()
