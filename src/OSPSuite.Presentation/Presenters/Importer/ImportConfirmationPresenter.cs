@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSource _dataSource;
       private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly ISimpleChartPresenter _chartPresenter;
+      private string _lastNamingPattern = "";
 
       //maybe better seperate concerns here
       public void DataSetToDataRepository(string key, int index)
@@ -39,7 +40,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void TriggerNamingConventionChanged(string namingConvention)
       {
+         _lastNamingPattern = namingConvention;
          setNames(namingConvention);
+      }
+
+      public void Refresh()
+      {
+         if (!string.IsNullOrEmpty(_lastNamingPattern))
+            setNames(_lastNamingPattern);
       }
 
       public void SetDataSource(IDataSource dataSource)
@@ -65,7 +73,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             throw new EmptyNamingConventionsException();
 
          _view.SetNamingConventions(conventions);
-         setNames(conventions.First());
+         _lastNamingPattern = conventions.First();
+         setNames(_lastNamingPattern);
       }
 
       public void ImportData()

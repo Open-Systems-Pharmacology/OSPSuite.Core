@@ -9,7 +9,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporterPresenter _importerPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
-      
+      private IDataSource _lastDataSource;
+
       public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter) : base(view)
       {
          _importerPresenter = importerPresenter;
@@ -29,16 +30,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void AddConfirmationView()
       {
          _view.AddConfirmationView(_confirmationPresenter.View);
+         if (_lastDataSource != null)
+         {
+            _confirmationPresenter.Refresh();
+         }
       }
 
       public void ImportData(object sender, ImportDataEventArgs e)
       {
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = e.DataSource });
+         _lastDataSource = e.DataSource;
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _lastDataSource });
       }
 
 
       public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
+         _lastDataSource = args.DataSource;
          _confirmationPresenter.SetDataSource(args.DataSource);
          _confirmationPresenter.SetNamingConventions(_importerPresenter.GetNamingConventions());
          AddConfirmationView();

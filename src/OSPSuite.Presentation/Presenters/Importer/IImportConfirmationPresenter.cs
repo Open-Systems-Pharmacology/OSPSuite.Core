@@ -15,6 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetDataSource(IDataSource dataSource);
       void SetNamingConventions(IEnumerable<string> namingConventions);
       void ImportData();
+      void Refresh();
       void DataSetToDataRepository(string key, int index); 
 
       event EventHandler<ImportDataEventArgs> OnImportData;
