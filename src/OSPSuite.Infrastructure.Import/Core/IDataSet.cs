@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -17,11 +19,41 @@ namespace OSPSuite.Infrastructure.Import.Core
    public interface IDataSet
    {
       IEnumerable<ParsedDataSet> Data { get; set; }
+      void ClearNan();
+      void ThrowsOnNan();
    }
 
    public class DataSet : IDataSet
    {
       public IEnumerable<ParsedDataSet> Data { get; set; } = new List<ParsedDataSet>();
+
+      public void ThrowsOnNan()
+      {
+         if (Data.Any(dataSet => dataSet.Data.Values.Any(points => points.Any(p => double.IsNaN(p.Value)))))
+            throw new NanException();
+      }
+
+      public void ClearNan()
+      {
+         foreach (var dataSet in Data)
+         {
+            var i = 0;
+            while (i < dataSet.Data.Values.First().Count())
+            {
+               if (dataSet.Data.Values.Any(points => points.Any(p => double.IsNaN(p.Value))))
+               {
+                  foreach (var simulationPoints in dataSet.Data.Values)
+                  {
+                     simulationPoints.RemoveAt(i);
+                  }
+               }
+               else
+               {
+                  i++;
+               }
+            }
+         }
+      }
    }
 
 }

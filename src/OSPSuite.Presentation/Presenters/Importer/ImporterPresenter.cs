@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
+      private readonly INanPresenter _nanPresenter;
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
@@ -34,18 +35,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IDataViewingPresenter dataViewingPresenter, 
          IColumnMappingPresenter columnMappingPresenter, 
          ISourceFilePresenter sourceFilePresenter,
-         IImporter importer
+         INanPresenter nanPresenter,
+            IImporter importer
       ) : base(view)
       {
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
+         _view.AddNanView(nanPresenter.View);
          _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
          _columnMappingPresenter = columnMappingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
+         _nanPresenter = nanPresenter;
 
          _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
@@ -99,6 +103,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          );
 
          dataSource.SetMappings(_dataSourceFile.Path, mappings);
+         dataSource.NanSettings = _nanPresenter.Settings;
          dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
          dataSource.AddSheets( sheets, _columnInfos);
 

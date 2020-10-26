@@ -61,9 +61,5 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Importer\" />
-  </ItemGroup>
-
 
 </Project>

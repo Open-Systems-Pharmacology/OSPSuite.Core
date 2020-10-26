@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -17,6 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<MetaDataMappingConverter> GetMappings();
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
+      NanSettings NanSettings { get; set; }
    }
 
    public class DataSource : IDataSource
@@ -43,6 +45,13 @@ namespace OSPSuite.Infrastructure.Import.Core
       public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          _importer.AddFromFile(_configuration.Format, dataSheets, columnInfos, this);
+         foreach (var dataSet in DataSets)
+         {
+            if (NanSettings.Action == NanSettings.ActionType.Throw)
+               dataSet.ThrowsOnNan();
+            else
+               dataSet.ClearNan();
+         }
       }
 
       public void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings)
@@ -67,5 +76,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
       }
+      public NanSettings NanSettings { get; set; }
    }
 }

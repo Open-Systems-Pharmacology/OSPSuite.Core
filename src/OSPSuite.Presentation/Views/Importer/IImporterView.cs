@@ -8,6 +8,7 @@ namespace OSPSuite.Presentation.Views.Importer
       void AddDataViewingControl(IDataViewingControl dataViewingControl);
       void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
       void AddSourceFileControl(ISourceFileControl sourceFileControl);
+      void AddNanView(INanView nanView);
       void SetFormats(IEnumerable<string> options, string selected, string description);
       void EnableImportButtons();
       void DisableImportButtons();

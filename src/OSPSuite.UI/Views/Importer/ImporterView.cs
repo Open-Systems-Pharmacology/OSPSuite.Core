@@ -8,6 +8,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -20,8 +21,8 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         btnImport.Click += onButtonImportClicked;
-         btnImportAll.Click += onButtonImportAllClicked;
+         btnImport.Click += (s, a) => this.DoWithinExceptionHandler(() => onButtonImportClicked(s, a));
+         btnImportAll.Click += (s, a) => this.DoWithinExceptionHandler(() => onButtonImportAllClicked(s, a));
          ImporterTabControl.SelectedPageChanged += onSelectedPageChanged;
          ImporterTabControl.CloseButtonClick += onCloseTab;
          ImporterTabControl.MouseDown += onTabControlMouseDown;
@@ -124,6 +125,11 @@ namespace OSPSuite.UI.Views.Importer
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
          ImporterTabControl.FillWith(dataViewingControl);
+      }
+
+      public void AddNanView(INanView nanView)
+      {
+         nanPanelControl.FillWith(nanView);
       }
 
       public void SetFormats(IEnumerable<string> options, string selected, string description)
