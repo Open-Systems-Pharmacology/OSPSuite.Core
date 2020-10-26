@@ -27,6 +27,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       event EventHandler<ImportSheetsEventArgs> OnImportSheets;
 
+      event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
+
       void SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
