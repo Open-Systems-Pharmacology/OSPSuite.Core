@@ -36,6 +36,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
             });
          _view = A.Fake<IColumnMappingControl>();
          _importer = A.Fake<IImporter>();
+         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
+            A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
+            {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
       }
 
       protected override void Context()
