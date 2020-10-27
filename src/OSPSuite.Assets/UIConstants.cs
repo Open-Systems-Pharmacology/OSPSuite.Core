@@ -18,6 +18,7 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
       public static readonly string EmptyName = "Empty";
@@ -371,6 +372,7 @@ namespace OSPSuite.Assets
          public static readonly string NanActionIgnoreRow = "Ignore the row";
          public static readonly string NanIndicator = "NaN indicator";
          public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
 
          public class ToolTips
          {

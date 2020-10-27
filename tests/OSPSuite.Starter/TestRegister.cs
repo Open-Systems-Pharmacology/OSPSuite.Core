@@ -12,7 +12,6 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
-using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Services;
@@ -25,6 +24,7 @@ using OSPSuite.UI.Services;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Core;
 
 namespace OSPSuite.Starter
 {
@@ -74,6 +74,7 @@ namespace OSPSuite.Starter
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
 
          container.Register<IImportLogger, ImportLogger>();
+         container.Register<IConfirmationDialog, ConfirmationDialog>();
          container.Register<IDataFormat, MixColumnsDataFormat>("ColumnsDataFormat.v3");
 
          container.Register<BarManager, BarManager>();
