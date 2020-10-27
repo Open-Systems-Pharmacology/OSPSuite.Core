@@ -46,8 +46,6 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _errorUnitIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.MissingData);
       private readonly RepositoryItemButtonEdit _okIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.OK);
       private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-      private readonly UxRepositoryItemImageComboBox _descriptionRepository;
-      private readonly UxRepositoryItemImageComboBox _nameRepository;
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -264,7 +262,7 @@ namespace OSPSuite.UI.Views.Importer
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ComboBoxItem(option.Description));
+            editor.Items.Add(new ComboBoxItem(option.Label));
          }
 
          editor.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
