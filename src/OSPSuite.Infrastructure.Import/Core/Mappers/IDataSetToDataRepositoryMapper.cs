@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
@@ -30,18 +31,19 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
          var sheetName = dataSetPair.Key;
          var dataSet = dataSetPair.Value;
-         var dataRepository = new DataRepository { Name = dataSetName };
          var configuration = dataSource.GetImporterConfiguration();
 
-        // configuration.Format.Parameters
+         var dataRepository = new DataRepository { Name = dataSetName };
 
+
+         //a) - we ommit the sorting of the view that is being done in the old importer
 
          //var colInfos = columnInfos as IList<ColumnInfo> ?? columnInfos.ToList();
 
          //do we actually need to sort our IDataSet somehow?
          //importDataTable.DefaultView.Sort = getSortString(colInfos);
 
-         //addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
+         addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
 
          //addExtendedPropertiesForMetaData(configuration.Format, dataSet, dataRepository);
 
@@ -72,16 +74,28 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> column, string fileName)
       {
          DataColumn dataColumn;
-
-
-         //here use colInfo.Name instead!!!
          var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit);
+
+         if (string.IsNullOrEmpty(column.Key.BaseGridName) || (column.Key.BaseGridName == column.Key.Name))
+            dataColumn = new BaseGrid(column.Key.Name, dimension);
+         else
+         {
+            
+            if (!containsColumnByName(dataRepository.Columns, column.Key.BaseGridName))
+            {
+               //convertParsedDataColumn(dataRepository, importDataTable.Columns.ItemByName(colInfo.BaseGridName));
+               throw new Exception();
+            }
+            var baseGrid = findColumnByName(dataRepository.Columns, column.Key.BaseGridName) as BaseGrid;
+            dataColumn = new DataColumn(column.Key.Name, dimension, baseGrid);
+         }
+
 
          //var baseGrid = findColumnByName(dataRepository.Columns, colInfo.BaseGridName) as BaseGrid;
          //dataColumn = new DataColumn(column.Key.Unit.ColumnName, dimension, baseGrid);
 
          //maybe colInfo.Name...!!!!
-         dataColumn = new BaseGrid(column.Key.Column.Name, dimension); //it is not good that we have column 
+         //dataColumn = new BaseGrid(column.Key.Column.Name, dimension); //it is not good that we have column 
 
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
          dataColumn.DataInfo = dataInfo;
@@ -107,10 +121,29 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          dataInfo.DisplayUnitName = unit.Name; //or column.Key.Unit.Name?
          dataColumn.Values = values;
 
+         //special case: Origin
+         //if AuxiliaryType is set, set Origin to ObservationAuxiliary else to Observation for standard columns
+         //type is set to BaseGrid for baseGrid column
+         if (dataColumn.IsBaseGrid())
+            dataInfo.Origin = ColumnOrigins.BaseGrid;
+         else
+            dataInfo.Origin = (dataColumn.DataInfo.AuxiliaryType == AuxiliaryType.Undefined)
+               ? ColumnOrigins.Observation
+               : ColumnOrigins.ObservationAuxiliary;
+        // if (dataInfo.Origin == ColumnOrigins.Observation)
+          //  addLowerLimitOfQuantification(importDataColumn, dataColumn);
+
          //meta data information and input parameters currently not handled
          dataRepository.Add(dataColumn);
       }
 
+      private static DataColumn findColumnByName(IEnumerable<DataColumn> columns, string name)
+      {
+         var column = columns.FirstOrDefault(col => col.Name == name);
+         if (column == null)
+            throw new Exception(name);//this should actually be named
+         return column;
+      }
       private static void addExtendedPropertyForSource(string fileName, string sheetName,  DataRepository dataRepository)
       {
          if (!string.IsNullOrEmpty(fileName))
@@ -128,6 +161,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.FILE, Value = fileName });
             dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.SHEET, Value = sheetName });
          }
+      }
+
+      private static bool containsColumnByName(IEnumerable<DataColumn> columns, string name)
+      {
+         return columns.Any(col => col.Name == name);
       }
 
       //should be UNIT TESTED

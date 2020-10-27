@@ -197,7 +197,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   parseMappingOnSameGivenColumn;
             dictionary.Add
             (
-               new ExtendedColumn(currentParameter.MappedColumn, columnInfo.BaseGridName),
+               new ExtendedColumn(currentParameter.MappedColumn, columnInfo.BaseGridName, columnInfo.Name),
                dataSet.Select
                (
                   row => mappingsParser(currentParameter, data, row)

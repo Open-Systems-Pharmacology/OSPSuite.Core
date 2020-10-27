@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void DataSetToDataRepository(string key, int index)
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, index, key);
-         View.ShowSelectedDataSet(dataRepository);
+         //View.ShowSelectedDataSet(dataRepository);
          _chartPresenter.PlotObservedData(dataRepository);
       }
 
