@@ -142,6 +142,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.DisableImportButtons();
       }
       private void onCompletedMapping(object sender, EventArgs e)
+
       {
          View.EnableImportButtons();
          _dataSource.DataSets.Clear();
