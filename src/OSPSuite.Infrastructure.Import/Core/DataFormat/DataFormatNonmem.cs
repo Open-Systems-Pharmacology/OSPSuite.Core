@@ -36,7 +36,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var units = data.GetColumn(unitKey).ToList();
          var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
          rank++;
-         return new UnitDescription(i => (i > 0) ? units[i] : def, unitKey);
+         return new UnitDescription(i => (i > 0 && i < units.Count) ? units[i] : def, unitKey);
       }
    }
 }
