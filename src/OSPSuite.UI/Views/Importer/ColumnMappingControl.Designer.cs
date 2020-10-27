@@ -19,6 +19,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             components.Dispose();
          }
+         _gridViewBinder.Dispose();
          base.Dispose(disposing);
       }
 
