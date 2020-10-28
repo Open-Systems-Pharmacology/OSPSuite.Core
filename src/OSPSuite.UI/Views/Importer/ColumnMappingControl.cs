@@ -73,12 +73,13 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem descriptionRepository(ColumnMappingDTO model)
       {
-         var descriptionRepository = new UxRepositoryItemComboBox(columnMappingGridView)
+         var descriptionRepository = new UxRepositoryItemImageComboBox(columnMappingGridView, _imageListRetriever)
          {
             AutoComplete = true,
             AllowNullInput = DefaultBoolean.True,
             CloseUpKey = new KeyShortcut(Keys.Enter)
          };
+    //     descriptionRepository.FillComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model));
 //         descriptionRepository.FillImageComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model), x => x.IconIndex);
          fillComboBoxItems(descriptionRepository, _presenter.GetAvailableOptionsFor(model));
          return descriptionRepository;
@@ -256,13 +257,16 @@ namespace OSPSuite.UI.Views.Importer
          });
       }
 
-      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<ColumnMappingOption> options)
+      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<ColumnMappingOption> options)
       {
          editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ComboBoxItem(option.Label));
+            editor.Items.Add(new ImageComboBoxItem(option.Description)
+            {
+               Description = option.Label,
+            });
          }
 
          editor.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
