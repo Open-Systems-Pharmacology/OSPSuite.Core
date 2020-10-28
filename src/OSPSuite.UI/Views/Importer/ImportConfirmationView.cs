@@ -8,6 +8,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Presentation.Views.ObservedData;
@@ -82,7 +83,7 @@ namespace OSPSuite.UI.Views.Importer
       {
       }
 
-      public void AddChartView(ISimpleChartView chartView)
+      public void AddChartView(IView chartView)
       {
          chartPanelControl.FillWith(chartView);
       }
