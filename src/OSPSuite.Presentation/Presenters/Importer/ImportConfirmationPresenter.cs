@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IImporter _importer;
       private IDataSource _dataSource;
-      private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
