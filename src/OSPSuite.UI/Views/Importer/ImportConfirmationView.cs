@@ -95,6 +95,9 @@ namespace OSPSuite.UI.Views.Importer
       private void onDataSetNameSelected(object sender, EventArgs eventArgs)
       {
          var listBox = sender as ListBoxControl;
+
+         if (listBox.SelectedValue == null) return;
+
          _presenter.DataSetToDataRepository(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
       }
    }
