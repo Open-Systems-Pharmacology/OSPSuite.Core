@@ -88,6 +88,8 @@ namespace OSPSuite.UI.Views.Importer
       {
          var listBox = sender as ListBoxControl;
          _presenter.DataSetToDataRepository(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
+
+
       }
    }
 }
