@@ -13,7 +13,7 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetNamingConventions(IEnumerable<string> options, string selected = null);
       void SetNamingConventionKeys(IEnumerable<string> keys);
       void ShowSelectedDataSet(DataRepository dataRepository);
-      void AddChartView(ISimpleChartView chartView);
+      void AddChartView(IView chartView);
       void AddDataView(IDataRepositoryDataView dataView);
    }
 }

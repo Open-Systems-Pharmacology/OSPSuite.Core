@@ -15,8 +15,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IImporter _importer;
       private IDataSource _dataSource;
-      private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
-      private readonly ISimpleChartPresenter _chartPresenter;
+      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
 
@@ -25,21 +25,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, index, key);
          //View.ShowSelectedDataSet(dataRepository);
-         _chartPresenter.PlotObservedData(dataRepository);
+         _chartPresenter.EditObservedData(dataRepository);
          _dataPresenter.EditObservedData(dataRepository);
       }
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer, IDataSetToDataRepositoryMapper dataRepositoryMapper,
-         ISimpleChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
+         IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
       {
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
          _dataRepositoryMapper = dataRepositoryMapper;
          _chartPresenter = chartPresenter;
          _dataPresenter = dataPresenter;
-         View.AddChartView(_chartPresenter.View);
+         View.AddChartView(_chartPresenter.BaseView);
          View.AddDataView(_dataPresenter.View);
          _dataPresenter.DisableEdition();
       }
