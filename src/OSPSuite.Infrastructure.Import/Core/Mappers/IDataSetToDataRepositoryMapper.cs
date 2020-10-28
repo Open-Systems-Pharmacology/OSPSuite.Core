@@ -74,6 +74,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> column, string fileName)
       {
          DataColumn dataColumn;
+         //so the dimension is calculated correctly but with the wrong function
+         //for now it stays like this, cause otherwise we have to have the association
+         //var dimension_test = _dimensionFactory.Dimension(column.Key.Name);
+         //otherwise we can also just get the defaultDimension from the columnInfos when we
+         //create the extended column
          var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit);
 
          if (string.IsNullOrEmpty(column.Key.BaseGridName) || (column.Key.BaseGridName == column.Key.Name))
@@ -115,7 +120,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             if (value == null) //but we actually should not be allowing this at all right?
                values[i++] = float.NaN;
             else
-               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(unit, (double)value.Value);
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), (double)value.Value);
          }
 
          dataInfo.DisplayUnitName = unit.Name; //or column.Key.Unit.Name?
