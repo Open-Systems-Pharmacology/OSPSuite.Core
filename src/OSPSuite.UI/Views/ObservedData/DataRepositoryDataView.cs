@@ -28,6 +28,12 @@ namespace OSPSuite.UI.Views.ObservedData
          _columUnitsMenuBinder = new GridViewColumnUnitsMenuBinder<int>(gridView, col => col.AbsoluteIndex);
       }
 
+      public void DisableEdition()
+      {
+         btnAddData.Enabled = false;
+         gridView.OptionsBehavior.Editable = false;
+      }
+
       public override void InitializeBinding()
       {
          base.InitializeBinding();

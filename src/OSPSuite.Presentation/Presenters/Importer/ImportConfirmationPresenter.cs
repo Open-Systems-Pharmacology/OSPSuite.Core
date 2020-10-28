@@ -7,6 +7,7 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ObservedData;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -16,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSource _dataSource;
       private IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly ISimpleChartPresenter _chartPresenter;
+      private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
 
       //maybe better seperate concerns here
@@ -24,18 +26,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, index, key);
          //View.ShowSelectedDataSet(dataRepository);
          _chartPresenter.PlotObservedData(dataRepository);
+         _dataPresenter.EditObservedData(dataRepository);
       }
 
       public event EventHandler<ImportDataEventArgs> OnImportData = delegate { };
 
       public ImportConfirmationPresenter(IImportConfirmationView view, IImporter importer, IDataSetToDataRepositoryMapper dataRepositoryMapper,
-         ISimpleChartPresenter chartPresenter) : base(view)
+         ISimpleChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
       {
          _importer = importer;
          _dataSource = new DataSource(_importer); //we re just initializing to empty...
          _dataRepositoryMapper = dataRepositoryMapper;
          _chartPresenter = chartPresenter;
+         _dataPresenter = dataPresenter;
          View.AddChartView(_chartPresenter.View);
+         View.AddDataView(_dataPresenter.View);
+         _dataPresenter.DisableEdition();
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)

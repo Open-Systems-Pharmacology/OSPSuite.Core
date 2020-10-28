@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using DevExpress.XtraEditors;
+using DevExpress.XtraGrid.Columns;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
@@ -76,7 +80,6 @@ namespace OSPSuite.UI.Views.Importer
 
       public void ShowSelectedDataSet(DataRepository dataRepository)
       {
-         datagridControl.DataSource = dataRepository;
       }
 
       public void AddChartView(ISimpleChartView chartView)
@@ -84,12 +87,15 @@ namespace OSPSuite.UI.Views.Importer
          chartPanelControl.FillWith(chartView);
       }
 
+      public void AddDataView(IDataRepositoryDataView dataView)
+      {
+         dataPanelControl.FillWith(dataView);
+      }
+
       private void onDataSetNameSelected(object sender, EventArgs eventArgs)
       {
          var listBox = sender as ListBoxControl;
          _presenter.DataSetToDataRepository(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
-
-
       }
    }
 }
