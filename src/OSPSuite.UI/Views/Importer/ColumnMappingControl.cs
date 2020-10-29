@@ -113,12 +113,12 @@ namespace OSPSuite.UI.Views.Importer
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AutoBind(x => x.MappingName)
-            .WithCaption(Captions.Name)
+            .WithCaption(Captions.Importer.MappingName)
             .WithRepository(nameRepository)
             .AsReadOnly();
 
          _gridViewBinder.AutoBind(x => x.Description)
-            .WithCaption(Captions.Description)
+            .WithCaption(Captions.Importer.ExcelColumn)
             .WithRepository(descriptionRepository)
             .WithOnValueUpdated((o, e) => onValueChanged(o))
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
@@ -130,13 +130,19 @@ namespace OSPSuite.UI.Views.Importer
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithCaption(Captions.Importer.UnitColumn)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(unitRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption(UIConstants.EMPTY_COLUMN)
+            .WithCaption(Captions.Importer.ErrorColumn)
+            .WithShowButton(ShowButtonModeEnum.ShowAlways)
+            .WithRepository(unitRepository)
+            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+
+         _gridViewBinder.AddUnboundColumn()
+            .WithCaption(Captions.Importer.LLOQColumn)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(lloqRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
