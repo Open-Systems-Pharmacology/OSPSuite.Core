@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
@@ -26,7 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private DataImporterSettings _dataImporterSettings;
       private IEnumerable<IDataFormat> _availableFormats;
       private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
-      private readonly IConfirmationDialog _confirmationDialog;
+      private readonly IDialogCreator _dialogCreator;
 
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -43,10 +44,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ISourceFilePresenter sourceFilePresenter,
          INanPresenter nanPresenter,
          IImporter importer,
-         IConfirmationDialog confirmationDialog
+         IDialogCreator dialogCreator
       ) : base(view)
       {
-         _confirmationDialog = confirmationDialog;
+         _dialogCreator = dialogCreator;
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddColumnMappingControl(columnMappingPresenter.View);
@@ -172,7 +173,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         if (_dataSource.DataSets.Any() && !_confirmationDialog.Confirm(Captions.Importer.OpenFileConfirmation))
+         if (_dataSource.DataSets.Any() && _dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.No)
             return;
          _dataSource.DataSets.Clear();
          _sheets = new List<Cache<string, IDataSheet>>();
