@@ -153,7 +153,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (!lloqEditorPresenter.Canceled)
             {
                column.LloqColumn = lloqEditorPresenter.LloqColumn;
-               _view.Rebind();
+               _view.RefreshData();
             }
          }
       }
@@ -181,7 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                }
                model.Description = ColumnMappingFormatter.Stringify(model.Source);
                ValidateMapping();
-               _view.Rebind();
+               _view.RefreshData();
             }
          }
       }
@@ -432,7 +432,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             model.Source = newParam;
             _format.Parameters[index] = newParam;
          }
-         View.Rebind();
+         View.RefreshData();
       }
 
       public void AddGroupBy(AddGroupByFormatParameter source)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DevExpress.XtraEditors.DXErrorProvider;
 using OSPSuite.Assets;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
@@ -8,10 +9,12 @@ using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public class ColumnMappingDTO : Notifier
+   public class ColumnMappingDTO : Notifier, IDXDataErrorInfo
    {
       public string MappingName { get; private set; }
       private string _description;
+
+      public string ErrorMessage { get; set; }
 
       public string Description 
       {
@@ -53,6 +56,44 @@ namespace OSPSuite.Presentation.Views.Importer
          InvalidUnit
       }
       public MappingStatus Status { get; set; }
+
+      public void GetPropertyError(string propertyName, ErrorInfo info)
+      {
+         switch (Status)
+         {
+            case MappingStatus.Invalid:
+               info.ErrorText = Captions.MissingMandatoryMapping;
+               info.ErrorType = ErrorType.Critical;
+               break;
+            case MappingStatus.InvalidUnit:
+               info.ErrorText = Captions.MissingUnit;
+               info.ErrorType = ErrorType.Critical;
+               break;
+            default:
+               info.ErrorText = "";
+               info.ErrorType = ErrorType.None;
+               break;
+         }
+      }
+
+      public void GetError(ErrorInfo info)
+      {
+         switch (Status)
+         {
+            case MappingStatus.Invalid:
+               info.ErrorText = Captions.MissingMandatoryMapping;
+               info.ErrorType = ErrorType.Critical;
+               break;
+            case MappingStatus.InvalidUnit:
+               info.ErrorText = Captions.MissingUnit;
+               info.ErrorType = ErrorType.Critical;
+               break;
+            default:
+               info.ErrorText = "";
+               info.ErrorType = ErrorType.None;
+               break;
+         }
+      }
    }
 
    public static class ColumnMappingFormatter
@@ -151,6 +192,6 @@ namespace OSPSuite.Presentation.Views.Importer
    public interface IColumnMappingControl : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
-      void Rebind();
+      void RefreshData();
    }
 }
