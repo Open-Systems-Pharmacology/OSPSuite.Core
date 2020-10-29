@@ -373,7 +373,11 @@ namespace OSPSuite.Assets
          public static readonly string NanIndicator = "NaN indicator";
          public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
          public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
-
+         public static readonly string ExcelColumn = "Excel Column";
+         public static readonly string MappingName = "Mapping Name";
+         public static readonly string UnitColumn = "Unit";
+         public static readonly string LLOQColumn = "LLOQ";
+         public static readonly string ErrorColumn = "Error";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
