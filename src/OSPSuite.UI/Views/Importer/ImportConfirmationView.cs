@@ -26,11 +26,12 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
-         buttonAdd.Click += (s, a) => this.DoWithinExceptionHandler(() =>
-            namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}")));
-         importButton.Click += onButtonImportClick;
-         namesListBox.SelectedIndexChanged += onDataSetNameSelected;
-         keysListBox.SelectedIndexChanged += (s, a) => buttonAdd.Enabled = keysListBox.SelectedItems.Any();
+         buttonAdd.Click += (s, a) => OnEvent(() =>
+            namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+         );
+         importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
+         namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
+         keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
       }
 
@@ -51,7 +52,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             namingConventionComboBoxEdit.EditValue = options.First();
          }
-         namingConventionComboBoxEdit.TextChanged += onNamingConventionChanged;
+         namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
       }
 
       public void SetDataSetNames(IEnumerable<string> names)

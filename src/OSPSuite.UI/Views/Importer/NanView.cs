@@ -25,14 +25,14 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          fillNanOptions();
-         actionImageComboBoxEdit.SelectedValueChanged += (s, a) =>
+         actionImageComboBoxEdit.SelectedValueChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Action = (NanSettings.ActionType) actionImageComboBoxEdit.SelectedIndex;
-         };
-         indicatorLayoutControlItem.TextChanged += (s, a) =>
+         });
+         indicatorLayoutControlItem.TextChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Indicator = indicatorTextEdit.Text;
-         };
+         });
       }
 
       private void fillNanOptions()

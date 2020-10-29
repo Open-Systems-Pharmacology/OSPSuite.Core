@@ -78,7 +78,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          var comboBox = new ImageComboBoxEdit { Name = name };
          comboBox.Properties.AllowNullInput = DefaultBoolean.False;
-         comboBox.TextChanged += textChangedHandler;
+         comboBox.TextChanged += (s, a) => OnEvent(() => textChangedHandler(s, a));
          comboBox.Enabled = true;
          Controls.Add(comboBox);
          return comboBox;

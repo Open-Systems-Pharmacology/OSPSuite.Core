@@ -147,17 +147,18 @@ namespace OSPSuite.UI.Views.Importer
             .WithRepository(lloqRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
-         _removeButtonRepository.ButtonClick += (o, e) =>
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
          {
             columnMappingGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
             columnMappingGridView.CloseEditor();
             _presenter.ClearRow(_gridViewBinder.FocusedElement);
-         };
-         _unitButtonRepository.ButtonClick += (o, e) => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement);
-         _addButtonRepository.ButtonClick += (o, e) => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter);
+         });
+         
+         _unitButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement));
+         _addButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
-         _lloqButtonRepository.ButtonClick += (o, e) => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement);
+         _lloqButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement));
          _disabledLloqButtonRepository.Buttons[0].Enabled = false;
          _emptyIconRepository.Buttons[0].Enabled = false;
       }
@@ -275,7 +276,7 @@ namespace OSPSuite.UI.Views.Importer
             });
          }
 
-         editor.KeyDown += clearSelectionOnDeleteForComboBoxEdit;
+         editor.KeyDown += (s, a) => OnEvent(clearSelectionOnDeleteForComboBoxEdit, s, a);
          if (editor.Items.Count != 0) return;
          editor.NullText = Captions.Importer.NothingSelectableEditorNullText;
          editor.Enabled = false;

@@ -12,7 +12,7 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterTiledView()
       {
          InitializeComponent();
-         navigationTileBar.ItemClick += onTileBarClicked;
+         navigationTileBar.ItemClick += (s, a) => OnEvent(onTileBarClicked, s, a);
       }
 
       private void onTileBarClicked(object sender, EventArgs e)
