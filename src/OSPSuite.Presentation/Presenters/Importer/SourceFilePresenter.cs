@@ -13,6 +13,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public string Filter { get; set; }
       public string DirectoryKey { get; set; }
 
+      public Func<bool> CheckBeforeSelectFile { get; set; } = () => true;
+
       public SourceFilePresenter(IDialogCreator dialogCreator, ISourceFileControl view) : base(view)
       {
          _dialogCreator = dialogCreator;
@@ -23,6 +25,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void OpenFileDialog( string initFileName)
       {
+         if (!CheckBeforeSelectFile()) return;
+
          string initDirectoryName = null;
          if (!initFileName.IsNullOrEmpty()) 
             initDirectoryName = Path.GetDirectoryName(initFileName);
