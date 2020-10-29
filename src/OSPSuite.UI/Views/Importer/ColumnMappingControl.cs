@@ -42,9 +42,6 @@ namespace OSPSuite.UI.Views.Importer
          new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
 
       private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-      private readonly RepositoryItemButtonEdit _errorIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Exit);
-      private readonly RepositoryItemButtonEdit _errorUnitIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.MissingData);
-      private readonly RepositoryItemButtonEdit _okIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.OK);
       private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
@@ -106,11 +103,6 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeBinding()
       {
          base.InitializeBinding();
-         _gridViewBinder.AddUnboundColumn()
-            .WithCaption(UIConstants.EMPTY_COLUMN)
-            .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(invalidRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AutoBind(x => x.MappingName)
             .WithCaption(Captions.Importer.MappingName)
@@ -149,9 +141,9 @@ namespace OSPSuite.UI.Views.Importer
 
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
          {
+            _presenter.ClearRow(_gridViewBinder.FocusedElement);
             columnMappingGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
             columnMappingGridView.CloseEditor();
-            _presenter.ClearRow(_gridViewBinder.FocusedElement);
          });
          
          _unitButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement));
@@ -165,6 +157,16 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
       {
+         if (model.Source is AddGroupByFormatParameter)
+         {
+            if (string.IsNullOrEmpty(model.Source.ColumnName))
+            {
+               return _disabledRemoveButtonRepository;
+            }
+
+            return _addButtonRepository;
+         }
+
          return model.Source == null || model.Source is IgnoredDataFormatParameter || model.Source is AddGroupByFormatParameter
             ? _disabledRemoveButtonRepository
             : _removeButtonRepository;
@@ -177,32 +179,7 @@ namespace OSPSuite.UI.Views.Importer
             return _unitButtonRepository;
          }
 
-         if (model.Source is AddGroupByFormatParameter)
-         {
-            if (string.IsNullOrEmpty(model.Source.ColumnName))
-            {
-               return _disabledUnitButtonRepository;
-            }
-
-            return _addButtonRepository;
-         }
-
          return _disabledUnitButtonRepository;
-      }
-
-      private RepositoryItem invalidRepository(ColumnMappingDTO model)
-      {
-         switch (model.Status)
-         {
-            case ColumnMappingDTO.MappingStatus.Valid:
-               return _okIconRepository;
-            case ColumnMappingDTO.MappingStatus.Invalid:
-               return _errorIconRepository;
-            case ColumnMappingDTO.MappingStatus.InvalidUnit:
-               return _errorUnitIconRepository;
-            default:
-               return _emptyIconRepository;
-         }
       }
 
       private RepositoryItem lloqRepository(ColumnMappingDTO model)
@@ -215,10 +192,10 @@ namespace OSPSuite.UI.Views.Importer
          return _disabledLloqButtonRepository;
       }
 
-      public void Rebind()
+      public void RefreshData()
       {
          columnMappingGridView.RefreshData();
-         // _gridViewBinder.Rebind();
+         // _gridViewBinder.RefreshData();
       }
 
       public void SetMappingSource(IList<ColumnMappingDTO> mappings)
