@@ -123,7 +123,7 @@ namespace OSPSuite.Starter.Presenters
       {
          var dataImporterSettings = new DataImporterSettings
          {
-            Caption = "PK-Sim - Import Ontogeny"
+            Caption = "PK-Sim - LoadCurrentSheet Ontogeny"
          };
 
          StartImporterExcelView(

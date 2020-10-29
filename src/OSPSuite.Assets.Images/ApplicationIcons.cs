@@ -137,7 +137,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Human = AddNamedIcon("Human", "Human");
       public static readonly ApplicationIcon HumanGreen = AddNamedIcon("HumanGreen", "HumanGreen");
       public static readonly ApplicationIcon HumanRed = AddNamedIcon("HumanRed", "HumanRed");
-      public static readonly ApplicationIcon Import = AddNamedIcon("ObservedData", "Import");
+      public static readonly ApplicationIcon Import = AddNamedIcon("ObservedData", "LoadCurrentSheet");
       public static readonly ApplicationIcon MoleculeStartValuesImport = AddNamedIcon("MoleculeStartValuesImport", "MoleculeStartValuesImport");
       public static readonly ApplicationIcon ParameterStartValuesImport = AddNamedIcon("ParameterStartValuesImport", "ParameterStartValuesImport");
       public static readonly ApplicationIcon ImportPopulation = AddNamedIcon("ImportPopulation", "ImportPopulation");
@@ -441,7 +441,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Tree = AddNamedIcon("Tree", "Tree");
       public static readonly ApplicationIcon Diagram = AddNamedIcon("Diagram", "Diagram");
       public static readonly ApplicationIcon ContainerObserver = AddNamedIcon("ContainerObserver", "ContainerObserver");
-      public static readonly ApplicationIcon ImportAll = AddNamedIcon("ImportAll", "ImportAll");
+      public static readonly ApplicationIcon ImportAll = AddNamedIcon("LoadAllSheets", "LoadAllSheets");
       public static readonly ApplicationIcon ReactionList = AddNamedIcon("ReactionList", "ReactionList");
       public static readonly ApplicationIcon SolverSettings = AddNamedIcon("SolverSettings", "SolverSettings");
       public static readonly ApplicationIcon Swap = AddNamedIcon("Swap", "Swap");

@@ -125,7 +125,7 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImport.Size = new System.Drawing.Size(288, 54);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
-         this.btnImport.Text = "Import";
+         this.btnImport.Text = Captions.Importer.LoadCurrentSheets;
          // 
          // btnImportAll
          // 
@@ -135,7 +135,7 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImportAll.Size = new System.Drawing.Size(281, 54);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
-         this.btnImportAll.Text = "Import All";
+         this.btnImportAll.Text = Captions.Importer.LoadAllSheets;
          // 
          // columnMappingPanelControl
          // 

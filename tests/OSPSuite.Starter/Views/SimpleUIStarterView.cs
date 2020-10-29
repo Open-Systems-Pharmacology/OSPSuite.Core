@@ -40,7 +40,7 @@ namespace OSPSuite.Starter.Views
 
       private void simpleButton1_Click(object sender, EventArgs e)
       {
-         var folder = _dialogCreator.AskForFolder("Test", "Import");
+         var folder = _dialogCreator.AskForFolder("Test", "LoadCurrentSheet");
          _dialogCreator.MessageBoxInfo(folder);
       }
 
