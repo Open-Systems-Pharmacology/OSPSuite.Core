@@ -71,6 +71,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
 
          _dataSource = new DataSource(_importer);
+
+         _sourceFilePresenter.CheckBeforeSelectFile = () =>
+            !_dataSource.DataSets.Any() || _dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
       }
       public void ImportDataForConfirmation()
       {
@@ -173,8 +176,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         if (_dataSource.DataSets.Any() && _dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.No)
-            return;
          _dataSource.DataSets.Clear();
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);

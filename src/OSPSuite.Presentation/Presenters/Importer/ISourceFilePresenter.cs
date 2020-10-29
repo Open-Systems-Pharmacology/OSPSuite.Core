@@ -7,6 +7,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       void OpenFileDialog(string initFileName);
 
+      Func<bool> CheckBeforeSelectFile { get; set; }
+
       event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
       void SetFilePath(string filePath);
       string Title { get; set; }
