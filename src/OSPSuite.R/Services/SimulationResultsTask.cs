@@ -18,7 +18,7 @@ namespace OSPSuite.R.Services
       void ExportResultsToCSV(SimulationResults simulationResults, IModelCoreSimulation simulation, string csvFile);
 
       /// <summary>
-      ///    Import simulation results from one or more csv files defined in <paramref name="csvFiles" />
+      ///    LoadCurrentSheet simulation results from one or more csv files defined in <paramref name="csvFiles" />
       /// </summary>
       SimulationResults ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles);
    }
