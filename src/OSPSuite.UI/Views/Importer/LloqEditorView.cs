@@ -9,7 +9,7 @@ namespace OSPSuite.UI.Views.Importer
       public LloqEditorView()
       {
          InitializeComponent();
-         ColumnsComboBox.EditValueChanged += (s, e) => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString());
+         ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
       }
       public void FillComboBox(IEnumerable<string> columns, string defaultValue)
       {

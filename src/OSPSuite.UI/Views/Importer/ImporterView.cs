@@ -21,11 +21,11 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         btnImport.Click += (s, a) => this.DoWithinExceptionHandler(() => onButtonImportClicked(s, a));
-         btnImportAll.Click += (s, a) => this.DoWithinExceptionHandler(() => onButtonImportAllClicked(s, a));
-         ImporterTabControl.SelectedPageChanged += onSelectedPageChanged;
-         ImporterTabControl.CloseButtonClick += onCloseTab;
-         ImporterTabControl.MouseDown += onTabControlMouseDown;
+         btnImport.Click += (s, a) => OnEvent(onButtonImportClicked, s, a);
+         btnImportAll.Click += (s, a) => OnEvent(onButtonImportAllClicked, s, a);
+         ImporterTabControl.SelectedPageChanged += (s, a) => OnEvent(onSelectedPageChanged, s, a);
+         ImporterTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
+         ImporterTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
@@ -134,20 +134,8 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetFormats(IEnumerable<string> options, string selected, string description)
       {
-         /*formatComboBoxEdit.Properties.Items.Clear();
-         foreach (var option in options)
-         {
-            formatComboBoxEdit.Properties.Items.Add(option);
-         }
-         formatComboBoxEdit.EditValue = selected;
-         formatComboBoxEdit.TextChanged += onFormatChanged;*/
          descriptionRichTextBox.Text = description;
       }
-
-      /*private void onFormatChanged(object sender, EventArgs e)
-      {
-         _presenter.SetNewFormat(formatComboBoxEdit.EditValue as string);
-      }*/
 
       public void AddTabs(List<string> sheetNames)
       {
