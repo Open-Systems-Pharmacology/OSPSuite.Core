@@ -134,7 +134,7 @@ namespace OSPSuite.UI.Views.Importer
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(Captions.Importer.ErrorColumn)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(unitRepository)
+            .WithRepository(errorRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
