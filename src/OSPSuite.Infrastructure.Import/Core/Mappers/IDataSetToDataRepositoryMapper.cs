@@ -112,6 +112,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          
          //not 100% sure this is correct
          var unit = dimension.Unit(column.Key.Column.Unit.SelectedUnit);
+         
+         
+         //we have this, so we can actually populate the error list for the mapping
+         //column.Key.Column.ErrorColumn
+         
+         
+         
          var values = new float[column.Value.Count];
          var i = 0;
          //loop over view rows to get the sorted values.

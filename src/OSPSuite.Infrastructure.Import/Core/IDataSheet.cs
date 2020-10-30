@@ -57,6 +57,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string LloqColumn { get; set; }
 
+      public string ErrorColumn { get; set; }
+
       public override string ToString()
       {
          return $"{Name} [{Unit}]";
