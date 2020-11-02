@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NPOI.XWPF.UserModel;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -63,6 +64,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   {
                      Name = header,
                      Unit = units,
+                     ErrorColumn = "", //this should actually be automatically added from the excel, and only for observation
                      LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                   })
                );
@@ -195,9 +197,23 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                currentParameter.MappedColumn.LloqColumn == null ? 
                   (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn : 
                   parseMappingOnSameGivenColumn;
+
+            string columnType = "";
+            if (!string.IsNullOrEmpty(columnInfo.RelatedColumnOf)) //column is error column, so we need auxiliary type as metadata
+            {
+               columnType = Constants.AUXILIARY_TYPE;
+            }
+
             dictionary.Add
             (
-               new ExtendedColumn(currentParameter.MappedColumn, columnInfo.BaseGridName, columnInfo.Name),
+               new ExtendedColumn
+               {
+                  Column = currentParameter.MappedColumn,
+                  BaseGridName = columnInfo.BaseGridName,
+                  Name = columnInfo.Name,
+                  ColumnType = columnType,
+                  ErrorDeviation = Constants.STD_DEV_ARITHMETIC
+               },
                dataSet.Select
                (
                   row => mappingsParser(currentParameter, data, row)

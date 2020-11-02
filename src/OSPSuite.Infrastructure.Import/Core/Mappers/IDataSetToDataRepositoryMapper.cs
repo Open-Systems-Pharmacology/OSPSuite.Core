@@ -133,6 +133,46 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          dataInfo.DisplayUnitName = unit.Name; //or column.Key.Unit.Name?
          dataColumn.Values = values;
 
+         var propInfo = dataInfo.GetType().GetProperty(column.Key.ColumnType);
+         AuxiliaryType errorType = AuxiliaryType.Undefined;
+
+         if (propInfo != null)
+         {
+            if (column.Key.ColumnType == Constants.AUXILIARY_TYPE)
+            {
+               switch (column.Key.ErrorDeviation)
+               {
+                  case Constants.STD_DEV_ARITHMETIC:
+                     errorType = AuxiliaryType.ArithmeticStdDev;
+                     for (i = 0; i < dataColumn.Values.Count; i++)
+                        if (dataColumn.Values[i] < 0F)
+                        {
+                           dataColumn[i] = float.NaN;
+                        }
+                     break;
+                  case Constants.STD_DEV_GEOMETRIC:
+                     errorType = AuxiliaryType.GeometricStdDev;
+                     for (i = 0; i < dataColumn.Values.Count; i++)
+                        if (dataColumn.Values[i] < 1F)
+                        {
+                           dataColumn[i] = float.NaN;
+                        }
+                     break;
+               }
+            }
+
+            //not sure what this is for
+            /*
+            else
+            {
+               // set explicitly defined property
+               if (propInfo.PropertyType.IsEnum)
+                  value = Enum.Parse(propInfo.PropertyType, value.ToString(), true);
+            }*/
+
+            propInfo.SetValue(dataColumn.DataInfo, errorType, null);
+         }
+
          //special case: Origin
          //if AuxiliaryType is set, set Origin to ObservationAuxiliary else to Observation for standard columns
          //type is set to BaseGrid for baseGrid column
