@@ -112,11 +112,6 @@ namespace OSPSuite.UI.Views.Importer
             _presenter.SelectTab(e.Page.Text);
       }
 
-      public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
-      {
-         columnMappingPanelControl.FillWith(columnMappingControl);
-      }
-
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
       {
          sourceFilePanelControl.FillWith(sourceFileControl);

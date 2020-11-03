@@ -8,22 +8,31 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
    {
       private readonly IImporterPresenter _importerPresenter;
+      private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
       private IDataSource _lastDataSource;
 
-      public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter) : base(view)
+      public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
+      ) : base(view)
       {
          _importerPresenter = importerPresenter;
          _confirmationPresenter = confirmationPresenter;
+         _columnMappingPresenter = columnMappingPresenter;
+         _view.AddColumnMappingControl(columnMappingPresenter.View);
          _confirmationPresenter.OnImportData += ImportData;
          _importerPresenter.OnImportSheets += ImportSheets;
          _view.AddImporterView(_importerPresenter.View);
-         AddSubPresenters(_importerPresenter, _confirmationPresenter);
+         AddSubPresenters(_importerPresenter, _confirmationPresenter, _columnMappingPresenter);
          _importerPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
+         _importerPresenter.OnFormatChanged += onFormatChanged;
+         _importerPresenter.OnTabChanged += onTabChanged;
+         _columnMappingPresenter.OnMissingMapping += onMissingMapping;
+         _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
+         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
       }
 
@@ -52,6 +61,25 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.EnableConfirmationView();
       }
 
+      private void onFormatChanged(object sender, FormatChangedEventArgs e)
+      {
+         _columnMappingPresenter.SetDataFormat(e.Format);
+      }
+
+      private void onTabChanged(object sender, TabChangedEventArgs e)
+      {
+         _columnMappingPresenter.SetRawData(e.TabData);
+      }
+
+      private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
+      {
+         _importerPresenter.onMissingMapping();
+      }
+
+      private void onCompletedMapping(object sender, EventArgs e)
+      {
+         _importerPresenter.onCompletedMapping();
+      }
       public void AddDataMappingView()
       {
          _view.AddImporterView(_importerPresenter.View);

@@ -34,11 +34,14 @@ namespace OSPSuite.UI.Views.Importer
          centralPanelControl.FillWith(importerView);
       }
 
+      public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
+      {
+         columnMappingPanelControl.FillWith(columnMappingControl);
+      }
       public void AddConfirmationView(IImportConfirmationView confirmationView)
       {
          centralPanelControl.FillWith(confirmationView);
       }
-
       public void EnableConfirmationView()
       {
          if (!confirmationTile.Enabled)
