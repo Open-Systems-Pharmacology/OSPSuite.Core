@@ -64,7 +64,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ClearMapping();
       void ChangeUnitsOnRow(ColumnMappingDTO model);
       void ChangeLloqOnRow(ColumnMappingDTO model);
-      void ChangeErrorOnRow(ColumnMappingDTO model);
       void ValidateMapping();
 
       event EventHandler OnMappingCompleted; //status: you can import

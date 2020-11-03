@@ -41,11 +41,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _lloqButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
 
-      private readonly RepositoryItemButtonEdit _errorButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.BasicPharmacochemistryError, Captions.ErrorInformationDescription);
-
       private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-      private readonly RepositoryItemButtonEdit _disabledErrorButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
       private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
@@ -80,8 +76,8 @@ namespace OSPSuite.UI.Views.Importer
             AllowNullInput = DefaultBoolean.True,
             CloseUpKey = new KeyShortcut(Keys.Enter)
          };
-         //descriptionRepository.FillComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model));
-         //descriptionRepository.FillImageComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model), x => x.IconIndex);
+    //     descriptionRepository.FillComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model));
+//         descriptionRepository.FillImageComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model), x => x.IconIndex);
          fillComboBoxItems(descriptionRepository, _presenter.GetAvailableOptionsFor(model));
          return descriptionRepository;
       }
@@ -155,7 +151,6 @@ namespace OSPSuite.UI.Views.Importer
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
          _lloqButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement));
-         _errorButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeErrorOnRow(_gridViewBinder.FocusedElement));
          _disabledLloqButtonRepository.Buttons[0].Enabled = false;
          _emptyIconRepository.Buttons[0].Enabled = false;
       }
@@ -195,15 +190,6 @@ namespace OSPSuite.UI.Views.Importer
          }
 
          return _disabledLloqButtonRepository;
-      }
-      private RepositoryItem errorRepository(ColumnMappingDTO model)
-      {
-         if (model.Source is MappingDataFormatParameter /*&& (model.Source as MappingDataFormatParameter).MappedColumn?.errorColumn != null*/)
-         {
-            return _errorButtonRepository;
-         }
-
-         return _disabledErrorButtonRepository;
       }
 
       public void RefreshData()

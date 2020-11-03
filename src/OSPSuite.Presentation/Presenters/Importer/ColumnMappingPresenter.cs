@@ -134,33 +134,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      public void ChangeErrorOnRow(ColumnMappingDTO model)
-      {
-         using (var errorEditorPresenter = _applicationController.Start<IErrorEditorPresenter>())
-         {
-            var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
-            var columns = new List<string>() { column.ErrorColumn };
-            if (column.ErrorColumn != "")
-            {
-               columns.Add("");
-            }
-            columns.AddRange(availableColumns());
-
-            //not sure exactly what this function is meant to do
-            errorEditorPresenter.ShowFor
-            (
-               columns,
-               column.ErrorColumn
-            );
-            if (!errorEditorPresenter.Canceled)
-            {
-               column.ErrorColumn = errorEditorPresenter.ErrorColumn;
-               _view.RefreshData();
-            }
-         }
-      }
-
-
       public void ChangeLloqOnRow(ColumnMappingDTO model)
       {
          using (var lloqEditorPresenter = _applicationController.Start<ILloqEditorPresenter>())
