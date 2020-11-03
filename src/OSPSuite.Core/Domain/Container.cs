@@ -164,17 +164,18 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns all children recursively of the container of type <typeparamref name="T" />
       /// </summary>
-      public virtual IReadOnlyList<T> GetAllChildren<T>() where T : class, IEntity
-      {
-         return GetAllChildren<T>(child => true);
-      }
+      public virtual IReadOnlyList<T> GetAllChildren<T>() where T : class, IEntity => GetAllChildren<T>(child => true);
 
       public virtual void RemoveChild(IEntity childToRemove)
       {
-         if (!_children.Contains(childToRemove)) return;
+         if (!_children.Contains(childToRemove))
+            return;
+
          var deleted = _children.Remove(childToRemove);
          if (!deleted)
             throw new UnableToRemoveChildException(childToRemove, this);
+
+         childToRemove.ParentContainer = null;
 
          OnChanged();
       }
