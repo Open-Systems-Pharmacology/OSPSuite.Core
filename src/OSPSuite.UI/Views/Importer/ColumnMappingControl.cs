@@ -128,12 +128,6 @@ namespace OSPSuite.UI.Views.Importer
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption(Captions.Importer.ErrorColumn)
-            .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(errorRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
-
-         _gridViewBinder.AddUnboundColumn()
             .WithCaption(Captions.Importer.LLOQColumn)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(lloqRepository)
