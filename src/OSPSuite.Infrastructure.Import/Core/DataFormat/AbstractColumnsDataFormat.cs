@@ -64,7 +64,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   {
                      Name = header,
                      Unit = units,
-                     ErrorColumn = "", //this should actually be automatically added from the excel, and only for observation
                      LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                   })
                );

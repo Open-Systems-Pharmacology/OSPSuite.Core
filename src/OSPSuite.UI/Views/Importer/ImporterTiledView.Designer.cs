@@ -33,9 +33,9 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void InitializeComponent()
       {
-         DevExpress.XtraEditors.TileItemElement tileItemElement1 = new DevExpress.XtraEditors.TileItemElement();
+         DevExpress.XtraEditors.TileItemElement tileItemElement3 = new DevExpress.XtraEditors.TileItemElement();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImporterTiledView));
-         DevExpress.XtraEditors.TileItemElement tileItemElement2 = new DevExpress.XtraEditors.TileItemElement();
+         DevExpress.XtraEditors.TileItemElement tileItemElement4 = new DevExpress.XtraEditors.TileItemElement();
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.centralPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.navigationTileBar = new DevExpress.XtraBars.Navigation.TileBar();
@@ -67,9 +67,9 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // centralPanelControl
          // 
-         this.centralPanelControl.Location = new System.Drawing.Point(12, 245);
+         this.centralPanelControl.Location = new System.Drawing.Point(12, 225);
          this.centralPanelControl.Name = "centralPanelControl";
-         this.centralPanelControl.Size = new System.Drawing.Size(1247, 959);
+         this.centralPanelControl.Size = new System.Drawing.Size(1247, 979);
          this.centralPanelControl.TabIndex = 5;
          // 
          // navigationTileBar
@@ -80,7 +80,7 @@ namespace OSPSuite.UI.Views.Importer
          this.navigationTileBar.Location = new System.Drawing.Point(12, 12);
          this.navigationTileBar.Name = "navigationTileBar";
          this.navigationTileBar.ScrollMode = DevExpress.XtraEditors.TileControlScrollMode.ScrollButtons;
-         this.navigationTileBar.Size = new System.Drawing.Size(1247, 229);
+         this.navigationTileBar.Size = new System.Drawing.Size(1247, 209);
          this.navigationTileBar.TabIndex = 4;
          this.navigationTileBar.WideTileWidth = 300;
          // 
@@ -93,23 +93,23 @@ namespace OSPSuite.UI.Views.Importer
          // dataMappingTile
          // 
          this.dataMappingTile.DropDownOptions.BeakColor = System.Drawing.Color.Coral;
-         tileItemElement1.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
-         tileItemElement1.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
-         tileItemElement1.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement1.Text = Captions.Importer.DataMapping;
-         this.dataMappingTile.Elements.Add(tileItemElement1);
+         tileItemElement3.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
+         tileItemElement3.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
+         tileItemElement3.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
+         tileItemElement3.Text = "Data Mapping";
+         this.dataMappingTile.Elements.Add(tileItemElement3);
          this.dataMappingTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.dataMappingTile.Name = "dataMappingTile";
          // 
          // confirmationTile
          // 
          this.confirmationTile.DropDownOptions.BeakColor = System.Drawing.Color.Blue;
-         tileItemElement2.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
-         tileItemElement2.ImageOptions.ImageAlignment = DevExpress.XtraEditors.TileItemContentAlignment.TopLeft;
-         tileItemElement2.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
-         tileItemElement2.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement2.Text = Captions.Importer.Confirmation;
-         this.confirmationTile.Elements.Add(tileItemElement2);
+         tileItemElement4.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
+         tileItemElement4.ImageOptions.ImageAlignment = DevExpress.XtraEditors.TileItemContentAlignment.TopLeft;
+         tileItemElement4.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
+         tileItemElement4.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
+         tileItemElement4.Text = "Confirmation";
+         this.confirmationTile.Elements.Add(tileItemElement4);
          this.confirmationTile.Enabled = false;
          this.confirmationTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.confirmationTile.Name = "confirmationTile";
@@ -130,16 +130,16 @@ namespace OSPSuite.UI.Views.Importer
          this.tileBarLayoutControlItem.Control = this.navigationTileBar;
          this.tileBarLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.tileBarLayoutControlItem.Name = "tileBarLayoutControlItem";
-         this.tileBarLayoutControlItem.Size = new System.Drawing.Size(1251, 233);
+         this.tileBarLayoutControlItem.Size = new System.Drawing.Size(1251, 213);
          this.tileBarLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.tileBarLayoutControlItem.TextVisible = false;
          // 
          // centralPanelControlLayoutControlItem
          // 
          this.centralPanelControlLayoutControlItem.Control = this.centralPanelControl;
-         this.centralPanelControlLayoutControlItem.Location = new System.Drawing.Point(0, 233);
+         this.centralPanelControlLayoutControlItem.Location = new System.Drawing.Point(0, 213);
          this.centralPanelControlLayoutControlItem.Name = "centralPanelControlLayoutControlItem";
-         this.centralPanelControlLayoutControlItem.Size = new System.Drawing.Size(1251, 963);
+         this.centralPanelControlLayoutControlItem.Size = new System.Drawing.Size(1251, 983);
          this.centralPanelControlLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.centralPanelControlLayoutControlItem.TextVisible = false;
          // 
