@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain
 {
@@ -31,7 +33,7 @@ namespace OSPSuite.Core.Domain
          while (parent != null)
          {
             list.Insert(0, parent.Name);
-            parent = parent.ParentContainer;
+            parent = parent.IsAnImplementationOf<IRootContainer>() ? null : parent.ParentContainer;
          }
 
          return list;

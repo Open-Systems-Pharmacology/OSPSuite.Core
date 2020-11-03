@@ -45,8 +45,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-  
-
    public class When_resolving_the_entity_defined_at_a_given_location : concern_for_ContainerExtensions
    {
       [Observation]
@@ -57,6 +55,13 @@ namespace OSPSuite.Core.Domain
          _container.EntityAt<Container>(_liver.Name, _cell.Name).ShouldBeEqualTo(_cell);
          _container.EntityAt<Observer>(_liver.Name, _cell.Name, _observer.Name).ShouldBeEqualTo(_observer);
          _container.EntityAt<Parameter>(_liver.Name, _cell.Name, _para1.Name).ShouldBeEqualTo(_para1);
+      }
+
+      [Observation]
+      public void should_return_the_expected_entity_when_the_entity_is_defined_and_using_object_path()
+      {
+         var objectPath = new ObjectPath(_liver.Name, _cell.Name, _para1.Name);
+         _container.EntityAt<Parameter>(objectPath).ShouldBeEqualTo(_para1);
       }
 
       [Observation]
