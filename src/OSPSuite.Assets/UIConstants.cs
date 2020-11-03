@@ -366,7 +366,6 @@ namespace OSPSuite.Assets
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:  ";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
-         public static readonly string ErrorColumnEditorTitle = "Please select the error column.";
          public static readonly string ConfirmationImport = "Import";
          public static readonly string NanAction = "Action";
          public static readonly string NanActionThrowsError = "Error";
@@ -1165,7 +1164,6 @@ namespace OSPSuite.Assets
       public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
       public static readonly string AddInformationDescription = "Add a new grouping by field";
       public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
-      public static readonly string ErrorInformationDescription = "Enter an error column";
    }
 
    public static class Error
