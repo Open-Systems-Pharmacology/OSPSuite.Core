@@ -5,6 +5,7 @@ namespace OSPSuite.Presentation.Views.Importer
    public interface IImporterTiledView : IView<IImporterTiledPresenter>
    {
       void AddImporterView(IImporterView importerView);
+      void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
       void AddConfirmationView(IImportConfirmationView confirmationView);
       void EnableConfirmationView();
       void DisableConfirmationView();

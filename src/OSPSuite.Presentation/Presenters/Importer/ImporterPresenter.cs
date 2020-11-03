@@ -16,10 +16,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
    internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
-      private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly INanPresenter _nanPresenter;
       private readonly IImporter _importer;
+      private IDataFormat _format;
       private DataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
@@ -31,6 +31,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
+      public event EventHandler<TabChangedEventArgs> OnTabChanged;
 
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
 
@@ -40,7 +41,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       (
          IImporterView view, 
          IDataViewingPresenter dataViewingPresenter, 
-         IColumnMappingPresenter columnMappingPresenter, 
          ISourceFilePresenter sourceFilePresenter,
          INanPresenter nanPresenter,
          IImporter importer,
@@ -50,13 +50,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dialogCreator = dialogCreator;
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
-         _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
          _view.AddNanView(nanPresenter.View);
          _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
-         _columnMappingPresenter = columnMappingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
          _nanPresenter = nanPresenter;
 
@@ -64,11 +62,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
          _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
 
-         AddSubPresenters(_dataViewingPresenter, _columnMappingPresenter);
+         AddSubPresenters(_dataViewingPresenter);
 
          _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
-         _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
 
          _dataSource = new DataSource(_importer);
 
@@ -81,6 +77,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sheets.Add(sheets);
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
       }
+
+      public void onMissingMapping()
+      {
+         View.DisableImportButtons();
+      }
+
+      public void onCompletedMapping()
+      {
+         View.EnableImportButtons();
+         _dataSource.DataSets.Clear();
+         foreach (var sheet in _sheets)
+         {
+            getDataSource(sheet);
+         }
+      }
+
       public void ImportDataForConfirmation(string sheetName)
       {
          var sheets = new Cache<string, IDataSheet>();
@@ -88,14 +100,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sheets.Add(sheets);
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
       }
-
-      public void SetNewFormat(string formatName)
-      {
-         var format = _availableFormats.First(f => f.Name == formatName);
-         SetDataFormat(format, _availableFormats);
-         OnFormatChanged.Invoke(this, new FormatChangedEventArgs {Format = format.Name});
-      }
-
 
       public IEnumerable<string> GetNamingConventions()
       {
@@ -119,7 +123,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _dataSource.SetMappings(_dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
-         _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
+         //Todo: this here as a test!!!
+         _dataSource.SetDataFormat(_format);  //_columnMappingPresenter.GetDataFormat()  
          _dataSource.AddSheets( sheets, _columnInfos);
 
          return _dataSource;
@@ -141,32 +146,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnSourceFileChanged.Invoke(sender, e);
       }
 
-      private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
-      {
-         View.DisableImportButtons();
-      }
-      private void onCompletedMapping(object sender, EventArgs e)
-
-      {
-         View.EnableImportButtons();
-         _dataSource.DataSets.Clear();
-         foreach (var sheet in _sheets)
-         {
-            getDataSource(sheet);
-         }
-      }
-
+      //TODO: not sure we need this
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
          var dataFormats = availableFormats.ToList();
          _availableFormats = dataFormats;
-         _columnMappingPresenter.SetDataFormat(format);
+         _format = format; //ToDo: BUT WE SHOULD ACTUALLY KEEP IT ONLY IN COLUMNMAPPINGPRESENTER OR HERE
+         OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          _dataImporterSettings = dataImporterSettings;
-         _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
       }
@@ -186,7 +177,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SelectTab(string tabName)
       {
-         _columnMappingPresenter.SetRawData(_dataSourceFile.DataSheets[tabName].RawData);
+         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
          _dataViewingPresenter.SetTabData(tabName);
       }
 

@@ -5,13 +5,17 @@ using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
+   public class TabChangedEventArgs : EventArgs
+   {
+      public UnformattedData TabData { get; set; }
+   }
    public class ImportSheetsEventArgs : EventArgs
    {
       public IDataSource DataSource { get; set; }
    }
    public class FormatChangedEventArgs : EventArgs
    {
-      public string Format { get; set; }
+      public IDataFormat Format { get; set; }
    }
    public interface IImporterPresenter : IPresenter<IImporterView>
    {
@@ -25,6 +29,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;
 
+      event EventHandler<TabChangedEventArgs> OnTabChanged;
+
       event EventHandler<ImportSheetsEventArgs> OnImportSheets;
 
       event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
@@ -35,8 +41,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void RemoveAllButThisTab(string tabName);
       IEnumerable<string> GetNamingConventions();
       void ImportDataForConfirmation();
+      void onMissingMapping();
+      void onCompletedMapping();
       void ImportDataForConfirmation(string sheetName);
-      void SetNewFormat(string formatName);
       void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
    }
 }

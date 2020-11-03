@@ -6,7 +6,6 @@ namespace OSPSuite.Presentation.Views.Importer
    public interface IImporterView : IView<IImporterPresenter>
    {
       void AddDataViewingControl(IDataViewingControl dataViewingControl);
-      void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
       void AddSourceFileControl(ISourceFileControl sourceFileControl);
       void AddNanView(INanView nanView);
       void EnableImportButtons();

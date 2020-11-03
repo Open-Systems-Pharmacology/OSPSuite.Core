@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraBars.Navigation;
+﻿using System.Windows.Forms;
+using DevExpress.XtraBars.Navigation;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -33,10 +34,11 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void InitializeComponent()
       {
-         DevExpress.XtraEditors.TileItemElement tileItemElement3 = new DevExpress.XtraEditors.TileItemElement();
+         DevExpress.XtraEditors.TileItemElement tileItemElement1 = new DevExpress.XtraEditors.TileItemElement();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImporterTiledView));
-         DevExpress.XtraEditors.TileItemElement tileItemElement4 = new DevExpress.XtraEditors.TileItemElement();
+         DevExpress.XtraEditors.TileItemElement tileItemElement2 = new DevExpress.XtraEditors.TileItemElement();
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.columnMappingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.centralPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.navigationTileBar = new DevExpress.XtraBars.Navigation.TileBar();
          this.navigationTileBarGroup = new DevExpress.XtraBars.Navigation.TileBarGroup();
@@ -45,31 +47,46 @@ namespace OSPSuite.UI.Views.Importer
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.tileBarLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.centralPanelControlLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.columnMappingLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
+         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.centralPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tileBarLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.centralPanelControlLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
+         this.rootLayoutControl.Controls.Add(this.columnMappingPanelControl);
          this.rootLayoutControl.Controls.Add(this.centralPanelControl);
          this.rootLayoutControl.Controls.Add(this.navigationTileBar);
          this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(1271, 1216);
+         this.rootLayoutControl.Size = new System.Drawing.Size(1987, 1372);
          this.rootLayoutControl.TabIndex = 0;
+         // 
+         // columnMappingPanelControl
+         // 
+         this.columnMappingPanelControl.Location = new System.Drawing.Point(28, 12);
+         this.columnMappingPanelControl.Name = "columnMappingPanelControl";
+         this.columnMappingPanelControl.Size = new System.Drawing.Size(865, 1348);
+         this.columnMappingPanelControl.TabIndex = 6;
          // 
          // centralPanelControl
          // 
-         this.centralPanelControl.Location = new System.Drawing.Point(12, 225);
+         this.centralPanelControl.Location = new System.Drawing.Point(922, 253);
          this.centralPanelControl.Name = "centralPanelControl";
-         this.centralPanelControl.Size = new System.Drawing.Size(1247, 979);
+         this.centralPanelControl.Size = new System.Drawing.Size(1053, 1107);
          this.centralPanelControl.TabIndex = 5;
          // 
          // navigationTileBar
@@ -77,10 +94,10 @@ namespace OSPSuite.UI.Views.Importer
          this.navigationTileBar.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
          this.navigationTileBar.Groups.Add(this.navigationTileBarGroup);
          this.navigationTileBar.ItemSize = 140;
-         this.navigationTileBar.Location = new System.Drawing.Point(12, 12);
+         this.navigationTileBar.Location = new System.Drawing.Point(922, 12);
          this.navigationTileBar.Name = "navigationTileBar";
          this.navigationTileBar.ScrollMode = DevExpress.XtraEditors.TileControlScrollMode.ScrollButtons;
-         this.navigationTileBar.Size = new System.Drawing.Size(1247, 209);
+         this.navigationTileBar.Size = new System.Drawing.Size(1053, 237);
          this.navigationTileBar.TabIndex = 4;
          this.navigationTileBar.WideTileWidth = 300;
          // 
@@ -93,23 +110,23 @@ namespace OSPSuite.UI.Views.Importer
          // dataMappingTile
          // 
          this.dataMappingTile.DropDownOptions.BeakColor = System.Drawing.Color.Coral;
-         tileItemElement3.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
-         tileItemElement3.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
-         tileItemElement3.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement3.Text = "Data Mapping";
-         this.dataMappingTile.Elements.Add(tileItemElement3);
+         tileItemElement1.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
+         tileItemElement1.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
+         tileItemElement1.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
+         tileItemElement1.Text = "Data Mapping";
+         this.dataMappingTile.Elements.Add(tileItemElement1);
          this.dataMappingTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.dataMappingTile.Name = "dataMappingTile";
          // 
          // confirmationTile
          // 
          this.confirmationTile.DropDownOptions.BeakColor = System.Drawing.Color.Blue;
-         tileItemElement4.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
-         tileItemElement4.ImageOptions.ImageAlignment = DevExpress.XtraEditors.TileItemContentAlignment.TopLeft;
-         tileItemElement4.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
-         tileItemElement4.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
-         tileItemElement4.Text = "Confirmation";
-         this.confirmationTile.Elements.Add(tileItemElement4);
+         tileItemElement2.ImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
+         tileItemElement2.ImageOptions.ImageAlignment = DevExpress.XtraEditors.TileItemContentAlignment.TopLeft;
+         tileItemElement2.ImageOptions.ImageScaleMode = DevExpress.XtraEditors.TileItemImageScaleMode.Stretch;
+         tileItemElement2.ImageOptions.ImageSize = new System.Drawing.Size(80, 80);
+         tileItemElement2.Text = "Confirmation";
+         this.confirmationTile.Elements.Add(tileItemElement2);
          this.confirmationTile.Enabled = false;
          this.confirmationTile.ItemSize = DevExpress.XtraBars.Navigation.TileBarItemSize.Wide;
          this.confirmationTile.Name = "confirmationTile";
@@ -120,28 +137,55 @@ namespace OSPSuite.UI.Views.Importer
          this.Root.GroupBordersVisible = false;
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.tileBarLayoutControlItem,
-            this.centralPanelControlLayoutControlItem});
+            this.centralPanelControlLayoutControlItem,
+            this.columnMappingLayoutControlItem,
+            this.splitterItem1,
+            this.emptySpaceItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(1271, 1216);
+         this.Root.Size = new System.Drawing.Size(1987, 1372);
          this.Root.TextVisible = false;
          // 
          // tileBarLayoutControlItem
          // 
          this.tileBarLayoutControlItem.Control = this.navigationTileBar;
-         this.tileBarLayoutControlItem.Location = new System.Drawing.Point(0, 0);
+         this.tileBarLayoutControlItem.Location = new System.Drawing.Point(910, 0);
          this.tileBarLayoutControlItem.Name = "tileBarLayoutControlItem";
-         this.tileBarLayoutControlItem.Size = new System.Drawing.Size(1251, 213);
+         this.tileBarLayoutControlItem.Size = new System.Drawing.Size(1057, 241);
          this.tileBarLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.tileBarLayoutControlItem.TextVisible = false;
          // 
          // centralPanelControlLayoutControlItem
          // 
          this.centralPanelControlLayoutControlItem.Control = this.centralPanelControl;
-         this.centralPanelControlLayoutControlItem.Location = new System.Drawing.Point(0, 213);
+         this.centralPanelControlLayoutControlItem.Location = new System.Drawing.Point(910, 241);
          this.centralPanelControlLayoutControlItem.Name = "centralPanelControlLayoutControlItem";
-         this.centralPanelControlLayoutControlItem.Size = new System.Drawing.Size(1251, 983);
+         this.centralPanelControlLayoutControlItem.Size = new System.Drawing.Size(1057, 1111);
          this.centralPanelControlLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.centralPanelControlLayoutControlItem.TextVisible = false;
+         // 
+         // columnMappingLayoutControlItem
+         // 
+         this.columnMappingLayoutControlItem.Control = this.columnMappingPanelControl;
+         this.columnMappingLayoutControlItem.Location = new System.Drawing.Point(16, 0);
+         this.columnMappingLayoutControlItem.Name = "columnMappingLayoutControlItem";
+         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(869, 1352);
+         this.columnMappingLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.columnMappingLayoutControlItem.TextVisible = false;
+         // 
+         // splitterItem1
+         // 
+         this.splitterItem1.AllowHotTrack = true;
+         this.splitterItem1.Location = new System.Drawing.Point(885, 0);
+         this.splitterItem1.Name = "splitterItem1";
+         this.splitterItem1.Size = new System.Drawing.Size(25, 1352);
+         // 
+         // emptySpaceItem1
+         // 
+         this.emptySpaceItem1.AllowHotTrack = false;
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 0);
+         this.emptySpaceItem1.Name = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(16, 1352);
+         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // ImporterTiledView
          // 
@@ -149,14 +193,18 @@ namespace OSPSuite.UI.Views.Importer
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.rootLayoutControl);
          this.Name = "ImporterTiledView";
-         this.Size = new System.Drawing.Size(1271, 1216);
+         this.Size = new System.Drawing.Size(1987, 1372);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.centralPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tileBarLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.centralPanelControlLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.columnMappingLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -172,5 +220,9 @@ namespace OSPSuite.UI.Views.Importer
       private TileBarItem confirmationTile;
       private DevExpress.XtraLayout.LayoutControlItem tileBarLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem centralPanelControlLayoutControlItem;
+      private DevExpress.XtraEditors.PanelControl columnMappingPanelControl;
+      private DevExpress.XtraLayout.LayoutControlItem columnMappingLayoutControlItem;
+      private DevExpress.XtraLayout.SplitterItem splitterItem1;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
    }
 }
