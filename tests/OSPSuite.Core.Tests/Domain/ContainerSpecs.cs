@@ -179,6 +179,12 @@ namespace OSPSuite.Core.Domain
          _container.GetChildren<IContainer>().ShouldOnlyContain(_childContainer);
          _container.GetChildren<IParameter>().ShouldOnlyContain(_childParameter);
       }
+
+      [Observation]
+      public void should_also_ensure_that_the_parent_container_is_set_to_null()
+      {
+         _container.ParentContainer.ShouldBeNull();
+      }
    }
 
    public class When_adding_a_null_entity_as_child_to_a_container : concern_for_Container
