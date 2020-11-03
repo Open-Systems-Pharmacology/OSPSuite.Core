@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -122,14 +123,21 @@ namespace OSPSuite.Core.Domain
          if (!path.Any())
             return null;
 
-         var current = container;
-         //-1 since last entry is the actual entity to return
-         for (int i = 0; i < path.Length - 1; i++)
+         var pathToUse = path;
+         //This happens to be a path given as string (or a IObjectPath)
+         if (pathToUse.Length == 1 && pathToUse[0].Contains(ObjectPath.PATH_DELIMITER))
          {
-            current = current.Container(path[i]);
+            pathToUse = pathToUse[0].ToPathArray();
          }
 
-         return current?.GetSingleChildByName<T>(path.Last());
+         var current = container;
+         //-1 since last entry is the actual entity to return
+         for (int i = 0; i < pathToUse.Length - 1; i++)
+         {
+            current = current.Container(pathToUse[i]);
+         }
+
+         return current?.GetSingleChildByName<T>(pathToUse.Last());
       }
 
       /// <summary>
