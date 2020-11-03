@@ -132,11 +132,6 @@ namespace OSPSuite.UI.Views.Importer
          nanPanelControl.FillWith(nanView);
       }
 
-      public void SetFormats(IEnumerable<string> options, string selected, string description)
-      {
-         descriptionRichTextBox.Text = description;
-      }
-
       public void AddTabs(List<string> sheetNames)
       {
          //we should seek an alternative
