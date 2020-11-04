@@ -29,6 +29,7 @@ namespace OSPSuite.UI.Views.Importer
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
+         nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
