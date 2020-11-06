@@ -45,7 +45,8 @@ namespace OSPSuite.Core.Domain.Services
          IEventBuilderTask eventBuilderTask, IKeywordReplacerTask keywordReplacerTask,
          ITransportCreator transportCreator, IProgressManager progressManager, IFormulaTask formulaTask, ICalculationMethodTask calculationMethodTask,
          IBuildConfigurationValidator buildConfigurationValidator, IParameterBuilderToParameterMapper parameterMapper,
-         IQuantityValuesUpdater quantityValuesUpdater, IModelValidatorFactory modelValidatorFactory, ICircularReferenceChecker circularReferenceChecker)
+         IQuantityValuesUpdater quantityValuesUpdater, IModelValidatorFactory modelValidatorFactory,
+         ICircularReferenceChecker circularReferenceChecker)
       {
          _objectBaseFactory = objectBaseFactory;
          _buildConfigurationValidator = buildConfigurationValidator;
@@ -112,6 +113,20 @@ namespace OSPSuite.Core.Domain.Services
 
          //now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
+
+
+         //This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
+         removeUndefinedInstanceParametersIn(model);
+      }
+
+      private void removeUndefinedInstanceParametersIn(IModel model)
+      {
+         var allNaNParametersFromMolecules = model.Root.GetAllChildren<IContainer>()
+            .Where(c => c.ContainerType == ContainerType.Molecule)
+            .SelectMany(c => c.AllParameters(p => double.IsNaN(p.Value)))
+            .ToList();
+
+         allNaNParametersFromMolecules.Each(x => x.ParentContainer.RemoveChild(x));
       }
 
       private ValidationResult validateModel(IModel model, IBuildConfiguration buildConfiguration)
@@ -127,7 +142,8 @@ namespace OSPSuite.Core.Domain.Services
          return new ValidationResult(modelValidation.Messages.Union(circularReferenceValidation.Messages));
       }
 
-      private CreationResult buildProcess(IModel model, IBuildConfiguration buildConfiguration, params Func<IModel, IBuildConfiguration, ValidationResult>[] steps)
+      private CreationResult buildProcess(IModel model, IBuildConfiguration buildConfiguration,
+         params Func<IModel, IBuildConfiguration, ValidationResult>[] steps)
       {
          var result = new CreationResult(model);
          IProgressUpdater progress = null;
@@ -222,7 +238,8 @@ namespace OSPSuite.Core.Domain.Services
          return validate<ValidatorForObserversAndEvents>(model, buildConfiguration);
       }
 
-      private ValidationResult validate<TValidationVisitor>(IModel model, IBuildConfiguration buildConfiguration) where TValidationVisitor : IModelValidator
+      private ValidationResult validate<TValidationVisitor>(IModel model, IBuildConfiguration buildConfiguration)
+         where TValidationVisitor : IModelValidator
       {
          if (!buildConfiguration.ShouldValidate)
             return new ValidationResult();
@@ -273,7 +290,8 @@ namespace OSPSuite.Core.Domain.Services
       {
          var messages = buildConfiguration.Reactions
             .Where(r => !_reactionCreator.CreateReaction(r, model, buildConfiguration))
-            .Select(r => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(r.Name), r, buildConfiguration.Reactions))
+            .Select(
+               r => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(r.Name), r, buildConfiguration.Reactions))
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)
@@ -284,7 +302,8 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createGlobalMoleculeContainers(IModel model, IBuildConfiguration buildConfiguration)
       {
-         buildConfiguration.AllPresentMolecules().Each(m => _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, m, buildConfiguration));
+         buildConfiguration.AllPresentMolecules()
+            .Each(m => _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, m, buildConfiguration));
       }
 
       private void addLocalParametersToMolecule(IModel model, IBuildConfiguration buildConfiguration)
@@ -297,8 +316,10 @@ namespace OSPSuite.Core.Domain.Services
 
          foreach (var moleculePropertiesContainer in allMoleculePropertiesContainer)
          {
-            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, buildConfiguration, model, x => !isEndogenousParameter(x));
-            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, buildConfiguration, model, isEndogenousParameter);
+            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, buildConfiguration, model,
+               x => !isEndogenousParameter(x));
+            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, buildConfiguration, model,
+               isEndogenousParameter);
 
             // remove the molecule properties container only used as template
             moleculePropertiesContainer.ParentContainer.RemoveChild(moleculePropertiesContainer);
@@ -310,7 +331,8 @@ namespace OSPSuite.Core.Domain.Services
          return parameter.NameIsOneOf(Constants.ONTOGENY_FACTOR, Constants.HALF_LIFE, Constants.DEGRADATION_COEFF);
       }
 
-      private void addLocalStructureMoleculeParametersToMoleculeAmount(IEnumerable<string> moleculeNames, IContainer moleculePropertiesContainerTemplate,
+      private void addLocalStructureMoleculeParametersToMoleculeAmount(IEnumerable<string> moleculeNames,
+         IContainer moleculePropertiesContainerTemplate,
          IBuildConfiguration buildConfiguration, IModel model, Func<IParameter, bool> query)
       {
          foreach (var moleculeName in moleculeNames)
@@ -336,7 +358,8 @@ namespace OSPSuite.Core.Domain.Services
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
          moleculesWithPhysicalContainers.Each(pm => addMoleculeToContainer(buildConfiguration, pm, molecules[pm.MoleculeStartValue.MoleculeName]));
 
-         return new MoleculeBuildingBlockValidator().Validate(molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules, buildConfiguration.MoleculeStartValues));
+         return new MoleculeBuildingBlockValidator().Validate(molecules).Messages
+            .Concat(createValidationMessagesForPresentMolecules(presentMolecules, buildConfiguration.MoleculeStartValues));
       }
 
       private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
@@ -344,24 +367,32 @@ namespace OSPSuite.Core.Domain.Services
          return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
-      private void addMoleculeToContainer(IBuildConfiguration buildConfiguration, StartValueAndContainer startValueAndContainer, IMoleculeBuilder moleculeBuilder)
+      private void addMoleculeToContainer(IBuildConfiguration buildConfiguration, StartValueAndContainer startValueAndContainer,
+         IMoleculeBuilder moleculeBuilder)
       {
          startValueAndContainer.Container.Add(_moleculeMapper.MapFrom(moleculeBuilder, buildConfiguration));
       }
 
-      private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules, IBuildingBlock buildingBlock)
+      private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules,
+         IBuildingBlock buildingBlock)
       {
          var moleculesWithoutPhysicalContainers = presentMolecules.Where(x => !containerIsPhysical(x));
-         return moleculesWithoutPhysicalContainers.Select(x => x.Container == null ? createValidationMessageForNullContainer(x, buildingBlock) : createValidationMessageForMoleculesWithNonPhysicalContainer(x, buildingBlock));
+         return moleculesWithoutPhysicalContainers.Select(x =>
+            x.Container == null
+               ? createValidationMessageForNullContainer(x, buildingBlock)
+               : createValidationMessageForMoleculesWithNonPhysicalContainer(x, buildingBlock));
       }
 
-      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer, IBuildingBlock buildingBlock)
+      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer,
+         IBuildingBlock buildingBlock)
       {
          var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         return buildValidationMessage(buildingBlock, moleculeStartValue, Validation.StartValueDefinedForNonPhysicalContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
+         return buildValidationMessage(buildingBlock, moleculeStartValue,
+            Validation.StartValueDefinedForNonPhysicalContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
       }
 
-      private static ValidationMessage buildValidationMessage(IBuildingBlock buildingBlock, IMoleculeStartValue moleculeStartValue, string validationDescription)
+      private static ValidationMessage buildValidationMessage(IBuildingBlock buildingBlock, IMoleculeStartValue moleculeStartValue,
+         string validationDescription)
       {
          return new ValidationMessage(NotificationType.Warning, validationDescription, moleculeStartValue, buildingBlock);
       }
@@ -369,7 +400,9 @@ namespace OSPSuite.Core.Domain.Services
       private ValidationMessage createValidationMessageForNullContainer(StartValueAndContainer startValueAndContainer, IBuildingBlock buildingBlock)
       {
          var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         return buildValidationMessage(buildingBlock, moleculeStartValue, Validation.StartValueDefinedForContainerThatCannotBeResolved(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
+         return buildValidationMessage(buildingBlock, moleculeStartValue,
+            Validation.StartValueDefinedForContainerThatCannotBeResolved(moleculeStartValue.MoleculeName,
+               moleculeStartValue.ContainerPath.PathAsString));
       }
 
       private static IEnumerable<StartValueAndContainer> allPresentMoleculesInContainers(IContainer root, IBuildConfiguration buildConfiguration)

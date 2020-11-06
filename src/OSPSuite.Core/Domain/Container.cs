@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns the children of the Container
       /// </summary>
-      IEnumerable<IEntity> Children { get; }
+      IReadOnlyList<IEntity> Children { get; }
 
 
       /// <summary>
@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain
 
    public class Container : Entity, IContainer
    {
-      private readonly IList<IEntity> _children;
+      private readonly List<IEntity> _children;
       private ContainerMode _mode;
       private ContainerType _containerType;
 
@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain
          Mode = ContainerMode.Logical;
       }
 
-      public virtual IEnumerable<IEntity> Children => _children;
+      public virtual IReadOnlyList<IEntity> Children => _children;
 
       public virtual void Add(IEntity newChild)
       {
@@ -110,8 +110,8 @@ namespace OSPSuite.Core.Domain
             return;
 
          // check for circular container reference
-         if (newChild is IContainer && IsDescendant((IContainer) newChild))
-            throw new CircularReferenceException(newChild.Name, Name);
+         if (newChild is IContainer child && IsDescendant(child))
+            throw new CircularReferenceException(child.Name, Name);
 
          if (this.ContainsName(newChild.Name))
          {
@@ -120,13 +120,13 @@ namespace OSPSuite.Core.Domain
             // if newChild already belongs to this container, do nothing
             if (!ReferenceEquals(oldChild, newChild))
                throw new NotUniqueNameException(newChild.Name, Name);
+
+            return;
          }
-         else
-         {
-            _children.Add(newChild);
-            newChild.ParentContainer = this;
-            OnChanged();
-         }
+
+         _children.Add(newChild);
+         newChild.ParentContainer = this;
+         OnChanged();
       }
 
       public string ContainerTypeAsString => ContainerType.ToString();
@@ -230,16 +230,12 @@ namespace OSPSuite.Core.Domain
          return first.Union(second);
       }
 
-      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer
-      {
-         return GetAllContainersAndSelf<TContainer>(x => true);
-      }
+      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer
       {
          var allChildren = GetAllChildren(predicate).ToList();
-         var container = this as TContainer;
-         if (container != null && predicate(container))
+         if (this is TContainer container && predicate(container))
             allChildren.Add(container);
 
          return allChildren;

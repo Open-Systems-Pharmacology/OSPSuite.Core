@@ -166,6 +166,11 @@ namespace OSPSuite.Helpers
 
          var parameterPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "FormulaParameterOverwritten");
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
+
+
+         //overwrite to make sure we have a value for a given path
+         var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E", "OtherNaNParam");
+         parameterStartValues[nanParameterNotNaN].StartValue = 10;
       }
 
       private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculesStartValues)
@@ -422,7 +427,7 @@ namespace OSPSuite.Helpers
          IFormula moleculeReferenceFormula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExpGlobal");
          formulaCache.Add(moleculeReferenceFormula);
          moleculeReferenceFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "RelExpGlobal").WithAlias("RelExpGlobal"));
-         var relExpLokalFromGlobal =
+         var relExpLocalFromGlobal =
             _objectBaseFactory.Create<IParameter>()
                .WithName("RelExpLocal")
                .WithFormula(moleculeReferenceFormula)
@@ -430,7 +435,7 @@ namespace OSPSuite.Helpers
          moleculeD.AddParameter(relExp);
          moleculeD.AddParameter(relExpNorm);
          moleculeD.AddParameter(relExpGlobal);
-         moleculeD.AddParameter(relExpLokalFromGlobal);
+         moleculeD.AddParameter(relExpLocalFromGlobal);
          return moleculeD;
       }
 
@@ -439,9 +444,11 @@ namespace OSPSuite.Helpers
          var moleculeE = defaultMolecule("E", 4, 5, QuantityType.Transporter, formulaCache);
          moleculeE.IsFloating = false;
 
-         var relExp = newConstantParameter("RelExp", 0).WithMode(ParameterBuildMode.Local);
-
-         moleculeE.AddParameter(relExp);
+         moleculeE.AddParameter(newConstantParameter("RelExp", 0).WithMode(ParameterBuildMode.Local));
+         
+         //create a couple of NaN Parameters. Only a few should be created in the simulation
+         moleculeE.AddParameter(newConstantParameter("NaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
+         moleculeE.AddParameter(newConstantParameter("OtherNaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
          return moleculeE;
       }
 
