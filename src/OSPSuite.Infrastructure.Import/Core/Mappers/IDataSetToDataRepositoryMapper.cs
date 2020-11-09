@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -95,7 +96,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //create the extended column
          var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit);
 
-         if (string.IsNullOrEmpty(column.Key.ColumnInfo.BaseGridName) || (column.Key.ColumnInfo.BaseGridName == column.Key.ColumnInfo.Name))
+         if (column.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
          else
          {
@@ -145,7 +146,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          if (propInfo != null)
          {
-            if (!string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
+            if (column.Key.ColumnInfo.IsAuxiliary())
             {
                switch (column.Key.ErrorDeviation)
                {
