@@ -208,9 +208,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                new ExtendedColumn
                {
                   Column = currentParameter.MappedColumn,
-                  BaseGridName = columnInfo.BaseGridName,
-                  Name = columnInfo.Name,
-                  ColumnType = columnType,
+                  ColumnInfo = columnInfo,
                   ErrorDeviation = Constants.STD_DEV_ARITHMETIC
                },
                dataSet.Select

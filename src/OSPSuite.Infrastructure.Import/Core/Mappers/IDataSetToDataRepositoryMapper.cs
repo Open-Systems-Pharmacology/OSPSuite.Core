@@ -53,8 +53,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          }
 
          /*
-
-
                   addExtendedPropertiesForGroupBy(importDataTable, dataRepository);
 
                   //convert columns
@@ -68,6 +66,25 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                   // make associations of columns.
                   associateColumns(colInfos, dataRepository);
          */
+
+         //associate column - 
+         
+         foreach (var column in ParsedDataSet.Data)
+         {
+            if (string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
+               continue;
+
+            if (!containsColumnByName(dataRepository.Columns, column.Key.ColumnInfo.RelatedColumnOf))
+               continue;
+
+            var col = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.Name);
+
+            var relatedCol = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.RelatedColumnOf);
+            relatedCol.AddRelatedColumn(col);
+         }
+
+
+
          return dataRepository;
       }
 
@@ -81,18 +98,18 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //create the extended column
          var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit);
 
-         if (string.IsNullOrEmpty(column.Key.BaseGridName) || (column.Key.BaseGridName == column.Key.Name))
-            dataColumn = new BaseGrid(column.Key.Name, dimension);
+         if (string.IsNullOrEmpty(column.Key.ColumnInfo.BaseGridName) || (column.Key.ColumnInfo.BaseGridName == column.Key.ColumnInfo.Name))
+            dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
          else
          {
             
-            if (!containsColumnByName(dataRepository.Columns, column.Key.BaseGridName))
+            if (!containsColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName))
             {
                //convertParsedDataColumn(dataRepository, importDataTable.Columns.ItemByName(colInfo.BaseGridName));
                throw new Exception();
             }
-            var baseGrid = findColumnByName(dataRepository.Columns, column.Key.BaseGridName) as BaseGrid;
-            dataColumn = new DataColumn(column.Key.Name, dimension, baseGrid);
+            var baseGrid = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName) as BaseGrid;
+            dataColumn = new DataColumn(column.Key.ColumnInfo.Name, dimension, baseGrid);
          }
 
 
@@ -126,12 +143,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          dataInfo.DisplayUnitName = unit.Name; //or column.Key.Unit.Name?
          dataColumn.Values = values;
 
-         var propInfo = dataInfo.GetType().GetProperty(column.Key.ColumnType);
+         var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);
          AuxiliaryType errorType = AuxiliaryType.Undefined;
 
          if (propInfo != null)
          {
-            if (column.Key.ColumnType == Constants.AUXILIARY_TYPE)
+            if (!string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
             {
                switch (column.Key.ErrorDeviation)
                {
