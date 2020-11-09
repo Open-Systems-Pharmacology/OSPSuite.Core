@@ -58,7 +58,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
                c.Name,
                ColumnMappingFormatter.Stringify(target),
                target,
-               _importer.GetImageIndex(new MappingDataFormatParameter("", null))
+               _importer.GetImageIndex(new MappingDataFormatParameter("", null)),
+               c
             );
          }).Union
          (
@@ -156,6 +157,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
                _view.RefreshData();
             }
          }
+      }
+
+      public void ChangeErrorType(ColumnMappingDTO model)
+      {
+         //TODO: show error type selector
       }
 
       public void ChangeUnitsOnRow(ColumnMappingDTO model)
