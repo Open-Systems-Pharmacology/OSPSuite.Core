@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -29,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void ThrowsOnNan()
       {
-         if (Data.Any(dataSet => dataSet.Data.Values.Any(points => points.Any(p => double.IsNaN(p.Value)))))
+         if (Data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => double.IsNaN(point.Value)))))
             throw new NanException();
       }
 
@@ -37,10 +38,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          foreach (var dataSet in Data)
          {
+            var mainColumns = dataSet.Data.Where(pair => pair.Key.ColumnInfo.IsMandatory).Select(pair => pair.Value).ToList();
             var i = 0;
-            while (i < dataSet.Data.Values.First().Count())
+            while (i < mainColumns.First().Count())
             {
-               if (dataSet.Data.Values.Any(points => points.Any(p => double.IsNaN(p.Value))))
+               if (mainColumns.Any(points => points.Any(p => double.IsNaN(p.Value))))
                {
                   foreach (var simulationPoints in dataSet.Data.Values)
                   {
