@@ -63,12 +63,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                      errorNaN |= columnErrorNaN;
                   }
 
-                  // make associations of columns.
-                  associateColumns(colInfos, dataRepository);
          */
 
          //associate column - 
-         
          foreach (var column in ParsedDataSet.Data)
          {
             if (string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))

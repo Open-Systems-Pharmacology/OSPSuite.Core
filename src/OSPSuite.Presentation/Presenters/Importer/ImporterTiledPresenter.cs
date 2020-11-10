@@ -7,25 +7,25 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
    {
-      private readonly IImporterPresenter _importerPresenter;
+      private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
       private IDataSource _lastDataSource;
 
-      public ImporterTiledPresenter(IImporterTiledView view, IImporterPresenter importerPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
+      public ImporterTiledPresenter(IImporterTiledView view, IImporterDataPresenter importerDataPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
       ) : base(view)
       {
-         _importerPresenter = importerPresenter;
+         _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _confirmationPresenter.OnImportData += ImportData;
-         _importerPresenter.OnImportSheets += ImportSheets;
-         _view.AddImporterView(_importerPresenter.View);
-         AddSubPresenters(_importerPresenter, _confirmationPresenter, _columnMappingPresenter);
-         _importerPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
-         _importerPresenter.OnFormatChanged += onFormatChanged;
-         _importerPresenter.OnTabChanged += onTabChanged;
+         _importerDataPresenter.OnImportSheets += ImportSheets;
+         _view.AddImporterView(_importerDataPresenter.View);
+         AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter);
+         _importerDataPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
+         _importerDataPresenter.OnFormatChanged += onFormatChanged;
+         _importerDataPresenter.OnTabChanged += onTabChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
       }
@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
-         _importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+         _importerDataPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
       }
 
       public void AddConfirmationView()
@@ -56,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _lastDataSource = args.DataSource;
          _confirmationPresenter.SetDataSource(args.DataSource);
-         _confirmationPresenter.SetNamingConventions(_importerPresenter.GetNamingConventions());
+         _confirmationPresenter.SetNamingConventions(_importerDataPresenter.GetNamingConventions());
          AddConfirmationView();
          View.EnableConfirmationView();
       }
@@ -73,16 +73,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
-         _importerPresenter.onMissingMapping();
+         _importerDataPresenter.onMissingMapping();
       }
 
       private void onCompletedMapping(object sender, EventArgs e)
       {
-         _importerPresenter.onCompletedMapping();
+         _importerDataPresenter.onCompletedMapping();
       }
       public void AddDataMappingView()
       {
-         _view.AddImporterView(_importerPresenter.View);
+         _view.AddImporterView(_importerDataPresenter.View);
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

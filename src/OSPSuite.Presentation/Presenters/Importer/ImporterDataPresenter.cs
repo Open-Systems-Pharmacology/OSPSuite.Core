@@ -13,7 +13,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 { 
-   internal class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
+   class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
@@ -37,15 +37,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged = delegate { };
 
-      public ImporterPresenter
+      public ImporterDataPresenter
       (
-         IImporterView view, 
+         IImporterDataView dataView, 
          IDataViewingPresenter dataViewingPresenter, 
          ISourceFilePresenter sourceFilePresenter,
          INanPresenter nanPresenter,
          IImporter importer,
          IDialogCreator dialogCreator
-      ) : base(view)
+      ) : base(dataView)
       {
          _dialogCreator = dialogCreator;
          _importer = importer;

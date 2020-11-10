@@ -3,7 +3,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface IImporterView : IView<IImporterPresenter>
+   public interface IImporterDataView : IView<IImporterDataPresenter>
    {
       void AddDataViewingControl(IDataViewingControl dataViewingControl);
       void AddSourceFileControl(ISourceFileControl sourceFileControl);

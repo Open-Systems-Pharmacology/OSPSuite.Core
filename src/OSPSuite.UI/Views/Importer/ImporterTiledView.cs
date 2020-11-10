@@ -29,9 +29,9 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
-      public void AddImporterView(IImporterView importerView)
+      public void AddImporterView(IImporterDataView importerDataView)
       {
-         centralPanelControl.FillWith(importerView);
+         centralPanelControl.FillWith(importerDataView);
       }
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
