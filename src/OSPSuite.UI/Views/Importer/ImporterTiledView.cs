@@ -45,17 +45,17 @@ namespace OSPSuite.UI.Views.Importer
       }
       public void EnableConfirmationView()
       {
-         if (!importTabPage.PageEnabled)
+         if (!confirmationTabPage.PageEnabled)
          {
-            importTabPage.PageEnabled = true;
-            importTabPage.PageVisible = true;
+            confirmationTabPage.PageEnabled = true;
+            confirmationTabPage.PageVisible = true;
          }
       }
 
       public void DisableConfirmationView()
       {
-         importTabPage.PageEnabled = false;
-         importTabPage.PageVisible = false;
+         confirmationTabPage.PageEnabled = false;
+         confirmationTabPage.PageVisible = false;
       }
    }
 }

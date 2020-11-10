@@ -38,7 +38,7 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.previewXtraTabControl = new DevExpress.XtraTab.XtraTabControl();
          this.sourceTabPage = new DevExpress.XtraTab.XtraTabPage();
-         this.importTabPage = new DevExpress.XtraTab.XtraTabPage();
+         this.confirmationTabPage = new DevExpress.XtraTab.XtraTabPage();
          this.columnMappingPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.columnMappingLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -79,21 +79,21 @@ namespace OSPSuite.UI.Views.Importer
          this.previewXtraTabControl.TabIndex = 0;
          this.previewXtraTabControl.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
             this.sourceTabPage,
-            this.importTabPage});
+            this.confirmationTabPage});
          // 
          // sourceTabPage
          // 
          this.sourceTabPage.Name = "sourceTabPage";
          this.sourceTabPage.Size = new System.Drawing.Size(408, 475);
-         this.sourceTabPage.Text = "Source";
+         this.sourceTabPage.Text = Captions.Importer.SourceTab; ;
          // 
-         // importTabPage
+         // confirmationTabPage
          // 
-         this.importTabPage.Name = "importTabPage";
-         this.importTabPage.Size = new System.Drawing.Size(187, 475);
-         this.importTabPage.Text = "Import";
-         this.importTabPage.Enabled = false;
-         this.importTabPage.Visible = false;
+         this.confirmationTabPage.Name = "confirmationTabPage";
+         this.confirmationTabPage.Size = new System.Drawing.Size(187, 475);
+         this.confirmationTabPage.Text = Captions.Importer.ConfirmationTab;
+         this.confirmationTabPage.Enabled = false;
+         this.confirmationTabPage.Visible = false;
          // 
          // columnMappingPanelControl
          // 
@@ -181,7 +181,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraTab.XtraTabControl previewXtraTabControl;
       private DevExpress.XtraTab.XtraTabPage sourceTabPage;
-      private DevExpress.XtraTab.XtraTabPage importTabPage;
+      private DevExpress.XtraTab.XtraTabPage confirmationTabPage;
       private DevExpress.XtraLayout.LayoutControlItem previewLayoutControlItem;
    }
 }
