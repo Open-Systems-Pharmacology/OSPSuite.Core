@@ -10,7 +10,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public IDataSource DataSource { get; set; }
    }
 
-   public interface IImporterTiledPresenter : IPresenter<IImporterTiledView>
+   public interface IImporterPresenter : IPresenter<IImporterView>
    {
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,

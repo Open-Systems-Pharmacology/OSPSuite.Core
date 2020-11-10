@@ -5,14 +5,14 @@ using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
-   public class ImporterTiledPresenter : AbstractPresenter<IImporterTiledView, IImporterTiledPresenter>, IImporterTiledPresenter
+   public class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
       private IDataSource _lastDataSource;
 
-      public ImporterTiledPresenter(IImporterTiledView view, IImporterDataPresenter importerDataPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
+      public ImporterPresenter(IImporterView view, IImporterDataPresenter importerDataPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
       ) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;

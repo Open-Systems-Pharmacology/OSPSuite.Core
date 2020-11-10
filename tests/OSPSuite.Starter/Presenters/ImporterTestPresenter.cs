@@ -26,11 +26,11 @@ namespace OSPSuite.Starter.Presenters
 
    public class ImporterTestPresenter : AbstractPresenter<IImporterTestView, IImporterTestPresenter>, IImporterTestPresenter
    {
-      private readonly IImporterTiledPresenter _importer;
+      private readonly IImporterPresenter _importer;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
 
-      public ImporterTestPresenter(IImporterTestView view, IImporterTiledPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator)
+      public ImporterTestPresenter(IImporterTestView view, IImporterPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator)
          : base(view)
       {
          _importer = importer;
@@ -40,7 +40,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
       {
-         var starter = new TestStarter<IImporterTiledPresenter>();
+         var starter = new TestStarter<IImporterPresenter>();
          starter.Start(1000, 600);
          starter.Presenter.SetSettings(categories, columns, settings);
          starter.Presenter.OnTriggerImport += startImportSuccessDialog;
