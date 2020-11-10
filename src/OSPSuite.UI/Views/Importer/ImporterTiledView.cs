@@ -1,4 +1,5 @@
 ﻿using System;
+using DevExpress.XtraTab;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Extensions;
@@ -12,15 +13,15 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterTiledView()
       {
          InitializeComponent();
-         navigationTileBar.ItemClick += (s, a) => OnEvent(onTileBarClicked, s, a);
+         previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
+         //xtraTabControl.SelectedTabPage.Appearance.Header.Font = Fonts.SelectedTabHeaderFont; -- WE COULD ACTUALLY KEEP THE LOGIC OF HAVING A FONT HERE
       }
 
-      private void onTileBarClicked(object sender, EventArgs e)
+      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         var eventArgs = e as DevExpress.XtraEditors.TileItemEventArgs;
-         if (eventArgs.Item == dataMappingTile)
+         if (previewXtraTabControl.SelectedTabPage == sourceTabPage) //not the best solution in the world this check here....
             _presenter.AddDataMappingView();
-         else if (eventArgs.Item == confirmationTile)
+         else
             _presenter.AddConfirmationView();
       }
 
@@ -31,7 +32,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddImporterView(IImporterDataView importerDataView)
       {
-         centralPanelControl.FillWith(importerDataView);
+         previewXtraTabControl.FillWith(importerDataView);
       }
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
@@ -40,17 +41,21 @@ namespace OSPSuite.UI.Views.Importer
       }
       public void AddConfirmationView(IImportConfirmationView confirmationView)
       {
-         centralPanelControl.FillWith(confirmationView);
+         previewXtraTabControl.FillWith(confirmationView);
       }
       public void EnableConfirmationView()
       {
-         if (!confirmationTile.Enabled)
-            confirmationTile.Enabled = true;
+         if (!importTabPage.PageEnabled)
+         {
+            importTabPage.PageEnabled = true;
+            importTabPage.PageVisible = true;
+         }
       }
 
       public void DisableConfirmationView()
       {
-         confirmationTile.Enabled = false;
+         importTabPage.PageEnabled = false;
+         importTabPage.PageVisible = false;
       }
    }
 }
