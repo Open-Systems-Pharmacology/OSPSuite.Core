@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface IImporterTiledView : IView<IImporterTiledPresenter>
+   public interface IImporterView : IView<IImporterPresenter>
    {
       void AddImporterView(IImporterDataView importerDataView);
       void AddColumnMappingControl(IColumnMappingControl columnMappingControl);

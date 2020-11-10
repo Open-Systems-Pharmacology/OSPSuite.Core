@@ -6,11 +6,11 @@ using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ImporterTiledView
+   public partial class ImporterView
    {
-      private IImporterTiledPresenter _presenter;
+      private IImporterPresenter _presenter;
 
-      public ImporterTiledView()
+      public ImporterView()
       {
          InitializeComponent();
          previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
@@ -25,7 +25,7 @@ namespace OSPSuite.UI.Views.Importer
             _presenter.AddConfirmationView();
       }
 
-      public void AttachPresenter(IImporterTiledPresenter presenter)
+      public void AttachPresenter(IImporterPresenter presenter)
       {
          _presenter = presenter;
       }

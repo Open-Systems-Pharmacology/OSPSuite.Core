@@ -7,7 +7,7 @@ using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   partial class ImporterTiledView : BaseUserControl, IImporterTiledView
+   partial class ImporterView : BaseUserControl, IImporterView
    {
       /// <summary>
       /// Required designer variable.
