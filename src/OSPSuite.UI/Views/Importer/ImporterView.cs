@@ -1,5 +1,4 @@
-﻿using System;
-using DevExpress.XtraTab;
+﻿using DevExpress.XtraTab;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Extensions;
@@ -49,6 +48,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             confirmationTabPage.PageEnabled = true;
             confirmationTabPage.PageVisible = true;
+            previewXtraTabControl.SelectedTabPage = confirmationTabPage;
          }
       }
 
