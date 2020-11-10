@@ -380,6 +380,8 @@ namespace OSPSuite.Assets
          public static readonly string ErrorColumn = "Error";
          public static readonly string LoadAllSheets = "Load all sheets";
          public static readonly string LoadCurrentSheets = "Load current sheet";
+         public static readonly string SourceTab = "Source";
+         public static readonly string ConfirmationTab = "Confirmation";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
