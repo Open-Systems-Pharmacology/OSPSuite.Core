@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       public IDataFormat Format { get; set; }
    }
-   public interface IImporterPresenter : IPresenter<IImporterView>
+   public interface IImporterDataPresenter : IPresenter<IImporterDataView>
    {
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
 

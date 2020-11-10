@@ -12,29 +12,29 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ImporterView : BaseUserControl , IImporterView
+   public partial class ImporterDataView : BaseUserControl, IImporterDataView
    {
-      private IImporterPresenter _presenter;
+      private IImporterDataPresenter _dataPresenter;
 
       private string _contextMenuSelectedTab;
 
-      public ImporterView()
+      public ImporterDataView()
       {
          InitializeComponent();
          btnImport.Click += (s, a) => OnEvent(onButtonImportClicked, s, a);
          btnImportAll.Click += (s, a) => OnEvent(onButtonImportAllClicked, s, a);
-         ImporterTabControl.SelectedPageChanged += (s, a) => OnEvent(onSelectedPageChanged, s, a);
-         ImporterTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
-         ImporterTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
+         importerTabControl.SelectedPageChanged += (s, a) => OnEvent(onSelectedPageChanged, s, a);
+         importerTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
+         importerTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
-         nanLayoutControlItem.AdjustControlHeight(80);
+         //nanLayoutControlItem.AdjustControlHeight(80);
       }
 
-      public void AttachPresenter(IImporterPresenter presenter)
+      public void AttachPresenter(IImporterDataPresenter dataPresenter)
       {
-         _presenter = presenter;
+         _dataPresenter = dataPresenter;
       }
 
       public void EnableImportButtons()
@@ -51,22 +51,22 @@ namespace OSPSuite.UI.Views.Importer
 
       private void onButtonImportAllClicked(object sender, EventArgs e)
       {
-         _presenter.ImportDataForConfirmation();
+         _dataPresenter.ImportDataForConfirmation();
       }
 
       private void onTabControlMouseDown(object sender, MouseEventArgs e)
       {
          if (e.Button != MouseButtons.Right)
             return;
-         XtraTabHitInfo hi = ImporterTabControl.CalcHitInfo(e.Location);
+         XtraTabHitInfo hi = importerTabControl.CalcHitInfo(e.Location);
          if (hi.HitTest != XtraTabHitTest.PageHeader)
             return;
-         
+
          var contextMenu = new DXPopupMenu();
          contextMenu.Items.Clear();
          contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
          contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
-         contextMenu.ShowPopup(ImporterTabControl, e.Location);
+         contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
 
       }
@@ -78,39 +78,39 @@ namespace OSPSuite.UI.Views.Importer
          var page = eventArgs.Page as XtraTabPage;
          if (page == null) return;
          //deleteTable(page);
-         //ImporterTabControl.TabPages.Remove(page);
-         _presenter.RemoveTab(page.Text);
-         _presenter.RefreshTabs();
+         //importerTabControl.TabPages.Remove(page);
+         _dataPresenter.RemoveTab(page.Text);
+         _dataPresenter.RefreshTabs();
       }
 
       private void onCloseAllButThisTab(object sender, EventArgs e)
       {
-         _presenter.RemoveAllButThisTab(_contextMenuSelectedTab);
+         _dataPresenter.RemoveAllButThisTab(_contextMenuSelectedTab);
       }
 
       private void onCloseAllTabsToTheRight(object sender, EventArgs e)
       {
          var removePage = false;
-         foreach (XtraTabPage tabName in ImporterTabControl.TabPages)
+         foreach (XtraTabPage tabName in importerTabControl.TabPages)
          {
             if (removePage)
-               _presenter.RemoveTab(tabName.Text);
+               _dataPresenter.RemoveTab(tabName.Text);
 
             if (tabName.Text == _contextMenuSelectedTab)
                removePage = true;
          }
-         _presenter.RefreshTabs();
+         _dataPresenter.RefreshTabs();
       }
 
       private void onButtonImportClicked(object sender, EventArgs e)
       {
-         _presenter.ImportDataForConfirmation(ImporterTabControl.SelectedTabPage.Text);
+         _dataPresenter.ImportDataForConfirmation(importerTabControl.SelectedTabPage.Text);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         if (ImporterTabControl.SelectedTabPage != null) //not the best solution in the world this check here....
-            _presenter.SelectTab(e.Page.Text);
+         if (importerTabControl.SelectedTabPage != null) //not the best solution in the world this check here....
+            _dataPresenter.SelectTab(e.Page.Text);
       }
 
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
@@ -120,12 +120,12 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
-         ImporterTabControl.FillWith(dataViewingControl);
+         importerTabControl.FillWith(dataViewingControl);
       }
 
       public void AddNanView(INanView nanView)
       {
-         nanPanelControl.FillWith(nanView);
+        // nanPanelControl.FillWith(nanView);
       }
 
       public void AddTabs(List<string> sheetNames)
@@ -133,13 +133,13 @@ namespace OSPSuite.UI.Views.Importer
          //we should seek an alternative
          foreach (var sheetName in sheetNames)
          {
-            ImporterTabControl.TabPages.Add(sheetName);
+            importerTabControl.TabPages.Add(sheetName);
          }
       }
 
       public void ClearTabs()
       {
-         ImporterTabControl.TabPages.Clear();
+         importerTabControl.TabPages.Clear();
       }
    }
 }
