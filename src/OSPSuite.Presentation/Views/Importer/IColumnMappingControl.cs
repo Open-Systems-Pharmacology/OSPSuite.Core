@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.Views.Importer
    {
       public string MappingName { get; private set; }
       private string _description;
+      public ColumnInfo ColumnInfo { get; private set; }
 
       public string ErrorMessage { get; set; }
 
@@ -40,8 +41,9 @@ namespace OSPSuite.Presentation.Views.Importer
          AddGroupBy
       }
       public ColumnType CurrentColumnType { get; set; }
-      public ColumnMappingDTO(ColumnType columnType, string columnName, string description, DataFormatParameter source, int icon)
+      public ColumnMappingDTO(ColumnType columnType, string columnName, string description, DataFormatParameter source, int icon, ColumnInfo columnInfo = null)
       {
+         ColumnInfo = columnInfo;
          CurrentColumnType = columnType;
          MappingName = columnName;
          Description = description;

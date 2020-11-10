@@ -376,7 +376,7 @@ namespace OSPSuite.Assets
          public static readonly string ExcelColumn = "Excel Column";
          public static readonly string MappingName = "Mapping Name";
          public static readonly string UnitColumn = "Unit";
-         public static readonly string LLOQColumn = "LLOQ";
+         public static readonly string ExtraColumn = "Extras";
          public static readonly string ErrorColumn = "Error";
          public static readonly string LoadAllSheets = "Load all sheets";
          public static readonly string LoadCurrentSheets = "Load current sheet";
@@ -1164,6 +1164,7 @@ namespace OSPSuite.Assets
       public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
       public static readonly string AddInformationDescription = "Add a new grouping by field";
       public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
+      public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
    }
 
    public static class Error

@@ -13,6 +13,7 @@ using OSPSuite.Assets;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -40,6 +41,8 @@ namespace OSPSuite.UI.Views.Importer
 
       private readonly RepositoryItemButtonEdit _lloqButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
+      private readonly RepositoryItemButtonEdit _errorTypeButtonRepository =
+         new UxRepositoryItemButtonImage(ApplicationIcons.MetaDataAndUnitInformation, Captions.ErrorTypeInformationDescription);
 
       private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
       private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
@@ -128,7 +131,7 @@ namespace OSPSuite.UI.Views.Importer
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _gridViewBinder.AddUnboundColumn()
-            .WithCaption(Captions.Importer.LLOQColumn)
+            .WithCaption(Captions.Importer.ExtraColumn)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(lloqRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
@@ -145,6 +148,7 @@ namespace OSPSuite.UI.Views.Importer
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnitButtonRepository.Buttons[0].Enabled = false;
          _lloqButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement));
+         _errorTypeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeErrorType(_gridViewBinder.FocusedElement));
          _disabledLloqButtonRepository.Buttons[0].Enabled = false;
          _emptyIconRepository.Buttons[0].Enabled = false;
       }
@@ -178,8 +182,14 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem lloqRepository(ColumnMappingDTO model)
       {
-         if (model.Source is MappingDataFormatParameter && (model.Source as MappingDataFormatParameter).MappedColumn?.LloqColumn != null)
+         if (model.Source is MappingDataFormatParameter)
          {
+            if (model.ColumnInfo.IsBase())
+               return _disabledLloqButtonRepository;
+            if (model.ColumnInfo.IsAuxiliary())
+               return _errorTypeButtonRepository;
+            if ((model.Source as MappingDataFormatParameter).MappedColumn?.LloqColumn == null)
+               return _disabledLloqButtonRepository;
             return _lloqButtonRepository;
          }
 
