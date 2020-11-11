@@ -17,7 +17,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
-      private readonly INanPresenter _nanPresenter;
       private readonly IImporter _importer;
       private IDataFormat _format;
       private DataSource _dataSource;
@@ -42,7 +41,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporterDataView dataView, 
          IDataViewingPresenter dataViewingPresenter, 
          ISourceFilePresenter sourceFilePresenter,
-         INanPresenter nanPresenter,
          IImporter importer,
          IDialogCreator dialogCreator
       ) : base(dataView)
@@ -51,12 +49,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
-         _view.AddNanView(nanPresenter.View);
          _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
-         _nanPresenter = nanPresenter;
 
          _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
@@ -86,11 +82,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void onCompletedMapping()
       {
          View.EnableImportButtons();
+         /* this could be here just for the refreshing of the confirmation view
          _dataSource.DataSets.Clear();
+         //ToDo: Hmmm...why are we even doing this???
          foreach (var sheet in _sheets)
          {
             getDataSource(sheet);
-         }
+         }*/
       }
 
       public void ImportDataForConfirmation(string sheetName)
@@ -122,7 +120,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          );
 
          _dataSource.SetMappings(_dataSourceFile.Path, mappings);
-         _dataSource.NanSettings = _nanPresenter.Settings;
          //Todo: this here as a test!!!
          _dataSource.SetDataFormat(_format);  //_columnMappingPresenter.GetDataFormat()  
          _dataSource.AddSheets( sheets, _columnInfos);

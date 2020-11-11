@@ -14,6 +14,7 @@ namespace OSPSuite.UI.Views.Importer
          InitializeComponent();
          previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
          //xtraTabControl.SelectedTabPage.Appearance.Header.Font = Fonts.SelectedTabHeaderFont; -- WE COULD ACTUALLY KEEP THE LOGIC OF HAVING A FONT HERE
+         nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
@@ -56,6 +57,11 @@ namespace OSPSuite.UI.Views.Importer
       {
          confirmationTabPage.PageEnabled = false;
          confirmationTabPage.PageVisible = false;
+      }
+
+      public void AddNanView(INanView nanView)
+      {
+         nanPanelControl.FillWith(nanView);
       }
    }
 }
