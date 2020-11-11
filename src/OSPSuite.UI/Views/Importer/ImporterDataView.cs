@@ -29,7 +29,6 @@ namespace OSPSuite.UI.Views.Importer
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
-         //nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
@@ -121,11 +120,6 @@ namespace OSPSuite.UI.Views.Importer
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {
          importerTabControl.FillWith(dataViewingControl);
-      }
-
-      public void AddNanView(INanView nanView)
-      {
-        // nanPanelControl.FillWith(nanView);
       }
 
       public void AddTabs(List<string> sheetNames)

@@ -10,24 +10,33 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
+      private readonly INanPresenter _nanPresenter;
       private IDataSource _lastDataSource;
 
-      public ImporterPresenter(IImporterView view, IImporterDataPresenter importerDataPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
+      public ImporterPresenter(IImporterView view, INanPresenter nanPresenter, IImporterDataPresenter importerDataPresenter, IImportConfirmationPresenter confirmationPresenter, IColumnMappingPresenter columnMappingPresenter
       ) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
+         _nanPresenter = nanPresenter;
          _view.AddColumnMappingControl(columnMappingPresenter.View);
+         _view.AddNanView(nanPresenter.View);
          _confirmationPresenter.OnImportData += ImportData;
          _importerDataPresenter.OnImportSheets += ImportSheets;
          _view.AddImporterView(_importerDataPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter);
          _importerDataPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
+         _nanPresenter.OnNanSettingsChanged += onNaNSettingsChanged;
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
+      }
+
+      private void onNaNSettingsChanged(object sender, NanSettingsChangedEventArgs e)
+      {
+         throw new NotImplementedException();
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
@@ -55,6 +64,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
          _lastDataSource = args.DataSource;
+         args.DataSource.NanSettings = _nanPresenter.Settings;
          _confirmationPresenter.SetDataSource(args.DataSource);
          _confirmationPresenter.SetNamingConventions(_importerDataPresenter.GetNamingConventions());
          AddConfirmationView();
