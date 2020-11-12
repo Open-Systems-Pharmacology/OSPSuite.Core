@@ -95,6 +95,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.AddImporterView(_importerDataPresenter.View);
       }
 
+      public void SetSourceFile(string path)
+      {
+         _importerDataPresenter.SetDataSource(path);
+      }
+
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
    }
 }

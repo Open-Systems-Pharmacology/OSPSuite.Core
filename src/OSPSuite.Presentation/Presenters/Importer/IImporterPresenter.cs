@@ -19,6 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       );
       void AddConfirmationView();
       void AddDataMappingView();
+      void SetSourceFile(string path);
 
       event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
    }

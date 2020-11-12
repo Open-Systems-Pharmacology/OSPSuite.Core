@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraEditors;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
@@ -44,6 +45,7 @@ namespace OSPSuite.Starter.Presenters
          starter.Start(1000, 600);
          starter.Presenter.SetSettings(categories, columns, settings);
          starter.Presenter.OnTriggerImport += startImportSuccessDialog;
+         starter.Presenter.SetSourceFile(_dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA));
       }
 
       public void StartWithTestForGroupBySettings()
