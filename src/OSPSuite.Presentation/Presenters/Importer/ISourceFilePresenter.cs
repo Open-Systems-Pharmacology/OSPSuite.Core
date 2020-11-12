@@ -14,6 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       string Title { get; set; }
       string Filter { get; set; }
       string DirectoryKey { get; set; }
+      void SetSourceFile(string path);
    }
 
    public class SourceFileChangedEventArgs : EventArgs

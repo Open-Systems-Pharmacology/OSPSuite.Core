@@ -60,7 +60,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          AddSubPresenters(_dataViewingPresenter);
 
-         _sourceFilePresenter.OnSourceFileChanged += onSourceFileChanged;
+         _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
 
          _dataSource = new DataSource(_importer);
 
@@ -137,12 +137,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return _dataSourceFile.DataSheets[sheetName];
       }
 
-      private void onSourceFileChanged(object sender, SourceFileChangedEventArgs e)
-      {
-         SetDataSource(e.FileName);
-         OnSourceFileChanged.Invoke(sender, e);
-      }
-
       //TODO: not sure we need this
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
@@ -170,6 +164,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
+         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs {FileName = dataSourceFileName});
       }
 
       public void SelectTab(string tabName)

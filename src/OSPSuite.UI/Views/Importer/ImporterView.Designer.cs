@@ -109,6 +109,8 @@ namespace OSPSuite.UI.Views.Importer
          this.confirmationTabPage.Name = "confirmationTabPage";
          this.confirmationTabPage.Size = new System.Drawing.Size(1022, 1208);
          this.confirmationTabPage.Text = "Confirmation";
+         this.confirmationTabPage.Enabled = false;
+         this.confirmationTabPage.Visible = false;
          // 
          // columnMappingPanelControl
          // 
