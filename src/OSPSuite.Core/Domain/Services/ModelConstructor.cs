@@ -116,14 +116,15 @@ namespace OSPSuite.Core.Domain.Services
 
 
          //This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
-         removeUndefinedInstanceParametersIn(model);
+         removeUndefinedLocalMoleculeParametersIn(model);
       }
 
-      private void removeUndefinedInstanceParametersIn(IModel model)
+      private void removeUndefinedLocalMoleculeParametersIn(IModel model)
       {
          var allNaNParametersFromMolecules = model.Root.GetAllChildren<IContainer>()
             .Where(c => c.ContainerType == ContainerType.Molecule)
             .SelectMany(c => c.AllParameters(p => double.IsNaN(p.Value)))
+            .Where(x => x.BuildMode == ParameterBuildMode.Local)
             .ToList();
 
          allNaNParametersFromMolecules.Each(x => x.ParentContainer.RemoveChild(x));

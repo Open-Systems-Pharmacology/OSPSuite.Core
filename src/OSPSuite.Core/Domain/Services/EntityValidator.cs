@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Validation;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Domain.SensitivityAnalyses;
 
 namespace OSPSuite.Core.Domain.Services
 {
    /// <summary>
-   ///    Is reponsible to perform a validation of all rules defined in an entity. If the entity is a container, vlidate all
+   ///    Is responsible to perform a validation of all rules defined in an entity. If the entity is a container, validate all
    ///    its children as well
    /// </summary>
    public interface IEntityValidator
@@ -26,11 +26,11 @@ namespace OSPSuite.Core.Domain.Services
       IVisitor<SensitivityAnalysis>
    {
       protected ValidationResult _validationResult;
-      private IReadOnlyList<string> _compoundNames;
       private readonly IParameterIdentificationValidator _parameterIdentificationValidator;
       private readonly ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 
-      public EntityValidator(IParameterIdentificationValidator parameterIdentificationValidator, ISensitivityAnalysisValidator sensitivityAnalysisValidator)
+      public EntityValidator(IParameterIdentificationValidator parameterIdentificationValidator,
+         ISensitivityAnalysisValidator sensitivityAnalysisValidator)
       {
          _parameterIdentificationValidator = parameterIdentificationValidator;
          _sensitivityAnalysisValidator = sensitivityAnalysisValidator;
@@ -45,20 +45,18 @@ namespace OSPSuite.Core.Domain.Services
          {
             objectsToValidate.Add(simulation.Model.Root);
             objectsToValidate.Add(simulation.SimulationSettings);
-            compoundNames = simulation.CompoundNames;
          }
          else
             objectsToValidate.Add(objectBase);
 
-         return validateEntities(objectsToValidate, compoundNames);
+         return validateEntities(objectsToValidate);
       }
 
-      private ValidationResult validateEntities(IReadOnlyList<IObjectBase> entities, IReadOnlyList<string> compoundNames)
+      private ValidationResult validateEntities(IReadOnlyList<IObjectBase> entities)
       {
          try
          {
             _validationResult = new ValidationResult();
-            _compoundNames = compoundNames;
             entities.Each(entity => entity.AcceptVisitor(this));
             return _validationResult;
          }
@@ -78,22 +76,11 @@ namespace OSPSuite.Core.Domain.Services
 
       public void Visit(IParameter parameter)
       {
-         //only validate visible parmaeter
+         //only validate visible parameter
          if (!parameter.Visible)
             return;
 
-         //do not validate parameter defined in molecule amount for other molecule than drug (value cannot be set by user and some values are invalid)
-         if (parentIsAMoleculeButNotDrug(parameter.ParentContainer))
-            return;
-
          Visit((IEntity) parameter);
-      }
-
-      private bool parentIsAMoleculeButNotDrug(IContainer parent)
-      {
-         return parent != null
-                && parent.ContainerType == ContainerType.Molecule
-                && !parent.NameIsOneOf(_compoundNames);
       }
 
       private void addRuleToValidation(IBusinessRule rule, IObjectBase objectBase)
