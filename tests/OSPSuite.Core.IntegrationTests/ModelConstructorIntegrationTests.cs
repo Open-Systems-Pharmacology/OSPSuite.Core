@@ -415,6 +415,13 @@ namespace OSPSuite.Core
          bone_cell_E.Parameter("OtherNaNParam").ShouldNotBeNull();
       }
 
+      [Observation]
+      public void should_have_not_removed_global_nan_parameters()
+      {
+         var global_container = _model.Root.EntityAt<IContainer>("E");
+         global_container.Parameter("GlobalNaNParam").ShouldNotBeNull();
+      }
+
 
       [Observation]
       public void should_have_added_the_local_transporter_process_parameters_in_the_local_transporter_process_container()
