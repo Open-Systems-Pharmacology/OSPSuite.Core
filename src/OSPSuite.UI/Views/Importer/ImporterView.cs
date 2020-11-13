@@ -1,4 +1,5 @@
 ﻿using DevExpress.XtraTab;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Extensions;
@@ -13,7 +14,9 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
-         //xtraTabControl.SelectedTabPage.Appearance.Header.Font = Fonts.SelectedTabHeaderFont; -- WE COULD ACTUALLY KEEP THE LOGIC OF HAVING A FONT HERE
+         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
+         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
          nanLayoutControlItem.AdjustControlHeight(80);
       }
 
@@ -33,6 +36,11 @@ namespace OSPSuite.UI.Views.Importer
       public void AddImporterView(IImporterDataView importerDataView)
       {
          previewXtraTabControl.FillWith(importerDataView);
+      }
+
+      public void AddSourceFileControl(ISourceFileControl sourceFileControl)
+      {
+         sourceFilePanelControl.FillWith(sourceFileControl);
       }
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)

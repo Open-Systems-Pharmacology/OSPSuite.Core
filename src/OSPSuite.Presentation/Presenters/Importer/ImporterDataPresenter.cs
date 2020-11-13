@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 
@@ -16,7 +13,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
    {
       private readonly IDataViewingPresenter _dataViewingPresenter;
-      private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
@@ -34,31 +30,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
       (
          IImporterDataView dataView, 
          IDataViewingPresenter dataViewingPresenter, 
-         ISourceFilePresenter sourceFilePresenter,
          IImporter importer,
          IDialogCreator dialogCreator
       ) : base(dataView)
       {
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
-         _view.AddSourceFileControl(sourceFilePresenter.View);
 
          _dataViewingPresenter = dataViewingPresenter;
-         _sourceFilePresenter = sourceFilePresenter;
-
-         _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
-         _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
-         _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
 
          AddSubPresenters(_dataViewingPresenter);
-
-         _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
-
-         _sourceFilePresenter.CheckBeforeSelectFile = () =>
-            dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
-//ToDo: We should move the SourceFilePresenter directly under the ImporterPresenter. Grouping these 2 presenters makes 0 sense
-//then we can also move the correct call for the func there
-        // !_dataSource.DataSets.Any() || dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
       }
 
       public void ImportDataForConfirmation()
@@ -121,7 +102,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
-         _sourceFilePresenter.SetFilePath(dataSourceFileName);
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(_dataViewingPresenter.GetSheetNames());
