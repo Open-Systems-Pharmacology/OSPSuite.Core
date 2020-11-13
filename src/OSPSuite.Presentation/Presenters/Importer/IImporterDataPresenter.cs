@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -11,7 +12,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    }
    public class ImportSheetsEventArgs : EventArgs
    {
-      public IDataSource DataSource { get; set; }
+      public IDataSourceFile DataSourceFile { get; set; }
+      public Cache<string, IDataSheet> Sheets { get; set; }
    }
    public class FormatChangedEventArgs : EventArgs
    {
