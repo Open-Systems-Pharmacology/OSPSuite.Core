@@ -112,10 +112,6 @@ namespace OSPSuite.UI.Views.Importer
             _dataPresenter.SelectTab(e.Page.Text);
       }
 
-      public void AddSourceFileControl(ISourceFileControl sourceFileControl)
-      {
-         sourceFilePanelControl.FillWith(sourceFileControl);
-      }
 
       public void AddDataViewingControl(IDataViewingControl dataViewingControl)
       {

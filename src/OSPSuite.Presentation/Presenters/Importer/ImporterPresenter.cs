@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
@@ -15,12 +17,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
+      private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private DataImporterSettings _dataImporterSettings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
-      private readonly IImporter _importer;
-      private IDataSource _dataSource;
+      private readonly IDataSource _dataSource;
 
       public ImporterPresenter(
          IImporterView view, 
@@ -29,18 +31,28 @@ namespace OSPSuite.Presentation.Presenters.Importer
          INanPresenter nanPresenter, 
          IImporterDataPresenter importerDataPresenter, 
          IImportConfirmationPresenter confirmationPresenter, 
-         IColumnMappingPresenter columnMappingPresenter
+         IColumnMappingPresenter columnMappingPresenter,
+         ISourceFilePresenter sourceFilePresenter,
+         IDialogCreator dialogCreator
       ) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
          _nanPresenter = nanPresenter;
-         _importer = importer;
+         _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
-         _dataSource = new DataSource(_importer);
+         _dataSource = new DataSource(importer);
+
+         _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
+         _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
+         _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
+         _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
+         _sourceFilePresenter.CheckBeforeSelectFile = () => 
+            !_dataSource.DataSets.Any() || dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
 
          _view.AddColumnMappingControl(columnMappingPresenter.View);
+         _view.AddSourceFileControl(sourceFilePresenter.View);
          _view.AddNanView(nanPresenter.View);
          _confirmationPresenter.OnImportData += ImportData;
          _confirmationPresenter.OnDataSetSelected += plotDataSet;
@@ -51,8 +63,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
          _importerDataPresenter.OnImportSheets += ImportSheets;
          _view.AddImporterView(_importerDataPresenter.View);
-         AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter);
-         _importerDataPresenter.OnSourceFileChanged += (s, a) => { view.DisableConfirmationView(); };
+         AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
@@ -82,6 +93,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
+      public void SetDataSource(string dataSourceFileName)
+      {
+         if (string.IsNullOrEmpty(dataSourceFileName)) return;
+
+         _sourceFilePresenter.SetFilePath(dataSourceFileName);
+         _view.DisableConfirmationView();
+      }
       public void ImportData(object sender, EventArgs e)
       {
          OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
@@ -146,6 +164,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSourceFile(string path)
       {
+         _sourceFilePresenter.SetFilePath(path);
          _importerDataPresenter.SetDataSource(path);
       }
 

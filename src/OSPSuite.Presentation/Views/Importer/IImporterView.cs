@@ -7,6 +7,7 @@ namespace OSPSuite.Presentation.Views.Importer
       void AddImporterView(IImporterDataView importerDataView);
       void AddColumnMappingControl(IColumnMappingControl columnMappingControl);
       void AddConfirmationView(IImportConfirmationView confirmationView);
+      void AddSourceFileControl(ISourceFileControl sourceFileControl);
       void EnableConfirmationView();
       void DisableConfirmationView();
       void AddNanView(INanView nanView);
