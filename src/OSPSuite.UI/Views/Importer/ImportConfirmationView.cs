@@ -100,7 +100,7 @@ namespace OSPSuite.UI.Views.Importer
 
          if (listBox.SelectedValue == null) return;
 
-         _presenter.DataSetToDataRepository(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
+         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
       }
    }
 }
