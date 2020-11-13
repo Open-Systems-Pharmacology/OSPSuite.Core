@@ -449,7 +449,7 @@ namespace OSPSuite.Helpers
          //create a couple of NaN Parameters. Only a few should be created in the simulation
          moleculeE.AddParameter(newConstantParameter("NaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
          moleculeE.AddParameter(newConstantParameter("OtherNaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
-         moleculeE.AddParameter(newConstantParameter("GLobalNaNParam", double.NaN).WithMode(ParameterBuildMode.Global));
+         moleculeE.AddParameter(newConstantParameter("GlobalNaNParam", double.NaN).WithMode(ParameterBuildMode.Global));
          return moleculeE;
       }
 
