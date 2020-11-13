@@ -18,11 +18,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IImporter _importer;
-      private IDataFormat _format;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private DataImporterSettings _dataImporterSettings;
       private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -95,11 +93,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets});
       }
 
-      public IEnumerable<string> GetNamingConventions()
-      {
-         return _dataImporterSettings.NamingConventions;
-      }
-
       private Cache<string, IDataSheet> getAllSheets()
       {
          return _dataSourceFile.DataSheets;
@@ -113,15 +106,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       //TODO: not sure we need this
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
-         var dataFormats = availableFormats.ToList();
-
-         _format = format; //ToDo: BUT WE SHOULD ACTUALLY KEEP IT ONLY IN COLUMNMAPPINGPRESENTER OR HERE
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos)
       {
-         _dataImporterSettings = dataImporterSettings;
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
       }
@@ -129,7 +118,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         //_dataSource.DataSets.Clear();
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);

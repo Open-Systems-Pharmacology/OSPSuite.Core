@@ -25,8 +25,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         IReadOnlyList<ColumnInfo> columnInfos
       );
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;
@@ -41,7 +40,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
-      IEnumerable<string> GetNamingConventions();
       void ImportDataForConfirmation();
       void onMissingMapping();
       void onCompletedMapping();
