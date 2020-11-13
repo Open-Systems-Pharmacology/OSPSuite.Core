@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IColumnMappingPresenter _columnMappingPresenter;
       private readonly IImportConfirmationPresenter _confirmationPresenter;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private DataImporterSettings _dataImporterSettings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
       private readonly IImporter _importer;
@@ -42,7 +43,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddNanView(nanPresenter.View);
          _confirmationPresenter.OnImportData += ImportData;
-         _confirmationPresenter.OnDataSetSelected += plotDataset;
+         _confirmationPresenter.OnDataSetSelected += plotDataSet;
          _confirmationPresenter.OnNamingConventionChanged += (s, a) =>
          {
             _dataSource.SetNamingConvention(a.NamingConvention); 
@@ -58,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
       }
 
-      private void plotDataset(object sender, DataSetSelectedEventArgs e)
+      private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
          _confirmationPresenter.PlotDataRepository(dataRepository);
@@ -68,7 +69,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _columnInfos = columnInfos;
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
-         _importerDataPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+         _importerDataPresenter.SetSettings(metaDataCategories, columnInfos);
+         _dataImporterSettings = dataImporterSettings;
       }
 
       public void AddConfirmationView()
@@ -113,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
-         _confirmationPresenter.SetNamingConventions(_importerDataPresenter.GetNamingConventions());
+         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);
          AddConfirmationView();
          View.EnableConfirmationView();
       }
