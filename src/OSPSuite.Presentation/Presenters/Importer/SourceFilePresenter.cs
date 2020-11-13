@@ -12,10 +12,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public string Title  { get; set;} 
       public string Filter { get; set; }
       public string DirectoryKey { get; set; }
-      public void SetSourceFile(string path)
-      {
-         throw new NotImplementedException();
-      }
 
       public Func<bool> CheckBeforeSelectFile { get; set; } = () => true;
 

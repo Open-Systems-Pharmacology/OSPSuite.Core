@@ -28,12 +28,10 @@ namespace OSPSuite.UI.Views.Importer
          actionImageComboBoxEdit.SelectedValueChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Action = (NanSettings.ActionType) actionImageComboBoxEdit.SelectedIndex;
-            _presenter.NaNSettingsChanged();
          });
          indicatorLayoutControlItem.TextChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Indicator = indicatorTextEdit.Text;
-            _presenter.NaNSettingsChanged();
          });
       }
 

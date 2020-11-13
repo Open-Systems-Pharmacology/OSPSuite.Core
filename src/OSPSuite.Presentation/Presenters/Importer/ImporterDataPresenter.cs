@@ -19,15 +19,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IImporter _importer;
       private IDataFormat _format;
-      private DataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private DataImporterSettings _dataImporterSettings;
-      private IEnumerable<IDataFormat> _availableFormats;
       private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
-      private readonly IDialogCreator _dialogCreator;
-
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
@@ -45,11 +41,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IDialogCreator dialogCreator
       ) : base(dataView)
       {
-         _dialogCreator = dialogCreator;
          _importer = importer;
          _view.AddDataViewingControl(dataViewingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
-         _importer = importer;
 
          _dataViewingPresenter = dataViewingPresenter;
          _sourceFilePresenter = sourceFilePresenter;
@@ -62,16 +56,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
 
-         _dataSource = new DataSource(_importer);
-
          _sourceFilePresenter.CheckBeforeSelectFile = () =>
-            !_dataSource.DataSets.Any() || _dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
+            dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
+//ToDo: We should move the SourceFilePresenter directly under the ImporterPresenter. Grouping these 2 presenters makes 0 sense
+//then we can also move the correct call for the func there
+        // !_dataSource.DataSets.Any() || dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
       }
+
       public void ImportDataForConfirmation()
       {
          var sheets = getAllSheets();
          _sheets.Add(sheets);
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets });
       }
 
       public void onMissingMapping()
@@ -96,35 +92,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, IDataSheet>();
          sheets.Add(sheetName, getSingleSheet(sheetName));
          _sheets.Add(sheets);
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSource = getDataSource(sheets) });
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets});
       }
 
       public IEnumerable<string> GetNamingConventions()
       {
          return _dataImporterSettings.NamingConventions;
-      }
-
-      private IDataSource getDataSource(Cache<string, IDataSheet> sheets)
-      {
-         var mappings = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-         }).Union
-         (
-            _dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.ColumnName,
-               Index = sheetName => _dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-            })
-         );
-
-         _dataSource.SetMappings(_dataSourceFile.Path, mappings);
-         //Todo: this here as a test!!!
-         _dataSource.SetDataFormat(_format);  //_columnMappingPresenter.GetDataFormat()  
-         _dataSource.AddSheets( sheets, _columnInfos);
-
-         return _dataSource;
       }
 
       private Cache<string, IDataSheet> getAllSheets()
@@ -141,7 +114,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
          var dataFormats = availableFormats.ToList();
-         _availableFormats = dataFormats;
+
          _format = format; //ToDo: BUT WE SHOULD ACTUALLY KEEP IT ONLY IN COLUMNMAPPINGPRESENTER OR HERE
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
       }
@@ -156,7 +129,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
-         _dataSource.DataSets.Clear();
+         //_dataSource.DataSets.Clear();
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          _dataViewingPresenter.SetDataSource(_dataSourceFile);
