@@ -18,7 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
-      private readonly IDimensionFactory _dimensionFactory; //TO BE INITIALIZED IN THE CONSTRUCTOR
+      private readonly IDimensionFactory _dimensionFactory;
 
       public DataSetToDataRepositoryMapper(IDimensionFactory dimensionFactory)
       {
@@ -26,48 +26,21 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       }
       public DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName)
       {
-         //var dataSet = dataSource.DataSets.ElementAt(dataSetIndex);
-         var ParsedDataSet = GetDataSet(dataSource, dataSetIndex, out var sheetIndex);
-         
+         var parsedDataSet = getDataSet(dataSource, dataSetIndex, out var sheetIndex);
          var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
          var sheetName = dataSetPair.Key;
-         var dataSet = dataSetPair.Value;
          var configuration = dataSource.GetImporterConfiguration();
-
          var dataRepository = new DataRepository { Name = dataSetName };
-
-
-         //a) - we ommit the sorting of the view that is being done in the old importer
-
-         //var colInfos = columnInfos as IList<ColumnInfo> ?? columnInfos.ToList();
-
-         //do we actually need to sort our IDataSet somehow?
-         //importDataTable.DefaultView.Sort = getSortString(colInfos);
 
          addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
 
-         //addExtendedPropertiesForMetaData(configuration.Format, dataSet, dataRepository);
-
-         foreach (var column in ParsedDataSet.Data)
+         foreach (var column in parsedDataSet.Data)
          {
             convertParsedDataColumn(dataRepository, column, configuration.FileName);
          }
 
-         /*
-                  addExtendedPropertiesForGroupBy(importDataTable, dataRepository);
-
-                  //convert columns
-                  foreach (ImportDataColumn importDataColumn in importDataTable.Columns)
-                  {
-                     bool columnErrorNaN;
-                     convertParsedDataColumn(dataRepository, importDataColumn, colInfos, out columnErrorNaN);
-                     errorNaN |= columnErrorNaN;
-                  }
-
-         */
-
-         //associate column - 
-         foreach (var column in ParsedDataSet.Data)
+         //associate columns
+         foreach (var column in parsedDataSet.Data)
          {
             if (string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
                continue;
@@ -80,8 +53,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             var relatedCol = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.RelatedColumnOf);
             relatedCol.AddRelatedColumn(col);
          }
-
-
 
          return dataRepository;
       }
@@ -110,25 +81,16 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataColumn = new DataColumn(column.Key.ColumnInfo.Name, dimension, baseGrid);
          }
 
-
-         //var baseGrid = findColumnByName(dataRepository.Columns, colInfo.BaseGridName) as BaseGrid;
-         //dataColumn = new DataColumn(column.Key.Unit.ColumnName, dimension, baseGrid);
-
-         //maybe colInfo.Name...!!!!
-         //dataColumn = new BaseGrid(column.Key.Column.Name, dimension); //it is not good that we have column 
-
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
          dataColumn.DataInfo = dataInfo;
 
-         //this should actually be the name of the file or the sheet
          if (!string.IsNullOrEmpty(fileName))
             dataInfo.Source = fileName;
 
-         
-         //not 100% sure this is correct
          var unit = dimension.Unit(column.Key.Column.Unit.SelectedUnit);
          var values = new float[column.Value.Count];
          var i = 0;
+
          //loop over view rows to get the sorted values.
          foreach (var value in column.Value)
          {
@@ -138,11 +100,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), (double)value.Value);
          }
 
-         dataInfo.DisplayUnitName = unit.Name; //or column.Key.Unit.Name?
+         dataInfo.DisplayUnitName = unit.Name;
          dataColumn.Values = values;
 
          var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);
-         AuxiliaryType errorType = AuxiliaryType.Undefined;
+         var errorType = AuxiliaryType.Undefined;
 
          if (propInfo != null)
          {
@@ -168,16 +130,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                      break;
                }
             }
-
-            //not sure what this is for
-            /*
-            else
-            {
-               // set explicitly defined property
-               if (propInfo.PropertyType.IsEnum)
-                  value = Enum.Parse(propInfo.PropertyType, value.ToString(), true);
-            }*/
-
             propInfo.SetValue(dataColumn.DataInfo, errorType, null);
          }
 
@@ -190,8 +142,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataInfo.Origin = (dataColumn.DataInfo.AuxiliaryType == AuxiliaryType.Undefined)
                ? ColumnOrigins.Observation
                : ColumnOrigins.ObservationAuxiliary;
-        // if (dataInfo.Origin == ColumnOrigins.Observation)
-          //  addLowerLimitOfQuantification(importDataColumn, dataColumn);
 
          //meta data information and input parameters currently not handled
          dataRepository.Add(dataColumn);
@@ -228,8 +178,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return columns.Any(col => col.Name == name);
       }
 
-      //should be UNIT TESTED
-      private ParsedDataSet GetDataSet(IDataSource dataSource, int dataSetIndex, out int sheetIndex)
+      private ParsedDataSet getDataSet(IDataSource dataSource, int dataSetIndex, out int sheetIndex)
       {
          sheetIndex = 0;
          var sheet = dataSource.DataSets.GetEnumerator();
@@ -246,28 +195,5 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          return null;
       }
-
-      private static void addExtendedPropertiesForMetaData(IDataFormat format,IDataSet dataSet, DataRepository dataRepository)
-      {
-         //null check?
-         /*
-                  foreach (MetaDataFormatParameter parameter in format.Parameters)
-                  {
-                     var name = parameter.MetaDataId;
-
-                     var value = importDataTable.MetaData.Rows.ItemByIndex(0)[metaData];
-                     parameter.
-                     if (value == DBNull.Value && !metaData.Required) continue;
-
-                     // add extended property
-                     var extendedProperty = Activator.CreateInstance(typeof(ExtendedProperty<>).MakeGenericType(metaData.DataType))
-                        as IExtendedProperty;
-                     if (extendedProperty == null) continue;
-                     extendedProperty.Name = parameter.ColumnName;
-                     extendedProperty.ValueAsObject = value;
-                     dataRepository.ExtendedProperties.Add(extendedProperty);
-         */
-      //}
-   }
    }
 }
