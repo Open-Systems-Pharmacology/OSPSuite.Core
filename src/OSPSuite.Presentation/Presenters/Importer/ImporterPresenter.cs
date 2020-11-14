@@ -131,6 +131,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             Constants.FILE,
             Constants.SHEET
          };
+
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -43,6 +44,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ImportDataForConfirmation();
       void onMissingMapping();
       void onCompletedMapping();
+      List<string> GetSheetNames();
+      DataTable GetSheet(string tabName);
       void ImportDataForConfirmation(string sheetName);
       void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
    }

@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.Views.Importer
 {
    public interface IImporterDataView : IView<IImporterDataPresenter>
    {
-      void AddDataViewingControl(IDataViewingControl dataViewingControl);
+      void SetGridSource(string tabName = null);
       void EnableImportButtons();
       void DisableImportButtons();
       void AddTabs(List<string> tabNames);
