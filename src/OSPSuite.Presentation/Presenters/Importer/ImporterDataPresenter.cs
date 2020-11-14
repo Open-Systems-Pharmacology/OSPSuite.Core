@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using OSPSuite.Assets;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Services;
+using System.Data;
+using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
@@ -12,7 +11,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 { 
    class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
    {
-      private readonly IDataViewingPresenter _dataViewingPresenter;
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
@@ -28,20 +26,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public ImporterDataPresenter
       (
-         IImporterDataView dataView, 
-         IDataViewingPresenter dataViewingPresenter, 
-         IImporter importer,
-         IDialogCreator dialogCreator
+         IImporterDataView dataView,
+         IImporter importer
       ) : base(dataView)
       {
          _importer = importer;
-         _view.AddDataViewingControl(dataViewingPresenter.View);
-
-         _dataViewingPresenter = dataViewingPresenter;
-
-         AddSubPresenters(_dataViewingPresenter);
       }
 
+      public List<string> GetSheetNames()
+      {
+         return _dataSourceFile.DataSheets.Keys.ToList();
+      }
+      public DataTable GetSheet(string tabName)
+      {
+         return _dataSourceFile.DataSheets.Contains(tabName) ? _dataSourceFile.DataSheets[tabName].RawData.AsDataTable() : new DataTable();
+      }
       public void ImportDataForConfirmation()
       {
          var sheets = getAllSheets();
@@ -101,36 +100,37 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
-         _dataViewingPresenter.SetDataSource(_dataSourceFile);
+         View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
-         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+         View.AddTabs(GetSheetNames());
          OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs {FileName = dataSourceFileName});
       }
 
       public void SelectTab(string tabName)
       {
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
-         _dataViewingPresenter.SetTabData(tabName);
+         View.SetGridSource(tabName);
       }
 
       public void RemoveTab(string tabName)
       {
-         _dataViewingPresenter.RemoveTabData(tabName);
+         _dataSourceFile.DataSheets.Remove(tabName);
       }
 
       public void RemoveAllButThisTab(string tabName)
       {
          View.ClearTabs();
-         _dataViewingPresenter.RemoveAllButThisTabData(tabName);
-         //those under here could go in a private called refresh (is there maybe smthing like this already existing????)
-         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+         var remainingSheet = _dataSourceFile.DataSheets[tabName];
+         _dataSourceFile.DataSheets.Clear();
+         _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
+         View.AddTabs(GetSheetNames());
       }
 
       public void RefreshTabs()
       {
          View.ClearTabs();
-         View.AddTabs(_dataViewingPresenter.GetSheetNames());
+         View.AddTabs(GetSheetNames());
       }
    }
 }
