@@ -83,7 +83,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return _dataSourceFile.DataSheets[sheetName];
       }
 
-      //TODO: not sure we need this
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});

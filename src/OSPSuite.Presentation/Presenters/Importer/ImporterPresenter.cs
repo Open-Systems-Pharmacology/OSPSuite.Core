@@ -87,7 +87,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void AddConfirmationView()
       {
          _view.AddConfirmationView(_confirmationPresenter.View);
-         if (_dataSource != null)  //NOT SURE ABOUT THIS REFERENCE HERE
+         if (_dataSource != null) 
          {
             _confirmationPresenter.Refresh();
          }
