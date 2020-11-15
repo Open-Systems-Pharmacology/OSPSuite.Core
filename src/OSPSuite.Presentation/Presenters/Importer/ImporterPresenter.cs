@@ -68,6 +68,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
+         View.DisableConfirmationView();
       }
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
