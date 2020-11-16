@@ -23,6 +23,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
       private readonly IDataSource _dataSource;
+      private IDataSourceFile _dataSourceFile;
 
       public ImporterPresenter(
          IImporterView view, 
@@ -98,7 +99,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
 
-         _sourceFilePresenter.SetFilePath(dataSourceFileName);
+         SetSourceFile(dataSourceFileName);
          _view.DisableConfirmationView();
       }
       public void ImportData(object sender, EventArgs e)
@@ -158,6 +159,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onCompletedMapping(object sender, EventArgs e)
       {
          _importerDataPresenter.onCompletedMapping();
+         _dataSource.DataSets.Clear();
+         foreach (var sheet in _importerDataPresenter.Sheets)
+         {
+            ImportSheets(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheet });
+         }
       }
       public void AddDataMappingView()
       {
@@ -167,7 +173,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetSourceFile(string path)
       {
          _sourceFilePresenter.SetFilePath(path);
-         _importerDataPresenter.SetDataSource(path);
+         _dataSourceFile = _importerDataPresenter.SetDataSource(path);
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

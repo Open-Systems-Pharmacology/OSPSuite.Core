@@ -45,12 +45,14 @@ namespace OSPSuite.Infrastructure.Import.Core
       public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          _importer.AddFromFile(_configuration.Format, dataSheets, columnInfos, this);
+         if (!double.TryParse(NanSettings.Indicator, out var indicator))
+            indicator = double.NaN;
          foreach (var dataSet in DataSets)
          {
             if (NanSettings.Action == NanSettings.ActionType.Throw)
-               dataSet.ThrowsOnNan();
+               dataSet.ThrowsOnNan(indicator);
             else
-               dataSet.ClearNan();
+               dataSet.ClearNan(indicator);
          }
       }
 
