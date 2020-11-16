@@ -41,11 +41,6 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
-      public void FillExcelRowView(IView view)
-      {
-         excelRowPanelControl.FillWith(view);
-      }
-
       public void FillUnitsView(IView view)
       {
          unitsPanelControl.FillWith(view);

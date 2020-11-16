@@ -9,11 +9,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface IMappingParameterEditorPresenter : IDisposablePresenter
    {
       void HideAll();
-      void SetOptions(IEnumerable<string> options);
       void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected);
       void SetErrorTypeOptions(IEnumerable<string> types, string selected);
-      int SelectedOption { get; }
       int SelectedUnit { get; }
       int SelectedLloq { get; }
       int SelectedErrorType { get; }
@@ -22,7 +20,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public class MappingParameterEditorPresenter : AbstractDisposablePresenter<IMappingParameterEditorView, IMappingParameterEditorPresenter>, IMappingParameterEditorPresenter
    {
-      private readonly IOptionsEditorPresenter _excelRowEditorPresenter;
       private readonly IOptionsEditorPresenter _unitsEditorPresenter;
       private readonly IOptionsEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
@@ -30,7 +27,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private string _selectedColumn { get; set; }
       private bool _columnMapping;
 
-      public int SelectedOption { get => _excelRowEditorPresenter.SelectedIndex; }
       public int SelectedUnit { get => _unitsEditorPresenter.SelectedIndex; }
       public int SelectedLloq { get => _lloqEditorPresenter.SelectedIndex; }
       public int SelectedErrorType { get => _errorEditorPresenter.SelectedIndex; }
@@ -45,17 +41,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
-         IOptionsEditorPresenter excelRowEditorPresenter,
          IOptionsEditorPresenter unitsEditorPresenter,
          IOptionsEditorPresenter lloqEditorPresenter,
          IOptionsEditorPresenter errorEditorPresenter
       ) : base(view)
       {
-         _excelRowEditorPresenter = excelRowEditorPresenter;
          _unitsEditorPresenter = unitsEditorPresenter;
          _lloqEditorPresenter = lloqEditorPresenter;
          _errorEditorPresenter = errorEditorPresenter;
-         View.FillExcelRowView(_excelRowEditorPresenter.BaseView);
          View.FillUnitsView(_unitsEditorPresenter.BaseView);
          View.FillLloqView(_lloqEditorPresenter.BaseView);
          View.FillErrorView(_errorEditorPresenter.BaseView);
@@ -65,11 +58,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _unitsEditorPresenter.Clear();
          View.HideAll();
-      }
-
-      public void SetOptions(IEnumerable<string> options)
-      {
-         _excelRowEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", options } });
       }
 
       public void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
@@ -100,7 +88,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ShowUnits();
       void ShowLloq();
       void ShowErrorTypes();
-      void FillExcelRowView(IView view);
       void FillUnitsView(IView view);
       void FillLloqView(IView view);
       void FillErrorView(IView view);

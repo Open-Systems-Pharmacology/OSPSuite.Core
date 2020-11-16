@@ -65,6 +65,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ValidateMapping();
       void SetSubEditorSettings(ColumnMappingDTO model);
       void UpdateDescriptrionForModel();
+      void SetDescriptionForRow(ColumnMappingDTO model);
 
       event EventHandler OnMappingCompleted; //status: you can import
 

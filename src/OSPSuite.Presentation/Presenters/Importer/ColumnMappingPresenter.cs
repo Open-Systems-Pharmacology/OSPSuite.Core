@@ -139,15 +139,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
+      public void SetDescriptionForRow(ColumnMappingDTO model)
+      {
+         _setDescriptionForRow(model);
+      }
+
       public void UpdateDescriptrionForModel()
       {
-         var selectedOption = GetAvailableOptionsFor(_currentModel).ElementAt(_mappingParameterEditorPresenter.SelectedOption);
-         _currentModel.Description = selectedOption.Description;
-         _setDescriptionForRow(_currentModel);
-         _view.RefreshData();
-         if (selectedOption.Label == Captions.Importer.NoneEditorNullText)
-            return;
-
          if (!(_currentModel.Source is MappingDataFormatParameter))
          {
             _view.RefreshData();
@@ -161,7 +159,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
          }
          _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
-         ValidateMapping();
 
          if (_currentModel.ColumnInfo.IsBase())
          {
@@ -183,14 +180,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
             columns.AddRange(availableColumns());
             column.LloqColumn = columns[_mappingParameterEditorPresenter.SelectedLloq];
          }
+         ValidateMapping();
          _view.RefreshData();
+         _view.CloseEditor();
       }
 
       public void SetSubEditorSettings(ColumnMappingDTO model)
       {
          _currentModel = model;
          _mappingParameterEditorPresenter.HideAll();
-         _mappingParameterEditorPresenter.SetOptions(GetAvailableRowsFor(model));
          if (!(model.Source is MappingDataFormatParameter))
             return;
 
