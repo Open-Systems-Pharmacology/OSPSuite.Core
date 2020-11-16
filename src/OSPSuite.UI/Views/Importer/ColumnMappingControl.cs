@@ -34,12 +34,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _addButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
 
-      private readonly RepositoryItemButtonEdit _errorTypeButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.MetaDataAndUnitInformation, Captions.ErrorTypeInformationDescription);
-
-      private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-      private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-
+      
       private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private void queryDisplayText(QueryDisplayTextEventArgs e)
@@ -160,9 +155,6 @@ namespace OSPSuite.UI.Views.Importer
          
          _addButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
-         _errorTypeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeErrorType(_gridViewBinder.FocusedElement));
-         _disabledLloqButtonRepository.Buttons[0].Enabled = false;
-         _emptyIconRepository.Buttons[0].Enabled = false;
       }
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
