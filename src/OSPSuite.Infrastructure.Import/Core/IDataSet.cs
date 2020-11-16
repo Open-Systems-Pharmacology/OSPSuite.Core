@@ -20,21 +20,21 @@ namespace OSPSuite.Infrastructure.Import.Core
    public interface IDataSet
    {
       IEnumerable<ParsedDataSet> Data { get; set; }
-      void ClearNan();
-      void ThrowsOnNan();
+      void ClearNan(double indicator);
+      void ThrowsOnNan(double indicator);
    }
 
    public class DataSet : IDataSet
    {
       public IEnumerable<ParsedDataSet> Data { get; set; } = new List<ParsedDataSet>();
 
-      public void ThrowsOnNan()
+      public void ThrowsOnNan(double indicator)
       {
-         if (Data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => double.IsNaN(point.Value)))))
+         if (Data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Value == indicator || double.IsNaN(point.Value)))))
             throw new NanException();
       }
 
-      public void ClearNan()
+      public void ClearNan(double indicator)
       {
          foreach (var dataSet in Data)
          {
@@ -42,7 +42,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             var i = 0;
             while (i < mainColumns.First().Count())
             {
-               if (mainColumns.Any(points => points.Any(p => double.IsNaN(p.Value))))
+               if (mainColumns.Any(points => points.Any(p => p.Value == indicator || double.IsNaN(p.Value))))
                {
                   foreach (var simulationPoints in dataSet.Data.Values)
                   {

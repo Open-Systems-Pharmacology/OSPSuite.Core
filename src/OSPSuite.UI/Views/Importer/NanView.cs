@@ -29,7 +29,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             _presenter.Settings.Action = (NanSettings.ActionType) actionImageComboBoxEdit.SelectedIndex;
          });
-         indicatorLayoutControlItem.TextChanged += (s, a) => OnEvent(() =>
+         indicatorTextEdit.TextChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Indicator = indicatorTextEdit.Text;
          });
