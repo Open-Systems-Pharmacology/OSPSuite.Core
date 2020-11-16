@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Extensions;
@@ -112,7 +113,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _originalFormat = _format.Parameters.ToList();
          _extraColumns = _originalFormat
                .OfType<MappingDataFormatParameter>()
-               .Where(m => m.MappedColumn?.Unit?.ColumnName != null)
+               .Where(m => !string.IsNullOrEmpty(m.MappedColumn?.Unit?.ColumnName))
                .Select(m => m.MappedColumn.Unit.ColumnName)
                .Union(
                   _originalFormat
@@ -170,7 +171,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_currentModel.ColumnInfo.IsAuxiliary())
          {
-            
+            column.ErrorStdDev = _mappingParameterEditorPresenter.SelectedErrorType == 0 ? Constants.STD_DEV_ARITHMETIC : Constants.STD_DEV_GEOMETRIC;
          }
          else
          {
@@ -209,10 +210,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary())
          {
-            _mappingParameterEditorPresenter.SetErrorTypeOptions(new List<string>() { "Type1", "Type2" }, "Type1");
+            _mappingParameterEditorPresenter.SetErrorTypeOptions(new List<string>() { Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC }, source.MappedColumn.ErrorStdDev);
          }
          else
          {
+            if (column.LloqColumn == null)
+               return;
+
             var columns = new List<string>() { column.LloqColumn };
             if (column.LloqColumn != "")
             {
@@ -221,11 +225,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             columns.AddRange(availableColumns());
             _mappingParameterEditorPresenter.SetLloqOptions(columns, column.LloqColumn);
          }
-      }
-
-      public void ChangeErrorType(ColumnMappingDTO model)
-      {
-         //TODO: show error type selector
       }
 
       private ColumnMappingOption generateGroupByColumnMappingOption(string description, string columnName)

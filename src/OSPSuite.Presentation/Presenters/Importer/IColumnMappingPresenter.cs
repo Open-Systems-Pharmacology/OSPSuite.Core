@@ -62,7 +62,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void AddGroupBy(AddGroupByFormatParameter source);
       void ResetMapping();
       void ClearMapping();
-      void ChangeErrorType(ColumnMappingDTO model);
       void ValidateMapping();
       void SetSubEditorSettings(ColumnMappingDTO model);
       void UpdateDescriptrionForModel();

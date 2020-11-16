@@ -209,7 +209,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                {
                   Column = currentParameter.MappedColumn,
                   ColumnInfo = columnInfo,
-                  ErrorDeviation = Constants.STD_DEV_ARITHMETIC
+                  ErrorDeviation = currentParameter.MappedColumn.ErrorStdDev
                },
                dataSet.Select
                (
