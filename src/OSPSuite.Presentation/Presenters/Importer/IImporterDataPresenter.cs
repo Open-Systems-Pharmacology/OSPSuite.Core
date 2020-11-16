@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged;
 
-      void SetDataSource(string dataSourceFileName);
+      IDataSourceFile SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
@@ -48,5 +48,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       DataTable GetSheet(string tabName);
       void ImportDataForConfirmation(string sheetName);
       void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
+      IReadOnlyList<Cache<string, IDataSheet>> Sheets { get; }
    }
 }
