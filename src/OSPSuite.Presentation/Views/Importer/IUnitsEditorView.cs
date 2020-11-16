@@ -4,7 +4,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface IUnitsEditorView : IModalView<IUnitsEditorPresenter>
+   public interface IUnitsEditorView : IView<IUnitsEditorPresenter>
    {
       void SetParams(bool columnMapping, bool useDimensionSelector);
       void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue);

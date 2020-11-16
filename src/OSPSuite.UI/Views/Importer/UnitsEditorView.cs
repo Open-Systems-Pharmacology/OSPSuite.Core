@@ -11,13 +11,12 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class UnitsEditorView : BaseModalView, IUnitsEditorView
+   public partial class UnitsEditorView : BaseUserControl, IUnitsEditorView
    {
-      private ImageComboBoxEdit _unitComboBox;
-      private ImageComboBoxEdit _dimensionComboBox;
       private ImageComboBoxEdit _columnComboBox;
       private IUnitsEditorPresenter _presenter;
 
@@ -35,42 +34,27 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetParams(bool columnMapping, bool useDimensionSelector)
       {
-         var lc = new LayoutControl { Name = "LayoutControl" };
-         unitPanel.Controls.Add(lc);
-         lc.Dock = DockStyle.Fill;
-         lc.AllowCustomization = false;
-
          if (columnMapping)
          {
             _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
-            _dimensionComboBox = createComboBox("Dimension", (s, e) => { });
-            _unitComboBox = createComboBox("Unit", (s, e) => { });
-            unitPanel.Size = new Size(unitPanel.Size.Width, 50);
-            addControlItem(lc, "Column", _columnComboBox);
+            _unitComboBox.EditValueChanged += (s, e) => { };
             _unitComboBox.Visible = false;
-            _dimensionComboBox.Visible = false;
             _columnComboBox.Visible = true;
          }
          else
          {
-            _dimensionComboBox = createComboBox("Dimension", onDimensionComboBoxTextChanged);
-            _unitComboBox = createComboBox("Unit", onUnitComboBoxTextChanged);
+            _unitComboBox.EditValueChanged += onUnitComboBoxTextChanged;
             _columnComboBox = createComboBox("Column", (s, e) => { });
             if (useDimensionSelector)
             {
-               unitPanel.Size = new Size(unitPanel.Size.Width, 85);
-               addControlItem(lc, "Dimension", _dimensionComboBox);
-               _dimensionComboBox.Visible = true;
+               //_dimensionComboBox.Visible = true;
             }
             else
             {
-               unitPanel.Size = new Size(unitPanel.Size.Width, 50);
-               _dimensionComboBox.Visible = false;
+               //_dimensionComboBox.Visible = false;
             }
             _unitComboBox.Visible = true;
             _columnComboBox.Visible = false;
-
-            addControlItem(lc, "Unit", _unitComboBox);
          }
       }
 
@@ -86,7 +70,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private void onDimensionComboBoxTextChanged(object sender, EventArgs e)
       {
-         _presenter.SelectDimension(_dimensionComboBox.EditValue as string);
+         //_presenter.SelectDimension(_dimensionComboBox.EditValue as string);
       }
 
       private void onUnitComboBoxTextChanged(object sender, EventArgs e)
@@ -126,7 +110,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             return;
          }
-         _dimensionComboBox.Properties.Items.Clear();
+         //_dimensionComboBox.Properties.Items.Clear();
          foreach (var dimension in dimensionList)
          {
             var newItem = new ImageComboBoxItem
@@ -134,9 +118,9 @@ namespace OSPSuite.UI.Views.Importer
                Description = dimension.DisplayName,
                Value = dimension.Name
             };
-            _dimensionComboBox.Properties.Items.Add(newItem);
+            //_dimensionComboBox.Properties.Items.Add(newItem);
          }
-         _dimensionComboBox.EditValue = defaultValue;
+         //_dimensionComboBox.EditValue = defaultValue;
       }
 
       public void FillUnitComboBox(IEnumerable<Unit> units, string defaultValue)
@@ -158,7 +142,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private bool isEnabled() //TODO Resharper
       {
-         return (_dimensionComboBox == null || !_dimensionComboBox.Properties.Items.Any() || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null;
+         return true;// (_dimensionComboBox == null || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null;
       }
 
       private void onOkClick()

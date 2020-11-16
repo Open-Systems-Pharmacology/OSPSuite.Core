@@ -25,6 +25,7 @@ using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Starter
 {

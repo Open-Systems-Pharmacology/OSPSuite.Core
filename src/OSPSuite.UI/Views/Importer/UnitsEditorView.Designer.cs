@@ -28,93 +28,80 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.unitPanel = new System.Windows.Forms.Panel();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this._unitComboBox = new DevExpress.XtraEditors.CheckedComboBoxEdit();
+         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
+         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this._unitComboBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          this.SuspendLayout();
          // 
-         // btnCancel
+         // layoutControl1
          // 
-         this.btnCancel.Location = new System.Drawing.Point(403, 14);
-         this.btnCancel.Size = new System.Drawing.Size(82, 27);
+         this.layoutControl1.Controls.Add(this._unitComboBox);
+         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl1.Name = "layoutControl1";
+         this.layoutControl1.Root = this.Root;
+         this.layoutControl1.Size = new System.Drawing.Size(379, 46);
+         this.layoutControl1.TabIndex = 0;
+         this.layoutControl1.Text = "layoutControl1";
          // 
-         // btnOk
+         // _unitComboBox
          // 
-         this.btnOk.Location = new System.Drawing.Point(303, 14);
-         this.btnOk.Size = new System.Drawing.Size(96, 27);
+         this._unitComboBox.Location = new System.Drawing.Point(37, 12);
+         this._unitComboBox.Name = "_unitComboBox";
+         this._unitComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this._unitComboBox.Size = new System.Drawing.Size(330, 22);
+         this._unitComboBox.StyleController = this.layoutControl1;
+         this._unitComboBox.TabIndex = 5;
          // 
-         // layoutControlBase
+         // Root
          // 
-         this.layoutControlBase.Location = new System.Drawing.Point(0, 124);
-         this.layoutControlBase.Size = new System.Drawing.Size(498, 57);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
+         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.Root.GroupBordersVisible = false;
+         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem2});
+         this.Root.Name = "Root";
+         this.Root.Size = new System.Drawing.Size(379, 46);
+         this.Root.TextVisible = false;
          // 
-         // btnExtra
+         // layoutControlItem2
          // 
-         this.btnExtra.Size = new System.Drawing.Size(141, 27);
-         // 
-         // layoutControlGroupBase
-         // 
-         this.layoutControlGroupBase.Size = new System.Drawing.Size(498, 57);
-         // 
-         // layoutItemOK
-         // 
-         this.layoutItemOK.Location = new System.Drawing.Point(290, 0);
-         this.layoutItemOK.Size = new System.Drawing.Size(100, 33);
-         // 
-         // layoutItemCancel
-         // 
-         this.layoutItemCancel.Location = new System.Drawing.Point(390, 0);
-         this.layoutItemCancel.Size = new System.Drawing.Size(86, 33);
-         // 
-         // emptySpaceItemBase
-         // 
-         this.emptySpaceItemBase.Location = new System.Drawing.Point(145, 0);
-         this.emptySpaceItemBase.Size = new System.Drawing.Size(145, 33);
-         // 
-         // layoutItemExtra
-         // 
-         this.layoutItemExtra.Size = new System.Drawing.Size(145, 33);
-         // 
-         // unitPanel
-         // 
-         this.unitPanel.Location = new System.Drawing.Point(7, 24);
-         this.unitPanel.Name = "unitPanel";
-         this.unitPanel.Size = new System.Drawing.Size(482, 85);
-         this.unitPanel.TabIndex = 0;
+         this.layoutControlItem2.Control = this._unitComboBox;
+         this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlItem2.Name = "layoutControlItem2";
+         this.layoutControlItem2.Size = new System.Drawing.Size(359, 26);
+         this.layoutControlItem2.Text = "Unit";
+         this.layoutControlItem2.TextSize = new System.Drawing.Size(22, 16);
          // 
          // UnitsEditorView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(498, 181);
-         this.Controls.Add(this.unitPanel);
+         this.Controls.Add(this.layoutControl1);
          this.Name = "UnitsEditorView";
-         this.Controls.SetChildIndex(this.unitPanel, 0);
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
+         this.Size = new System.Drawing.Size(379, 46);
+         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
+         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this._unitComboBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          this.ResumeLayout(false);
-         this.PerformLayout();
 
       }
 
       #endregion
 
-      private System.Windows.Forms.Panel unitPanel;
+      private DevExpress.XtraLayout.LayoutControl layoutControl1;
+      private DevExpress.XtraEditors.CheckedComboBoxEdit _unitComboBox;
+      private DevExpress.XtraLayout.LayoutControlGroup Root;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
    }
 }

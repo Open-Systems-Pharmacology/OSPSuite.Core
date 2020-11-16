@@ -378,10 +378,12 @@ namespace OSPSuite.Assets
          public static readonly string UnitColumn = "Unit";
          public static readonly string ExtraColumn = "Extras";
          public static readonly string ErrorColumn = "Error";
+         public static readonly string ErrorType = "Error type";
          public static readonly string LoadAllSheets = "Load all sheets";
          public static readonly string LoadCurrentSheets = "Load current sheet";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
+         public static readonly string MappingDescription = "Mapping description";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";

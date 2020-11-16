@@ -195,5 +195,6 @@ namespace OSPSuite.Presentation.Views.Importer
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
       void RefreshData();
+      void FillSubView(IView view);
    }
 }
