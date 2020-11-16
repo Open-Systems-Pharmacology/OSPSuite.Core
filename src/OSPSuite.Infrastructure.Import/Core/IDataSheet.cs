@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -57,7 +58,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string LloqColumn { get; set; }
 
-      public string ErrorStdDev { get; set; } 
+      public string ErrorStdDev { get; set; } = Constants.STD_DEV_ARITHMETIC;
 
       public override string ToString()
       {
