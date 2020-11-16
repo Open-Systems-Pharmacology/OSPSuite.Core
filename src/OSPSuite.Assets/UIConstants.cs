@@ -376,7 +376,7 @@ namespace OSPSuite.Assets
          public static readonly string ExcelColumn = "Excel Column";
          public static readonly string MappingName = "Mapping Name";
          public static readonly string UnitColumn = "Unit";
-         public static readonly string ExtraColumn = "Extras";
+         public static readonly string ExtraColumn = "Edit extra fields";
          public static readonly string ErrorColumn = "Error";
          public static readonly string ErrorType = "Error type";
          public static readonly string LoadAllSheets = "Load all sheets";
