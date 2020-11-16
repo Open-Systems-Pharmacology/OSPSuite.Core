@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.ObservedData;
 
 namespace OSPSuite.Presentation.Views.Importer

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
@@ -23,13 +24,13 @@ namespace OSPSuite.UI.Views.Importer
          InitializeComponent();
          btnImport.Click += (s, a) => OnEvent(onButtonImportClicked, s, a);
          btnImportAll.Click += (s, a) => OnEvent(onButtonImportAllClicked, s, a);
+         importerTabControl.FillWith(dataViewingGridControl);
          importerTabControl.SelectedPageChanged += (s, a) => OnEvent(onSelectedPageChanged, s, a);
          importerTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
          importerTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
-         //nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
@@ -113,19 +114,15 @@ namespace OSPSuite.UI.Views.Importer
             _dataPresenter.SelectTab(e.Page.Text);
       }
 
-      public void AddSourceFileControl(ISourceFileControl sourceFileControl)
+      public void SetGridSource(string tabName = null)
       {
-         sourceFilePanelControl.FillWith(sourceFileControl);
-      }
+         dataViewingGridControl.DataSource = null;
+         dataViewingGridView.Columns.Clear();
 
-      public void AddDataViewingControl(IDataViewingControl dataViewingControl)
-      {
-         importerTabControl.FillWith(dataViewingControl);
-      }
+         if (tabName == null)
+            tabName = _dataPresenter.GetSheetNames().ElementAt(0);
 
-      public void AddNanView(INanView nanView)
-      {
-        // nanPanelControl.FillWith(nanView);
+         dataViewingGridControl.DataSource = _dataPresenter.GetSheet(tabName);
       }
 
       public void AddTabs(List<string> sheetNames)

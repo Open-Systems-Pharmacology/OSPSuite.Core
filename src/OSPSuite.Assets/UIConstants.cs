@@ -384,6 +384,9 @@ namespace OSPSuite.Assets
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string MappingDescription = "Mapping description";
+         public static readonly string MappingLayout = "Mapping";
+         public static readonly string PreviewLayout = "Preview";
+         public static readonly string SourceLayout = "Source";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";

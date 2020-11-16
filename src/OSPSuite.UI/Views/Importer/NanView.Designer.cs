@@ -55,30 +55,33 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl.Controls.Add(this.indicatorTextEdit);
          this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
+         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(642, 86);
+         this.rootLayoutControl.Size = new System.Drawing.Size(550, 70);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // actionImageComboBoxEdit
          // 
-         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(123, 52);
+         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(78, 44);
+         this.actionImageComboBoxEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.actionImageComboBoxEdit.Name = "actionImageComboBoxEdit";
-         this.indicatorTextEdit.ToolTip = Captions.Importer.NanIndicatorHint;
          this.actionImageComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(507, 22);
+         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(444, 20);
          this.actionImageComboBoxEdit.StyleController = this.rootLayoutControl;
          this.actionImageComboBoxEdit.TabIndex = 5;
          // 
          // indicatorTextEdit
          // 
-         this.indicatorTextEdit.Location = new System.Drawing.Point(123, 12);
+         this.indicatorTextEdit.Location = new System.Drawing.Point(78, 10);
+         this.indicatorTextEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.indicatorTextEdit.Name = "indicatorTextEdit";
-         this.indicatorTextEdit.Size = new System.Drawing.Size(507, 22);
+         this.indicatorTextEdit.Size = new System.Drawing.Size(444, 20);
          this.indicatorTextEdit.StyleController = this.rootLayoutControl;
          this.indicatorTextEdit.TabIndex = 4;
+         this.indicatorTextEdit.ToolTip = "Set a string to indicate how NaN should be detected";
          // 
          // Root
          // 
@@ -89,40 +92,41 @@ namespace OSPSuite.UI.Views.Importer
             this.emptySpaceItem1,
             this.actionLayoutControlItem});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(642, 86);
+         this.Root.Size = new System.Drawing.Size(533, 74);
          this.Root.TextVisible = false;
          // 
          // indicatorLayoutControlItem
          // 
          this.indicatorLayoutControlItem.Control = this.indicatorTextEdit;
          this.indicatorLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.indicatorLayoutControlItem.Name = Captions.Importer.NanIndicator;
-         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(622, 26);
-         this.indicatorLayoutControlItem.TextSize = new System.Drawing.Size(108, 16);
+         this.indicatorLayoutControlItem.Name = "NaN indicator";
+         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(515, 24);
+         this.indicatorLayoutControlItem.TextSize = new System.Drawing.Size(64, 13);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 26);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 24);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(622, 14);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(515, 10);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // actionLayoutControlItem
          // 
          this.actionLayoutControlItem.Control = this.actionImageComboBoxEdit;
-         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 40);
-         this.actionLayoutControlItem.Name = Captions.Importer.NanAction;
-         this.actionLayoutControlItem.Size = new System.Drawing.Size(622, 26);
-         this.actionLayoutControlItem.TextSize = new System.Drawing.Size(108, 16);
+         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 34);
+         this.actionLayoutControlItem.Name = "Action";
+         this.actionLayoutControlItem.Size = new System.Drawing.Size(515, 24);
+         this.actionLayoutControlItem.TextSize = new System.Drawing.Size(64, 13);
          // 
          // NanView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.rootLayoutControl);
+         this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.Name = "NanView";
-         this.Size = new System.Drawing.Size(642, 86);
+         this.Size = new System.Drawing.Size(550, 70);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);

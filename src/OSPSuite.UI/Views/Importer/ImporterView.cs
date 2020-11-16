@@ -1,5 +1,5 @@
-﻿using System;
-using DevExpress.XtraTab;
+﻿using DevExpress.XtraTab;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Extensions;
@@ -14,7 +14,10 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
-         //xtraTabControl.SelectedTabPage.Appearance.Header.Font = Fonts.SelectedTabHeaderFont; -- WE COULD ACTUALLY KEEP THE LOGIC OF HAVING A FONT HERE
+         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
+         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
+         nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
@@ -35,6 +38,11 @@ namespace OSPSuite.UI.Views.Importer
          previewXtraTabControl.FillWith(importerDataView);
       }
 
+      public void AddSourceFileControl(ISourceFileControl sourceFileControl)
+      {
+         sourceFilePanelControl.FillWith(sourceFileControl);
+      }
+
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
          columnMappingPanelControl.FillWith(columnMappingControl);
@@ -49,6 +57,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             confirmationTabPage.PageEnabled = true;
             confirmationTabPage.PageVisible = true;
+            previewXtraTabControl.SelectedTabPage = confirmationTabPage;
          }
       }
 
@@ -56,6 +65,11 @@ namespace OSPSuite.UI.Views.Importer
       {
          confirmationTabPage.PageEnabled = false;
          confirmationTabPage.PageVisible = false;
+      }
+
+      public void AddNanView(INanView nanView)
+      {
+         nanPanelControl.FillWith(nanView);
       }
    }
 }
