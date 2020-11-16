@@ -61,5 +61,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\Importer\MappingParameterEditorView.cs" />
+  </ItemGroup>
+
 
 </Project>

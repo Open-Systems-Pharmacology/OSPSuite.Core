@@ -13,7 +13,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IEnumerable<IDimension> _dimensions;
       private string _selectedUnit { get; set; }
       private string _selectedColumn { get; set; }
-      private bool _canClose = false;
       private IDimensionFactory _dimensionFactory;
       private bool _columnMapping;
 
@@ -30,11 +29,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dimensionFactory = dimensionFactory;
       }
 
-      public bool Canceled => _view.Canceled;
-
-      public override bool CanClose => base.CanClose && _canClose;
-
-      public void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
+      public void SetOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _importDataColumn = importDataColumn;
          _dimensions = dimensions;
@@ -45,8 +40,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
-
-         _view.Display();
       }
 
       public void SelectDimension(string dimension)
@@ -107,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          this.DoWithinExceptionHandler(() =>
          {
             _importDataColumn.Unit = new UnitDescription(_selectedUnit);
-            _canClose = true;
+            //_canClose = true;
          });
       }
    }

@@ -13,8 +13,8 @@ using OSPSuite.Assets;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -31,21 +31,37 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
 
-      private readonly RepositoryItemButtonEdit _unitButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.UnitInformation, Captions.UnitInformationDescription);
-
-      private readonly RepositoryItemButtonEdit _disabledUnitButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
-
       private readonly RepositoryItemButtonEdit _addButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
 
-      private readonly RepositoryItemButtonEdit _lloqButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.OutputInterval, Captions.LloqInformationDescription);
       private readonly RepositoryItemButtonEdit _errorTypeButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.MetaDataAndUnitInformation, Captions.ErrorTypeInformationDescription);
 
       private readonly RepositoryItemButtonEdit _disabledLloqButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
       private readonly RepositoryItemButtonEdit _emptyIconRepository = new UxRepositoryItemButtonImage(ApplicationIcons.EmptyIcon);
+
+      private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly PopupContainerControl _popupControl = new PopupContainerControl();
+      private void queryDisplayText(QueryDisplayTextEventArgs e)
+      {
+         var withValueOrigin = _gridViewBinder.FocusedElement;
+         if (withValueOrigin == null) return;
+         e.DisplayText = _gridViewBinder.FocusedElement.MappingName;
+      }      
+
+      private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
+      {
+         _presenter.SetSubEditorSettings(model);
+         return _repositoryItemPopupContainerEdit;
+      }
+
+      private void closeUp(CloseUpEventArgs e)
+      {
+         if (e.CloseMode == PopupCloseMode.Cancel)
+            return;
+
+         _presenter.UpdateDescriptrionForModel();
+      }
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -64,6 +80,19 @@ namespace OSPSuite.UI.Views.Importer
          columnMappingGrid.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(onGetActiveObjectInfo, o, e);
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.UnitInformationDescription);
+
+         _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
+         _repositoryItemPopupContainerEdit.PopupControl = _popupControl;
+         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = false;
+         _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
+         _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
+         _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
+         _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+      }
+
+      public void FillSubView(IView view)
+      {
+         _popupControl.FillWith(view);
       }
 
       public void AttachPresenter(IColumnMappingPresenter presenter)
@@ -79,8 +108,6 @@ namespace OSPSuite.UI.Views.Importer
             AllowNullInput = DefaultBoolean.True,
             CloseUpKey = new KeyShortcut(Keys.Enter)
          };
-    //     descriptionRepository.FillComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model));
-//         descriptionRepository.FillImageComboBoxRepositoryWith(_presenter.GetAvailableOptionsFor(model), x => x.IconIndex);
          fillComboBoxItems(descriptionRepository, _presenter.GetAvailableOptionsFor(model));
          return descriptionRepository;
       }
@@ -94,7 +121,6 @@ namespace OSPSuite.UI.Views.Importer
             Description = model.MappingName
          };
          var repo = new UxRepositoryItemImageComboBox(columnMappingGridView, _imageListRetriever) {AllowNullInput = DefaultBoolean.True};
-         //repo.FillImageComboBoxRepositoryWith(new[] {entry}, x=>x.IconIndex);
          fillComboBoxItem
          (
             repo,
@@ -115,25 +141,14 @@ namespace OSPSuite.UI.Views.Importer
          _gridViewBinder.AutoBind(x => x.Description)
             .WithCaption(Captions.Importer.ExcelColumn)
             .WithRepository(descriptionRepository)
-            .WithOnValueUpdated((o, e) => onValueChanged(o))
-            .WithShowButton(ShowButtonModeEnum.ShowAlways);
+            //.WithOnValueUpdated((o, e) => onValueChanged(o))
+            .WithShowButton(ShowButtonModeEnum.ShowAlways)
+            .WithEditRepository(repositoryItemPopupContainerEdit);
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(removeRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
-
-         _gridViewBinder.AddUnboundColumn()
-            .WithCaption(Captions.Importer.UnitColumn)
-            .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(unitRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
-
-         _gridViewBinder.AddUnboundColumn()
-            .WithCaption(Captions.Importer.ExtraColumn)
-            .WithShowButton(ShowButtonModeEnum.ShowAlways)
-            .WithRepository(lloqRepository)
             .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
 
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
@@ -143,11 +158,8 @@ namespace OSPSuite.UI.Views.Importer
             columnMappingGridView.CloseEditor();
          });
          
-         _unitButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeUnitsOnRow(_gridViewBinder.FocusedElement));
          _addButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
-         _disabledUnitButtonRepository.Buttons[0].Enabled = false;
-         _lloqButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeLloqOnRow(_gridViewBinder.FocusedElement));
          _errorTypeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.ChangeErrorType(_gridViewBinder.FocusedElement));
          _disabledLloqButtonRepository.Buttons[0].Enabled = false;
          _emptyIconRepository.Buttons[0].Enabled = false;
@@ -170,36 +182,9 @@ namespace OSPSuite.UI.Views.Importer
             : _removeButtonRepository;
       }
 
-      private RepositoryItem unitRepository(ColumnMappingDTO model)
-      {
-         if (model.Source is MappingDataFormatParameter)
-         {
-            return _unitButtonRepository;
-         }
-
-         return _disabledUnitButtonRepository;
-      }
-
-      private RepositoryItem lloqRepository(ColumnMappingDTO model)
-      {
-         if (model.Source is MappingDataFormatParameter)
-         {
-            if (model.ColumnInfo.IsBase())
-               return _disabledLloqButtonRepository;
-            if (model.ColumnInfo.IsAuxiliary())
-               return _errorTypeButtonRepository;
-            if ((model.Source as MappingDataFormatParameter).MappedColumn?.LloqColumn == null)
-               return _disabledLloqButtonRepository;
-            return _lloqButtonRepository;
-         }
-
-         return _disabledLloqButtonRepository;
-      }
-
       public void RefreshData()
       {
          columnMappingGridView.RefreshData();
-         // _gridViewBinder.RefreshData();
       }
 
       public void SetMappingSource(IList<ColumnMappingDTO> mappings)
@@ -287,11 +272,6 @@ namespace OSPSuite.UI.Views.Importer
 
          if (e.KeyCode == Keys.Delete)
             view.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
-      }
-
-      private void onValueChanged(ColumnMappingDTO model)
-      {
-         _presenter.SetDescriptionForRow(model);
       }
 
       private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)

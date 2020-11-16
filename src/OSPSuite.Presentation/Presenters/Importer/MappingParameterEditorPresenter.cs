@@ -1,0 +1,108 @@
+﻿using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Presentation.Views;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace OSPSuite.Presentation.Presenters.Importer
+{
+   public interface IMappingParameterEditorPresenter : IDisposablePresenter
+   {
+      void HideAll();
+      void SetOptions(IEnumerable<string> options);
+      void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
+      void SetLloqOptions(IEnumerable<string> columns, string selected);
+      void SetErrorTypeOptions(IEnumerable<string> types, string selected);
+      int SelectedOption { get; }
+      int SelectedUnit { get; }
+      int SelectedLloq { get; }
+      int SelectedErrorType { get; }
+      UnitDescription Unit { get; }
+   }
+
+   public class MappingParameterEditorPresenter : AbstractDisposablePresenter<IMappingParameterEditorView, IMappingParameterEditorPresenter>, IMappingParameterEditorPresenter
+   {
+      private readonly IOptionsEditorPresenter _excelRowEditorPresenter;
+      private readonly IOptionsEditorPresenter _unitsEditorPresenter;
+      private readonly IOptionsEditorPresenter _lloqEditorPresenter;
+      private readonly IOptionsEditorPresenter _errorEditorPresenter;
+      private IEnumerable<IDimension> _dimensions;
+      private string _selectedColumn { get; set; }
+      private bool _columnMapping;
+
+      public int SelectedOption { get => _excelRowEditorPresenter.SelectedIndex; }
+      public int SelectedUnit { get => _unitsEditorPresenter.SelectedIndex; }
+      public int SelectedLloq { get => _lloqEditorPresenter.SelectedIndex; }
+      public int SelectedErrorType { get => _errorEditorPresenter.SelectedIndex; }
+
+      public UnitDescription Unit
+      {
+         get
+         {
+            return _columnMapping ? new UnitDescription(_ => _selectedColumn, _selectedColumn) : new UnitDescription(_unitsEditorPresenter.SelectedText);
+         }
+      }
+
+      public MappingParameterEditorPresenter(
+         IMappingParameterEditorView view,
+         IOptionsEditorPresenter excelRowEditorPresenter,
+         IOptionsEditorPresenter unitsEditorPresenter,
+         IOptionsEditorPresenter lloqEditorPresenter,
+         IOptionsEditorPresenter errorEditorPresenter
+      ) : base(view)
+      {
+         _excelRowEditorPresenter = excelRowEditorPresenter;
+         _unitsEditorPresenter = unitsEditorPresenter;
+         _lloqEditorPresenter = lloqEditorPresenter;
+         _errorEditorPresenter = errorEditorPresenter;
+         View.FillExcelRowView(_excelRowEditorPresenter.BaseView);
+         View.FillUnitsView(_unitsEditorPresenter.BaseView);
+         View.FillLloqView(_lloqEditorPresenter.BaseView);
+         View.FillErrorView(_errorEditorPresenter.BaseView);
+      }
+
+      public void HideAll()
+      {
+         _unitsEditorPresenter.Clear();
+         View.HideAll();
+      }
+
+      public void SetOptions(IEnumerable<string> options)
+      {
+         _excelRowEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", options } });
+      }
+
+      public void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
+      {
+         _dimensions = dimensions;
+         _columnMapping = importDataColumn.Unit.ColumnName != null;
+
+         _unitsEditorPresenter.SetOptions(_dimensions.ToDictionary(d => d.Name, d => d.Units.Select(u => u.Name)), importDataColumn.Unit.SelectedUnit);
+         View.ShowUnits();
+      }
+
+      public void SetLloqOptions(IEnumerable<string> columns, string selected)
+      {
+         _lloqEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", columns } });
+         View.ShowLloq();
+      }
+
+      public void SetErrorTypeOptions(IEnumerable<string> types, string selected)
+      {
+         _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
+         View.ShowErrorTypes();
+      }
+   }
+
+   public interface IMappingParameterEditorView : IView<IMappingParameterEditorPresenter>
+   {
+      void HideAll();
+      void ShowUnits();
+      void ShowLloq();
+      void ShowErrorTypes();
+      void FillExcelRowView(IView view);
+      void FillUnitsView(IView view);
+      void FillLloqView(IView view);
+      void FillErrorView(IView view);
+   }
+}

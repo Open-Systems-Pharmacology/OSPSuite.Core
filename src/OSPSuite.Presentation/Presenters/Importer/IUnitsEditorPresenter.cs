@@ -6,9 +6,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IUnitsEditorPresenter : IDisposablePresenter
    {
-      void ShowFor(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
+      void SetOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
       UnitDescription Unit { get; }
-      bool Canceled { get; }
       void SetUnit();
       void SelectDimension(string dimension);
       void SelectUnit(string unit);
