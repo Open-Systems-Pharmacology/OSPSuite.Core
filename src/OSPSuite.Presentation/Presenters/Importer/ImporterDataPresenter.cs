@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
+      public IReadOnlyList<Cache<string, IDataSheet>> Sheets { get => (IReadOnlyList<Cache<string, IDataSheet>>)_sheets; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
@@ -56,13 +57,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void onCompletedMapping()
       {
          View.EnableImportButtons();
-         /* this could be here just for the refreshing of the confirmation view
-         _dataSource.DataSets.Clear();
-         //ToDo: Hmmm...why are we even doing this???
-         foreach (var sheet in _sheets)
-         {
-            getDataSource(sheet);
-         }*/
       }
 
       public void ImportDataForConfirmation(string sheetName)
@@ -94,9 +88,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _metaDataCategories = metaDataCategories;
       }
 
-      public void SetDataSource(string dataSourceFileName)
+      public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
-         if (string.IsNullOrEmpty(dataSourceFileName)) return;
+         if (string.IsNullOrEmpty(dataSourceFileName)) return null;
          _sheets = new List<Cache<string, IDataSheet>>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          View.SetGridSource();
@@ -104,6 +98,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
          OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs {FileName = dataSourceFileName});
+         return _dataSourceFile;
       }
 
       public void SelectTab(string tabName)
