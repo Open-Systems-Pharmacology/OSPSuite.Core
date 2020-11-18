@@ -190,7 +190,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var dataSet = rawDataSet.ToList();
          foreach (var columnInfo in columnInfos)
          {
-            var currentParameter = mappingParameters.First(p => p.MappedColumn.Name == columnInfo.DisplayName);
+            var currentParameter = mappingParameters.FirstOrDefault(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
             Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser = 
                currentParameter.MappedColumn.LloqColumn == null ? 
