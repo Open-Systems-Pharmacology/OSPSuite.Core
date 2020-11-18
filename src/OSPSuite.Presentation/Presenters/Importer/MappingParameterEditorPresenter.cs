@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
+﻿using System;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _dimensions = dimensions;
-         _columnMapping = importDataColumn.Unit.ColumnName != null;
+         _columnMapping = !string.IsNullOrEmpty(importDataColumn.Unit.ColumnName);
 
          _unitsEditorPresenter.SetOptions(_dimensions.ToDictionary(d => d.Name, d => d.Units.Select(u => u.Name)), importDataColumn.Unit.SelectedUnit);
          View.ShowUnits();
