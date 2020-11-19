@@ -36,23 +36,26 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void ClearNan(double indicator)
       {
-         foreach (var dataSet in Data)
+         for (var dataSetIndex = 0; dataSetIndex < Data.Count(); dataSetIndex++)
          {
+            var dataSet = Data.ElementAt(dataSetIndex);
             var mainColumns = dataSet.Data.Where(pair => pair.Key.ColumnInfo.IsMandatory).Select(pair => pair.Value).ToList();
-            var i = 0;
-            while (i < mainColumns.First().Count())
+            for (var i = 0; i < mainColumns.Count(); i++)
             {
-               if (mainColumns.Any(points => points.Any(p => p.Value == indicator || double.IsNaN(p.Value))))
-               {
-                  foreach (var simulationPoints in dataSet.Data.Values)
-                  {
-                     simulationPoints.RemoveAt(i);
-                  }
-               }
-               else
-               {
-                  i++;
-               }
+               var elements = mainColumns[i].Where(p => p.Value == indicator || double.IsNaN(p.Value));
+               removeRowsContainingElements(elements.ToList(), mainColumns[i], dataSet);
+            }
+         }
+      }
+
+      private void removeRowsContainingElements(IList<SimulationPoint> elements, IList<SimulationPoint> column, ParsedDataSet dataSet)
+      {
+         foreach (var element in elements)
+         {
+            var index = column.IndexOf(element);
+            for (var valueIndex = 0; valueIndex < dataSet.Data.Values.Count(); valueIndex++)
+            {
+               dataSet.Data.Values.ElementAt(valueIndex).RemoveAt(index);
             }
          }
       }
