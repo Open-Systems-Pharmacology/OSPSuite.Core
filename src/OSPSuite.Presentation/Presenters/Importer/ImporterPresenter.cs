@@ -63,6 +63,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
          };
          _importerDataPresenter.OnImportSheets += ImportSheets;
+         _nanPresenter.OnNaNSettingsChanged += (s,a) =>_columnMappingPresenter.ValidateMapping();
          _view.AddImporterView(_importerDataPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
