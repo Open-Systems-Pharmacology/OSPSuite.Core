@@ -1,4 +1,5 @@
-﻿using OSPSuite.Infrastructure.Import.Core;
+﻿using System;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -6,5 +7,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface INanPresenter : IPresenter<INanView>
    {
       NanSettings Settings { get; }
+      void NewNaNSettings();
+
+      event EventHandler OnNaNSettingsChanged;
    }
 }
