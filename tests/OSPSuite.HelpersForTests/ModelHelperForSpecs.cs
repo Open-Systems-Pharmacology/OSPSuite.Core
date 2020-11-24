@@ -170,7 +170,9 @@ namespace OSPSuite.Helpers
 
          //overwrite to make sure we have a value for a given path
          var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E", "OtherNaNParam");
-         parameterStartValues[nanParameterNotNaN].StartValue = 10;
+
+         //NAN parameters are not added to the PSV by default
+         parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
       }
 
       private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculesStartValues)
