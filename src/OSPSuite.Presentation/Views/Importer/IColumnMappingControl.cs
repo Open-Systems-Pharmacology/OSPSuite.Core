@@ -120,7 +120,7 @@ namespace OSPSuite.Presentation.Views.Importer
 
       public static string Mapping(MappingDataFormatParameter model)
       {
-         return $"{ColumnMappingOption.DescriptionType.Mapping},{model.ColumnName},{model.MappedColumn.Name},{model.MappedColumn.Unit.SelectedUnit}";
+         return $"{ColumnMappingOption.DescriptionType.Mapping},{model.ColumnName},{model.MappedColumn.Name},{model.MappedColumn.Unit.SelectedUnit},{model.MappedColumn.LloqColumn},{model.MappedColumn.ErrorStdDev}";
       }
 
       public static string MetaData(MetaDataFormatParameter model)
@@ -177,7 +177,7 @@ namespace OSPSuite.Presentation.Views.Importer
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            return new MappingDataFormatParameter(parsed[1], new Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]) });
+            return new MappingDataFormatParameter(parsed[1], new Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]), LloqColumn = parsed[4], ErrorStdDev = parsed[5]});
          }
          else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {

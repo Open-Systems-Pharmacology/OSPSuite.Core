@@ -7,7 +7,6 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -158,7 +157,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
          }
-         _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
 
          if (_currentModel.ColumnInfo.IsBase())
          {
@@ -180,6 +178,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             columns.AddRange(availableColumns());
             column.LloqColumn = columns[_mappingParameterEditorPresenter.SelectedLloq];
          }
+         _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
          ValidateMapping();
          _view.RefreshData();
          _view.CloseEditor();
@@ -194,13 +193,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var source = (MappingDataFormatParameter)model.Source;
          var column = source.MappedColumn;
+         
          _mappingParameterEditorPresenter.SetUnitOptions(
             column,
             _columnInfos
                .First(i => i.DisplayName == model.MappingName)
                .DimensionInfos
                .Select(d => d.Dimension),
-            new List<string>() { column.Unit.ColumnName }.Union(availableColumns())
+            new List<string>() {column.Unit.ColumnName}.Union(availableColumns())
          );
 
          if (model.ColumnInfo.IsBase())

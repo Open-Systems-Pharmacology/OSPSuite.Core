@@ -20,9 +20,45 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.Importer
 {
+   class DataFormatParameterFormatter : IFormatter<DataFormatParameter>
+   {
+      public string Format(DataFormatParameter model)
+      {
+         if (model == null)
+            return "";
+         return model.ColumnName;
+      }
+   }
+
+   class SettingsFormatter : IFormatter<string>
+   {
+      public string Format(string description)
+      {
+         var parsed = description.Split(',');
+         if (parsed[0] == "Mapping")
+         {
+            var str = $"Units: {parsed[3]}";
+            if (!string.IsNullOrEmpty(parsed[4]))
+            {
+               str += $", Lloq: {parsed[4]}";
+            }
+
+            if (!string.IsNullOrEmpty(parsed[5]))
+            {
+               str += $", Error: {parsed[5]}";
+            }
+
+            return str;
+         }
+
+         return " ";
+      }
+   }
+
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
       private readonly IImageListRetriever _imageListRetriever;
@@ -30,7 +66,8 @@ namespace OSPSuite.UI.Views.Importer
       private readonly GridViewBinder<ColumnMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
-      private readonly RepositoryItemButtonEdit _editButtonRepository = new UxRepositoryItemButtonImage(ApplicationIcons.Edit);
+      private readonly DataFormatParameterFormatter _sourceFormatter = new DataFormatParameterFormatter();
+      private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
 
       private readonly RepositoryItemButtonEdit _addButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
@@ -98,7 +135,11 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem editButtonRepository(ColumnMappingDTO model)
       {
-         return _editButtonRepository;
+         var repo = new UxRepositoryItemComboBox(columnMappingGridView) { AllowNullInput = DefaultBoolean.True };
+         repo.Items.Clear();
+
+         repo.Items.Add(new ComboBoxItem(model.Description));
+         return repo;
       }
 
       private RepositoryItem descriptionRepository(ColumnMappingDTO model)
@@ -144,17 +185,17 @@ namespace OSPSuite.UI.Views.Importer
             .WithRepository(nameRepository)
             .AsReadOnly();
 
-         _gridViewBinder.AutoBind(x => x.Description)
+         _gridViewBinder.AutoBind(x => x.Source)
+            .WithFormat(x => _sourceFormatter)
             .WithCaption(Captions.Importer.ExcelColumn)
             .WithRepository(descriptionRepository)
             .WithOnValueUpdated((o, e) => onValueChanged(o))
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
-         _gridViewBinder.AddUnboundColumn()
+         _gridViewBinder.AutoBind(x => x.Description)
             .WithCaption(Captions.Importer.ExtraColumn)
-            .WithShowButton(ShowButtonModeEnum.ShowAlways)
+            .WithFormat(_settingsFormatter)
             .WithRepository(editButtonRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH)
             .WithEditRepository(repositoryItemPopupContainerEdit);
 
          _gridViewBinder.AddUnboundColumn()
