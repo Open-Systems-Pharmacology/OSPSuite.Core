@@ -25,7 +25,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IOptionsEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
       private IEnumerable<IDimension> _dimensions;
-      private string _selectedColumn { get; set; }
       private bool _columnMapping;
 
       public int SelectedUnit { get => _unitsEditorPresenter.SelectedIndex; }
@@ -36,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          get
          {
-            return _columnMapping ? new UnitDescription(_ => _selectedColumn, _selectedColumn) : new UnitDescription(_unitsEditorPresenter.SelectedText);
+            return _columnMapping ? new UnitDescription(_ => "", _unitsEditorPresenter.SelectedText) : new UnitDescription(_unitsEditorPresenter.SelectedText);
          }
       }
 
@@ -66,7 +65,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dimensions = dimensions;
          _columnMapping = !string.IsNullOrEmpty(importDataColumn.Unit.ColumnName);
 
-         _unitsEditorPresenter.SetOptions(_dimensions.ToDictionary(d => d.Name, d => d.Units.Select(u => u.Name)), importDataColumn.Unit.SelectedUnit);
+         if (_columnMapping)
+         {
+            _unitsEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", availableColumns } }, importDataColumn.Unit.ColumnName);
+         }
+         else
+         {
+            _unitsEditorPresenter.SetOptions(_dimensions.ToDictionary(d => d.Name, d => d.Units.Select(u => u.Name)), importDataColumn.Unit.SelectedUnit);
+         }
          View.ShowUnits();
       }
 
