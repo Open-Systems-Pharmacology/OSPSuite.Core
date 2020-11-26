@@ -5,6 +5,7 @@ using System.Linq;
 using NPOI.XWPF.UserModel;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -38,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var totalRank = 0.0;
          ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
-         ExtractNonQualifiedHeadings(keys, missingKeys, data, ref totalRank);
+         ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
          return totalRank;
       }
@@ -57,16 +58,21 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                keys.Remove(headerKey);
                var units = ExtractUnits(headerKey, data, keys, ref rank);
 
+               var col = new Column()
+               {
+                  Name = header,
+                  Unit = units,
+                  LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
+               };
+               if (columnInfos.First(ci => ci.DisplayName == header).IsAuxiliary())
+               {
+                  col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+               }
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
-                  new Column()
-                  {
-                     Name = header,
-                     Unit = units,
-                     LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
-                  })
-               );
+                  col
+               ));
             }
             else
             {
@@ -75,7 +81,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IUnformattedData data, ref double rank)
+      protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
          foreach (var header in missingKeys)
          {
@@ -90,17 +96,23 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (headerKey == null) continue;
             keys.Remove(headerKey);
             var units = ExtractUnits(headerKey, data, keys, ref rank);
+
+            var col = new Column()
+            {
+               Name = header,
+               Unit = units,
+               LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
+            };
+            if (columnInfos.First(ci => ci.DisplayName == header).IsAuxiliary())
+            {
+               col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+            }
             Parameters.Add
             (
                new MappingDataFormatParameter
                (
                   headerKey,
-                  new Column()
-                  {
-                     Name = header,
-                     Unit = units,
-                     LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
-                  }
+                  col
                )
             );
          }

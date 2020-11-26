@@ -58,7 +58,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string LloqColumn { get; set; }
 
-      public string ErrorStdDev { get; set; } = Constants.STD_DEV_ARITHMETIC;
+      public string ErrorStdDev { get; set; }
 
       public override string ToString()
       {
