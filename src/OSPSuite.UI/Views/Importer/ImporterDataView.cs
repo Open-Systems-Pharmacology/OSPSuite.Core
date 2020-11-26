@@ -31,6 +31,7 @@ namespace OSPSuite.UI.Views.Importer
          _contextMenuSelectedTab = "";
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
+         dataViewingGridView.OptionsBehavior.Editable = false;
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
