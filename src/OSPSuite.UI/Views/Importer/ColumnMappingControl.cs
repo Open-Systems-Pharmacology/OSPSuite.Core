@@ -74,6 +74,7 @@ namespace OSPSuite.UI.Views.Importer
 
       
       private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private void queryDisplayText(QueryDisplayTextEventArgs e)
       {
@@ -84,6 +85,8 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
+         if (!(model.Source is MappingDataFormatParameter))
+            return _disabledPopupContainerEdit;
          _presenter.SetSubEditorSettings(model);
          return _repositoryItemPopupContainerEdit;
       }
@@ -121,6 +124,8 @@ namespace OSPSuite.UI.Views.Importer
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
          _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+
+         _disabledPopupContainerEdit.Enabled = false;
       }
 
       public void FillSubView(IView view)
@@ -292,7 +297,7 @@ namespace OSPSuite.UI.Views.Importer
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ImageComboBoxItem(option.Description)
+            editor.Items.Add(new ImageComboBoxItem(ColumnMappingFormatter.Parse(option.Description))
             {
                Description = option.Label,
             });
