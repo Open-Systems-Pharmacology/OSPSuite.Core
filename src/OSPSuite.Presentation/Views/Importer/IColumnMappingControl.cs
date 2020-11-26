@@ -171,19 +171,26 @@ namespace OSPSuite.Presentation.Views.Importer
          {
             return new IgnoredDataFormatParameter(parsed.Length == 2 ? parsed[1] : "");
          }
-         else if (parsed[0] == ColumnMappingOption.DescriptionType.GroupBy.ToString())
+         if (parsed[0] == ColumnMappingOption.DescriptionType.GroupBy.ToString())
          {
             return new GroupByDataFormatParameter(parsed[1]);
          }
-         else if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
+         if (parsed[0] == ColumnMappingOption.DescriptionType.Mapping.ToString())
          {
-            return new MappingDataFormatParameter(parsed[1], new Column() { Name = parsed[2], Unit = new UnitDescription(parsed[3]), LloqColumn = parsed[4], ErrorStdDev = parsed[5]});
+            var parameter = new MappingDataFormatParameter(parsed[1], new Column()
+            {
+               Name = parsed[2], 
+               Unit = new UnitDescription(parsed[3]), 
+               LloqColumn = parsed[4], 
+               ErrorStdDev = parsed[5]
+            });
+            return parameter;
          }
-         else if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
+         if (parsed[0] == ColumnMappingOption.DescriptionType.MetaData.ToString())
          {
             return new MetaDataFormatParameter(parsed[1], parsed[2]);
          }
-         else if (parsed[0] == ColumnMappingOption.DescriptionType.AddGroupBy.ToString())
+         if (parsed[0] == ColumnMappingOption.DescriptionType.AddGroupBy.ToString())
          {
             return new AddGroupByFormatParameter(parsed[1]);
          }
