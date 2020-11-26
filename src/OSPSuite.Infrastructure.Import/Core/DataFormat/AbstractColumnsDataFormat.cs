@@ -129,7 +129,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
          {
             keys.Remove(header);
-            Parameters.Add(new GroupByDataFormatParameter(header));
+            Parameters.Add(new IgnoredDataFormatParameter(header));
          }
       }
 
