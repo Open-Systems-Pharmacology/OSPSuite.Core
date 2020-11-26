@@ -36,6 +36,7 @@ namespace OSPSuite.UI.Views.ObservedData
       {
          layoutItemAddData.Visibility = LayoutVisibility.Never;
          btnAddData.Enabled = false;
+         layoutItemAddData.Visibility = LayoutVisibility.Never;
          gridView.OptionsBehavior.Editable = false;
          if (_removeColumn != null)
          {
