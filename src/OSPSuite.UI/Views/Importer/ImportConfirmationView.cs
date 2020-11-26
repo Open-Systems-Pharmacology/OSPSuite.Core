@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.Importer
          keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
          separatorComboBoxEdit.Properties.Items.Clear();
-         separatorComboBoxEdit.Properties.Items.AddRange(new [] {",", ".", "-", "_"});
+         separatorComboBoxEdit.Properties.Items.AddRange(new [] {",", ".", "-", "_"}); //TODO: Bring the values from some configuration??
          separatorComboBoxEdit.SelectedIndex = 0;
          separatorControlItem.Text = Captions.Importer.Separator;
       }
