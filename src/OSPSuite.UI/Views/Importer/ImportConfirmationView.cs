@@ -27,12 +27,16 @@ namespace OSPSuite.UI.Views.Importer
          InitializeComponent();
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
-            namingConventionComboBoxEdit.EditValue += String.Join(",", keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+            namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
          keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
+         separatorComboBoxEdit.Properties.Items.Clear();
+         separatorComboBoxEdit.Properties.Items.AddRange(new [] {",", ".", "-", "_"}); //TODO: Bring the values from some configuration??
+         separatorComboBoxEdit.SelectedIndex = 0;
+         separatorControlItem.Text = Captions.Importer.Separator;
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
