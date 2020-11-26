@@ -126,6 +126,7 @@ namespace OSPSuite.UI.Views.Importer
          _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
 
          _disabledPopupContainerEdit.Enabled = false;
+         _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
       }
 
       public void FillSubView(IView view)
