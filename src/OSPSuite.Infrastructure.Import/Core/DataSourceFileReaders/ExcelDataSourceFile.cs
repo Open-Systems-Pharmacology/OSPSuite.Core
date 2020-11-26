@@ -21,7 +21,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          {
             var loadedData = new Cache<string, IDataSheet>();
 
-
             var reader = new ExcelReader(path);
 
             while (reader.MoveToNextSheet())
