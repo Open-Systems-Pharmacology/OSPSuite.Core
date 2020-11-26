@@ -34,7 +34,6 @@ namespace OSPSuite.UI.Views.ObservedData
 
       public void DisableEdition()
       {
-         layoutItemAddData.Visibility = LayoutVisibility.Never;
          btnAddData.Enabled = false;
          layoutItemAddData.Visibility = LayoutVisibility.Never;
          gridView.OptionsBehavior.Editable = false;
