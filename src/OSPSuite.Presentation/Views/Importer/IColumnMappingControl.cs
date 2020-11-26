@@ -11,9 +11,9 @@ namespace OSPSuite.Presentation.Views.Importer
 {
    public class ColumnMappingDTO : Notifier, IDXDataErrorInfo
    {
-      public string MappingName { get; private set; }
+      public string MappingName { get; }
       private string _description;
-      public ColumnInfo ColumnInfo { get; private set; }
+      public ColumnInfo ColumnInfo { get; }
 
       public string ErrorMessage { get; set; }
 
