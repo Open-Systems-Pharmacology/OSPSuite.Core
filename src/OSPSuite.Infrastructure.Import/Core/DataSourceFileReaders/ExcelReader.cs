@@ -17,6 +17,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       private bool _columnOffsetOn;
       private int _columnOffset;
       private bool _isTypeXlsx;
+      private IFormulaEvaluator _formulaEvaluator;
+
+      public ISheet CurrentSheet { get; set; } //why is this public even????
+      public List<string> CurrentRow { get; set; } = new List<string>();
 
       public ExcelReader(string path, bool columnOffsetOn = true)
       {
@@ -28,15 +32,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          _columnOffsetOn = columnOffsetOn;
          _sheetEnumerator = _book.GetEnumerator();
          _isTypeXlsx = Path.GetExtension(path).Equals(_xlsxExtension);
+         _formulaEvaluator = _book.GetCreationHelper().CreateFormulaEvaluator();
       }
 
       public ExcelReader(bool columnOffsetOn = true)
       {
          _columnOffsetOn = columnOffsetOn;
       }
-
-      public ISheet CurrentSheet { get; set; } //why is this public even????
-      public List<string> CurrentRow { get; set; } = new List<string>();
 
       public void LoadNewWorkbook(string path, bool columnOffsetOn = true)
       {
@@ -76,10 +78,30 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          {
             var cell = currentExcelRow.GetCell(i);
 
-            CurrentRow.Add(cell == null ? "" : cell.ToString());
+            CurrentRow.Add(cell == null ? "" : getCellStringValue(cell));
          }
 
          return true;
+      }
+
+      private string getCellStringValue(ICell cell)
+      {
+
+         var cellValue = _formulaEvaluator.Evaluate(cell);
+
+         if (cellValue == null) return "";
+
+         switch (cellValue.CellType)
+         {
+            case CellType.Boolean:
+               return cellValue.BooleanValue.ToString();
+            case CellType.Numeric:
+               return cellValue.NumberValue.ToString();
+            case CellType.String:
+               return cellValue.StringValue;
+         }
+
+         return "";
       }
 
       private bool isNumeric(ICell cell)

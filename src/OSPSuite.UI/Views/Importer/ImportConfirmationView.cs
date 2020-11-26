@@ -98,7 +98,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          var listBox = sender as ListBoxControl;
 
-         if (listBox.SelectedValue == null) return;
+         if (listBox.SelectedValue == null) return;  //here if null we have to empty the GUI
 
          _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
       }
