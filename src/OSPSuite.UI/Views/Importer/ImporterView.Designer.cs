@@ -51,6 +51,7 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -67,6 +68,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
@@ -85,18 +87,18 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // sourceFilePanelControl
          // 
+         this.sourceFilePanelControl.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
          this.sourceFilePanelControl.Location = new System.Drawing.Point(928, 49);
          this.sourceFilePanelControl.Name = "sourceFilePanelControl";
          this.sourceFilePanelControl.Size = new System.Drawing.Size(1047, 48);
          this.sourceFilePanelControl.TabIndex = 8;
-         this.sourceFilePanelControl.BorderStyle = BorderStyles.Simple;
          // 
          // nanPanelControl
          // 
-         this.nanPanelControl.Location = new System.Drawing.Point(13, 732);
+         this.nanPanelControl.Location = new System.Drawing.Point(13, 1129);
          this.nanPanelControl.Margin = new System.Windows.Forms.Padding(8);
          this.nanPanelControl.Name = "nanPanelControl";
-         this.nanPanelControl.Size = new System.Drawing.Size(886, 626);
+         this.nanPanelControl.Size = new System.Drawing.Size(886, 205);
          this.nanPanelControl.TabIndex = 7;
          // 
          // previewXtraTabControl
@@ -123,17 +125,17 @@ namespace OSPSuite.UI.Views.Importer
          this.confirmationTabPage.Enabled = false;
          this.confirmationTabPage.Margin = new System.Windows.Forms.Padding(8);
          this.confirmationTabPage.Name = "confirmationTabPage";
-         this.confirmationTabPage.Size = new System.Drawing.Size(1043, 1143);
+         this.confirmationTabPage.Size = new System.Drawing.Size(1043, 1133);
          this.confirmationTabPage.Text = "Confirmation";
          // 
          // columnMappingPanelControl
          // 
+         this.columnMappingPanelControl.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
          this.columnMappingPanelControl.Location = new System.Drawing.Point(13, 49);
          this.columnMappingPanelControl.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
          this.columnMappingPanelControl.Name = "columnMappingPanelControl";
-         this.columnMappingPanelControl.Size = new System.Drawing.Size(886, 634);
+         this.columnMappingPanelControl.Size = new System.Drawing.Size(886, 1049);
          this.columnMappingPanelControl.TabIndex = 6;
-         this.columnMappingPanelControl.BorderStyle = BorderStyles.Simple;
          // 
          // Root
          // 
@@ -145,7 +147,8 @@ namespace OSPSuite.UI.Views.Importer
             this.nanLayoutControlItem,
             this.emptySpaceItem2,
             this.splitterItem1,
-            this.sourceFileLayoutControlItem});
+            this.sourceFileLayoutControlItem,
+            this.emptySpaceItem3});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(1988, 1371);
          this.Root.TextVisible = false;
@@ -155,7 +158,7 @@ namespace OSPSuite.UI.Views.Importer
          this.columnMappingLayoutControlItem.Control = this.columnMappingPanelControl;
          this.columnMappingLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.columnMappingLayoutControlItem.Name = "columnMappingLayoutControlItem";
-         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(890, 674);
+         this.columnMappingLayoutControlItem.Size = new System.Drawing.Size(890, 1089);
          this.columnMappingLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
          this.columnMappingLayoutControlItem.TextSize = new System.Drawing.Size(408, 33);
          // 
@@ -171,17 +174,17 @@ namespace OSPSuite.UI.Views.Importer
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 674);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 1089);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(890, 45);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(890, 27);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // nanLayoutControlItem
          // 
          this.nanLayoutControlItem.Control = this.nanPanelControl;
-         this.nanLayoutControlItem.Location = new System.Drawing.Point(0, 719);
+         this.nanLayoutControlItem.Location = new System.Drawing.Point(0, 1116);
          this.nanLayoutControlItem.Name = "nanLayoutControlItem";
-         this.nanLayoutControlItem.Size = new System.Drawing.Size(890, 630);
+         this.nanLayoutControlItem.Size = new System.Drawing.Size(890, 209);
          this.nanLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.nanLayoutControlItem.TextVisible = false;
          // 
@@ -209,6 +212,14 @@ namespace OSPSuite.UI.Views.Importer
          this.sourceFileLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
          this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(408, 33);
          // 
+         // emptySpaceItem3
+         // 
+         this.emptySpaceItem3.AllowHotTrack = false;
+         this.emptySpaceItem3.Location = new System.Drawing.Point(0, 1325);
+         this.emptySpaceItem3.Name = "emptySpaceItem3";
+         this.emptySpaceItem3.Size = new System.Drawing.Size(890, 24);
+         this.emptySpaceItem3.TextSize = new System.Drawing.Size(0, 0);
+         // 
          // ImporterView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
@@ -233,6 +244,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -254,5 +266,6 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraEditors.PanelControl sourceFilePanelControl;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
       private DevExpress.XtraLayout.LayoutControlItem sourceFileLayoutControlItem;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem3;
    }
 }
