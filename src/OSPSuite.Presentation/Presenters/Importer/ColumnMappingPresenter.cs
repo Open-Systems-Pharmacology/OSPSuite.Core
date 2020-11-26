@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IList<string> _extraColumns;
       private UnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
-      private IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
+      private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private ColumnMappingDTO _currentModel;
       public ColumnMappingPresenter
       (
@@ -147,7 +147,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (!(_currentModel.Source is MappingDataFormatParameter))
          {
-            _view.RefreshData();
             return;
          }
 
@@ -160,7 +159,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_currentModel.ColumnInfo.IsBase())
          {
+            _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
+            ValidateMapping();
             _view.RefreshData();
+            _view.CloseEditor();
             return;
          }
 
@@ -399,7 +401,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                return new ToolTipDescription()
                {
                   Title = Captions.MappingTitle,
-                  Description = Captions.MappingHint(mp.ColumnName, mp?.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
+                  Description = Captions.MappingHint(mp.ColumnName, mp.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
                };
             case GroupByDataFormatParameter gp:
                return new ToolTipDescription()
