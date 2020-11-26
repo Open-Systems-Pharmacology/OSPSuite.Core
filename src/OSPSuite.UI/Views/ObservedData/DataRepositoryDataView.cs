@@ -5,6 +5,7 @@ using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Core.Commands;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
@@ -31,6 +32,7 @@ namespace OSPSuite.UI.Views.ObservedData
       public void DisableEdition()
       {
          btnAddData.Enabled = false;
+         layoutItemAddData.Visibility = LayoutVisibility.Never;
          gridView.OptionsBehavior.Editable = false;
       }
 
