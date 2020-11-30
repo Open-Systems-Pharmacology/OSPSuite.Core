@@ -40,12 +40,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs {NamingConvention = namingConvention});
       }
 
-      public void Refresh()
-      {
-         if (!string.IsNullOrEmpty(_lastNamingPattern))
-            OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs { NamingConvention = _lastNamingPattern });
-      }
-
       public void SetKeys(IEnumerable<string> keys)
       {
          View.SetNamingConventionKeys(keys);

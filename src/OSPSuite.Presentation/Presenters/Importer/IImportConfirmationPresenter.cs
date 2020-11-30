@@ -21,7 +21,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetKeys(IEnumerable<string> keys);
       void SetNamingConventions(IEnumerable<string> namingConventions);
       void ImportData();
-      void Refresh();
       void DataSetSelected(string key, int index);
       void PlotDataRepository(DataRepository dataRepository);
       void SetDataSetNames(IEnumerable<string> names);

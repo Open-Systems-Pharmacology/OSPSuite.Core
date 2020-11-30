@@ -90,10 +90,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void AddConfirmationView()
       {
          _view.AddConfirmationView(_confirmationPresenter.View);
-         if (_dataSource != null) 
-         {
-            _confirmationPresenter.Refresh();
-         }
       }
 
       public void SetDataSource(string dataSourceFileName)
@@ -111,6 +107,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
+         if (!args.Sheets.Any()) return;
+
          var mappings = args.DataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
@@ -161,10 +159,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _importerDataPresenter.onCompletedMapping();
          _dataSource.DataSets.Clear();
-         foreach (var sheet in _importerDataPresenter.Sheets)
-         {
-            ImportSheets(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheet });
-         }
+         ImportSheets(this, new ImportSheetsEventArgs {DataSourceFile = _dataSourceFile, Sheets = _importerDataPresenter.Sheets});
       }
       public void AddDataMappingView()
       {
