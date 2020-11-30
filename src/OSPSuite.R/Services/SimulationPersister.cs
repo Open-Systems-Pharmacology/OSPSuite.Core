@@ -9,7 +9,7 @@ namespace OSPSuite.R.Services
 {
    public interface ISimulationPersister
    {
-      Simulation LoadSimulation(string fileName);
+      Simulation LoadSimulation(string fileName, bool resetIds = true);
       void SaveSimulation(Simulation simulation, string fileName);
    }
 
@@ -19,23 +19,30 @@ namespace OSPSuite.R.Services
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly ICloneManagerForModel _cloneManagerForModel;
+      private readonly IObjectIdResetter _objectIdResetter;
 
       public SimulationPersister(
          CorePersistor simulationPersistor,
          IDimensionFactory dimensionFactory,
          IObjectBaseFactory objectBaseFactory,
-         ICloneManagerForModel cloneManagerForModel)
+         ICloneManagerForModel cloneManagerForModel,
+         IObjectIdResetter objectIdResetter)
       {
          _simulationPersistor = simulationPersistor;
          _dimensionFactory = dimensionFactory;
          _objectBaseFactory = objectBaseFactory;
          _cloneManagerForModel = cloneManagerForModel;
+         _objectIdResetter = objectIdResetter;
       }
 
-      public Simulation LoadSimulation(string fileName)
+      public Simulation LoadSimulation(string fileName, bool resetIds = true)
       {
          var simulationTransfer = _simulationPersistor.Load(fileName, _dimensionFactory, _objectBaseFactory, new WithIdRepository(), _cloneManagerForModel);
-         return new Simulation(simulationTransfer.Simulation);
+         var simulation = simulationTransfer.Simulation;
+         if(resetIds)
+            _objectIdResetter.ResetIdFor(simulation);
+
+         return new Simulation(simulation);
       }
 
       public void SaveSimulation(Simulation simulation, string fileName)
