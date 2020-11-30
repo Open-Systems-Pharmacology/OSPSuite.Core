@@ -72,6 +72,7 @@ namespace OSPSuite.R.Bootstrap
          container.Register<IPathToPathElementsMapper, PathToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, RQuantityPathToQuantityDisplayPathMapper>();
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
+         container.Register<IObjectIdResetter, ObjectIdResetter>();
       }
 
       private void initializeConfiguration(IContainer container, ApiConfig apiConfig)
