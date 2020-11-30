@@ -28,7 +28,7 @@ namespace OSPSuite.UI.Views.Importer
    {
       public string Format(DataFormatParameter model)
       {
-         if (model == null)
+         if ( model == null || model is IgnoredDataFormatParameter)
             return "";
          return model.ColumnName;
       }

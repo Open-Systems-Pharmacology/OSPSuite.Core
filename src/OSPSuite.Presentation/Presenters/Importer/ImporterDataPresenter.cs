@@ -15,15 +15,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private IList<Cache<string, IDataSheet>> _sheets = new List<Cache<string, IDataSheet>>();
-      public IReadOnlyList<Cache<string, IDataSheet>> Sheets { get => (IReadOnlyList<Cache<string, IDataSheet>>)_sheets; }
+      private Cache<string, IDataSheet> _sheets = new Cache<string, IDataSheet>();
+      public Cache<string, IDataSheet> Sheets { get => _sheets; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
 
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
-
-      public event EventHandler<SourceFileChangedEventArgs> OnSourceFileChanged = delegate { };
 
       public ImporterDataPresenter
       (
@@ -44,8 +42,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public void ImportDataForConfirmation()
       {
-         var sheets = getAllSheets();
-         _sheets.Add(sheets);
+         var sheets = new Cache<string, IDataSheet>();
+         foreach (var element in _dataSourceFile.DataSheets.KeyValues)
+         {
+            if (!_sheets.Keys.Contains(element.Key))
+            {
+               _sheets.Add(element.Key, element.Value);
+               sheets.Add(element.Key, element.Value);
+            }
+         }
+
+         if (sheets.Count == 0) return;
+
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets });
       }
 
@@ -62,14 +70,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ImportDataForConfirmation(string sheetName)
       {
          var sheets = new Cache<string, IDataSheet>();
-         sheets.Add(sheetName, getSingleSheet(sheetName));
-         _sheets.Add(sheets);
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets});
-      }
 
-      private Cache<string, IDataSheet> getAllSheets()
-      {
-         return _dataSourceFile.DataSheets;
+         if (!_sheets.Keys.Contains(sheetName))
+         {
+            _sheets.Add(sheetName, getSingleSheet(sheetName));
+            sheets.Add(sheetName, getSingleSheet(sheetName));
+         }
+         if (sheets.Count == 0) return;
+
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets});
       }
 
       private IDataSheet getSingleSheet(string sheetName)
@@ -91,13 +100,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return null;
-         _sheets = new List<Cache<string, IDataSheet>>();
+         _sheets = new Cache<string, IDataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
-         OnSourceFileChanged.Invoke(this, new SourceFileChangedEventArgs {FileName = dataSourceFileName});
          return _dataSourceFile;
       }
 
