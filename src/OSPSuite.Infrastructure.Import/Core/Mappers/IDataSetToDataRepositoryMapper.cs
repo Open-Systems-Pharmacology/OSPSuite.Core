@@ -94,7 +94,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //loop over view rows to get the sorted values.
          foreach (var value in column.Value)
          {
-            if (value == null) //but we actually should not be allowing this at all right?
+            if (value == null || double.IsNaN(value.Value)) //but we actually should not be allowing this at all right?
                values[i++] = float.NaN;
             else
                values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), (double)value.Value);
