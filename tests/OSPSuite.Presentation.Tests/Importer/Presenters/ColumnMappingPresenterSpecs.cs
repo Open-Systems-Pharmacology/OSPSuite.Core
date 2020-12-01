@@ -94,35 +94,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   static public class ColumnMappingViewModelExtensions
-   {
-      static public bool IsEquivalentTo(this ColumnMappingDTO self, ColumnMappingDTO other)
-      {
-         if (self == null)
-            return other == null;
-         if (self.MappingName != other.MappingName || self.Description != other.Description)
-            return false;
-         switch (self.Source)
-         {
-            case MappingDataFormatParameter mp:
-               if (!(other.Source is MappingDataFormatParameter))
-                  return false;
-               var mmp = other.Source as MappingDataFormatParameter;
-               return mp.ColumnName == mmp.ColumnName && ((mp.MappedColumn == null && mmp.MappedColumn == null) || (mp.MappedColumn.Name == mmp.MappedColumn.Name && mp.MappedColumn.Unit.SelectedUnit == mmp.MappedColumn.Unit.SelectedUnit));
-            case MetaDataFormatParameter mp:
-               if (!(other.Source is MetaDataFormatParameter))
-                  return false;
-               var mdmp = other.Source as MetaDataFormatParameter;
-               return mp.ColumnName == mdmp.ColumnName && mp.MetaDataId == mdmp.MetaDataId;
-            case GroupByDataFormatParameter mp:
-               if (!(other.Source is GroupByDataFormatParameter))
-                  return false;
-               return mp.ColumnName == other.Source.ColumnName;
-         }
-         return false;
-      }
-   }
-
    public class When_getting_available_options : ConcernForColumnMappingPresenter
    {
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
