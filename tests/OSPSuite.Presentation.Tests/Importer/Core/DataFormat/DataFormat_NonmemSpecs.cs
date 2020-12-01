@@ -265,11 +265,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       public void identify_groupBy_parameters()
       {
          var groupByParameters = sut.Parameters.Where(p => p is GroupByDataFormatParameter).ToList();
-         groupByParameters.Count.ShouldBeEqualTo(1);
-         foreach (var name in new[] { "Groupe Id" })
-         {
-            groupByParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
-         }
+         groupByParameters.Count.ShouldBeEqualTo(0);
       }
    }
 
@@ -321,13 +317,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _basicFormat,
             _columnInfos
          ).ToList();
-         data.Count().ShouldBeEqualTo(10);
+         data.Count().ShouldBeEqualTo(5);
          for (var molecule = 0; molecule < _molecules.Length; molecule++)
-            for (var groupId = 0; groupId < _groupIds.Length; groupId++)
-            {
-               data[molecule * _groupIds.Length + groupId].ValueForColumn(4).ShouldBeEqualTo(_molecules[molecule]);
-               data[molecule * _groupIds.Length + groupId].ValueForColumn(9).ShouldBeEqualTo(_groupIds[groupId]);
-            }
+            data[molecule].ValueForColumn(4).ShouldBeEqualTo(_molecules[molecule]);
       }
 
       [TestCase]
