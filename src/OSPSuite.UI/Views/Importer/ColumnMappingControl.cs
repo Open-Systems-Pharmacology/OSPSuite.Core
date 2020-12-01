@@ -24,32 +24,23 @@ using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   class DataFormatParameterFormatter : IFormatter<DataFormatParameter>
+   class SettingsFormatter : IFormatter<DataFormatParameter>
    {
       public string Format(DataFormatParameter model)
       {
-         if ( model == null || model is IgnoredDataFormatParameter)
+         if (model == null)
             return "";
-         return model.ColumnName;
-      }
-   }
 
-   class SettingsFormatter : IFormatter<string>
-   {
-      public string Format(string description)
-      {
-         var parsed = description.Split(',');
-         if (parsed[0] == "Mapping")
+         if (model is MappingDataFormatParameter mapping)
          {
-            var str = $"Units: {parsed[3]}";
-            if (!string.IsNullOrEmpty(parsed[4]))
+            var str = $"Units: {mapping.MappedColumn.Unit.SelectedUnit}";
+            if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
             {
-               str += $", Lloq: {parsed[4]}";
+               str += $", Lloq: {mapping.MappedColumn.LloqColumn}";
             }
-
-            if (!string.IsNullOrEmpty(parsed[5]))
+            if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
             {
-               str += $", Error: {parsed[5]}";
+               str += $", Error: {mapping.MappedColumn.ErrorStdDev}";
             }
 
             return str;
@@ -66,7 +57,6 @@ namespace OSPSuite.UI.Views.Importer
       private readonly GridViewBinder<ColumnMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
-      private readonly DataFormatParameterFormatter _sourceFormatter = new DataFormatParameterFormatter();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
 
       private readonly RepositoryItemButtonEdit _addButtonRepository =
@@ -144,7 +134,7 @@ namespace OSPSuite.UI.Views.Importer
          var repo = new UxRepositoryItemComboBox(columnMappingGridView) { AllowNullInput = DefaultBoolean.True };
          repo.Items.Clear();
 
-         repo.Items.Add(new ComboBoxItem(model.Description));
+         repo.Items.Add(new ComboBoxItem(""));
          return repo;
       }
 
@@ -154,9 +144,10 @@ namespace OSPSuite.UI.Views.Importer
          {
             AutoComplete = true,
             AllowNullInput = DefaultBoolean.True,
+            NullText = Captions.Importer.NoneEditorNullText,
             CloseUpKey = new KeyShortcut(Keys.Enter)
          };
-         fillComboBoxItems(descriptionRepository, _presenter.GetAvailableOptionsFor(model));
+         fillComboBoxItems(descriptionRepository, _presenter.GetAvailableRowsFor(model));
          return descriptionRepository;
       }
 
@@ -191,14 +182,13 @@ namespace OSPSuite.UI.Views.Importer
             .WithRepository(nameRepository)
             .AsReadOnly();
 
-         _gridViewBinder.AutoBind(x => x.Source)
-            .WithFormat(x => _sourceFormatter)
+         _gridViewBinder.AutoBind(x => x.ExcelColumn)
             .WithCaption(Captions.Importer.ExcelColumn)
             .WithRepository(descriptionRepository)
             .WithOnValueUpdated((o, e) => onValueChanged(o))
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
-         _gridViewBinder.AutoBind(x => x.Description)
+         _gridViewBinder.AutoBind(x => x.Source)
             .WithCaption(Captions.Importer.ExtraColumn)
             .WithFormat(_settingsFormatter)
             .WithRepository(editButtonRepository)
@@ -213,7 +203,7 @@ namespace OSPSuite.UI.Views.Importer
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
          {
             _presenter.ClearRow(_gridViewBinder.FocusedElement);
-            columnMappingGridView.ActiveEditor.EditValue = ColumnMappingFormatter.Ignored();
+            columnMappingGridView.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
             columnMappingGridView.CloseEditor();
          });
 
@@ -234,7 +224,7 @@ namespace OSPSuite.UI.Views.Importer
             return _addButtonRepository;
          }
 
-         return model.Source == null || model.Source is IgnoredDataFormatParameter || model.Source is AddGroupByFormatParameter
+         return model.Source == null || model.Source is AddGroupByFormatParameter
             ? _disabledRemoveButtonRepository
             : _removeButtonRepository;
       }
@@ -292,16 +282,13 @@ namespace OSPSuite.UI.Views.Importer
          });
       }
 
-      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<ColumnMappingOption> options)
+      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<string> options)
       {
          editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ImageComboBoxItem(ColumnMappingFormatter.Parse(option.Description))
-            {
-               Description = option.Label,
-            });
+            editor.Items.Add(new ImageComboBoxItem(option));
          }
 
          editor.KeyDown += (s, a) => OnEvent(clearSelectionOnDeleteForComboBoxEdit, s, a);

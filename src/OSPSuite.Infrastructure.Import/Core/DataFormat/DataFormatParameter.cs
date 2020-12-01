@@ -17,7 +17,7 @@
 
    public abstract class DataFormatParameter
    {
-      public string ColumnName { get; private set; }
+      public string ColumnName { get; set; }
 
       protected DataFormatParameter(string columnName)
       {
@@ -29,13 +29,7 @@
          return other.GetType() == GetType();
       }
    }
-
-   public class IgnoredDataFormatParameter : DataFormatParameter
-   {
-      public IgnoredDataFormatParameter(string columnName) : base(columnName)
-      { }
-   }
-
+   
    public class AddGroupByFormatParameter : DataFormatParameter
    {
       public AddGroupByFormatParameter(string columnName) : base(columnName)

@@ -14,7 +14,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public abstract string Name { get; }
       public abstract string Description { get; }
       public IList<DataFormatParameter> Parameters { get; protected set; }
-      
+      public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
+
       public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawData, columnInfos))
@@ -68,6 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                {
                   col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
                }
+               ExcelColumnNames.Add(headerKey);
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
@@ -124,12 +126,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
+            ExcelColumnNames.Add(header);
             Parameters.Add(new MetaDataFormatParameter(header, header));
          }
          foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
          {
             keys.Remove(header);
-            Parameters.Add(new IgnoredDataFormatParameter(header));
+            ExcelColumnNames.Add(header);
          }
       }
 
