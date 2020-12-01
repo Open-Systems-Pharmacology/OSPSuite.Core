@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
-      private IList<string> _extraColumns;
+      private IList<string> _excelColumns;
       private UnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
@@ -59,7 +59,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             (
                ColumnMappingDTO.ColumnType.Mapping,
                c.Name,
-               ColumnMappingFormatter.Stringify(target),
                target,
                _importer.GetImageIndex(new MappingDataFormatParameter("", null)),
                c
@@ -73,7 +72,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                (
                   ColumnMappingDTO.ColumnType.MetaData,
                   md.Name,
-                  ColumnMappingFormatter.Stringify(target),
                   target,
                   _importer.GetImageIndex(new MetaDataFormatParameter("", ""))
                );
@@ -86,7 +84,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   return new ColumnMappingDTO(
                      ColumnMappingDTO.ColumnType.GroupBy,
                      Captions.GroupByTitle,
-                     ColumnMappingFormatter.Stringify(gb),
                      gb,
                      _importer.GetImageIndex(gb)
                   );
@@ -97,7 +94,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             new ColumnMappingDTO(
                ColumnMappingDTO.ColumnType.AddGroupBy,
                Captions.AddGroupByTitle,
-               null,
                new AddGroupByFormatParameter(""),
                _importer.GetImageIndex(new GroupByDataFormatParameter(""))
             )
@@ -108,19 +104,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDataFormat(IDataFormat format)
       {
-         _format = format;
-         _originalFormat = _format.Parameters.ToList();
-         _extraColumns = _originalFormat
-               .OfType<MappingDataFormatParameter>()
-               .Where(m => !string.IsNullOrEmpty(m.MappedColumn?.Unit?.ColumnName))
-               .Select(m => m.MappedColumn.Unit.ColumnName)
-               .Union(
-                  _originalFormat
+         _excelColumns = format.Parameters
+            .Select(p => p.ColumnName)
+            .Union(
+               format.Parameters
                   .OfType<MappingDataFormatParameter>()
-                  .Where(m => m.MappedColumn?.LloqColumn != null)
+                  .Where(m => !string.IsNullOrEmpty(m.MappedColumn.LloqColumn))
                   .Select(m => m.MappedColumn.LloqColumn)
                )
-               .ToList();
+            .Union(
+               format.Parameters
+                  .OfType<MappingDataFormatParameter>()
+                  .Where(m => !string.IsNullOrEmpty(m.MappedColumn.Unit.ColumnName))
+                  .Select(m => m.MappedColumn.Unit.ColumnName)
+               ).ToList();
+         _format = format;
+         _originalFormat = _format.Parameters.ToList();
          setDataFormat(format.Parameters);
       }
 
@@ -159,7 +158,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_currentModel.ColumnInfo.IsBase())
          {
-            _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
             ValidateMapping();
             _view.RefreshData();
             _view.CloseEditor();
@@ -180,7 +178,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             columns.AddRange(availableColumns());
             column.LloqColumn = columns[_mappingParameterEditorPresenter.SelectedLloq];
          }
-         _currentModel.Description = ColumnMappingFormatter.Stringify(_currentModel.Source);
          ValidateMapping();
          _view.RefreshData();
          _view.CloseEditor();
@@ -227,39 +224,35 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private ColumnMappingOption generateGroupByColumnMappingOption(string description, string columnName)
+      private ColumnMappingOption generateGroupByColumnMappingOption(string columnName)
       {
          return new ColumnMappingOption()
          {
-            Label = columnName,
-            Description = description
+            Label = columnName
          };
       }
 
-      private ColumnMappingOption generateAddGroupByColumnMappingOption(string description, string columnName)
+      private ColumnMappingOption generateAddGroupByColumnMappingOption(string columnName)
       {
          return new ColumnMappingOption()
          {
-            Label = columnName,
-            Description = description
+            Label = columnName
          };
       }
 
-      private ColumnMappingOption generateMappingColumnMappingOption(string description, string mappingId, string unit = "?")
+      private ColumnMappingOption generateMappingColumnMappingOption(string mappingId, string unit = "?")
       {
          return new ColumnMappingOption()
          {
             Label = Captions.MappingDescription(mappingId, unit),
-            Description = description
          };
       }
 
-      private ColumnMappingOption generateMetaDataColumnMappingOption(string description, string metaDataId)
+      private ColumnMappingOption generateMetaDataColumnMappingOption(string metaDataId)
       {
          return new ColumnMappingOption()
          {
-            Label = Captions.MetaDataDescription(metaDataId),
-            Description = description
+            Label = Captions.MetaDataDescription(metaDataId)
          };
       }
 
@@ -268,11 +261,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var options = new List<string>();
          if (model == null)
             return options;
-         if (model.Source != null && !(model.Source is IgnoredDataFormatParameter) && !(model.Source is AddGroupByFormatParameter))
+         if (model.Source != null && !(model.Source is AddGroupByFormatParameter))
          {
             options.Add(model.Source.ColumnName);
          }
-         options.Add(Captions.Importer.NoneEditorNullText);
          options.AddRange(this.availableColumns());
          return options;
       }
@@ -287,35 +279,28 @@ namespace OSPSuite.Presentation.Presenters.Importer
             switch (model.Source)
             {
                case GroupByDataFormatParameter _:
-                  options.Add(generateGroupByColumnMappingOption(model.Description, model.Source.ColumnName));
+                  options.Add(generateGroupByColumnMappingOption(model.Source.ColumnName));
                   break;
                case MappingDataFormatParameter tm:
-                  options.Add(generateMappingColumnMappingOption(model.Description, model.Source.ColumnName,
+                  options.Add(generateMappingColumnMappingOption(model.Source.ColumnName,
                      tm.MappedColumn.Unit.SelectedUnit));
                   break;
                case MetaDataFormatParameter tm:
-                  options.Add(generateMetaDataColumnMappingOption(model.Description, model.Source.ColumnName));
+                  options.Add(generateMetaDataColumnMappingOption(model.Source.ColumnName));
                   break;
-               case IgnoredDataFormatParameter _:
                case AddGroupByFormatParameter _:
                   break;
                default:
                   throw new Exception(Error.TypeNotSupported(model.Source.GetType()));
             }
          }
-         options.Add(generateIgnoredColumnMappingOption(ColumnMappingFormatter.Ignored()));
          var availableColumns = this.availableColumns();
          switch (model.CurrentColumnType)
          {
             case ColumnMappingDTO.ColumnType.Mapping:
                foreach (var column in availableColumns)
                {
-                  options.Add(
-                     generateMappingColumnMappingOption(
-                        ColumnMappingFormatter.Mapping(new MappingDataFormatParameter(column, new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) })),
-                        column
-                     )
-                  );
+                  options.Add(generateMappingColumnMappingOption(column));
                }
                break;
             case ColumnMappingDTO.ColumnType.MetaData:
@@ -323,7 +308,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   options.Add(
                      generateMetaDataColumnMappingOption(
-                        ColumnMappingFormatter.MetaData(new MetaDataFormatParameter(column, model.MappingName)),
                         column
                      )
                   );
@@ -335,7 +319,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   options.Add(
                      generateGroupByColumnMappingOption(
-                        ColumnMappingFormatter.GroupBy(new GroupByDataFormatParameter(column)),
                         column
                      )
                   );
@@ -347,7 +330,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   options.Add(
                      generateAddGroupByColumnMappingOption(
-                        ColumnMappingFormatter.AddGroupBy(new AddGroupByFormatParameter(column)),
                         column
                      )
                   );
@@ -360,9 +342,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IEnumerable<string> availableColumns()
       {
-         return _originalFormat
-            .Select(f => f.ColumnName)
-            .Union(_extraColumns)
+         return _excelColumns
             .Where
             (
                cn =>
@@ -415,12 +395,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   Title = Captions.MetaDataTitle,
                   Description = Captions.MetaDataHint(mp.ColumnName, mp.MetaDataId)
                };
-            case IgnoredDataFormatParameter _:
-               return new ToolTipDescription()
-               {
-                  Title = Captions.IgnoredParameterTitle,
-                  Description = Captions.IgnoredParameterHint
-               };
             case AddGroupByFormatParameter _:
                return new ToolTipDescription()
                {
@@ -434,39 +408,32 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void _setDescriptionForRow(ColumnMappingDTO model)
       {
-         if (model.Source is AddGroupByFormatParameter)
+         if (model.Source == null)
          {
-            model.Source = ColumnMappingFormatter.Parse(model.Description);
-            return;
-         }
-         var newParam = ColumnMappingFormatter.Parse(model.Description);
-         if (newParam is IgnoredDataFormatParameter && model.Source != null)
-         {
-            newParam = new IgnoredDataFormatParameter(model.Source.ColumnName);
-         }
-         if (model.Source != null)
-         {
-            var oldModel = _mappings.FirstOrDefault(m => !(m.Source is IgnoredDataFormatParameter) && m.Source == model.Source);
-            if (oldModel != null)
+            switch (model.CurrentColumnType)
             {
-               ClearRow(oldModel);
+               case ColumnMappingDTO.ColumnType.MetaData:
+                  model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName);
+                  break;
+               case ColumnMappingDTO.ColumnType.Mapping:
+                  model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column(){ Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
+                  break;
+               default:
+                  throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
             }
+            _format.Parameters.Add(model.Source);
          }
-         var oldParam = _format.Parameters.FirstOrDefault(p => p.ColumnName == newParam.ColumnName);
-         if (oldParam != null)
+         else if (model.Source is AddGroupByFormatParameter)
          {
-            var index = _format.Parameters.IndexOf(oldParam);
-            if (index >= 0)
-            {
-               _format.Parameters[index] = newParam;
-               model.Source = newParam;
-            }
+            model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
+            _format.Parameters.Add(model.Source);
          }
-         else 
+         else
          {
-            _format.Parameters.Add(newParam);
-            setDataFormat(_format.Parameters);
+            model.Source.ColumnName = model.ExcelColumn;
          }
+         
+         setDataFormat(_format.Parameters);
       }
 
       public void ClearRow(ColumnMappingDTO model)
@@ -478,14 +445,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
-            var newParam = ColumnMappingFormatter.Parse(ColumnMappingFormatter.Ignored(new IgnoredDataFormatParameter(model.Source.ColumnName)));
             var index = _format.Parameters.IndexOf(model.Source);
-            if (index < 0)
-            {
-               index = _format.Parameters.IndexOf(_format.Parameters.First(p => p.ColumnName == newParam.ColumnName));
-            }
-            model.Source = newParam;
-            _format.Parameters[index] = newParam;
+            model.ExcelColumn = Captions.Importer.NoneEditorNullText;
+            model.Source = null;
+            _format.Parameters.RemoveAt(index);
          }
          View.RefreshData();
       }
@@ -495,7 +458,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var parameter = new GroupByDataFormatParameter(source.ColumnName);
          _format.Parameters.Insert(_format.Parameters.Count-2, parameter);new GroupByDataFormatParameter(source.ColumnName);
          setDataFormat(_mappings
-            .Where(f => !(f.Source is IgnoredDataFormatParameter || f.Source is AddGroupByFormatParameter))
+            .Where(f => !(f.Source is AddGroupByFormatParameter))
             .Select(f => f.Source)
             .Append(parameter)
             .ToList());
@@ -514,11 +477,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ClearMapping()
       {
-         var format = _format.Parameters.Select(p => new IgnoredDataFormatParameter(p.ColumnName) as DataFormatParameter).ToList();
+         var format = new List<DataFormatParameter>();
          setDataFormat(format);
          _format.Parameters.Clear();
-         foreach (var p in format)
-            _format.Parameters.Add(p);
       }
 
       private void setStatuses()

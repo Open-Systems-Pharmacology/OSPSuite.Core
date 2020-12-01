@@ -42,7 +42,6 @@ namespace OSPSuite.UI.Views.Importer
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.keysLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.namesLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.namingConventionLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.importButtonLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -55,6 +54,7 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem5 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.namingConventionLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem6 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
@@ -68,7 +68,6 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.importButtonLayoutControlItem)).BeginInit();
@@ -81,6 +80,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).BeginInit();
          this.SuspendLayout();
          // 
@@ -221,14 +221,6 @@ namespace OSPSuite.UI.Views.Importer
          this.namesLayout.TextSize = new System.Drawing.Size(0, 0);
          this.namesLayout.TextVisible = false;
          // 
-         // namingConventionLayout
-         // 
-         this.namingConventionLayout.Control = this.namingConventionComboBoxEdit;
-         this.namingConventionLayout.Location = new System.Drawing.Point(0, 332);
-         this.namingConventionLayout.Name = "namingConventionLayout";
-         this.namingConventionLayout.Size = new System.Drawing.Size(914, 26);
-         this.namingConventionLayout.TextSize = new System.Drawing.Size(142, 16);
-         // 
          // emptySpaceItem2
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
@@ -328,6 +320,14 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem5.Size = new System.Drawing.Size(914, 10);
          this.emptySpaceItem5.TextSize = new System.Drawing.Size(0, 0);
          // 
+         // namingConventionLayout
+         // 
+         this.namingConventionLayout.Control = this.namingConventionComboBoxEdit;
+         this.namingConventionLayout.Location = new System.Drawing.Point(0, 332);
+         this.namingConventionLayout.Name = "namingConventionLayout";
+         this.namingConventionLayout.Size = new System.Drawing.Size(914, 26);
+         this.namingConventionLayout.TextSize = new System.Drawing.Size(142, 16);
+         // 
          // emptySpaceItem6
          // 
          this.emptySpaceItem6.AllowHotTrack = false;
@@ -356,7 +356,6 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.keysLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesLayout)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.importButtonLayoutControlItem)).EndInit();
@@ -369,6 +368,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).EndInit();
          this.ResumeLayout(false);
 
