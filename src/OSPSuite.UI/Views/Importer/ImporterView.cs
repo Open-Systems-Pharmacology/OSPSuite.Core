@@ -43,9 +43,9 @@ namespace OSPSuite.UI.Views.Importer
          sourceFilePanelControl.FillWith(sourceFileControl);
       }
 
-      public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
+      public void AddColumnMappingControl(IColumnMappingView columnMappingView)
       {
-         columnMappingPanelControl.FillWith(columnMappingControl);
+         columnMappingPanelControl.FillWith(columnMappingView);
       }
 
       public void AddConfirmationView(IImportConfirmationView confirmationView)

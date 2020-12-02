@@ -24,7 +24,7 @@ using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
+   public partial class ColumnMappingView : BaseUserControl, IColumnMappingView
    {
       private readonly IImageListRetriever _imageListRetriever;
       private IColumnMappingPresenter _presenter;
@@ -40,7 +40,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
 
-      public ColumnMappingControl(IImageListRetriever imageListRetriever)
+      public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
          _imageListRetriever = imageListRetriever;
          InitializeComponent();

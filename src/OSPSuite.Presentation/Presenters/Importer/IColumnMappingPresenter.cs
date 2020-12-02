@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public bool UnitActive { get; set; }
    }
 
-   public interface IColumnMappingPresenter : IPresenter<IColumnMappingControl>
+   public interface IColumnMappingPresenter : IPresenter<IColumnMappingView>
    {
       void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos);
       IDataFormat GetDataFormat();

@@ -2,7 +2,7 @@
 
 namespace OSPSuite.UI.Views.Importer
 {
-   partial class ColumnMappingControl
+   partial class ColumnMappingView
    {
       /// <summary> 
       /// Required designer variable.
@@ -79,7 +79,7 @@ namespace OSPSuite.UI.Views.Importer
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.columnMappingGrid);
          this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
-         this.Name = "ColumnMappingControl";
+         this.Name = "ColumnMappingView";
          this.Size = new System.Drawing.Size(1078, 757);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.columnMappingGrid)).EndInit();

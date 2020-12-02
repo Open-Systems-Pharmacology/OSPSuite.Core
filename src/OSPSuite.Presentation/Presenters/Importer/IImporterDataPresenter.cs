@@ -49,8 +49,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       DataTable GetSheet(string tabName);
       void ImportDataForConfirmation(string sheetName);
 
-      void
-         RefreshTabs(); //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
+      //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
+      void RefreshTabs(); 
 
       Cache<string, IDataSheet> Sheets { get; }
    }
