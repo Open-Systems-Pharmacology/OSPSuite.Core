@@ -1,6 +1,4 @@
-﻿using OSPSuite.Assets;
-
-namespace OSPSuite.UI.Views.Importer
+﻿namespace OSPSuite.UI.Views.Importer
 {
    partial class ImportConfirmationView
    {
@@ -56,7 +54,6 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem5 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.namingConventionLayout = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem6 = new DevExpress.XtraLayout.EmptySpaceItem();
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -86,10 +83,10 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // namesListBox
          // 
-         this.namesListBox.Location = new System.Drawing.Point(12, 384);
+         this.namesListBox.Location = new System.Drawing.Point(11, 323);
          this.namesListBox.Margin = new System.Windows.Forms.Padding(2);
          this.namesListBox.Name = "namesListBox";
-         this.namesListBox.Size = new System.Drawing.Size(910, 640);
+         this.namesListBox.Size = new System.Drawing.Size(779, 508);
          this.namesListBox.StyleController = this.layoutControl;
          this.namesListBox.TabIndex = 4;
          // 
@@ -108,73 +105,74 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Margin = new System.Windows.Forms.Padding(2);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(1745, 1067);
+         this.layoutControl.Size = new System.Drawing.Size(1496, 867);
          this.layoutControl.TabIndex = 38;
          // 
          // buttonAdd
          // 
-         this.buttonAdd.Location = new System.Drawing.Point(754, 303);
+         this.buttonAdd.Location = new System.Drawing.Point(647, 253);
          this.buttonAdd.Margin = new System.Windows.Forms.Padding(2);
          this.buttonAdd.Name = "buttonAdd";
-         this.buttonAdd.Size = new System.Drawing.Size(168, 27);
+         this.buttonAdd.Size = new System.Drawing.Size(143, 22);
          this.buttonAdd.StyleController = this.layoutControl;
          this.buttonAdd.TabIndex = 10;
          this.buttonAdd.Text = "Add keys";
          // 
          // separatorComboBoxEdit
          // 
-         this.separatorComboBoxEdit.Location = new System.Drawing.Point(157, 267);
+         this.separatorComboBoxEdit.Location = new System.Drawing.Point(136, 219);
+         this.separatorComboBoxEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.separatorComboBoxEdit.Name = "separatorComboBoxEdit";
          this.separatorComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.separatorComboBoxEdit.Size = new System.Drawing.Size(765, 22);
+         this.separatorComboBoxEdit.Size = new System.Drawing.Size(654, 20);
          this.separatorComboBoxEdit.StyleController = this.layoutControl;
          this.separatorComboBoxEdit.TabIndex = 42;
          // 
          // chartPanelControl
          // 
-         this.chartPanelControl.Location = new System.Drawing.Point(938, 482);
+         this.chartPanelControl.Location = new System.Drawing.Point(804, 392);
          this.chartPanelControl.Margin = new System.Windows.Forms.Padding(1);
          this.chartPanelControl.Name = "chartPanelControl";
-         this.chartPanelControl.Size = new System.Drawing.Size(795, 542);
+         this.chartPanelControl.Size = new System.Drawing.Size(681, 439);
          this.chartPanelControl.TabIndex = 41;
          // 
          // dataPanelControl
          // 
-         this.dataPanelControl.Location = new System.Drawing.Point(938, 12);
+         this.dataPanelControl.Location = new System.Drawing.Point(804, 10);
          this.dataPanelControl.Margin = new System.Windows.Forms.Padding(1);
          this.dataPanelControl.Name = "dataPanelControl";
-         this.dataPanelControl.Size = new System.Drawing.Size(795, 454);
+         this.dataPanelControl.Size = new System.Drawing.Size(681, 368);
          this.dataPanelControl.TabIndex = 41;
          // 
          // importButton
          // 
-         this.importButton.Location = new System.Drawing.Point(1548, 1028);
+         this.importButton.Location = new System.Drawing.Point(1327, 835);
          this.importButton.Margin = new System.Windows.Forms.Padding(1);
          this.importButton.Name = "importButton";
-         this.importButton.Size = new System.Drawing.Size(185, 27);
+         this.importButton.Size = new System.Drawing.Size(158, 22);
          this.importButton.StyleController = this.layoutControl;
          this.importButton.TabIndex = 40;
          this.importButton.Text = "Import";
          // 
          // keysListBox
          // 
-         this.keysListBox.Location = new System.Drawing.Point(12, 12);
+         this.keysListBox.Location = new System.Drawing.Point(11, 10);
          this.keysListBox.Margin = new System.Windows.Forms.Padding(2);
          this.keysListBox.Name = "keysListBox";
          this.keysListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-         this.keysListBox.Size = new System.Drawing.Size(910, 241);
+         this.keysListBox.Size = new System.Drawing.Size(779, 195);
          this.keysListBox.StyleController = this.layoutControl;
          this.keysListBox.TabIndex = 9;
          // 
          // namingConventionComboBoxEdit
          // 
-         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(157, 344);
+         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(136, 289);
          this.namingConventionComboBoxEdit.Margin = new System.Windows.Forms.Padding(2);
          this.namingConventionComboBoxEdit.Name = "namingConventionComboBoxEdit";
          this.namingConventionComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(765, 22);
+         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(654, 20);
          this.namingConventionComboBoxEdit.StyleController = this.layoutControl;
          this.namingConventionComboBoxEdit.TabIndex = 8;
          // 
@@ -200,7 +198,7 @@ namespace OSPSuite.UI.Views.Importer
             this.namingConventionLayout,
             this.emptySpaceItem6});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(1745, 1067);
+         this.Root.Size = new System.Drawing.Size(1496, 867);
          this.Root.TextVisible = false;
          // 
          // keysLayout
@@ -208,143 +206,142 @@ namespace OSPSuite.UI.Views.Importer
          this.keysLayout.Control = this.keysListBox;
          this.keysLayout.Location = new System.Drawing.Point(0, 0);
          this.keysLayout.Name = "namesLayout";
-         this.keysLayout.Size = new System.Drawing.Size(914, 245);
+         this.keysLayout.Size = new System.Drawing.Size(783, 199);
          this.keysLayout.TextSize = new System.Drawing.Size(0, 0);
          this.keysLayout.TextVisible = false;
          // 
          // namesLayout
          // 
          this.namesLayout.Control = this.namesListBox;
-         this.namesLayout.Location = new System.Drawing.Point(0, 372);
+         this.namesLayout.Location = new System.Drawing.Point(0, 313);
          this.namesLayout.Name = "item0";
-         this.namesLayout.Size = new System.Drawing.Size(914, 644);
+         this.namesLayout.Size = new System.Drawing.Size(783, 512);
          this.namesLayout.TextSize = new System.Drawing.Size(0, 0);
          this.namesLayout.TextVisible = false;
          // 
          // emptySpaceItem2
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 245);
+         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 199);
          this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(914, 10);
+         this.emptySpaceItem2.Size = new System.Drawing.Size(783, 10);
          this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
          // 
          // emptySpaceItem3
          // 
          this.emptySpaceItem3.AllowHotTrack = false;
-         this.emptySpaceItem3.Location = new System.Drawing.Point(0, 358);
+         this.emptySpaceItem3.Location = new System.Drawing.Point(0, 303);
          this.emptySpaceItem3.Name = "emptySpaceItem3";
-         this.emptySpaceItem3.Size = new System.Drawing.Size(914, 14);
+         this.emptySpaceItem3.Size = new System.Drawing.Size(783, 10);
          this.emptySpaceItem3.TextSize = new System.Drawing.Size(0, 0);
          // 
          // importButtonLayoutControlItem
          // 
          this.importButtonLayoutControlItem.Control = this.importButton;
-         this.importButtonLayoutControlItem.Location = new System.Drawing.Point(1536, 1016);
+         this.importButtonLayoutControlItem.Location = new System.Drawing.Point(1316, 825);
          this.importButtonLayoutControlItem.Name = "importButtonLayoutControlItem";
-         this.importButtonLayoutControlItem.Size = new System.Drawing.Size(189, 31);
+         this.importButtonLayoutControlItem.Size = new System.Drawing.Size(162, 26);
          this.importButtonLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importButtonLayoutControlItem.TextVisible = false;
          // 
          // emptySpaceItem4
          // 
          this.emptySpaceItem4.AllowHotTrack = false;
-         this.emptySpaceItem4.Location = new System.Drawing.Point(0, 1016);
+         this.emptySpaceItem4.Location = new System.Drawing.Point(0, 825);
          this.emptySpaceItem4.Name = "emptySpaceItem4";
-         this.emptySpaceItem4.Size = new System.Drawing.Size(1536, 31);
+         this.emptySpaceItem4.Size = new System.Drawing.Size(1316, 26);
          this.emptySpaceItem4.TextSize = new System.Drawing.Size(0, 0);
          // 
          // chartPanelLayoutControlItem
          // 
          this.chartPanelLayoutControlItem.Control = this.chartPanelControl;
-         this.chartPanelLayoutControlItem.Location = new System.Drawing.Point(926, 470);
+         this.chartPanelLayoutControlItem.Location = new System.Drawing.Point(793, 382);
          this.chartPanelLayoutControlItem.Name = "chartPanelLayoutControlItem";
-         this.chartPanelLayoutControlItem.Size = new System.Drawing.Size(799, 546);
+         this.chartPanelLayoutControlItem.Size = new System.Drawing.Size(685, 443);
          this.chartPanelLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.chartPanelLayoutControlItem.TextVisible = false;
          // 
          // dataPanelLayoutControlItem
          // 
          this.dataPanelLayoutControlItem.Control = this.dataPanelControl;
-         this.dataPanelLayoutControlItem.Location = new System.Drawing.Point(926, 0);
+         this.dataPanelLayoutControlItem.Location = new System.Drawing.Point(793, 0);
          this.dataPanelLayoutControlItem.Name = "dataPanelLayoutControlItem";
-         this.dataPanelLayoutControlItem.Size = new System.Drawing.Size(799, 458);
+         this.dataPanelLayoutControlItem.Size = new System.Drawing.Size(685, 372);
          this.dataPanelLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.dataPanelLayoutControlItem.TextVisible = false;
          // 
          // splitterItem
          // 
          this.splitterItem.AllowHotTrack = true;
-         this.splitterItem.Location = new System.Drawing.Point(914, 0);
+         this.splitterItem.Location = new System.Drawing.Point(783, 0);
          this.splitterItem.Name = "splitterItem1";
-         this.splitterItem.Size = new System.Drawing.Size(12, 1016);
+         this.splitterItem.Size = new System.Drawing.Size(10, 825);
          // 
          // splitterItem1
          // 
          this.splitterItem1.AllowHotTrack = true;
-         this.splitterItem1.Location = new System.Drawing.Point(926, 458);
+         this.splitterItem1.Location = new System.Drawing.Point(793, 372);
          this.splitterItem1.Name = "item1";
-         this.splitterItem1.Size = new System.Drawing.Size(799, 12);
+         this.splitterItem1.Size = new System.Drawing.Size(685, 10);
          // 
          // separatorControlItem
          // 
          this.separatorControlItem.Control = this.separatorComboBoxEdit;
-         this.separatorControlItem.Location = new System.Drawing.Point(0, 255);
+         this.separatorControlItem.Location = new System.Drawing.Point(0, 209);
          this.separatorControlItem.Name = "separatorControlItem";
-         this.separatorControlItem.Size = new System.Drawing.Size(914, 26);
+         this.separatorControlItem.Size = new System.Drawing.Size(783, 24);
          this.separatorControlItem.Text = "Separator";
-         this.separatorControlItem.TextSize = new System.Drawing.Size(142, 16);
+         this.separatorControlItem.TextSize = new System.Drawing.Size(122, 13);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 291);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 243);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(742, 31);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(636, 26);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.buttonAdd;
-         this.layoutControlItem1.Location = new System.Drawing.Point(742, 291);
+         this.layoutControlItem1.Location = new System.Drawing.Point(636, 243);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(172, 31);
+         this.layoutControlItem1.Size = new System.Drawing.Size(147, 26);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
          // emptySpaceItem5
          // 
          this.emptySpaceItem5.AllowHotTrack = false;
-         this.emptySpaceItem5.Location = new System.Drawing.Point(0, 281);
+         this.emptySpaceItem5.Location = new System.Drawing.Point(0, 233);
          this.emptySpaceItem5.Name = "emptySpaceItem5";
-         this.emptySpaceItem5.Size = new System.Drawing.Size(914, 10);
+         this.emptySpaceItem5.Size = new System.Drawing.Size(783, 10);
          this.emptySpaceItem5.TextSize = new System.Drawing.Size(0, 0);
          // 
          // namingConventionLayout
          // 
          this.namingConventionLayout.Control = this.namingConventionComboBoxEdit;
-         this.namingConventionLayout.Location = new System.Drawing.Point(0, 332);
+         this.namingConventionLayout.Location = new System.Drawing.Point(0, 279);
          this.namingConventionLayout.Name = "namingConventionLayout";
-         this.namingConventionLayout.Size = new System.Drawing.Size(914, 26);
-         this.namingConventionLayout.TextSize = new System.Drawing.Size(142, 16);
+         this.namingConventionLayout.Size = new System.Drawing.Size(783, 24);
+         this.namingConventionLayout.TextSize = new System.Drawing.Size(122, 13);
          // 
          // emptySpaceItem6
          // 
          this.emptySpaceItem6.AllowHotTrack = false;
-         this.emptySpaceItem6.Location = new System.Drawing.Point(0, 322);
+         this.emptySpaceItem6.Location = new System.Drawing.Point(0, 269);
          this.emptySpaceItem6.Name = "emptySpaceItem6";
-         this.emptySpaceItem6.Size = new System.Drawing.Size(914, 10);
+         this.emptySpaceItem6.Size = new System.Drawing.Size(783, 10);
          this.emptySpaceItem6.TextSize = new System.Drawing.Size(0, 0);
          // 
          // ImportConfirmationView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl);
-         this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+         this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
          this.Name = "ImportConfirmationView";
-         this.Size = new System.Drawing.Size(1745, 1067);
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+         this.Size = new System.Drawing.Size(1496, 867);
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

@@ -24,32 +24,6 @@ using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   class SettingsFormatter : IFormatter<DataFormatParameter>
-   {
-      public string Format(DataFormatParameter model)
-      {
-         if (model == null)
-            return "";
-
-         if (model is MappingDataFormatParameter mapping)
-         {
-            var str = $"Units: {mapping.MappedColumn.Unit.SelectedUnit}";
-            if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
-            {
-               str += $", Lloq: {mapping.MappedColumn.LloqColumn}";
-            }
-            if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
-            {
-               str += $", Error: {mapping.MappedColumn.ErrorStdDev}";
-            }
-
-            return str;
-         }
-
-         return " ";
-      }
-   }
-
    public partial class ColumnMappingControl : BaseUserControl, IColumnMappingControl
    {
       private readonly IImageListRetriever _imageListRetriever;
@@ -57,37 +31,14 @@ namespace OSPSuite.UI.Views.Importer
       private readonly GridViewBinder<ColumnMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
-      private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
 
       private readonly RepositoryItemButtonEdit _addButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
 
-      
       private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
-      private void queryDisplayText(QueryDisplayTextEventArgs e)
-      {
-         var withValueOrigin = _gridViewBinder.FocusedElement;
-         if (withValueOrigin == null) return;
-         e.DisplayText = _gridViewBinder.FocusedElement.MappingName;
-      }      
-
-      private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
-      {
-         if (!(model.Source is MappingDataFormatParameter))
-            return _disabledPopupContainerEdit;
-         _presenter.SetSubEditorSettings(model);
-         return _repositoryItemPopupContainerEdit;
-      }
-
-      private void closeUp(CloseUpEventArgs e)
-      {
-         if (e.CloseMode == PopupCloseMode.Cancel)
-            return;
-
-         _presenter.UpdateDescriptrionForModel();
-      }
+      private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
 
       public ColumnMappingControl(IImageListRetriever imageListRetriever)
       {
@@ -119,6 +70,30 @@ namespace OSPSuite.UI.Views.Importer
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
       }
 
+      private void queryDisplayText(QueryDisplayTextEventArgs e)
+      {
+         var withValueOrigin = _gridViewBinder.FocusedElement;
+         if (withValueOrigin == null) return;
+         e.DisplayText = withValueOrigin.MappingName;
+      }
+
+      private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
+      {
+         if (!(model.Source is MappingDataFormatParameter))
+            return _disabledPopupContainerEdit;
+
+         _presenter.SetSubEditorSettings(model);
+         return _repositoryItemPopupContainerEdit;
+      }
+
+      private void closeUp(CloseUpEventArgs e)
+      {
+         if (e.CloseMode == PopupCloseMode.Cancel)
+            return;
+
+         _presenter.UpdateDescriptrionForModel();
+      }
+
       public void FillSubView(IView view)
       {
          _popupControl.FillWith(view);
@@ -131,7 +106,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem editButtonRepository(ColumnMappingDTO model)
       {
-         var repo = new UxRepositoryItemComboBox(columnMappingGridView) { AllowNullInput = DefaultBoolean.True };
+         var repo = new UxRepositoryItemComboBox(columnMappingGridView) {AllowNullInput = DefaultBoolean.True};
          repo.Items.Clear();
 
          repo.Items.Add(new ComboBoxItem(""));
@@ -208,7 +183,8 @@ namespace OSPSuite.UI.Views.Importer
          });
 
 
-         _addButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
+         _addButtonRepository.ButtonClick += (o, e) =>
+            OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
       }
 
@@ -304,7 +280,7 @@ namespace OSPSuite.UI.Views.Importer
 
          if (!(sender is GridView mv))
             return;
-         
+
          var menu = new GridViewColumnMenu(mv);
          menu.Items.Clear();
          menu.Items.Add(new DXMenuItem(Captions.Importer.ResetMapping, onCreateAutoMappingClick));
@@ -331,6 +307,34 @@ namespace OSPSuite.UI.Views.Importer
       private void onClearMappingClick(object sender, EventArgs eventArgs)
       {
          _presenter.ClearMapping();
+      }
+   }
+
+   //TODO move to presenter file and test
+   class SettingsFormatter : IFormatter<DataFormatParameter>
+   {
+      public string Format(DataFormatParameter model)
+      {
+         if (model == null)
+            return "";
+
+         if (model is MappingDataFormatParameter mapping)
+         {
+            var str = $"Units: {mapping.MappedColumn.Unit.SelectedUnit}";
+            if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
+            {
+               str += $", LLOQ: {mapping.MappedColumn.LloqColumn}";
+            }
+
+            if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
+            {
+               str += $", Error: {mapping.MappedColumn.ErrorStdDev}";
+            }
+
+            return str;
+         }
+
+         return " ";
       }
    }
 }

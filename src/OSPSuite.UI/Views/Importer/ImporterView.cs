@@ -2,11 +2,12 @@
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ImporterView
+   public partial class ImporterView : BaseUserControl, IImporterView
    {
       private IImporterPresenter _presenter;
 

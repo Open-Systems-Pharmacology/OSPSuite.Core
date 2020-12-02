@@ -9,7 +9,6 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -70,8 +69,8 @@ namespace OSPSuite.UI.Views.Importer
          contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
          contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
-
       }
+
       private void onCloseTab(object sender, EventArgs e)
       {
          //from DataSetControl.cs
@@ -101,6 +100,7 @@ namespace OSPSuite.UI.Views.Importer
             if (tabName.Text == _contextMenuSelectedTab)
                removePage = true;
          }
+
          _dataPresenter.RefreshTabs();
       }
 
