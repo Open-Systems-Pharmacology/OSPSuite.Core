@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
 
       protected override void Context()
       {
-         sut = new ExcelReader();
+         sut = new ExcelReader(_excelFilePath[0]);
       }
 
       public override void GlobalContext()
