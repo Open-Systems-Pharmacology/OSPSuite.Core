@@ -10,11 +10,13 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImporterView : BaseUserControl, IImporterView
    {
       private IImporterPresenter _presenter;
+      private XtraTabPage _confirmationTabPage;
+      private const int DATA_PAGE_INDEX = 0;
+      private const int CONFIRMATION_PAGE_INDEX = 1;
 
       public ImporterView()
       {
          InitializeComponent();
-         previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
          nanLayoutControlItem.AdjustControlHeight(80);
       }
 
@@ -26,15 +28,6 @@ namespace OSPSuite.UI.Views.Importer
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
       }
 
-      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
-      {
-         return;
-         if (previewXtraTabControl.SelectedTabPage == sourceTabPage) //not the best solution in the world this check here....
-            _presenter.AddDataMappingView();
-         else
-            _presenter.AddConfirmationView();
-      }
-
       public void AttachPresenter(IImporterPresenter presenter)
       {
          _presenter = presenter;
@@ -42,7 +35,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddImporterView(IImporterDataView importerDataView)
       {
-         previewXtraTabControl.FillWith(importerDataView);
+         previewXtraTabControl.AddPageFrom(importerDataView, DATA_PAGE_INDEX);
       }
 
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
@@ -52,28 +45,28 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
-         sourceTabPage.FillWith(columnMappingControl);
+         columnMappingPanelControl.FillWith(columnMappingControl);
       }
 
       public void AddConfirmationView(IImportConfirmationView confirmationView)
       {
-         confirmationTabPage.FillWith(confirmationView);
+         _confirmationTabPage = previewXtraTabControl.AddPageFrom(confirmationView, CONFIRMATION_PAGE_INDEX);
       }
 
       public void EnableConfirmationView()
       {
-         if (!confirmationTabPage.PageEnabled)
-         {
-            confirmationTabPage.PageEnabled = true;
-            confirmationTabPage.PageVisible = true;
-            previewXtraTabControl.SelectedTabPage = confirmationTabPage;
-         }
+         if (_confirmationTabPage.PageEnabled)
+            return;
+
+         _confirmationTabPage.PageEnabled = true;
+         _confirmationTabPage.PageVisible = true;
+         previewXtraTabControl.SelectedTabPage = _confirmationTabPage;
       }
 
       public void DisableConfirmationView()
       {
-         confirmationTabPage.PageEnabled = false;
-         confirmationTabPage.PageVisible = false;
+         _confirmationTabPage.PageEnabled = false;
+         _confirmationTabPage.PageVisible = false;
       }
 
       public void AddNanView(INanView nanView)

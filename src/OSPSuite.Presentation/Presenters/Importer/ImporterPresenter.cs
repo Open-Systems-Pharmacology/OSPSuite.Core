@@ -65,6 +65,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnImportSheets += ImportSheets;
          _nanPresenter.OnNaNSettingsChanged += (s, a) => _columnMappingPresenter.ValidateMapping();
          _view.AddImporterView(_importerDataPresenter.View);
+         _view.AddConfirmationView(_confirmationPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
          _importerDataPresenter.OnTabChanged += onTabChanged;
@@ -86,16 +87,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _importerDataPresenter.SetSettings(metaDataCategories, columnInfos);
          _dataImporterSettings = dataImporterSettings;
-      }
-
-      public void AddConfirmationView()
-      {
-         _view.AddConfirmationView(_confirmationPresenter.View);
-      }
-
-      public void AddDataMappingView()
-      {
-         _view.AddImporterView(_importerDataPresenter.View);
       }
 
       public void SetDataSource(string dataSourceFileName)
@@ -142,7 +133,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);
-         AddConfirmationView();
          View.EnableConfirmationView();
       }
 

@@ -102,5 +102,13 @@ namespace OSPSuite.UI.Views.Importer
 
          _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex);
       }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO CAPTION
+         Caption = "Confirmation";
+         ApplicationIcon = ApplicationIcons.Parameter;
+      }
    }
 }

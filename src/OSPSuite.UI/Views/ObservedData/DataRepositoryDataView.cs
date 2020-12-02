@@ -19,7 +19,7 @@ namespace OSPSuite.UI.Views.ObservedData
 {
    public partial class DataRepositoryDataView : BaseDataRepositoryDataView<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataView
    {
-      protected readonly GridViewColumnUnitsMenuBinder<int> _columUnitsMenuBinder;
+      protected readonly GridViewColumnUnitsMenuBinder<int> _columnUnitsMenuBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly GridColumnCreator _creator = new GridColumnCreator();
       private DataTable _dataTable;
@@ -29,13 +29,14 @@ namespace OSPSuite.UI.Views.ObservedData
       public DataRepositoryDataView(IToolTipCreator tooltipCreator) : base(tooltipCreator)
       {
          InitializeComponent();
-         _columUnitsMenuBinder = new GridViewColumnUnitsMenuBinder<int>(gridView, col => col.AbsoluteIndex);
+         _columnUnitsMenuBinder = new GridViewColumnUnitsMenuBinder<int>(gridView, col => col.AbsoluteIndex);
       }
 
       public void DisableEdition()
       {
          btnAddData.Enabled = false;
          layoutItemAddData.Visibility = LayoutVisibility.Never;
+         emptySpaceItem.Visibility = LayoutVisibility.Never;
          gridView.OptionsBehavior.Editable = false;
          if (_removeColumn != null)
          {
@@ -58,7 +59,7 @@ namespace OSPSuite.UI.Views.ObservedData
       {
          _dataTable = dataTable;
          base.BindTo(dataTable);
-         _columUnitsMenuBinder.BindTo(_presenter);
+         _columnUnitsMenuBinder.BindTo(_presenter);
          createDataRemoveColumn();
       }
 
