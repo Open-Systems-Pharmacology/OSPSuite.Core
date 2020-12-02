@@ -15,14 +15,20 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
+         nanLayoutControlItem.AdjustControlHeight(80);
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
          sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
-         nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
+         return;
          if (previewXtraTabControl.SelectedTabPage == sourceTabPage) //not the best solution in the world this check here....
             _presenter.AddDataMappingView();
          else
@@ -46,12 +52,14 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
       {
-         columnMappingPanelControl.FillWith(columnMappingControl);
+         sourceTabPage.FillWith(columnMappingControl);
       }
+
       public void AddConfirmationView(IImportConfirmationView confirmationView)
       {
-         previewXtraTabControl.FillWith(confirmationView);
+         confirmationTabPage.FillWith(confirmationView);
       }
+
       public void EnableConfirmationView()
       {
          if (!confirmationTabPage.PageEnabled)

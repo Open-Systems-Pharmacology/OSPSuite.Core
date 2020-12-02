@@ -1,7 +1,4 @@
-﻿using System.Windows.Forms;
-using OSPSuite.Assets;
-
-namespace OSPSuite.UI.Views.Importer
+﻿namespace OSPSuite.UI.Views.Importer
 {
    partial class NanView
    {
@@ -36,8 +33,8 @@ namespace OSPSuite.UI.Views.Importer
          this.indicatorTextEdit = new DevExpress.XtraEditors.TextEdit();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.indicatorLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.actionLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -45,8 +42,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.indicatorTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.indicatorLayoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.actionLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
@@ -58,27 +55,27 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(550, 70);
+         this.rootLayoutControl.Size = new System.Drawing.Size(556, 79);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // actionImageComboBoxEdit
          // 
-         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(78, 44);
+         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(79, 36);
          this.actionImageComboBoxEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.actionImageComboBoxEdit.Name = "actionImageComboBoxEdit";
          this.actionImageComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(444, 20);
+         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(465, 20);
          this.actionImageComboBoxEdit.StyleController = this.rootLayoutControl;
          this.actionImageComboBoxEdit.TabIndex = 5;
          // 
          // indicatorTextEdit
          // 
-         this.indicatorTextEdit.Location = new System.Drawing.Point(78, 10);
+         this.indicatorTextEdit.Location = new System.Drawing.Point(79, 12);
          this.indicatorTextEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.indicatorTextEdit.Name = "indicatorTextEdit";
-         this.indicatorTextEdit.Size = new System.Drawing.Size(444, 20);
+         this.indicatorTextEdit.Size = new System.Drawing.Size(465, 20);
          this.indicatorTextEdit.StyleController = this.rootLayoutControl;
          this.indicatorTextEdit.TabIndex = 4;
          this.indicatorTextEdit.ToolTip = "Set a string to indicate how NaN should be detected";
@@ -89,44 +86,44 @@ namespace OSPSuite.UI.Views.Importer
          this.Root.GroupBordersVisible = false;
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.indicatorLayoutControlItem,
-            this.emptySpaceItem1,
-            this.actionLayoutControlItem});
+            this.actionLayoutControlItem,
+            this.emptySpaceItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(533, 74);
+         this.Root.Size = new System.Drawing.Size(556, 79);
          this.Root.TextVisible = false;
          // 
          // indicatorLayoutControlItem
          // 
          this.indicatorLayoutControlItem.Control = this.indicatorTextEdit;
          this.indicatorLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.indicatorLayoutControlItem.Name = "NaN indicator";
-         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(515, 24);
+         this.indicatorLayoutControlItem.Name = "indicatorLayoutControlItem";
+         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(536, 24);
          this.indicatorLayoutControlItem.TextSize = new System.Drawing.Size(64, 13);
-         // 
-         // emptySpaceItem1
-         // 
-         this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 24);
-         this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(515, 10);
-         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // actionLayoutControlItem
          // 
          this.actionLayoutControlItem.Control = this.actionImageComboBoxEdit;
-         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 34);
-         this.actionLayoutControlItem.Name = "Action";
-         this.actionLayoutControlItem.Size = new System.Drawing.Size(515, 24);
+         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 24);
+         this.actionLayoutControlItem.Name = "actionLayoutControlItem";
+         this.actionLayoutControlItem.Size = new System.Drawing.Size(536, 24);
          this.actionLayoutControlItem.TextSize = new System.Drawing.Size(64, 13);
          // 
-         // NanView
+         // emptySpaceItem1
+         // 
+         this.emptySpaceItem1.AllowHotTrack = false;
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 48);
+         this.emptySpaceItem1.Name = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(536, 11);
+         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // NanViewNew
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.rootLayoutControl);
          this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
          this.Name = "NanView";
-         this.Size = new System.Drawing.Size(550, 70);
+         this.Size = new System.Drawing.Size(556, 79);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
@@ -134,8 +131,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.indicatorTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.indicatorLayoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.actionLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -147,7 +144,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraEditors.TextEdit indicatorTextEdit;
       private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraLayout.LayoutControlItem indicatorLayoutControlItem;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlItem actionLayoutControlItem;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
    }
 }

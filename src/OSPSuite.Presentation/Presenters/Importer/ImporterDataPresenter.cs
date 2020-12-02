@@ -38,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public DataTable GetSheet(string tabName)
       {
+         //TODO: We are converting these data everytime the user click on a tab. This should be done once only
          return _dataSourceFile.DataSheets.Contains(tabName) ? _dataSourceFile.DataSheets[tabName].RawData.AsDataTable() : new DataTable();
       }
       public void ImportDataForConfirmation()

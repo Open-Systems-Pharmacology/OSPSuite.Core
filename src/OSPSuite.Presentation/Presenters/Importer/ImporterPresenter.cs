@@ -26,12 +26,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSourceFile _dataSourceFile;
 
       public ImporterPresenter(
-         IImporterView view, 
-         IDataSetToDataRepositoryMapper dataRepositoryMapper, 
-         IImporter importer, 
-         INanPresenter nanPresenter, 
-         IImporterDataPresenter importerDataPresenter, 
-         IImportConfirmationPresenter confirmationPresenter, 
+         IImporterView view,
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IImporter importer,
+         INanPresenter nanPresenter,
+         IImporterDataPresenter importerDataPresenter,
+         IImportConfirmationPresenter confirmationPresenter,
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator
@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
          _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
          _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
-         _sourceFilePresenter.CheckBeforeSelectFile = () => 
+         _sourceFilePresenter.CheckBeforeSelectFile = () =>
             !_dataSource.DataSets.Any() || dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
 
          _view.AddColumnMappingControl(columnMappingPresenter.View);
@@ -59,11 +59,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _confirmationPresenter.OnDataSetSelected += plotDataSet;
          _confirmationPresenter.OnNamingConventionChanged += (s, a) =>
          {
-            _dataSource.SetNamingConvention(a.NamingConvention); 
+            _dataSource.SetNamingConvention(a.NamingConvention);
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
          };
          _importerDataPresenter.OnImportSheets += ImportSheets;
-         _nanPresenter.OnNaNSettingsChanged += (s,a) =>_columnMappingPresenter.ValidateMapping();
+         _nanPresenter.OnNaNSettingsChanged += (s, a) => _columnMappingPresenter.ValidateMapping();
          _view.AddImporterView(_importerDataPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
@@ -77,9 +77,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
          _confirmationPresenter.PlotDataRepository(dataRepository);
-      } 
-      
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      }
+
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings)
       {
          _columnInfos = columnInfos;
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
@@ -92,6 +93,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.AddConfirmationView(_confirmationPresenter.View);
       }
 
+      public void AddDataMappingView()
+      {
+         _view.AddImporterView(_importerDataPresenter.View);
+      }
+
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
@@ -99,11 +105,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          SetSourceFile(dataSourceFileName);
          _view.DisableConfirmationView();
       }
+
       public void ImportData(object sender, EventArgs e)
       {
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs {DataSource = _dataSource});
       }
-
 
       public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
@@ -160,10 +166,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.onCompletedMapping();
          _dataSource.DataSets.Clear();
          ImportSheets(this, new ImportSheetsEventArgs {DataSourceFile = _dataSourceFile, Sheets = _importerDataPresenter.Sheets});
-      }
-      public void AddDataMappingView()
-      {
-         _view.AddImporterView(_importerDataPresenter.View);
       }
 
       public void SetSourceFile(string path)

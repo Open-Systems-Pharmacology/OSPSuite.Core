@@ -1,26 +1,17 @@
-﻿using DevExpress.XtraEditors;
+﻿using DevExpress.XtraEditors.Controls;
+using OSPSuite.Assets;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DevExpress.XtraEditors.Controls;
-using OSPSuite.Assets;
-using OSPSuite.Infrastructure.Import.Core;
 
 namespace OSPSuite.UI.Views.Importer
 {
    public partial class NanView : BaseUserControl, INanView
    {
       private INanPresenter _presenter;
-      
+
       public NanView()
       {
          InitializeComponent();
@@ -56,6 +47,14 @@ namespace OSPSuite.UI.Views.Importer
       public void AttachPresenter(INanPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO MVOE TO CONSTANTS
+         indicatorLayoutControlItem.Text = "NaN indicator".FormatForLabel();
+         actionLayoutControlItem.Text = "Action".FormatForLabel();
       }
    }
 }
