@@ -97,6 +97,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
 
          SetSourceFile(dataSourceFileName);
+         AddDataMappingView();
          _view.DisableConfirmationView();
       }
       public void ImportData(object sender, EventArgs e)
