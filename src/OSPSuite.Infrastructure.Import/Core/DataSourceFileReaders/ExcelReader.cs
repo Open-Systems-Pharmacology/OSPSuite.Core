@@ -35,11 +35,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          _formulaEvaluator = _book.GetCreationHelper().CreateFormulaEvaluator();
       }
 
-      public ExcelReader(bool columnOffsetOn = true)
-      {
-         _columnOffsetOn = columnOffsetOn;
-      }
-
       public void LoadNewWorkbook(string path, bool columnOffsetOn = true)
       {
          using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
