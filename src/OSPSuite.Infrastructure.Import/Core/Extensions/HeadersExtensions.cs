@@ -7,7 +7,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Extensions
    {
       public static string FindHeader(this IEnumerable<string> me, string match)
       {
-         return me.FirstOrDefault(h => h.ToUpper().StartsWith(match.ToUpper()));
+         return me.Where(h => h.ToUpper().StartsWith(match.ToUpper())).OrderBy(h => h.Length).FirstOrDefault();
       }
    }
 }
