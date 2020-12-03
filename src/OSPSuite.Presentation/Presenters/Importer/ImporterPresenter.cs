@@ -123,10 +123,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
             })
          );
 
+
          _dataSource.SetMappings(args.DataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         _dataSource.AddSheets(args.Sheets, _columnInfos);
+         try
+         {
+            _dataSource.AddSheets(args.Sheets, _columnInfos);
+         }
+         catch (Exception e)
+         {
+            _view.ShowErrorMessage(e.Message);
+            return;
+         }
+
 
          var keys = new List<string>()
          {

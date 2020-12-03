@@ -1,4 +1,6 @@
-﻿using DevExpress.XtraTab;
+﻿using System.Windows.Forms;
+using DevExpress.XtraEditors;
+using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -26,6 +28,11 @@ namespace OSPSuite.UI.Views.Importer
             _presenter.AddDataMappingView();
          else
             _presenter.AddConfirmationView();
+      }
+
+      public void ShowErrorMessage(string message)
+      {
+         XtraMessageBox.Show(this, message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
