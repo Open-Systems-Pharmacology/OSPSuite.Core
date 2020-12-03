@@ -17,13 +17,21 @@ namespace OSPSuite.R.MinimalImplementations
 
          yield return PathElementId.Molecule;
 
-         //Container is defined? no need to use TopContainer
-         if (!pathElements.Contains(PathElementId.Container))
+         if (shouldDisplayTopContainer(pathElements))
             yield return PathElementId.TopContainer;
 
          yield return PathElementId.Container;
          yield return PathElementId.BottomCompartment;
          yield return PathElementId.Name;
+      }
+
+      private static bool shouldDisplayTopContainer(PathElements pathElements)
+      {
+         if (pathElements.Contains(PathElementId.Container))
+            return false;
+
+         //We do not display top container if it the organism. Otherwise we do
+         return !string.Equals(pathElements[PathElementId.TopContainer].DisplayName, Constants.ORGANISM);
       }
    }
 }
