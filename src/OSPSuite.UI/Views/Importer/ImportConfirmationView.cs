@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DevExpress.XtraEditors;
 using DevExpress.XtraGrid.Columns;
 using OSPSuite.Assets;
@@ -21,21 +22,33 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
       private IImportConfirmationPresenter _presenter;
+      private List<string> _namingConventionOptions = new List<string>();
 
       public ImportConfirmationView()
       {
          InitializeComponent();
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
-            namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+            {
+               var current = namingConventionComboBoxEdit.EditValue.ToString();
+               namingConventionComboBoxEdit.EditValue += (current.Length > 0 ? separatorComboBoxEdit.SelectedItem.ToString() : "") + string.Join(
+                  separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"));
+            }
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
          keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
          separatorComboBoxEdit.Properties.Items.Clear();
-         separatorComboBoxEdit.Properties.Items.AddRange(new [] {",", ".", "-", "_"}); //TODO: Bring the values from some configuration??
+         separatorComboBoxEdit.Properties.Items.AddRange(new [] {".", ",", "-", "_"}); //TODO: Bring the values from some configuration??
          separatorComboBoxEdit.SelectedIndex = 0;
+         separatorComboBoxEdit.TextChanged += (s, a) => OnEvent(() =>
+         {
+            setNamingConventions(
+               _namingConventionOptions.Select(nc => Regex.Replace(nc, @"}[,.-_]*{", $"}}{separatorComboBoxEdit.SelectedText}{{")),
+                  namingConventionComboBoxEdit.EditValue.ToString()
+            );
+         });
          separatorControlItem.Text = Captions.Importer.Separator;
       }
 
@@ -44,7 +57,16 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
+
+
       public void SetNamingConventions(IEnumerable<string> options, string selected = null)
+      {
+         _namingConventionOptions = options.ToList();
+         setNamingConventions(_namingConventionOptions, selected);
+         namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
+      }
+
+      private void setNamingConventions(IEnumerable<string> options, string selected)
       {
          namingConventionComboBoxEdit.Properties.Items.Clear();
          namingConventionComboBoxEdit.Properties.Items.AddRange(options.ToArray());
@@ -54,9 +76,8 @@ namespace OSPSuite.UI.Views.Importer
          }
          else
          {
-            namingConventionComboBoxEdit.EditValue = options.First();
+            namingConventionComboBoxEdit.EditValue = _namingConventionOptions.First();
          }
-         namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
       }
 
       public void SetDataSetNames(IEnumerable<string> names)
