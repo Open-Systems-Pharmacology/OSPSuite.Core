@@ -388,6 +388,10 @@ namespace OSPSuite.Assets
          public static readonly string PreviewLayout = "Preview";
          public static readonly string SourceLayout = "Source";
          public static readonly string Separator = "Separator";
+         public static readonly string Dimension = "Dimension";
+         public static readonly string Unit = "Unit";
+         public static readonly string AssignColumn = "Assign a column";
+         public static readonly string Column = "Column";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
