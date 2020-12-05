@@ -204,7 +204,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
       {
-         _builderCache.Add(modelObject, builder);
+         _builderCache[modelObject] = builder;
       }
 
       public virtual IEnumerable<IBuildingBlock> AllBuildingBlocks
