@@ -1,9 +1,9 @@
 ﻿using System;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Presentation.Views;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -87,16 +87,5 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
          View.ShowErrorTypes();
       }
-   }
-
-   public interface IMappingParameterEditorView : IView<IMappingParameterEditorPresenter>
-   {
-      void HideAll();
-      void ShowUnits();
-      void ShowLloq();
-      void ShowErrorTypes();
-      void FillUnitsView(IView view);
-      void FillLloqView(IView view);
-      void FillErrorView(IView view);
    }
 }

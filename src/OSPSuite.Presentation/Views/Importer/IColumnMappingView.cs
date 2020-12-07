@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Views.Importer
       }
    }
 
-   public interface IColumnMappingControl : IView<IColumnMappingPresenter>
+   public interface IColumnMappingView : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
       void RefreshData();

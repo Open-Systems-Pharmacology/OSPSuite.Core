@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using DevExpress.XtraEditors;
-using DevExpress.XtraGrid.Columns;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
@@ -25,6 +21,7 @@ namespace OSPSuite.UI.Views.Importer
       public ImportConfirmationView()
       {
          InitializeComponent();
+
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
             namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
@@ -34,11 +31,10 @@ namespace OSPSuite.UI.Views.Importer
          keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
          separatorComboBoxEdit.Properties.Items.Clear();
-         separatorComboBoxEdit.Properties.Items.AddRange(new [] {",", ".", "-", "_"}); //TODO: Bring the values from some configuration??
+         separatorComboBoxEdit.Properties.Items.AddRange(new[] { ",", ".", "-", "_" }); //TODO: Bring the values from some configuration??
          separatorComboBoxEdit.SelectedIndex = 0;
          separatorControlItem.Text = Captions.Importer.Separator;
       }
-
       public void AttachPresenter(IImportConfirmationPresenter presenter)
       {
          _presenter = presenter;
@@ -75,7 +71,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
-         this.DoWithinExceptionHandler( () => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
+         this.DoWithinExceptionHandler(() => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
       }
 
       public void SetNamingConventionKeys(IEnumerable<string> keys)
@@ -104,7 +100,15 @@ namespace OSPSuite.UI.Views.Importer
 
          if (listBox.SelectedValue == null) return;  //here if null we have to empty the GUI
 
-         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
+         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex);
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO CAPTION
+         Caption = "Confirmation";
+         ApplicationIcon = ApplicationIcons.Parameter;
       }
    }
 }

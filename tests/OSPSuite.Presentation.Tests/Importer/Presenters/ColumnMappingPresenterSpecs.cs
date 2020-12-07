@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public abstract class ConcernForColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
    {
       protected IDataFormat _basicFormat;
-      protected IColumnMappingControl _view;
+      protected IColumnMappingView _view;
       protected IImporter _importer;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                //new MetaDataFormatParameter("Sp", "Species"),
                new GroupByDataFormatParameter("Study id")
             });
-         _view = A.Fake<IColumnMappingControl>();
+         _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()

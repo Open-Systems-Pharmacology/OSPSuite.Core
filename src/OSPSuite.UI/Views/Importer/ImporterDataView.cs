@@ -5,11 +5,11 @@ using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -32,6 +32,19 @@ namespace OSPSuite.UI.Views.Importer
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO move to constant file
+         Caption = "Source";
+         btnImport.InitWithImage(ApplicationIcons.Import, "Load current sheet");
+         btnImportAll.InitWithImage(ApplicationIcons.Import, "Load all sheets");
+         layoutItemImportAll.AdjustLargeButtonSize();
+         layoutItemImportCurrent.AdjustLargeButtonSize();
+         ApplicationIcon = ApplicationIcons.Excel;
+
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
@@ -66,12 +79,13 @@ namespace OSPSuite.UI.Views.Importer
 
          var contextMenu = new DXPopupMenu();
          contextMenu.Items.Clear();
+         //TODO MOVE CAPTIONS TO CAPTION FILE PLEASE
          contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
          contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
          contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
-
       }
+
       private void onCloseTab(object sender, EventArgs e)
       {
          //from DataSetControl.cs
@@ -101,6 +115,7 @@ namespace OSPSuite.UI.Views.Importer
             if (tabName.Text == _contextMenuSelectedTab)
                removePage = true;
          }
+
          _dataPresenter.RefreshTabs();
       }
 

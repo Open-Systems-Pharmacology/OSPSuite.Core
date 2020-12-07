@@ -11,7 +11,7 @@ using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
-   public class ColumnMappingPresenter : AbstractPresenter<IColumnMappingControl, IColumnMappingPresenter>, IColumnMappingPresenter
+   public class ColumnMappingPresenter : AbstractPresenter<IColumnMappingView, IColumnMappingPresenter>, IColumnMappingPresenter
    {
       private IDataFormat _format;
       private List<ColumnMappingDTO> _mappings;
@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ColumnMappingDTO _currentModel;
       public ColumnMappingPresenter
       (
-         IColumnMappingControl view,
+         IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter
       ) : base(view)
@@ -352,6 +352,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             );
       }
 
+      //TODO This method shpould take a mapping as parameter. The view must know if from the databinder
       public ToolTipDescription ToolTipDescriptionFor(int index)
       {
          var description = _mappings.ElementAt(index).MappingName;

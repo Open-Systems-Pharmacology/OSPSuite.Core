@@ -11,15 +11,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       public UnformattedData TabData { get; set; }
    }
+
    public class ImportSheetsEventArgs : EventArgs
    {
       public IDataSourceFile DataSourceFile { get; set; }
       public Cache<string, IDataSheet> Sheets { get; set; }
    }
+
    public class FormatChangedEventArgs : EventArgs
    {
       public IDataFormat Format { get; set; }
    }
+
    public interface IImporterDataPresenter : IPresenter<IImporterDataView>
    {
       void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats);
@@ -45,7 +48,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
       void ImportDataForConfirmation(string sheetName);
-      void RefreshTabs();//should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
+
+      //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
+      void RefreshTabs(); 
+
       Cache<string, IDataSheet> Sheets { get; }
    }
 }

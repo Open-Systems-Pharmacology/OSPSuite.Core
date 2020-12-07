@@ -2,30 +2,30 @@
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ImporterView
+   public partial class ImporterView : BaseUserControl, IImporterView
    {
       private IImporterPresenter _presenter;
+      private XtraTabPage _confirmationTabPage;
+      private const int DATA_PAGE_INDEX = 0;
+      private const int CONFIRMATION_PAGE_INDEX = 1;
 
       public ImporterView()
       {
          InitializeComponent();
-         previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
-         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
-         previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
          nanLayoutControlItem.AdjustControlHeight(80);
       }
 
-      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
+      public override void InitializeResources()
       {
-         if (previewXtraTabControl.SelectedTabPage == sourceTabPage) //not the best solution in the world this check here....
-            _presenter.AddDataMappingView();
-         else
-            _presenter.AddConfirmationView();
+         base.InitializeResources();
+         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
+         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddImporterView(IImporterDataView importerDataView)
       {
-         previewXtraTabControl.FillWith(importerDataView);
+         previewXtraTabControl.AddPageFrom(importerDataView, DATA_PAGE_INDEX);
       }
 
       public void AddSourceFileControl(ISourceFileControl sourceFileControl)
@@ -43,28 +43,30 @@ namespace OSPSuite.UI.Views.Importer
          sourceFilePanelControl.FillWith(sourceFileControl);
       }
 
-      public void AddColumnMappingControl(IColumnMappingControl columnMappingControl)
+      public void AddColumnMappingControl(IColumnMappingView columnMappingView)
       {
-         columnMappingPanelControl.FillWith(columnMappingControl);
+         columnMappingPanelControl.FillWith(columnMappingView);
       }
+
       public void AddConfirmationView(IImportConfirmationView confirmationView)
       {
-         previewXtraTabControl.FillWith(confirmationView);
+         _confirmationTabPage = previewXtraTabControl.AddPageFrom(confirmationView, CONFIRMATION_PAGE_INDEX);
       }
+
       public void EnableConfirmationView()
       {
-         if (!confirmationTabPage.PageEnabled)
-         {
-            confirmationTabPage.PageEnabled = true;
-            confirmationTabPage.PageVisible = true;
-            previewXtraTabControl.SelectedTabPage = confirmationTabPage;
-         }
+         if (_confirmationTabPage.PageEnabled)
+            return;
+
+         _confirmationTabPage.PageEnabled = true;
+         _confirmationTabPage.PageVisible = true;
+         previewXtraTabControl.SelectedTabPage = _confirmationTabPage;
       }
 
       public void DisableConfirmationView()
       {
-         confirmationTabPage.PageEnabled = false;
-         confirmationTabPage.PageVisible = false;
+         _confirmationTabPage.PageEnabled = false;
+         _confirmationTabPage.PageVisible = false;
       }
 
       public void AddNanView(INanView nanView)
