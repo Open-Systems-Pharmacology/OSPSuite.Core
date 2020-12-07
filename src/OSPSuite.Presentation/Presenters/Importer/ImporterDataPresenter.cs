@@ -15,8 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      private Cache<string, IDataSheet> _sheets = new Cache<string, IDataSheet>();
-      public Cache<string, IDataSheet> Sheets { get => _sheets; }
+      public Cache<string, IDataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
@@ -30,6 +29,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       ) : base(dataView)
       {
          _importer = importer;
+         Sheets = new Cache<string, IDataSheet>();
       }
 
       public List<string> GetSheetNames()
@@ -45,9 +45,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, IDataSheet>();
          foreach (var element in _dataSourceFile.DataSheets.KeyValues)
          {
-            if (!_sheets.Keys.Contains(element.Key))
+            if (!Sheets.Keys.Contains(element.Key))
             {
-               _sheets.Add(element.Key, element.Value);
+               Sheets.Add(element.Key, element.Value);
                sheets.Add(element.Key, element.Value);
             }
          }
@@ -71,9 +71,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var sheets = new Cache<string, IDataSheet>();
 
-         if (!_sheets.Keys.Contains(sheetName))
+         if (!Sheets.Keys.Contains(sheetName))
          {
-            _sheets.Add(sheetName, getSingleSheet(sheetName));
+            Sheets.Add(sheetName, getSingleSheet(sheetName));
             sheets.Add(sheetName, getSingleSheet(sheetName));
          }
          if (sheets.Count == 0) return;
@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return null;
-         _sheets = new Cache<string, IDataSheet>();
+         Sheets = new Cache<string, IDataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);

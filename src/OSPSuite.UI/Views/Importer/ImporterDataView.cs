@@ -18,6 +18,8 @@ namespace OSPSuite.UI.Views.Importer
       private IImporterDataPresenter _dataPresenter;
 
       private string _contextMenuSelectedTab;
+      private bool sheetImportedFlag;
+      private bool allSheetsImportedFlag;
 
       public ImporterDataView()
       {
@@ -29,6 +31,8 @@ namespace OSPSuite.UI.Views.Importer
          importerTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
          importerTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
          _contextMenuSelectedTab = "";
+         sheetImportedFlag = false;
+         allSheetsImportedFlag = false;
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
@@ -41,7 +45,8 @@ namespace OSPSuite.UI.Views.Importer
 
       public void EnableImportButtons()
       {
-         btnImport.Enabled = true;
+         if (!sheetImportedFlag)
+            btnImport.Enabled = true;
          btnImportAll.Enabled = true;
       }
 
@@ -111,8 +116,21 @@ namespace OSPSuite.UI.Views.Importer
 
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
       {
-         if (importerTabControl.SelectedTabPage != null) //not the best solution in the world this check here....
-            _dataPresenter.SelectTab(e.Page.Text);
+         if (importerTabControl.SelectedTabPage == null) return;
+
+         if (_dataPresenter.Sheets.Keys.Contains(e.Page.Text))
+         {
+            btnImport.Enabled = false;
+            btnImport.Text = "Sheet already imported";
+            sheetImportedFlag = true;
+         }
+         else
+         {
+            btnImport.Text = "Load current sheet";
+            btnImport.Enabled = true;
+            sheetImportedFlag = false;
+         }
+         _dataPresenter.SelectTab(e.Page.Text);
       }
 
       public void SetGridSource(string tabName = null)
