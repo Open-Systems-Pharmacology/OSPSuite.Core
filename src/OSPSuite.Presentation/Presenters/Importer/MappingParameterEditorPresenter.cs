@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
-         IUnitsEditorPresenter unitsEditorPresenter,,
+         IOptionsEditorPresenter unitsEditorPresenter,
          IOptionsEditorPresenter lloqEditorPresenter,
          IOptionsEditorPresenter errorEditorPresenter
       ) : base(view)
@@ -87,16 +87,5 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
          View.ShowErrorTypes();
       }
-   }
-   
-   public interface IMappingParameterEditorView : IView<IMappingParameterEditorPresenter>
-   {
-      void HideAll();
-      void ShowUnits();
-      void ShowLloq();
-      void ShowErrorTypes();
-      void FillUnitsView(IView view);
-      void FillLloqView(IView view);
-      void FillErrorView(IView view);
    }
 }

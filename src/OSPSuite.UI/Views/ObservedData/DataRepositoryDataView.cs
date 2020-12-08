@@ -46,19 +46,6 @@ namespace OSPSuite.UI.Views.ObservedData
          _editable = false;
       }
 
-      public void DisableEdition()
-      {
-         btnAddData.Enabled = false;
-         layoutItemAddData.Visibility = LayoutVisibility.Never;
-         gridView.OptionsBehavior.Editable = false;
-         if (_removeColumn != null)
-         {
-            gridView.Columns.Remove(_removeColumn);
-         }
-
-         _editable = false;
-      }
-
       public override void InitializeBinding()
       {
          base.InitializeBinding();

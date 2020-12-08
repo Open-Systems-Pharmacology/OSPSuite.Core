@@ -1,4 +1,6 @@
-﻿﻿using DevExpress.XtraTab;
+﻿﻿using System.Windows.Forms;
+ using DevExpress.XtraEditors;
+ using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -17,19 +19,10 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         previewXtraTabControl.SelectedPageChanged += (s, e) => OnEvent(onSelectedPageChanged, s, e);
          sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
          nanLayoutControlItem.AdjustControlHeight(80);
-      }
-
-      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
-      {
-         if (previewXtraTabControl.SelectedTabPage == sourceTabPage) //not the best solution in the world this check here....
-            _presenter.AddDataMappingView();
-         else
-            _presenter.AddConfirmationView();
       }
 
       public void ShowErrorMessage(string message)
