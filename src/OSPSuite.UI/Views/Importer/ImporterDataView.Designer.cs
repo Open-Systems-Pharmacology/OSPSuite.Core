@@ -81,7 +81,6 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImport.Size = new System.Drawing.Size(246, 54);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
-         this.btnImport.Text = "Load current sheet";
          // 
          // btnImportAll
          // 
@@ -91,7 +90,6 @@ namespace OSPSuite.UI.Views.Importer
          this.btnImportAll.Size = new System.Drawing.Size(198, 54);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
-         this.btnImportAll.Text = "Load all sheets";
          // 
          // importerTabControl
          // 

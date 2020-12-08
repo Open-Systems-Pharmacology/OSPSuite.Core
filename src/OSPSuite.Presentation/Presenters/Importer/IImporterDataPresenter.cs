@@ -42,6 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ImportDataForConfirmation();
       void onMissingMapping();
       void onCompletedMapping();
+      void DisableImportedSheets();
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
       void ImportDataForConfirmation(string sheetName);

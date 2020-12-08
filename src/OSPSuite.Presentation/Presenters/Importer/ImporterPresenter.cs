@@ -111,6 +111,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          try
          {
             importSheets(args.DataSourceFile, args.Sheets);
+            _importerDataPresenter.DisableImportedSheets();
          }
          catch (Exception e)
          {
@@ -198,6 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _sourceFilePresenter.SetFilePath(path);
          _dataSourceFile = _importerDataPresenter.SetDataSource(path);
+         _columnMappingPresenter.ValidateMapping();
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

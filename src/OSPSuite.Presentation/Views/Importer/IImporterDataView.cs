@@ -10,5 +10,8 @@ namespace OSPSuite.Presentation.Views.Importer
       void DisableImportButtons();
       void AddTabs(List<string> tabNames);
       void ClearTabs();
+      void DisableImportCurrentSheet();
+      void DisableImportAllSheets();
+      void ResetImportButtons();
    }
 }

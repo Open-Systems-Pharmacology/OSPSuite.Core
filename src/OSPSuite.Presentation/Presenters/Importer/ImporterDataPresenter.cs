@@ -6,6 +6,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 { 
@@ -106,6 +107,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
+         View.ResetImportButtons();
          return _dataSourceFile;
       }
 
@@ -133,6 +135,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
+      }
+      public void DisableImportedSheets()
+      {
+         View.DisableImportCurrentSheet();
+
+         if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count())
+            View.DisableImportAllSheets();
       }
    }
 }

@@ -5,11 +5,11 @@ using System.Windows.Forms;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -20,6 +20,7 @@ namespace OSPSuite.UI.Views.Importer
       private string _contextMenuSelectedTab;
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
+      private bool allImportButtonsDisabledFlag;
 
       public ImporterDataView()
       {
@@ -35,6 +36,9 @@ namespace OSPSuite.UI.Views.Importer
          allSheetsImportedFlag = false;
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
+         btnImportAll.Text = Captions.Importer.LoadAllSheets;
+         btnImport.Text = Captions.Importer.LoadCurrentSheet;
+         allImportButtonsDisabledFlag = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
       }
 
@@ -45,13 +49,16 @@ namespace OSPSuite.UI.Views.Importer
 
       public void EnableImportButtons()
       {
+         allImportButtonsDisabledFlag = false;
          if (!sheetImportedFlag)
             btnImport.Enabled = true;
-         btnImportAll.Enabled = true;
+         if (!allSheetsImportedFlag)
+            btnImportAll.Enabled = true;
       }
 
       public void DisableImportButtons()
       {
+         allImportButtonsDisabledFlag = true;
          btnImport.Enabled = false;
          btnImportAll.Enabled = false;
       }
@@ -71,8 +78,8 @@ namespace OSPSuite.UI.Views.Importer
 
          var contextMenu = new DXPopupMenu();
          contextMenu.Items.Clear();
-         contextMenu.Items.Add(new DXMenuItem("close all tabs but this", onCloseAllButThisTab));
-         contextMenu.Items.Add(new DXMenuItem("close all tabs to the right", onCloseAllTabsToTheRight));
+         contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsButThis, onCloseAllButThisTab));
+         contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsToTheRight, onCloseAllTabsToTheRight));
          contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
 
@@ -114,27 +121,22 @@ namespace OSPSuite.UI.Views.Importer
          _dataPresenter.ImportDataForConfirmation(importerTabControl.SelectedTabPage.Text);
       }
 
-      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e) //actually do we need the event arguments here?
+      private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e)
       {
          if (importerTabControl.SelectedTabPage == null) return;
 
          if (_dataPresenter.Sheets.Keys.Contains(e.Page.Text))
-         {
-            btnImport.Enabled = false;
-            btnImport.Text = "Sheet already imported";
-            sheetImportedFlag = true;
-         }
+            DisableImportCurrentSheet();
          else
-         {
-            btnImport.Text = "Load current sheet";
-            btnImport.Enabled = true;
-            sheetImportedFlag = false;
-         }
+            enableImportCurrentSheet();
+
          _dataPresenter.SelectTab(e.Page.Text);
       }
 
       public void SetGridSource(string tabName = null)
       {
+         allImportButtonsDisabledFlag = false;
+
          dataViewingGridControl.DataSource = null;
          dataViewingGridView.Columns.Clear();
 
@@ -156,6 +158,42 @@ namespace OSPSuite.UI.Views.Importer
       public void ClearTabs()
       {
          importerTabControl.TabPages.Clear();
+      }
+
+      public void DisableImportCurrentSheet()
+      {
+         btnImport.Enabled = false;
+         btnImport.Text = Captions.Importer.SheetsAlreadyImported;
+         sheetImportedFlag = true;
+      }
+
+      private void enableImportCurrentSheet()
+      {
+         if (allImportButtonsDisabledFlag) return;
+
+         btnImport.Text = Captions.Importer.LoadCurrentSheet;
+         btnImport.Enabled = true;
+         sheetImportedFlag = false;
+      }
+      private void enableImportAllSheets()
+      {
+         if (allImportButtonsDisabledFlag) return;
+
+         btnImportAll.Enabled = true;
+         btnImportAll.Text = Captions.Importer.LoadAllSheets;
+         allSheetsImportedFlag = false;
+      }
+      public void DisableImportAllSheets()
+      {
+         btnImportAll.Enabled = false;
+         btnImportAll.Text = Captions.Importer.AllSheetsAlreadyImported;
+         allSheetsImportedFlag = true;
+      }
+
+      public void ResetImportButtons()
+      {
+         enableImportCurrentSheet();
+         enableImportAllSheets();
       }
    }
 }

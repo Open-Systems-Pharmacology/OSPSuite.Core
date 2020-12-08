@@ -380,7 +380,6 @@ namespace OSPSuite.Assets
          public static readonly string ErrorColumn = "Error";
          public static readonly string ErrorType = "Error type";
          public static readonly string LoadAllSheets = "Load all sheets";
-         public static readonly string LoadCurrentSheets = "Load current sheet";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string MappingDescription = "Mapping description";
@@ -392,6 +391,12 @@ namespace OSPSuite.Assets
          public static readonly string Unit = "Unit";
          public static readonly string AssignColumn = "Assign a column";
          public static readonly string Column = "Column";
+         public static readonly string LoadCurrentSheet = "Load current sheet";
+         public static readonly string AllSheetsAlreadyImported = "All sheets already imported";
+         public static readonly string SheetsAlreadyImported = "Current sheet already imported";
+         public static readonly string CloseAllTabsButThis = "close all tabs but this";
+         public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
+
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
