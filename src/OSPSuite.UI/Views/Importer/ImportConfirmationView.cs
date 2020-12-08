@@ -27,13 +27,10 @@ namespace OSPSuite.UI.Views.Importer
       public ImportConfirmationView()
       {
          InitializeComponent();
+
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
-            {
-               var current = namingConventionComboBoxEdit.EditValue.ToString();
-               namingConventionComboBoxEdit.EditValue += (current.Length > 0 ? separatorComboBoxEdit.SelectedItem.ToString() : "") + string.Join(
-                  separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"));
-            }
+            namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
@@ -125,7 +122,15 @@ namespace OSPSuite.UI.Views.Importer
 
          if (listBox.SelectedValue == null) return;  //here if null we have to empty the GUI
 
-         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex );
+         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex);
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO CAPTION
+         Caption = "Confirmation";
+         ApplicationIcon = ApplicationIcons.Parameter;
       }
    }
 }

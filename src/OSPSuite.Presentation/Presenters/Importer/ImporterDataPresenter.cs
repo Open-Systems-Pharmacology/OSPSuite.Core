@@ -6,7 +6,6 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 { 
@@ -39,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public DataTable GetSheet(string tabName)
       {
+         //TODO: We are converting these data everytime the user click on a tab. This should be done once only
          return _dataSourceFile.DataSheets.Contains(tabName) ? _dataSourceFile.DataSheets[tabName].RawData.AsDataTable() : new DataTable();
       }
       public void ImportDataForConfirmation()
@@ -71,7 +71,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ImportDataForConfirmation(string sheetName)
       {
          var sheets = new Cache<string, IDataSheet>();
-
          if (!Sheets.Keys.Contains(sheetName))
          {
             Sheets.Add(sheetName, getSingleSheet(sheetName));
@@ -108,6 +107,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
          View.ResetImportButtons();
+
          return _dataSourceFile;
       }
 
@@ -136,6 +136,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ClearTabs();
          View.AddTabs(GetSheetNames());
       }
+
       public void DisableImportedSheets()
       {
          View.DisableImportCurrentSheet();

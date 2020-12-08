@@ -9,7 +9,6 @@ using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -50,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
          _sourceFilePresenter.DirectoryKey = Constants.DirectoryKey.OBSERVED_DATA;
          _sourceFilePresenter.OnSourceFileChanged += (s, e) => SetDataSource(e.FileName);
-         _sourceFilePresenter.CheckBeforeSelectFile = () => 
+         _sourceFilePresenter.CheckBeforeSelectFile = () =>
             !_dataSource.DataSets.Any() || dialogCreator.MessageBoxYesNo(Captions.Importer.OpenFileConfirmation) == ViewResult.Yes;
 
          _view.AddColumnMappingControl(columnMappingPresenter.View);
@@ -78,9 +77,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
          _confirmationPresenter.PlotDataRepository(dataRepository);
-      } 
-      
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      }
+
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings)
       {
          _columnInfos = columnInfos;
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
@@ -88,64 +88,40 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataImporterSettings = dataImporterSettings;
       }
 
-      public void AddConfirmationView()
-      {
-         _view.AddConfirmationView(_confirmationPresenter.View);
-      }
-
       public void SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
 
          SetSourceFile(dataSourceFileName);
-         AddDataMappingView();
          _view.DisableConfirmationView();
       }
+
       public void ImportData(object sender, EventArgs e)
       {
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs {DataSource = _dataSource});
       }
 
-      private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
+      public void ImportSheets(object sender, ImportSheetsEventArgs args)
       {
-         try
-         {
-            importSheets(args.DataSourceFile, args.Sheets);
-            _importerDataPresenter.DisableImportedSheets();
-         }
-         catch (Exception e)
-         {
-            _view.ShowErrorMessage(e.Message);
-            _view.DisableConfirmationView();
-            foreach (var sheetName in args.Sheets.Keys)
-            {
-               _importerDataPresenter.Sheets.Remove(sheetName);
-            }
-         }
-      }
+         if (!args.Sheets.Any()) return;
 
-
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, IDataSheet> sheets)
-      {
-         if (!sheets.Any()) return;
-
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         var mappings = args.DataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            Index = sheetName => args.DataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
          }).Union
          (
-            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            args.DataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => args.DataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
          );
 
-         _dataSource.SetMappings(dataSourceFile.Path, mappings);
+         _dataSource.SetMappings(args.DataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         _dataSource.AddSheets(sheets, _columnInfos);
+         _dataSource.AddSheets(args.Sheets, _columnInfos);
 
          var keys = new List<string>()
          {
@@ -156,7 +132,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);
-         AddConfirmationView();
          View.EnableConfirmationView();
       }
 
@@ -173,26 +148,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
          _importerDataPresenter.onMissingMapping();
-         _view.DisableConfirmationView();
       }
 
-      private void onCompletedMapping(object sender, EventArgs args)
+      private void onCompletedMapping(object sender, EventArgs e)
       {
          _importerDataPresenter.onCompletedMapping();
          _dataSource.DataSets.Clear();
-         try
-         {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets);
-         }
-         catch (Exception e)
-         {
-            _view.ShowErrorMessage(e.Message);
-            _view.DisableConfirmationView();
-         }
-      }
-      public void AddDataMappingView()
-      {
-         _view.AddImporterView(_importerDataPresenter.View);
+         ImportSheets(this, new ImportSheetsEventArgs {DataSourceFile = _dataSourceFile, Sheets = _importerDataPresenter.Sheets});
       }
 
       public void SetSourceFile(string path)

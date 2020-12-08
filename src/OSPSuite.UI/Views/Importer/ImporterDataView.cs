@@ -41,6 +41,19 @@ namespace OSPSuite.UI.Views.Importer
          allImportButtonsDisabledFlag = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
       }
+      
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         //TODO move to constant file
+         Caption = "Source";
+         btnImport.InitWithImage(ApplicationIcons.Import, "Load current sheet");
+         btnImportAll.InitWithImage(ApplicationIcons.Import, "Load all sheets");
+         layoutItemImportAll.AdjustLargeButtonSize();
+         layoutItemImportCurrent.AdjustLargeButtonSize();
+         ApplicationIcon = ApplicationIcons.Excel;
+
+      }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
       {

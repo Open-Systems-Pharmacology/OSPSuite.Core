@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
+using DevExpress.Utils;
+using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -14,6 +19,7 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IUnitsEditorPresenter _presenter;
       private bool _useDimensionSelector;
+      private ImageComboBoxEdit _columnComboBox;
 
       public UnitsEditorView()
       {
@@ -40,6 +46,28 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetParams(bool columnMapping, bool useDimensionSelector)
       {
+         if (columnMapping)
+         {
+            _columnComboBox = createComboBox("Column", onColumnComboBoxTextChanged);
+            _unitComboBox.EditValueChanged += (s, e) => { };
+            _unitComboBox.Visible = false;
+            _columnComboBox.Visible = true;
+         }
+         else
+         {
+            _unitComboBox.EditValueChanged += onUnitComboBoxTextChanged;
+            _columnComboBox = createComboBox("Column", (s, e) => { });
+            if (useDimensionSelector)
+            {
+               //_dimensionComboBox.Visible = true;
+            }
+            else
+            {
+               //_dimensionComboBox.Visible = false;
+            }
+            _unitComboBox.Visible = true;
+            _columnComboBox.Visible = false;
+         }
          _columnsToggleSwitch.IsOn = columnMapping;
          _useDimensionSelector = useDimensionSelector;
          onIsOnChanged(null, null);
@@ -70,12 +98,22 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      private void onDimensionComboBoxTextChanged()
+      private ImageComboBoxEdit createComboBox(string name, EventHandler textChangedHandler)
       {
-         _presenter.SelectDimension(_dimensionsComboBox.EditValue as string);
+         var comboBox = new ImageComboBoxEdit { Name = name };
+         comboBox.Properties.AllowNullInput = DefaultBoolean.False;
+         comboBox.TextChanged += (s, a) => OnEvent(() => textChangedHandler(s, a));
+         comboBox.Enabled = true;
+         Controls.Add(comboBox);
+         return comboBox;
       }
 
-      private void onUnitComboBoxTextChanged()
+      private void onDimensionComboBoxTextChanged(object sender, EventArgs e)
+      {
+         //_presenter.SelectDimension(_dimensionComboBox.EditValue as string);
+      }
+
+      private void onUnitComboBoxTextChanged(object sender, EventArgs e)
       {
          _presenter.SelectUnit(_unitComboBox.EditValue as string);
       }
@@ -86,11 +124,18 @@ namespace OSPSuite.UI.Views.Importer
             _presenter.SelectColumn(_columnComboBox.EditValue as string);
       }
 
+      private void addControlItem(LayoutControl lc, string name, Control control)
+      {
+         var colItem = lc.Root.AddItem();
+         colItem.Name = name;
+         colItem.Control = control;
+      }
+
       public void FillColumnComboBox(IEnumerable<string> cols)
       {
          var columns = cols.ToList();
          _columnComboBox.Properties.Items.Clear();
-         foreach (var column in columns.Where(c => c != null))
+         foreach (var column in columns)
             _columnComboBox.Properties.Items.Add(new ImageComboBoxItem
             {
                Description = column,
@@ -106,7 +151,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             return;
          }
-         _dimensionsComboBox.Properties.Items.Clear();
+         //_dimensionComboBox.Properties.Items.Clear();
          foreach (var dimension in dimensionList)
          {
             var newItem = new ImageComboBoxItem
@@ -114,9 +159,9 @@ namespace OSPSuite.UI.Views.Importer
                Description = dimension.DisplayName,
                Value = dimension.Name
             };
-            _dimensionsComboBox.Properties.Items.Add(newItem);
+            //_dimensionComboBox.Properties.Items.Add(newItem);
          }
-         _dimensionsComboBox.EditValue = defaultValue;
+         //_dimensionComboBox.EditValue = defaultValue;
       }
 
       public void FillUnitComboBox(IEnumerable<Unit> units, string defaultValue)
@@ -135,6 +180,57 @@ namespace OSPSuite.UI.Views.Importer
             Value = unit.Name
          });
       }
+
+      private bool isEnabled() //TODO Resharper
+      {
+         return true;// (_dimensionComboBox == null || !String.IsNullOrEmpty(_dimensionComboBox.Text)) && _unitComboBox.Text != null;
+      }
+
+      private void onOkClick()
+      {
+         _presenter.SetUnit();
+         Parent.Hide();
+      }
+
+      private void onCopyClick() //TODO Resharper
+      {
+         onOkClick();
+
+         /*OnCopyUnitInfo(this, new CopyUnitInfoEventArgs
+         {
+            ColumnName = _importDataColumn.ColumnName,
+            Dimension = selectedDimension,
+            Unit = _selectedUnit
+         });*/
+      }
+
+      public class CopyUnitInfoEventArgs : EventArgs
+      {
+         /// <summary>
+         ///    Name of current column.
+         /// </summary>
+         public string ColumnName { get; set; }
+
+         /// <summary>
+         ///    Dimension of current column.
+         /// </summary>
+         public Dimension Dimension { get; set; }
+
+         /// <summary>
+         ///    Unit of current column.
+         /// </summary>
+         public Unit Unit { get; set; }
+      }
+
+      /// <summary>
+      ///    Handler for event OnCopyUnitInfo.
+      /// </summary>
+      public delegate void CopyUnitInfoHandler(object sender, CopyUnitInfoEventArgs e);
+
+      /// <summary>
+      ///    Event raised when user clicks on copy button.
+      /// </summary>
+      public event CopyUnitInfoHandler OnCopyUnitInfo = delegate { }; //TODO Resharper
 
       public void AttachPresenter(IUnitsEditorPresenter presenter)
       {

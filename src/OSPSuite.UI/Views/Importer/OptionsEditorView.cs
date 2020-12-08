@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views.Importer
       public void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, string selected = null)
       {
          _comboBoxEdit.Properties.Items.Clear();
-         var list = options.SelectMany(o => o.Value).ToList();
+         var list = options.SelectMany(o => o.Value).ToArray();
          _comboBoxEdit.Properties.Items.AddRange(list);
          _comboBoxEdit.SelectedIndexChanged += (s, a) => OnEvent(() => OnOptionChanged.Invoke(s, new OptionChangedEventArgs() { Index = _comboBoxEdit.SelectedIndex, Text = _comboBoxEdit.Text }));
          if (string.IsNullOrEmpty(selected))

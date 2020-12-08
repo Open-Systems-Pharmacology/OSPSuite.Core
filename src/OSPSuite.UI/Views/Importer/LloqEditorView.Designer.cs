@@ -1,42 +1,57 @@
-﻿using OSPSuite.Assets;
-using OSPSuite.Presentation.Presenters.Importer;
-
-namespace OSPSuite.UI.Views.Importer
+﻿namespace OSPSuite.UI.Views.Importer
 {
-   partial class LloqEditorView : BaseModalView
+   partial class LloqEditorView
    {
-      private DevExpress.XtraLayout.LayoutControl rootLayoutControl;
-      private DevExpress.XtraLayout.LayoutControlGroup Root;
-      private DevExpress.XtraEditors.ComboBoxEdit ColumnsComboBox;
-      private DevExpress.XtraLayout.LayoutControlItem rootLayoutControlItem;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private ILloqEditorPresenter _presenter;
-      public void AttachPresenter(ILloqEditorPresenter presenter)
+      /// <summary>
+      /// Required designer variable.
+      /// </summary>
+      private System.ComponentModel.IContainer components = null;
+
+      /// <summary>
+      /// Clean up any resources being used.
+      /// </summary>
+      /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+      protected override void Dispose(bool disposing)
       {
-         _presenter = presenter;
+         if (disposing && (components != null))
+         {
+            components.Dispose();
+         }
+
+         base.Dispose(disposing);
       }
 
+      #region Windows Form Designer generated code
+
+      /// <summary>
+      /// Required method for Designer support - do not modify
+      /// the contents of this method with the code editor.
+      /// </summary>
       private void InitializeComponent()
       {
+         this.components = new System.ComponentModel.Container();
+         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.Text = "LLOQEditorViewNew";
+
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.ColumnsComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.rootLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutControlBase)).BeginInit();
          this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutControlGroupBase)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemOK)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemCancel)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.emptySpaceItemBase)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemExtra)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this._errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.ColumnsComboBox.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.ColumnsComboBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.Root)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.rootLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize) (this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
          // 
          // btnCancel
@@ -99,8 +114,10 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.ColumnsComboBox.Location = new System.Drawing.Point(64, 12);
          this.ColumnsComboBox.Name = "ColumnsComboBox";
-         this.ColumnsComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.ColumnsComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[]
+         {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)
+         });
          this.ColumnsComboBox.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
          this.ColumnsComboBox.Size = new System.Drawing.Size(452, 22);
          this.ColumnsComboBox.StyleController = this.rootLayoutControl;
@@ -110,9 +127,11 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
          this.Root.GroupBordersVisible = false;
-         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[]
+         {
             this.rootLayoutControlItem,
-            this.emptySpaceItem1});
+            this.emptySpaceItem1
+         });
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(528, 67);
          this.Root.TextVisible = false;
@@ -141,23 +160,32 @@ namespace OSPSuite.UI.Views.Importer
          this.Name = "LloqEditorView";
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.rootLayoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutControlBase)).EndInit();
          this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutControlGroupBase)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemOK)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemCancel)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.emptySpaceItemBase)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.layoutItemExtra)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this._errorProvider)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.ColumnsComboBox.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.ColumnsComboBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.Root)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.rootLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize) (this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
          this.PerformLayout();
-         this.Text = Captions.Importer.LloqColumnEditorTitle;
       }
+
+      private DevExpress.XtraLayout.LayoutControl rootLayoutControl;
+      private DevExpress.XtraLayout.LayoutControlGroup Root;
+      private DevExpress.XtraEditors.ComboBoxEdit ColumnsComboBox;
+      private DevExpress.XtraLayout.LayoutControlItem rootLayoutControlItem;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+
+
+
+      #endregion
    }
 }

@@ -17,8 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
-      void AddConfirmationView();
-      void AddDataMappingView();
+
       void SetSourceFile(string path);
 
       event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;

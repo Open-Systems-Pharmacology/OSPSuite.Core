@@ -62,21 +62,21 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Margin = new System.Windows.Forms.Padding(6);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(538, 196);
+         this.layoutControl.Size = new System.Drawing.Size(538, 125);
          this.layoutControl.TabIndex = 38;
          // 
          // errorTypePanelControl
          // 
-         this.errorTypePanelControl.Location = new System.Drawing.Point(72, 119);
+         this.errorTypePanelControl.Location = new System.Drawing.Point(72, 76);
          this.errorTypePanelControl.Name = "errorTypePanelControl";
-         this.errorTypePanelControl.Size = new System.Drawing.Size(454, 49);
+         this.errorTypePanelControl.Size = new System.Drawing.Size(454, 27);
          this.errorTypePanelControl.TabIndex = 7;
          // 
          // lloqPanelControl
          // 
-         this.lloqPanelControl.Location = new System.Drawing.Point(72, 69);
+         this.lloqPanelControl.Location = new System.Drawing.Point(72, 46);
          this.lloqPanelControl.Name = "lloqPanelControl";
-         this.lloqPanelControl.Size = new System.Drawing.Size(454, 46);
+         this.lloqPanelControl.Size = new System.Drawing.Size(454, 26);
          this.lloqPanelControl.TabIndex = 6;
          // 
          // unitsPanelControl
@@ -84,7 +84,7 @@ namespace OSPSuite.UI.Views.Importer
          this.unitsPanelControl.Location = new System.Drawing.Point(72, 12);
          this.unitsPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.unitsPanelControl.Name = "unitsPanelControl";
-         this.unitsPanelControl.Size = new System.Drawing.Size(454, 53);
+         this.unitsPanelControl.Size = new System.Drawing.Size(454, 30);
          this.unitsPanelControl.TabIndex = 5;
          // 
          // Root
@@ -95,7 +95,7 @@ namespace OSPSuite.UI.Views.Importer
             this.errorTypeLayoutControlItem,
             this.emptySpaceItem1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(538, 196);
+         this.Root.Size = new System.Drawing.Size(538, 125);
          this.Root.TextVisible = false;
          // 
          // unitsLayoutControlItem
@@ -103,31 +103,31 @@ namespace OSPSuite.UI.Views.Importer
          this.unitsLayoutControlItem.Control = this.unitsPanelControl;
          this.unitsLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.unitsLayoutControlItem.Name = "Units";
-         this.unitsLayoutControlItem.Size = new System.Drawing.Size(518, 57);
+         this.unitsLayoutControlItem.Size = new System.Drawing.Size(518, 34);
          this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
          // 
          // lloqLayoutControlItem
          // 
          this.lloqLayoutControlItem.Control = this.lloqPanelControl;
-         this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 57);
+         this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 34);
          this.lloqLayoutControlItem.Name = "Lloq";
-         this.lloqLayoutControlItem.Size = new System.Drawing.Size(518, 50);
+         this.lloqLayoutControlItem.Size = new System.Drawing.Size(518, 30);
          this.lloqLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
          // 
          // errorTypeLayoutControlItem
          // 
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
-         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 107);
+         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 64);
          this.errorTypeLayoutControlItem.Name = "Error type";
-         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(518, 53);
+         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(518, 31);
          this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 160);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 95);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(518, 16);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(518, 10);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // MappingParameterEditorView
@@ -137,7 +137,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Controls.Add(this.layoutControl);
          this.Margin = new System.Windows.Forms.Padding(8);
          this.Name = "MappingParameterEditorView";
-         this.Size = new System.Drawing.Size(538, 196);
+         this.Size = new System.Drawing.Size(538, 125);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

@@ -4,6 +4,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -13,6 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected);
       void SetErrorTypeOptions(IEnumerable<string> types, string selected);
+      int SelectedUnit { get; }
       int SelectedLloq { get; }
       int SelectedErrorType { get; }
       UnitDescription Unit { get; }
@@ -20,22 +22,27 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public class MappingParameterEditorPresenter : AbstractDisposablePresenter<IMappingParameterEditorView, IMappingParameterEditorPresenter>, IMappingParameterEditorPresenter
    {
-      private readonly IUnitsEditorPresenter _unitsEditorPresenter;
+      private readonly IOptionsEditorPresenter _unitsEditorPresenter;
       private readonly IOptionsEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
       private IEnumerable<IDimension> _dimensions;
+      private bool _columnMapping;
 
+      public int SelectedUnit { get => _unitsEditorPresenter.SelectedIndex; }
       public int SelectedLloq { get => _lloqEditorPresenter.SelectedIndex; }
       public int SelectedErrorType { get => _errorEditorPresenter.SelectedIndex; }
 
       public UnitDescription Unit
       {
-         get => _unitsEditorPresenter. Unit;
+         get
+         {
+            return _columnMapping ? new UnitDescription(_ => "", _unitsEditorPresenter.SelectedText) : new UnitDescription(_unitsEditorPresenter.SelectedText);
+         }
       }
 
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
-         IUnitsEditorPresenter unitsEditorPresenter,
+         IUnitsEditorPresenter unitsEditorPresenter,,
          IOptionsEditorPresenter lloqEditorPresenter,
          IOptionsEditorPresenter errorEditorPresenter
       ) : base(view)
@@ -56,7 +63,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _dimensions = dimensions;
-         _unitsEditorPresenter.SetOptions(importDataColumn, _dimensions, availableColumns);
+         _columnMapping = !string.IsNullOrEmpty(importDataColumn.Unit.ColumnName);
+
+         if (_columnMapping)
+         {
+            _unitsEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", availableColumns } }, importDataColumn.Unit.ColumnName);
+         }
+         else
+         {
+            _unitsEditorPresenter.SetOptions(_dimensions.ToDictionary(d => d.Name, d => d.Units.Select(u => u.Name)), importDataColumn.Unit.SelectedUnit);
+         }
          View.ShowUnits();
       }
 
@@ -72,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ShowErrorTypes();
       }
    }
-
+   
    public interface IMappingParameterEditorView : IView<IMappingParameterEditorPresenter>
    {
       void HideAll();
