@@ -82,7 +82,7 @@ namespace OSPSuite.Infrastructure.Export
       [Test]
       public void should_have_created_data()
       {
-         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, true);
+         sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
 
          var reader = new ExcelReader(_exportExcelFilePath);
          reader.MoveToNextSheet();
