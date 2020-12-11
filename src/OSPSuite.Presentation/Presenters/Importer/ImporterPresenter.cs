@@ -65,6 +65,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
          _importerDataPresenter.OnImportSheets += ImportSheetsFromDataPresenter;
          _nanPresenter.OnNaNSettingsChanged += (s,a) =>_columnMappingPresenter.ValidateMapping();
+         _view.AddConfirmationView(_confirmationPresenter.View);
          _view.AddImporterView(_importerDataPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
@@ -109,7 +110,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             importSheets(args.DataSourceFile, args.Sheets);
             _importerDataPresenter.DisableImportedSheets();
          }
-         catch (Exception e)
+         catch (NanException e)
          {
             _view.ShowErrorMessage(e.Message);
             _view.DisableConfirmationView();
@@ -170,11 +171,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.onMissingMapping();
       }
 
-      private void onCompletedMapping(object sender, EventArgs e)
+      private void onCompletedMapping(object sender, EventArgs args)
       {
          _importerDataPresenter.onCompletedMapping();
-         _dataSource.DataSets.Clear();
-         importSheets(_dataSourceFile, _importerDataPresenter.Sheets);
+         _dataSource.DataSets.Clear(); 
+         try
+         {
+            importSheets(_dataSourceFile, _importerDataPresenter.Sheets);
+         }
+         catch (NanException e)
+         {
+            _view.ShowErrorMessage(e.Message);
+            _view.DisableConfirmationView();
+         }
       }
 
       public void SetSourceFile(string path)

@@ -53,7 +53,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SelectColumn(string column)
       {
-         this.DoWithinExceptionHandler(() => _selectedColumn = column);
+         this.DoWithinExceptionHandler(() => {
+            _columnMapping = true;
+            _selectedColumn = column;
+         });
       }
 
       public void SelectUnit(string unit)
