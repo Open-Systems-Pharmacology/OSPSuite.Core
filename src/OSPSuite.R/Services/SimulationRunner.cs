@@ -19,6 +19,7 @@ namespace OSPSuite.R.Services
 
       SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
       Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null);
+
    }
 
    public class SimulationRunner : ISimulationRunner

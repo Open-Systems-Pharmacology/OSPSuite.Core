@@ -13,13 +13,11 @@ namespace OSPSuite.Core.Domain.Services
    {
       private readonly IDataFactory _dataFactory;
       private IModelCoreSimulation _modelCoreSimulation;
-      private IReadOnlyList<string> _variableParameterPaths;
-      private IReadOnlyList<string> _variableSpeciePaths;
       private Simulation _simModelSimulation;
       private readonly Cache<string, double> _parameterValueCache = new Cache<string, double>();
       private readonly Cache<string, double> _initialValueCache = new Cache<string, double>();
-      private List<ParameterProperties> _allVariableParameters;
-      private List<SpeciesProperties> _allVariableSpecies;
+      private IReadOnlyList<ParameterProperties> _allVariableParameters;
+      private IReadOnlyList<SpeciesProperties> _allVariableMolecules;
       private string _simulationResultsName;
       private bool _calculateSensitivities;
 
@@ -29,40 +27,47 @@ namespace OSPSuite.Core.Domain.Services
          _dataFactory = dataFactory;
       }
 
+      public IReadOnlyList<string> VariableParameterPaths { get; private set; }
+
+      public IReadOnlyList<string> VariableMoleculePaths { get; private set; }
+
       public void InitializeWith(IModelCoreSimulation modelCoreSimulation, IReadOnlyList<string> variableParameterPaths,
-         IReadOnlyList<string> variableSpeciePaths, bool calculateSensitivities = false, string simulationResultsName = null)
+         IReadOnlyList<string> variableMoleculePaths, bool calculateSensitivities = false, string simulationResultsName = null)
       {
          _modelCoreSimulation = modelCoreSimulation;
-         _variableParameterPaths = variableParameterPaths;
-         _variableSpeciePaths = variableSpeciePaths;
          _simulationResultsName = simulationResultsName;
          _calculateSensitivities = calculateSensitivities;
-         _simModelSimulation = createAndFinalizeSimulation();
-         _allVariableParameters = _simModelSimulation.VariableParameters.ToList();
-         _allVariableSpecies = _simModelSimulation.VariableSpecies.ToList();
+         _simModelSimulation = createAndFinalizeSimulation(variableParameterPaths, variableMoleculePaths);
       }
 
       public void InitializeForSensitivity()
       {
-         InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciePaths, calculateSensitivities: true,
+         InitializeWith(_modelCoreSimulation, VariableParameterPaths, VariableMoleculePaths, calculateSensitivities: true,
             simulationResultsName: _simulationResultsName);
       }
 
-      private Simulation createAndFinalizeSimulation()
+      private Simulation createAndFinalizeSimulation(IReadOnlyList<string> variableParameterPaths,
+         IReadOnlyList<string> variableMoleculePaths)
       {
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized);
          var simulation = CreateSimulation(simulationExport, x => x.CheckForNegativeValues = false);
-         setVariableParameters(simulation);
-         setVariableSpecies(simulation);
+         setVariableParameters(simulation, variableParameterPaths);
+         setVariableMolecules(simulation, variableMoleculePaths);
          FinalizeSimulation(simulation);
          return simulation;
       }
 
-      private void setVariableParameters(Simulation simulation) =>
-         SetVariableParameters(simulation, _variableParameterPaths, _calculateSensitivities);
+      private void setVariableParameters(Simulation simulation, IReadOnlyList<string> variableParameterPaths)
+      {
+         _allVariableParameters = SetVariableParameters(simulation, variableParameterPaths, _calculateSensitivities);
+         VariableParameterPaths = _allVariableParameters.Select(x => x.Path).ToList();
+      }
 
-      private void setVariableSpecies(Simulation simulation) =>
-         SetVariableSpecies(simulation, _variableSpeciePaths);
+      private void setVariableMolecules(Simulation simulation, IReadOnlyList<string> variableMoleculePaths)
+      {
+         _allVariableMolecules = SetVariableMolecules(simulation, variableMoleculePaths);
+         VariableMoleculePaths = _allVariableMolecules.Select(x => x.Path).ToList();
+      }
 
       public SimulationRunResults RunSimulation()
       {
@@ -86,7 +91,31 @@ namespace OSPSuite.Core.Domain.Services
 
       public void UpdateParameterValue(string parameterPath, double value) => _parameterValueCache[parameterPath] = value;
 
-      public void UpdateInitialValue(string speciesPath, double value) => _initialValueCache[speciesPath] = value;
+      public void UpdateParameterValues(IReadOnlyList<double> parameterValues)
+      {
+         updateValues(parameterValues, VariableParameterPaths, _parameterValueCache, "parameter values");
+      }
+
+      public void UpdateInitialValue(string moleculePath, double value) => _initialValueCache[moleculePath] = value;
+
+      public void UpdateInitialValues(IReadOnlyList<double> initialValues)
+      {
+         updateValues(initialValues, VariableMoleculePaths, _initialValueCache, "initial values");
+      }
+
+      private void updateValues(IReadOnlyList<double> values, IReadOnlyList<string> variablePaths, ICache<string, double> valuesCache,
+         string updatedValues)
+      {
+         var count = values?.Count ?? 0;
+         if (variablePaths.Count != count)
+            throw new InvalidArgumentException($"No the expected number of {updatedValues} ({variablePaths.Count} vs {count})");
+
+         //this should never be null here
+         if (values == null)
+            return;
+
+         variablePaths.Each((path, i) => valuesCache[path] = values[i]);
+      }
 
       public void StopSimulation()
       {
@@ -105,8 +134,6 @@ namespace OSPSuite.Core.Domain.Services
          _simModelSimulation = null;
          _parameterValueCache.Clear();
          _initialValueCache.Clear();
-         _allVariableParameters.Clear();
-         _allVariableSpecies.Clear();
       }
 
       private DataRepository getResults()
@@ -116,10 +143,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateSimulationValues()
       {
-         _allVariableParameters.Each(p => p.Value =  _parameterValueCache[p.Path]);
+         _allVariableParameters.Each(p => p.Value = _parameterValueCache[p.Path]);
          _simModelSimulation.SetParameterValues();
 
-         _allVariableSpecies.Each(p => p.InitialValue = _initialValueCache[p.Path]);
+         _allVariableMolecules.Each(p => p.InitialValue = _initialValueCache[p.Path]);
          _simModelSimulation.SetSpeciesValues();
       }
 

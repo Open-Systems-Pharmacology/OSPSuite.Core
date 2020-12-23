@@ -112,7 +112,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             _parameterIdentification.AllDataRepositoryMappedFor(simulation));
          _outputSelectionUpdater.UpdateOutputsIn(modelCoreSimulation, _parameterIdentification.AllOutputsMappedFor(simulation));
          simModelBatch.InitializeWith(modelCoreSimulation, _parameterIdentification.PathOfOptimizedParameterBelongingTo(simulation),
-            variableSpeciePaths: Array.Empty<string>(),
+            variableMoleculePaths: Array.Empty<string>(),
             simulationResultsName: Captions.ParameterIdentification.SimulationResultsForRun(RunResult.Index));
          return simModelBatch;
       }

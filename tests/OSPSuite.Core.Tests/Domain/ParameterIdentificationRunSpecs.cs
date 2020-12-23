@@ -129,11 +129,13 @@ namespace OSPSuite.Core.Domain
    {
       private IReadOnlyList<string> _parameters;
       private List<DataRepository> _observedDataList;
-   
+
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _simModelBatch.InitializeWith(_modelCoreSimulation, A<IReadOnlyList<string>>._, A<bool>._, A<string>._))
+         A.CallTo(() => _simModelBatch.InitializeWith(_modelCoreSimulation,
+               A<IReadOnlyList<string>>._,
+               A<IReadOnlyList<string>>._, A<bool>._, A<string>._))
             .Invokes(x => _parameters = x.GetArgument<IReadOnlyList<string>>(1));
 
          A.CallTo(() => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._))
@@ -164,7 +166,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_initializing_the_parameter_indentification_run_with_a_parameter_identification_with_multiple_simulations : concern_for_ParameterIdentificationRun
+   public class
+      When_initializing_the_parameter_indentification_run_with_a_parameter_identification_with_multiple_simulations :
+         concern_for_ParameterIdentificationRun
    {
       private OutputMapping _outputMapping2;
       private ISimulation _simulation2;
@@ -194,8 +198,11 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_update_the_time_grid_of_all_resulting_core_simulations()
       {
-         A.CallTo(() => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._)).MustHaveHappened();
-         A.CallTo(() => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation2, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._)).MustHaveHappened();
+         A.CallTo(() => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._))
+            .MustHaveHappened();
+         A.CallTo(
+               () => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation2, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._))
+            .MustHaveHappened();
       }
 
       [Observation]
@@ -261,8 +268,6 @@ namespace OSPSuite.Core.Domain
       private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
       private OptimizedParameterValue _optimizedParameterValue;
 
-     
-
       protected override void Context()
       {
          base.Context();
@@ -278,7 +283,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] { _optimizedParameterValue });
+         _objectiveFunction(new[] {_optimizedParameterValue});
       }
 
       [Observation]
@@ -370,7 +375,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_parameter_identification_run_is_running_the_simulations_and_updating_an_identification_parameter_using_factor : concern_for_ParameterIdentificationRun
+   public class
+      When_the_parameter_identification_run_is_running_the_simulations_and_updating_an_identification_parameter_using_factor :
+         concern_for_ParameterIdentificationRun
    {
       private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
 
@@ -378,7 +385,8 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _identificationParameter.UseAsFactor = true;
-         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._, A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
             .Invokes(x => { _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1); })
             .Returns(new OptimizationRunProperties(5));
 
@@ -412,12 +420,10 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
 
-         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._, A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
-            .Invokes(x =>
-            {
-               _cancellationTokenSource.Cancel();
-            })
-            .Throws(x=> new OperationCanceledException());
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+            .Invokes(x => { _cancellationTokenSource.Cancel(); })
+            .Throws(x => new OperationCanceledException());
       }
 
       protected override void Because()
@@ -440,7 +446,8 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
 
-         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._, A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
             .Throws(x => new ArithmeticException("Math Error"));
       }
 
@@ -457,7 +464,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_parameter_identification_run_is_running_a_parameter_identification_where_the_jacobian_should_be_calculated : concern_for_ParameterIdentificationRun
+   public class
+      When_the_parameter_identification_run_is_running_a_parameter_identification_where_the_jacobian_should_be_calculated :
+         concern_for_ParameterIdentificationRun
    {
       private ParameterIdentificationRunResult _result;
       private JacobianMatrix _jacobianMatrix;
@@ -468,7 +477,8 @@ namespace OSPSuite.Core.Domain
          _jacobianMatrix = new JacobianMatrix(new[] {"A"});
          _parameterIdentification.Configuration.CalculateJacobian = true;
          A.CallTo(_jacobianMatrixCalculator).WithReturnType<JacobianMatrix>().Returns(_jacobianMatrix);
-         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._, A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
             .Invokes(x =>
             {
                var objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
@@ -494,7 +504,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_parameter_identification_runner_is_running_a_parameter_identification_with_fixed_parameters : concern_for_ParameterIdentificationRun
+   public class
+      When_the_parameter_identification_runner_is_running_a_parameter_identification_with_fixed_parameters : concern_for_ParameterIdentificationRun
    {
       private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
       private IReadOnlyList<OptimizedParameterConstraint> _constraints;
@@ -524,7 +535,8 @@ namespace OSPSuite.Core.Domain
          _parameter3.Value = 100;
          _parameterSelection3 = ParameterSelectionFor(_parameter3, "ParameterPath3");
 
-         _fixedIdentificationParameter = DomainHelperForSpecs.IdentificationParameter("Fixed IdParam", min: 0, max: 200, startValue: 60, isFixed: true);
+         _fixedIdentificationParameter =
+            DomainHelperForSpecs.IdentificationParameter("Fixed IdParam", min: 0, max: 200, startValue: 60, isFixed: true);
          _fixedIdentificationParameter.AddLinkedParameter(_parameterSelection3);
          _parameterIdentification.AddIdentificationParameter(_fixedIdentificationParameter);
       }
