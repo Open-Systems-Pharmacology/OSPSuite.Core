@@ -59,6 +59,9 @@ namespace OSPSuite.Core.Domain.Services
 
       protected IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variableParameterPaths, bool calculateSensitivities)
       {
+         if (variableParameterPaths == null)
+            return Array.Empty<ParameterProperties>();
+         
          var allParameters = simulation.ParameterProperties;
          var parametersToBeVaried = allParameters.Where(p => variableParameterPaths.Contains(p.Path)).ToList();
 
@@ -68,12 +71,16 @@ namespace OSPSuite.Core.Domain.Services
          return parametersToBeVaried;
       }
 
-      protected IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variableSpeciesPaths)
+      protected IReadOnlyList<SpeciesProperties> SetVariableMolecules(Simulation simulation, IReadOnlyList<string> variableMoleculePaths)
       {
-         var allSpecies = simulation.SpeciesProperties;
-         var speciesToBeVaried = allSpecies.Where(p => variableSpeciesPaths.Contains(p.Path)).ToList();
-         simulation.VariableSpecies = speciesToBeVaried;
-         return speciesToBeVaried;
+
+         if (variableMoleculePaths == null)
+            return Array.Empty<SpeciesProperties>();
+
+         var allMolecules = simulation.SpeciesProperties;
+         var moleculeToBeVaried = allMolecules.Where(p => variableMoleculePaths.Contains(p.Path)).ToList();
+         simulation.VariableSpecies = moleculeToBeVaried;
+         return moleculeToBeVaried;
       }
 
       protected IEnumerable<SolverWarning> WarningsFrom(Simulation simModelSimulation) => simModelSimulation.SolverWarnings;

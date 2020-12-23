@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="simulation">SimModel simulation</param>
       private void setVariableInitialValues(Simulation simulation)
       {
-         SetVariableSpecies(simulation, _populationDataSplitter.InitialValuesPathsToBeVaried());
+         SetVariableMolecules(simulation, _populationDataSplitter.InitialValuesPathsToBeVaried());
       }
 
       public void StopSimulation() => _cancellationTokenSource.Cancel();

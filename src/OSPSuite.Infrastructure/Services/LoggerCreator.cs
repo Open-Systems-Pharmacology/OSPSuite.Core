@@ -16,6 +16,7 @@ namespace OSPSuite.Infrastructure.Services
 
    public class LoggerCreator : ILoggerCreator
    {
+      
       private readonly ConcurrentDictionary<string, ILogger> _loggerDict = new ConcurrentDictionary<string, ILogger>();
 
       private readonly List<Func<ILoggingBuilder, ILoggingBuilder>> _loggingBuilderConfigurations = new List<Func<ILoggingBuilder, ILoggingBuilder>>

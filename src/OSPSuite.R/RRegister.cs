@@ -34,6 +34,11 @@ namespace OSPSuite.R
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
+         //Add specific implementations that are not registered automatically
+         container.Register<SimulationBatch, SimulationBatch>();
+         container.Register<ISimulationBatchFactory, SimulationBatchFactory>();
+
+         //Singletons
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
          container.Register<IOSPLogger, RLogger, RLogger>(LifeStyle.Singleton);
