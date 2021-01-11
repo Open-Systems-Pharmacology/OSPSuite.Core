@@ -39,7 +39,7 @@ pull_requests:
   do_not_increment_build_number: false     
 
 nuget: 
-  disable_publish_on_pr: true  
+  disable_publish_on_pr: false  
 
 skip_tags: true
 
