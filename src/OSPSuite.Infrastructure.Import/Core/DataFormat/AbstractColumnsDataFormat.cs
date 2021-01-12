@@ -211,7 +211,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                currentParameter.MappedColumn.LloqColumn == null ? 
                   (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn : 
                   parseMappingOnSameGivenColumn;
-
+            //TODO: Check with Georgios the intention of this variable 
             string columnType = "";
             if (!string.IsNullOrEmpty(columnInfo.RelatedColumnOf)) //column is error column, so we need auxiliary type as metadata
             {

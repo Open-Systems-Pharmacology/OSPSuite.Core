@@ -24,6 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       );
       int GetImageIndex(DataFormatParameter parameter);
       MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
+
    }
 
    public class Importer : IImporter

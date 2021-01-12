@@ -29,14 +29,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
-            return new UnitDescription(_ => UnitDescription.InvalidUnit);
+            return new UnitDescription();
          }
 
          keys.Remove(unitKey);
-         var units = data.GetColumn(unitKey).ToList();
-         var def = data.GetColumnDescription(unitKey).ExistingValues.FirstOrDefault();
          rank++;
-         return new UnitDescription(i => (i > 0 && i < units.Count) ? units[i] : def, unitKey);
+         return new UnitDescription(data.GetColumn(unitKey), unitKey);
       }
    }
 }

@@ -23,6 +23,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
+      protected string[] _groupIds = new string[] { "H", "T2DM" };
 
       protected override void Context()
       {
@@ -160,6 +162,28 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                }
             }
          );
+         foreach (var molecule in _molecules)
+            foreach (var groupId in _groupIds)
+               for (var time = 0; time < 10; time++)
+               {
+                  _basicFormat.AddRow(new List<string>()
+                  {
+                     "PeripheralVenousBlood",
+                     "Arterialized",
+                     "Human",
+                     "75 [g] glucose",
+                     molecule,
+                     $"time",
+                     "0",
+                     "0",
+                     "po",
+                     groupId,
+                     "min",
+                     "pmol/l",
+                     "pmol/l",
+                     $"{0.01}"
+                  });
+               }
       }
    }
 
@@ -272,36 +296,14 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
       private IUnformattedData _mockedData;
-      private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
-      private string[] _groupIds = new string[] { "H", "T2DM" };
+      
       protected override void Context()
       {
          base.Context();
          _mockedData = A.Fake<IUnformattedData>();
          A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
-         foreach (var molecule in _molecules)
-            foreach (var groupId in _groupIds)
-               for (var time = 0; time < 10; time++)
-               {
-                  _basicFormat.AddRow(new List<string>()
-                  {
-                     "PeripheralVenousBlood",
-                     "Arterialized",
-                     "Human",
-                     "75 [g] glucose",
-                     molecule,
-                     $"time",
-                     "0",
-                     "0",
-                     "po",
-                     groupId,
-                     "min",
-                     "pmol/l",
-                     "pmol/l",
-                     $"{0.01}"
-                  });
-               }
+         A.CallTo(() => _mockedData.GetColumn(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumn(columnName.Arguments[0].ToString()));
       }
 
       protected override void Because()

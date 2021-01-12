@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Domain;
-using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -13,14 +11,13 @@ namespace OSPSuite.Infrastructure.Import.Core
       public UnitDescription()
       {
          Units = _ => InvalidUnit;
-         ColumnName = null;
+         ColumnName = "";
          SelectedUnit = InvalidUnit;
       }
-      public UnitDescription(Func<int, string> units, string columnName = "")
+      public UnitDescription(IEnumerable<string> units, string columnName = "")
       {
-         Units = units;
+         AttachUnitFunction(units);
          ColumnName = columnName;
-         SelectedUnit = units(-1);
       }
 
       public UnitDescription(string selectedUnit)
@@ -30,6 +27,8 @@ namespace OSPSuite.Infrastructure.Import.Core
          SelectedUnit = selectedUnit;
       }
 
+      private IList<string> _units = null;
+
       public Func<int, string> Units { get; private set; }
 
       public string SelectedUnit { get; private set; }
@@ -38,9 +37,15 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void AttachUnitFunction(IEnumerable<string> column)
       {
-         var units = column.ToList();
-         var def = units.First(c => !string.IsNullOrWhiteSpace(c));
-         Units = i => (i > 0) ? units[i] : def;
+         if (column == null) return;
+         _units = column.ToList();
+         if (_units.Count == 0) return; 
+
+         var def = _units.First(c => !string.IsNullOrWhiteSpace(c));
+         if (_units.Count == 1)
+            Units = _ => def;
+         else
+            Units = i => (i > 0 && i < _units.Count) ? _units[i] : def;
          SelectedUnit = def;
       }
 
