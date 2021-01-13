@@ -172,6 +172,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          );
          sut.SetParameters(singleColumn, _columnInfos, _metaDataCategories).ShouldBeEqualTo(0);
       }
+
+      [TestCase]
+      public void record_excel_columns()
+      {
+         sut.SetParameters(_basicFormat, _columnInfos, _metaDataCategories);
+         sut.ExcelColumnNames.Count.ShouldBeEqualTo(_basicFormat.GetHeaders().Count());
+      }
    }
 
    public class When_listing_parameters : ConcernforDataFormat_TMetaData_C

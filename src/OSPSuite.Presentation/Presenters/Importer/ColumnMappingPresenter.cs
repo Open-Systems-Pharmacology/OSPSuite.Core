@@ -19,7 +19,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
-      private IList<string> _excelColumns;
       private UnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
@@ -104,20 +103,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDataFormat(IDataFormat format)
       {
-         _excelColumns = format.Parameters
-            .Select(p => p.ColumnName)
-            .Union(
-               format.Parameters
-                  .OfType<MappingDataFormatParameter>()
-                  .Where(m => !string.IsNullOrEmpty(m.MappedColumn.LloqColumn))
-                  .Select(m => m.MappedColumn.LloqColumn)
-               )
-            .Union(
-               format.Parameters
-                  .OfType<MappingDataFormatParameter>()
-                  .Where(m => !string.IsNullOrEmpty(m.MappedColumn.Unit.ColumnName))
-                  .Select(m => m.MappedColumn.Unit.ColumnName)
-               ).ToList();
          _format = format;
          _originalFormat = _format.Parameters.ToList();
          setDataFormat(format.Parameters);
@@ -342,7 +327,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IEnumerable<string> availableColumns()
       {
-         return _excelColumns
+         return _format.ExcelColumnNames
             .Where
             (
                cn =>

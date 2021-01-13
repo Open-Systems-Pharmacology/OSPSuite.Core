@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPOI.XWPF.UserModel;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Extensions;
@@ -34,6 +33,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private double setParameters(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var keys = data.GetHeaders().ToList();
+         ExcelColumnNames = keys.ToList();
          Parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
@@ -69,7 +69,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                {
                   col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
                }
-               ExcelColumnNames.Add(headerKey);
                Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
@@ -126,13 +125,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
-            ExcelColumnNames.Add(header);
             Parameters.Add(new MetaDataFormatParameter(header, header));
          }
          foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
          {
             keys.Remove(header);
-            ExcelColumnNames.Add(header);
          }
       }
 
