@@ -136,7 +136,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var column = ((MappingDataFormatParameter)_currentModel.Source).MappedColumn;
          column.Unit = _mappingParameterEditorPresenter.Unit;
-         if (column.Unit.ColumnName != null)
+         if (column.Unit.ColumnName != null && !string.IsNullOrEmpty(column.Unit.ColumnName))
          {
             column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
          }

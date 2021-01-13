@@ -46,7 +46,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          this.DoWithinExceptionHandler(() =>
          {
-            _selectedUnit = _dimensions.First(d => d.Name == dimension).DefaultUnit.Name;
+            _selectedUnit = (_dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First()).DefaultUnit.Name;
+            SetUnit();
             fillUnits(_selectedUnit);
          });
       }
@@ -91,12 +92,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (_dimensions == null || !_dimensions.Any())
             return;
 
-         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units), selectedUnit);
+         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units).Where(u => !string.IsNullOrEmpty(u.Name)), selectedUnit);
       }
 
       private IDimension findSelectedOrDefaultDimension(string selectedUnit)
       {
-         return _dimensionFactory.DimensionForUnit(selectedUnit) ?? _dimensions.First();
+         //return _dimensionFactory.DimensionForUnit(selectedUnit);
+         return _dimensions.FirstOrDefault(d => d.Units.Any(u => u.Name == selectedUnit)) ?? _dimensions.First();
       }
 
       public void SetUnit()

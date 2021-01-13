@@ -41,7 +41,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _units = column.ToList();
          if (_units.Count == 0) return; 
 
-         var def = _units.First(c => !string.IsNullOrWhiteSpace(c));
+         var def = _units.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? "";
          if (_units.Count == 1)
             Units = _ => def;
          else
