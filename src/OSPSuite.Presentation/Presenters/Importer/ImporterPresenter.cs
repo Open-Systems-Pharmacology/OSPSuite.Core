@@ -13,7 +13,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
-   public class ImporterPresenter : AbstractPresenter<IImporterView, IImporterPresenter>, IImporterPresenter
+   public class ImporterPresenter : AbstractDisposablePresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;

@@ -396,6 +396,7 @@ namespace OSPSuite.Assets
          public static readonly string SheetsAlreadyImported = "Current sheet already imported";
          public static readonly string CloseAllTabsButThis = "close all tabs but this";
          public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
+         public static readonly string Title = "Importer";
 
          public class ToolTips
          {

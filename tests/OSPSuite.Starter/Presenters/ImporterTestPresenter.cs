@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Starter.Tasks;
@@ -30,22 +31,25 @@ namespace OSPSuite.Starter.Presenters
       private readonly IImporterPresenter _importer;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
+      private readonly IDataImporter _dataImporter;
 
-      public ImporterTestPresenter(IImporterTestView view, IImporterPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator)
+      public ImporterTestPresenter(IImporterTestView view, IImporterPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter)
          : base(view)
       {
          _importer = importer;
          _dataGenerator = dataGenerator;
          _dialogCreator = dialogCreator;
+         _dataImporter = dataImporter;
       }
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
       {
-         var starter = new TestStarter<IImporterPresenter>();
-         starter.Start(1000, 600);
-         starter.Presenter.SetSettings(categories, columns, settings);
-         starter.Presenter.OnTriggerImport += startImportSuccessDialog;
-         starter.Presenter.SetSourceFile(_dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA));
+         _dialogCreator.MessageBoxInfo(_dataImporter.ImportDataSets
+         (
+            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            settings
+         ).Count() + " data sets successfully imported");
       }
 
       public void StartWithTestForGroupBySettings()
@@ -106,19 +110,6 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );
-
-         //promptForImports(new List<DataRepository> { dataSet });
-      }
-
-      private static void promptForImports(List<DataRepository> dataSets)
-      {
-         if (dataSets.Any())
-            XtraMessageBox.Show($"Transferred {dataSets.Count} Data Sets!");
-      }
-
-      private void startImportSuccessDialog(object sender, ImportTriggeredEventArgs importTriggeredEventArgs)
-      {
-         _dialogCreator.MessageBoxInfo(importTriggeredEventArgs.DataSource.DataSets.Select(d => d.Data.Count()).Sum() + " data sets successfully imported");
       }
 
       public void StartWithOntogenySettings()
