@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="FakeItEasy" Version="6.2.1" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
     <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.6.1" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />

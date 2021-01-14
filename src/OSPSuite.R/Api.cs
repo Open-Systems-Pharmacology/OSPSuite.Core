@@ -3,6 +3,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Bootstrap;
+using OSPSuite.R.Domain;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -38,6 +39,8 @@ namespace OSPSuite.R
       public static ISimulationResultsTask GetSimulationResultsTask() => resolveTask<ISimulationResultsTask>();
 
       public static IOutputIntervalFactory GetOutputIntervalFactory() => resolveTask<IOutputIntervalFactory>();
+
+      public static ISimulationBatchFactory GetSimulationBatchFactory() => resolveTask<ISimulationBatchFactory>();
 
       public static ISensitivityAnalysisRunner GetSensitivityAnalysisRunner() => resolveTask<ISensitivityAnalysisRunner>();
 

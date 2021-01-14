@@ -47,7 +47,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IJacobianMatrixCalculator _jacobianMatrixCalculator;
       private readonly Cache<ISimulation, ISimModelBatch> _allSimModelBatches = new Cache<ISimulation, ISimModelBatch>();
       private readonly List<float> _totalErrorHistory = new List<float>();
-      private readonly Cache<string, IdentificationParameterHistory> _parametersHistory = new Cache<string, IdentificationParameterHistory>(x => x.Name);
+
+      private readonly Cache<string, IdentificationParameterHistory> _parametersHistory =
+         new Cache<string, IdentificationParameterHistory>(x => x.Name);
+
       public ParameterIdentificationRunResult RunResult { get; } = new ParameterIdentificationRunResult();
       public IReadOnlyList<float> TotalErrorHistory => _totalErrorHistory;
       public IReadOnlyCollection<IdentificationParameterHistory> ParametersHistory => _parametersHistory;
@@ -105,9 +108,12 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var simModelBatch = _simModelBatchFactory.Create();
          var modelCoreSimulation = _modelCoreSimulationMapper.MapFrom(simulation, shouldCloneModel: true);
-         _timeGridUpdater.UpdateSimulationTimeGrid(modelCoreSimulation, _parameterIdentification.Configuration.RemoveLLOQMode, _parameterIdentification.AllDataRepositoryMappedFor(simulation));
+         _timeGridUpdater.UpdateSimulationTimeGrid(modelCoreSimulation, _parameterIdentification.Configuration.RemoveLLOQMode,
+            _parameterIdentification.AllDataRepositoryMappedFor(simulation));
          _outputSelectionUpdater.UpdateOutputsIn(modelCoreSimulation, _parameterIdentification.AllOutputsMappedFor(simulation));
-         simModelBatch.InitializeWith(modelCoreSimulation, _parameterIdentification.PathOfOptimizedParameterBelongingTo(simulation), simulationResultsName: Captions.ParameterIdentification.SimulationResultsForRun(RunResult.Index));
+         simModelBatch.InitializeWith(modelCoreSimulation, _parameterIdentification.PathOfOptimizedParameterBelongingTo(simulation),
+            variableMoleculePaths: Array.Empty<string>(),
+            simulationResultsName: Captions.ParameterIdentification.SimulationResultsForRun(RunResult.Index));
          return simModelBatch;
       }
 
@@ -198,7 +204,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private void raiseRunStatusChanged(OptimizationRunResult currentRunResult)
       {
-         RunStatusChanged(this, new ParameterIdentificationRunStatusEventArgs(new ParameterIdentificationRunState(RunResult, currentRunResult, _totalErrorHistory, _parametersHistory)));
+         RunStatusChanged(this,
+            new ParameterIdentificationRunStatusEventArgs(new ParameterIdentificationRunState(RunResult, currentRunResult, _totalErrorHistory,
+               _parametersHistory)));
       }
 
       private void updateRunResult(OptimizationRunResult currentResult)
@@ -261,7 +269,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       private IReadOnlyList<OptimizedParameterConstraint> retrieveVariableParameterConstraints()
       {
-         return _variableParameters.Select(x => new OptimizedParameterConstraint(x.Name, x.MinValueParameter.Value, x.MaxValueParameter.Value, x.StartValueParameter.Value, x.Scaling)).ToArray();
+         return _variableParameters.Select(x =>
+               new OptimizedParameterConstraint(x.Name, x.MinValueParameter.Value, x.MaxValueParameter.Value, x.StartValueParameter.Value, x.Scaling))
+            .ToArray();
       }
 
       #region Disposable properties

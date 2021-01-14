@@ -24,7 +24,7 @@ namespace OSPSuite.Core
 
       public new IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variablePaths)
       {
-         return base.SetVariableSpecies(simulation, variablePaths);
+         return base.SetVariableMolecules(simulation, variablePaths);
       }
    }
 }
