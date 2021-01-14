@@ -23,11 +23,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public IEnumerable<DataRepository> ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
-         List<DataRepository> result = null;
+         List<DataRepository> result = new List<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
          presenter.OnTriggerImport += (s, d) =>
          {
-            result = new List<DataRepository>();
             var i = 0;
             foreach (var pair in d.DataSource.DataSets.KeyValues)
             {

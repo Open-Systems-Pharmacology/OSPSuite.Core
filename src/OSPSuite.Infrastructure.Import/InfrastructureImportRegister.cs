@@ -1,4 +1,6 @@
 ﻿using OSPSuite.Core;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Container;
 
@@ -12,8 +14,10 @@ namespace OSPSuite.Infrastructure.Import
          {
             x.AssemblyContainingType<InfrastructureImportRegister>();
             x.WithDefaultConvention();
-            x.ExcludeType(typeof(ImportLogger));
          });
+
+         container.Register<IDataFormat, MixColumnsDataFormat>("ColumnsDataFormat.v3");
+
       }
    }
 }

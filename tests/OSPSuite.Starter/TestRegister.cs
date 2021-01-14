@@ -74,8 +74,6 @@ namespace OSPSuite.Starter
          container.Register<IDataColumnToPathElementsMapper, DataColumnToPathElementsMapper>();
          container.Register<IQuantityPathToQuantityDisplayPathMapper, QuantityPathToQuantityDisplayPathMapper>();
 
-         container.Register<IImportLogger, ImportLogger>();
-         container.Register<IDataFormat, MixColumnsDataFormat>("ColumnsDataFormat.v3");
 
          container.Register<BarManager, BarManager>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();

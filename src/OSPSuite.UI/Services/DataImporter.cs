@@ -28,6 +28,10 @@ namespace OSPSuite.UI.Services
       {
          
          var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         
+         if (string.IsNullOrEmpty(path))
+            return new List<DataRepository>();
+
          using (var importerPresenter = _container.Resolve<IImporterPresenter>())
          {
             importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
