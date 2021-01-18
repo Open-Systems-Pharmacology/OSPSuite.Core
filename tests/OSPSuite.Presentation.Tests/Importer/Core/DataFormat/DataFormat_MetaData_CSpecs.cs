@@ -11,7 +11,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public abstract class ConcernforDataFormat_TMetaData_C : ContextSpecification<DataFormatHeadersWithUnits>
+   public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -21,9 +21,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          _columnInfos = new List<ColumnInfo>()
          {
-            new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
-            new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },
-            new ColumnInfo() { DisplayName = "Error", IsMandatory = false }
+            new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },
+            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
@@ -124,7 +124,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_checking_format : ConcernforDataFormat_TMetaData_C
+   public class When_checking_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
       [TestCase]
       public void identify_basic_format()
@@ -181,7 +181,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_listing_parameters : ConcernforDataFormat_TMetaData_C
+   public class When_listing_parameters : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
       protected override void Because()
       {
@@ -237,7 +237,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_parsing_format : ConcernforDataFormat_TMetaData_C
+   public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
       private IUnformattedData _mockedData;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
@@ -311,6 +311,40 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
             dataset.Data.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
+      }
+   }
+
+   public class When_parsing_format_with_measurement_units_but_without_error_units : ConcernforDataFormat_DataFormatHeadersWithUnits
+   {
+      private IUnformattedData _mockedData;
+
+      protected override void Context()
+      {
+         base.Context();
+         _mockedData = A.Fake<IUnformattedData>();
+         var headers = _basicFormat.GetHeaders().ToList();
+         headers.Remove("Error [pmol/l]");
+         headers.Add("Error");
+         A.CallTo(() => _mockedData.GetHeaders()).Returns(headers);
+         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => {
+            var param = columnName.Arguments[0].ToString();
+            if (param == "Error")
+               return _basicFormat.GetColumnDescription("Error [pmol/l]");
+            return _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString());
+         });
+      }
+
+      protected override void Because()
+      {
+         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
+      }
+
+      [TestCase]
+      public void initialize_error_unit_from_measurement_unit()
+      {
+         sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Error").MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(
+            sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Concentration").MappedColumn.Unit.SelectedUnit
+         );
       }
    }
 }

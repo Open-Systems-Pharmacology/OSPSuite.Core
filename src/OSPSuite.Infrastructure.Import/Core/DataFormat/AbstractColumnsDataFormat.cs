@@ -42,7 +42,28 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
+         setSecondaryColumnUnit(columnInfos);
          return totalRank;
+      }
+
+      private void setSecondaryColumnUnit(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         var mappings = Parameters.OfType<MappingDataFormatParameter>();
+         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
+         {
+            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            {
+               var relatedParameter = mappings.FirstOrDefault(p => p.ColumnName == relatedColumn.Name);
+               if (relatedParameter != null && (relatedParameter.MappedColumn.Unit == null || relatedParameter.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit))
+               {
+                  var mainParameter = mappings.FirstOrDefault(p => p.MappedColumn.Name == column.Name);
+                  if (mainParameter != null)
+                  {
+                     relatedParameter.MappedColumn.Unit = mainParameter.MappedColumn.Unit;
+                  }
+               }
+            }
+         }
       }
 
       protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
