@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.UI.Views.Importer
+﻿using OSPSuite.Assets;
+
+namespace OSPSuite.UI.Views.Importer
 {
    partial class NanView
    {
@@ -69,6 +71,7 @@
          this.actionImageComboBoxEdit.Size = new System.Drawing.Size(418, 20);
          this.actionImageComboBoxEdit.StyleController = this.rootLayoutControl;
          this.actionImageComboBoxEdit.TabIndex = 5;
+         this.actionImageComboBoxEdit.ToolTip = Captions.Importer.NanActionHint;
          // 
          // indicatorTextEdit
          // 
@@ -78,7 +81,7 @@
          this.indicatorTextEdit.Size = new System.Drawing.Size(418, 20);
          this.indicatorTextEdit.StyleController = this.rootLayoutControl;
          this.indicatorTextEdit.TabIndex = 4;
-         this.indicatorTextEdit.ToolTip = "Set a string to indicate how NaN should be detected";
+         this.indicatorTextEdit.ToolTip = Captions.Importer.NanIndicatorHint;
          // 
          // Root
          // 
