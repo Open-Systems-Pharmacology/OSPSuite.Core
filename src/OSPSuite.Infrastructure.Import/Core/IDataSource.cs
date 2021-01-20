@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Linq.Dynamic;
+using System.Reflection;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -10,9 +14,9 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSource
    {
-      void SetDataFormat( IDataFormat dataFormat);
+      void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      void AddSheets( Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos);
+      void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
@@ -29,7 +33,18 @@ namespace OSPSuite.Infrastructure.Import.Core
       public DataSource(IImporter importer)
       {
          _importer = importer;
-         _configuration =  new ImporterConfiguration();
+         _configuration = new ImporterConfiguration();
+
+         var type = typeof(DynamicQueryable).Assembly.GetType("System.Linq.Dynamic.ExpressionParser");
+
+         FieldInfo field = type.GetField("predefinedTypes", BindingFlags.Static | BindingFlags.NonPublic);
+
+         Type[] predefinedTypes = (Type[])field.GetValue(null);
+
+         Array.Resize(ref predefinedTypes, predefinedTypes.Length + 1);
+         predefinedTypes[predefinedTypes.Length - 1] = typeof(IEnumerable<string>); // Your type
+
+         field.SetValue(null, predefinedTypes);
       }
 
       public void SetDataFormat(IDataFormat dataFormat)
@@ -42,9 +57,28 @@ namespace OSPSuite.Infrastructure.Import.Core
          _configuration.NamingConventions = namingConvention;
       }
 
-      public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos)
+      private Cache<string, IDataSheet> filterSheets(Cache<string, IDataSheet> dataSheets, string filter)
       {
-         _importer.AddFromFile(_configuration.Format, dataSheets, columnInfos, this);
+         Cache<string, IDataSheet> filteredDataSheets = new Cache<string, IDataSheet>();
+         foreach (var key in dataSheets.Keys)
+         {
+            var dt = dataSheets[key].RawData.AsDataTable();
+            var dv = new DataView(dt);
+            dv.RowFilter = filter;
+            var list = new List<DataRow>();
+            var ds = new DataSheet() { RawData = new UnformattedData(dataSheets[key].RawData) };
+            foreach (DataRowView drv in dv)
+            {
+               ds.RawData.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
+            }
+            filteredDataSheets.Add(key, ds);
+         }
+         return filteredDataSheets;
+      }
+
+      public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
+      {         
+         _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (!double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
          foreach (var dataSet in DataSets)

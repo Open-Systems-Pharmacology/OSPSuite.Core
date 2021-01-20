@@ -21,6 +21,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
 
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
+      public event EventHandler<EventArgs> OnDataChanged = delegate { };
 
       public ImporterDataPresenter
       (
@@ -55,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (sheets.Count == 0) return;
 
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets });
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
       }
 
       public void onMissingMapping()
@@ -78,7 +79,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          if (sheets.Count == 0) return;
 
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets});
+         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria()});
+      }
+
+      public void TriggerOnDataChanged()
+      {
+         OnDataChanged.Invoke(this, null);
       }
 
       private IDataSheet getSingleSheet(string sheetName)
@@ -113,8 +119,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SelectTab(string tabName)
       {
+         var activeFilter = GetActiveFilterCriteria();
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
          View.SetGridSource(tabName);
+         View.SetFilter(activeFilter);
       }
 
       public void RemoveTab(string tabName)
@@ -143,6 +151,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count())
             View.DisableImportAllSheets();
+      }
+
+      public string GetActiveFilterCriteria()
+      {
+         return View.GetActiveFilterCriteria();
       }
    }
 }

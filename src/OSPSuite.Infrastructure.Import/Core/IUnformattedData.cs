@@ -41,6 +41,23 @@ namespace OSPSuite.Infrastructure.Import.Core
       protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
 
+      public UnformattedData(UnformattedData reference)
+      {
+         _headers = new Cache<string, ColumnDescription>();
+         foreach (var header in reference.GetHeaders())
+         {
+            _headers.Add(header, reference.GetColumnDescription(header));
+         }
+         _rawDataTable = new List<List<string>>();
+      }
+
+      public UnformattedData()
+      {
+         _emptyColumns = new List<string>();
+         _headers = new Cache<string, ColumnDescription>();
+         _rawDataTable = new List<List<string>>();
+      }
+
       private IEnumerable<string> getColumn(int columnIndex)
       {
          return _rawDataTable.Select(column => column[columnIndex]).ToList();

@@ -52,7 +52,8 @@ namespace OSPSuite.UI.Views.Importer
          layoutItemImportAll.AdjustLargeButtonSize();
          layoutItemImportCurrent.AdjustLargeButtonSize();
          ApplicationIcon = ApplicationIcons.Excel;
-
+         useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
+         dataViewingGridView.ColumnFilterChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
@@ -159,6 +160,11 @@ namespace OSPSuite.UI.Views.Importer
          dataViewingGridControl.DataSource = _dataPresenter.GetSheet(tabName);
       }
 
+      public string GetActiveFilterCriteria()
+      {
+         return useForImportCheckEdit.Checked ? DevExpress.Data.Filtering.CriteriaToWhereClauseHelper.GetDataSetWhere(dataViewingGridView.ActiveFilterCriteria) : "";
+      }
+
       public void AddTabs(List<string> sheetNames)
       {
          //we should seek an alternative
@@ -207,6 +213,11 @@ namespace OSPSuite.UI.Views.Importer
       {
          enableImportCurrentSheet();
          enableImportAllSheets();
+      }
+
+      public void SetFilter(string filter)
+      {
+         dataViewingGridView.ActiveFilterString = filter;
       }
    }
 }
