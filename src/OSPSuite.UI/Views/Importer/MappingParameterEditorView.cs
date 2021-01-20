@@ -17,24 +17,24 @@ namespace OSPSuite.UI.Views.Importer
 
       public void ShowUnits()
       {
-         unitsLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+         UnitsLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
       }
 
       public void ShowLloq()
       {
-         lloqLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+         LloqLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
       }
 
       public void ShowErrorTypes()
       {
-         errorTypeLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+         ErrorLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
       }
 
       public void HideAll()
       {
-         unitsLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-         lloqLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-         errorTypeLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         UnitsLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         LloqLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         ErrorLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
       }
 
       public void AttachPresenter(IMappingParameterEditorPresenter presenter)

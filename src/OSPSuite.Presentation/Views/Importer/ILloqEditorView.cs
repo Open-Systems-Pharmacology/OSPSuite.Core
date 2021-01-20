@@ -3,8 +3,9 @@ using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface ILloqEditorView : IModalView<ILloqEditorPresenter>
+   public interface ILloqEditorView : IView<ILloqEditorPresenter>
    {
       void FillComboBox(IEnumerable<string> columns, string defaultValue);
+      void FillLloqSelector(IView view);
    }
 }

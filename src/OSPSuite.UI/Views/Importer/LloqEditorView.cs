@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class LloqEditorView : BaseModalView, ILloqEditorView
+   public partial class LloqEditorView : BaseUserControl, ILloqEditorView
    {
       public LloqEditorView()
       {
          InitializeComponent();
-         ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
+         //ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
          LloqToggleSwitch.IsOnChanged += onIsOnChanged;
       }
 
@@ -26,13 +29,13 @@ namespace OSPSuite.UI.Views.Importer
       {
          if (LloqToggleSwitch.IsOn)
          {
-            ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+            //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
 
             //onColumnComboBoxTextChanged();
          }
          else
          {
-            ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+            //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
             
             //here we have to instead present the text
             //_columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
@@ -41,9 +44,14 @@ namespace OSPSuite.UI.Views.Importer
       }
       public void FillComboBox(IEnumerable<string> columns, string defaultValue)
       {
-         ColumnsComboBox.Properties.Items.Clear();
-         ColumnsComboBox.Properties.Items.AddRange(columns.ToArray());
-         ColumnsComboBox.EditValue = defaultValue;
+         //ColumnsComboBox.Properties.Items.Clear();
+         //ColumnsComboBox.Properties.Items.AddRange(columns.ToArray());
+         //ColumnsComboBox.EditValue = defaultValue;
+      }
+
+      public void FillLloqSelector(IView view)
+      {
+         LloqDescriptionPanelControl.FillWith(view);
       }
 
       public override void InitializeResources()

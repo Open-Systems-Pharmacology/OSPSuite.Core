@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class MappingParameterEditorPresenter : AbstractDisposablePresenter<IMappingParameterEditorView, IMappingParameterEditorPresenter>, IMappingParameterEditorPresenter
    {
       private readonly IUnitsEditorPresenter _unitsEditorPresenter;
-      private readonly IOptionsEditorPresenter _lloqEditorPresenter;
+      private readonly ILloqEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
       private IEnumerable<IDimension> _dimensions;
 
@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
          IUnitsEditorPresenter unitsEditorPresenter,
-         IOptionsEditorPresenter lloqEditorPresenter,
+         ILloqEditorPresenter lloqEditorPresenter,
          IOptionsEditorPresenter errorEditorPresenter
       ) : base(view)
       {

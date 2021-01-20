@@ -40,9 +40,9 @@ namespace OSPSuite.UI.Views.Importer
          this.lloqLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.errorTypeLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-         this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.UnitsLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.LloqLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.ErrorLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -55,9 +55,9 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.UnitsLayoutControlGroup)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqLayoutControlGroup)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.ErrorLayoutControlGroup)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
@@ -109,9 +109,9 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.emptySpaceItem1,
-            this.layoutControlGroup2,
-            this.layoutControlGroup3,
-            this.layoutControlGroup4});
+            this.UnitsLayoutControlGroup,
+            this.LloqLayoutControlGroup,
+            this.ErrorLayoutControlGroup});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(1459, 525);
@@ -149,32 +149,32 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem1.Size = new System.Drawing.Size(1433, 46);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
-         // layoutControlGroup2
+         // UnitsLayoutControlGroup
          // 
-         this.layoutControlGroup2.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.UnitsLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.unitsLayoutControlItem});
-         this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup2.Name = "layoutControlGroup2";
-         this.layoutControlGroup2.Size = new System.Drawing.Size(1433, 161);
-         this.layoutControlGroup2.TextVisible = false;
+         this.UnitsLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.UnitsLayoutControlGroup.Name = "UnitsLayoutControlGroup";
+         this.UnitsLayoutControlGroup.Size = new System.Drawing.Size(1433, 161);
+         this.UnitsLayoutControlGroup.TextVisible = false;
          // 
-         // layoutControlGroup3
+         // LloqLayoutControlGroup
          // 
-         this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.LloqLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.lloqLayoutControlItem});
-         this.layoutControlGroup3.Location = new System.Drawing.Point(0, 161);
-         this.layoutControlGroup3.Name = "layoutControlGroup3";
-         this.layoutControlGroup3.Size = new System.Drawing.Size(1433, 144);
-         this.layoutControlGroup3.TextVisible = false;
+         this.LloqLayoutControlGroup.Location = new System.Drawing.Point(0, 161);
+         this.LloqLayoutControlGroup.Name = "LloqLayoutControlGroup";
+         this.LloqLayoutControlGroup.Size = new System.Drawing.Size(1433, 144);
+         this.LloqLayoutControlGroup.TextVisible = false;
          // 
-         // layoutControlGroup4
+         // ErrorLayoutControlGroup
          // 
-         this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.ErrorLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.errorTypeLayoutControlItem});
-         this.layoutControlGroup4.Location = new System.Drawing.Point(0, 305);
-         this.layoutControlGroup4.Name = "layoutControlGroup4";
-         this.layoutControlGroup4.Size = new System.Drawing.Size(1433, 148);
-         this.layoutControlGroup4.TextVisible = false;
+         this.ErrorLayoutControlGroup.Location = new System.Drawing.Point(0, 305);
+         this.ErrorLayoutControlGroup.Name = "ErrorLayoutControlGroup";
+         this.ErrorLayoutControlGroup.Size = new System.Drawing.Size(1433, 148);
+         this.ErrorLayoutControlGroup.TextVisible = false;
          // 
          // MappingParameterEditorView
          // 
@@ -196,9 +196,9 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.UnitsLayoutControlGroup)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqLayoutControlGroup)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.ErrorLayoutControlGroup)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -214,8 +214,8 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.LayoutControlItem unitsLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup2;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup3;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup4;
+      private DevExpress.XtraLayout.LayoutControlGroup UnitsLayoutControlGroup;
+      private DevExpress.XtraLayout.LayoutControlGroup LloqLayoutControlGroup;
+      private DevExpress.XtraLayout.LayoutControlGroup ErrorLayoutControlGroup;
    }
 }
