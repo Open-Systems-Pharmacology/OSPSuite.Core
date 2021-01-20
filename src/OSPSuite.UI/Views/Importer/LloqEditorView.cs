@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
@@ -12,7 +13,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
-
+         LloqToggleSwitch.IsOnChanged += onIsOnChanged;
       }
 
       private ILloqEditorPresenter _presenter;
@@ -21,6 +22,23 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
+      private void onIsOnChanged(object sender, EventArgs e)
+      {
+         if (LloqToggleSwitch.IsOn)
+         {
+            ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+
+            //onColumnComboBoxTextChanged();
+         }
+         else
+         {
+            ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+            
+            //here we have to instead present the text
+            //_columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+            //onUnitComboBoxTextChanged();
+         }
+      }
       public void FillComboBox(IEnumerable<string> columns, string defaultValue)
       {
          ColumnsComboBox.Properties.Items.Clear();

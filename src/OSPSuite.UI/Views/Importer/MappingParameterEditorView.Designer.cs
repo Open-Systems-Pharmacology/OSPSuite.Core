@@ -35,10 +35,14 @@ namespace OSPSuite.UI.Views.Importer
          this.lloqPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.unitsPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.unitsLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.lloqLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.errorTypeLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -46,10 +50,14 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
@@ -59,85 +67,123 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Controls.Add(this.unitsPanelControl);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl.Margin = new System.Windows.Forms.Padding(6);
+         this.layoutControl.Margin = new System.Windows.Forms.Padding(13, 12, 13, 12);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(538, 125);
+         this.layoutControl.Size = new System.Drawing.Size(1481, 547);
          this.layoutControl.TabIndex = 38;
          // 
          // errorTypePanelControl
          // 
-         this.errorTypePanelControl.Location = new System.Drawing.Point(72, 76);
+         this.errorTypePanelControl.Location = new System.Drawing.Point(161, 344);
+         this.errorTypePanelControl.Margin = new System.Windows.Forms.Padding(6);
          this.errorTypePanelControl.Name = "errorTypePanelControl";
-         this.errorTypePanelControl.Size = new System.Drawing.Size(454, 27);
+         this.errorTypePanelControl.Size = new System.Drawing.Size(1281, 118);
          this.errorTypePanelControl.TabIndex = 7;
          // 
          // lloqPanelControl
          // 
-         this.lloqPanelControl.Location = new System.Drawing.Point(72, 46);
+         this.lloqPanelControl.Location = new System.Drawing.Point(161, 200);
+         this.lloqPanelControl.Margin = new System.Windows.Forms.Padding(6);
          this.lloqPanelControl.Name = "lloqPanelControl";
-         this.lloqPanelControl.Size = new System.Drawing.Size(454, 26);
+         this.lloqPanelControl.Size = new System.Drawing.Size(1281, 114);
          this.lloqPanelControl.TabIndex = 6;
          // 
          // unitsPanelControl
          // 
-         this.unitsPanelControl.Location = new System.Drawing.Point(72, 12);
+         this.unitsPanelControl.Location = new System.Drawing.Point(161, 39);
          this.unitsPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.unitsPanelControl.Name = "unitsPanelControl";
-         this.unitsPanelControl.Size = new System.Drawing.Size(454, 30);
+         this.unitsPanelControl.Size = new System.Drawing.Size(1281, 131);
          this.unitsPanelControl.TabIndex = 5;
          // 
          // Root
          // 
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.unitsLayoutControlItem,
-            this.lloqLayoutControlItem,
-            this.errorTypeLayoutControlItem,
-            this.emptySpaceItem1});
+            this.layoutControlGroup1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(538, 125);
+         this.Root.Size = new System.Drawing.Size(1481, 547);
          this.Root.TextVisible = false;
+         // 
+         // layoutControlGroup1
+         // 
+         this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.emptySpaceItem1,
+            this.layoutControlGroup2,
+            this.layoutControlGroup3,
+            this.layoutControlGroup4});
+         this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlGroup1.Name = "layoutControlGroup1";
+         this.layoutControlGroup1.Size = new System.Drawing.Size(1459, 525);
+         this.layoutControlGroup1.TextVisible = false;
          // 
          // unitsLayoutControlItem
          // 
          this.unitsLayoutControlItem.Control = this.unitsPanelControl;
          this.unitsLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.unitsLayoutControlItem.Name = "Units";
-         this.unitsLayoutControlItem.Size = new System.Drawing.Size(518, 34);
-         this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
+         this.unitsLayoutControlItem.Size = new System.Drawing.Size(1407, 135);
+         this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // lloqLayoutControlItem
          // 
          this.lloqLayoutControlItem.Control = this.lloqPanelControl;
-         this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 34);
+         this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.lloqLayoutControlItem.Name = "Lloq";
-         this.lloqLayoutControlItem.Size = new System.Drawing.Size(518, 30);
-         this.lloqLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
+         this.lloqLayoutControlItem.Size = new System.Drawing.Size(1407, 118);
+         this.lloqLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // errorTypeLayoutControlItem
          // 
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
-         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 64);
+         this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.errorTypeLayoutControlItem.Name = "Error type";
-         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(518, 31);
-         this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(57, 16);
+         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(1407, 122);
+         this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 95);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 453);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(518, 10);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(1433, 46);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // layoutControlGroup2
+         // 
+         this.layoutControlGroup2.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.unitsLayoutControlItem});
+         this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlGroup2.Name = "layoutControlGroup2";
+         this.layoutControlGroup2.Size = new System.Drawing.Size(1433, 161);
+         this.layoutControlGroup2.TextVisible = false;
+         // 
+         // layoutControlGroup3
+         // 
+         this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.lloqLayoutControlItem});
+         this.layoutControlGroup3.Location = new System.Drawing.Point(0, 161);
+         this.layoutControlGroup3.Name = "layoutControlGroup3";
+         this.layoutControlGroup3.Size = new System.Drawing.Size(1433, 144);
+         this.layoutControlGroup3.TextVisible = false;
+         // 
+         // layoutControlGroup4
+         // 
+         this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.errorTypeLayoutControlItem});
+         this.layoutControlGroup4.Location = new System.Drawing.Point(0, 305);
+         this.layoutControlGroup4.Name = "layoutControlGroup4";
+         this.layoutControlGroup4.Size = new System.Drawing.Size(1433, 148);
+         this.layoutControlGroup4.TextVisible = false;
          // 
          // MappingParameterEditorView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl);
-         this.Margin = new System.Windows.Forms.Padding(8);
+         this.Margin = new System.Windows.Forms.Padding(17, 16, 17, 16);
          this.Name = "MappingParameterEditorView";
-         this.Size = new System.Drawing.Size(538, 125);
+         this.Size = new System.Drawing.Size(1481, 547);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
@@ -145,10 +191,14 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.lloqPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.unitsLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.lloqLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.errorTypeLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -163,5 +213,9 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraEditors.PanelControl unitsPanelControl;
       private DevExpress.XtraLayout.LayoutControlItem unitsLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup2;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup3;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup4;
    }
 }

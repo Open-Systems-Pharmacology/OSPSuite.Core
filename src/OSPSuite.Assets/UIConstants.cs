@@ -390,7 +390,8 @@ namespace OSPSuite.Assets
          public static readonly string Separator = "Separator";
          public static readonly string Dimension = "Dimension";
          public static readonly string Unit = "Unit";
-         public static readonly string AssignColumn = "Assign a column";
+         public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
+         public static readonly string ImportUnitFromColumn = "Import unit from a column";
          public static readonly string Column = "Column";
          public static readonly string LoadCurrentSheet = "Load current sheet";
          public static readonly string AllSheetsAlreadyImported = "All sheets already imported";

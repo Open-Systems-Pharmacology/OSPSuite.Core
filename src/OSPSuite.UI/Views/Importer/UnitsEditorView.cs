@@ -23,7 +23,7 @@ namespace OSPSuite.UI.Views.Importer
          _dimensionsComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
          _unitLayoutControlItem.Text = Captions.Importer.Unit;
          _unitComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _columnsToogleLayoutControlItem.Text = Captions.Importer.AssignColumn;
+         _columnsToogleLayoutControlItem.Text = Captions.Importer.ImportUnitFromColumn;
          _unitComboBox.EditValueChanged += (s, a) => OnEvent(onUnitComboBoxTextChanged);
          _columnComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
          _columnLayoutControlItem.Text = Captions.Importer.Column;
