@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
@@ -15,6 +17,8 @@ namespace OSPSuite.UI.Views.Importer
       public LloqEditorView()
       {
          InitializeComponent();
+         LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
+         LloqDescriptionLayoutControlItem.TextVisible = false;
          //ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
          LloqToggleSwitch.IsOnChanged += onIsOnChanged;
       }
@@ -29,14 +33,23 @@ namespace OSPSuite.UI.Views.Importer
       {
          if (LloqToggleSwitch.IsOn)
          {
+            LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never;
+            LloqDescriptionLayoutControlItem.Visibility = LayoutVisibility.Always;
+            //LloqDescriptionPanelControl.Visible = true;
             //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
 
             //onColumnComboBoxTextChanged();
          }
          else
          {
+            LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Always;
+            LloqDescriptionLayoutControlItem.Visibility = LayoutVisibility.Never;
+
+            //LloqDescriptionLayoutControlItem.TextVisible = true;
+            //LloqDescriptionPanelControl.Visible = false;
+
             //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
-            
+
             //here we have to instead present the text
             //_columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
             //onUnitComboBoxTextChanged();
@@ -58,6 +71,9 @@ namespace OSPSuite.UI.Views.Importer
       {
          base.InitializeResources();
          Text = Captions.Importer.LloqColumnEditorTitle;
+         LloqDescriptionLayoutControlItem.Text = Captions.Importer.LloqDescription;
+         LloqDescriptionPanelControl.Dock = DockStyle.Fill;
+         LloqDescriptionPanelControl.Visible = false;
       }
    }
 }

@@ -1,4 +1,6 @@
-﻿using OSPSuite.Presentation.Presenters.Importer;
+﻿using DevExpress.Utils;
+using DevExpress.XtraEditors.Controls;
+using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -13,6 +15,12 @@ namespace OSPSuite.UI.Views.Importer
       public MappingParameterEditorView()
       {
          InitializeComponent();
+         unitsLayoutControlItem.TextLocation = Locations.Top;
+         errorTypeLayoutControlItem.TextLocation = Locations.Top;
+         lloqLayoutControlItem.TextLocation = Locations.Top;
+         errorTypePanelControl.BorderStyle = BorderStyles.Simple;
+         unitsPanelControl.BorderStyle = BorderStyles.Simple;
+         lloqPanelControl.BorderStyle = BorderStyles.Simple;
       }
 
       public void ShowUnits()
