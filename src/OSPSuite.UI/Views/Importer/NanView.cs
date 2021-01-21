@@ -51,9 +51,8 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         //TODO MVOE TO CONSTANTS
-         indicatorLayoutControlItem.Text = "NaN indicator".FormatForLabel();
-         actionLayoutControlItem.Text = "Action".FormatForLabel();
+         indicatorLayoutControlItem.Text = Captions.Importer.NanIndicator.FormatForLabel(false);
+         actionLayoutControlItem.Text = Captions.Importer.NanAction.FormatForLabel(false);
       }
    }
 }

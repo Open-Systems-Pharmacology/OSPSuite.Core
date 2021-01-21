@@ -399,6 +399,7 @@ namespace OSPSuite.Assets
          public static readonly string CloseAllTabsButThis = "close all tabs but this";
          public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
          public static readonly string Title = "Importer";
+         public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
 
          public class ToolTips

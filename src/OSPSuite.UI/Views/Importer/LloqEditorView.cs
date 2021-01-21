@@ -17,8 +17,6 @@ namespace OSPSuite.UI.Views.Importer
       public LloqEditorView()
       {
          InitializeComponent();
-         LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
-         LloqDescriptionLayoutControlItem.TextVisible = false;
          //ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
          LloqToggleSwitch.IsOnChanged += onIsOnChanged;
       }
@@ -71,9 +69,9 @@ namespace OSPSuite.UI.Views.Importer
       {
          base.InitializeResources();
          Text = Captions.Importer.LloqColumnEditorTitle;
-         LloqDescriptionLayoutControlItem.Text = Captions.Importer.LloqDescription;
+         LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
          LloqDescriptionPanelControl.Dock = DockStyle.Fill;
-         LloqDescriptionPanelControl.Visible = false;
+         LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never; //actually this should depend on the file
       }
    }
 }
