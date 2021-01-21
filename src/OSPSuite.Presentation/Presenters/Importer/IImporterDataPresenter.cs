@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       public IDataSourceFile DataSourceFile { get; set; }
       public Cache<string, IDataSheet> Sheets { get; set; }
+      public string Filter { get; set; }
    }
 
    public class FormatChangedEventArgs : EventArgs
@@ -38,6 +39,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       event EventHandler<ImportSheetsEventArgs> OnImportSheets;
 
+      event EventHandler<EventArgs> OnDataChanged;
+
       IDataSourceFile SetDataSource(string dataSourceFileName);
       void SelectTab(string tabName);
       void RemoveTab(string tabName);
@@ -54,5 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void RefreshTabs(); 
 
       Cache<string, IDataSheet> Sheets { get; }
+      string GetActiveFilterCriteria();
+      void TriggerOnDataChanged();
    }
 }

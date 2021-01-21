@@ -13,5 +13,8 @@ namespace OSPSuite.Presentation.Views.Importer
       void DisableImportCurrentSheet();
       void DisableImportAllSheets();
       void ResetImportButtons();
+      string GetActiveFilterCriteria();
+
+      void SetFilter(string filter);
    }
 }

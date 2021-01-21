@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly INanPresenter _nanPresenter;
       private readonly IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
-
+      
       public ImporterPresenter(
          IImporterView view, 
          IDataSetToDataRepositoryMapper dataRepositoryMapper, 
@@ -70,6 +70,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
          _importerDataPresenter.OnTabChanged += onTabChanged;
+         _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
@@ -107,7 +108,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
-            importSheets(args.DataSourceFile, args.Sheets);
+            importSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
          }
          catch (NanException e)
@@ -122,7 +123,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
 
 
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, IDataSheet> sheets)
+      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, IDataSheet> sheets, string filter)
       {
          if (!sheets.Any()) return;
 
@@ -142,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         _dataSource.AddSheets(sheets, _columnInfos);
+         _dataSource.AddSheets(sheets, _columnInfos, filter);
 
          var keys = new List<string>()
          {
@@ -171,19 +172,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.onMissingMapping();
       }
 
-      private void onCompletedMapping(object sender, EventArgs args)
+      private void onImporterDataChanged(object sender, EventArgs args)
       {
-         _importerDataPresenter.onCompletedMapping();
-         _dataSource.DataSets.Clear(); 
+         _dataSource.DataSets.Clear();
          try
          {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets);
+            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
          }
          catch (NanException e)
          {
             _view.ShowErrorMessage(e.Message);
             _view.DisableConfirmationView();
          }
+      }
+
+      private void onCompletedMapping(object sender, EventArgs args)
+      {
+         _importerDataPresenter.onCompletedMapping();
+         onImporterDataChanged(this, args);
       }
 
       public void SetSourceFile(string path)
