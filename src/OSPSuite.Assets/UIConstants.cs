@@ -364,7 +364,7 @@ namespace OSPSuite.Assets
          public static readonly string DataMapping = "Data Mapping";
          public static readonly string Confirmation = "Confirmation";
          public static readonly string ThreeDots = "...";
-         public static readonly string File = "File:  ";
+         public static readonly string File = "File:";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
          public static readonly string ConfirmationImport = "Import";
          public static readonly string NanAction = "Action";

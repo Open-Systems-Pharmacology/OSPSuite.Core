@@ -65,13 +65,18 @@ namespace OSPSuite.UI.Views.Importer
          LloqDescriptionPanelControl.FillWith(view);
       }
 
+      public void SetLloqToggle(bool lloqColumnsSelection)
+      {
+         LloqToggleSwitch.IsOn = lloqColumnsSelection;
+      }
+
       public override void InitializeResources()
       {
          base.InitializeResources();
          Text = Captions.Importer.LloqColumnEditorTitle;
          LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
          LloqDescriptionPanelControl.Dock = DockStyle.Fill;
-         LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never; //actually this should depend on the file
+         //LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never; //actually this should depend on the file
       }
    }
 }

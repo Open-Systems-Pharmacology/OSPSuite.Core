@@ -1,4 +1,5 @@
-﻿using OSPSuite.Presentation.Presenters.Importer;
+﻿using OSPSuite.Assets;
+using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 
@@ -11,7 +12,8 @@ namespace OSPSuite.UI.Views.Importer
       public SourceFileControl()
       {
          InitializeComponent();
-         openSourceFileButton.Click += (sender, args) => OnEvent(() => _presenter.OpenFileDialog(sourceFileTextEdit.Text));
+         OpenSourceFileLayoutControlItem.Text = Captions.Importer.File;
+         openSourceFileButtonEdit.Click += (sender, args) => OnEvent(() => _presenter.OpenFileDialog(openSourceFileButtonEdit.Text));
       }
 
       public void AttachPresenter(ISourceFilePresenter presenter)
@@ -21,7 +23,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetFilePath(string filePath)
       {
-         sourceFileTextEdit.Text = filePath;
+         openSourceFileButtonEdit.Text = filePath;
       }
    }
 }

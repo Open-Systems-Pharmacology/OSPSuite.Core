@@ -7,5 +7,6 @@ namespace OSPSuite.Presentation.Views.Importer
    {
       void FillComboBox(IEnumerable<string> columns, string defaultValue);
       void FillLloqSelector(IView view);
+      void SetLloqToggle(bool lloqColumnsSelection);
    }
 }

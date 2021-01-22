@@ -196,8 +196,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
+            var lloqColumnSelection = true;
             if (column.LloqColumn == null)
-               return;
+               lloqColumnSelection = false;
 
             var columns = new List<string>() { column.LloqColumn };
             if (column.LloqColumn != "")
@@ -205,7 +206,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                columns.Add("");
             }
             columns.AddRange(availableColumns());
-            _mappingParameterEditorPresenter.SetLloqOptions(columns, column.LloqColumn);
+            _mappingParameterEditorPresenter.SetLloqOptions(columns, column.LloqColumn, lloqColumnSelection);
          }
       }
 

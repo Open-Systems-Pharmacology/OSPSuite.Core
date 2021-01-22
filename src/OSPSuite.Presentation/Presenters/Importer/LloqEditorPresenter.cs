@@ -15,8 +15,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public string LloqColumn { get; private set; }
 
-      public void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, string selected = null)
+      public void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, bool lloqColumnsSelection, string selected = null)
       {
+         View.SetLloqToggle(lloqColumnsSelection);
          _optionsEditorPresenter.SetOptions(options, selected);
       }
 
