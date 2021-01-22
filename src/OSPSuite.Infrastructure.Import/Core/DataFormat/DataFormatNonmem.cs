@@ -34,7 +34,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          keys.Remove(unitKey);
          rank++;
-         return new UnitDescription(data.GetColumn(unitKey), unitKey);
+         return new UnitDescription(data.GetColumn(unitKey).First(u => !string.IsNullOrEmpty(u)), unitKey);
       }
    }
 }

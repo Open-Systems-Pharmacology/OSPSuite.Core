@@ -8,45 +8,35 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       public static readonly string InvalidUnit = "?";
 
-      public UnitDescription()
-      {
-         Units = _ => InvalidUnit;
-         ColumnName = "";
-         SelectedUnit = InvalidUnit;
-      }
-      public UnitDescription(IEnumerable<string> units, string columnName = "")
-      {
-         AttachUnitFunction(units);
-         ColumnName = columnName;
-      }
-
-      public UnitDescription(string selectedUnit)
-      {
-         Units = _ => selectedUnit;
-         ColumnName = null;
-         SelectedUnit = selectedUnit;
-      }
-
-      private IList<string> _units = null;
-
-      public Func<int, string> Units { get; private set; }
-
       public string SelectedUnit { get; private set; }
 
       public string ColumnName { get; }
 
-      public void AttachUnitFunction(IEnumerable<string> column)
+      public UnitDescription()
       {
-         if (column == null) return;
-         _units = column.ToList();
-         if (_units.Count == 0) return; 
+         ColumnName = "";
+         SelectedUnit = InvalidUnit;
+      }
+      public UnitDescription(string defUnit, string columnName = "")
+      {
+         SelectedUnit = defUnit;
+         ColumnName = columnName;
+      }
 
-         var def = _units.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? "";
-         if (_units.Count == 1)
-            Units = _ => def;
-         else
-            Units = i => (i > 0 && i < _units.Count) ? _units[i] : def;
-         SelectedUnit = def;
+      public string ExtractUnit(IUnformattedData data, IEnumerable<string> row)
+      {
+         if (ColumnName == null)
+         {
+            return SelectedUnit;
+         }
+
+         return row.ElementAt(data.GetColumnDescription(ColumnName).Index);
+      }
+
+      public UnitDescription(string selectedUnit)
+      {
+         ColumnName = null;
+         SelectedUnit = selectedUnit;
       }
 
       public override string ToString()
