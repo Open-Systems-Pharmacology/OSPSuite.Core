@@ -8,5 +8,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetLloqColumn(string column);
       int SelectedIndex { get; }
       void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, bool lloqColumnsSelection, string selected = null );
+      bool LloqFromColumn();
    }
 }

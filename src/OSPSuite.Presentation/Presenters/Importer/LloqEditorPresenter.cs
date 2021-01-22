@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MathNet.Numerics.Financial;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -26,9 +27,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          LloqColumn = column;
       }
 
-      public int SelectedIndex
+      public bool LloqFromColumn()
       {
-         get => _optionsEditorPresenter.SelectedIndex;
+         return View.IsLloqToggleOn();
       }
+
+      public int SelectedIndex => _optionsEditorPresenter.SelectedIndex;
    }
 }

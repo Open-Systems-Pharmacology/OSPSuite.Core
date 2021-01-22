@@ -70,6 +70,11 @@ namespace OSPSuite.UI.Views.Importer
          LloqToggleSwitch.IsOn = lloqColumnsSelection;
       }
 
+      public bool IsLloqToggleOn()
+      {
+         return LloqToggleSwitch.IsOn;
+      }
+
       public override void InitializeResources()
       {
          base.InitializeResources();

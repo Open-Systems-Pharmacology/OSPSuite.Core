@@ -161,7 +161,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                columns.Add("");
             }
             columns.AddRange(availableColumns());
-            column.LloqColumn = columns[_mappingParameterEditorPresenter.SelectedLloq];
+            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? columns[_mappingParameterEditorPresenter.SelectedLloq] : null;
          }
          ValidateMapping();
          _view.RefreshData();
@@ -196,11 +196,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
-            var lloqColumnSelection = true;
-            if (column.LloqColumn == null)
-               lloqColumnSelection = false;
+            var lloqColumnSelection = column.LloqColumn != null;
 
-            var columns = new List<string>() { column.LloqColumn };
+            var columns = new List<string>();
+
+            if (column.LloqColumn != null)
+               columns.Add(column.LloqColumn);
+
             if (column.LloqColumn != "")
             {
                columns.Add("");

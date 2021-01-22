@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetErrorTypeOptions(IEnumerable<string> types, string selected);
       int SelectedLloq { get; }
       int SelectedErrorType { get; }
+      bool LloqFromColumn();
       UnitDescription Unit { get; }
    }
 
@@ -28,6 +29,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public int SelectedLloq { get => _lloqEditorPresenter.SelectedIndex; }
       public int SelectedErrorType { get => _errorEditorPresenter.SelectedIndex; }
+
+      public bool LloqFromColumn()
+      {
+         return _lloqEditorPresenter.LloqFromColumn();
+      }
 
       public UnitDescription Unit
       {
