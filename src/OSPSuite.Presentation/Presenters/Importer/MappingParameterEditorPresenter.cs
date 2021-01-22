@@ -1,9 +1,7 @@
-﻿using System;
-using OSPSuite.Core.Domain.UnitSystem;
+﻿using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Presentation.Views;
 using System.Collections.Generic;
-using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -53,6 +51,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.FillUnitsView(_unitsEditorPresenter.BaseView);
          View.FillLloqView(_lloqEditorPresenter.BaseView);
          View.FillErrorView(_errorEditorPresenter.BaseView);
+         errorEditorPresenter.OnOptionSelectionChanged += errorSelectionChanged;
       }
 
       public void HideAll()
@@ -77,6 +76,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
          View.ShowErrorTypes();
+      }
+
+      private void errorSelectionChanged(object sender, OptionChangedEventArgs e)
+      {
+         if (e.Text.Equals(Constants.STD_DEV_ARITHMETIC))
+            View.ShowUnits();
+         else if (e.Text.Equals(Constants.STD_DEV_GEOMETRIC))
+            View.HideUnits();
       }
    }
 }

@@ -67,5 +67,10 @@ namespace OSPSuite.UI.Views.Importer
       {
          errorTypePanelControl.FillWith(view);
       }
+
+      public void HideUnits()
+      {
+         UnitsLayoutControlGroup.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+      }
    }
 }

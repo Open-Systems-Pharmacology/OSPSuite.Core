@@ -13,13 +13,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void Clear();
       int SelectedIndex { get; }
       string SelectedText { get; }
+
+      event EventHandler<OptionChangedEventArgs> OnOptionSelectionChanged;
    }
 
    public class OptionsEditorPresenter : AbstractDisposablePresenter<IOptionsEditorView, IOptionsEditorPresenter>, IOptionsEditorPresenter
    {
       public OptionsEditorPresenter(IOptionsEditorView view) : base(view)
       {
-         View.OnOptionChanged += (s, a) => { SelectedIndex = a.Index; SelectedText = a.Text; };
+         View.OnOptionChanged += (s, a) => optionsChanged(a.Index, a.Text);
       }
 
       public void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, string selected = null)
@@ -34,6 +36,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          View.Clear();
       }
+
+      private void optionsChanged( int selectedIndex, string selectedText)
+      {
+         SelectedIndex = selectedIndex; 
+         SelectedText = selectedText;
+         OnOptionSelectionChanged.Invoke(this, new OptionChangedEventArgs {Index = selectedIndex, Text = selectedText});
+      }
+      public event EventHandler<OptionChangedEventArgs> OnOptionSelectionChanged = delegate { };
    }
 
    public class OptionChangedEventArgs : EventArgs

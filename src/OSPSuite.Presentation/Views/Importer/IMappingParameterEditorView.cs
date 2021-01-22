@@ -11,5 +11,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void FillUnitsView(IView view);
       void FillLloqView(IView view);
       void FillErrorView(IView view);
+      void HideUnits();
    }
 }
