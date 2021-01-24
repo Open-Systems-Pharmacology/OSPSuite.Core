@@ -70,34 +70,34 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Margin = new System.Windows.Forms.Padding(13, 12, 13, 12);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(1673, 826);
+         this.layoutControl.Size = new System.Drawing.Size(1706, 627);
          this.layoutControl.TabIndex = 38;
          // 
          // errorTypePanelControl
          // 
          this.errorTypePanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.errorTypePanelControl.Location = new System.Drawing.Point(148, 518);
+         this.errorTypePanelControl.Location = new System.Drawing.Point(148, 26);
          this.errorTypePanelControl.Margin = new System.Windows.Forms.Padding(6);
          this.errorTypePanelControl.Name = "errorTypePanelControl";
-         this.errorTypePanelControl.Size = new System.Drawing.Size(1499, 209);
+         this.errorTypePanelControl.Size = new System.Drawing.Size(1532, 156);
          this.errorTypePanelControl.TabIndex = 7;
          // 
          // lloqPanelControl
          // 
          this.lloqPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.lloqPanelControl.Location = new System.Drawing.Point(148, 285);
+         this.lloqPanelControl.Location = new System.Drawing.Point(148, 381);
          this.lloqPanelControl.Margin = new System.Windows.Forms.Padding(6);
          this.lloqPanelControl.Name = "lloqPanelControl";
-         this.lloqPanelControl.Size = new System.Drawing.Size(1499, 203);
+         this.lloqPanelControl.Size = new System.Drawing.Size(1532, 132);
          this.lloqPanelControl.TabIndex = 6;
          // 
          // unitsPanelControl
          // 
          this.unitsPanelControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-         this.unitsPanelControl.Location = new System.Drawing.Point(148, 26);
+         this.unitsPanelControl.Location = new System.Drawing.Point(148, 212);
          this.unitsPanelControl.Margin = new System.Windows.Forms.Padding(0);
          this.unitsPanelControl.Name = "unitsPanelControl";
-         this.unitsPanelControl.Size = new System.Drawing.Size(1499, 229);
+         this.unitsPanelControl.Size = new System.Drawing.Size(1532, 139);
          this.unitsPanelControl.TabIndex = 5;
          // 
          // Root
@@ -105,7 +105,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlGroup1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(1673, 826);
+         this.Root.Size = new System.Drawing.Size(1706, 627);
          this.Root.TextVisible = false;
          // 
          // layoutControlGroup1
@@ -118,24 +118,24 @@ namespace OSPSuite.UI.Views.Importer
             this.ErrorLayoutControlGroup});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(1651, 804);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(1684, 605);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 731);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 517);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1651, 73);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(1684, 88);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // UnitsLayoutControlGroup
          // 
          this.UnitsLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.unitsLayoutControlItem});
-         this.UnitsLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.UnitsLayoutControlGroup.Location = new System.Drawing.Point(0, 186);
          this.UnitsLayoutControlGroup.Name = "UnitsLayoutControlGroup";
-         this.UnitsLayoutControlGroup.Size = new System.Drawing.Size(1651, 259);
+         this.UnitsLayoutControlGroup.Size = new System.Drawing.Size(1684, 169);
          this.UnitsLayoutControlGroup.TextVisible = false;
          // 
          // unitsLayoutControlItem
@@ -143,16 +143,16 @@ namespace OSPSuite.UI.Views.Importer
          this.unitsLayoutControlItem.Control = this.unitsPanelControl;
          this.unitsLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.unitsLayoutControlItem.Name = "Units";
-         this.unitsLayoutControlItem.Size = new System.Drawing.Size(1625, 233);
+         this.unitsLayoutControlItem.Size = new System.Drawing.Size(1658, 143);
          this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // LloqLayoutControlGroup
          // 
          this.LloqLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.lloqLayoutControlItem});
-         this.LloqLayoutControlGroup.Location = new System.Drawing.Point(0, 259);
+         this.LloqLayoutControlGroup.Location = new System.Drawing.Point(0, 355);
          this.LloqLayoutControlGroup.Name = "LloqLayoutControlGroup";
-         this.LloqLayoutControlGroup.Size = new System.Drawing.Size(1651, 233);
+         this.LloqLayoutControlGroup.Size = new System.Drawing.Size(1684, 162);
          this.LloqLayoutControlGroup.TextVisible = false;
          // 
          // lloqLayoutControlItem
@@ -160,16 +160,16 @@ namespace OSPSuite.UI.Views.Importer
          this.lloqLayoutControlItem.Control = this.lloqPanelControl;
          this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.lloqLayoutControlItem.Name = "Lloq";
-         this.lloqLayoutControlItem.Size = new System.Drawing.Size(1625, 207);
+         this.lloqLayoutControlItem.Size = new System.Drawing.Size(1658, 136);
          this.lloqLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // ErrorLayoutControlGroup
          // 
          this.ErrorLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.errorTypeLayoutControlItem});
-         this.ErrorLayoutControlGroup.Location = new System.Drawing.Point(0, 492);
+         this.ErrorLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.ErrorLayoutControlGroup.Name = "ErrorLayoutControlGroup";
-         this.ErrorLayoutControlGroup.Size = new System.Drawing.Size(1651, 239);
+         this.ErrorLayoutControlGroup.Size = new System.Drawing.Size(1684, 186);
          this.ErrorLayoutControlGroup.TextVisible = false;
          // 
          // errorTypeLayoutControlItem
@@ -177,7 +177,7 @@ namespace OSPSuite.UI.Views.Importer
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
          this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.errorTypeLayoutControlItem.Name = "Error type";
-         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(1625, 213);
+         this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(1658, 160);
          this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
          // MappingParameterEditorView
@@ -187,7 +187,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Controls.Add(this.layoutControl);
          this.Margin = new System.Windows.Forms.Padding(17, 16, 17, 16);
          this.Name = "MappingParameterEditorView";
-         this.Size = new System.Drawing.Size(1673, 826);
+         this.Size = new System.Drawing.Size(1706, 627);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
