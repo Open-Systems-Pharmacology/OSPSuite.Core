@@ -257,7 +257,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-         var unit = currentParameter.MappedColumn.Unit.Units(row.Index);
+         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(data, row.Data);
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
@@ -286,7 +286,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
             ? -1
             : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
-         var unit = currentParameter.MappedColumn.Unit.Units(row.Index);
+         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(data, row.Data);
 
          if (lloqIndex < 0 || !double.TryParse(row.Data.ElementAt(lloqIndex).Trim(), out var lloq))
             lloq = double.NaN;

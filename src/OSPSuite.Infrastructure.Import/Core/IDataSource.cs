@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Reflection;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -73,6 +74,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             }
             filteredDataSheets.Add(key, ds);
          }
+
          return filteredDataSheets;
       }
 

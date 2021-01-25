@@ -139,7 +139,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          column.Unit = _mappingParameterEditorPresenter.Unit;
          if (column.Unit.ColumnName != null && !string.IsNullOrEmpty(column.Unit.ColumnName))
          {
-            column.Unit.AttachUnitFunction(_rawData.GetColumn(column.Unit.ColumnName));
+            column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
          }
 
          if (_currentModel.ColumnInfo.IsBase())

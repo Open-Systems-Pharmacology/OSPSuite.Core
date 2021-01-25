@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          get
          {
-            return _columnMapping ? new UnitDescription(new List<string>() { _selectedColumn }, _selectedColumn) : new UnitDescription(_selectedUnit);
+            return new UnitDescription(_selectedUnit, _selectedColumn);
          }
       }
 
