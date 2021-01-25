@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -97,6 +98,29 @@ namespace OSPSuite.UI.Views.Importer
                Value = column
             });
          _columnComboBox.EditValue = columns.First();
+      }
+
+      public void SetUnitColumnSelection()
+      {
+         _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
+         _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
+         _unitLayoutControlItem.Visibility = LayoutVisibility.Never;
+
+      }
+
+      public void ShowAll()
+      {
+         _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Always;
+         _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Always;
+         _unitLayoutControlItem.Visibility = LayoutVisibility.Always;
+         _columnLayoutControlItem.Visibility = LayoutVisibility.Always;
+      }
+
+      public void SetUnitsManualSelection()
+      {
+         _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
+         _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
+         _columnLayoutControlItem.Visibility = LayoutVisibility.Never;
       }
 
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)

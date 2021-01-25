@@ -40,6 +40,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
+         View.ShowAll();
       }
 
       public void SelectDimension(string dimension)
@@ -58,6 +59,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _columnMapping = true;
             _selectedColumn = column;
          });
+      }
+
+      public void SetUnitColumnSelection()
+      {
+         View.SetUnitColumnSelection();
+      }
+
+      public void SetUnitsManualSelection()
+      {
+         View.SetUnitsManualSelection();
       }
 
       public void SelectUnit(string unit)

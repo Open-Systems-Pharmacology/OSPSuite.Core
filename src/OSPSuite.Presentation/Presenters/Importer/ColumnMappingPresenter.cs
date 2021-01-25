@@ -8,6 +8,7 @@ using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -186,6 +187,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
                .Select(d => d.Dimension),
             new List<string>() {column.Unit.ColumnName}.Union(availableColumns())
          );
+
+         if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
+         {
+            var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
+            var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO.Source).MappedColumn;
+
+            if (!relatedColumn.Unit.ColumnName.IsNullOrEmpty())
+               _mappingParameterEditorPresenter.SetUnitColumnSelection();
+            else
+               _mappingParameterEditorPresenter.SetUnitsManualSelection();
+         }
 
          if (model.ColumnInfo.IsBase())
             return;
