@@ -115,7 +115,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem descriptionRepository(ColumnMappingDTO model)
       {
-         var descriptionRepository = new UxRepositoryItemImageComboBox(columnMappingGridView, _imageListRetriever)
+         var descriptionRepository = new UxRepositoryItemComboBox(columnMappingGridView)
          {
             AutoComplete = true,
             AllowNullInput = DefaultBoolean.True,
@@ -258,13 +258,13 @@ namespace OSPSuite.UI.Views.Importer
          });
       }
 
-      private void fillComboBoxItems(RepositoryItemImageComboBox editor, IEnumerable<string> options)
+      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<string> options)
       {
          editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ImageComboBoxItem(option));
+            editor.Items.Add(new ComboBoxItem(option));
          }
 
          editor.KeyDown += (s, a) => OnEvent(clearSelectionOnDeleteForComboBoxEdit, s, a);
