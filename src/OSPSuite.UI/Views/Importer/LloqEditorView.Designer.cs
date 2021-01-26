@@ -94,7 +94,7 @@
          // 
          this.LloqDescriptionLabelControl.Location = new System.Drawing.Point(12, 409);
          this.LloqDescriptionLabelControl.Name = "LloqDescriptionLabelControl";
-         this.LloqDescriptionLabelControl.Size = new System.Drawing.Size(156, 33);
+         this.LloqDescriptionLabelControl.Size = new System.Drawing.Size(329, 33);
          this.LloqDescriptionLabelControl.StyleController = this.layoutControl1;
          this.LloqDescriptionLabelControl.TabIndex = 6;
          this.LloqDescriptionLabelControl.Text = "LloqDescriptionLabelControl";

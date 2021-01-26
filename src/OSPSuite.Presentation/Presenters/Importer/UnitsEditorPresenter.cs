@@ -76,6 +76,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          this.DoWithinExceptionHandler(() =>
          {
             _columnMapping = false;
+            _selectedColumn = null;
             _selectedUnit = unit;
          });
       }

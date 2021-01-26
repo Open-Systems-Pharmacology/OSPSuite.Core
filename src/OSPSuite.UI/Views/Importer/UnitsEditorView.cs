@@ -111,9 +111,9 @@ namespace OSPSuite.UI.Views.Importer
       public void ShowAll()
       {
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Always;
-         _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Always;
-         _unitLayoutControlItem.Visibility = LayoutVisibility.Always;
-         _columnLayoutControlItem.Visibility = LayoutVisibility.Always;
+        // _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Always;
+         //_unitLayoutControlItem.Visibility = LayoutVisibility.Always;
+         //_columnLayoutControlItem.Visibility = LayoutVisibility.Always;
       }
 
       public void SetUnitsManualSelection()
