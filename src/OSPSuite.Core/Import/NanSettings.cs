@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OSPSuite.Infrastructure.Import.Core
+﻿namespace OSPSuite.Core.Import
 {
    public class NanSettings
    {

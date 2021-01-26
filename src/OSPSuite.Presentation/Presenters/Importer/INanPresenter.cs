@@ -1,5 +1,5 @@
 ﻿using System;
-using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer

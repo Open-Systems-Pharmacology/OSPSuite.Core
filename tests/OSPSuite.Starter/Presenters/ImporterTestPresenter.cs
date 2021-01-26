@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -24,19 +25,19 @@ namespace OSPSuite.Starter.Presenters
       void StartPKSimSingleMode();
       void StartWithOntogenySettings();
       void StartWithMoBiSettings();
+      void ReloadWithPKSimSettings();
+      void LoadWithPKSimSettings();
    }
 
    public class ImporterTestPresenter : AbstractPresenter<IImporterTestView, IImporterTestPresenter>, IImporterTestPresenter
    {
-      private readonly IImporterPresenter _importer;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
       private readonly IDataImporter _dataImporter;
 
-      public ImporterTestPresenter(IImporterTestView view, IImporterPresenter importer, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter)
+      public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter)
          : base(view)
       {
-         _importer = importer;
          _dataGenerator = dataGenerator;
          _dialogCreator = dialogCreator;
          _dataImporter = dataImporter;
@@ -85,6 +86,50 @@ namespace OSPSuite.Starter.Presenters
          );
 
          //promptForImports(dataSets);
+      }
+
+      public void ReloadWithPKSimSettings()
+      {
+         var fileDialog = new OpenFileDialog { Multiselect = false };
+         fileDialog.Title = Captions.Importer.SaveConfiguration;
+         fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
+
+         if (fileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+         var dataImporterSettings = new DataImporterSettings();
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromXml
+         (
+            fileDialog.FileName,
+            false,
+            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            dataImporterSettings
+         ).Count() + " data sets successfully imported");
+      }
+
+      public void LoadWithPKSimSettings()
+      {
+         var fileDialog = new OpenFileDialog { Multiselect = false };
+         fileDialog.Title = Captions.Importer.SaveConfiguration;
+         fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
+
+         if (fileDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+         var dataImporterSettings = new DataImporterSettings();
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromXml
+         (
+            fileDialog.FileName,
+            true,
+            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            dataImporterSettings
+         ).Count() + " data sets successfully imported");
       }
 
       public void StartWithPKSimSettings()

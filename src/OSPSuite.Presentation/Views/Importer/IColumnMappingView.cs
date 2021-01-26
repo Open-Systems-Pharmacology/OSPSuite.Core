@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using DevExpress.XtraEditors.DXErrorProvider;
 using OSPSuite.Assets;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Utility.Reflection;
 

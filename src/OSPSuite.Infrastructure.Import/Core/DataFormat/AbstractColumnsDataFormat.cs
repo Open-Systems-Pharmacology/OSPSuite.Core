@@ -5,6 +5,7 @@ using System.Linq;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Extensions;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -12,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    {
       public abstract string Name { get; }
       public abstract string Description { get; }
-      public IList<DataFormatParameter> Parameters { get; protected set; }
+      public IList<DataFormatParameter> Parameters { get; set; }
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
 
       public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
@@ -257,7 +258,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
-         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(data, row.Data);
+         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
@@ -286,7 +287,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
             ? -1
             : data.GetColumnDescription(currentParameter.MappedColumn.LloqColumn).Index;
-         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(data, row.Data);
+         var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
 
          if (lloqIndex < 0 || !double.TryParse(row.Data.ElementAt(lloqIndex).Trim(), out var lloq))
             lloq = double.NaN;

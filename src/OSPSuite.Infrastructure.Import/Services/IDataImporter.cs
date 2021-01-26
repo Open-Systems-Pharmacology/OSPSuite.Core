@@ -12,6 +12,18 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="metaDataCategories">Specification of meta data of the table.</param>
       /// <param name="columnInfos">Specification of columns including specification of meta data.</param>
       /// <param name="dataImporterSettings">Settings used to initialize the view</param>
-      IEnumerable<DataRepository> ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings);
+      IEnumerable<DataRepository> ImportDataSets(
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings
+      );
+
+      IEnumerable<DataRepository> ImportFromXml(
+         string configurationFilePath, 
+         bool promptForConfirmation,
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings
+      );
    }
 }

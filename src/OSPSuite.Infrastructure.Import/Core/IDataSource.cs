@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Reflection;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -81,11 +81,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
       {         
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
-         if (!double.TryParse(NanSettings.Indicator, out var indicator))
+         if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
          foreach (var dataSet in DataSets)
          {
-            if (NanSettings.Action == NanSettings.ActionType.Throw)
+            if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
                dataSet.ThrowsOnNan(indicator);
             else
                dataSet.ClearNan(indicator);

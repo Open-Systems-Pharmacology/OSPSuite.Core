@@ -21,5 +21,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetSourceFile(string path);
 
       event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
+
+      void SaveConfiguration(string fileName);
+      void LoadConfiguration(string fileName);
    }
 }

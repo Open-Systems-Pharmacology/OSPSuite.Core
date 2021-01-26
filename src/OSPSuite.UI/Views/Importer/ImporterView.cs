@@ -2,10 +2,12 @@
  using DevExpress.XtraEditors;
  using DevExpress.XtraTab;
 using OSPSuite.Assets;
+using OSPSuite.Core.Serialization;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -36,6 +38,19 @@ namespace OSPSuite.UI.Views.Importer
          sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
+
+         saveMappingBtn.Click += (s, a) => OnEvent(() =>
+         {
+            var fileDialog = new OpenFileDialog { Multiselect = false };
+            fileDialog.Title = Captions.Importer.SaveConfiguration;
+            fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
+
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+               return;
+            _presenter.SaveConfiguration(fileDialog.FileName);
+         });
+         saveMappingBtn.Text = Captions.Importer.SaveConfiguration;
+         saveMappingBtnLayoutControlItem.AdjustButtonSize();
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

@@ -20,6 +20,8 @@ namespace OSPSuite.Starter.Views
          startComparisonTestButton.Click += (sender, args) => OnEvent(_presenter.StartComparisonTest);
          startExplorerTestButton.Click += (sender, args) => OnEvent(_presenter.StartExplorerTest);
          startImporterTestButton.Click += (sender, args) => OnEvent(_presenter.StartImporterTest);
+         startImporterLoadTestButton.Click += (sender, args) => OnEvent(_presenter.StartImporterLoadTest);
+         startImporterReloadTestButton.Click += (sender, args) => OnEvent(_presenter.StartImporterReloadTest);
          startShellTestButton.Click += (sender, args) => OnEvent(_presenter.StartShellTest);
          startDataRepositoryTestButton.Click += (sender, args) => OnEvent(_presenter.StartDataRepositoryTest);
          startPivotGridTestButton.Click += (sender, args) => OnEvent(_presenter.StartPivotGridTest);
@@ -42,6 +44,8 @@ namespace OSPSuite.Starter.Views
          startComparisonTestButton.Text = "Start Comparison Test";
          startExplorerTestButton.Text = "Start Explorer Test";
          startImporterTestButton.Text = "Start Importer Test";
+         startImporterLoadTestButton.Text = "Start Importer Load Test";
+         startImporterReloadTestButton.Text = "Start Importer Reload Test";
          startShellTestButton.Text = "Start Shell Test";
          startDataRepositoryTestButton.Text = "Start Data Repository Test";
          startPivotGridTestButton.Text = "Start Pivot Grid Test";

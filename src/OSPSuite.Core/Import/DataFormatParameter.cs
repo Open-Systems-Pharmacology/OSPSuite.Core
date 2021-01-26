@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Infrastructure.Import.Core.DataFormat
+﻿namespace OSPSuite.Core.Import
 {
    public class ParameterConfiguration
    {
@@ -24,6 +24,8 @@
          ColumnName = columnName;
       }
 
+      protected DataFormatParameter() { }
+
       public virtual bool EquivalentTo(DataFormatParameter other)
       {
          return other.GetType() == GetType();
@@ -32,6 +34,8 @@
    
    public class AddGroupByFormatParameter : DataFormatParameter
    {
+      public AddGroupByFormatParameter() { }
+
       public AddGroupByFormatParameter(string columnName) : base(columnName)
       {
       }
@@ -39,12 +43,14 @@
 
    public class MetaDataFormatParameter : DataFormatParameter
    {
+      public MetaDataFormatParameter() { }
+
       public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
       {
          MetaDataId = metaDataId;
       }
 
-      public string MetaDataId { get; private set; }
+      public string MetaDataId { get; set; }
 
       public override bool EquivalentTo(DataFormatParameter other)
       {
@@ -54,6 +60,8 @@
 
    public class GroupByDataFormatParameter : DataFormatParameter
    {
+      public GroupByDataFormatParameter() { }
+
       public GroupByDataFormatParameter(string columnName) : base(columnName)
       { }
 
@@ -65,12 +73,14 @@
 
    public class MappingDataFormatParameter : DataFormatParameter
    {
+      public MappingDataFormatParameter() { }
+
       public MappingDataFormatParameter(string columnName, Column mappedColumn) : base(columnName)
       {
          MappedColumn = mappedColumn;
       }
 
-      public Column MappedColumn { get; }
+      public Column MappedColumn { get; set; }
 
       public override bool EquivalentTo(DataFormatParameter other)
       {
