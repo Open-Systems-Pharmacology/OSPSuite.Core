@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {

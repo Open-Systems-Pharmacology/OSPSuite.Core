@@ -4,12 +4,15 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.Xml;
+using System.Xml.Linq;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -25,7 +28,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly INanPresenter _nanPresenter;
       private readonly IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
-      
+      private readonly Utility.Container.IContainer _container;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
+      private OSPSuite.Core.Import.ImporterConfiguration _configuration = new OSPSuite.Core.Import.ImporterConfiguration();
+
       public ImporterPresenter(
          IImporterView view, 
          IDataSetToDataRepositoryMapper dataRepositoryMapper, 
@@ -35,7 +41,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImportConfirmationPresenter confirmationPresenter, 
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
-         IDialogCreator dialogCreator
+         IDialogCreator dialogCreator,
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
+         Utility.Container.IContainer container
       ) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
@@ -45,6 +53,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
          _dataSource = new DataSource(importer);
+         _container = container;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
 
          _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
@@ -62,9 +72,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _dataSource.SetNamingConvention(a.NamingConvention); 
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
+            _configuration.NamingConventions = a.NamingConvention;
          };
          _importerDataPresenter.OnImportSheets += ImportSheetsFromDataPresenter;
-         _nanPresenter.OnNaNSettingsChanged += (s,a) =>_columnMappingPresenter.ValidateMapping();
+         _nanPresenter.OnNaNSettingsChanged += (s, a) =>
+         {
+            _columnMappingPresenter.ValidateMapping();
+            _configuration.NanSettings = _nanPresenter.Settings;
+         };
          _view.AddConfirmationView(_confirmationPresenter.View);
          _view.AddImporterView(_importerDataPresenter.View);
          AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
@@ -110,6 +125,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             importSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
+            _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
+            _configuration.FilterString = args.Filter;
          }
          catch (NanException e)
          {
@@ -160,6 +177,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {
          _columnMappingPresenter.SetDataFormat(e.Format);
+         _configuration.Parameters = e.Format.Parameters.ToList();
       }
 
       private void onTabChanged(object sender, TabChangedEventArgs e)
@@ -197,6 +215,29 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter.SetFilePath(path);
          _dataSourceFile = _importerDataPresenter.SetDataSource(path);
          _columnMappingPresenter.ValidateMapping();
+         _configuration.FileName = path;
+      }
+
+      public void SaveConfiguration(string fileName)
+      {
+         
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
+            var element = serializer.Serialize(_configuration, serializationContext);
+            element.Save(fileName);
+         } 
+      }
+
+      public void LoadConfiguration(string fileName)
+      {
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
+            var xel = XElement.Load(fileName);
+            _configuration = serializer.Deserialize<OSPSuite.Core.Import.ImporterConfiguration>(xel, serializationContext);
+            //broadcast...  
+         }
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

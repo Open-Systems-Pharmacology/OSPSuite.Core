@@ -8,6 +8,7 @@ using System.Linq;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {

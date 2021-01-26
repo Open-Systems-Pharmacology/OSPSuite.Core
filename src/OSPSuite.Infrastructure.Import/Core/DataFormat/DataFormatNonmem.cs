@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat

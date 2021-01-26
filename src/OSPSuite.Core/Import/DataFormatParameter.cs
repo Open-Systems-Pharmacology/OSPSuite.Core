@@ -1,4 +1,4 @@
-﻿namespace OSPSuite.Infrastructure.Import.Core.DataFormat
+﻿namespace OSPSuite.Core.Import
 {
    public class ParameterConfiguration
    {

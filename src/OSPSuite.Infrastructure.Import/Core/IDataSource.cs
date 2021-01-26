@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Reflection;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 

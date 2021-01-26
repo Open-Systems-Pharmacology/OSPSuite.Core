@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System.Text.RegularExpressions;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {

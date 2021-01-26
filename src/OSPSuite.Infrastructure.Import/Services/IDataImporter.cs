@@ -13,5 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="columnInfos">Specification of columns including specification of meta data.</param>
       /// <param name="dataImporterSettings">Settings used to initialize the view</param>
       IEnumerable<DataRepository> ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings);
+
+      //IEnumerable<DataRepository> ImportFromXml(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string xmlFilePath, bool prompt);
    }
 }
