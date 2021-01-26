@@ -18,6 +18,8 @@ namespace OSPSuite.Starter.Presenters
       void StartComparisonTest();
       void StartExplorerTest();
       void StartImporterTest();
+      void StartImporterReloadTest();
+      void StartImporterLoadTest();
       void StartShellTest();
       void StartDataRepositoryTest();
       void StartPivotGridTest();
@@ -81,6 +83,17 @@ namespace OSPSuite.Starter.Presenters
       public void StartExplorerTest() => start<IExplorerTestPresenter>();
 
       public void StartImporterTest() => start<IImporterTestPresenter>();
+
+      public void StartImporterReloadTest() {
+         var presenter = IoC.Resolve<IImporterTestPresenter>();
+         presenter.ReloadWithPKSimSettings();
+      }
+
+      public void StartImporterLoadTest()
+      {
+         var presenter = IoC.Resolve<IImporterTestPresenter>();
+         presenter.LoadWithPKSimSettings();
+      }
 
       public void StartShellTest() => _shellPresenter.Start();
 

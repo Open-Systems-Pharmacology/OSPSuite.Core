@@ -13,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    {
       public abstract string Name { get; }
       public abstract string Description { get; }
-      public IList<DataFormatParameter> Parameters { get; protected set; }
+      public IList<DataFormatParameter> Parameters { get; set; }
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
 
       public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)

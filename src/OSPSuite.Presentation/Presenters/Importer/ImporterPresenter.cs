@@ -236,7 +236,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
             var xel = XElement.Load(fileName);
             _configuration = serializer.Deserialize<OSPSuite.Core.Import.ImporterConfiguration>(xel, serializationContext);
-            //broadcast...  
+            //broadcast...
+
+            _sourceFilePresenter.SetFilePath(_configuration.FileName);
+            _dataSourceFile = _importerDataPresenter.SetDataSource(_configuration.FileName);
+            _dataSourceFile.Format.Parameters = _configuration.Parameters;
+            _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
+            _columnMappingPresenter.ValidateMapping();
+            _dataSource.SetNamingConvention(_configuration.NamingConventions);
+            _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
+            var sheets = new Cache<string, IDataSheet>();
+            foreach (var element in _configuration.LoadedSheets)
+            {
+               sheets.Add(element, _dataSourceFile.DataSheets[element]);
+            }
+            importSheets(_dataSourceFile, sheets, _configuration.FilterString);
+            _importerDataPresenter.DisableImportedSheets();
          }
       }
 
