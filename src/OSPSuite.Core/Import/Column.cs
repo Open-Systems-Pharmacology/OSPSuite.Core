@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Import
 
       public string ExtractUnit(Func<string,int> index, IEnumerable<string> row)
       {
-         if (ColumnName == null)
+         if (string.IsNullOrEmpty(ColumnName))
          {
             return SelectedUnit;
          }
