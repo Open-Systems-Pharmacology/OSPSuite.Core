@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Views.Importer
       void FillUnitComboBox(IEnumerable<Unit> units, string defaultValue);
       void FillColumnComboBox(IEnumerable<string> columns);
       void SetUnitColumnSelection();
-      void ShowAll();
+      void ShowToggle();
       void SetUnitsManualSelection();
    }
 }

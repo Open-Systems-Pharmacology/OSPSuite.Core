@@ -154,7 +154,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             column.ErrorStdDev = _mappingParameterEditorPresenter.SelectedErrorType == 0 ? Constants.STD_DEV_ARITHMETIC : Constants.STD_DEV_GEOMETRIC;
          }
-         else
+         else //in this case the column is a measurement column
          {
             var columns = new List<string>() { column.LloqColumn };
             if (column.LloqColumn != "")
@@ -163,8 +163,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
             columns.AddRange(availableColumns());
             column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? columns[_mappingParameterEditorPresenter.SelectedLloq] : null;
+            
+            
+            var errorColumnDTO = _mappings.FirstOrDefault(c => c.ColumnInfo.RelatedColumnOf == _currentModel.MappingName);
+            var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
+
+            if (errorColumn.Unit.ColumnName.IsNullOrEmpty() != column.Unit.ColumnName.IsNullOrEmpty())
+               errorColumn.Unit = new UnitDescription();
          }
          ValidateMapping();
+
          _view.RefreshData();
          _view.CloseEditor();
       }

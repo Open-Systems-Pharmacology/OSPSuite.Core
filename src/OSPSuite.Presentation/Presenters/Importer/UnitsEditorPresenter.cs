@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
-         View.ShowAll();
+         View.ShowToggle();
       }
 
       public void SelectDimension(string dimension)
@@ -109,7 +109,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IDimension findSelectedOrDefaultDimension(string selectedUnit)
       {
-         //return _dimensionFactory.DimensionForUnit(selectedUnit);
          return _dimensions.FirstOrDefault(d => d.Units.Any(u => u.Name == selectedUnit)) ?? _dimensions.First();
       }
 
@@ -118,7 +117,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          this.DoWithinExceptionHandler(() =>
          {
             _importDataColumn.Unit = new UnitDescription(_selectedUnit);
-            //_canClose = true;
          });
       }
    }

@@ -126,7 +126,7 @@ namespace OSPSuite.UI.Views.Importer
          return descriptionRepository;
       }
 
-      private RepositoryItemImageComboBox nameRepository(ColumnMappingDTO model)
+      private RepositoryItemComboBox nameRepository(ColumnMappingDTO model)
       {
          var entry = new ColumnMappingOption()
          {
@@ -134,7 +134,7 @@ namespace OSPSuite.UI.Views.Importer
             IconIndex = model.Icon,
             Description = model.MappingName
          };
-         var repo = new UxRepositoryItemImageComboBox(columnMappingGridView, _imageListRetriever) {AllowNullInput = DefaultBoolean.True};
+         var repo = new UxRepositoryItemComboBox(columnMappingGridView) {AllowNullInput = DefaultBoolean.True};
          fillComboBoxItem
          (
             repo,
@@ -245,17 +245,18 @@ namespace OSPSuite.UI.Views.Importer
          return superToolTip;
       }
 
-      private void fillComboBoxItem(RepositoryItemImageComboBox editor, ColumnMappingOption option)
+      private void fillComboBoxItem(RepositoryItemComboBox editor, ColumnMappingOption option)
       {
          editor.Items.Clear();
-         editor.SmallImages = _imageListRetriever.AllImages16x16;
+         //editor.SmallImages = _imageListRetriever.AllImages16x16;
          editor.NullText = Captions.Importer.NoneEditorNullText;
 
-         editor.Items.Add(new ImageComboBoxItem(option.Description)
+         editor.Items.Add(new ComboBoxItem(option.Description)
+         /*
          {
             Description = option.Label,
             ImageIndex = option.IconIndex
-         });
+         }*/);
       }
 
       private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<string> options)
@@ -290,7 +291,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
       {
-         var comboBoxEdit = sender as ImageComboBoxEdit;
+         var comboBoxEdit = sender as ImageComboBoxEdit; //this actually comes from the column with the xes, so all good
          var gridControl = comboBoxEdit?.Parent as UxGridControl;
          var view = gridControl?.FocusedView as ColumnView;
          if (view == null) return;

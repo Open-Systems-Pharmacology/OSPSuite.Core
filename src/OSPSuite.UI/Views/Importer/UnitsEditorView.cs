@@ -105,15 +105,12 @@ namespace OSPSuite.UI.Views.Importer
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
          _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
          _unitLayoutControlItem.Visibility = LayoutVisibility.Never;
-
+         _columnLayoutControlItem.Visibility = LayoutVisibility.Always;
       }
 
-      public void ShowAll()
+      public void ShowToggle()
       {
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Always;
-        // _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Always;
-         //_unitLayoutControlItem.Visibility = LayoutVisibility.Always;
-         //_columnLayoutControlItem.Visibility = LayoutVisibility.Always;
       }
 
       public void SetUnitsManualSelection()
@@ -121,6 +118,7 @@ namespace OSPSuite.UI.Views.Importer
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
          _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
          _columnLayoutControlItem.Visibility = LayoutVisibility.Never;
+         _unitLayoutControlItem.Visibility = LayoutVisibility.Always;
       }
 
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)
