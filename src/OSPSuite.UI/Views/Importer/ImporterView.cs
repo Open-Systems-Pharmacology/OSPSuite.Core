@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Views.Importer
 
          saveMappingBtn.Click += (s, a) => OnEvent(() =>
          {
-            var fileDialog = new OpenFileDialog { Multiselect = false };
+            var fileDialog = new SaveFileDialog { };
             fileDialog.Title = Captions.Importer.SaveConfiguration;
             fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
 
