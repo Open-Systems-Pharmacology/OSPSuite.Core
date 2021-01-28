@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Journal
       void Load(RelatedItem relatedItem);
 
       /// <summary>
-      ///    LoadCurrentSheet all related items into calling application. THat means that file based related item or sister application
+      ///    Import all related items into calling application. THat means that file based related item or sister application
       ///    related items won't be loaded
       /// </summary>
       void ImportAllIntoApplication(IEnumerable<RelatedItem> relatedItems);
