@@ -187,15 +187,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var source = (MappingDataFormatParameter)model.Source;
          var column = source.MappedColumn;
-         
-         _mappingParameterEditorPresenter.SetUnitOptions(
-            column,
-            _columnInfos
-               .First(i => i.DisplayName == model.MappingName)
-               .DimensionInfos
-               .Select(d => d.Dimension),
-            new List<string>() {column.Unit.ColumnName}.Union(availableColumns())
-         );
+
+         _mappingParameterEditorPresenter.InitView();
+
+         var columns = new List<string>() { column.Unit.ColumnName };
 
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
@@ -203,10 +198,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO.Source).MappedColumn;
 
             if (!relatedColumn.Unit.ColumnName.IsNullOrEmpty())
+            {
                _mappingParameterEditorPresenter.SetUnitColumnSelection();
+               columns.Add(relatedColumn.Unit.ColumnName);
+            }
             else
                _mappingParameterEditorPresenter.SetUnitsManualSelection();
          }
+
+         _mappingParameterEditorPresenter.SetUnitOptions(
+            column,
+            _columnInfos
+               .First(i => i.DisplayName == model.MappingName)
+               .DimensionInfos
+               .Select(d => d.Dimension),
+               columns.Union(availableColumns())
+         );
+
 
          if (model.ColumnInfo.IsBase())
             return;
@@ -219,7 +227,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             var lloqColumnSelection = column.LloqColumn != null;
 
-            var columns = new List<string>();
+            columns = new List<string>();
 
             if (column.LloqColumn != null)
                columns.Add(column.LloqColumn);

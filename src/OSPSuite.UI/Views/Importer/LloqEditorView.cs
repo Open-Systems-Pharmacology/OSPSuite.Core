@@ -17,8 +17,8 @@ namespace OSPSuite.UI.Views.Importer
       public LloqEditorView()
       {
          InitializeComponent();
-         //ColumnsComboBox.EditValueChanged += (s, e) => OnEvent(() => _presenter.SetLloqColumn(ColumnsComboBox.EditValue.ToString()));
          LloqToggleSwitch.IsOnChanged += onIsOnChanged;
+         lloqToggleLayoutControlItem.Text = Captions.Importer.ImportLLOQFromColumn;
       }
 
       private ILloqEditorPresenter _presenter;
@@ -32,8 +32,8 @@ namespace OSPSuite.UI.Views.Importer
          if (LloqToggleSwitch.IsOn)
          {
             LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never;
-            LloqDescriptionLayoutControlItem.Visibility = LayoutVisibility.Always;
-            //LloqDescriptionPanelControl.Visible = true;
+            LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Always;
+            //LloqColumnPanelControl.Visible = true;
             //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
 
             //onColumnComboBoxTextChanged();
@@ -41,10 +41,10 @@ namespace OSPSuite.UI.Views.Importer
          else
          {
             LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Always;
-            LloqDescriptionLayoutControlItem.Visibility = LayoutVisibility.Never;
+            LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Never;
 
-            //LloqDescriptionLayoutControlItem.TextVisible = true;
-            //LloqDescriptionPanelControl.Visible = false;
+            //LloqColumnLayoutControlItem.TextVisible = true;
+            //LloqColumnPanelControl.Visible = false;
 
             //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
 
@@ -62,7 +62,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void FillLloqSelector(IView view)
       {
-         LloqDescriptionPanelControl.FillWith(view);
+         LloqColumnPanelControl.FillWith(view);
       }
 
       public void SetLloqToggle(bool lloqColumnsSelection)
@@ -80,7 +80,8 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          Text = Captions.Importer.LloqColumnEditorTitle;
          LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
-         LloqDescriptionPanelControl.Dock = DockStyle.Fill;
+         LloqColumnPanelControl.Dock = DockStyle.Fill;
+         LloqColumnLayoutControlItem.Text = Captions.Importer.Column;
          //LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never; //actually this should depend on the file
       }
    }

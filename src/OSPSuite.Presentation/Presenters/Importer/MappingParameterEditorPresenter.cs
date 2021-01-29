@@ -18,6 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       UnitDescription Unit { get; }
       void SetUnitColumnSelection();
       void SetUnitsManualSelection();
+      void InitView();
    }
 
    public class MappingParameterEditorPresenter : AbstractDisposablePresenter<IMappingParameterEditorView, IMappingParameterEditorPresenter>, IMappingParameterEditorPresenter
@@ -50,6 +51,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _unitsEditorPresenter.SetUnitsManualSelection();
       }
 
+      public void InitView()
+      {
+         View.ShowUnits();
+      }
+
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
          IUnitsEditorPresenter unitsEditorPresenter,
@@ -75,7 +81,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _dimensions = dimensions;
          _unitsEditorPresenter.SetOptions(importDataColumn, _dimensions, availableColumns);
-         View.ShowUnits();
       }
 
       public void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection)

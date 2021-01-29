@@ -33,12 +33,12 @@
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
          this.LloqDescriptionLabelControl = new DevExpress.XtraEditors.LabelControl();
-         this.LloqDescriptionPanelControl = new DevExpress.XtraEditors.PanelControl();
+         this.LloqColumnPanelControl = new DevExpress.XtraEditors.PanelControl();
          this.LloqToggleSwitch = new DevExpress.XtraEditors.ToggleSwitch();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.lloqToggleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-         this.LloqDescriptionLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.LloqColumnLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.LloqDescriptionLabelLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
@@ -47,12 +47,12 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
          this.layoutControl1.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionPanelControl)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqColumnPanelControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.LloqToggleSwitch.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lloqToggleLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqColumnLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionLabelLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
@@ -81,7 +81,7 @@
          // layoutControl1
          // 
          this.layoutControl1.Controls.Add(this.LloqDescriptionLabelControl);
-         this.layoutControl1.Controls.Add(this.LloqDescriptionPanelControl);
+         this.layoutControl1.Controls.Add(this.LloqColumnPanelControl);
          this.layoutControl1.Controls.Add(this.LloqToggleSwitch);
          this.layoutControl1.Location = new System.Drawing.Point(12, 12);
          this.layoutControl1.Name = "layoutControl1";
@@ -99,20 +99,20 @@
          this.LloqDescriptionLabelControl.TabIndex = 6;
          this.LloqDescriptionLabelControl.Text = "LloqDescriptionLabelControl";
          // 
-         // LloqDescriptionPanelControl
+         // LloqColumnPanelControl
          // 
-         this.LloqDescriptionPanelControl.Location = new System.Drawing.Point(12, 63);
-         this.LloqDescriptionPanelControl.Name = "LloqDescriptionPanelControl";
-         this.LloqDescriptionPanelControl.Size = new System.Drawing.Size(1958, 342);
-         this.LloqDescriptionPanelControl.TabIndex = 5;
+         this.LloqColumnPanelControl.Location = new System.Drawing.Point(373, 61);
+         this.LloqColumnPanelControl.Name = "LloqColumnPanelControl";
+         this.LloqColumnPanelControl.Size = new System.Drawing.Size(1599, 346);
+         this.LloqColumnPanelControl.TabIndex = 5;
          // 
          // LloqToggleSwitch
          // 
-         this.LloqToggleSwitch.Location = new System.Drawing.Point(12, 12);
+         this.LloqToggleSwitch.Location = new System.Drawing.Point(375, 12);
          this.LloqToggleSwitch.Name = "LloqToggleSwitch";
          this.LloqToggleSwitch.Properties.OffText = "Off";
          this.LloqToggleSwitch.Properties.OnText = "On";
-         this.LloqToggleSwitch.Size = new System.Drawing.Size(1958, 47);
+         this.LloqToggleSwitch.Size = new System.Drawing.Size(1595, 47);
          this.LloqToggleSwitch.StyleController = this.layoutControl1;
          this.LloqToggleSwitch.TabIndex = 4;
          // 
@@ -121,23 +121,22 @@
          this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
          this.layoutControlGroup1.GroupBordersVisible = false;
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem2,
+            this.lloqToggleLayoutControlItem,
             this.emptySpaceItem1,
-            this.LloqDescriptionLayoutControlItem,
+            this.LloqColumnLayoutControlItem,
             this.LloqDescriptionLabelLayoutControlItem,
             this.emptySpaceItem2});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(1982, 869);
          this.layoutControlGroup1.TextVisible = false;
          // 
-         // layoutControlItem2
+         // lloqToggleLayoutControlItem
          // 
-         this.layoutControlItem2.Control = this.LloqToggleSwitch;
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(1962, 51);
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
+         this.lloqToggleLayoutControlItem.Control = this.LloqToggleSwitch;
+         this.lloqToggleLayoutControlItem.Location = new System.Drawing.Point(0, 0);
+         this.lloqToggleLayoutControlItem.Name = "lloqToggleLayoutControlItem";
+         this.lloqToggleLayoutControlItem.Size = new System.Drawing.Size(1962, 51);
+         this.lloqToggleLayoutControlItem.TextSize = new System.Drawing.Size(360, 33);
          // 
          // emptySpaceItem1
          // 
@@ -147,14 +146,14 @@
          this.emptySpaceItem1.Size = new System.Drawing.Size(1962, 250);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
-         // LloqDescriptionLayoutControlItem
+         // LloqColumnLayoutControlItem
          // 
-         this.LloqDescriptionLayoutControlItem.Control = this.LloqDescriptionPanelControl;
-         this.LloqDescriptionLayoutControlItem.Location = new System.Drawing.Point(0, 51);
-         this.LloqDescriptionLayoutControlItem.Name = "LloqDescriptionLayoutControlItem";
-         this.LloqDescriptionLayoutControlItem.Size = new System.Drawing.Size(1962, 346);
-         this.LloqDescriptionLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
-         this.LloqDescriptionLayoutControlItem.TextVisible = false;
+         this.LloqColumnLayoutControlItem.Control = this.LloqColumnPanelControl;
+         this.LloqColumnLayoutControlItem.Location = new System.Drawing.Point(0, 51);
+         this.LloqColumnLayoutControlItem.Name = "LloqColumnLayoutControlItem";
+         this.LloqColumnLayoutControlItem.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
+         this.LloqColumnLayoutControlItem.Size = new System.Drawing.Size(1962, 346);
+         this.LloqColumnLayoutControlItem.TextSize = new System.Drawing.Size(360, 33);
          // 
          // LloqDescriptionLabelLayoutControlItem
          // 
@@ -199,12 +198,12 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
          this.layoutControl1.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionPanelControl)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqColumnPanelControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.LloqToggleSwitch.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lloqToggleLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.LloqColumnLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.LloqDescriptionLabelLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
@@ -222,11 +221,11 @@
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
       private DevExpress.XtraEditors.LabelControl LloqDescriptionLabelControl;
-      private DevExpress.XtraEditors.PanelControl LloqDescriptionPanelControl;
+      private DevExpress.XtraEditors.PanelControl LloqColumnPanelControl;
       private DevExpress.XtraEditors.ToggleSwitch LloqToggleSwitch;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+      private DevExpress.XtraLayout.LayoutControlItem lloqToggleLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private DevExpress.XtraLayout.LayoutControlItem LloqDescriptionLayoutControlItem;
+      private DevExpress.XtraLayout.LayoutControlItem LloqColumnLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem LloqDescriptionLabelLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
    }

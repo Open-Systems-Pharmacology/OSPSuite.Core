@@ -401,7 +401,7 @@ namespace OSPSuite.Assets
          public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
          public static readonly string Title = "Importer";
          public static readonly string LLOQ = "LLOQ";
-         public static readonly string LloqDescription = "values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
+         public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
          public static readonly string SaveConfigurationFilter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
