@@ -100,6 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ).ToList();
          View.SetMappingSource(_mappings);
          ValidateMapping();
+
       }
 
       public void SetDataFormat(IDataFormat format)

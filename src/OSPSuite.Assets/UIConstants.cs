@@ -394,8 +394,8 @@ namespace OSPSuite.Assets
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
          public static readonly string Column = "Column";
          public static readonly string LoadCurrentSheet = "Load current sheet";
-         public static readonly string AllSheetsAlreadyImported = "All sheets already imported";
-         public static readonly string SheetsAlreadyImported = "Current sheet already imported";
+         public static readonly string AllSheetsAlreadyImported = "All imported";
+         public static readonly string SheetsAlreadyImported = "Imported";
          public static readonly string CloseAllTabsButThis = "close all tabs but this";
          public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
          public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
@@ -404,7 +404,7 @@ namespace OSPSuite.Assets
          public static readonly string LloqDescription = "values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
          public static readonly string SaveConfigurationFilter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
-
+         public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";

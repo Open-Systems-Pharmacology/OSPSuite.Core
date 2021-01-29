@@ -45,15 +45,15 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         //TODO move to constant file
-         Caption = "Source";
-         btnImport.InitWithImage(ApplicationIcons.Import, "Load current sheet");
-         btnImportAll.InitWithImage(ApplicationIcons.Import, "Load all sheets");
+         Caption = Captions.Importer.SourceTab;
+         btnImport.InitWithImage(ApplicationIcons.Import, Captions.Importer.LoadCurrentSheet);
+         btnImportAll.InitWithImage(ApplicationIcons.Import, Captions.Importer.LoadAllSheets);
          layoutItemImportAll.AdjustLargeButtonSize();
          layoutItemImportCurrent.AdjustLargeButtonSize();
          ApplicationIcon = ApplicationIcons.Excel;
          useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
          dataViewingGridView.ColumnFilterChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
+
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)
