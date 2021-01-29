@@ -441,7 +441,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Tree = AddNamedIcon("Tree", "Tree");
       public static readonly ApplicationIcon Diagram = AddNamedIcon("Diagram", "Diagram");
       public static readonly ApplicationIcon ContainerObserver = AddNamedIcon("ContainerObserver", "ContainerObserver");
-      public static readonly ApplicationIcon ImportAll = AddNamedIcon("LoadAllSheets", "LoadAllSheets");
+      public static readonly ApplicationIcon ImportAll = AddNamedIcon("ImportAll", "ImportAll");
       public static readonly ApplicationIcon ReactionList = AddNamedIcon("ReactionList", "ReactionList");
       public static readonly ApplicationIcon SolverSettings = AddNamedIcon("SolverSettings", "SolverSettings");
       public static readonly ApplicationIcon Swap = AddNamedIcon("Swap", "Swap");
