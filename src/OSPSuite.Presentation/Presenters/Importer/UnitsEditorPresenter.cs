@@ -40,7 +40,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
-         View.ShowToggle();
       }
 
       public void SelectDimension(string dimension)
@@ -69,6 +68,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetUnitsManualSelection()
       {
          View.SetUnitsManualSelection();
+      }
+
+      public void ShowColumnToggle()
+      {
+         View.ShowToggle();
       }
 
       public void SelectUnit(string unit)

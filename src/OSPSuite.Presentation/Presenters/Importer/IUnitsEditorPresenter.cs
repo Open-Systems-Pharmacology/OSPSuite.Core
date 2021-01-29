@@ -14,5 +14,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SelectColumn(string column);
       void SetUnitColumnSelection();
       void SetUnitsManualSelection();
+      void ShowColumnToggle();
    }
 }

@@ -164,13 +164,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
             columns.AddRange(availableColumns());
             column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? columns[_mappingParameterEditorPresenter.SelectedLloq] : null;
-            
-            
-            var errorColumnDTO = _mappings.FirstOrDefault(c => c.ColumnInfo.RelatedColumnOf == _currentModel.MappingName);
-            var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
-
-            if (errorColumn.Unit.ColumnName.IsNullOrEmpty() != column.Unit.ColumnName.IsNullOrEmpty())
-               errorColumn.Unit = new UnitDescription();
          }
          ValidateMapping();
 
@@ -524,8 +517,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
+      private void invalidateErrorUnit()
+      {
+         var errorColumnDTO = _mappings.FirstOrDefault(c => !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
+
+
+         var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
+         var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
+         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO.Source).MappedColumn;
+
+         if (errorColumn.Unit.ColumnName.IsNullOrEmpty() != measurementColumn.Unit.ColumnName.IsNullOrEmpty())
+            errorColumn.Unit = new UnitDescription();
+         
+      }
+
       public void ValidateMapping()
       {
+         invalidateErrorUnit();
+
          _mappingProblem = _importer.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
          setStatuses();
          if (_mappingProblem.MissingMapping.Count != 0 || _mappingProblem.MissingUnit.Count != 0)

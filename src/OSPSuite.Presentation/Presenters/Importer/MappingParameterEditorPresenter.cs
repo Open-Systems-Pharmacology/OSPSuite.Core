@@ -54,6 +54,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void InitView()
       {
          View.ShowUnits();
+         _unitsEditorPresenter.ShowColumnToggle();
       }
 
       public MappingParameterEditorPresenter(
