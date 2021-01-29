@@ -137,7 +137,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Human = AddNamedIcon("Human", "Human");
       public static readonly ApplicationIcon HumanGreen = AddNamedIcon("HumanGreen", "HumanGreen");
       public static readonly ApplicationIcon HumanRed = AddNamedIcon("HumanRed", "HumanRed");
-      public static readonly ApplicationIcon Import = AddNamedIcon("ObservedData", "LoadCurrentSheet");
+      public static readonly ApplicationIcon Import = AddNamedIcon("ObservedData", "Import");
       public static readonly ApplicationIcon MoleculeStartValuesImport = AddNamedIcon("MoleculeStartValuesImport", "MoleculeStartValuesImport");
       public static readonly ApplicationIcon ParameterStartValuesImport = AddNamedIcon("ParameterStartValuesImport", "ParameterStartValuesImport");
       public static readonly ApplicationIcon ImportPopulation = AddNamedIcon("ImportPopulation", "ImportPopulation");
