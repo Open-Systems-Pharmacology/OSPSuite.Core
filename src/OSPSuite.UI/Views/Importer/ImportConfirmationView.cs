@@ -47,6 +47,8 @@ namespace OSPSuite.UI.Views.Importer
             );
          });
          separatorControlItem.Text = Captions.Importer.Separator;
+         buttonAddLayoutControlItem.AdjustButtonSize();
+         importButtonLayoutControlItem.AdjustButtonSize();
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
