@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
 
       private readonly RepositoryItemButtonEdit _addButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.AddInformationDescription);
+         new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.Importer.AddInformationDescription);
 
       private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
@@ -56,7 +56,7 @@ namespace OSPSuite.UI.Views.Importer
          columnMappingGrid.ToolTipController = new ToolTipController().Initialize(imageListRetriever);
          columnMappingGrid.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(onGetActiveObjectInfo, o, e);
          var unitInformationTip = new SuperToolTip();
-         unitInformationTip.Items.Add(Captions.UnitInformationDescription);
+         unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
          _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
          _repositoryItemPopupContainerEdit.PopupControl = _popupControl;

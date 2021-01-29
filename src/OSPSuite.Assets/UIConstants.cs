@@ -383,7 +383,6 @@ namespace OSPSuite.Assets
          public static readonly string LoadAllSheets = "Load all sheets";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
-         public static readonly string MappingDescription = "Mapping description";
          public static readonly string MappingLayout = "Mapping";
          public static readonly string PreviewLayout = "Preview";
          public static readonly string SourceLayout = "Source";
@@ -404,7 +403,51 @@ namespace OSPSuite.Assets
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
          public static readonly string SaveConfigurationFilter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+         public static readonly string GroupByTitle = "Group by";
+         public static readonly string MappingTitle = "Mapping";
+
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
+         
+         public static readonly string AddGroupByTitle = "Add group by";
+         public static readonly string MetaDataTitle = "Meta data";
+         public static readonly string IgnoredParameterTitle = "Ignored parameter";
+         public static readonly string NotConfiguredField = "Field not configured yet";
+         public static readonly string AddGroupBy = "Add a new grouping by";
+         public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
+         public static readonly string MissingUnit = "Field most contain a valid unit description";
+         public static string MappingHint(string parameter, string target, string unit)
+         {
+            return $"The column {parameter} will be mapped into {target} with units as {unit}";
+         }
+         public static string GroupByHint(string parameter)
+         {
+            return $"The column {parameter} will be used for grouping by";
+         }
+         public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
+         public static string MetaDataHint(string parameter, string target)
+         {
+            return $"The column {parameter} will be used as meta data to extract the following data: {target}";
+         }
+         public static readonly string IgnoredParameterHint = "This parameter will be ignored";
+
+         public static readonly string GroupByDescription = "Group by";
+
+         public static string MetaDataDescription(string metaDataId)
+         {
+            return $"{metaDataId}";
+         }
+
+         public static string MappingDescription(string parameter, string unit)
+         {
+            return $"{parameter}({unit})";
+         }
+
+         public static readonly string UnitInformationCaption = "Unit Information";
+         public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
+         public static readonly string AddInformationDescription = "Add a new grouping by field";
+         public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
+         public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
+
          public class ToolTips
          {
             public static readonly string NamingPattern = "Set a pattern for renaming imported data";
@@ -412,15 +455,6 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
-
-         public static string NamingPatternDescription(string token)
-         {
-            const string sampleMetaDataName = "File";
-            var sb = new StringBuilder();
-            sb.AppendFormat("Automatically generates names replacing words surrounded by <b>{0}</b> with like named meta data values. \n", string.Format(token, string.Empty));
-            sb.AppendFormat("The pattern <b>{0}</b> would be replaced with the meta data value for {1}", string.Format(token, sampleMetaDataName), sampleMetaDataName);
-            return sb.ToString();
-         }
       }
 
       public static class Diff
@@ -1148,48 +1182,6 @@ namespace OSPSuite.Assets
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
       }
-
-      public static readonly string MappingTitle = "Mapping";
-      public static readonly string GroupByTitle = "Group by";
-      public static readonly string AddGroupByTitle = "Add group by";
-      public static readonly string MetaDataTitle = "Meta data";
-      public static readonly string IgnoredParameterTitle = "Ignored parameter";
-      public static readonly string NotConfiguredField = "Field not configured yet";
-      public static readonly string AddGroupBy = "Add a new grouping by";
-      public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
-      public static readonly string MissingUnit = "Field most contain a valid unit description";
-      public static string MappingHint(string parameter, string target, string unit)
-      {
-         return $"The column {parameter} will be mapped into {target} with units as {unit}";
-      }
-      public static string GroupByHint(string parameter)
-      {
-         return $"The column {parameter} will be used for grouping by";
-      }
-      public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
-      public static string MetaDataHint(string parameter, string target)
-      {
-         return $"The column {parameter} will be used as meta data to extract the following data: {target}";
-      }
-      public static readonly string IgnoredParameterHint = "This parameter will be ignored";
-
-      public static readonly string GroupByDescription = "Group by";
-      
-      public static string MetaDataDescription(string metaDataId)
-      { 
-         return $"{metaDataId}";
-      }
-
-      public static string MappingDescription(string parameter, string unit)
-      {
-         return $"{parameter}({unit})";
-      }
-
-      public static readonly string UnitInformationCaption = "Unit Information";
-      public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
-      public static readonly string AddInformationDescription = "Add a new grouping by field";
-      public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
-      public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
    }
 
    public static class Error

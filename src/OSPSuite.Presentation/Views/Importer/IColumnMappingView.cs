@@ -65,11 +65,11 @@ namespace OSPSuite.Presentation.Views.Importer
          switch (Status)
          {
             case MappingStatus.Invalid:
-               info.ErrorText = Captions.MissingMandatoryMapping;
+               info.ErrorText = Captions.Importer.MissingMandatoryMapping;
                info.ErrorType = ErrorType.Critical;
                break;
             case MappingStatus.InvalidUnit:
-               info.ErrorText = Captions.MissingUnit;
+               info.ErrorText = Captions.Importer.MissingUnit;
                info.ErrorType = ErrorType.Critical;
                break;
             default:
@@ -84,11 +84,11 @@ namespace OSPSuite.Presentation.Views.Importer
          switch (Status)
          {
             case MappingStatus.Invalid:
-               info.ErrorText = Captions.MissingMandatoryMapping;
+               info.ErrorText = Captions.Importer.MissingMandatoryMapping;
                info.ErrorType = ErrorType.Critical;
                break;
             case MappingStatus.InvalidUnit:
-               info.ErrorText = Captions.MissingUnit;
+               info.ErrorText = Captions.Importer.MissingUnit;
                info.ErrorType = ErrorType.Critical;
                break;
             default:

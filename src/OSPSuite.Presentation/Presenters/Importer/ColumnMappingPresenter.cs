@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   return new ColumnMappingDTO(
                      ColumnMappingDTO.ColumnType.GroupBy,
-                     Captions.GroupByTitle,
+                     Captions.Importer.GroupByTitle,
                      gb,
                      _importer.GetImageIndex(gb)
                   );
@@ -93,7 +93,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          (
             new ColumnMappingDTO(
                ColumnMappingDTO.ColumnType.AddGroupBy,
-               Captions.AddGroupByTitle,
+               Captions.Importer.AddGroupByTitle,
                new AddGroupByFormatParameter(""),
                _importer.GetImageIndex(new GroupByDataFormatParameter(""))
             )
@@ -254,7 +254,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          return new ColumnMappingOption()
          {
-            Label = Captions.MappingDescription(mappingId, unit),
+            Label = Captions.Importer.MappingDescription(mappingId, unit),
          };
       }
 
@@ -262,7 +262,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          return new ColumnMappingOption()
          {
-            Label = Captions.MetaDataDescription(metaDataId)
+            Label = Captions.Importer.MetaDataDescription(metaDataId)
          };
       }
 
@@ -370,14 +370,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             return new ToolTipDescription()
             {
-               Title = Captions.MissingMandatoryMapping
+               Title = Captions.Importer.MissingMandatoryMapping
             };
          }
          var element = _mappings.ElementAt(index).Source;
          if (element == null)
             return new ToolTipDescription()
             {
-               Title = Captions.NotConfiguredField
+               Title = Captions.Importer.NotConfiguredField
             };
          switch (element)
          {
@@ -386,31 +386,31 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   return new ToolTipDescription()
                   {
-                     Title = Captions.MissingUnit
+                     Title = Captions.Importer.MissingUnit
                   };
                }
                return new ToolTipDescription()
                {
-                  Title = Captions.MappingTitle,
-                  Description = Captions.MappingHint(mp.ColumnName, mp.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
+                  Title = Captions.Importer.MappingTitle,
+                  Description = Captions.Importer.MappingHint(mp.ColumnName, mp.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
                };
             case GroupByDataFormatParameter gp:
                return new ToolTipDescription()
                {
-                  Title = Captions.GroupByTitle,
-                  Description = Captions.GroupByHint(gp.ColumnName)
+                  Title = Captions.Importer.GroupByTitle,
+                  Description = Captions.Importer.GroupByHint(gp.ColumnName)
                };
             case MetaDataFormatParameter mp:
                return new ToolTipDescription()
                {
-                  Title = Captions.MetaDataTitle,
-                  Description = Captions.MetaDataHint(mp.ColumnName, mp.MetaDataId)
+                  Title = Captions.Importer.MetaDataTitle,
+                  Description = Captions.Importer.MetaDataHint(mp.ColumnName, mp.MetaDataId)
                };
             case AddGroupByFormatParameter _:
                return new ToolTipDescription()
                {
-                  Title = Captions.AddGroupByTitle,
-                  Description = Captions.AddGroupByHint
+                  Title = Captions.Importer.AddGroupByTitle,
+                  Description = Captions.Importer.AddGroupByHint
                };
             default:
                throw new Exception(Error.TypeNotSupported(element.GetType()));
