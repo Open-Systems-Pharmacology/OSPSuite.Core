@@ -130,8 +130,7 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         //TODO CAPTION
-         Caption = "Confirmation";
+         Caption = Captions.Importer.Confirmation;
          ApplicationIcon = ApplicationIcons.Parameter;
       }
    }
