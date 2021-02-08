@@ -519,8 +519,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void invalidateErrorUnit()
       {
-         var errorColumnDTO = _mappings.FirstOrDefault(c => !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
+         var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo!= null)  && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
+         if (errorColumnDTO == null) return;
 
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
