@@ -15,10 +15,12 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IUnitsEditorPresenter _presenter;
       private bool _useDimensionSelector;
+      private bool _isErrorEditor;
 
       public UnitsEditorView()
       {
          InitializeComponent();
+         _isErrorEditor = false;
          Text = Captions.Importer.PleaseEnterDimensionAndUnitInformation;
          _dimensionsLayoutControlItem.Text = Captions.Importer.Dimension;
          _dimensionsComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
@@ -48,6 +50,9 @@ namespace OSPSuite.UI.Views.Importer
 
       private void onIsOnChanged(object sender, EventArgs e)
       {
+         if (_isErrorEditor)
+            return;
+
          if (_columnsToggleSwitch.IsOn)
          {
             _unitLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
@@ -102,6 +107,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetUnitColumnSelection()
       {
+         _isErrorEditor = true;
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
          _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
          _unitLayoutControlItem.Visibility = LayoutVisibility.Never;
@@ -110,11 +116,13 @@ namespace OSPSuite.UI.Views.Importer
 
       public void ShowToggle()
       {
+         _isErrorEditor = false;
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Always;
       }
 
       public void SetUnitsManualSelection()
       {
+         _isErrorEditor = true;
          _columnsToogleLayoutControlItem.Visibility = LayoutVisibility.Never;
          _dimensionsLayoutControlItem.Visibility = LayoutVisibility.Never;
          _columnLayoutControlItem.Visibility = LayoutVisibility.Never;

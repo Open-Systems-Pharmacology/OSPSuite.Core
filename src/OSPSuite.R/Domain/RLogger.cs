@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
 {
-   public class RLogger : IOSPLogger
+   public class RLogger : IOSPSuiteLogger
    {
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
