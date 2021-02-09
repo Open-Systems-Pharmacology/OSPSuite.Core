@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSourceFile _dataSourceFile;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      private readonly Cache<string, DataTable> _sheetsForViewing;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       public Cache<string, IDataSheet> Sheets { get; set; }
 
@@ -28,10 +29,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public ImporterDataPresenter
       (
          IImporterDataView dataView,
-         IImporter importer
-      ) : base(dataView)
+         IImporter importer) : base(dataView)
       {
          _importer = importer;
+         _sheetsForViewing = new Cache<string, DataTable>();
          Sheets = new Cache<string, IDataSheet>();
       }
 
@@ -41,8 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public DataTable GetSheet(string tabName)
       {
-         //TODO: We are converting these data everytime the user click on a tab. This should be done once only
-         return _dataSourceFile.DataSheets.Contains(tabName) ? _dataSourceFile.DataSheets[tabName].RawData.AsDataTable() : new DataTable();
+         return _sheetsForViewing.Contains(tabName) ? _sheetsForViewing[tabName] : new DataTable();
       }
       public void ImportDataForConfirmation()
       {
@@ -110,6 +110,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (string.IsNullOrEmpty(dataSourceFileName)) return null;
          Sheets = new Cache<string, IDataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
+         createSheetsForViewing();
          View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
          View.ClearTabs();
@@ -117,6 +118,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ResetImportButtons();
 
          return _dataSourceFile;
+      }
+
+      private void createSheetsForViewing()
+      {
+         foreach (var sheet in _dataSourceFile.DataSheets.KeyValues)
+         {
+            _sheetsForViewing[sheet.Key] = sheet.Value.RawData.AsDataTable();
+         }
       }
 
       public void SelectTab(string tabName)
