@@ -20,16 +20,58 @@ namespace OSPSuite.Core.Domain.Services
       private IReadOnlyList<SpeciesProperties> _allVariableMolecules;
       private string _simulationResultsName;
       private bool _calculateSensitivities;
+      private ICloneManagerForModel _cloneManagerForModel;
+      private ISimModelSimulationFactory _simModelSimulationFactory;
 
-      public SimModelBatch(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(
+      public SimModelBatch(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory, ICloneManagerForModel cloneManagerForModel) : base(
          simModelExporter, simModelSimulationFactory)
       {
          _dataFactory = dataFactory;
+         _simModelExporter = simModelExporter;
+         _simModelSimulationFactory = simModelSimulationFactory;
+         _cloneManagerForModel = cloneManagerForModel;
       }
 
       public IReadOnlyList<string> VariableParameterPaths { get; private set; }
 
       public IReadOnlyList<string> VariableMoleculePaths { get; private set; }
+
+      public object Clone()
+      {
+         var xml = _simModelExporter.ExportSimModelXml(_modelCoreSimulation, new SimulationRunOptions().SimModelExportMode);
+         var simulation = _simModelSimulationFactory.Create();
+         simulation.LoadFromXMLString(xml);
+         var other = new SimModelBatch(_simModelExporter, _simModelSimulationFactory, _dataFactory, _cloneManagerForModel)
+         {
+            _modelCoreSimulation = new ModelCoreSimulation
+            {
+               BuildConfiguration = _modelCoreSimulation.BuildConfiguration,
+               Model = _cloneManagerForModel.CloneModel(_modelCoreSimulation.Model),
+               Creation = _modelCoreSimulation.Creation,
+               Id = _modelCoreSimulation.Id,
+               Name = _modelCoreSimulation.Name
+            },
+            _allVariableParameters = _allVariableParameters.ToList(),
+            _allVariableMolecules = _allVariableMolecules.ToList(),
+            _simModelSimulation = simulation,
+            _simulationResultsName = _simulationResultsName,
+            _calculateSensitivities = _calculateSensitivities,
+            _cloneManagerForModel = _cloneManagerForModel,
+            _simModelSimulationFactory = _simModelSimulationFactory,
+            VariableParameterPaths = VariableParameterPaths.ToList(),
+            VariableMoleculePaths = VariableMoleculePaths.ToList()
+         };
+         foreach (var parameterValueCachePair in _parameterValueCache.KeyValues)
+         {
+            other._parameterValueCache.Add(parameterValueCachePair.Key, parameterValueCachePair.Value);
+         }
+         foreach (var initialValueCachePair in _initialValueCache.KeyValues)
+         {
+            other._initialValueCache.Add(initialValueCachePair.Key, initialValueCachePair.Value);
+         }
+         other.InitializeWith(other._modelCoreSimulation, other.VariableParameterPaths, other.VariableMoleculePaths);
+         return other;
+      }
 
       public void InitializeWith(IModelCoreSimulation modelCoreSimulation, IReadOnlyList<string> variableParameterPaths,
          IReadOnlyList<string> variableMoleculePaths, bool calculateSensitivities = false, string simulationResultsName = null)

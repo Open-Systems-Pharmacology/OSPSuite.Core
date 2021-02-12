@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface ISimModelBatch : IDisposable
+   public interface ISimModelBatch : IDisposable, ICloneable
    {
       void InitializeWith(IModelCoreSimulation modelCoreSimulation, IReadOnlyList<string> variableParameterPaths,
          IReadOnlyList<string> variableMoleculePaths, bool calculateSensitivities = false, string simulationResultsName = null);

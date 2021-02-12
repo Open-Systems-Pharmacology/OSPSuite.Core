@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -78,6 +80,29 @@ namespace OSPSuite.R.Services
          _progressUpdater?.Dispose();
          _populationRunner.Terminated -= terminated;
          _populationRunner.SimulationProgress -= simulationProgress;
+      }
+
+      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, SimulationRunOptions[] simulationRunOptionsCollection = null)
+      {
+         if (simulationRunOptionsCollection != null && simulations.Length != simulationRunOptionsCollection.Length) return null;
+
+         var tasks = new List<Task<SimulationResults>>();
+         for (var i = 0; i < simulations.Length; i++)
+         {
+            tasks.Add(RunAsync(simulations[i], simulationRunOptionsCollection != null ? simulationRunOptionsCollection[i] : null));
+         }
+         Task.WaitAll(tasks.ToArray());
+         return tasks.Select(t => t.Result).ToArray();
+      }
+
+      public SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
+      {
+         return RunAsync(simulation, simulationRunOptions).Result;
+      }
+
+      public SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
+      {
+         return RunAsync(simulation, population, simulationRunOptions).Result;
       }
 
       private async Task<SimulationResults> runAsync(
