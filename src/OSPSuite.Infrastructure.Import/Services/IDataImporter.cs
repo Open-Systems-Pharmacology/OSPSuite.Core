@@ -19,10 +19,18 @@ namespace OSPSuite.Infrastructure.Import.Services
       );
 
       IEnumerable<DataRepository> ImportFromXml(
-         string configurationFilePath, 
+         string configurationFilePath,
          bool promptForConfirmation,
-         IReadOnlyList<MetaDataCategory> metaDataCategories, 
-         IReadOnlyList<ColumnInfo> columnInfos, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings
+      );
+
+      IEnumerable<DataRepository> ImportFromConfiguration(
+         OSPSuite.Core.Import.ImporterConfiguration configuration,
+         bool promptForConfirmation,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
    }

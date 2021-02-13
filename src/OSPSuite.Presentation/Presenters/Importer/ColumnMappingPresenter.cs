@@ -100,7 +100,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ).ToList();
          View.SetMappingSource(_mappings);
          ValidateMapping();
+         InitializeErrorUnit();
+      }
 
+      public void InitializeErrorUnit()
+      {
+         var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
+
+         if (errorColumnDTO == null) return;
+
+         var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
+
+         if ( (errorColumn.Unit.SelectedUnit != "?") && (errorColumn.Unit.ColumnName != "")) return;
+         
+            
+         var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
+         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source).MappedColumn; 
+         errorColumn.Unit = measurementColumn.Unit;
       }
 
       public void SetDataFormat(IDataFormat format)
@@ -153,7 +169,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_currentModel.ColumnInfo.IsAuxiliary())
          {
-            column.ErrorStdDev = _mappingParameterEditorPresenter.SelectedErrorType == 0 ? Constants.STD_DEV_ARITHMETIC : Constants.STD_DEV_GEOMETRIC;
+            if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
+               column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+            else
+            {
+               column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
+               column.Unit = new UnitDescription(); //geometric error has no unit
+            }
          }
          else //in this case the column is a measurement column
          {
@@ -529,7 +551,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (errorColumn.Unit.ColumnName.IsNullOrEmpty() != measurementColumn.Unit.ColumnName.IsNullOrEmpty())
             errorColumn.Unit = new UnitDescription();
-         
       }
 
       public void ValidateMapping()
