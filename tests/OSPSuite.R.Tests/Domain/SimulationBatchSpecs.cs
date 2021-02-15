@@ -111,7 +111,7 @@ namespace OSPSuite.R.Domain
             InitialValues = new[] { 10.5 },
             ParameterValues = new[] { 3.6, 0.55 }
          });
-         _results = sut.Run(_simulationBatchRunValuesCollection.ToArray());
+         _results = sut.RunConcurrently(_simulationBatchRunValuesCollection.ToArray());
       }
 
       [Observation]
