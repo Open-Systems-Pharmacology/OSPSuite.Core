@@ -1,5 +1,4 @@
-﻿
-using DevExpress.XtraEditors;
+﻿using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -16,6 +15,8 @@ using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
+
 
 namespace OSPSuite.UI.Services
 {
@@ -131,7 +132,7 @@ namespace OSPSuite.UI.Services
       }
       
    public IEnumerable<DataRepository> ImportFromConfiguration(
-         OSPSuite.Core.Import.ImporterConfiguration configuration,
+         ImporterConfiguration configuration,
          bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,

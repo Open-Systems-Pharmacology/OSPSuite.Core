@@ -13,6 +13,7 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using System.Xml.Linq;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -30,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IDataSourceFile _dataSourceFile;
       private readonly Utility.Container.IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
-      private OSPSuite.Core.Import.ImporterConfiguration _configuration = new OSPSuite.Core.Import.ImporterConfiguration();
+      private ImporterConfiguration _configuration = new ImporterConfiguration();
 
       public ImporterPresenter(
          IImporterView view, 
@@ -229,7 +230,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void LoadConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration)
+      public void LoadConfiguration(ImporterConfiguration configuration)
       {
          _configuration = configuration;
          ApplyConfiguration();
@@ -260,7 +261,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
             var xel = XElement.Load(fileName);
-            _configuration = serializer.Deserialize<OSPSuite.Core.Import.ImporterConfiguration>(xel, serializationContext);
+            _configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
             //broadcast...
 
             ApplyConfiguration();

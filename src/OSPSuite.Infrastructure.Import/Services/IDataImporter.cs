@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using System.Collections.Generic;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
@@ -27,7 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       );
 
       IEnumerable<DataRepository> ImportFromConfiguration(
-         OSPSuite.Core.Import.ImporterConfiguration configuration,
+         ImporterConfiguration configuration,
          bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
