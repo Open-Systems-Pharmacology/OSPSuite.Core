@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
-using DevExpress.XtraEditors;
+using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Starter.Tasks;
-using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -34,13 +36,17 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
       private readonly IDataImporter _dataImporter;
-
-      public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter)
+      private readonly OSPSuite.Utility.Container.IContainer _container;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
+      public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter,
+         IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository)
          : base(view)
       {
          _dataGenerator = dataGenerator;
          _dialogCreator = dialogCreator;
          _dataImporter = dataImporter;
+         _container = container;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
       }
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
@@ -90,46 +96,60 @@ namespace OSPSuite.Starter.Presenters
 
       public void ReloadWithPKSimSettings()
       {
-         var fileDialog = new OpenFileDialog { Multiselect = false };
-         fileDialog.Title = Captions.Importer.SaveConfiguration;
-         fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
-
-         if (fileDialog.ShowDialog() != DialogResult.OK)
-            return;
-
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromXml
-         (
-            fileDialog.FileName,
-            false,
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings
-         ).Count() + " data sets successfully imported");
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
+
+            var fileName = _dialogCreator.AskForFileToOpen("Save configuration", "xml files (*.xml)|*.xml|All files (*.*)|*.*",
+               Constants.DirectoryKey.PROJECT);
+
+            if (fileName.IsNullOrEmpty()) return;
+
+            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+
+            _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
+            (
+               configuration,
+               false,
+               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings
+            ).Count() + " data sets successfully imported");
+         }
       }
 
       public void LoadWithPKSimSettings()
       {
-         var fileDialog = new OpenFileDialog { Multiselect = false };
-         fileDialog.Title = Captions.Importer.SaveConfiguration;
-         fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
-
-         if (fileDialog.ShowDialog() != DialogResult.OK)
-            return;
-
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromXml
-         (
-            fileDialog.FileName,
-            true,
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings
-         ).Count() + " data sets successfully imported");
+
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
+
+            var fileName = _dialogCreator.AskForFileToOpen("Load configuration", "xml files (*.xml)|*.xml|All files (*.*)|*.*",
+               Constants.DirectoryKey.PROJECT);
+
+            if (fileName.IsNullOrEmpty()) return;
+
+            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+
+
+            _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
+            (
+               configuration,
+               true,
+               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings
+            ).Count() + " data sets successfully imported");
+         }
       }
 
       public void StartWithPKSimSettings()

@@ -12,7 +12,7 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
-using System.Xml.Linq;
+using DevExpress.Utils.CommonDialogs;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -232,14 +232,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void LoadConfiguration(ImporterConfiguration configuration)
       {
-         _configuration = configuration;
-         ApplyConfiguration();
+         openFile(configuration.FileName);
+         ApplyConfiguration(configuration);
       }
 
-      public void ApplyConfiguration()
+      private void openFile(string configurationFileName)
       {
-         _sourceFilePresenter.SetFilePath(_configuration.FileName);
-         _dataSourceFile = _importerDataPresenter.SetDataSource(_configuration.FileName);
+         _sourceFilePresenter.SetFilePath(configurationFileName);
+         _dataSourceFile = _importerDataPresenter.SetDataSource(configurationFileName);
+      }
+
+      public void ApplyConfiguration(ImporterConfiguration configuration)
+      {
+         _configuration = configuration;
          _dataSourceFile.Format.Parameters = _configuration.Parameters;
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          _columnMappingPresenter.ValidateMapping();
@@ -251,21 +256,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             sheets.Add(element, _dataSourceFile.DataSheets[element]);
          }
 
-         importSheets(_dataSourceFile, sheets, _configuration.FilterString);
+         importSheets(_dataSourceFile, sheets, configuration.FilterString);
          _importerDataPresenter.DisableImportedSheets();
-      }
-      
-      public void LoadConfigurationFromFilePath(string fileName)
-      {
-         using (var serializationContext = SerializationTransaction.Create(_container))
-         {
-            var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
-            var xel = XElement.Load(fileName);
-            _configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
-            //broadcast...
-
-            ApplyConfiguration();
-         }
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

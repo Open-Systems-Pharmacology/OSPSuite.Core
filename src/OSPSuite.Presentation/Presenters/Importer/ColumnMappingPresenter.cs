@@ -174,7 +174,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             else
             {
                column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
-               column.Unit = new UnitDescription(); //geometric error has no unit
+               column.Unit = new UnitDescription(""); //geometric error has no unit
             }
          }
          else //in this case the column is a measurement column

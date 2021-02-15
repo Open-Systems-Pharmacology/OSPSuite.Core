@@ -94,6 +94,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
          View.ShowErrorTypes();
+
+         if ( selected.Equals(Constants.STD_DEV_GEOMETRIC))
+            View.HideUnits();
       }
 
       private void errorSelectionChanged(object sender, OptionChangedEventArgs e)

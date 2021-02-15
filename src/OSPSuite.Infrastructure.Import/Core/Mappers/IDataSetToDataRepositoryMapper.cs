@@ -62,7 +62,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //var dimension_test = _dimensionFactory.Dimension(column.Key.Name);
          //otherwise we can also just get the defaultDimension from the columnInfos when we
          //create the extended column
-         var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit);
+         var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit) ?? Constants.Dimension.NO_DIMENSION;
 
          if (column.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
@@ -84,7 +84,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          if (!string.IsNullOrEmpty(fileName))
             dataInfo.Source = fileName;
 
-         var unit = dimension.Unit(column.Key.Column.Unit.SelectedUnit);
+         
+         var unit = (dimension != Constants.Dimension.NO_DIMENSION)
+            ? dimension.Unit(column.Key.Column.Unit.SelectedUnit)
+            : null;
+
+         dataInfo.DisplayUnitName = (unit != null ) ? unit.Name : string.Empty;
+
          var values = new float[column.Value.Count];
          var i = 0;
 
@@ -93,11 +99,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          {
             if (value == null || double.IsNaN(value.Value)) //but we actually should not be allowing this at all right?
                values[i++] = float.NaN;
+            else if (unit != null)
+               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), value.Value);
             else
-               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), (double)value.Value);
+               values[i++] = (float) value.Value;
          }
 
-         dataInfo.DisplayUnitName = unit.Name;
          dataColumn.Values = values;
 
          var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);

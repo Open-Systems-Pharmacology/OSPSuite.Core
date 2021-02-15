@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics;
 using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
@@ -145,7 +146,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                .Where(col => col.IsMandatory && subset.All(cm =>
                   cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
                .ToList(),
-            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit).Select(cm => cm.MappedColumn.Name)
+            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && cm.MappedColumn.ErrorStdDev.Equals("geometric")).Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
       }

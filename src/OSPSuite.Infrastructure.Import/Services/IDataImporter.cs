@@ -19,14 +19,6 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       );
 
-      IEnumerable<DataRepository> ImportFromXml(
-         string configurationFilePath,
-         bool promptForConfirmation,
-         IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
-      );
-
       IEnumerable<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          bool promptForConfirmation,

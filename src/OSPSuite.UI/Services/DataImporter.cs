@@ -3,7 +3,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -14,7 +13,6 @@ using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -62,76 +60,7 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public IEnumerable<DataRepository> ImportFromXml(
-       string configurationFilePath,
-       bool promptForConfirmation,
-       IReadOnlyList<MetaDataCategory> metaDataCategories,
-       IReadOnlyList<ColumnInfo> columnInfos,
-       DataImporterSettings dataImporterSettings
-    )
-      {
-         if (string.IsNullOrEmpty(configurationFilePath)) return null;
-
-         if (promptForConfirmation)
-         {
-            using (var importerPresenter = _container.Resolve<IImporterPresenter>())
-            {
-               importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-               importerPresenter.LoadConfigurationFromFilePath(configurationFilePath);
-               using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
-               {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
-               }
-            }
-         }
-         else
-         {
-            OSPSuite.Core.Import.ImporterConfiguration configuration = null;
-            using (var serializationContext = SerializationTransaction.Create(_container))
-            {
-               var serializer = _modelingXmlSerializerRepository.SerializerFor<OSPSuite.Core.Import.ImporterConfiguration>();
-               var xel = XElement.Load(configurationFilePath);
-               configuration = serializer.Deserialize<OSPSuite.Core.Import.ImporterConfiguration>(xel, serializationContext);
-            }
-
-            var dataSource = new DataSource(_importer);
-            var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
-            dataSourceFile.Format.Parameters = configuration.Parameters;
-            var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.MetaDataId,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-            }).Union
-            (
-               dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-               {
-                  Id = md.ColumnName,
-                  Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-               })
-            );
-            dataSource.SetMappings(dataSourceFile.Path, mappings);
-            dataSource.NanSettings = configuration.NanSettings;
-            dataSource.SetDataFormat(dataSourceFile.Format);
-            var sheets = new Cache<string, IDataSheet>();
-            foreach (var key in configuration.LoadedSheets)
-            {
-               sheets.Add(key, dataSourceFile.DataSheets[key]);
-            }
-            dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
-
-            var result = new List<DataRepository>();
-            var i = 0;
-            foreach (var pair in dataSource.DataSets.KeyValues)
-            {
-               foreach (var data in pair.Value.Data)
-                  result.Add(_dataRepositoryMapper.ConvertImportDataSet(dataSource, i++, pair.Key));
-            }
-
-            return result;
-         }
-      }
-      
-   public IEnumerable<DataRepository> ImportFromConfiguration(
+      public IEnumerable<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
