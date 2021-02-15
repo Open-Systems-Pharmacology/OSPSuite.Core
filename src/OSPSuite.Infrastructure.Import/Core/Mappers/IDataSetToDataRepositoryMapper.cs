@@ -27,7 +27,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
          var sheetName = dataSetPair.Key;
          var configuration = dataSource.GetImporterConfiguration();
-         var dataRepository = new DataRepository { Name = dataSetName };
+         var dataRepository = new DataRepository { Name = dataSource.NamesFromConvention().ElementAt(dataSetIndex) };
 
          addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
 
