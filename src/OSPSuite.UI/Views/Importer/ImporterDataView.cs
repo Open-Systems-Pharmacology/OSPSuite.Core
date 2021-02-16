@@ -145,6 +145,7 @@ namespace OSPSuite.UI.Views.Importer
             enableImportCurrentSheet();
 
          _dataPresenter.SelectTab(e.Page.Text);
+         SelectedTab = e.Page.Text;
       }
 
       public void SetGridSource(string tabName = null)
@@ -219,5 +220,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          dataViewingGridView.ActiveFilterString = filter;
       }
+
+      public string SelectedTab { get; set; }
    }
 }

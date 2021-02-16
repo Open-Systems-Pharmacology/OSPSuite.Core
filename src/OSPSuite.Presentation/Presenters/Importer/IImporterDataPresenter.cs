@@ -56,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
       void RefreshTabs(); 
 
-      Cache<string, IDataSheet> Sheets { get; }
+      Cache<string, IDataSheet> Sheets { get; set; }
       string GetActiveFilterCriteria();
       void TriggerOnDataChanged();
    }

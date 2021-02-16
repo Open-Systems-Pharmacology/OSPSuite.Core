@@ -16,5 +16,6 @@ namespace OSPSuite.Presentation.Views.Importer
       string GetActiveFilterCriteria();
 
       void SetFilter(string filter);
+      string SelectedTab { get; set; }
    }
 }

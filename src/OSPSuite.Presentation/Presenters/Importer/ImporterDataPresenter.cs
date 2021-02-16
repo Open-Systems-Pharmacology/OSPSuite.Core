@@ -158,7 +158,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void DisableImportedSheets()
       {
-         View.DisableImportCurrentSheet();
+         if (Sheets.Keys.Any(x => x ==View.SelectedTab))
+            View.DisableImportCurrentSheet();
 
          if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count())
             View.DisableImportAllSheets();

@@ -256,7 +256,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
             sheets.Add(element, _dataSourceFile.DataSheets[element]);
          }
 
-         importSheets(_dataSourceFile, sheets, configuration.FilterString);
+         foreach (var sheet in sheets.KeyValues)
+         {
+            _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
+         }
+         importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString);
          _importerDataPresenter.DisableImportedSheets();
       }
 
