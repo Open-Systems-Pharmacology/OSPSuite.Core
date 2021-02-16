@@ -1,4 +1,6 @@
-﻿using OSPSuite.Core.Import;
+﻿using System.Xml.Linq;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -10,6 +12,14 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.LloqColumn);
          Map(x => x.Name);
          Map(x => x.Unit);
+      }
+
+      protected override void TypedDeserialize(Column objectToDeserialize, XElement outputToDeserialize, SerializationContext context)
+      {
+         base.TypedDeserialize(objectToDeserialize, outputToDeserialize, context);
+         
+         if (objectToDeserialize.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+            objectToDeserialize.Unit = new UnitDescription("?");
       }
    }
 }
