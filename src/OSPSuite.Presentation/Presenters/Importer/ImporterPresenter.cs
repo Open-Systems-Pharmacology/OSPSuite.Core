@@ -13,6 +13,9 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using DevExpress.Utils.CommonDialogs;
+using NPOI.OpenXmlFormats.Dml.Diagram;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -32,6 +35,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly Utility.Container.IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private ImporterConfiguration _configuration = new ImporterConfiguration();
+      private readonly IDimensionFactory _dimensionFactory;
+
 
       public ImporterPresenter(
          IImporterView view, 
@@ -43,10 +48,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
+         IDimensionFactory dimensionFactory,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
          Utility.Container.IContainer container
       ) : base(view)
       {
+         _dimensionFactory = dimensionFactory;
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
@@ -129,17 +136,45 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
             _configuration.FilterString = args.Filter;
          }
-         catch (NanException e)
+         catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
-            _view.ShowErrorMessage(e.Message);
-            _view.DisableConfirmationView();
-            foreach (var sheetName in args.Sheets.Keys)
-            {
-               _importerDataPresenter.Sheets.Remove(sheetName);
+            { 
+               _view.ShowErrorMessage(e.Message);
+               _view.DisableConfirmationView();
+               foreach (var sheetName in args.Sheets.Keys)
+               {
+                  _importerDataPresenter.Sheets.Remove(sheetName);
+               }
             }
          }
       }
 
+      private void validateDataSource(IDataSource dataSource)
+      {
+         foreach (var column in _columnInfos.Where(c => !c.IsAuxiliary()))
+         {
+            foreach (var relatedColumn in _columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            {
+               foreach (var dataSet in dataSource.DataSets)
+               {
+                  foreach (var set in dataSet.Data)
+                  {
+                     var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
+                        var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
+
+                        //null check???? for errorColumn???
+
+                        for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                        {
+                           if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
+                               _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
+                              throw new ErrorUnitException();
+                        }
+                  }
+               }
+            }
+         }
+      }
 
       private void importSheets(IDataSourceFile dataSourceFile, Cache<string, IDataSheet> sheets, string filter)
       {
@@ -162,6 +197,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
          _dataSource.AddSheets(sheets, _columnInfos, filter);
+
+         validateDataSource(_dataSource);
 
          var keys = new List<string>()
          {
