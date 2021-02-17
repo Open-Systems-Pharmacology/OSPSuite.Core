@@ -315,6 +315,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
+      public ImporterConfiguration getConfiguration() => _configuration;
+
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
    }
 }
