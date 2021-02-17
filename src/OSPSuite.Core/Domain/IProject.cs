@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Domain
 {
@@ -27,6 +28,8 @@ namespace OSPSuite.Core.Domain
       ///    All the observed data defined in the project
       /// </summary>
       IReadOnlyCollection<DataRepository> AllObservedData { get; }
+
+      IReadOnlyCollection<ImporterConfiguration> AllImporterConfigurations { get; }
 
       /// <summary>
       ///    Add an observed data to the project

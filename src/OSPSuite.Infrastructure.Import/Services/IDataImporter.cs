@@ -5,6 +5,7 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
+
    public interface IDataImporter
    {
       /// <summary>
@@ -13,7 +14,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="metaDataCategories">Specification of meta data of the table.</param>
       /// <param name="columnInfos">Specification of columns including specification of meta data.</param>
       /// <param name="dataImporterSettings">Settings used to initialize the view</param>
-      IEnumerable<DataRepository> ImportDataSets(
+      (IEnumerable<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
          DataImporterSettings dataImporterSettings

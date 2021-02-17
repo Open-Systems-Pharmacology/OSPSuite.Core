@@ -10,5 +10,6 @@ namespace OSPSuite.Core.Import
       public string NamingConventions { get; set; }
       public string FilterString { get; set; }
       public NanSettings NanSettings { get; set; }
+      public string UniqueId { get; set; }
    }
 }

@@ -41,13 +41,13 @@ namespace OSPSuite.UI.Services
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public IEnumerable<DataRepository> ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public (IEnumerable<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
 
          var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
 
          if (string.IsNullOrEmpty(path))
-            return new List<DataRepository>();
+            return (new List<DataRepository>(), null);
 
          using (var importerPresenter = _container.Resolve<IImporterPresenter>())
          {
@@ -76,7 +76,7 @@ namespace OSPSuite.UI.Services
                importerPresenter.LoadConfiguration(configuration);
                using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings).DataRepositories;
                }
             }
          }
