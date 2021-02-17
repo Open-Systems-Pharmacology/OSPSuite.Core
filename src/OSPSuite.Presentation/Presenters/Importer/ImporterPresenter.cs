@@ -144,6 +144,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                foreach (var sheetName in args.Sheets.Keys)
                {
                   _importerDataPresenter.Sheets.Remove(sheetName);
+                  _view.DisableConfirmationView();
                }
             }
          }
@@ -160,16 +161,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   foreach (var set in dataSet.Data)
                   {
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
-                        var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
+                     var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
-                        //null check???? for errorColumn???
+                     //null check???? for errorColumn???
 
-                        for (var i = 0; i < measurementColumn.Value.Count(); i++)
-                        {
-                           if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
-                               _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
-                              throw new ErrorUnitException();
-                        }
+                     if (_dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == Constants.Dimension.NO_DIMENSION
+                         || _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == null)
+                        continue;
+
+                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                     {
+                        if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
+                            _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
+                           throw new ErrorUnitException();
+                     }
                   }
                }
             }
@@ -235,7 +240,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             importSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
          }
-         catch (NanException e)
+         catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
             _view.ShowErrorMessage(e.Message);
             _view.DisableConfirmationView();
@@ -297,7 +302,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
          }
-         importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString);
+
+         try
+         {
+            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString);
+         }
+         catch (Exception e) when (e is NanException || e is ErrorUnitException)
+         {
+            _view.ShowErrorMessage(e.Message);
+         }
+
          _importerDataPresenter.DisableImportedSheets();
       }
 
