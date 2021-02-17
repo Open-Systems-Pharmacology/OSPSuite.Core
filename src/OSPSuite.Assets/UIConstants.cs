@@ -2107,6 +2107,7 @@ namespace OSPSuite.Assets
       public static readonly string InteractionContainer = "Interaction Container";
       public static readonly string BuildingBlock = "Building Block";
       public static readonly string ObservedData = "Observed Data";
+      public static readonly string ImporterConfiguration = "Importer Configuration";
       public static readonly string CurveTemplate = "Curve Template";
       public static readonly string DataTable = "DataTable";
       public static readonly string JournalPage = "Page";

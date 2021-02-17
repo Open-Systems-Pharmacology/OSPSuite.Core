@@ -7,12 +7,14 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Domain
 {
    public abstract class Project : ObjectBase, IProject
    {
       private readonly Cache<string, DataRepository> _allObservedData = new Cache<string, DataRepository>(x => x.Id, x => null);
+      private readonly Cache<string, ImporterConfiguration> _allImporterConfigurations = new Cache<string, ImporterConfiguration>(x => x.Id, x => null);
       private readonly List<IClassifiable> _allClassifiables = new List<IClassifiable>();
       private readonly List<IClassification> _allClassifications = new List<IClassification>();
       private readonly List<ParameterIdentification> _allParameterIdentifications = new List<ParameterIdentification>();
@@ -38,15 +40,32 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyCollection<DataRepository> AllObservedData => _allObservedData;
 
+      public IReadOnlyCollection<ImporterConfiguration> AllImporterConfigurations => _allImporterConfigurations;
+
       public virtual void AddObservedData(DataRepository dataRepositoryToAdd)
       {
          _allObservedData.Add(dataRepositoryToAdd);
+      }
+
+      public virtual void AddOImporterConfiguration(ImporterConfiguration importerConfiguration)
+      {
+         _allImporterConfigurations.Add(importerConfiguration);
       }
 
       public virtual void RemoveObservedData(DataRepository dataRepositoryToRemove)
       {
          _allObservedData.Remove(dataRepositoryToRemove.Id);
          RemoveClassifiableForWrappedObject(dataRepositoryToRemove);
+      }
+
+      public virtual void RemoveImporterConfiguration(ImporterConfiguration importerConfigurationToRemove)
+      {
+         _allImporterConfigurations.Remove(importerConfigurationToRemove.Id);
+      }
+
+      public virtual void AddImporterConfiguration(ImporterConfiguration configurationToAdd)
+      {
+         _allImporterConfigurations.Add(configurationToAdd);
       }
 
       protected void RemoveClassifiableForWrappedObject(IWithId wrappedObject)
@@ -57,6 +76,8 @@ namespace OSPSuite.Core.Domain
       }
 
       public DataRepository ObservedDataBy(string dataRepositoryId) => _allObservedData[dataRepositoryId];
+
+      public ImporterConfiguration ImporterConfigurationBy(string id) => _allImporterConfigurations[id];
 
       public virtual DataRepository ObservedDataBy(UsedObservedData usedObservedData) => ObservedDataBy(usedObservedData.Id);
       

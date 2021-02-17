@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
          MapEnumerable(x => x.LoadedSheets, x => x.LoadedSheets.Add);
          Map(x => x.FilterString);
          Map(x => x.NanSettings);
+         Map(x => x.Id);
       }
    }
 }

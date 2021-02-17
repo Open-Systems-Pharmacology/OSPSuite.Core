@@ -56,7 +56,7 @@ namespace OSPSuite.Starter.Presenters
             _dataGenerator.DefaultPKSimMetaDataCategories(),
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             settings
-         ).Count() + " data sets successfully imported");
+         ).DataRepositories.Count() + " data sets successfully imported");
       }
 
       public void StartWithTestForGroupBySettings()
