@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
    public abstract class Project : ObjectBase, IProject
    {
       private readonly Cache<string, DataRepository> _allObservedData = new Cache<string, DataRepository>(x => x.Id, x => null);
-      private readonly Cache<string, ImporterConfiguration> _allImporterConfigurations = new Cache<string, ImporterConfiguration>(x => x.UniqueId, x => null);
+      private readonly Cache<string, ImporterConfiguration> _allImporterConfigurations = new Cache<string, ImporterConfiguration>(x => x.Id, x => null);
       private readonly List<IClassifiable> _allClassifiables = new List<IClassifiable>();
       private readonly List<IClassification> _allClassifications = new List<IClassification>();
       private readonly List<ParameterIdentification> _allParameterIdentifications = new List<ParameterIdentification>();
@@ -47,20 +47,25 @@ namespace OSPSuite.Core.Domain
          _allObservedData.Add(dataRepositoryToAdd);
       }
 
+      public virtual void AddOImporterConfiguration(ImporterConfiguration importerConfiguration)
+      {
+         _allImporterConfigurations.Add(importerConfiguration);
+      }
+
       public virtual void RemoveObservedData(DataRepository dataRepositoryToRemove)
       {
          _allObservedData.Remove(dataRepositoryToRemove.Id);
          RemoveClassifiableForWrappedObject(dataRepositoryToRemove);
       }
 
+      public virtual void RemoveImporterConfiguration(ImporterConfiguration importerConfigurationToRemove)
+      {
+         _allImporterConfigurations.Remove(importerConfigurationToRemove.Id);
+      }
+
       public virtual void AddImporterConfiguration(ImporterConfiguration configurationToAdd)
       {
          _allImporterConfigurations.Add(configurationToAdd);
-      }
-
-      public virtual void RemoveImporterConfiguration(ImporterConfiguration configurationToRemove)
-      {
-         _allImporterConfigurations.Remove(configurationToRemove.UniqueId);
       }
 
       protected void RemoveClassifiableForWrappedObject(IWithId wrappedObject)

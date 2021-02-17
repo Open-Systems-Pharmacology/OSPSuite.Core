@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          };
          var configuration = presenter.getConfiguration();
-         configuration.UniqueId = id;
+         configuration.Id = id;
          _view.AttachImporterPresenter(presenter);
          _view.Display();
          return (result, configuration);

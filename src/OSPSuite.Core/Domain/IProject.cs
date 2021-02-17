@@ -37,15 +37,31 @@ namespace OSPSuite.Core.Domain
       void AddObservedData(DataRepository dataRepositoryToAdd);
 
       /// <summary>
+      ///    Add an importer configuration to the project
+      /// </summary>
+      void AddImporterConfiguration(ImporterConfiguration configuration);
+
+      /// <summary>
       ///    Remove an observed data from the project
       /// </summary>
       void RemoveObservedData(DataRepository dataRepositoryToRemove);
+
+      /// <summary>
+      ///    Remove an importer configuration from the project
+      /// </summary>
+      void RemoveImporterConfiguration(ImporterConfiguration importerConfigurationToRemove);
 
       /// <summary>
       ///    Returns the observed Data with the given id.
       /// </summary>
       /// <param name="dataRepositoryId">Id of the observed data</param>
       DataRepository ObservedDataBy(string dataRepositoryId);
+
+      /// <summary>
+      ///    Returns the importer configuration with the given id.
+      /// </summary>
+      /// <param name="id">Id of the importer configuration</param>
+      ImporterConfiguration ImporterConfigurationBy(string id);
 
       /// <summary>
       ///    Returns the observed data referenced by <paramref name="usedObservedData"/>
