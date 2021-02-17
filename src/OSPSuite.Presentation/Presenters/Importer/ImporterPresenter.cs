@@ -171,6 +171,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
                      for (var i = 0; i < measurementColumn.Value.Count(); i++)
                      {
+                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Value))
+                           continue;
+
                         if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
                             _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
                            throw new ErrorUnitException();
