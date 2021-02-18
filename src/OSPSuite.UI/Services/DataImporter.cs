@@ -82,16 +82,6 @@ namespace OSPSuite.UI.Services
          }
          else
          {
-            /*
-            OSPSuite.Core.Import.ImporterConfiguration configuration = null;
-            using (var serializationContext = SerializationTransaction.Create(_container))
-            {
-               var serializer = _modelingXmlSerializerRepository.SerializerFor<OSPSuite.Core.Import.ImporterConfiguration>();
-               var xel = XElement.Load(configurationFilePath);
-               configuration = serializer.Deserialize<OSPSuite.Core.Import.ImporterConfiguration>(xel, serializationContext);
-            }
-            */
-
             var dataSource = new DataSource(_importer);
             var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
             dataSourceFile.Format.Parameters = configuration.Parameters;
@@ -110,6 +100,7 @@ namespace OSPSuite.UI.Services
             dataSource.SetMappings(dataSourceFile.Path, mappings);
             dataSource.NanSettings = configuration.NanSettings;
             dataSource.SetDataFormat(dataSourceFile.Format);
+            dataSource.SetNamingConvention(configuration.NamingConventions);
             var sheets = new Cache<string, IDataSheet>();
             foreach (var key in configuration.LoadedSheets)
             {
