@@ -114,7 +114,11 @@ namespace OSPSuite.UI.Services
             foreach (var pair in dataSource.DataSets.KeyValues)
             {
                foreach (var data in pair.Value.Data)
-                  result.Add(_dataRepositoryMapper.ConvertImportDataSet(dataSource, i++, pair.Key));
+               {
+                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource, i++, pair.Key);
+                  dataRepo.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Configuration", Value = configuration.Id });
+                  result.Add(dataRepo);
+               }
             }
 
             return result;
