@@ -39,12 +39,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
 
       public ImporterPresenter(
-         IImporterView view, 
-         IDataSetToDataRepositoryMapper dataRepositoryMapper, 
-         IImporter importer, 
-         INanPresenter nanPresenter, 
-         IImporterDataPresenter importerDataPresenter, 
-         IImportConfirmationPresenter confirmationPresenter, 
+         IImporterView view,
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IImporter importer,
+         INanPresenter nanPresenter,
+         IImporterDataPresenter importerDataPresenter,
+         IImportConfirmationPresenter confirmationPresenter,
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _confirmationPresenter.OnDataSetSelected += plotDataSet;
          _confirmationPresenter.OnNamingConventionChanged += (s, a) =>
          {
-            _dataSource.SetNamingConvention(a.NamingConvention); 
+            _dataSource.SetNamingConvention(a.NamingConvention);
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
             _configuration.NamingConventions = a.NamingConvention;
          };
@@ -124,7 +124,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportData(object sender, EventArgs e)
       {
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs {DataSource = _dataSource});
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
       }
 
       private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
@@ -138,7 +138,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
-            { 
+            {
                _view.ShowErrorMessage(e.Message);
                _view.DisableConfirmationView();
                foreach (var sheetName in args.Sheets.Keys)
@@ -266,9 +266,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SaveConfiguration(string fileName)
       {
-         
+
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
+            _configuration = GetConfiguration();
             var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
             var element = serializer.Serialize(_configuration, serializationContext);
             element.Save(fileName);
@@ -318,7 +319,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      public ImporterConfiguration getConfiguration() => _configuration;
+      public ImporterConfiguration GetConfiguration() {
+         _configuration.Parameters = _dataSourceFile.Format.Parameters.ToList();
+         return _configuration;
+      }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
    }

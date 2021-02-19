@@ -27,6 +27,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       void LoadConfiguration(ImporterConfiguration configuration);
 
-      ImporterConfiguration getConfiguration();
+      ImporterConfiguration GetConfiguration();
    }
 }
