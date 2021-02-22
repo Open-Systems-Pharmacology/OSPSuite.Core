@@ -542,7 +542,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void invalidateErrorUnit()
       {
-         var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo!= null)  && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
+         var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo!= null)  && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
          if (errorColumnDTO == null) return;
 
