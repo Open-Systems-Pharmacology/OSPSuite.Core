@@ -95,7 +95,7 @@ namespace OSPSuite.R.Services
 
       public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, IndividualValuesCache[] populations, SimulationRunOptions simulationRunOptions = null)
       {
-         if (simulations.Length != populations.Length) throw new Exception("simulations and populations should have the same length");
+         if (simulations.Length != populations.Length) throw new InvalidArgumentException("simulations and populations should have the same length");
 
          var tasks = new List<Task<SimulationResults>>();
          for (var i = 0; i < simulations.Length; i++)
