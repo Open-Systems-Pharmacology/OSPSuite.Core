@@ -82,14 +82,28 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, SimulationRunOptions[] simulationRunOptionsCollection = null)
+      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, SimulationRunOptions simulationRunOptions = null)
       {
-         if (simulationRunOptionsCollection != null && simulations.Length != simulationRunOptionsCollection.Length) return null;
+         var tasks = new List<Task<SimulationResults>>();
+         for (var i = 0; i < simulations.Length; i++)
+         {
+            tasks.Add(RunAsync(simulations[i], simulationRunOptions));
+         }
+         Task.WaitAll(tasks.ToArray());
+         return tasks.Select(t => t.Result).ToArray();
+      }
+
+      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, IndividualValuesCache[] populations, SimulationRunOptions simulationRunOptions = null)
+      {
+         if (simulations.Length != populations.Length) throw new Exception("simulations and populations should have the same length");
 
          var tasks = new List<Task<SimulationResults>>();
          for (var i = 0; i < simulations.Length; i++)
          {
-            tasks.Add(RunAsync(simulations[i], simulationRunOptionsCollection != null ? simulationRunOptionsCollection[i] : null));
+            if (populations[i] != null)
+               tasks.Add(RunAsync(simulations[i], simulationRunOptions));
+            else
+               tasks.Add(RunAsync(simulations[i], populations[i], simulationRunOptions));
          }
          Task.WaitAll(tasks.ToArray());
          return tasks.Select(t => t.Result).ToArray();
