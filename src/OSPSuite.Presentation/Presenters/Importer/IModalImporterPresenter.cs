@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                foreach (var data in pair.Value.Data)
                {
                   var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource, i++, pair.Key);
-                  dataRepo.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Configuration", Value = id });
+                  dataRepo.ConfigurationId = id;
                   result.Add(dataRepo);
                }
                   
