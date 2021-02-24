@@ -28,7 +28,7 @@ namespace OSPSuite.UI.Views.Importer
          if (string.IsNullOrEmpty(selected))
             _comboBoxEdit.SelectedIndex = 0;
          else
-            _comboBoxEdit.SelectedIndex = list.FindIndex( o => o == selected); //ToDo: have to check this, changed to fix conflict
+            _comboBoxEdit.SelectedIndex = list.FindIndex( o => o == selected);
       }
 
       public void Clear()

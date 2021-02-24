@@ -16,6 +16,7 @@ using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -37,7 +38,8 @@ namespace OSPSuite.UI.Views.Importer
          keysListBox.SelectedIndexChanged += (s, a) => OnEvent(() => buttonAdd.Enabled = keysListBox.SelectedItems.Any());
          buttonAdd.Enabled = false;
          separatorComboBoxEdit.Properties.Items.Clear();
-         separatorComboBoxEdit.Properties.Items.AddRange(new [] {".", ",", "-", "_"}); //TODO: Bring the values from some configuration??
+         
+         separatorComboBoxEdit.Properties.Items.AddRange(Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS);
          separatorComboBoxEdit.SelectedIndex = 0;
          separatorComboBoxEdit.TextChanged += (s, a) => OnEvent(() =>
          {

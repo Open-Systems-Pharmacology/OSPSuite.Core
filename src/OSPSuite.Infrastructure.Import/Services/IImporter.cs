@@ -63,7 +63,6 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          foreach (var key in dataSets.Keys)
          {
-            //TODO implement GetOrAdd() as a method for Cache, in order not to be doing this all the time
             IDataSet current;
             if (alreadyExisting.DataSets.Contains(key))
                current = alreadyExisting.DataSets[key];
