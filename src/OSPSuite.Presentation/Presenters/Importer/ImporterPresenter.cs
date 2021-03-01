@@ -163,7 +163,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
-                     //null check???? for errorColumn???
+                     if (errorColumn.Key == null)
+                        return;
 
                      if (_dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == Constants.Dimension.NO_DIMENSION
                          || _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == null)
