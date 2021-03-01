@@ -53,8 +53,8 @@ namespace OSPSuite.Starter.Presenters
       {
          _dialogCreator.MessageBoxInfo(_dataImporter.ImportDataSets
          (
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            categories,
+            columns,
             settings
          ).DataRepositories.Count() + " data sets successfully imported");
       }
@@ -81,9 +81,7 @@ namespace OSPSuite.Starter.Presenters
       public void StartWithMoBiSettings()
       {
          var dataImporterSettings = new DataImporterSettings();
-
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE);
 
          StartImporterExcelView(
             _dataGenerator.DefaultMoBiMetaDataCategories(),
