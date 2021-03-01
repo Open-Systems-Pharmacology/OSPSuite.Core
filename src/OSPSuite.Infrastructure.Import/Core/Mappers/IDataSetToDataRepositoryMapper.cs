@@ -13,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName);
    }
 
-   class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
+   public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
       private readonly IDimensionFactory _dimensionFactory;
 
