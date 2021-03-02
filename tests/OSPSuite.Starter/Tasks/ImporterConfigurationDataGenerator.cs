@@ -172,8 +172,10 @@ namespace OSPSuite.Starter.Tasks
          var compCategory = getCompartmentCategory();
          categories.Add(compCategory);
 
-         var concentrationCategory = getConcentrationCategory();
+         var concentrationCategory = getMoleculeCategory();
          categories.Add(concentrationCategory);
+
+         categories.Add(createMetaDataCategory<string>("Molecular Weight"));
 
          categories.Add(createMetaDataCategory<string>("Study Id"));
          categories.Add(createMetaDataCategory<string>("Gender"));
@@ -184,12 +186,14 @@ namespace OSPSuite.Starter.Tasks
          return categories;
       }
 
-      private static MetaDataCategory getConcentrationCategory()
+      private static MetaDataCategory getMoleculeCategory()
       {
          var metaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
          metaDataCategory.ListOfValues.Add("JustOne", "JustOne");
+         metaDataCategory.ShouldListOfValuesBeIncluded = true;
+         metaDataCategory.SelectDefaultValue = true;
          return metaDataCategory;
       }
 
@@ -217,6 +221,7 @@ namespace OSPSuite.Starter.Tasks
          });
 
          organCategory.Description = "Organ";
+         organCategory.ShouldListOfValuesBeIncluded = true;
          return organCategory;
       }
 

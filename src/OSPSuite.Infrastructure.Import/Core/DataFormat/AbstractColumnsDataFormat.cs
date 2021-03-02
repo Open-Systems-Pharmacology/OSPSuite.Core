@@ -161,7 +161,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var groupByParams =
             Parameters
                .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter)
-               .Select(p => (p.ColumnName, data.GetColumnDescription(p.ColumnName).ExistingValues));
+               .Select(p => (p.ColumnName, p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn ? data.GetColumnDescription(p.ColumnName).ExistingValues : new List<string>() { p.ColumnName }));
          return buildDataSets(data, groupByParams, columnInfos);
       }
 
@@ -204,7 +204,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             row =>
             {
                var index = 0;
-               return valueTuples.All(p => row.ElementAt(data.GetColumnDescription(p.ColumnName).Index) == p.ExistingValues[indexesCopy.ElementAt(index++)]);
+               return valueTuples.All(p =>
+               {
+                  var elementColumn = data.GetColumnDescription(p.ColumnName);
+                  var element = elementColumn != null ? row.ElementAt(elementColumn.Index) : p.ColumnName;
+                  return element == p.ExistingValues[indexesCopy.ElementAt(index++)];
+               });
             }
          ).ToList();
          if (!rawDataSet.Any())

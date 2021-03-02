@@ -160,7 +160,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public ColumnDescription GetColumnDescription(string columnName)
       {
-         return _headers[columnName];
+         return _headers.Contains(columnName) ? _headers[columnName] : null;
       }
 
       public UnformattedDataRow GetDataRow(int index)

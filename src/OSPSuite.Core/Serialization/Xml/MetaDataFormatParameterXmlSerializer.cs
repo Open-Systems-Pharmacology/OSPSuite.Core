@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          Map(x => x.ColumnName);
          Map(x => x.MetaDataId);
+         Map(x => x.IsColumn);
       }
    }
 }

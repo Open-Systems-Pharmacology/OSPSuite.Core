@@ -19,32 +19,26 @@ namespace OSPSuite.Infrastructure.Import.Core
       )
       {
          Description = mappings.Select(p =>
-            new InstantiatedMetaData()
+         {
+            var columnDescription = columnHandler.GetColumnDescription(p.ColumnName);
+            return new InstantiatedMetaData()
             {
-               Id = columnHandler.GetColumnDescription(p.ColumnName).Index,
-               Value = rawData.First().Data.ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index)
-            }
+               Id = columnDescription != null ? columnDescription.Index : -1,
+               Value = columnDescription != null ? rawData.First().Data.ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index) : p.ColumnName
+            };
+         }
          );
          Data = parsedData;
       }
 
       public string NameFromConvention(IEnumerable<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
       {
-         return mappings.Aggregate
-         (
-            // Start with the namingConvention replacing {file} and {sheet} by their names
-            new MetaDataMappingConverter()
-            {
-               Id = convention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", sheetName)
-            },
-            // Aggregates then by iterating on mappings (which contains all valid keys, e.g. metadata) and replacing any text
-            // {id} with id being the id of the current key by the value stored for such a key when the data was parsed
-            (acc, x) =>
-               new MetaDataMappingConverter()
-               {
-                  Id = acc.Id.Replace($"{{{x.Id}}}", $"{ValueForColumn(x.Index(sheetName))}")
-               }
-         ).Id;
+         var result = convention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", sheetName);
+         for (var i = 0; i < mappings.Count(); i++)
+         {
+            result = result.Replace($"{{{mappings.ElementAt(i).Id}}}", $"{Description.ElementAt(i).Value}");
+         }
+         return result;
       }
 
       public string ValueForColumn(int columnId)

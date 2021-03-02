@@ -36,6 +36,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private ImporterConfiguration _configuration = new ImporterConfiguration();
       private readonly IDimensionFactory _dimensionFactory;
+      private IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
 
       public ImporterPresenter(
@@ -112,6 +113,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.SetSettings(metaDataCategories, columnInfos);
          _importerDataPresenter.SetSettings(metaDataCategories, columnInfos);
          _dataImporterSettings = dataImporterSettings;
+         _metaDataCategories = metaDataCategories;
       }
 
       public void SetDataSource(string dataSourceFileName)
@@ -192,7 +194,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()

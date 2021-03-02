@@ -115,7 +115,7 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem descriptionRepository(ColumnMappingDTO model)
       {
-         var descriptionRepository = new UxRepositoryItemComboBox(columnMappingGridView)
+         var descriptionRepository = new UxRepositoryItemImageComboBox(columnMappingGridView, _imageListRetriever)
          {
             AutoComplete = true,
             AllowNullInput = DefaultBoolean.True,
@@ -259,13 +259,13 @@ namespace OSPSuite.UI.Views.Importer
          }*/);
       }
 
-      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<string> options)
+      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<ImageComboBoxOption> options)
       {
          editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;
          foreach (var option in options)
          {
-            editor.Items.Add(new ComboBoxItem(option));
+            editor.Items.Add(new ImageComboBoxItem(option.Description, option.ImageIndex));
          }
 
          editor.KeyDown += (s, a) => OnEvent(clearSelectionOnDeleteForComboBoxEdit, s, a);
@@ -310,8 +310,7 @@ namespace OSPSuite.UI.Views.Importer
          _presenter.ClearMapping();
       }
    }
-
-   //TODO move to presenter file and test
+   
    class SettingsFormatter : IFormatter<DataFormatParameter>
    {
       public string Format(DataFormatParameter model)

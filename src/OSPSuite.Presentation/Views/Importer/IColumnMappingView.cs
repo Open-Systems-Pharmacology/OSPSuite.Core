@@ -99,6 +99,12 @@ namespace OSPSuite.Presentation.Views.Importer
       }
    }
 
+   public class ImageComboBoxOption
+   {
+      public string Description { get; set; }
+      public int ImageIndex { get; set; }
+   }
+
    public interface IColumnMappingView : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);

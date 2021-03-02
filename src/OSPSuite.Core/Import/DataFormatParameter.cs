@@ -45,12 +45,15 @@
    {
       public MetaDataFormatParameter() { }
 
-      public MetaDataFormatParameter(string columnName, string metaDataId) : base(columnName)
+      public MetaDataFormatParameter(string columnName, string metaDataId, bool isColumn = true) : base(columnName)
       {
          MetaDataId = metaDataId;
+         IsColumn = isColumn;
       }
 
       public string MetaDataId { get; set; }
+
+      public bool IsColumn { get; set; }
 
       public override bool EquivalentTo(DataFormatParameter other)
       {

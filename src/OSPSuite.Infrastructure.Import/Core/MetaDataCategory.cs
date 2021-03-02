@@ -16,6 +16,10 @@ namespace OSPSuite.Infrastructure.Import.Core
       /// <remarks>The key is the real value. The value of the dictionary is the display text of the value in the gui.</remarks>
       public Dictionary<string, string> ListOfValues { get; private set; }
 
+      public bool ShouldListOfValuesBeIncluded { get; set; } = false;
+
+      public bool SelectDefaultValue { get; set; } = false;
+
       /// <summary>
       ///    List of images, if available
       /// </summary>

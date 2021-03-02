@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
@@ -110,6 +111,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (string.IsNullOrEmpty(dataSourceFileName)) return null;
          Sheets = new Cache<string, IDataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
+         setDefaultMetaData();
          createSheetsForViewing();
          View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
@@ -118,6 +120,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ResetImportButtons();
 
          return _dataSourceFile;
+      }
+
+      private void setDefaultMetaData()
+      {
+         foreach (var metaData in _metaDataCategories)
+         {
+            if (!metaData.SelectDefaultValue || metaData.DefaultValue == null) continue;
+            var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
+            parameter.ColumnName = metaData.DefaultValue.ToString();
+            parameter.IsColumn = false;
+         }
       }
 
       private void createSheetsForViewing()

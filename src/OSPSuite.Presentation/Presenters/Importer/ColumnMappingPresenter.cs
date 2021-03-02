@@ -111,12 +111,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
-         if ( (errorColumn.Unit.SelectedUnit != "?") && (errorColumn.Unit.ColumnName != "")) return;
+         if ((errorColumn.Unit.SelectedUnit != "?") && (errorColumn.Unit.ColumnName != "")) return;
          if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC) return;
-         
-            
+
+
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
-         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source).MappedColumn; 
+         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source).MappedColumn;
          errorColumn.Unit = measurementColumn.Unit;
       }
 
@@ -132,18 +132,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _rawData = rawData;
       }
 
-      private ColumnMappingOption generateIgnoredColumnMappingOption(string description)
-      {
-         return new ColumnMappingOption()
-         {
-            Label = Captions.Importer.NoneEditorNullText,
-            Description = description
-         };
-      }
-
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
-         _setDescriptionForRow(model);
+         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Select(v => v.ToString());
+         _setDescriptionForRow(model, values.All(v => v != model.ExcelColumn));
       }
 
       public void UpdateDescriptrionForModel()
@@ -289,17 +281,27 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      public IEnumerable<string> GetAvailableRowsFor(ColumnMappingDTO model)
+      public IEnumerable<ImageComboBoxOption> GetAvailableRowsFor(ColumnMappingDTO model)
       {
-         var options = new List<string>();
+         var options = new List<ImageComboBoxOption>();
          if (model == null)
             return options;
-         if (model.Source != null && !(model.Source is AddGroupByFormatParameter))
+         if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
-            options.Add(model.Source.ColumnName);
+            var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
+            if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new ImageComboBoxOption() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
          }
-         options.AddRange(this.availableColumns());
-         return options;
+         if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
+         {
+            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+         }
+         else if (model.Source != null && !(model.Source is AddGroupByFormatParameter) && !(model.Source is MetaDataFormatParameter))
+         {
+            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+         }
+         options.AddRange(availableColumns().Select(c => new ImageComboBoxOption() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
+         return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
       }
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)
@@ -369,7 +371,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                }
                break;
          }
-         
+
          return options;
       }
 
@@ -440,17 +442,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private void _setDescriptionForRow(ColumnMappingDTO model)
+      private void _setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
          if (model.Source == null)
          {
             switch (model.CurrentColumnType)
             {
                case ColumnMappingDTO.ColumnType.MetaData:
-                  model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName);
+                  model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName, isColumn);
                   break;
                case ColumnMappingDTO.ColumnType.Mapping:
-                  model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column(){ Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
+                  model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
                   break;
                default:
                   throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
@@ -465,8 +467,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else
          {
             model.Source.ColumnName = model.ExcelColumn;
+            if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
+            {
+               (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
+            }
          }
-         
+
          setDataFormat(_format.Parameters);
       }
 
@@ -490,7 +496,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void AddGroupBy(AddGroupByFormatParameter source)
       {
          var parameter = new GroupByDataFormatParameter(source.ColumnName);
-         _format.Parameters.Insert(_format.Parameters.Count-2, parameter);new GroupByDataFormatParameter(source.ColumnName);
+         _format.Parameters.Insert(_format.Parameters.Count - 2, parameter); new GroupByDataFormatParameter(source.ColumnName);
          setDataFormat(_mappings
             .Where(f => !(f.Source is AddGroupByFormatParameter))
             .Select(f => f.Source)
@@ -542,7 +548,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void invalidateErrorUnit()
       {
-         var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo!= null)  && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
+         var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
          if (errorColumnDTO == null) return;
 
@@ -550,7 +556,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (errorColumn == null) return;
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
          if (measurementColumnDTO == null) return;
-         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO.Source)?.MappedColumn;
+         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source)?.MappedColumn;
          if (measurementColumn == null) return;
 
          if ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) && (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC))
@@ -565,7 +571,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          setStatuses();
          if (_mappingProblem.MissingMapping.Count != 0 || _mappingProblem.MissingUnit.Count != 0)
          {
-            OnMissingMapping(this, new MissingMappingEventArgs {Message = _mappingProblem.MissingMapping.FirstOrDefault() ?? _mappingProblem.MissingUnit.FirstOrDefault() });
+            OnMissingMapping(this, new MissingMappingEventArgs { Message = _mappingProblem.MissingMapping.FirstOrDefault() ?? _mappingProblem.MissingUnit.FirstOrDefault() });
          }
          else
          {
