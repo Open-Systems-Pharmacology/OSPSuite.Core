@@ -36,7 +36,7 @@ namespace OSPSuite.UI.Views.Charts
          this.titleTextBox = new DevExpress.XtraEditors.TextEdit();
          this.layoutControl = new UxLayoutControl();
          this.sideMarginsEnabledCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
-         this.legendPositionComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.legendPositionComboBoxEdit = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.diagramBackgroundColorColorEdit = new UxColorPickEditWithHistory();
          this.backgroundColorColorEdit = new UxColorPickEditWithHistory();
          this.descriptionTextBox = new DevExpress.XtraEditors.MemoEdit();
@@ -284,7 +284,7 @@ namespace OSPSuite.UI.Views.Charts
     private DevExpress.XtraEditors.TextEdit titleTextBox;
     private DevExpress.XtraEditors.MemoEdit descriptionTextBox;
     private DevExpress.XtraEditors.TextEdit nameTextBox;
-    private DevExpress.XtraEditors.ComboBoxEdit legendPositionComboBoxEdit;
+    private OSPSuite.UI.Controls.UxComboBoxEdit legendPositionComboBoxEdit;
     private UxColorPickEditWithHistory backgroundColorColorEdit;
     private UxColorPickEditWithHistory diagramBackgroundColorColorEdit;
     private UxLayoutControl layoutControl;

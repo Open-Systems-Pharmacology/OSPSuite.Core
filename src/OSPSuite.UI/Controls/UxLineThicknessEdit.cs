@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using DevExpress.XtraEditors;
 
 namespace OSPSuite.UI.Controls
 {
-   public class UxLineThicknessEdit : ComboBoxEdit
+   public class UxLineThicknessEdit : UxComboBoxEdit
    {
       private readonly int[] _validValues;
 
       public UxLineThicknessEdit()
       {
-         _validValues = new [] {1,2,3};
+         _validValues = new[] {1, 2, 3};
       }
 
       public IEnumerable<int> GetValidValues()

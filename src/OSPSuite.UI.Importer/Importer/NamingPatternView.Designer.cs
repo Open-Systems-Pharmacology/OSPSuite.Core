@@ -29,7 +29,7 @@
       private void InitializeComponent()
       {
          this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.cbPatternComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbPatternComboBox = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemNamingPattern = new DevExpress.XtraLayout.LayoutControlItem();
          this.lblNamingPatternDescription = new DevExpress.XtraEditors.LabelControl();
@@ -130,7 +130,7 @@
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraEditors.ComboBoxEdit cbPatternComboBox;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbPatternComboBox;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemNamingPattern;
       private DevExpress.XtraEditors.LabelControl lblNamingPatternDescription;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
