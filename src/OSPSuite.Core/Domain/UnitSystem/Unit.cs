@@ -59,9 +59,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public virtual bool HasSynonym(string name) => _unitSynonyms.Contains(name);
 
-      public virtual void AddUnitSynonym(string name) => AddUnitSynonym(new UnitSynonym(name));
+      internal virtual void AddUnitSynonym(string name) => AddUnitSynonym(new UnitSynonym(name));
 
-      public virtual void AddUnitSynonym(UnitSynonym unitSynonym)
+      internal virtual void AddUnitSynonym(UnitSynonym unitSynonym)
       {
          if (HasSynonym(unitSynonym.Name))
             return;

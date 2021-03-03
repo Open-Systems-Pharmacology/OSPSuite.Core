@@ -58,11 +58,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
       Unit UnitOrDefault(string name);
 
       /// <summary>
-      /// Returns the unit defined at the 0-based index <paramref name="index"/>. 
+      ///    Returns the unit defined at the 0-based index <paramref name="index" />.
       /// </summary>
       /// <param name="index">0-based index if the unit in the unit array</param>
-      /// /// <exception cref="ArgumentOutOfRangeException">is thrown if index does not match the units array dimensions</exception>
-      /// <returns>The unit at <paramref name="index"/></returns>
+      /// ///
+      /// <exception cref="ArgumentOutOfRangeException">is thrown if index does not match the units array dimensions</exception>
+      /// <returns>The unit at <paramref name="index" /></returns>
       Unit UnitAt(int index);
 
       /// <summary>
@@ -80,14 +81,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
       double UnitValueToBaseUnitValue(Unit unit, double valueInUnit);
 
       /// <summary>
-      ///    Adds a unit to the dimension. The unit won't be set as default unit
-      /// </summary>
-      Unit AddUnit(string unitName, double factor, double offset);
-
-      /// <summary>
       ///    Adds a unit to the dimension and set the unit as default unit if the flag is set to true
       /// </summary>
-      Unit AddUnit(string unitName, double factor, double offset, bool isDefault);
+      /// <param name="unitName">Name of unit. Needs to be unique</param>
+      /// <param name="factor">Value multiplied by this factor will be in base unit</param>
+      /// <param name="offset">Add the factor to a value to convert to base unit</param>
+      /// <param name="isDefault">True if this unit is the default unit otherwise False. Default is <c>false</c></param>
+      Unit AddUnit(string unitName, double factor, double offset, bool isDefault = false);
 
       void RemoveUnit(string unitName);
 
@@ -112,16 +112,17 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
    public class Dimension : IDimension
    {
-      private readonly Cache<string, Unit> _units;
+      private readonly Cache<string, Unit> _units = new Cache<string, Unit>(x => x.Name);
+
       private Unit _defaultUnit;
       private Unit _baseUnit;
-      public string Name { get; private set; }
+      public string Name { get; } = string.Empty;
       private string _displayName;
+      public BaseDimensionRepresentation BaseRepresentation { get; }
 
-      public Dimension() //parameter less constructor for deserialization
+      [Obsolete("For serialization")]
+      public Dimension()
       {
-         _units = new Cache<string, Unit>(x => x.Name);
-         Name = string.Empty;
       }
 
       public Dimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName) : this()
@@ -131,8 +132,6 @@ namespace OSPSuite.Core.Domain.UnitSystem
          BaseUnit = new Unit(baseUnitName, 1.0, 0.0);
          _units.Add(BaseUnit);
       }
-
-      public BaseDimensionRepresentation BaseRepresentation { get; }
 
       public string DisplayName
       {
@@ -166,14 +165,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IEnumerable<Unit> Units => _units;
 
-      public IEnumerable<string> GetUnitNames()
-      {
-         return _units.Keys;
-      }
+      public IEnumerable<string> GetUnitNames() => _units.Keys;
 
       public Unit Unit(string name)
       {
-         return _units[name];
+         if (_units.Contains(name))
+            return _units[name];
+
+         //it might be a unit synonym
+         return _units.FirstOrDefault(x => x.HasSynonym(name));
       }
 
       public Unit UnitOrDefault(string name)
@@ -183,8 +183,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit UnitAt(int index)
       {
-         if(index<0 || index>= _units.Count)
-            throw  new ArgumentOutOfRangeException(nameof(index));
+         if (index < 0 || index >= _units.Count)
+            throw new ArgumentOutOfRangeException(nameof(index));
 
          return _units.ElementAt(index);
       }
@@ -199,10 +199,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return (valueInUnit + unit.Offset) * unit.Factor;
       }
 
-      public Unit AddUnit(string unitName, double factor, double offset)
-      {
-         return AddUnit(unitName, factor, offset, false);
-      }
+      public Unit AddUnit(string unitName, double factor, double offset) => AddUnit(unitName, factor, offset, false);
 
       public Unit AddUnit(string unitName, double factor, double offset, bool isDefault)
       {
@@ -231,20 +228,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _units.Add(unit.Name, unit);
       }
 
-      public bool HasUnit(string unitName)
-      {
-         return _units.Contains(unitName);
-      }
+      private bool hasSynonym(string unitName) =>  _units.Any(x => x.HasSynonym(unitName));
 
-      public bool HasUnit(Unit unit)
-      {
-         return unit != null && HasUnit(unit.Name);
-      }
+      public bool HasUnit(string unitName) => _units.Contains(unitName) || hasSynonym(unitName);
 
-      public bool CanConvertToUnit(string unitName)
-      {
-         return HasUnit(unitName);
-      }
+      public bool HasUnit(Unit unit) => unit != null && HasUnit(unit.Name);
+
+      public bool CanConvertToUnit(string unitName) => HasUnit(unitName);
 
       public int CompareTo(IDimension other)
       {
@@ -254,10 +244,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return string.Compare(DisplayName, other.DisplayName, StringComparison.Ordinal);
       }
 
-      public override string ToString()
-      {
-         return DisplayName;
-      }
+      public override string ToString() => DisplayName;
 
       public int CompareTo(object obj)
       {
