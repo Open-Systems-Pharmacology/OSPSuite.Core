@@ -57,9 +57,9 @@ namespace OSPSuite.UI.Views.Charts
          _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) {BindingMode = BindingMode.TwoWay};
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
-         _lineStyleRepository = new UxRepositoryItemComboBox(gridView);
+         _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
          _lineThicknessRepository = new UxRepositoryItemComboBox(gridView);
-         _symbolRepository = new UxRepositoryItemComboBox(gridView);
+         _symbolRepository = new UxRepositoryItemSymbols(gridView);
          _axisTypeRepository = new UxRepositoryItemComboBox(gridView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(gridView);
          _visibleRepository = new UxRepositoryItemCheckEdit(gridView);
@@ -84,9 +84,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _lineStyleRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<LineStyles>());
          _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
-         _symbolRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<Symbols>());
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 

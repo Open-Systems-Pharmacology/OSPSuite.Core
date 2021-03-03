@@ -38,7 +38,7 @@ namespace OSPSuite.UI.Views
          this.gridView = new UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemParameters = new DevExpress.XtraLayout.LayoutControlItem();
-         this.cbModeSelection = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbModeSelection = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.layoutItemModeSelection = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -147,7 +147,7 @@ namespace OSPSuite.UI.Views
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemParameters;
-      private DevExpress.XtraEditors.ComboBoxEdit cbModeSelection;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbModeSelection;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemModeSelection;
    }
 }

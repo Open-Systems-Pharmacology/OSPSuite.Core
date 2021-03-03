@@ -33,7 +33,7 @@
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.panelChart = new DevExpress.XtraEditors.PanelControl();
          this.layoutItemChart = new DevExpress.XtraLayout.LayoutControlItem();
-         this.cbOutputSelection = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbOutputSelection = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.layoutItemOutputSelection = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
@@ -128,7 +128,7 @@
       private DevExpress.XtraEditors.PanelControl panelChart;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemChart;
-      private DevExpress.XtraEditors.ComboBoxEdit cbOutputSelection;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbOutputSelection;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemOutputSelection;
    }
 }

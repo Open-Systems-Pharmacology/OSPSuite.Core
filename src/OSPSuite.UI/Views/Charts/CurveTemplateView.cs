@@ -34,9 +34,9 @@ namespace OSPSuite.UI.Views.Charts
       {
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<CurveTemplateDTO>(mainView);
-         _lineStyleRepository = new UxRepositoryItemComboBox(mainView);
+         _lineStyleRepository = new UxRepositoryItemLineStyles(mainView);
          _lineThicknessRepository = new UxRepositoryItemComboBox(mainView);
-         _symbolRepository = new UxRepositoryItemComboBox(mainView);
+         _symbolRepository = new UxRepositoryItemSymbols(mainView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(mainView);
          _buttonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Delete);
          _quantityTypeRepository = new UxRepositoryItemCheckedComboBoxEdit(mainView, typeof(QuantityType));
@@ -51,9 +51,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public override void InitializeBinding()
       {
-         _lineStyleRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<LineStyles>());
          _lineThicknessRepository.FillComboBoxRepositoryWith(new[] { 1, 2, 3 });
-         _symbolRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<Symbols>());
 
          _gridViewBinder.AutoBind(x => x.Name)
             .WithCaption(Captions.CurveName);

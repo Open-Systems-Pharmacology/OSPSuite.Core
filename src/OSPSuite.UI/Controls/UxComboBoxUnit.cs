@@ -11,7 +11,7 @@ using OSPSuite.Presentation.DTO;
 
 namespace OSPSuite.UI.Controls
 {
-   public class UxComboBoxUnit<TWithUnit> : ComboBoxEdit where TWithUnit : IWithDisplayUnitDTO
+   public class UxComboBoxUnit<TWithUnit> : UxComboBoxEdit where TWithUnit : IWithDisplayUnitDTO
    {
       private readonly ScreenBinder<TWithUnit> _unitBinder;
       public event Action<TWithUnit, Unit> ParameterUnitSet = delegate { };
