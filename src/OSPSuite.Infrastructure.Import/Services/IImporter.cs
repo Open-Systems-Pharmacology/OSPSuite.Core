@@ -53,11 +53,11 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var dataSets = new Cache<string, IDataSet>();
 
-         foreach (var s in dataSheets.KeyValues)
+         foreach (var sheetKeyValue in dataSheets.KeyValues)
          {
-            dataSets.Add(s.Key, new DataSet()
+            dataSets.Add(sheetKeyValue.Key, new DataSet()
             {
-               Data = format.Parse(s.Value.RawData, columnInfos)
+               Data = format.Parse(sheetKeyValue.Value.RawData, columnInfos)
             });
          }
 
