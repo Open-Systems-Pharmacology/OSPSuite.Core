@@ -67,7 +67,7 @@ namespace OSPSuite.Core.Import
          IsColumn = isColumn;
       }
 
-      public string MetaDataId { get; set; }
+      public string MetaDataId { get; }
 
       public bool IsColumn { get; set; }
 
