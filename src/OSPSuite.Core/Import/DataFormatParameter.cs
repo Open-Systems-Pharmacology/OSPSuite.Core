@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Core.Import
+﻿using OSPSuite.Assets;
+
+namespace OSPSuite.Core.Import
 {
    public class ParameterConfiguration
    {
@@ -30,6 +32,10 @@
       {
          return other.GetType() == GetType();
       }
+
+      public abstract string TooltipTitle();
+
+      public abstract string TooltipDescription();
    }
    
    public class AddGroupByFormatParameter : DataFormatParameter
@@ -38,6 +44,16 @@
 
       public AddGroupByFormatParameter(string columnName) : base(columnName)
       {
+      }
+
+      public override string TooltipDescription()
+      {
+         return Captions.Importer.AddGroupByHint;
+      }
+
+      public override string TooltipTitle()
+      {
+         return Captions.Importer.AddGroupByTitle;
       }
    }
 
@@ -59,6 +75,16 @@
       {
          return base.EquivalentTo(other) && MetaDataId == (other as MetaDataFormatParameter).MetaDataId;
       }
+
+      public override string TooltipDescription()
+      {
+         return Captions.Importer.MetaDataHint(ColumnName, MetaDataId);
+      }
+
+      public override string TooltipTitle()
+      {
+         return Captions.Importer.MetaDataTitle;
+      }
    }
 
    public class GroupByDataFormatParameter : DataFormatParameter
@@ -71,6 +97,16 @@
       public override bool EquivalentTo(DataFormatParameter other)
       {
          return base.EquivalentTo(other) && ColumnName == (other as GroupByDataFormatParameter).ColumnName;
+      }
+
+      public override string TooltipDescription()
+      {
+         return Captions.Importer.GroupByHint(ColumnName);
+      }
+
+      public override string TooltipTitle()
+      {
+         return Captions.Importer.GroupByTitle;
       }
    }
 
@@ -88,6 +124,17 @@
       public override bool EquivalentTo(DataFormatParameter other)
       {
          return base.EquivalentTo(other) && MappedColumn.Name == (other as MappingDataFormatParameter).MappedColumn.Name;
+      }
+
+      public override string TooltipDescription()
+      {
+         
+         return Captions.Importer.MappingHint(ColumnName, MappedColumn.Name, MappedColumn.Unit.SelectedUnit);
+      }
+
+      public override string TooltipTitle()
+      {
+         return Captions.Importer.MappingTitle;
       }
    }
 }

@@ -2,7 +2,7 @@
  using DevExpress.XtraEditors;
  using DevExpress.XtraTab;
 using OSPSuite.Assets;
-using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -43,7 +43,7 @@ namespace OSPSuite.UI.Views.Importer
          {
             var fileDialog = new SaveFileDialog { };
             fileDialog.Title = Captions.Importer.SaveConfiguration;
-            fileDialog.Filter = Captions.Importer.SaveConfigurationFilter;
+            fileDialog.Filter = Constants.Filter.XML_FILE_FILTER;
 
             if (fileDialog.ShowDialog() != DialogResult.OK)
                return;

@@ -402,7 +402,6 @@ namespace OSPSuite.Assets
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
-         public static readonly string SaveConfigurationFilter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
 
@@ -1563,14 +1562,9 @@ namespace OSPSuite.Assets
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
 
-      public static string TypeNotSupported(Type t)
+      public static string TypeNotSupported(string typeName)
       {
-         return $"{t} is not currently been handled";
-      }
-
-      public static string TypeNotSupported(string t)
-      {
-         return $"{t} is not currently been handled";
+         return $"{typeName} is not currently been handled";
       }
    }
 

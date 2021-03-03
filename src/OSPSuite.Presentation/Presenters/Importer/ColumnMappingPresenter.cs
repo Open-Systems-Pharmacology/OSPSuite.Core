@@ -135,7 +135,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
          var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Select(v => v.ToString());
-         _setDescriptionForRow(model, values.All(v => v != model.ExcelColumn));
+         _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
       public void UpdateDescriptrionForModel()
@@ -326,7 +326,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                case AddGroupByFormatParameter _:
                   break;
                default:
-                  throw new Exception(Error.TypeNotSupported(model.Source.GetType()));
+                  throw new Exception(Error.TypeNotSupported(model.Source.GetType().ToString()));
             }
          }
          var availableColumns = this.availableColumns();
@@ -404,42 +404,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                Title = Captions.Importer.NotConfiguredField
             };
-         switch (element)
+         if ((element is MappingDataFormatParameter) && _mappingProblem.MissingUnit.Contains((element as MappingDataFormatParameter).MappedColumn.Name))
+            return new ToolTipDescription()
+            {
+               Title = Captions.Importer.MissingUnit
+            };
+         return new ToolTipDescription()
          {
-            case MappingDataFormatParameter mp:
-               if (_mappingProblem.MissingUnit.Contains(mp.MappedColumn.Name))
-               {
-                  return new ToolTipDescription()
-                  {
-                     Title = Captions.Importer.MissingUnit
-                  };
-               }
-               return new ToolTipDescription()
-               {
-                  Title = Captions.Importer.MappingTitle,
-                  Description = Captions.Importer.MappingHint(mp.ColumnName, mp.MappedColumn.Name, mp.MappedColumn.Unit.SelectedUnit)
-               };
-            case GroupByDataFormatParameter gp:
-               return new ToolTipDescription()
-               {
-                  Title = Captions.Importer.GroupByTitle,
-                  Description = Captions.Importer.GroupByHint(gp.ColumnName)
-               };
-            case MetaDataFormatParameter mp:
-               return new ToolTipDescription()
-               {
-                  Title = Captions.Importer.MetaDataTitle,
-                  Description = Captions.Importer.MetaDataHint(mp.ColumnName, mp.MetaDataId)
-               };
-            case AddGroupByFormatParameter _:
-               return new ToolTipDescription()
-               {
-                  Title = Captions.Importer.AddGroupByTitle,
-                  Description = Captions.Importer.AddGroupByHint
-               };
-            default:
-               throw new Exception(Error.TypeNotSupported(element.GetType()));
-         }
+            Title = element.TooltipTitle(),
+            Description = element.TooltipDescription()
+         };
       }
 
       private void _setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
