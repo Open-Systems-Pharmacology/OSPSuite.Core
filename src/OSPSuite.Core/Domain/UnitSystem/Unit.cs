@@ -8,6 +8,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
 {
    public class Unit
    {
+      private string _name;
+
       internal string FactorFormula { get; set; }
 
       /// <summary>
@@ -24,7 +26,24 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <summary>
       ///    Name of unit. Should be unique in the dimension containing this unit
       /// </summary>
-      public virtual string Name { get; }
+      public virtual string Name
+      {
+         get => _name;
+         internal set
+         {
+            _name = value;
+            addDefaultUnitSynonyms();
+         }
+      }
+
+      private void addDefaultUnitSynonyms()
+      {
+         if(!_name.Contains("µ"))
+            return;
+
+         AddUnitSynonym(_name.Replace("µ", "u"));
+         AddUnitSynonym(_name.Replace("µ", "mc"));
+      }
 
       /// <summary>
       ///    Gets or sets if a unit should be displayed or not (some kernel unit are typically hidden)
@@ -80,7 +99,6 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public virtual double UnitValueToBaseUnitValue(double unitValue) => (unitValue + Offset) * Factor;
 
       public override string ToString() => Name;
-
 
       public virtual bool SupportsName(string nameToCheck, StringComparison comparisonStrategy = StringComparison.Ordinal)
       {
