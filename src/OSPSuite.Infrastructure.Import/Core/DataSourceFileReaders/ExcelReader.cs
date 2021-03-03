@@ -4,12 +4,12 @@ using System.IO;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
    public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into extensions
    {
-      private const string _xlsxExtension = ".xlsx";
       //we could get this info here or in getCurrentRow, but make sure we do it once
       private IWorkbook _book;
       private IEnumerator<ISheet> _sheetEnumerator;
@@ -31,7 +31,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          _columnOffsetOn = columnOffsetOn;
          _sheetEnumerator = _book.GetEnumerator();
-         _isTypeXlsx = Path.GetExtension(path).Equals(_xlsxExtension);
+         _isTypeXlsx = Path.GetExtension(path).Equals(Constants.Filter.XLSX_EXTENSION);
          _formulaEvaluator = _book.GetCreationHelper().CreateFormulaEvaluator();
       }
 
@@ -49,7 +49,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          _sheetEnumerator = _book.GetEnumerator();
          _columnOffsetOn = columnOffsetOn;
-         _isTypeXlsx = Path.GetExtension(path).Equals(_xlsxExtension);
+         _isTypeXlsx = Path.GetExtension(path).Equals(Constants.Filter.XLSX_EXTENSION);
       }
 
       public bool MoveToNextSheet()

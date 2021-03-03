@@ -1,17 +1,18 @@
-﻿using OSPSuite.Utility.Exceptions;
+﻿using OSPSuite.Assets;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
    public class EmptyNamingConventionsException : OSPSuiteException
    {
-      public EmptyNamingConventionsException() : base("Column naming conventions cannot be empty.")
+      public EmptyNamingConventionsException() : base(Error.NamingConventionEmpty)
       {
       }
    }
 
    public class NullNamingConventionsException : OSPSuiteException
    {
-      public NullNamingConventionsException() : base("Column naming conventions cannot be null.")
+      public NullNamingConventionsException() : base(Error.NamingConventionNull)
       {
       }
    }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -10,8 +11,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class DataSourceFileParser : IDataSourceFileParser
    {
-      readonly string[] _csvExtensions = { ".csv" };
-      readonly string[] _excelExtensions = { ".xls", ".xlsx" };
+      private readonly string[] _csvExtensions = { Constants.Filter.CSV_EXTENSION };
+      private readonly string[] _excelExtensions = { Constants.Filter.XLS_EXTENSION, Constants.Filter.XLSX_EXTENSION };
 
       private readonly ICsvDataSourceFile _csvDataSourceFile;
       private readonly IExcelDataSourceFile _excelDataSourceFile;

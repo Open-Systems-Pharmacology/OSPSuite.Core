@@ -1203,6 +1203,13 @@ namespace OSPSuite.Assets
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
       public static readonly string MolWeightNotAvailable = "Molecular Weight not available.";
       public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
+      public static readonly string NamingConventionEmpty = "Column naming conventions cannot be empty.";
+      public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
+      public static readonly string InvalidFileException = "An error occurred while reading the file. Please check the content";
+      public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
+      public static readonly string InavlidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
+      public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
+      public static readonly string UnsupportedFileFormat = "The file format is not supported";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
