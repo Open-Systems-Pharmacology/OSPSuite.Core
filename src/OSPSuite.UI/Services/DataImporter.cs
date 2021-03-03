@@ -101,7 +101,7 @@ namespace OSPSuite.UI.Services
             dataSource.NanSettings = configuration.NanSettings;
             dataSource.SetDataFormat(dataSourceFile.Format);
             dataSource.SetNamingConvention(configuration.NamingConventions);
-            var sheets = new Cache<string, IDataSheet>();
+            var sheets = new Cache<string, DataSheet>();
             foreach (var key in configuration.LoadedSheets)
             {
                sheets.Add(key, dataSourceFile.DataSheets[key]);

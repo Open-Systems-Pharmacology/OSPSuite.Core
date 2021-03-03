@@ -187,7 +187,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, IDataSheet> sheets, string filter)
+      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter)
       {
          if (!sheets.Any()) return;
 
@@ -299,7 +299,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.ValidateMapping();
          _dataSource.SetNamingConvention(_configuration.NamingConventions);
          _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
-         var sheets = new Cache<string, IDataSheet>();
+         var sheets = new Cache<string, DataSheet>();
          foreach (var element in _configuration.LoadedSheets)
          {
             sheets.Add(element, _dataSourceFile.DataSheets[element]);

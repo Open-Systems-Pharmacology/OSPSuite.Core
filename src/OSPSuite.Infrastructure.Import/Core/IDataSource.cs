@@ -17,7 +17,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
+      void AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
@@ -58,9 +58,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          _configuration.NamingConventions = namingConvention;
       }
 
-      private Cache<string, IDataSheet> filterSheets(Cache<string, IDataSheet> dataSheets, string filter)
+      private Cache<string, DataSheet> filterSheets(Cache<string, DataSheet> dataSheets, string filter)
       {
-         Cache<string, IDataSheet> filteredDataSheets = new Cache<string, IDataSheet>();
+         Cache<string, DataSheet> filteredDataSheets = new Cache<string, DataSheet>();
          foreach (var key in dataSheets.Keys)
          {
             var dt = dataSheets[key].RawData.AsDataTable();
@@ -78,7 +78,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return filteredDataSheets;
       }
 
-      public void AddSheets(Cache<string, IDataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
+      public void AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
       {         
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))

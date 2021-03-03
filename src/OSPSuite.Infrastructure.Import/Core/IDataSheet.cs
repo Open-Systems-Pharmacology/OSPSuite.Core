@@ -7,12 +7,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// <summary>
    ///    e.g. a sheet in an excel file
    /// </summary>
-   public interface IDataSheet
-   {
-      UnformattedData RawData { get; set; }
-   }
-
-   public class DataSheet : IDataSheet
+   public class DataSheet
    {
       public UnformattedData RawData { get; set; }
    }

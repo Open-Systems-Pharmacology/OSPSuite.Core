@@ -15,11 +15,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
       }
 
-      protected override Cache<string, IDataSheet> LoadFromFile(string path)
+      protected override Cache<string, DataSheet> LoadFromFile(string path)
       {
          try
          {
-            var loadedData = new Cache<string, IDataSheet>();
+            var loadedData = new Cache<string, DataSheet>();
 
             var reader = new ExcelReader(path);
 
@@ -28,7 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                if (!reader.MoveToNextRow()) continue;
 
                var sheetName = reader.CurrentSheet.SheetName;
-               IDataSheet dataSheet = new DataSheet();
+               DataSheet dataSheet = new DataSheet();
                dataSheet.RawData = new UnformattedData();
                var headers = reader.CurrentRow;
      

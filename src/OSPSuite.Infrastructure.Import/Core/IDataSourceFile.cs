@@ -9,7 +9,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Cache<string, IDataSheet> DataSheets { get; }
+      Cache<string, DataSheet> DataSheets { get; }
 	   string Path { get; set; }
 
       IDataFormat Format { get; set; }
@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _logger = logger;
       }
       
-      public Cache<string, IDataSheet> DataSheets 
+      public Cache<string, DataSheet> DataSheets 
       { 
          get;
          protected set; 
@@ -43,6 +43,6 @@ namespace OSPSuite.Infrastructure.Import.Core
          set { _path = value; DataSheets = LoadFromFile(value); }
       }
 
-      protected abstract Cache<string, IDataSheet> LoadFromFile(string path);
+      protected abstract Cache<string, DataSheet> LoadFromFile(string path);
    }
 }

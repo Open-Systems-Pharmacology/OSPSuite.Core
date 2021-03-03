@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
-      public Cache<string, IDataSheet> Sheets { get; set; }
+      public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
       public event EventHandler<TabChangedEventArgs> OnTabChanged;
@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _importer = importer;
          _sheetsForViewing = new Cache<string, DataTable>();
-         Sheets = new Cache<string, IDataSheet>();
+         Sheets = new Cache<string, DataSheet>();
       }
 
       public List<string> GetSheetNames()
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public void ImportDataForConfirmation()
       {
-         var sheets = new Cache<string, IDataSheet>();
+         var sheets = new Cache<string, DataSheet>();
          foreach (var element in _dataSourceFile.DataSheets.KeyValues)
          {
             if (!Sheets.Keys.Contains(element.Key))
@@ -74,7 +74,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportDataForConfirmation(string sheetName)
       {
-         var sheets = new Cache<string, IDataSheet>();
+         var sheets = new Cache<string, DataSheet>();
          if (!Sheets.Keys.Contains(sheetName))
          {
             Sheets.Add(sheetName, getSingleSheet(sheetName));
@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnDataChanged.Invoke(this, null);
       }
 
-      private IDataSheet getSingleSheet(string sheetName)
+      private DataSheet getSingleSheet(string sheetName)
       {
          return _dataSourceFile.DataSheets[sheetName];
       }
@@ -109,7 +109,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return null;
-         Sheets = new Cache<string, IDataSheet>();
+         Sheets = new Cache<string, DataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
          setDefaultMetaData();
          createSheetsForViewing();
