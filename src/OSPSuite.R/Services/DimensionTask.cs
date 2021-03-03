@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -59,11 +58,19 @@ namespace OSPSuite.R.Services
       ///    Returns the name of all dimensions defined in the suite
       /// </summary>
       string[] AllAvailableDimensionNames();
+
+
+      /// <summary>
+      /// Returns the µ-symbol to ensure that we can replace all special chars
+      /// </summary>
+      string MuSymbol { get; }
    }
 
    public class DimensionTask : IDimensionTask
    {
       private readonly IDimensionFactory _dimensionFactory;
+
+      public string MuSymbol { get; } = "µ";
 
       public DimensionTask(IDimensionFactory dimensionFactory)
       {
@@ -157,6 +164,8 @@ namespace OSPSuite.R.Services
       public IDimension[] AllAvailableDimensions() => _dimensionFactory.DimensionsSortedByName;
 
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNamesSortedByName;
+
+     
 
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {
