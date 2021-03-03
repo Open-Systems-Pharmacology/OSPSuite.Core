@@ -52,6 +52,20 @@ namespace OSPSuite.Core.Domain.UnitSystem
       Unit Unit(string name);
 
       /// <summary>
+      ///    Returns the unit defined with the given name (or synonym) or null if not found
+      /// </summary>
+      /// <param name="unitName">Name of unit</param>
+      /// <param name="ignoreCase">Should ignore case when matching units. Default is <c>false</c></param>
+      Unit FindUnit(string unitName, bool ignoreCase = false);
+
+      /// <summary>
+      ///    Returns the true if a unt with the given name (or synonym) is found otherwise false
+      /// </summary>
+      /// <param name="unitName">Name of unit</param>
+      /// <param name="ignoreCase">Should ignore case when matching units. Default is <c>false</c></param>
+      bool SupportsUnit(string unitName, bool ignoreCase = false);
+
+      /// <summary>
       ///    Returns the unit defined with the given name or the default unit if the unit is not found
       /// </summary>
       /// <param name="name">Name of unit</param>
@@ -172,14 +186,23 @@ namespace OSPSuite.Core.Domain.UnitSystem
          if (_units.Contains(name))
             return _units[name];
 
-         //it might be a unit synonym
-         return _units.FirstOrDefault(x => x.HasSynonym(name));
+         //it might be a unit synonym. We use first because the contract specifies
+         return _units.First(x => x.HasSynonym(name));
       }
 
-      public Unit UnitOrDefault(string name)
+      public Unit FindUnit(string unitName, bool ignoreCase = false)
       {
-         return HasUnit(name) ? Unit(name) : DefaultUnit;
+         var comparisonStrategy = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+         return Units.FirstOrDefault(x => x.SupportsName(unitName, comparisonStrategy));
       }
+
+      public bool SupportsUnit(string unitName, bool ignoreCase = false)
+      {
+         var comparisonStrategy = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+         return Units.Any(x => x.SupportsName(unitName, comparisonStrategy));
+      }
+
+      public Unit UnitOrDefault(string name) => HasUnit(name) ? Unit(name) : DefaultUnit;
 
       public Unit UnitAt(int index)
       {
@@ -228,7 +251,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _units.Add(unit.Name, unit);
       }
 
-      private bool hasUnitWithSynonym(string unitName) =>  _units.Any(x => x.HasSynonym(unitName));
+      private bool hasUnitWithSynonym(string unitName) => _units.Any(x => x.HasSynonym(unitName));
 
       public bool HasUnit(string unitName) => _units.Contains(unitName) || hasUnitWithSynonym(unitName);
 

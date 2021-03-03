@@ -1,4 +1,4 @@
-﻿using FakeItEasy;
+﻿using System;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -13,6 +13,7 @@ namespace OSPSuite.Core.Domain
       {
          sut = new Dimension(new BaseDimensionRepresentation(), "DimForTest", "m");
          sut.AddUnit("cm", 0.01, 0);
+         sut.AddUnit("KM", 0.01, 0);
          _unitWithSynonym = sut.AddUnit("dm", 0.1, 0);
          _unitWithSynonym.AddUnitSynonym("dm_2");
       }
@@ -57,9 +58,18 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_null_if_it_does_not_exist()
+      public void should_throw_an_exception_if_it_does_not_exist()
       {
-         sut.Unit("toto").ShouldBeNull();
+         The.Action(()=> sut.Unit("toto")).ShouldThrowAn<Exception>();
+      }
+   }
+
+   public class When_adding_a_unit_when_a_unit_with_the_same_synonym_already_exists : concern_for_Dimension
+   {
+      [Observation]
+      public void should_throw_an_error()
+      {
+         The.Action(() => sut.AddUnit("dm_2", 1, 0)).ShouldThrowAn<NotUniqueIdException>();
       }
    }
 }

@@ -30,6 +30,20 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_a_micro_unit : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] { 1e-3, 2e-3 });
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000000, 2000000);
+      }
+   }
+
    public class When_converting_a_double_array_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
       protected override void Because()

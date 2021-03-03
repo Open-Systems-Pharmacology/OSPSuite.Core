@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.UnitSystem
@@ -35,6 +36,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
       ///    Returns the list of unit synonyms defined for this unit
       /// </summary>
       public virtual IReadOnlyCollection<UnitSynonym> UnitSynonyms => _unitSynonyms;
+      
+      /// <summary>
+      ///    Returns the list of unit synonym names defined for this unit
+      /// </summary>
+      public virtual IReadOnlyCollection<string> UnitSynonymNames => _unitSynonyms.Keys.ToList();
 
       private readonly Cache<string, UnitSynonym> _unitSynonyms = new Cache<string, UnitSynonym>(x => x.Name);
 
@@ -74,5 +80,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public virtual double UnitValueToBaseUnitValue(double unitValue) => (unitValue + Offset) * Factor;
 
       public override string ToString() => Name;
+
+
+      public virtual bool SupportsName(string nameToCheck, StringComparison comparisonStrategy = StringComparison.Ordinal)
+      {
+         return string.Equals(Name, nameToCheck, comparisonStrategy) ||
+                UnitSynonymNames.Any(syn => string.Equals(syn, nameToCheck, comparisonStrategy));
+      }
    }
 }
