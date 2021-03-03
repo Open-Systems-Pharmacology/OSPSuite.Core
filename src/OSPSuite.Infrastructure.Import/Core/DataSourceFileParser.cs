@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             _csvDataSourceFile.Path = path;
             return _csvDataSourceFile;
          }
-         else if (_excelExtensions.Any(path.EndsWith))
+         if (_excelExtensions.Any(path.EndsWith))
          {
             _excelDataSourceFile.Path = path;
             return _excelDataSourceFile;
