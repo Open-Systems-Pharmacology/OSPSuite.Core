@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -18,11 +17,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
-      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
-      public event EventHandler<TabChangedEventArgs> OnTabChanged;
+      public event EventHandler<TabChangedEventArgs> OnTabChanged = delegate { };
 
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
       public event EventHandler<EventArgs> OnDataChanged = delegate { };
