@@ -5,7 +5,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class UnformattedDataRow :IEnumerable
+   public class UnformattedDataRow : IEnumerable<string>
    {
       private readonly IEnumerable<string> _row;
       private readonly Cache<string, ColumnDescription> _headers;
@@ -15,7 +15,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _headers = headers;
       }
 
-      public IEnumerator GetEnumerator()
+      IEnumerator<string> IEnumerable<string>.GetEnumerator()
       {
          return _row.GetEnumerator();
       }
@@ -28,6 +28,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public int Count()
       {
          return _row.Count();
+      }
+
+      public IEnumerator GetEnumerator()
+      {
+         return _row.GetEnumerator();
       }
    }
 }
