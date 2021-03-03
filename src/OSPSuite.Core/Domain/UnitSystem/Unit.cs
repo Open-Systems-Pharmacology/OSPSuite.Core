@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.UnitSystem
 {
@@ -29,6 +31,13 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// </summary>
       public virtual bool Visible { get; set; }
 
+      /// <summary>
+      ///    Returns the list of unit synonyms defined for this unit
+      /// </summary>
+      public virtual IReadOnlyCollection<UnitSynonym> UnitSynonyms => _unitSynonyms;
+
+      private readonly Cache<string, UnitSynonym> _unitSynonyms = new Cache<string, UnitSynonym>(x => x.Name);
+
       [Obsolete("For deserialization")]
       public Unit()
       {
@@ -48,19 +57,22 @@ namespace OSPSuite.Core.Domain.UnitSystem
          FactorFormula = factor.ToString(NumberFormatInfo.InvariantInfo);
       }
 
-      public virtual double BaseUnitValueToUnitValue(double baseUnitValue)
+      public virtual bool HasSynonym(string name) => _unitSynonyms.Contains(name);
+
+      public virtual void AddUnitSynonym(string name) => AddUnitSynonym(new UnitSynonym(name));
+
+      public virtual void AddUnitSynonym(UnitSynonym unitSynonym)
       {
-         return baseUnitValue / Factor - Offset;
+         if (HasSynonym(unitSynonym.Name))
+            return;
+
+         _unitSynonyms.Add(unitSynonym);
       }
 
-      public virtual double UnitValueToBaseUnitValue(double unitValue)
-      {
-         return (unitValue + Offset) * Factor;
-      }
+      public virtual double BaseUnitValueToUnitValue(double baseUnitValue) => baseUnitValue / Factor - Offset;
 
-      public override string ToString()
-      {
-         return Name;
-      }
+      public virtual double UnitValueToBaseUnitValue(double unitValue) => (unitValue + Offset) * Factor;
+
+      public override string ToString() => Name;
    }
 }
