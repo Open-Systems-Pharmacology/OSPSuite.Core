@@ -30,6 +30,8 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       private IImporter _importer;
       private ImporterConfiguration _configuration;
+      private IEnumerable<MetaDataMappingConverter> _mappings;
+      public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
 
       public DataSource(IImporter importer)
       {
@@ -46,6 +48,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          _configuration.NamingConventions = namingConvention;
       }
+
+      public NanSettings NanSettings { get; set; }
 
       private Cache<string, DataSheet> filterSheets(Cache<string, DataSheet> dataSheets, string filter)
       {
@@ -97,12 +101,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          return _mappings;
       }
 
-      private IEnumerable<MetaDataMappingConverter> _mappings;
-      public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
       public IEnumerable<string> NamesFromConvention()
       {
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
       }
-      public NanSettings NanSettings { get; set; }
    }
 }
