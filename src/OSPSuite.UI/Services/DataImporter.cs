@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Services
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public (IEnumerable<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
 
          var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
@@ -60,7 +60,7 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public IEnumerable<DataRepository> ImportFromConfiguration(
+      public IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,

@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IModalImporterPresenter : IDisposablePresenter
    {
-      (IEnumerable<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings);
+      (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings);
    }
 
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public (IEnumerable<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
       {
          List<DataRepository> result = new List<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
