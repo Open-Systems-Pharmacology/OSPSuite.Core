@@ -17,10 +17,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       private bool _columnOffsetOn;
       private int _columnOffset;
       private bool _isTypeXlsx;
-      private IFormulaEvaluator _formulaEvaluator;
+      private readonly IFormulaEvaluator _formulaEvaluator;
 
-      public ISheet CurrentSheet { get; set; } //why is this public even????
-      public List<string> CurrentRow { get; set; } = new List<string>();
+      public ISheet CurrentSheet { get; private set; } 
+      public List<string> CurrentRow { get; private set; } = new List<string>();
 
       public ExcelReader(string path, bool columnOffsetOn = true)
       {
