@@ -126,24 +126,14 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                "key1", 
                new DataSet()
-               {
-                  Data = new List<ParsedDataSet>()
-                  {
-                     parsedDataSet1
-                  }
-               }
             },
             {
                "key2",
                new DataSet()
-               {
-                  Data = new List<ParsedDataSet>()
-                  {
-                     parsedDataSet2
-                  }
-               }
             }
          };
+         _dataSets["key1"].AddData(new List<ParsedDataSet>() { parsedDataSet1 } );
+         _dataSets["key2"].AddData(new List<ParsedDataSet>() { parsedDataSet2 });
          _mappings = new List<MetaDataMappingConverter>()
          {
             new MetaDataMappingConverter()

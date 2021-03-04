@@ -17,26 +17,34 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSet
    {
-      IEnumerable<ParsedDataSet> Data { get; set; }
+      IReadOnlyList<ParsedDataSet> Data { get; }
       void ClearNan(double indicator);
       void ThrowsOnNan(double indicator);
+      void AddData(IEnumerable<ParsedDataSet> range);
    }
 
    public class DataSet : IDataSet
    {
-      public IEnumerable<ParsedDataSet> Data { get; set; } = new List<ParsedDataSet>();
+      private List<ParsedDataSet> _data { get; } = new List<ParsedDataSet>();
+
+      public IReadOnlyList<ParsedDataSet> Data { get => _data; }
+
+      public void AddData(IEnumerable<ParsedDataSet> range)
+      {
+         _data.AddRange(range);
+      }
 
       public void ThrowsOnNan(double indicator)
       {
-         if (Data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Value == indicator || double.IsNaN(point.Value)))))
+         if (_data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Value == indicator || double.IsNaN(point.Value)))))
             throw new NanException();
       }
 
       public void ClearNan(double indicator)
       {
-         for (var dataSetIndex = 0; dataSetIndex < Data.Count(); dataSetIndex++)
+         for (var dataSetIndex = 0; dataSetIndex < _data.Count; dataSetIndex++)
          {
-            var dataSet = Data.ElementAt(dataSetIndex);
+            var dataSet = _data[dataSetIndex];
             var mainColumns = dataSet.Data.Where(pair => pair.Key.ColumnInfo.IsMandatory).Select(pair => pair.Value).ToList();
             for (var i = 0; i < mainColumns.Count(); i++)
             {

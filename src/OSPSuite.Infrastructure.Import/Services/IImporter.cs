@@ -55,10 +55,9 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          foreach (var sheetKeyValue in dataSheets.KeyValues)
          {
-            dataSets.Add(sheetKeyValue.Key, new DataSet()
-            {
-               Data = format.Parse(sheetKeyValue.Value.RawData, columnInfos)
-            });
+            var data = new DataSet();
+            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
+            dataSets.Add(sheetKeyValue.Key, data);
          }
 
          foreach (var key in dataSets.Keys)
@@ -71,7 +70,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                current = new DataSet();
                alreadyExisting.DataSets.Add(key, current);
             }
-            current.Data = current.Data.Union(dataSets[key].Data);
+            current.AddData(dataSets[key].Data);
          }
       }
 
