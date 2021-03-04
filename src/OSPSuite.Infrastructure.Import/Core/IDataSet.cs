@@ -42,14 +42,13 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void ClearNan(double indicator)
       {
-         for (var dataSetIndex = 0; dataSetIndex < _data.Count; dataSetIndex++)
+         foreach (var dataSet in _data)
          {
-            var dataSet = _data[dataSetIndex];
             var mainColumns = dataSet.Data.Where(pair => pair.Key.ColumnInfo.IsMandatory).Select(pair => pair.Value).ToList();
-            for (var i = 0; i < mainColumns.Count(); i++)
+            foreach (var column in mainColumns)
             {
-               var elements = mainColumns[i].Where(p => p.Value == indicator || double.IsNaN(p.Value));
-               removeRowsContainingElements(elements.ToList(), mainColumns[i], dataSet);
+               var elements = column.Where(p => p.Value == indicator || double.IsNaN(p.Value));
+               removeRowsContainingElements(elements.ToList(), column, dataSet);
             }
          }
       }
@@ -59,9 +58,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          foreach (var element in elements)
          {
             var index = column.IndexOf(element);
-            for (var valueIndex = 0; valueIndex < dataSet.Data.Values.Count(); valueIndex++)
+            foreach (var value in dataSet.Data.Values)
             {
-               dataSet.Data.Values.ElementAt(valueIndex).RemoveAt(index);
+               value.RemoveAt(index);
             }
          }
       }
