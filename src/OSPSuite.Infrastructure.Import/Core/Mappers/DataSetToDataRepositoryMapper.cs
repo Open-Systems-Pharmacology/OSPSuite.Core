@@ -23,7 +23,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       }
       public DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName)
       {
-         var parsedDataSet = getDataSet(dataSource, dataSetIndex, out var sheetIndex);
+         var ( parsedDataSet, sheetIndex)  = getDataSet(dataSource, dataSetIndex);
          var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
          var sheetName = dataSetPair.Key;
          var configuration = dataSource.GetImporterConfiguration();
@@ -182,14 +182,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return columns.Any(col => col.Name == name);
       }
 
-      private ParsedDataSet getDataSet(IDataSource dataSource, int dataSetIndex, out int sheetIndex)
+      private (ParsedDataSet dataSet, int sheetIndex) getDataSet (IDataSource dataSource, int dataSetIndex)
       {
-         sheetIndex = 0;
+         var sheetIndex = 0;
          var sheet = dataSource.DataSets.GetEnumerator();
          while (sheet.MoveNext() && dataSetIndex >= 0)
          {
             if (sheet.Current.Data.Count() > dataSetIndex)
-               return sheet.Current.Data.ElementAt(dataSetIndex);
+               return ( sheet.Current.Data.ElementAt(dataSetIndex), sheetIndex);
             else
             {
                dataSetIndex -= sheet.Current.Data.Count();
@@ -197,7 +197,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             }
          }
 
-         return null;
+         return (null,0);
       }
    }
 }
