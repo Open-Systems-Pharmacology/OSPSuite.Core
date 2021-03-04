@@ -326,7 +326,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                case AddGroupByFormatParameter _:
                   break;
                default:
-                  throw new Exception(Error.TypeNotSupported(model.Source.GetType().ToString()));
+                  throw new Exception(Error.TypeNotSupported(model.Source.GetType().Name));
             }
          }
          var availableColumns = this.availableColumns();
