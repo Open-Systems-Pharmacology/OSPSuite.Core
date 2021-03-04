@@ -166,7 +166,6 @@ namespace OSPSuite.R.Services
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNamesSortedByName;
 
      
-
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {
          switch (standardPKParameter)

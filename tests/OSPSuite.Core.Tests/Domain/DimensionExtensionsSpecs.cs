@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -9,10 +10,13 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_DimensionExtensions : StaticContextSpecification
    {
       protected IDimension _dimension;
+      protected IDimensionConverter _dimensionConverter;
 
       protected override void Context()
       {
          _dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+         _dimensionConverter = A.Fake<IDimensionConverter>();
+         A.CallTo(_dimensionConverter).WithReturnType<bool>().Returns(true);
       }
    }
 
@@ -51,7 +55,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_false_otherwise()
       {
-         _dimension.IsEquivalentTo(new Dimension(new BaseDimensionRepresentation(new double[]{1,2,3,4,5,6,7}), _dimension.Name, "XX")).ShouldBeFalse();
+         _dimension.IsEquivalentTo(new Dimension(new BaseDimensionRepresentation(new double[] {1, 2, 3, 4, 5, 6, 7}), _dimension.Name, "XX"))
+            .ShouldBeFalse();
       }
    }
 
@@ -66,24 +71,28 @@ namespace OSPSuite.Core.Domain
          _nonEquivalentDimension = new Dimension(new BaseDimensionRepresentation(new double[] {1, 2, 3, 4, 5, 6, 7}), _dimension.Name, "XX");
          _equivalentDimension = new Dimension(_dimension.BaseRepresentation, _dimension.Name, "XX");
       }
+
       [Observation]
       public void should_return_true_if_the_dimension_is_equivalent_to_the_source_dimension()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_equivalentDimension, new [] {_nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_equivalentDimension, new[] {_nonEquivalentDimension,}, new[] {_dimensionConverter});
          _dimension.IsEquivalentTo(mergedDimension).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_true_if_the_dimension_is_equivalent_to_any_of_the_target_dimension()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _equivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_equivalentDimension,}, new[] {_dimensionConverter});
          _dimension.IsEquivalentTo(mergedDimension).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_false_otherwise()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_nonEquivalentDimension,}, new[] {_dimensionConverter});
          _dimension.IsEquivalentTo(mergedDimension).ShouldBeFalse();
       }
    }
@@ -96,31 +105,34 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _nonEquivalentDimension = new Dimension(new BaseDimensionRepresentation(new double[] { 1, 2, 3, 4, 5, 6, 7 }), _dimension.Name, "XX");
+         _nonEquivalentDimension = new Dimension(new BaseDimensionRepresentation(new double[] {1, 2, 3, 4, 5, 6, 7}), _dimension.Name, "XX");
          _equivalentDimension = new Dimension(_dimension.BaseRepresentation, _dimension.Name, "XX");
       }
+
       [Observation]
       public void should_return_true_if_the_dimension_is_equivalent_to_the_source_dimension()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_equivalentDimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_equivalentDimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension.IsEquivalentTo(_dimension).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_true_if_the_dimension_is_equivalent_to_any_of_the_target_dimension()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _equivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_equivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension.IsEquivalentTo(_dimension).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_false_otherwise()
       {
-         var mergedDimension = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension.IsEquivalentTo(_dimension).ShouldBeFalse();
       }
    }
-
 
    public class When_checking_if_two_merge_dimensions_are_equivalent : concern_for_DimensionExtensions
    {
@@ -130,31 +142,34 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _nonEquivalentDimension = new Dimension(new BaseDimensionRepresentation(new double[] { 1, 2, 3, 4, 5, 6, 7 }), _dimension.Name, "XX");
+         _nonEquivalentDimension = new Dimension(new BaseDimensionRepresentation(new double[] {1, 2, 3, 4, 5, 6, 7}), _dimension.Name, "XX");
          _equivalentDimension = new Dimension(_dimension.BaseRepresentation, _dimension.Name, "XX");
-
       }
+
       [Observation]
       public void should_return_true_if_the_merge_dimensions_have_equivalent_source_dimension()
       {
-         var mergedDimension1 = new MergedDimensionFor<IParameter>(_equivalentDimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
-         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension1 =
+            new MergedDimensionFor<IParameter>(_equivalentDimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
+         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension1.IsEquivalentTo(mergedDimension2).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_true_if_the_merge_dimensions_have_equivalent_source_and_target_dimensions()
       {
-         var mergedDimension1 = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _equivalentDimension, }, new List<IDimensionConverter>());
-         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension1 =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_equivalentDimension,}, new[] { _dimensionConverter });
+         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension1.IsEquivalentTo(mergedDimension2).ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_false_otherwise()
       {
-         var mergedDimension1 = new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] { _nonEquivalentDimension, }, new List<IDimensionConverter>());
-         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] { _equivalentDimension, }, new List<IDimensionConverter>());
+         var mergedDimension1 =
+            new MergedDimensionFor<IParameter>(_nonEquivalentDimension, new[] {_nonEquivalentDimension,}, new[] { _dimensionConverter });
+         var mergedDimension2 = new MergedDimensionFor<IParameter>(_dimension, new[] {_equivalentDimension,}, new[] { _dimensionConverter });
          mergedDimension1.IsEquivalentTo(mergedDimension2).ShouldBeFalse();
       }
    }

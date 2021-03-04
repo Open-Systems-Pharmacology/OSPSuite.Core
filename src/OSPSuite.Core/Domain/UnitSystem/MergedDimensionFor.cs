@@ -10,36 +10,33 @@ namespace OSPSuite.Core.Domain.UnitSystem
    public interface IMergedDimension : IDimension
    {
       IDimension SourceDimension { get; }
-      IEnumerable<IDimension> TargetDimensions { get; }
+      IReadOnlyList<IDimension> TargetDimensions { get; }
    }
 
    public class MergedDimensionFor<T> : IMergedDimension where T : IWithDimension
    {
       private readonly IReadOnlyList<IDimensionConverter> _converters;
+
       private readonly ICache<string, Unit> _units = new Cache<string, Unit>(x => x.Name);
+
       public string DisplayName { get; set; }
 
-      public MergedDimensionFor(IDimension sourceDimension, IEnumerable<IDimension> targetDimensions, IReadOnlyList<IDimensionConverter> converters)
+      public IDimension SourceDimension { get; }
+
+      public IReadOnlyList<IDimension> TargetDimensions { get; }
+
+      public MergedDimensionFor(IDimension sourceDimension, IReadOnlyList<IDimension> targetDimensions, IReadOnlyList<IDimensionConverter> converters)
       {
          SourceDimension = sourceDimension;
-         TargetDimensions = targetDimensions;
+         TargetDimensions = targetDimensions.Where(dim => converters.Any(c => c.CanConvertTo(dim))).ToList();
          _converters = converters;
       }
 
       private void fillUpUnits()
       {
          _units.AddRange(SourceDimension.Units);
-         _converters.Each(addUnitsFromConverter);
+         TargetDimensions.Each(dim => { _units.AddRange(dim.Units); });
       }
-
-      private void addUnitsFromConverter(IDimensionConverter converter)
-      {
-         TargetDimensions.Where(converter.CanConvertTo).Each(dim => { _units.AddRange(dim.Units); });
-      }
-
-      public IDimension SourceDimension { get; }
-
-      public IEnumerable<IDimension> TargetDimensions { get; }
 
       public BaseDimensionRepresentation BaseRepresentation => SourceDimension.BaseRepresentation;
 
@@ -75,13 +72,25 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit Unit(string name)
       {
-         return cachedUnit[name];
+         if (cachedUnit.Contains(name))
+            return cachedUnit[name];
+
+         //The contract specifies an exception if not found. That's why we ask for the cachedUnit again. It will throw
+         return FindUnit(name) ?? cachedUnit[name];
       }
 
-      public Unit UnitOrDefault(string name)
+      public Unit FindUnit(string unitName, bool ignoreCase = false)
       {
-         return HasUnit(name) ? Unit(name) : DefaultUnit;
+         return SourceDimension.FindUnit(unitName, ignoreCase) ??
+                TargetDimensions.Select(x => x.FindUnit(unitName, ignoreCase)).FirstOrDefault();
       }
+
+      public bool SupportsUnit(string unitName, bool ignoreCase = false)
+      {
+         return FindUnit(unitName, ignoreCase) != null;
+      }
+
+      public Unit UnitOrDefault(string name) => FindUnit(name) ?? DefaultUnit;
 
       public Unit UnitAt(int index)
       {
@@ -90,7 +99,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit)
       {
-         if (SourceDimension.Units.Contains(unit))
+         if (SourceDimension.HasUnit(unit))
             return SourceDimension.BaseUnitValueToUnitValue(unit, valueInBaseUnit);
 
          var usedDimension = targetDimensionWith(unit);
@@ -109,7 +118,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
       {
-         if (SourceDimension.Units.Contains(unit))
+         if (SourceDimension.HasUnit(unit))
             return SourceDimension.UnitValueToBaseUnitValue(unit, valueInUnit);
 
          var usedDimension = targetDimensionWith(unit);
@@ -123,7 +132,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       private IDimension targetDimensionWith(Unit unit)
       {
-         return TargetDimensions.FirstOrDefault(dimensions => dimensions.Units.Contains(unit));
+         return TargetDimensions.FirstOrDefault(dimensions => dimensions.HasUnit(unit));
       }
 
       public Unit AddUnit(string unitName, double factor, double offset)
@@ -146,10 +155,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
          throw new InvalidOperationException("Cannot call AddUnit in MergedDimension");
       }
 
-      public bool HasUnit(string unitName)
-      {
-         return cachedUnit.Contains(unitName);
-      }
+      public bool HasUnit(string unitName) => SupportsUnit(unitName);
 
       public bool HasUnit(Unit unit)
       {
@@ -158,10 +164,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public bool CanConvertToUnit(string unitName)
       {
-         if (!HasUnit(unitName)) return false;
+         if (!HasUnit(unitName))
+            return false;
 
          var unit = Unit(unitName);
-         if (SourceDimension.Units.Contains(unit)) return true;
+         if (SourceDimension.HasUnit(unit))
+            return true;
 
          var usedDimension = targetDimensionWith(unit);
          var usedConverter = converterFor(usedDimension);
@@ -169,28 +177,20 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return usedConverter.CanResolveParameters();
       }
 
-      public int CompareTo(IDimension other)
-      {
-         return SourceDimension.CompareTo(other);
-      }
+      public int CompareTo(IDimension other) => SourceDimension.CompareTo(other);
 
-      public override string ToString()
-      {
-         return DisplayName;
-      }
+      public override string ToString() => DisplayName;
 
-      public int CompareTo(object obj)
-      {
-         return SourceDimension.CompareTo(obj);
-      }
+      public int CompareTo(object obj) => SourceDimension.CompareTo(obj);
    }
 
    public class UnableToResolveParametersException : OSPSuiteException
    {
-      public Unit Unit { get; private set; }
-      public string UnableToResolveParametersMessage { get; private set; }
+      public Unit Unit { get; }
+      public string UnableToResolveParametersMessage { get; }
 
-      public UnableToResolveParametersException(Unit unit, string unableToResolveParametersMessage) : base($"Unable to convert to {unit.Name}.\n{unableToResolveParametersMessage}")
+      public UnableToResolveParametersException(Unit unit, string unableToResolveParametersMessage) : base(
+         $"Unable to convert to {unit.Name}.\n{unableToResolveParametersMessage}")
       {
          Unit = unit;
          UnableToResolveParametersMessage = unableToResolveParametersMessage;

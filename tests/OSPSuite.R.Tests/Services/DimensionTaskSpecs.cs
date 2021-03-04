@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
@@ -28,6 +27,27 @@ namespace OSPSuite.R.Services
       public void should_be_able_to_convert_the_array()
       {
          _result.ShouldOnlyContainInOrder(1000, 2000, 3000d);
+      }
+   }
+
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_a_micro_unit : concern_for_DimensionTask
+   {
+      private double[] _result_u;
+      private double[] _result_mc;
+
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] { 1e-3, 2e-3 });
+         _result_u = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "ug", new[] { 1e-3, 2e-3 });
+         _result_mc = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "mcg", new[] { 1e-3, 2e-3 });
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_u.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_mc.ShouldOnlyContainInOrder(1000000, 2000000);
       }
    }
 
