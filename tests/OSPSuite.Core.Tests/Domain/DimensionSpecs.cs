@@ -13,6 +13,8 @@ namespace OSPSuite.Core.Domain
       {
          sut = new Dimension(new BaseDimensionRepresentation(), "DimForTest", "m");
          sut.AddUnit("cm", 0.01, 0);
+         sut.AddUnit("cm²", 0.01, 0);
+         sut.AddUnit("min²/m³", 0.01, 0);
          sut.AddUnit("KM", 0.01, 0);
          _unitWithSynonym = sut.AddUnit("dm", 0.1, 0);
          _unitWithSynonym.AddUnitSynonym("dm_2");
@@ -26,6 +28,8 @@ namespace OSPSuite.Core.Domain
       public void should_return_true_if_the_unit_by_name_exists()
       {
          sut.HasUnit("m").ShouldBeTrue();
+         sut.HasUnit("cm²").ShouldBeTrue();
+         sut.HasUnit("min²/m³").ShouldBeTrue();
          sut.HasUnit("cm").ShouldBeTrue();
       }
 
@@ -33,6 +37,8 @@ namespace OSPSuite.Core.Domain
       public void should_return_true_if_the_unit_by_synonym_exists()
       {
          sut.HasUnit("dm_2").ShouldBeTrue();
+         sut.HasUnit("cm2").ShouldBeTrue();
+         sut.HasUnit("min2/m3").ShouldBeTrue();
       }
 
       [Observation]
@@ -48,6 +54,8 @@ namespace OSPSuite.Core.Domain
       public void should_return_true_if_the_unit_by_name_exists()
       {
          sut.SupportsUnit("KM").ShouldBeTrue();
+         sut.SupportsUnit("cm2").ShouldBeTrue();
+         sut.SupportsUnit("min2/m3").ShouldBeTrue();
          sut.SupportsUnit("DM_3").ShouldBeTrue();
       }
 
@@ -56,6 +64,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.SupportsUnit("km", ignoreCase: true).ShouldBeTrue();
          sut.SupportsUnit("dM_3", ignoreCase: true).ShouldBeTrue();
+         sut.SupportsUnit("min2/M3", ignoreCase: true).ShouldBeTrue();
       }
    }
 
@@ -66,12 +75,15 @@ namespace OSPSuite.Core.Domain
       {
          sut.FindUnit("KM").ShouldNotBeNull();
          sut.FindUnit("DM_3").ShouldBeEqualTo(_unitWithSynonym);
+         sut.FindUnit("min2/m3").ShouldNotBeNull();
+
       }
 
       [Observation]
       public void should_return_the_unit_if_the_unit_by_name_exists_and_the_case_is_ignored()
       {
          sut.FindUnit("kM", ignoreCase: true).ShouldNotBeNull();
+         sut.FindUnit("min2/M3", ignoreCase: true).ShouldNotBeNull();
          sut.FindUnit("dM_3", ignoreCase: true).ShouldBeEqualTo(_unitWithSynonym);
       }
 

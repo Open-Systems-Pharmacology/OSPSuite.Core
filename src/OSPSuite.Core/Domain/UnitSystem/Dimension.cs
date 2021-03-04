@@ -108,7 +108,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       void AddUnit(Unit unit);
 
       /// <summary>
-      ///    Returns true if the dimension has a unit named <paramref name="unitName" /> otherwise false
+      ///    Returns true if the dimension has a unit or a unit synonym named <paramref name="unitName" /> otherwise false
       /// </summary>
       bool HasUnit(string unitName);
 

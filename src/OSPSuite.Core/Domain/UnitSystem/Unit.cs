@@ -38,11 +38,25 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       private void addDefaultUnitSynonyms()
       {
-         if(!_name.Contains("µ"))
+         addMuSynonyms();
+         addExponentSynonyms();
+      }
+
+      private void addMuSynonyms()
+      {
+         if (!Name.Contains("µ"))
             return;
 
-         AddUnitSynonym(_name.Replace("µ", "u"));
-         AddUnitSynonym(_name.Replace("µ", "mc"));
+         AddUnitSynonym(Name.Replace("µ", "u"));
+         AddUnitSynonym(Name.Replace("µ", "mc"));
+      }
+
+      private void addExponentSynonyms()
+      {
+         if (!(Name.Contains("²") || Name.Contains("³")))
+            return;
+
+         AddUnitSynonym(Name.Replace("²", "2").Replace("³", "3"));
       }
 
       /// <summary>
@@ -55,7 +69,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       ///    Returns the list of unit synonyms defined for this unit
       /// </summary>
       public virtual IReadOnlyCollection<UnitSynonym> UnitSynonyms => _unitSynonyms;
-      
+
       /// <summary>
       ///    Returns the list of unit synonym names defined for this unit
       /// </summary>
