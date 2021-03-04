@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Chart;
+﻿using System.Xml.Linq;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Serialization.Xml;
 
 namespace OSPSuite.Core.Serialization.Chart
@@ -17,6 +18,14 @@ namespace OSPSuite.Core.Serialization.Chart
          Map(x => x.Description);
          MapEnumerable(x => x.Axes, x => x.AddAxis);
          MapEnumerable(x => x.Curves, x => x.AddCurveIfConsistent);
+      }
+
+      protected override void TypedDeserialize(TCurveChart curveChart, XElement outputToDeserialize, SerializationContext context)
+      {
+         base.TypedDeserialize(curveChart, outputToDeserialize, context);
+
+         //once deserialize, we need to make sure that the curves are aware of the axis dimensions
+         curveChart.SynchronizeDataDisplayUnit();
       }
    }
 
