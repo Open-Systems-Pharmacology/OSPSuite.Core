@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Converters.v10
       {
          _converted = false;
          this.Visit(objectToUpdate);
-         return (PKMLVersion.V9_0, _converted);
+         return (PKMLVersion.V10_0, _converted);
       }
 
       public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
