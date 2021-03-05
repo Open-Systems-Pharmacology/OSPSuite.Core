@@ -226,7 +226,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {
          _columnMappingPresenter.SetDataFormat(e.Format);
-         _configuration.Parameters = e.Format.Parameters.ToList();
+         _configuration.CloneParametersFrom(e.Format.Parameters.ToList());
       }
 
       private void onTabChanged(object sender, TabChangedEventArgs e)
@@ -294,7 +294,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ApplyConfiguration(ImporterConfiguration configuration)
       {
          _configuration = configuration;
-         _dataSourceFile.Format.Parameters = _configuration.Parameters;
+         _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          _columnMappingPresenter.ValidateMapping();
          _dataSource.SetNamingConvention(_configuration.NamingConventions);
@@ -323,7 +323,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
 
       public ImporterConfiguration GetConfiguration() {
-         _configuration.Parameters = _dataSourceFile.Format.Parameters.ToList();
+         _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
          return _configuration;
       }
 

@@ -5,8 +5,16 @@ namespace OSPSuite.Core.Import
 {
    public class ImporterConfiguration : IWithId
    {
-      public List<DataFormatParameter> Parameters { get; set; } = new List<DataFormatParameter>();
-      public List<string> LoadedSheets { get; set; } = new List<string>();
+      private List<DataFormatParameter> _parameters = new List<DataFormatParameter>();
+      public IReadOnlyList<DataFormatParameter> Parameters { 
+         get => _parameters;
+      }
+      public void CloneParametersFrom(IReadOnlyList<DataFormatParameter> parameters)
+      {
+         _parameters = new List<DataFormatParameter>(parameters);
+      }
+      public void AddParameter(DataFormatParameter parameter) { _parameters.Add(parameter); }
+      public List<string> LoadedSheets { get; } = new List<string>();
       public string FileName { get; set; }
       public string NamingConventions { get; set; }
       public string FilterString { get; set; }

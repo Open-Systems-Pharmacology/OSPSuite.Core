@@ -20,7 +20,6 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public override void PerformMapping()
       {
-         //nothing to do here
       }
 
       protected override XElement TypedSerialize(ActionType action, SerializationContext serializationContext)

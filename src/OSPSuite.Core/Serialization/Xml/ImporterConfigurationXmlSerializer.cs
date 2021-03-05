@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
       public override void PerformMapping()
       {
-         MapEnumerable(x => x.Parameters, x => x.Parameters.Add);
+         MapEnumerable(x => x.Parameters, x => x.AddParameter);
          Map(x => x.FileName);
          Map(x => x.NamingConventions);
          MapEnumerable(x => x.LoadedSheets, x => x.LoadedSheets.Add);

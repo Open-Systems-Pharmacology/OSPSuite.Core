@@ -84,7 +84,7 @@ namespace OSPSuite.UI.Services
          {
             var dataSource = new DataSource(_importer);
             var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
-            dataSourceFile.Format.Parameters = configuration.Parameters;
+            dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
             var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.MetaDataId,

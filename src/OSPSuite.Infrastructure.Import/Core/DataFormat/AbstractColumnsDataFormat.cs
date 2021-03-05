@@ -13,7 +13,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    {
       public abstract string Name { get; }
       public abstract string Description { get; }
-      public IList<DataFormatParameter> Parameters { get; set; }
+      private IList<DataFormatParameter> _parameters;
+      public IList<DataFormatParameter> Parameters { get => _parameters; }
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
 
       public double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
@@ -35,7 +36,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          var keys = data.GetHeaders().ToList();
          ExcelColumnNames = keys.ToList();
-         Parameters = new List<DataFormatParameter>();
+         _parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
 
@@ -91,7 +92,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                {
                   col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
                }
-               Parameters.Add(new MappingDataFormatParameter
+               _parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
                   col
@@ -130,7 +131,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             {
                col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
             }
-            Parameters.Add
+            _parameters.Add
             (
                new MappingDataFormatParameter
                (
@@ -147,7 +148,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
-            Parameters.Add(new MetaDataFormatParameter(header, header));
+            _parameters.Add(new MetaDataFormatParameter(header, header));
          }
          foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
          {
@@ -305,6 +306,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             Lloq = lloq,
             Unit = unit
          };
+      }
+
+      public void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration)
+      {
+         _parameters = new List<DataFormatParameter>(configuration.Parameters);
       }
    }
 }

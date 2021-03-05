@@ -14,7 +14,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       string Name { get; }
       string Description { get; }
       double SetParameters(IUnformattedData rawData, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      IList<DataFormatParameter> Parameters { get; set; }
+      IList<DataFormatParameter> Parameters { get; }
+      void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration);
       IList<string> ExcelColumnNames { get; }
       IEnumerable<ParsedDataSet> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
    }
