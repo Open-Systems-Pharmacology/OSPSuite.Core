@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Serialization.Xml
          base.TypedDeserialize(objectToDeserialize, outputToDeserialize, context);
          
          if (objectToDeserialize.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
-            objectToDeserialize.Unit = new UnitDescription("?");
+            objectToDeserialize.Unit = new UnitDescription();
       }
    }
 }
