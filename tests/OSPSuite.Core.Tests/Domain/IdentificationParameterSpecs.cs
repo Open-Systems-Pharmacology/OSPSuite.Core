@@ -402,7 +402,7 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_optimized_parameter_value_itself_if_the_flag_use_as_factor_is_disabled()
       {
          sut.UseAsFactor = false;
-         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 100.0, 50d, 10, 200, Scalings.Linear), _parameterSelection)
+         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 10, 20.0, 10, 200, Scalings.Linear), _parameterSelection)
             .ShouldBeEqualTo(10);
       }
 
@@ -411,7 +411,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.UseAsFactor = true;
          _parameterSelection.Parameter.Value = 50;
-         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 100.0, 50d, 10, 200, Scalings.Linear), _parameterSelection)
+         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P" ,10, 120, 10, 200, Scalings.Linear), _parameterSelection)
             .ShouldBeEqualTo(500);
       }
    }

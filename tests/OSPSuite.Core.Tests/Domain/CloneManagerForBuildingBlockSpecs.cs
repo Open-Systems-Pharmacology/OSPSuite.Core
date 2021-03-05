@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain
       {
          _dimensionRepository = A.Fake<IDimensionFactory>();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
-         A.CallTo(() => _dimensionRepository.NoDimension).Returns(new Dimension());
+         A.CallTo(() => _dimensionRepository.NoDimension).Returns(Constants.Dimension.NO_DIMENSION);
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionRepository);
          _objectToClone = createEntityToClone();
          _formulaCache = new FormulaCache();

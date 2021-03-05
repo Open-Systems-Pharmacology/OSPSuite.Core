@@ -104,18 +104,25 @@ namespace OSPSuite.Presentation.Presentation
       public void should_have_created_one_optimized_parameter_dto_for_each_identification_parameter()
       {
          _dto.OptimizedParameters.Count.ShouldBeEqualTo(3);
-         validateIdentificationParameter(_dto.OptimizedParameters[0], _identificationParameter1, _optimizedParameterValue1.Value, _optimizedParameterValue1.StartValue);
-         validateIdentificationParameter(_dto.OptimizedParameters[1], _identificationParameter2, _optimizedParameterValue2.Value, _optimizedParameterValue2.StartValue);
-         validateIdentificationParameter(_dto.OptimizedParameters[2], _identificationParameter3, _identificationParameter3.StartValue, _identificationParameter3.StartValue);
+         validateIdentificationParameter(_dto.OptimizedParameters[0], _identificationParameter1, _optimizedParameterValue1.Value, _optimizedParameterValue1.StartValue, _optimizedParameterValue1.Min, _optimizedParameterValue1.Max);
+         validateIdentificationParameter(_dto.OptimizedParameters[1], _identificationParameter2, _optimizedParameterValue2.Value, _optimizedParameterValue2.StartValue, _optimizedParameterValue2.Min, _optimizedParameterValue2.Max);
+         validateIdentificationParameter(_dto.OptimizedParameters[2], _identificationParameter3, _identificationParameter3.StartValue, _identificationParameter3.StartValue, _identificationParameter3.MinValue, _identificationParameter3.MaxValue);
       }
 
-      private void validateIdentificationParameter(OptimizedParameterDTO optimizedParameterDTO, IdentificationParameter identificationParameter, double optimalValue, double startValue)
+      private void validateIdentificationParameter(
+         OptimizedParameterDTO optimizedParameterDTO, 
+         IdentificationParameter identificationParameter, 
+         double optimalValue, 
+         double startValue, 
+         double minValue, 
+         double maxValue
+         )
       {
          optimizedParameterDTO.Name.ShouldBeEqualTo(identificationParameter.Name);
          optimizedParameterDTO.OptimalValue.DisplayValue.ShouldBeEqualTo(identificationParameter.StartValueParameter.ConvertToDisplayUnit(optimalValue));
          optimizedParameterDTO.StartValue.DisplayValue.ShouldBeEqualTo(identificationParameter.StartValueParameter.ConvertToDisplayUnit(startValue));
-         optimizedParameterDTO.MinValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MinValueParameter.ValueInDisplayUnit);
-         optimizedParameterDTO.MaxValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MaxValueParameter.ValueInDisplayUnit);
+         optimizedParameterDTO.MinValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MinValueParameter.ConvertToDisplayUnit(minValue));
+         optimizedParameterDTO.MaxValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MaxValueParameter.ConvertToDisplayUnit(maxValue));
          optimizedParameterDTO.ValueIsCloseToBoundary.ShouldBeFalse();
          optimizedParameterDTO.RangeImage.ShouldNotBeNull();
       }

@@ -7,9 +7,9 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public string Name { get; }
       public double Value { get; set; }
       public double StartValue { get; }
-      public double Min { get; }
-      public double Max { get; }
-      public Scalings Scaling { get; }
+      public double Min { get; internal set; }
+      public double Max { get; internal set; }
+      public Scalings Scaling { get; internal set; }
 
       [Obsolete("For serialization")]
       public OptimizedParameterValue()

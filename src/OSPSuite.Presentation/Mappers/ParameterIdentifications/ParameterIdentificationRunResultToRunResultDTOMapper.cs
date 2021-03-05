@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 
          parameterIdentification.AllFixedIdentificationParameters.Each(x =>
          {
-            var fixedParameterDTO = mapFrom(x, x.StartValue);
+            var fixedParameterDTO = mapFrom(x, x.StartValue, x.StartValue, x.MinValue, x.MaxValue, x.Scaling);
             addOptimizedParameterDTOTo(runResultDTO, fixedParameterDTO);
          });
 
@@ -61,29 +61,29 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 
       private OptimizedParameterDTO mapFrom(IdentificationParameter identificationParameter, OptimizedParameterValue optimizedParameter)
       {
-         return mapFrom(identificationParameter, 
-            optimizedParameter.StartValue, 
-            optimizedParameter.Value, 
+         return mapFrom(identificationParameter,
+            optimizedParameter.StartValue,
+            optimizedParameter.Value,
             optimizedParameter.Min,
-            optimizedParameter.Max, 
+            optimizedParameter.Max,
             optimizedParameter.Scaling);
       }
 
       private OptimizedParameterDTO mapFrom(
          IdentificationParameter identificationParameter,
          double startValue,
-         double? optimalValue = null,
-         double? min = null,
-         double? max = null,
+         double optimalValue,
+         double min,
+         double max,
          Scalings scaling = Scalings.Linear)
       {
          var dto = new OptimizedParameterDTO
          {
             Name = identificationParameter.Name,
             StartValue = mapFrom(startValue, identificationParameter.StartValueParameter),
-            OptimalValue = mapFrom(optimalValue ?? startValue, identificationParameter.StartValueParameter),
-            MinValue = mapFrom(min ?? startValue, identificationParameter.MinValueParameter),
-            MaxValue = mapFrom(max ?? startValue, identificationParameter.MaxValueParameter),
+            OptimalValue = mapFrom(optimalValue, identificationParameter.StartValueParameter),
+            MinValue = mapFrom(min, identificationParameter.MinValueParameter),
+            MaxValue = mapFrom(max, identificationParameter.MaxValueParameter),
             Scaling = scaling
          };
          dto.RangeImage = _optimizedParameterRangeImageCreator.CreateFor(dto);

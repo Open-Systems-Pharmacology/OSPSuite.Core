@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Converters.v10
@@ -26,7 +27,28 @@ namespace OSPSuite.Core.Converters.v10
 
       public void Visit(ParameterIdentification parameterIdentification)
       {
+         parameterIdentification.Results.Each(x =>
+         {
+            convert(x.BestResult, parameterIdentification);
+         });
          _converted = true;
       }
+
+      private void convert(OptimizationRunResult runResult, ParameterIdentification parameterIdentification)
+      {
+         runResult.Values.Each(x =>
+         {
+            var identificationParameter = parameterIdentification.IdentificationParameterByName(x.Name);
+            //this can happen if a parameter was removed and the PI not run again
+            if (identificationParameter == null)
+               return;
+
+            x.Min = identificationParameter.MinValue;
+            x.Max = identificationParameter.MaxValue;
+            x.Scaling = identificationParameter.Scaling;
+         });
+
+      }
+
    }
 }
