@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain.Data
             foreach (var id in ids)
             {
                var individualResults = ResultsFor(id);
-               values.AddRange(individualResults?.ValuesFor(quantityPath)?? new float[numberOfValuesPerIndividual].InitializeWith(float.NaN));
+               values.AddRange(individualResults?.ValuesFor(quantityPath) ?? new float[numberOfValuesPerIndividual].InitializeWith(float.NaN));
             }
 
             return values.ToArray();
@@ -129,6 +129,17 @@ namespace OSPSuite.Core.Domain.Data
          lock (_locker)
          {
             return AllIndividualResults.Select(x => x.IndividualId).ToArray();
+         }
+      }
+
+      public virtual int NumberOfIndividuals
+      {
+         get
+         {
+            var allIndividualsIds = AllIndividualIds();
+            //+1 because individual ids are typically 0 based
+            var maxNumberOfIndividuals = allIndividualsIds.Any() ? allIndividualsIds.Max() + 1 : 0;
+            return Math.Max(Count, maxNumberOfIndividuals);
          }
       }
 
