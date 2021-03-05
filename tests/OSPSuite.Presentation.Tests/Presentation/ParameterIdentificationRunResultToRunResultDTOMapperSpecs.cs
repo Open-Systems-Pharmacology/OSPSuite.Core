@@ -59,12 +59,12 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentification.AddIdentificationParameter(_identificationParameter2);
          _parameterIdentification.AddIdentificationParameter(_identificationParameter3);
 
-         _optimizedParameterValue1 = new OptimizedParameterValue("P1", 2.5, 2.1);
+         _optimizedParameterValue1 = new OptimizedParameterValue("P1", 2.5, 2.1, 0, 100, Scalings.Linear);
          _optimizationRunResult.AddValue(_optimizedParameterValue1);
-         _optimizedParameterValue2 = new OptimizedParameterValue("P2", 5.5, 5.2);
+         _optimizedParameterValue2 = new OptimizedParameterValue("P2", 5.5, 5.2, 0, 100, Scalings.Linear);
          _optimizationRunResult.AddValue(_optimizedParameterValue2);
          //does not exist in PI anymore
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60, 0, 100, Scalings.Linear));
 
          A.CallTo(_rangeImageCreator).WithReturnType<Image>().Returns(ApplicationIcons.OK);
       }
@@ -104,24 +104,31 @@ namespace OSPSuite.Presentation.Presentation
       public void should_have_created_one_optimized_parameter_dto_for_each_identification_parameter()
       {
          _dto.OptimizedParameters.Count.ShouldBeEqualTo(3);
-         validateIdentificationParameter(_dto.OptimizedParameters[0], _identificationParameter1, _optimizedParameterValue1.Value, _optimizedParameterValue1.StartValue);
-         validateIdentificationParameter(_dto.OptimizedParameters[1], _identificationParameter2, _optimizedParameterValue2.Value, _optimizedParameterValue2.StartValue);
-         validateIdentificationParameter(_dto.OptimizedParameters[2], _identificationParameter3, _identificationParameter3.StartValue, _identificationParameter3.StartValue);
+         validateIdentificationParameter(_dto.OptimizedParameters[0], _identificationParameter1, _optimizedParameterValue1.Value, _optimizedParameterValue1.StartValue, _optimizedParameterValue1.Min, _optimizedParameterValue1.Max);
+         validateIdentificationParameter(_dto.OptimizedParameters[1], _identificationParameter2, _optimizedParameterValue2.Value, _optimizedParameterValue2.StartValue, _optimizedParameterValue2.Min, _optimizedParameterValue2.Max);
+         validateIdentificationParameter(_dto.OptimizedParameters[2], _identificationParameter3, _identificationParameter3.StartValue, _identificationParameter3.StartValue, _identificationParameter3.MinValue, _identificationParameter3.MaxValue);
       }
 
-      private void validateIdentificationParameter(OptimizedParameterDTO optimizedParameterDTO, IdentificationParameter identificationParameter, double optimalValue, double startValue)
+      private void validateIdentificationParameter(
+         OptimizedParameterDTO optimizedParameterDTO, 
+         IdentificationParameter identificationParameter, 
+         double optimalValue, 
+         double startValue, 
+         double minValue, 
+         double maxValue
+         )
       {
          optimizedParameterDTO.Name.ShouldBeEqualTo(identificationParameter.Name);
          optimizedParameterDTO.OptimalValue.DisplayValue.ShouldBeEqualTo(identificationParameter.StartValueParameter.ConvertToDisplayUnit(optimalValue));
          optimizedParameterDTO.StartValue.DisplayValue.ShouldBeEqualTo(identificationParameter.StartValueParameter.ConvertToDisplayUnit(startValue));
-         optimizedParameterDTO.MinValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MinValueParameter.ValueInDisplayUnit);
-         optimizedParameterDTO.MaxValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MaxValueParameter.ValueInDisplayUnit);
+         optimizedParameterDTO.MinValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MinValueParameter.ConvertToDisplayUnit(minValue));
+         optimizedParameterDTO.MaxValue.DisplayValue.ShouldBeEqualTo(identificationParameter.MaxValueParameter.ConvertToDisplayUnit(maxValue));
          optimizedParameterDTO.ValueIsCloseToBoundary.ShouldBeFalse();
          optimizedParameterDTO.RangeImage.ShouldNotBeNull();
       }
    }
 
-   public class When_mapping_some_parmaeter_identification_run_result_were_optimal_value_are_close_to_boundaries : concern_for_ParameterIdentificationRunResultToRunResultDTOMapper
+   public class When_mapping_some_parameter_identification_run_result_were_optimal_value_are_close_to_boundaries : concern_for_ParameterIdentificationRunResultToRunResultDTOMapper
    {
       protected override void Context()
       {
@@ -129,8 +136,8 @@ namespace OSPSuite.Presentation.Presentation
          _optimizationRunResult = new OptimizationRunResult();
          _runResult.BestResult = _optimizationRunResult;
 
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P1", _identificationParameter1.MinValueParameter.Value * 1.005, 1));
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P2", _identificationParameter2.MaxValueParameter.Value * 0.995, 4));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P1", _identificationParameter1.MinValueParameter.Value * 1.005, 1, _identificationParameter1.MinValue, _identificationParameter2.MaxValue, Scalings.Linear));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P2", _identificationParameter2.MaxValueParameter.Value * 0.995, 4, _identificationParameter1.MinValue, _identificationParameter2.MaxValue, Scalings.Linear));
       }
 
       [Observation]

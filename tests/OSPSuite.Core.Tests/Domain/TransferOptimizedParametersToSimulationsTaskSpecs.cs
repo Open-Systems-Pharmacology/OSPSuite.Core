@@ -30,7 +30,6 @@ namespace OSPSuite.Core.Domain
       protected ParameterSelection _linkedParameter3;
       protected IDialogCreator _dialogCreator;
       protected ParameterSelection _linkedParameter4;
-      private IOSPSuiteExecutionContext _context;
       protected List<ICommand> _allValueOriginCommands;
 
       protected override void Context()
@@ -40,8 +39,8 @@ namespace OSPSuite.Core.Domain
          _parameterIdentification = new ParameterIdentification();
          _runResult = new ParameterIdentificationRunResult();
 
-         _runResult.BestResult.AddValue(new OptimizedParameterValue("P1", 10, 20));
-         _runResult.BestResult.AddValue(new OptimizedParameterValue("P2", 4, 5));
+         _runResult.BestResult.AddValue(new OptimizedParameterValue("P1", 10, 20, 0, 200, Scalings.Linear));
+         _runResult.BestResult.AddValue(new OptimizedParameterValue("P2", 4, 5, 0, 200, Scalings.Linear));
 
          _identificationParameter1 = new IdentificationParameter {Name = "P1"};
          _identificationParameter2 = new IdentificationParameter {Name = "P2", UseAsFactor = true};
@@ -73,8 +72,7 @@ namespace OSPSuite.Core.Domain
          _parameterIdentification.AddIdentificationParameter(_identificationParameter2);
          _parameterIdentification.AddIdentificationParameter(_identificationParameter3);
 
-         _context = A.Fake<IOSPSuiteExecutionContext>();
-         sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator, _context);
+         sut = new TestTransferOptimizedParametersToSimulationsTask(_parameterTask, _dialogCreator);
 
          _allValueOriginCommands = new List<ICommand>();
 
@@ -91,7 +89,7 @@ namespace OSPSuite.Core.Domain
 
    public class TestTransferOptimizedParametersToSimulationsTask : TransferOptimizedParametersToSimulationsTask<IOSPSuiteExecutionContext>
    {
-      public TestTransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator, IOSPSuiteExecutionContext context) : base(parameterTask, dialogCreator, context)
+      public TestTransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator) : base(parameterTask, dialogCreator)
       {
       }
    }
@@ -125,7 +123,7 @@ namespace OSPSuite.Core.Domain
       public void should_create_two_commands_for_each_parameter_to_update()
       {
          var macro = _command.DowncastTo<IMacroCommand>();
-         //*2 because we have two commands per parmeter to update
+         //*2 because we have two commands per parameter to update
          macro.Count.ShouldBeEqualTo(4 * 2);
       }
 
@@ -167,13 +165,13 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_transferring_the_optimized_parameters_of_a_parameter_identification_to_the_simulations_with_a_parmaeter_that_does_not_exist : concern_for_TransferOptimizedParametersToSimulationsTask
+   public class When_transferring_the_optimized_parameters_of_a_parameter_identification_to_the_simulations_with_a_parameter_that_does_not_exist : concern_for_TransferOptimizedParametersToSimulationsTask
    {
       protected override void Context()
       {
          base.Context();
          _runResult.BestResult = new OptimizationRunResult();
-         _runResult.BestResult.AddValue(new OptimizedParameterValue("Does not exist", 1, 1));
+         _runResult.BestResult.AddValue(new OptimizedParameterValue("Does not exist", 1, 1, 1, 1, Scalings.Linear));
          _parameterIdentification = new ParameterIdentification();
       }
 

@@ -178,7 +178,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private OptimizationRunResult performRun(IReadOnlyList<OptimizedParameterValue> values)
       {
          //We clone the values here to ensure that we are not sharing the same parameter value instances as the PI algorithm
-         var clonedValues = values.Select(x => new OptimizedParameterValue(x.Name, x.Value, x.StartValue)).ToList();
+         var clonedValues = values.Select(x => x.Clone()).ToList();
 
          var optimizationRunResult = updateValuesAndCalculate(clonedValues);
 
