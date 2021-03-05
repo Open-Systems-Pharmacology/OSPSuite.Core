@@ -63,8 +63,7 @@ namespace OSPSuite.Core.Serializers
       protected override void Context()
       {
          base.Context();
-         _unit = new Unit("unit", 1.0/60, -1);
-         _unit.FactorFormula = "1/60";
+         _unit = new Unit("unit", 1.0 / 60, -1) {FactorFormula = "1/60"};
       }
 
       protected override void Because()

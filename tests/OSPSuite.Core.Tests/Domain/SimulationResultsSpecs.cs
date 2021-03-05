@@ -119,6 +119,38 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_return_the_max_individual_id_defined_in_the_results : concern_for_SimulationResults
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         sut.Add(new IndividualResults { IndividualId = 1 });
+         sut.Add(new IndividualResults { IndividualId = 3 });
+      }
+
+      [Observation]
+      public void should_return_the_expected_value_if_the_number_of_individual_plus_one_is_less_than_the_max_individual_id()
+      {
+         sut.NumberOfIndividuals.ShouldBeEqualTo(4);
+      }
+      
+      [Observation]
+      public void should_return_the_expected_value()
+      {
+         sut.Add(new IndividualResults { IndividualId = 0 });
+         sut.Add(new IndividualResults { IndividualId = 2 });
+         sut.Add(new IndividualResults { IndividualId = 4 });
+         sut.NumberOfIndividuals.ShouldBeEqualTo(5);
+      }
+
+      [Observation]
+      public void should_return_an_empty_list_if_the_results_are_empty()
+      {
+         new SimulationResults().NumberOfIndividuals.ShouldBeEqualTo(0);
+      }
+   }
+
    public class When_adding_a_range_of_results : concern_for_SimulationResults
    {
       protected override void Context()
