@@ -9,7 +9,10 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
    {
       string Name { get; }
       string DisplayName { get; }
-      OptimizationRunProperties Optimize(IReadOnlyList<OptimizedParameterConstraint> constraints, Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> objectiveFunc);
+
+      OptimizationRunProperties Optimize(IReadOnlyList<OptimizedParameterConstraint> constraints,
+         Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> objectiveFunc);
+
       OptimizationAlgorithmProperties Properties { get; }
    }
 
@@ -21,7 +24,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
       protected int _numberOfResiduals;
       public string Name { get; }
       public string Description { get; set; }
-      public string DisplayName { get;  }
+      public string DisplayName { get; }
       public OptimizationAlgorithmProperties Properties { get; }
 
       protected OptimizationAlgorithm(string name, string displayName)
@@ -32,20 +35,21 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
          _extendedPropertyStore = new ExtendedPropertyStore<T>(Properties);
       }
 
-      public OptimizationRunProperties Optimize(IReadOnlyList<OptimizedParameterConstraint> constraints, Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> objectiveFunc)
+      public OptimizationRunProperties Optimize(IReadOnlyList<OptimizedParameterConstraint> constraints,
+         Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> objectiveFunc)
       {
          _constraints = constraints;
          _objectiveFunc = objectiveFunc;
 
          var error = _objectiveFunc(_constraints);
-         if(error.ResidualsResult.ExceptionOccured)
+         if (error.ResidualsResult.ExceptionOccured)
             throw new OSPSuiteException(error.ResidualsResult.ExceptionMessage);
 
          _numberOfResiduals = error.AllResidualValues.Count;
 
          return RunOptimization();
       }
-         
+
       protected abstract OptimizationRunProperties RunOptimization();
 
       protected double[] CreateVectorFor(Func<OptimizedParameterConstraint, double> valueFunc)
@@ -58,12 +62,15 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications.Algorithms
          var values = new OptimizedParameterValue[_constraints.Count];
          for (int i = 0; i < values.Length; i++)
          {
+            var constraint = _constraints[i];
             var value = vector[i];
-            if (_constraints[i].Scaling == Scalings.Log)
+            if (constraint.Scaling == Scalings.Log)
                value = Math.Pow(10, value);
 
-            values[i] = new OptimizedParameterValue(_constraints[i].Name, value, _constraints[i].StartValue);
+            values[i] = new OptimizedParameterValue(constraint.Name, value, constraint.StartValue, constraint.Min, constraint.Max,
+               constraint.Scaling);
          }
+
          return values;
       }
    }

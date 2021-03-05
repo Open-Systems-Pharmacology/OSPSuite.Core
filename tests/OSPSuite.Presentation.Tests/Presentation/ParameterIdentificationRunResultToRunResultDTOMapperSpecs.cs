@@ -59,12 +59,12 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentification.AddIdentificationParameter(_identificationParameter2);
          _parameterIdentification.AddIdentificationParameter(_identificationParameter3);
 
-         _optimizedParameterValue1 = new OptimizedParameterValue("P1", 2.5, 2.1);
+         _optimizedParameterValue1 = new OptimizedParameterValue("P1", 2.5, 2.1, 0, 100, Scalings.Linear);
          _optimizationRunResult.AddValue(_optimizedParameterValue1);
-         _optimizedParameterValue2 = new OptimizedParameterValue("P2", 5.5, 5.2);
+         _optimizedParameterValue2 = new OptimizedParameterValue("P2", 5.5, 5.2, 0, 100, Scalings.Linear);
          _optimizationRunResult.AddValue(_optimizedParameterValue2);
          //does not exist in PI anymore
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60, 0, 100, Scalings.Linear));
 
          A.CallTo(_rangeImageCreator).WithReturnType<Image>().Returns(ApplicationIcons.OK);
       }
@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_mapping_some_parmaeter_identification_run_result_were_optimal_value_are_close_to_boundaries : concern_for_ParameterIdentificationRunResultToRunResultDTOMapper
+   public class When_mapping_some_parameter_identification_run_result_were_optimal_value_are_close_to_boundaries : concern_for_ParameterIdentificationRunResultToRunResultDTOMapper
    {
       protected override void Context()
       {
@@ -129,8 +129,8 @@ namespace OSPSuite.Presentation.Presentation
          _optimizationRunResult = new OptimizationRunResult();
          _runResult.BestResult = _optimizationRunResult;
 
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P1", _identificationParameter1.MinValueParameter.Value * 1.005, 1));
-         _optimizationRunResult.AddValue(new OptimizedParameterValue("P2", _identificationParameter2.MaxValueParameter.Value * 0.995, 4));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P1", _identificationParameter1.MinValueParameter.Value * 1.005, 1, _identificationParameter1.MinValue, _identificationParameter2.MaxValue, Scalings.Linear));
+         _optimizationRunResult.AddValue(new OptimizedParameterValue("P2", _identificationParameter2.MaxValueParameter.Value * 0.995, 4, _identificationParameter1.MinValue, _identificationParameter2.MaxValue, Scalings.Linear));
       }
 
       [Observation]

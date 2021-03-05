@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Presentation
          _confidenceIntervals.Add(_identificationParameter.Name, 5);
 
          A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(_confidenceIntervals);
-         A.CallTo(() => _runResult.BestResult.Values).Returns(new []{new OptimizedParameterValue(_identificationParameter.Name, 10, 20) });
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new []{new OptimizedParameterValue(_identificationParameter.Name, 10, 20, 0, 100, Scalings.Linear) });
          A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
 
          _identificationParameter.AddLinkedParameter(_parameterSelection);
@@ -141,7 +141,7 @@ namespace OSPSuite.Presentation.Presentation
          _confidenceIntervals = new Cache<string, double> {{_identificationParameter.Name, 5}};
 
          A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(_confidenceIntervals);
-         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] { new OptimizedParameterValue(_identificationParameter.Name, 10, 20) });
+         A.CallTo(() => _runResult.BestResult.Values).Returns(new[] { new OptimizedParameterValue(_identificationParameter.Name, 10, 20, 0, 100, Scalings.Linear) });
          A.CallTo(() => _parameterIdentification.IdentificationParameterByName(_identificationParameter.Name)).Returns(_identificationParameter);
 
          _identificationParameter.AddLinkedParameter(_parameterSelection);

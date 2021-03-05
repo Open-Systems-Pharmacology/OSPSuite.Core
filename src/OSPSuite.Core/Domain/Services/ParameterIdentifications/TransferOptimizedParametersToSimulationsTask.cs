@@ -22,13 +22,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    {
       private readonly ISetParameterTask _parameterTask;
       private readonly IDialogCreator _dialogCreator;
-      private readonly IOSPSuiteExecutionContext _executionContext;
 
-      public TransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator, TExecutionContext executionContext)
+      public TransferOptimizedParametersToSimulationsTask(ISetParameterTask parameterTask, IDialogCreator dialogCreator)
       {
          _parameterTask = parameterTask;
          _dialogCreator = dialogCreator;
-         _executionContext = executionContext;
       }
 
       public ICommand TransferParametersFrom(ParameterIdentification parameterIdentification, ParameterIdentificationRunResult runResult)
@@ -70,9 +68,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return identificationParameter.AllLinkedParameters.SelectMany(linkedParameter => updateParameterValue(identificationParameter, optimalValue, linkedParameter));
       }
 
-      private IEnumerable<ICommand> updateParameterValue(IdentificationParameter identificationParameter, double optimialValue, ParameterSelection linkedParameter)
+      private IEnumerable<ICommand> updateParameterValue(IdentificationParameter identificationParameter, double optimalValue, ParameterSelection linkedParameter)
       {
-         var value = identificationParameter.OptimizedParameterValueFor(optimialValue, linkedParameter);
+         var value = identificationParameter.OptimizedParameterValueFor(optimalValue, linkedParameter);
          var parameter = linkedParameter.Parameter;
 
          var setValueCommand = _parameterTask.SetParameterValue(parameter, value, linkedParameter.Simulation);
