@@ -139,7 +139,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       {
       }
 
-      public Dimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName) : this()
+      public Dimension(BaseDimensionRepresentation baseRepresentation, string dimensionName, string baseUnitName)
       {
          BaseRepresentation = baseRepresentation;
          Name = dimensionName;

@@ -19,6 +19,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
 {
    public interface IParameterIdentificationExportTask
    {
+      Task ExportToMatlab(ParameterIdentification parameterIdentification);
       Task ExportToR(ParameterIdentification parameterIdentification);
       Task ExportParametersHistoryToExcel(IReadOnlyCollection<IdentificationParameterHistory> parametersHistory, IReadOnlyList<float> errorHistory);
    }
@@ -26,6 +27,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
    public class ParameterIdentificationExportTask : IParameterIdentificationExportTask
    {
       private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_R = "ParameterIdentificationExportTemplate.r";
+      private const string PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_MATLAB = "ParameterIdentificationExportTemplate.m";
 
       private const string PI_FILE_NAME = "@PI_FILE_NAME";
       private const string SIM_FILE_NAMES = "@SIM_FILE_NAMES";
@@ -46,6 +48,11 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          _lazyLoadTask = lazyLoadTask;
          _parameterIdentificationExporter = parameterIdentificationExporter;
          _exportToExcelTask = exportToExcelTask;
+      }
+
+      public Task ExportToMatlab(ParameterIdentification parameterIdentification)
+      {
+         return export(parameterIdentification, PARAMETER_IDENTIFICATION_EXPORT_TEMPLATE_FOR_MATLAB, Constants.Filter.MATLAB_EXTENSION);
       }
 
       public Task ExportToR(ParameterIdentification parameterIdentification)
