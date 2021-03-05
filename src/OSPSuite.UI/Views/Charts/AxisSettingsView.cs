@@ -50,7 +50,7 @@ namespace OSPSuite.UI.Views.Charts
          _scalingRepository = new UxRepositoryItemScalings(gridView);
          _numberModeRepository = new UxRepositoryItemComboBox(gridView);
          _gridLinesRepository = new UxRepositoryItemCheckEdit(gridView);
-         _lineStyleRepository = new UxRepositoryItemComboBox(gridView);
+         _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
          _colorRepository = new UxRepositoryItemColorPickEditWithHistory(gridView);
 
          _deleteButtonRepository = new UxRepositoryItemButtonEdit(ButtonPredefines.Delete);
@@ -66,7 +66,6 @@ namespace OSPSuite.UI.Views.Charts
       {
          // initialize RepositoryItems
          _numberModeRepository.Items.AddRange(Enum.GetValues(typeof(NumberModes)));
-         _lineStyleRepository.Items.AddRange(Enum.GetValues(typeof(LineStyles)));
 
          _gridBinderAxes = new GridViewBinder<Axis>(gridView) {BindingMode = BindingMode.TwoWay};
 
