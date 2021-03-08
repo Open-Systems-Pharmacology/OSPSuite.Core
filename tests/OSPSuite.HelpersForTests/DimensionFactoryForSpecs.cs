@@ -13,7 +13,7 @@ namespace OSPSuite.Helpers
 
          var amountDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLAR_AMOUNT, "Molar Volume");
          amountDimension.AddUnit(new Unit("mol", 1, 0));
-
+         amountDimension.DisplayName = "ZZZ_LAST";
          var massDimension = new Dimension(new BaseDimensionRepresentation(), DimensionNames.Mass, "g");
          massDimension.AddUnit(new Unit("kg", 1000, 0));
          massDimension.AddUnit(new Unit("mg", 0.001, 0));

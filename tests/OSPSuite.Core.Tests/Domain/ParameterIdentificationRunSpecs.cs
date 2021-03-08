@@ -276,7 +276,7 @@ namespace OSPSuite.Core.Domain
             .Invokes(x => { _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1); })
             .Returns(A.Fake<OptimizationRunProperties>());
 
-         _optimizedParameterValue = new OptimizedParameterValue("A", 100.0, 50d);
+         _optimizedParameterValue = new OptimizedParameterValue("A", 100.0, 50d, 0, 200, Scalings.Linear);
 
          sut.Run(_cancellationToken);
       }
@@ -352,7 +352,7 @@ namespace OSPSuite.Core.Domain
       {
          _counter = 0;
          //Call the objective function as many time as we have results
-         _runResults.Each(x => { _objectiveFunction(new[] {new OptimizedParameterValue("P", 100.0, 50d)}); });
+         _runResults.Each(x => { _objectiveFunction(new[] {new OptimizedParameterValue("P", 100.0, 50d, 10, 200, Scalings.Linear)}); });
       }
 
       [Observation]
@@ -395,7 +395,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d)});
+         _objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d,0, 10, Scalings.Linear)});
       }
 
       [Observation]
@@ -482,7 +482,7 @@ namespace OSPSuite.Core.Domain
             .Invokes(x =>
             {
                var objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
-               objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d)});
+               objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d, 0, 10, Scalings.Linear)});
             });
       }
 
@@ -543,7 +543,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {new OptimizedParameterValue("A", 100.0, 50d)});
+         _objectiveFunction(new[] {new OptimizedParameterValue("A", 100.0, 50d, 0, 200, Scalings.Log)});
       }
 
       [Observation]

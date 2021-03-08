@@ -29,9 +29,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_sort_the_units_by_name()
+      public void should_sort_the_units_by_display_name()
       {
-         _result.ShouldOnlyContainInOrder(_factory.Dimensions.OrderBy(dimension => dimension.Name).ToArray());
+         _result.ShouldOnlyContainInOrder(_factory.Dimensions.OrderBy(dimension => dimension.DisplayName).ToArray());
       }
    }
 }

@@ -1848,6 +1848,7 @@ namespace OSPSuite.Assets
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
       public static readonly string ExportForR = "Export for R";
+      public static readonly string ExportForMatlab = AsDeveloperOnly("Export for Matlab®");
       public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
       public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
       public static readonly string ExportODEForR = "Export Simulation to R Differential Equations";

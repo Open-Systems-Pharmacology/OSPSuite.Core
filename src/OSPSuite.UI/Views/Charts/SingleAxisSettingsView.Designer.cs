@@ -40,11 +40,11 @@ namespace OSPSuite.UI.Views.Charts
          this.gridLinesCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.defaultLineSytleComboBox = new OSPSuite.UI.Controls.UxLineTypeEdit();
          this.captionTextBox = new DevExpress.XtraEditors.TextEdit();
-         this.unitComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.unitComboBox = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.defaultColorColorEdit = new OSPSuite.UI.Controls.UxColorPickEditWithHistory();
          this.axisTypeTextBox = new DevExpress.XtraEditors.TextEdit();
          this.maxTextBox = new DevExpress.XtraEditors.TextEdit();
-         this.dimensionComboBox = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.dimensionComboBox = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.axisTypeLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.defaultLineStyleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.numberRepresentationLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -462,8 +462,8 @@ namespace OSPSuite.UI.Views.Charts
       private TextEdit axisTypeTextBox;
       private UxLineTypeEdit defaultLineSytleComboBox;
       private UxNumberModeEdit numberRepresentationComboBox;
-      private ComboBoxEdit dimensionComboBox;
-      private ComboBoxEdit unitComboBox;
+      private OSPSuite.UI.Controls.UxComboBoxEdit dimensionComboBox;
+      private OSPSuite.UI.Controls.UxComboBoxEdit unitComboBox;
       private UxScalingsEdit scalingComboBox;
       private TextEdit captionTextBox;
       private TextEdit minTextBox;

@@ -54,6 +54,13 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<ExportParameterIdentificationToRUICommand, ParameterIdentification>(parameterIdentification);
       }
 
+      public static IMenuBarButton ExportParameterIdentificationToMatlab(ParameterIdentification parameterIdentification)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.ExportForMatlab.WithEllipsis())
+            .WithIcon(ApplicationIcons.Matlab)
+            .WithCommandFor<ExportParameterIdentificationToMatlabUICommand, ParameterIdentification>(parameterIdentification);
+      }
+
       public static IMenuBarButton CloneParameterIdentification(ParameterIdentification parameterIdentification)
       {
          return CreateMenuButton.WithCaption(MenuNames.Clone)
@@ -78,6 +85,9 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .AsGroupStarter();
 
          yield return AddParameterIdentificationToJournal(parameterIdentification);
+
+         yield return ExportParameterIdentificationToMatlab(parameterIdentification)
+            .ForDeveloper();
 
          yield return DeleteParameterIdentification(parameterIdentification)
             .AsGroupStarter();

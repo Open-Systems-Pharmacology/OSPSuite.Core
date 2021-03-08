@@ -14,6 +14,7 @@ namespace OSPSuite.UI.RepositoryItems
       {
          TextEditStyle = TextEditStyles.DisableTextEditor;
          EditValueChanged += (o, e) => view.PostEditor();
+         AllowMouseWheel = false;
       }
    }
 }

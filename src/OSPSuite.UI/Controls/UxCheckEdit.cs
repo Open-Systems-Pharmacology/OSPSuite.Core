@@ -19,11 +19,11 @@ namespace OSPSuite.UI.Controls
       public UxCheckEdit()
       {
          AllowClicksOutsideControlArea = false;
-         MouseDown += supressCheckBoxClicksOutsideGlyph;
+         MouseDown += suppressCheckBoxClicksOutsideGlyph;
          Properties.AllowFocused = false;
       }
 
-      private void supressCheckBoxClicksOutsideGlyph(object sender, MouseEventArgs e)
+      private void suppressCheckBoxClicksOutsideGlyph(object sender, MouseEventArgs e)
       {
          if (AllowClicksOutsideControlArea) return;
 

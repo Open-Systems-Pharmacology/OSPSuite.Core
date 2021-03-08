@@ -102,11 +102,11 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _bestResult = new OptimizationRunResult();
-         _bestResult.AddValue(new OptimizedParameterValue("P1", 1, 1));
-         _bestResult.AddValue(new OptimizedParameterValue("P2", 2, 2));
+         _bestResult.AddValue(new OptimizedParameterValue("P1", 1, 1, 0, 10, Scalings.Linear));
+         _bestResult.AddValue(new OptimizedParameterValue("P2", 2, 2, 0, 10, Scalings.Linear));
          _currentResult = new OptimizationRunResult();
-         _currentResult.AddValue(new OptimizedParameterValue("P1", 3, 4));
-         _currentResult.AddValue(new OptimizedParameterValue("P2", 4, 4));
+         _currentResult.AddValue(new OptimizedParameterValue("P1", 3, 4, 0, 10, Scalings.Linear));
+         _currentResult.AddValue(new OptimizedParameterValue("P2", 4, 4, 0, 10, Scalings.Linear));
 
          _runState = A.Fake<ParameterIdentificationRunState>();
          A.CallTo(() => _runState.Status).Returns(RunStatus.Running);

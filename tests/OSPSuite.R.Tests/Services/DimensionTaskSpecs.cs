@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
@@ -31,6 +30,27 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_a_micro_unit : concern_for_DimensionTask
+   {
+      private double[] _result_u;
+      private double[] _result_mc;
+
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] { 1e-3, 2e-3 });
+         _result_u = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "ug", new[] { 1e-3, 2e-3 });
+         _result_mc = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "mcg", new[] { 1e-3, 2e-3 });
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_u.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_mc.ShouldOnlyContainInOrder(1000000, 2000000);
+      }
+   }
+
    public class When_converting_a_double_array_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
       protected override void Because()
@@ -43,6 +63,17 @@ namespace OSPSuite.R.Services
       public void should_be_able_to_convert_the_array()
       {
          _result.ShouldOnlyContainInOrder(20, 40, 60d);
+      }
+   }
+
+   public class When_returning_the_mu_symbol_to_be_used_for_conversion : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_expected_symbol()
+      {
+         sut.MuSymbol.ShouldBeEqualTo("µ");
+         //also verifies that we are using the value defined in the dimension files
+         sut.MuSymbol.ShouldBeEqualTo(sut.DimensionByName(Constants.Dimension.MOLAR_AMOUNT).BaseUnit.Name.Substring(0, 1));
       }
    }
 
