@@ -104,7 +104,7 @@ namespace OSPSuite.Presentation.Importer.Services
             }
          );
          var parsedDataSet2 = new ParsedDataSetTest();
-         parsedDataSet1.SetDataAndDescription
+         parsedDataSet2.SetDataAndDescription
          (
             A.Fake<Dictionary<ExtendedColumn, IList<SimulationPoint>>>(),
             new List<InstantiatedMetaData>()
