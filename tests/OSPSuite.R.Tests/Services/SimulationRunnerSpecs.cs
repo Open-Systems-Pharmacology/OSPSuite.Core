@@ -55,7 +55,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.Run(_simulation);
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation });
       }
 
       [Test]
@@ -92,7 +92,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.Run(_simulation, _population, null, _simulationRunOptions);
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population, SimulationRunOptions = _simulationRunOptions});
       }
 
       [Observation]
@@ -137,7 +137,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.Run(_simulation, _population, _agingData, _simulationRunOptions);
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population, SimulationRunOptions = _simulationRunOptions, AgingData = _agingData});
       }
 
       [Observation]

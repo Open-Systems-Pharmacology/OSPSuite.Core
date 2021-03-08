@@ -68,7 +68,7 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _result = _simulationRunner.Run(_simulation);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
          _userDefinedPKParameter =
             _pkParameterTask.CreateUserDefinedPKParameter("MyCmax", StandardPKParameter.C_max, displayName: null, displayUnit: "mg/l");
          _pkParameterTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
@@ -111,7 +111,7 @@ namespace OSPSuite.R.Services
          var simulationFile = HelperForSpecs.DataFile("multiple_dosing.pkml");
          var simulationPersister = Api.GetSimulationPersister();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
-         _result = _simulationRunner.Run(_simulation);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
       }
 
       protected override void Because()
@@ -141,7 +141,7 @@ namespace OSPSuite.R.Services
          _population = populationTask.ImportPopulation(populationFile);
          //negative volumes ensures that we have one simulation crashing
          _population.SetValues("Organism|Liver|Volume", new[] {2.3, 2.3, 2.3, -10, 2.3});
-         _result = _simulationRunner.Run(_simulation, _population);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population});
       }
 
       protected override void Because()
@@ -175,7 +175,7 @@ namespace OSPSuite.R.Services
          _population.IndividualIds.AddRange(new []{ 2, 4, 6, 8, 10});
          //negative volumes ensures that we have one simulation crashing
          _population.SetValues("Organism|Liver|Volume", new[] { 2.3, 2.3, 2.3, -10, 2.3 });
-         _result = _simulationRunner.Run(_simulation, _population);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population});
       }
 
       protected override void Because()
@@ -207,7 +207,7 @@ namespace OSPSuite.R.Services
          _population = populationTask.ImportPopulation(populationFile);
          //negative volumes ensures that we have one simulation crashing
          _population.SetValues("Organism|Liver|Volume", new[] { 2.3, 2.3, 2.3, 2.3, -10 });
-         _result = _simulationRunner.Run(_simulation, _population);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population});
       }
 
       protected override void Because()

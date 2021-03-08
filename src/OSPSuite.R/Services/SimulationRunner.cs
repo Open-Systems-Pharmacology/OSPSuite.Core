@@ -13,16 +13,27 @@ using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
+   public class SimulationRunArgs
+   {
+      public IModelCoreSimulation Simulation { get; set; }
+      public SimulationRunOptions SimulationRunOptions { get; set; }
+      public IndividualValuesCache Population { get; set; }
+      public AgingData AgingData { get; set; }
+
+      public void Deconstruct(out IModelCoreSimulation simulation, out IndividualValuesCache population, out AgingData agingData,
+         out SimulationRunOptions simulationRunOptions)
+      {
+         simulation = Simulation;
+         simulationRunOptions = SimulationRunOptions;
+         population = Population;
+         agingData = AgingData;
+      }
+   }
+
    public interface ISimulationRunner
    {
-      Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
-      SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
-
-      SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, AgingData agingData = null,
-         SimulationRunOptions simulationRunOptions = null);
-
-      Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, AgingData agingData = null,
-         SimulationRunOptions simulationRunOptions = null);
+      Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs);
+      SimulationResults Run(SimulationRunArgs simulationRunArgs);
    }
 
    public class SimulationRunner : ISimulationRunner
@@ -69,18 +80,10 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
-      {
-         return RunAsync(simulation, simulationRunOptions).Result;
-      }
-
-      public SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, AgingData agingData = null,
-         SimulationRunOptions simulationRunOptions = null)
-      {
-         return RunAsync(simulation, population, agingData, simulationRunOptions).Result;
-      }
-
-      public async Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, IndividualValuesCache population, AgingData agingData = null,
+      private async Task<SimulationResults> runAsync(
+         IModelCoreSimulation simulation, 
+         IndividualValuesCache population, 
+         AgingData agingData = null,
          SimulationRunOptions simulationRunOptions = null)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
@@ -109,7 +112,7 @@ namespace OSPSuite.R.Services
          _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
       }
 
-      public Task<SimulationResults> RunAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
+      private Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
       {
          return Task.Run(() =>
          {
@@ -127,6 +130,19 @@ namespace OSPSuite.R.Services
             CheckForNegativeValues = options.CheckForNegativeValues,
             SimModelExportMode = SimModelExportMode.Optimized
          };
+      }
+
+      public Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs)
+      {
+         var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
+         return population == null ? 
+            runAsync(simulation, simulationRunOptions) : 
+            runAsync(simulation, population, agingData, simulationRunOptions);
+      }
+
+      public SimulationResults Run(SimulationRunArgs simulationRunArgs)
+      {
+         return RunAsync(simulationRunArgs).Result;
       }
    }
 }
