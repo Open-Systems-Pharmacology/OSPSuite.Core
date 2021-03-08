@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.Chart;
+using static OSPSuite.Core.Import.NanSettings;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -47,6 +48,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ClassificationType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<FormulaComparison, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<CreationMode, SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ActionType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ColumnOrigins, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<AuxiliaryType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQModeXmlAttributeMapper<SerializationContext>());

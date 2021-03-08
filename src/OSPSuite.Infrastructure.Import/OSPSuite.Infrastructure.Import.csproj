@@ -51,14 +51,5 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Core\MetaDataColumn.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Core\MetaDataTable.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-
 
 </Project>
