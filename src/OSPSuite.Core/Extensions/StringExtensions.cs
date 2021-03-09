@@ -108,5 +108,14 @@ namespace OSPSuite.Core.Extensions
 
          return indexOfUnitStart == -1 ? stringToStrip : stringToStrip.Remove(indexOfUnitStart, stringToStrip.Length - indexOfUnitStart).TrimEnd();
       }
+
+      /// <summary>
+      /// Returns the give text within quotes. 
+      /// </summary>
+      /// <example>
+      /// InQuotes(test) => "test"
+      /// </example>
+      /// <param name="text">Text to encapsulate in quotes</param>
+      public static string InQuotes(this string text) => $"\"{text}\"";
    }
 }

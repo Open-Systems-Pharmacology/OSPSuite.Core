@@ -70,7 +70,7 @@ namespace OSPSuite.R.Services
       {
          base.Context();
          var simulationRunner = Api.GetSimulationRunner();
-         _results = simulationRunner.Run(_simulation);
+         _results = simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
          _csvFile = FileHelper.GenerateTemporaryFileName();
       }
 
@@ -129,7 +129,7 @@ namespace OSPSuite.R.Services
          _simulation = _simulationPersister.LoadSimulation(simulationFile);
 
          var simulationRunner = Api.GetSimulationRunner();
-         _results = simulationRunner.Run(_simulation);
+         _results = simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
          _csvFile = FileHelper.GenerateTemporaryFileName();
       }
 
