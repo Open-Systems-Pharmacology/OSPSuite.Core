@@ -122,9 +122,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_that_the_entity_does_not_satisfy_the_criteria()
+      public void should_return_that_the_entity_does_satisfy_the_criteria()
       {
-         sut.IsSatisfiedBy(_entity).ShouldBeFalse();
+         sut.IsSatisfiedBy(_entity).ShouldBeTrue();
       }
    }
 
