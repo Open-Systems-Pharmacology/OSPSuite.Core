@@ -162,7 +162,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var groupByParams =
             Parameters
                .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter)
-               .Select(p => (p.ColumnName, p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn ? data.GetColumnDescription(p.ColumnName).ExistingValues : new List<string>() { p.ColumnName }));
+               .Select(p => (p.ColumnName, p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn ? (data.GetColumnDescription(p.ColumnName).ExistingValues) as IList<string> : new List<string>() { p.ColumnName }));
          return buildDataSets(data, groupByParams, columnInfos);
       }
 

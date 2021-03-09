@@ -32,7 +32,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public MeasurementLevel Level { get; set; }
 
-      private readonly IList<string> _existingValues;
+      protected readonly IList<string> _existingValues;
 
       public void AddExistingValues(string elementAt)
       {

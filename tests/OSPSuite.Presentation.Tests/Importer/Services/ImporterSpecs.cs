@@ -243,35 +243,19 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
-                  }
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration [pmol/l]",
-                  new ColumnDescription(6)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Error [pmol/l]",
-                  new ColumnDescription(7)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
                }
             }
          );
@@ -295,67 +279,36 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
-                  }
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Time_unit",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "min" }
-                  }
+                  new ColumnDescription(5, new List<string>() { "min" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "lloq",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
+                  
                },
                {
                   "Concentration",
-                  new ColumnDescription(6)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "pmol/l" }
-                  }
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
-                  new ColumnDescription(7)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "pmol/l" }
-                  }
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -379,59 +332,32 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
-                  }
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null,ColumnDescription.MeasurementLevel.Numeric )
                },
                {
                   "lloq",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration",
-                  new ColumnDescription(6)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "pmol/l" }
-                  }
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
-                  new ColumnDescription(7)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "pmol/l" }
-                  }
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+                  
                }
             }
          );

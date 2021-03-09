@@ -42,83 +42,43 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  new ColumnDescription(0)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "PeripheralVenousBlood" }
-                  }
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Compartment",
-                  new ColumnDescription(1)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "Arterialized" }
-                  }
+                  new ColumnDescription(1, new List<string>() { "Arterialized" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Species",
-                  new ColumnDescription(2)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "Human" }
-                  }
+                  new ColumnDescription(2, new List<string>() { "Human" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Dose",
-                  new ColumnDescription(3)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "75 [g] glucose" }
-                  }
+                  new ColumnDescription(3, new List<string>() { "75 [g] glucose" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Molecule",
-                  new ColumnDescription(4)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }
-                  }
+                  new ColumnDescription(4, new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
-                  new ColumnDescription(5)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration (molar) [pmol/l]",
-                  new ColumnDescription(6)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Error [pmol/l]",
-                  new ColumnDescription(7)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Numeric,
-                     ExistingValues = null
-                  }
+                  new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Route",
-                  new ColumnDescription(8)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "po" }
-                  }
+                  new ColumnDescription(8, new List<string>() { "po" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Groupe Id",
-                  new ColumnDescription(9)
-                  {
-                     Level = ColumnDescription.MeasurementLevel.Discrete,
-                     ExistingValues = new List<string>() { "H", "T2DM" }
-                  }
+                  new ColumnDescription(9, new List<string>() { "H", "T2DM" }, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
