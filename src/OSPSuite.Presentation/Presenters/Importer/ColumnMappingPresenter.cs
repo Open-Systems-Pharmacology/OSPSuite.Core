@@ -23,17 +23,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private UnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
+      private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       private ColumnMappingDTO _currentModel;
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
-         IMappingParameterEditorPresenter mappingParameterEditorPresenter
+         IMappingParameterEditorPresenter mappingParameterEditorPresenter,
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
       ) : base(view)
       {
          _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
-         View.FillSubView(_mappingParameterEditorPresenter.BaseView);
+         _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
+         View.FillMappingSubView(_mappingParameterEditorPresenter.BaseView);
+         View.FillMetaDataSubView(_metaDataParameterEditorPresenter.BaseView);
       }
 
       public void SetSettings(
@@ -43,6 +47,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
+         View.SetMetaDataCategories(metaDataCategories);
       }
 
       public IDataFormat GetDataFormat()
@@ -138,6 +143,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
+      public void UpdateMetaDataForModel()
+      {
+         if (_currentModel == null)
+            return;
+         var metaData = _currentModel.Source as MetaDataFormatParameter;
+         if (metaData == null)
+         {
+            return;
+         }
+         _mappings.First(m => m.MappingName == metaData.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
+         metaData.ColumnName = _metaDataParameterEditorPresenter.Input;
+         ValidateMapping();
+         _view.RefreshData();
+         _view.CloseEditor();
+      }
+
       public void UpdateDescriptrionForModel()
       {
          if (!(_currentModel.Source is MappingDataFormatParameter))
@@ -185,8 +206,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.RefreshData();
          _view.CloseEditor();
       }
+      public void SetSubEditorSettingsForMetaData(ColumnMappingDTO model)
+      {
+         _currentModel = model;
+      }
 
-      public void SetSubEditorSettings(ColumnMappingDTO model)
+      public void SetSubEditorSettingsForMapping(ColumnMappingDTO model)
       {
          _currentModel = model;
          _mappingParameterEditorPresenter.HideAll();
@@ -290,7 +315,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+            {
+               if (!metaDataCategory.ListOfValues.Values.Contains(model.ExcelColumn))
+                  options.Add(new ImageComboBoxOption() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
                options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new ImageComboBoxOption() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+            }
          }
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
          {

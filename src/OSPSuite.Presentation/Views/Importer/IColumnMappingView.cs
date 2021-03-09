@@ -108,8 +108,10 @@ namespace OSPSuite.Presentation.Views.Importer
    public interface IColumnMappingView : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
+      void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories);
       void RefreshData();
-      void FillSubView(IView view);
+      void FillMappingSubView(IView view);
+      void FillMetaDataSubView(IView view);
       void CloseEditor();
    }
 }

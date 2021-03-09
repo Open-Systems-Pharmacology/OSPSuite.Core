@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
@@ -13,6 +14,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -35,10 +37,13 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _addButtonRepository =
          new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.Importer.AddInformationDescription);
 
-      private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly RepositoryItemPopupContainerEdit _repositoryMappingPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly RepositoryItemPopupContainerEdit _repositoryMetaDataPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
-      private readonly PopupContainerControl _popupControl = new PopupContainerControl();
+      private readonly PopupContainerControl _mappingPopupControl = new PopupContainerControl();
+      private readonly PopupContainerControl _metaDataPopupControl = new PopupContainerControl();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
+      private IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
       public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
@@ -58,13 +63,21 @@ namespace OSPSuite.UI.Views.Importer
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
-         _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
-         _repositoryItemPopupContainerEdit.PopupControl = _popupControl;
-         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = false;
-         _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
-         _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
-         _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
-         _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+         _repositoryMappingPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
+         _repositoryMappingPopupContainerEdit.PopupControl = _mappingPopupControl;
+         _repositoryMappingPopupContainerEdit.CloseOnOuterMouseClick = false;
+         _repositoryMappingPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
+         _repositoryMappingPopupContainerEdit.CloseUp += (o, e) => closeUpMapping(e);
+         _repositoryMappingPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
+         _repositoryMappingPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+
+         _repositoryMetaDataPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
+         _repositoryMetaDataPopupContainerEdit.PopupControl = _metaDataPopupControl;
+         _repositoryMetaDataPopupContainerEdit.CloseOnOuterMouseClick = false;
+         _repositoryMetaDataPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
+         _repositoryMetaDataPopupContainerEdit.CloseUp += (o, e) => closeUpMetaData(e);
+         _repositoryMetaDataPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
+         _repositoryMetaDataPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
 
          _disabledPopupContainerEdit.Enabled = false;
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
@@ -74,19 +87,37 @@ namespace OSPSuite.UI.Views.Importer
       {
          var withValueOrigin = _gridViewBinder.FocusedElement;
          if (withValueOrigin == null) return;
-         e.DisplayText = withValueOrigin.MappingName;
+         switch (withValueOrigin.Source)
+         {
+            case MappingDataFormatParameter _:
+               e.DisplayText = withValueOrigin.MappingName;
+               break;
+            case MetaDataFormatParameter md:
+               e.DisplayText = md.ColumnName;
+               break;
+         }
       }
 
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
-         if (!(model.Source is MappingDataFormatParameter))
-            return _disabledPopupContainerEdit;
-
-         _presenter.SetSubEditorSettings(model);
-         return _repositoryItemPopupContainerEdit;
+         switch (model.Source)
+         {
+            case MappingDataFormatParameter _:
+               _presenter.SetSubEditorSettingsForMapping(model);
+               return _repositoryMappingPopupContainerEdit;
+            case MetaDataFormatParameter md:
+               var metaDataCategory = _metaDataCategories.FirstOrDefault(x => x.Name == model.MappingName);
+               if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+               {
+                  _presenter.SetSubEditorSettingsForMetaData(model);
+                  return _repositoryMetaDataPopupContainerEdit;
+               }
+               return _disabledPopupContainerEdit;
+         }
+         return _disabledPopupContainerEdit;         
       }
 
-      private void closeUp(CloseUpEventArgs e)
+      private void closeUpMapping(CloseUpEventArgs e)
       {
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
@@ -94,9 +125,21 @@ namespace OSPSuite.UI.Views.Importer
          _presenter.UpdateDescriptrionForModel();
       }
 
-      public void FillSubView(IView view)
+      private void closeUpMetaData(CloseUpEventArgs e)
       {
-         _popupControl.FillWith(view);
+         if (e.CloseMode == PopupCloseMode.Cancel)
+            return;
+        _presenter.UpdateMetaDataForModel();
+      }
+
+      public void FillMappingSubView(IView view)
+      {
+         _mappingPopupControl.FillWith(view);
+      }
+
+      public void FillMetaDataSubView(IView view)
+      {
+         _metaDataPopupControl.FillWith(view);
       }
 
       public void AttachPresenter(IColumnMappingPresenter presenter)
@@ -213,6 +256,11 @@ namespace OSPSuite.UI.Views.Importer
       public void SetMappingSource(IList<ColumnMappingDTO> mappings)
       {
          _gridViewBinder.BindToSource(mappings);
+      }
+
+      public void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         _metaDataCategories = metaDataCategories;
       }
 
       public void CloseEditor()

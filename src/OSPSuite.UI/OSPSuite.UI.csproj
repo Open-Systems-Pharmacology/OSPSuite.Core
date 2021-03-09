@@ -62,6 +62,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Importer\MetaDataParameterEditorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Views\Importer\MappingParameterEditorView.cs" />
   </ItemGroup>
 

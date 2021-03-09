@@ -63,8 +63,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ResetMapping();
       void ClearMapping();
       void ValidateMapping();
-      void SetSubEditorSettings(ColumnMappingDTO model);
+      void SetSubEditorSettingsForMapping(ColumnMappingDTO model);
+      void SetSubEditorSettingsForMetaData(ColumnMappingDTO model);
       void UpdateDescriptrionForModel();
+      void UpdateMetaDataForModel();
       void SetDescriptionForRow(ColumnMappingDTO model);
 
       event EventHandler OnMappingCompleted; //status: you can import
