@@ -18,6 +18,7 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
       public static readonly string EmptyName = "Empty";
@@ -353,6 +354,98 @@ namespace OSPSuite.Assets
          public static readonly string UnitInformation = "Unit Information";
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
+         public static readonly string ResetMapping = "Reset Mapping";
+         public static readonly string ClearMapping = "Clear Mapping";
+         public static readonly string Format = "Format: ";
+         public static readonly string AddKeys = "Add keys";
+         public static readonly string Columns = "Columns";
+         public static readonly string Mappings = "Mappings";
+         public static readonly string FormatPlain = "Format";
+         public static readonly string DataMapping = "Data Mapping";
+         public static readonly string Confirmation = "Confirmation";
+         public static readonly string ThreeDots = "...";
+         public static readonly string File = "File:";
+         public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
+         public static readonly string ConfirmationImport = "Import";
+         public static readonly string NanAction = "Action";
+         public static readonly string NanActionThrowsError = "Prevent the import";
+         public static readonly string NanActionIgnoreRow = "Ignore the row";
+         public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
+         public static readonly string NanIndicator = "NaN indicator";
+         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
+         public static readonly string ExcelColumn = "Excel Column";
+         public static readonly string MappingName = "Mapping Name";
+         public static readonly string UnitColumn = "Unit";
+         public static readonly string ExtraColumn = "Edit extra fields";
+         public static readonly string ErrorColumn = "Error";
+         public static readonly string ErrorType = "Error type";
+         public static readonly string LoadAllSheets = "Load all sheets";
+         public static readonly string SourceTab = "Source";
+         public static readonly string ConfirmationTab = "Confirmation";
+         public static readonly string MappingLayout = "Mapping";
+         public static readonly string PreviewLayout = "Preview";
+         public static readonly string SourceLayout = "Source";
+         public static readonly string Separator = "Separator";
+         public static readonly string Dimension = "Dimension";
+         public static readonly string Unit = "Unit";
+         public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
+         public static readonly string ImportUnitFromColumn = "Import unit from a column";
+         public static readonly string Column = "Column";
+         public static readonly string LoadCurrentSheet = "Load current sheet";
+         public static readonly string AllSheetsAlreadyImported = "All imported";
+         public static readonly string SheetsAlreadyImported = "Imported";
+         public static readonly string CloseAllTabsButThis = "close all tabs but this";
+         public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
+         public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
+         public static readonly string Title = "Importer";
+         public static readonly string LLOQ = "LLOQ";
+         public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
+         public static readonly string SaveConfiguration = "Save configuration";
+         public static readonly string GroupByTitle = "Group by";
+         public static readonly string MappingTitle = "Mapping";
+
+         public static readonly string UseFiltersForImport = "Use the filters for importing the data";
+         
+         public static readonly string AddGroupByTitle = "Add group by";
+         public static readonly string MetaDataTitle = "Meta data";
+         public static readonly string IgnoredParameterTitle = "Ignored parameter";
+         public static readonly string NotConfiguredField = "Field not configured yet";
+         public static readonly string AddGroupBy = "Add a new grouping by";
+         public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
+         public static readonly string MissingUnit = "Field most contain a valid unit description";
+         public static string MappingHint(string parameter, string target, string unit)
+         {
+            return $"The column {parameter} will be mapped into {target} with units as {unit}";
+         }
+         public static string GroupByHint(string parameter)
+         {
+            return $"The column {parameter} will be used for grouping by";
+         }
+         public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
+         public static string MetaDataHint(string parameter, string target)
+         {
+            return $"The column {parameter} will be used as meta data to extract the following data: {target}";
+         }
+         public static readonly string IgnoredParameterHint = "This parameter will be ignored";
+
+         public static readonly string GroupByDescription = "Group by";
+
+         public static string MetaDataDescription(string metaDataId)
+         {
+            return $"{metaDataId}";
+         }
+
+         public static string MappingDescription(string parameter, string unit)
+         {
+            return $"{parameter}({unit})";
+         }
+
+         public static readonly string UnitInformationCaption = "Unit Information";
+         public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
+         public static readonly string AddInformationDescription = "Add a new grouping by field";
+         public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
+         public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
 
          public class ToolTips
          {
@@ -361,15 +454,6 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
-
-         public static string NamingPatternDescription(string token)
-         {
-            const string sampleMetaDataName = "File";
-            var sb = new StringBuilder();
-            sb.AppendFormat("Automatically generates names replacing words surrounded by <b>{0}</b> with like named meta data values. \n", string.Format(token, string.Empty));
-            sb.AppendFormat("The pattern <b>{0}</b> would be replaced with the meta data value for {1}", string.Format(token, sampleMetaDataName), sampleMetaDataName);
-            return sb.ToString();
-         }
       }
 
       public static class Diff
@@ -1119,6 +1203,13 @@ namespace OSPSuite.Assets
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
       public static readonly string MolWeightNotAvailable = "Molecular Weight not available.";
       public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
+      public static readonly string NamingConventionEmpty = "Column naming conventions cannot be empty.";
+      public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
+      public static readonly string InvalidFileException = "An error occurred while reading the file. Please check the content";
+      public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
+      public static readonly string InavlidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
+      public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
+      public static readonly string UnsupportedFileFormat = "The file format is not supported";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
@@ -1477,6 +1568,11 @@ namespace OSPSuite.Assets
       }
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
+
+      public static string TypeNotSupported(string typeName)
+      {
+         return $"{typeName} is not currently been handled";
+      }
    }
 
    public static class Validation
@@ -2013,6 +2109,7 @@ namespace OSPSuite.Assets
       public static readonly string InteractionContainer = "Interaction Container";
       public static readonly string BuildingBlock = "Building Block";
       public static readonly string ObservedData = "Observed Data";
+      public static readonly string ImporterConfiguration = "Importer Configuration";
       public static readonly string CurveTemplate = "Curve Template";
       public static readonly string DataTable = "DataTable";
       public static readonly string JournalPage = "Page";

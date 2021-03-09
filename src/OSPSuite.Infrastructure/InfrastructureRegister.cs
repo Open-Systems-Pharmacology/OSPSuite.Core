@@ -26,7 +26,7 @@ namespace OSPSuite.Infrastructure
       {
          var loggerCreator = new LoggerCreator();
          container.RegisterImplementationOf((ILoggerCreator)loggerCreator);
-         container.Register<IOSPLogger, OSPLogger>(LifeStyle.Singleton);
+         container.Register<IOSPSuiteLogger, OSPLogger>(LifeStyle.Singleton);
       }
 
       private static void registerThirdPartyComponents(IContainer container)

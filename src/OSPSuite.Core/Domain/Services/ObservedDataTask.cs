@@ -8,6 +8,7 @@ using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using Command = OSPSuite.Assets.Command;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -36,6 +37,8 @@ namespace OSPSuite.Core.Domain.Services
       bool DeleteAll();
 
       void AddObservedDataToProject(DataRepository observedData);
+
+      void AddImporterConfigurationToProject(ImporterConfiguration congfigurations);
    }
 
    public abstract class ObservedDataTask : IObservedDataTask
@@ -142,6 +145,11 @@ namespace OSPSuite.Core.Domain.Services
          return _executionContext.Project.AllObservedData.ExistsById(observedData.Id);
       }
 
+      private bool importerConfigurationAlreadyExistsInProject(ImporterConfiguration configuration)
+      {
+         return _executionContext.Project.AllImporterConfigurations.ExistsById(configuration.Id);
+      }
+
       public void AddObservedDataToProject(DataRepository observedData)
       {
          if (observedDataAlreadyExistsInProject(observedData))
@@ -149,6 +157,14 @@ namespace OSPSuite.Core.Domain.Services
 
          observedData.Name = _containerTask.CreateUniqueName(_executionContext.Project.AllObservedData, observedData.Name, canUseBaseName: true);
          _executionContext.AddToHistory(new AddObservedDataToProjectCommand(observedData).Run(_executionContext));
+      }
+
+      public void AddImporterConfigurationToProject(ImporterConfiguration configuration)
+      {
+         if (importerConfigurationAlreadyExistsInProject(configuration))
+            return;
+
+         _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
       }
 
       private IEnumerable<IUsesObservedData> allUsersOfObservedData(DataRepository observedData)

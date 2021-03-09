@@ -233,5 +233,13 @@ namespace OSPSuite.Core.Domain.Data
       {
          return AllButBaseGrid().Where(column => column.DataInfo.Origin == ColumnOrigins.Observation);
       }
+
+      public string _configurationId;
+
+      public string ConfigurationId
+      {
+         get => _configurationId;
+         set => SetProperty(ref _configurationId, value);
+      }
    }
 }

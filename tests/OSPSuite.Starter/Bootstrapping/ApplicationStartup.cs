@@ -23,10 +23,11 @@ using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Export;
+using OSPSuite.Infrastructure.Import;
 using OSPSuite.Infrastructure.Serialization;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Importer;
+using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Regions;
 using OSPSuite.Starter.Presenters;
 using OSPSuite.Starter.Services;
@@ -95,9 +96,8 @@ namespace OSPSuite.Starter.Bootstrapping
             container.AddRegister(x => x.FromType<TestRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
             container.AddRegister(x => x.FromType<InfrastructureExportRegister>());
-            container.AddRegister(x => x.FromType<UIImporterRegister>());
-            container.AddRegister(x => x.FromType<PresentationImporterRegister>());
             container.AddRegister(x => x.FromType<InfrastructureSerializationRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
             container.AddRegister(x => x.FromInstance(serializerRegister));
 
             container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);

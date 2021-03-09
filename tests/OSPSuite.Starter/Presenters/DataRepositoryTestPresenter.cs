@@ -34,7 +34,6 @@ namespace OSPSuite.Starter.Presenters
          IDataRepositoryDataPresenter dataPresenter,
          IDataRepositoryChartPresenter chartPresenter,
          IDataRepositoryMetaDataPresenter metaDataPresenter,
-         IImportObservedDataTask importObservedDataTask,
          IDataRepositoryExportTask dataRepositoryTask,
          IDialogCreator dialogCreator) : base(view)
       {
@@ -53,7 +52,6 @@ namespace OSPSuite.Starter.Presenters
          _view.AddMetaDataView(_metaDataPresenter.BaseView);
 
          InitializeWith(new OSPSuiteMacroCommand<OSPSuiteExecutionContext>());
-         Edit(importObservedDataTask.ImportObservedData());
       }
 
       public void Edit(DataRepository repository)

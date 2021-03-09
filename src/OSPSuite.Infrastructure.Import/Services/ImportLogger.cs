@@ -8,7 +8,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   public interface IImportLogger : IOSPLogger
+   public interface IImportLogger : IOSPSuiteLogger
    {
       IEnumerable<LogEntry> Entries { get; }
       IEnumerable<string> Log { get; }

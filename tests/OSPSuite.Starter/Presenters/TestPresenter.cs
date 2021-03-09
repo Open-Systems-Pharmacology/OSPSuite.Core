@@ -1,8 +1,12 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Services;
+using System.Linq;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -14,6 +18,8 @@ namespace OSPSuite.Starter.Presenters
       void StartComparisonTest();
       void StartExplorerTest();
       void StartImporterTest();
+      void StartImporterReloadTest();
+      void StartImporterLoadTest();
       void StartShellTest();
       void StartDataRepositoryTest();
       void StartPivotGridTest();
@@ -35,10 +41,13 @@ namespace OSPSuite.Starter.Presenters
       private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
+      private readonly IImporterConfigurationDataGenerator _dataGenerator;
+
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
-         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter) : base(view)
+         ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
+         IDialogCreator dialogCreator) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -46,6 +55,7 @@ namespace OSPSuite.Starter.Presenters
          _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
+         _dataGenerator = dataGenerator;
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
@@ -73,6 +83,17 @@ namespace OSPSuite.Starter.Presenters
       public void StartExplorerTest() => start<IExplorerTestPresenter>();
 
       public void StartImporterTest() => start<IImporterTestPresenter>();
+
+      public void StartImporterReloadTest() {
+         var presenter = IoC.Resolve<IImporterTestPresenter>();
+         presenter.ReloadWithPKSimSettings();
+      }
+
+      public void StartImporterLoadTest()
+      {
+         var presenter = IoC.Resolve<IImporterTestPresenter>();
+         presenter.LoadWithPKSimSettings();
+      }
 
       public void StartShellTest() => _shellPresenter.Start();
 

@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Importer;
+using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
@@ -172,8 +172,10 @@ namespace OSPSuite.Starter.Tasks
          var compCategory = getCompartmentCategory();
          categories.Add(compCategory);
 
-         var concentrationCategory = getConcentrationCategory();
+         var concentrationCategory = getMoleculeCategory();
          categories.Add(concentrationCategory);
+
+         categories.Add(createMetaDataCategory<string>("Molecular Weight"));
 
          categories.Add(createMetaDataCategory<string>("Study Id"));
          categories.Add(createMetaDataCategory<string>("Gender"));
@@ -184,12 +186,14 @@ namespace OSPSuite.Starter.Tasks
          return categories;
       }
 
-      private static MetaDataCategory getConcentrationCategory()
+      private static MetaDataCategory getMoleculeCategory()
       {
          var metaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
          metaDataCategory.ListOfValues.Add("JustOne", "JustOne");
+         metaDataCategory.ShouldListOfValuesBeIncluded = true;
+         metaDataCategory.SelectDefaultValue = true;
          return metaDataCategory;
       }
 
@@ -217,6 +221,7 @@ namespace OSPSuite.Starter.Tasks
          });
 
          organCategory.Description = "Organ";
+         organCategory.ShouldListOfValuesBeIncluded = true;
          return organCategory;
       }
 
@@ -321,18 +326,6 @@ namespace OSPSuite.Starter.Tasks
          var images = new Dictionary<string, string>();
          var path = Path.GetDirectoryName(
             Assembly.GetExecutingAssembly().Location);
-
-         if (path != null)
-         {
-            var resourcePath = Path.GetFullPath(Path.Combine(path, @"..\..\..\..\Dev\OSPSuite.Resources\Icons\"));
-
-            var maleIcon =
-               new Icon(Path.Combine(resourcePath, "MetaData.ico"));
-            images.Add("Male", new ApplicationIcon(maleIcon).IconName);
-            var femaleIcon =
-               new Icon(Path.Combine(resourcePath, "UnitInformation.ico"));
-            images.Add("Female", new ApplicationIcon(femaleIcon).IconName);
-         }
 
          var genderCategory = createMetaDataCategory<string>(descriptiveName: "Gender", isMandatory: false, isListOfValuesFixed: true, fixedValuesRetriever: category =>
          {

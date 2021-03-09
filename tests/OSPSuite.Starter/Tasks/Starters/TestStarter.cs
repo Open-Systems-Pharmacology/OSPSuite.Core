@@ -12,11 +12,11 @@ namespace OSPSuite.Starter.Tasks.Starters
 
    public class TestStarter<TPresenter> : ITestStarter where TPresenter : IPresenter
    {
-      protected TPresenter _presenter;
+      public TPresenter Presenter { get; protected set; }
 
       public void Start(int width=0, int height=0)
       {
-         _presenter = IoC.Resolve<TPresenter>();
+         Presenter = IoC.Resolve<TPresenter>();
          XtraForm form;
          if (height == 0 || width == 0)
             form = new XtraForm();
@@ -28,7 +28,7 @@ namespace OSPSuite.Starter.Tasks.Starters
                Width = width
             };
          }
-         form.FillWith(_presenter.BaseView);
+         form.FillWith(Presenter.BaseView);
          form.Show();
       }
    }

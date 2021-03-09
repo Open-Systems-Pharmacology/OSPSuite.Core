@@ -52,7 +52,7 @@ namespace OSPSuite.R
 
       public static IFullPathDisplayResolver GetFullPathDisplayResolver() => resolveTask<IFullPathDisplayResolver>();
 
-      public static IOSPLogger GetLogger() => resolveTask<IOSPLogger>();
+      public static IOSPSuiteLogger GetLogger() => resolveTask<IOSPSuiteLogger>();
 
       private static T resolveTask<T>()
       {

@@ -25,9 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
-    <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>

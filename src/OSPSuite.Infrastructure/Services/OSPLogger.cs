@@ -3,7 +3,7 @@ using OSPSuite.Core.Services;
 
 namespace OSPSuite.Infrastructure.Services
 {
-   public class OSPLogger : IOSPLogger
+   public class OSPLogger : IOSPSuiteLogger
    {
       protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
       private readonly ILoggerCreator _loggerCreator;

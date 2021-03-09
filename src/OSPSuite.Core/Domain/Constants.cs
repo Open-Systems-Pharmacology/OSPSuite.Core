@@ -597,5 +597,10 @@ namespace OSPSuite.Core.Domain
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
+
+      public static class ImporterConstants
+      {
+         public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+      }
    }
 }
