@@ -103,7 +103,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             if (header.Level != ColumnDescription.MeasurementLevel.Discrete) continue;
             if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
-               header.ExistingValues.Add(rowList.ElementAt(header.Index));
+               header.AddExistingValues(rowList.ElementAt(header.Index));
          }
       }
 

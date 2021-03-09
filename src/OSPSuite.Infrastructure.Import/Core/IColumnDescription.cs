@@ -15,19 +15,28 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          Index = index;
          Level = MeasurementLevel.NotSet;
-         ExistingValues = new List<string>();
+         _existingValues = new List<string>();
       }
 
       //not sure we are going to be needing this kind of constructor
       public ColumnDescription(int index, List<string> existingValues, MeasurementLevel columnDataType)
       {
          Index = index;
-         ExistingValues = existingValues;
+         _existingValues = existingValues;
          Level = columnDataType;
       }
 
       public int Index { get; private set; }
-      public IList<string> ExistingValues { get; set; }
+
+      public IReadOnlyList<string> ExistingValues => (IReadOnlyList<string>)_existingValues;
+
       public MeasurementLevel Level { get; set; }
+
+      private readonly IList<string> _existingValues;
+
+      public void AddExistingValues(string elementAt)
+      {
+         _existingValues.Add(elementAt);
+      }
    }
 }
