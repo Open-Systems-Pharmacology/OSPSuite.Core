@@ -55,7 +55,9 @@ namespace OSPSuite.Starter.Presenters
          (
             categories,
             columns,
-            settings
+            settings,
+            "Molecule",
+            "Molecular Weight"
          ).DataRepositories.Count() + " data sets successfully imported");
       }
 
@@ -115,7 +117,9 @@ namespace OSPSuite.Starter.Presenters
                false,
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings
+               dataImporterSettings,
+               "Molecule",
+               "Molecular Weight"
             ).Count() + " data sets successfully imported");
          }
       }
@@ -145,7 +149,9 @@ namespace OSPSuite.Starter.Presenters
                true,
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings
+               dataImporterSettings,
+               "Molecule",
+               "Molecular Weight"
             ).Count() + " data sets successfully imported");
          }
       }

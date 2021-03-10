@@ -12,7 +12,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IModalImporterPresenter : IDisposablePresenter
    {
-      (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings);
+      (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IImporterPresenter presenter, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings,
+         string moleculeName,
+         string molWeightName
+      );
    }
 
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
@@ -24,7 +31,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IImporterPresenter presenter, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IImporterPresenter presenter, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings,
+         string moleculeName,
+         string molWeightName
+      )
       {
          List<DataRepository> result = new List<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
@@ -38,8 +52,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource, i++, pair.Key);
                   dataRepo.ConfigurationId = id;
-                  var moleculeName = "Molecule";
-                  var molWeightName = "Molecular Weight";
                   var molecule = dataRepo.ExtendedPropertyValueFor(moleculeName);
                   var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == moleculeName)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(moleculeName)))?.Value;
                   var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(molWeightName);

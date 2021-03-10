@@ -41,7 +41,13 @@ namespace OSPSuite.UI.Services
          _dataRepositoryMapper = dataRepositoryMapper;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings,
+         string moleculeName,
+         string molWeightName
+      )
       {
 
          var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
@@ -55,7 +61,7 @@ namespace OSPSuite.UI.Services
             importerPresenter.SetSourceFile(path);
             using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
             {
-               return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
+               return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings, moleculeName, molWeightName);
             }
          }
       }
@@ -65,7 +71,9 @@ namespace OSPSuite.UI.Services
          bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string moleculeName,
+         string molWeightName
       )
       {
          if (promptForConfirmation)
@@ -76,7 +84,7 @@ namespace OSPSuite.UI.Services
                importerPresenter.LoadConfiguration(configuration);
                using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings).DataRepositories;
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings, moleculeName, molWeightName).DataRepositories;
                }
             }
          }
