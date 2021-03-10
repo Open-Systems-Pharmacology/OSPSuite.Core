@@ -24,6 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
+      IReadOnlyList<IReadOnlyDictionary<string, string>> EnumerateMetaData(Cache<string, IDataSet> dataSets, IEnumerable<MetaDataMappingConverter> mappings);
       int GetImageIndex(DataFormatParameter parameter);
       MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
 
@@ -116,6 +117,14 @@ namespace OSPSuite.Infrastructure.Import.Services
             counters[key]++;
             // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
+         })).ToList();
+      }
+
+      public IReadOnlyList<IReadOnlyDictionary<string, string>> EnumerateMetaData(Cache<string, IDataSet> dataSets, IEnumerable<MetaDataMappingConverter> mappings)
+      {
+         return dataSets.KeyValues.SelectMany(ds => ds.Value.Data.Select(s =>
+         {
+            return s.EnumerateMetaData(mappings, ds.Key);
          })).ToList();
       }
 

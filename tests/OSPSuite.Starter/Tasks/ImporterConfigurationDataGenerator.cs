@@ -191,7 +191,7 @@ namespace OSPSuite.Starter.Tasks
          var metaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
-         metaDataCategory.ListOfValues.Add("JustOne", "JustOne");
+         metaDataCategory.ListOfValues.Add("JustOne", "22");
          metaDataCategory.ShouldListOfValuesBeIncluded = true;
          metaDataCategory.SelectDefaultValue = true;
          return metaDataCategory;

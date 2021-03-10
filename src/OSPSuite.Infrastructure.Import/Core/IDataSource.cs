@@ -24,6 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
+      IEnumerable<IReadOnlyDictionary<string, string>> EnumerateMetaData();
    }
 
    public class DataSource : IDataSource
@@ -104,6 +105,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IEnumerable<string> NamesFromConvention()
       {
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
+      }
+
+      public IEnumerable<IReadOnlyDictionary<string, string>> EnumerateMetaData()
+      {
+         return _importer.EnumerateMetaData(DataSets, _mappings);
       }
    }
 }

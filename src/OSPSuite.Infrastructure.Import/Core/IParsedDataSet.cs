@@ -41,6 +41,16 @@ namespace OSPSuite.Infrastructure.Import.Core
          return result;
       }
 
+      public IReadOnlyDictionary<string, string> EnumerateMetaData(IEnumerable<MetaDataMappingConverter> mappings, string sheetName)
+      {
+         var result = new Dictionary<string, string>();
+         for (var i = 0; i < mappings.Count(); i++)
+         {
+            result.Add(mappings.ElementAt(i).Id, Description.ElementAt(i).Value);
+         }
+         return result;
+      }
+
       public string ValueForColumn(int columnId)
       {
          return Description.FirstOrDefault(md => md.Id == columnId)?.Value;

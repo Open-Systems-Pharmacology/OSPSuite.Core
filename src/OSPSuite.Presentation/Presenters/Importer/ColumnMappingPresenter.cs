@@ -139,7 +139,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
-         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Select(v => v.ToString());
+         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys.Select(v => v);
          _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 

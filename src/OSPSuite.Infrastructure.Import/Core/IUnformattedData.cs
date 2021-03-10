@@ -101,7 +101,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          foreach (var header in _headers)
          {
-            if (header.Level != ColumnDescription.MeasurementLevel.Discrete) continue;
+            //if (header.Level != ColumnDescription.MeasurementLevel.Discrete) continue;
             if (!header.ExistingValues.Contains(rowList.ElementAt(header.Index)))
                header.AddExistingValues(rowList.ElementAt(header.Index));
          }

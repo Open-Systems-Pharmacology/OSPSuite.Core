@@ -29,6 +29,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var configuration = dataSource.GetImporterConfiguration();
          var dataRepository = new DataRepository { Name = dataSource.NamesFromConvention().ElementAt(dataSetIndex) };
 
+         foreach (var metaDataDescription in dataSource.EnumerateMetaData().ElementAt(dataSetIndex))
+         {
+            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Key, Value = metaDataDescription.Value });
+         }
+
          addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
 
          foreach (var column in parsedDataSet.Data)
