@@ -156,19 +156,6 @@ namespace OSPSuite.Starter.Presenters
          }
       }
 
-      public void LoadWithPKSimSettings()
-      {
-         var dataImporterSettings = new DataImporterSettings();
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
-         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         StartImporterExcelView
-         (
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings
-         );
-      }
-
       public void StartWithPKSimSettings()
       {
          var dataImporterSettings = new DataImporterSettings();
