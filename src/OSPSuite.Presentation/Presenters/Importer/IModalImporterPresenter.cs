@@ -3,6 +3,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   {
                      if (string.IsNullOrEmpty(molecularWeightDescription))
                      {
+                        molecularWeightDescription = moleculeDescription;
                         dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = molWeightName, Value = moleculeDescription });
                      }
                      else
@@ -68,7 +70,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
                            throw new InconsistenMoleculeAndMoleWeightException();
                      }
                   }
-
+                  if (!string.IsNullOrEmpty(molecularWeightDescription))
+                  {
+                     double molWeight;
+                     if (Double.TryParse(molecularWeightDescription, out molWeight))
+                     {
+                        dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+                     }
+                  }
                   result.Add(dataRepo);
                }
                   
