@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
                IsMandatory = false
             }
          };
-         sut = new ColumnMappingPresenter(_view, _importer, A.Fake<IMappingParameterEditorPresenter>());
+         sut = new ColumnMappingPresenter(_view, _importer, A.Fake<IMappingParameterEditorPresenter>(), A.Fake<IMetaDataParameterEditorPresenter>());
       }
    }
 
