@@ -44,7 +44,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly PopupContainerControl _metaDataPopupControl = new PopupContainerControl();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
-
+      
       public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
          _imageListRetriever = imageListRetriever;

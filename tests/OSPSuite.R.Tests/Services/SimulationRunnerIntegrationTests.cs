@@ -28,11 +28,11 @@ namespace OSPSuite.R.Services
          sut = Api.GetSimulationRunner();
 
          _simulation = _simulationPersister.LoadSimulation(_simulationFile);
-
       }
    }
 
-   public class When_performing_a_population_simulation_run_with_a_file_containing_only_a_subset_of_the_individual : concern_for_SimulationRunnerIntegration
+   public class
+      When_performing_a_population_simulation_run_with_a_file_containing_only_a_subset_of_the_individual : concern_for_SimulationRunnerIntegration
    {
       private string _outputFolder;
       private string _subPopulationFile;
@@ -49,10 +49,9 @@ namespace OSPSuite.R.Services
          _subPopulation = _populationTask.ImportPopulation(_subPopulationFile);
       }
 
-
       protected override void Because()
       {
-         _results = sut.Run(_simulation, _subPopulation);
+         _results = sut.Run(new SimulationRunArgs {Simulation = _simulation, Population = _subPopulation });
       }
 
       [Observation]
@@ -75,7 +74,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.Run(_simulation, _population);
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population });
       }
 
       [Observation]
