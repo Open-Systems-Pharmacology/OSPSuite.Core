@@ -25,6 +25,8 @@ namespace OSPSuite.Core.Services
       protected string _molecule2 = "molecule2";
       protected IKeywordReplacerTask _keywordReplacerTask;
       protected IContainerTask _containerTask;
+      private IMoleculeBuilder _moleculeBuilder1;
+      private IMoleculeBuilder _moleculeBuilder2;
 
       protected override void Context()
       {
@@ -33,7 +35,13 @@ namespace OSPSuite.Core.Services
          _observerBuildingBlock = new ObserverBuildingBlock();
          _model = A.Fake<IModel>();
          _buildConfiguration.Observers = _observerBuildingBlock;
-         A.CallTo(() => _buildConfiguration.AllPresentMolecules()).Returns(new[] {A.Fake<IMoleculeBuilder>().WithName(_molecule1), A.Fake<IMoleculeBuilder>().WithName(_molecule2)});
+         _moleculeBuilder1 = A.Fake<IMoleculeBuilder>().WithName(_molecule1);
+         _moleculeBuilder1.IsFloating = true;
+
+         _moleculeBuilder2 = A.Fake<IMoleculeBuilder>().WithName(_molecule2);
+         _moleculeBuilder2.IsFloating = true;
+         
+         A.CallTo(() => _buildConfiguration.AllPresentMolecules()).Returns(new[] { _moleculeBuilder1, _moleculeBuilder2 });
          _rootContainer = new Container();
 
          _organism = new Container().WithName("Organism");

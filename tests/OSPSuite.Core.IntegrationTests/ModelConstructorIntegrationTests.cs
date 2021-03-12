@@ -3,13 +3,13 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Core
@@ -21,6 +21,7 @@ namespace OSPSuite.Core
       protected IModel _model;
 
       protected string _modelName = "MyModel";
+
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -40,7 +41,8 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_successful_validation()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid,
+            _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
       }
 
       [Observation]
@@ -137,7 +139,8 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Influx_transport_from_transporter_D_should_only_take_place_between_lung_plasma_and_lung_cell_and_should_only_transport_molecule_A_and_B()
+      public void
+         Influx_transport_from_transporter_D_should_only_take_place_between_lung_plasma_and_lung_cell_and_should_only_transport_molecule_A_and_B()
       {
          var A = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A");
          var B = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B");
@@ -160,7 +163,8 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_AmoutObs_1_should_have_only_been_created_for_molecules_A_and_B_in_art_plasma_and_lung_plasma_and_ven_plasma_and_bone_plasma_und_molecule_D_in_lung_plasma_and_ven_plasma_and_molecule_E_in_ven_plasma()
+      public void
+         Observer_AmountObs_1_should_have_only_been_created_for_molecules_A_and_B_in_art_plasma_and_lung_plasma_and_ven_plasma_and_bone_plasma_und_molecule_D_in_lung_plasma_and_ven_plasma_and_molecule_E_in_ven_plasma()
       {
          string observerName = "AmountObs_1";
          var allContainingObserver = _model.Root.GetAllChildren<IContainer>().Where(c => c.ContainsName(observerName));
@@ -168,22 +172,26 @@ namespace OSPSuite.Core
          var art_pls_B = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "B");
 
          var lng_pls_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "A");
-         var lng_pls_D = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D");
          var lng_pls_B = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "B");
+
+         var lng_pls_D = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D");
 
          var ven_pls_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "A");
          var ven_pls_B = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B");
+
          var ven_pls_D = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "D");
          var ven_pls_E = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "E");
 
          var bon_pls_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "A");
          var bon_pls_B = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "B");
 
-         allContainingObserver.ShouldOnlyContain(art_pls_A, art_pls_B, lng_pls_A, lng_pls_B, lng_pls_D, ven_pls_A, ven_pls_B, ven_pls_D, ven_pls_E, bon_pls_A, bon_pls_B);
+         allContainingObserver.ShouldContain(art_pls_A, art_pls_B, lng_pls_A, lng_pls_B, ven_pls_A, ven_pls_B, bon_pls_A, bon_pls_B);
+
+         allContainingObserver.ShouldNotContain(lng_pls_D, ven_pls_D, ven_pls_E);
       }
 
       [Observation]
-      public void Observer_AmoutObs_2_should_have_only_been_created_for_molecules_C_in_lung_cell_and_bone_cell_and_molecule_E_in_bone_cell()
+      public void Observer_AmountObs_2_should_have_only_been_created_for_molecules_C_in_lung_cell_and_bone_cell_and_molecule_E_in_bone_cell()
       {
          string observerName = "AmountObs_2";
          var lung_cell_C = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "C");
@@ -194,7 +202,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_AmoutObs_3_should_have_only_been_created_for_molecules_A_B_D_in_lung_cell_and_bone_cell()
+      public void Observer_AmountObs_3_should_have_only_been_created_for_molecules_A_B_D_in_lung_cell_and_bone_cell()
       {
          string observerName = "AmountObs_3";
          var lung_cell_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "A");
@@ -205,7 +213,8 @@ namespace OSPSuite.Core
 
          var bon_cell_F = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "F");
          var allContainingObserver = _model.Root.GetAllChildren<IContainer>().Where(c => c.ContainsName(observerName));
-         allContainingObserver.ShouldOnlyContain(lung_cell_A, lung_cell_B, bon_cell_A, bon_cell_B, bon_cell_F);
+         allContainingObserver.ShouldContain(lung_cell_A, lung_cell_B, bon_cell_A, bon_cell_B);
+         allContainingObserver.ShouldNotContain(bon_cell_F);
       }
 
       [Observation]
@@ -218,7 +227,6 @@ namespace OSPSuite.Core
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
       }
 
-
       [Observation]
       public void Observer_InContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_lung_plasma()
       {
@@ -230,7 +238,8 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_NotInContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_all_plasma_except_lung()
+      public void
+         Observer_NotInContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_all_plasma_except_lung()
       {
          string observerName = "NotInContainerObserver";
 
@@ -242,9 +251,7 @@ namespace OSPSuite.Core
          var bone_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma);
          moleculeContainer = bone_plasma.GetSingleChildByName<IContainer>("C");
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
-
       }
-
 
       [Observation]
       public void bolus_application_should_only_take_place_in_arterial_blood_plasma()
@@ -265,15 +272,19 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_used_the_calculation_method_CM1_for_the_molecule_A()
       {
-         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_1");
-         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_1");
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name
+            .ShouldBeEqualTo("PartitionCoeff_1");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name
+            .ShouldBeEqualTo("PartitionCoeff_1");
       }
 
       [Observation]
       public void should_have_used_the_calculation_method_CM2_for_the_molecule_B()
       {
-         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
-         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name
+            .ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name
+            .ShouldBeEqualTo("PartitionCoeff_2");
       }
 
       [Observation]
@@ -353,19 +364,23 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_expended_the_dynamic_formula_to_use_only_valid_parameters_in_lung_pls_to_cell_neighborhood()
       {
-         var formula = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
+         var formula = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A")
+            .GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
             .Formula.DowncastTo<ExplicitFormula>();
          formula.ObjectPaths.Count().ShouldBeEqualTo(1);
-         formula.ObjectPaths.ElementAt(0).ShouldContain("lng_pls_to_lng_cell", "A", "My Transport1", "Transporter #1", Constants.Parameters.PROCESS_RATE);
+         formula.ObjectPaths.ElementAt(0)
+            .ShouldContain("lng_pls_to_lng_cell", "A", "My Transport1", "Transporter #1", Constants.Parameters.PROCESS_RATE);
       }
 
       [Observation]
       public void should_have_expended_the_dynamic_formula_to_use_only_valid_parameters_in_bon_pls_to_cell_neighborhood()
       {
-         var formula = _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
+         var formula = _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A")
+            .GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
             .Formula.DowncastTo<ExplicitFormula>();
          formula.ObjectPaths.Count().ShouldBeEqualTo(1);
-         formula.ObjectPaths.ElementAt(0).ShouldContain("bon_pls_to_bon_cell", "A", "My Transport2", "Transporter #2", Constants.Parameters.PROCESS_RATE);
+         formula.ObjectPaths.ElementAt(0)
+            .ShouldContain("bon_pls_to_bon_cell", "A", "My Transport2", "Transporter #2", Constants.Parameters.PROCESS_RATE);
       }
 
       [Observation]
@@ -406,8 +421,7 @@ namespace OSPSuite.Core
          bone_cell_E.ScaleDivisor.ShouldBeEqualTo(2.5);
       }
 
-
-      [Observation] 
+      [Observation]
       public void should_have_removed_local_molecule_parameters_with_a_NAN_value()
       {
          var bone_cell_E = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E");
@@ -422,7 +436,6 @@ namespace OSPSuite.Core
          global_container.Parameter("GlobalNaNParam").ShouldNotBeNull();
       }
 
-
       [Observation]
       public void should_have_added_the_local_transporter_process_parameters_in_the_local_transporter_process_container()
       {
@@ -433,7 +446,8 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_start_value_with_a_constant_formula()
+      public void
+         should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_start_value_with_a_constant_formula()
       {
          var bone_cell = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell);
          var parameter = bone_cell.Parameter("FormulaParameterOverwritten");
@@ -460,7 +474,8 @@ namespace OSPSuite.Core
 
       internal static IContainer ModelOrganCompartment(this IModel model, string organName, string compartmentName)
       {
-         return model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism).GetSingleChildByName<IContainer>(organName).GetSingleChildByName<IContainer>(compartmentName);
+         return model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism).GetSingleChildByName<IContainer>(organName)
+            .GetSingleChildByName<IContainer>(compartmentName);
       }
 
       internal static IMoleculeAmount ModelOrganCompartmentMolecule(this IModel model, string organName, string compartmentName, string moleculeName)
@@ -475,7 +490,8 @@ namespace OSPSuite.Core
       {
          base.Context();
          var moleculeStartValue = _buildConfiguration.MoleculeStartValues.First();
-         var physicalContainer = _buildConfiguration.SpatialStructure.TopContainers.Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
+         var physicalContainer = _buildConfiguration.SpatialStructure.TopContainers
+            .Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
       }
@@ -547,8 +563,8 @@ namespace OSPSuite.Core
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
          _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
-         _result.ValidationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
+         _result.ValidationResult.Messages.ElementAt(0).Text
+            .ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
       }
    }
-
 }

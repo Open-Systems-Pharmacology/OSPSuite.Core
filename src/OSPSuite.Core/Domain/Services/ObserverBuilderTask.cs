@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain.Services
       private IEnumerable<IMoleculeBuilder> moleculeBuildersValidFor(MoleculeList moleculeList, IEnumerable<IMoleculeBuilder> allMolecules)
       {
          if (moleculeList.ForAll)
-            return allMolecules.Where(molecule => !moleculeList.MoleculeNamesToExclude.Contains(molecule.Name));
+            return allMolecules.Where(molecule => molecule.IsFloating && !moleculeList.MoleculeNamesToExclude.Contains(molecule.Name));
 
          return allMolecules.Where(molecule => moleculeList.MoleculeNames.Contains(molecule.Name));
       }
