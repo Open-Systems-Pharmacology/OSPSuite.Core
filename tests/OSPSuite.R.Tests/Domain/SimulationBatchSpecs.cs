@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Services;
@@ -123,6 +124,50 @@ namespace OSPSuite.R.Domain
             result.Time.Values.ShouldBeEqualTo(_results[i].Time.Values);
             result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(_results[i].ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
          }
+      }
+
+      [Observation]
+      public void should_throw_on_wrong_parameters()
+      {
+         var collection = new object[] { 22, 34 };
+         The.Action(() => sut.RunConcurrently(collection.ToArray())).ShouldThrowAn<InvalidArgumentException>();
+      }
+   }
+
+   public class When_running_a_batch_simulation_run_concurrently_with_wrong_params : concern_for_SimulationBatch
+   {
+      private SimulationBatchOptions _simulationBatchOptions;
+      private SimulationResults[] _results;
+      private List<object> _simulationBatchRunValuesCollection;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulationBatchOptions = new SimulationBatchOptions
+         {
+            VariableMolecules = new[]
+            {
+               new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+            },
+
+            VariableParameters = new[]
+            {
+               new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+               new[] {"Organism", "Hematocrit"}.ToPathString(),
+            }
+         };
+         sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
+      }
+
+      protected override void Because()
+      {
+         
+      }
+
+      [Observation]
+      public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
+      {
+         
       }
    }
 
