@@ -82,8 +82,10 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, SimulationRunOptions simulationRunOptions = null)
+      public SimulationResults[] RunConcurrently(object[] simulationsArray, SimulationRunOptions simulationRunOptions = null)
       {
+         var simulations = simulationsArray.OfType<IModelCoreSimulation>().ToArray();
+         if (simulations.Length != simulationsArray.Length) throw new InvalidArgumentException("simulationsArray parameter should be a list of IModelCoreSimulation");
          var tasks = new List<Task<SimulationResults>>();
          for (var i = 0; i < simulations.Length; i++)
          {
@@ -93,10 +95,12 @@ namespace OSPSuite.R.Services
          return tasks.Select(t => t.Result).ToArray();
       }
 
-      public SimulationResults[] RunConcurrently(object[] simulationsArray, IndividualValuesCache[] populations, SimulationRunOptions simulationRunOptions = null)
+      public SimulationResults[] RunConcurrently(object[] simulationsArray, IndividualValuesCache[] populationsArray, SimulationRunOptions simulationRunOptions = null)
       {
          var simulations = simulationsArray.OfType<IModelCoreSimulation>().ToArray();
          if (simulations.Length != simulationsArray.Length) throw new InvalidArgumentException("simulationsArray parameter should be a list of IModelCoreSimulation");
+         var populations = populationsArray.OfType<IndividualValuesCache>().ToArray();
+         if (simulations.Length != populationsArray.Length) throw new InvalidArgumentException("populationsArray parameter should be a list of IndividualValuesCache");
          if (simulations.Length != populations.Length) throw new InvalidArgumentException("simulations and populations should have the same length");
 
          var tasks = new List<Task<SimulationResults>>();
