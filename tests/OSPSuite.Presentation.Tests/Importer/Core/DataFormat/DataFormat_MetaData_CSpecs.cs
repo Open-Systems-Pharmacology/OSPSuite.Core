@@ -269,7 +269,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Data.ElementAt(1).Value.First().Value.ShouldBeEqualTo(0);
             dataset.Data.ElementAt(1).Value.ElementAt(1).Lloq.ShouldBeEqualTo(0.01);
             dataset.Data.ElementAt(1).Value.ElementAt(1).Value.ShouldBeEqualTo(0);
-            dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeNull();
+            dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeEqualTo(double.NaN);
             dataset.Data.ElementAt(1).Value.ElementAt(2).Value.ShouldBeEqualTo(10);
          }
       }

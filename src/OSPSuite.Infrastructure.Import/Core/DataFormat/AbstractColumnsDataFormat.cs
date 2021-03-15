@@ -263,7 +263,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             return new SimulationPoint()
             {
                Value = result,
-               Unit = unit
+               Unit = unit,
+               Lloq = double.NaN
             };
          if (element.StartsWith("<"))
          {
