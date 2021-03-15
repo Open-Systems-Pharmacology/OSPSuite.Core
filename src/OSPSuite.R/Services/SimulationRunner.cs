@@ -93,8 +93,10 @@ namespace OSPSuite.R.Services
          return tasks.Select(t => t.Result).ToArray();
       }
 
-      public SimulationResults[] RunConcurrently(IModelCoreSimulation[] simulations, IndividualValuesCache[] populations, SimulationRunOptions simulationRunOptions = null)
+      public SimulationResults[] RunConcurrently(object[] simulationsArray, IndividualValuesCache[] populations, SimulationRunOptions simulationRunOptions = null)
       {
+         var simulations = simulationsArray.OfType<IModelCoreSimulation>().ToArray();
+         if (simulations.Length != simulationsArray.Length) throw new InvalidArgumentException("simulationsArray parameter should be a list of IModelCoreSimulation");
          if (simulations.Length != populations.Length) throw new InvalidArgumentException("simulations and populations should have the same length");
 
          var tasks = new List<Task<SimulationResults>>();

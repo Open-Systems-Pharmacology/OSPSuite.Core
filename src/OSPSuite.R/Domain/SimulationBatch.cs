@@ -130,8 +130,12 @@ namespace OSPSuite.R.Domain
       ///    This is really the only method that will be called from R
       /// </summary>
       /// <returns>Results of the simulation runs</returns>
-      public SimulationResults[] RunConcurrently(SimulationBatchRunValues[] simulationBatchRunValuesCollection) =>
-         RunAsync(simulationBatchRunValuesCollection).Select(s => s.Result).ToArray();
+      public SimulationResults[] RunConcurrently(object[] simulationBatchRunValuesCollection)
+      {
+         var simulationBatches = simulationBatchRunValuesCollection.OfType<SimulationBatchRunValues>().ToList();
+         if (simulationBatches.Count != simulationBatchRunValuesCollection.Length) throw new InvalidArgumentException("simulationBatchRunValuesCollection parameter should be a list of SimulationBatchRunValues");
+         return RunAsync(simulationBatches).Select(s => s.Result).ToArray();
+      }
 
       protected virtual void Cleanup()
       {
