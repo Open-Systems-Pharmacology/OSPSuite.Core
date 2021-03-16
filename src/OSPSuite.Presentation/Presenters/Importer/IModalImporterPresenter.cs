@@ -59,6 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      if (string.IsNullOrEmpty(molecularWeightDescription))
                      {
                         molecularWeightDescription = moleculeDescription;
+                        if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
                         dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
                      }
                      else

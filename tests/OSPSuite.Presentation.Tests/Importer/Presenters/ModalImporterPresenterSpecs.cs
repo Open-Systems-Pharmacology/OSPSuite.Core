@@ -8,10 +8,8 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +24,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Context()
       {
-         dataImporterSettings = A.Fake<DataImporterSettings>();
+         dataImporterSettings = new DataImporterSettings();
          base.Context();
          var mapper = A.Fake<IDataSetToDataRepositoryMapper>();
          sut = new ModalImporterPresenter(A.Fake<IModalImporterView>(), mapper);
@@ -92,7 +90,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void sets_molWeight_from_molecule()
       {
-         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).Returns("Molecule");
+         dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
@@ -108,8 +106,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void should_throw_when_inconsistent_mol_weight()
       {
-         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).Returns("Molecule");
-         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation).Returns("Mol weight");
+         dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
@@ -123,7 +121,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void sets_molWeight_from_molWeight()
       {
-         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation).Returns("Mol weight");
+         dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
