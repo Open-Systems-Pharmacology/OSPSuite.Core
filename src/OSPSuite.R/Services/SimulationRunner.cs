@@ -87,7 +87,10 @@ namespace OSPSuite.R.Services
          var tasks = new List<Task<SimulationResults>>();
          foreach (var setting in settings.SimulationWithPopulation)
          {
-            tasks.Add(RunAsync(setting.Simulation, setting.Population, settings.simulationRunOptions));
+            if (setting.Population != null)
+               tasks.Add(RunAsync(setting.Simulation, setting.Population, settings.simulationRunOptions));
+            else
+               tasks.Add(RunAsync(setting.Simulation, settings.simulationRunOptions));
          }
          Task.WaitAll(tasks.ToArray());
          return tasks.Select(t => t.Result).ToArray();
