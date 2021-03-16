@@ -26,7 +26,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
    {
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
-      private readonly double _double_tolerance = 0.0001;
 
       public ModalImporterPresenter(IModalImporterView view, IDataSetToDataRepositoryMapper dataRepositoryMapper) : base(view)
       {
@@ -72,7 +71,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                         double moleculeMolWeight;
                         double.TryParse(moleculeDescription, out moleculeMolWeight);
                         double.TryParse(molecularWeightDescription, out molWeight);
-                        if (Math.Abs(moleculeMolWeight - molWeight) > _double_tolerance)
+                        if (Math.Abs(moleculeMolWeight - molWeight) > Constants.DOUBLE_RELATIVE_EPSILON)
                            throw new InconsistenMoleculeAndMoleWeightException();
                      }
                   }
