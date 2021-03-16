@@ -17,19 +17,14 @@ namespace OSPSuite.Infrastructure.Import.Services
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings,
-         string moleculeName,
-         string molWeightName
+         DataImporterSettings dataImporterSettings
       );
 
       IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
-         bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings,
-         string moleculeName,
-         string molWeightName
+         DataImporterSettings dataImporterSettings
       );
    }
 }

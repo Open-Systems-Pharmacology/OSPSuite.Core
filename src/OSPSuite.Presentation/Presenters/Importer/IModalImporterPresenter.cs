@@ -17,9 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporterPresenter presenter, 
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings,
-         string moleculeName,
-         string molWeightName
+         DataImporterSettings dataImporterSettings
       );
    }
 
@@ -36,9 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporterPresenter presenter, 
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings,
-         string moleculeName,
-         string molWeightName
+         DataImporterSettings dataImporterSettings
       )
       {
          List<DataRepository> result = new List<DataRepository>();
@@ -53,9 +49,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
                {
                   var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource, i++, pair.Key);
                   dataRepo.ConfigurationId = id;
-                  var molecule = dataRepo.ExtendedPropertyValueFor(moleculeName);
-                  var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == moleculeName)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(moleculeName)))?.Value;
-                  var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(molWeightName);
+                  var molecule = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+                  var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
+                  var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
 
                   if (moleculeDescription != null)
@@ -63,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      if (string.IsNullOrEmpty(molecularWeightDescription))
                      {
                         molecularWeightDescription = moleculeDescription;
-                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = molWeightName, Value = moleculeDescription });
+                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
                      }
                      else
                      {

@@ -51,13 +51,13 @@ namespace OSPSuite.Starter.Presenters
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
       {
+         settings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         settings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
          _dialogCreator.MessageBoxInfo(_dataImporter.ImportDataSets
          (
             categories,
             columns,
-            settings,
-            "Molecule",
-            "Molecular Weight"
+            settings
          ).DataRepositories.Count() + " data sets successfully imported");
       }
 
@@ -111,15 +111,16 @@ namespace OSPSuite.Starter.Presenters
             var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = false;
+
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               false,
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings,
-               "Molecule",
-               "Molecular Weight"
+               dataImporterSettings
             ).Count() + " data sets successfully imported");
          }
       }
@@ -142,16 +143,16 @@ namespace OSPSuite.Starter.Presenters
             var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = true;
 
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               true,
                _dataGenerator.DefaultPKSimMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings,
-               "Molecule",
-               "Molecular Weight"
+               dataImporterSettings
             ).Count() + " data sets successfully imported");
          }
       }
