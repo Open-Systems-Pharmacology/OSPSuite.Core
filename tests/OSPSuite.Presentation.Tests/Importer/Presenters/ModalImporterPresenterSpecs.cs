@@ -22,9 +22,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected ImportTriggeredEventArgs eventArgs;
       protected List<MetaDataCategory> metaDataCategories;
+      protected DataImporterSettings dataImporterSettings;
 
       protected override void Context()
       {
+         dataImporterSettings = A.Fake<DataImporterSettings>();
          base.Context();
          var mapper = A.Fake<IDataSetToDataRepositoryMapper>();
          sut = new ModalImporterPresenter(A.Fake<IModalImporterView>(), mapper);
@@ -90,14 +92,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void sets_molWeight_from_molecule()
       {
+         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).Returns("Molecule");
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
             metaDataCategories,
             new List<ColumnInfo>(),
-            A.Fake<DataImporterSettings>(),
-            "Molecule",
-            "");
+            dataImporterSettings
+         );
          importerPresenter.OnTriggerImport += Raise.With(eventArgs);
          var molWeight = 6.0;
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
@@ -106,28 +108,29 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void should_throw_when_inconsistent_mol_weight()
       {
+         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).Returns("Molecule");
+         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation).Returns("Mol weight");
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
             metaDataCategories,
             new List<ColumnInfo>(),
-            A.Fake<DataImporterSettings>(),
-            "Molecule",
-            "Mol weight");
+            dataImporterSettings
+         );
          The.Action(() => importerPresenter.OnTriggerImport += Raise.With(eventArgs)).ShouldThrowAn<InconsistenMoleculeAndMoleWeightException>();
       }
 
       [TestCase]
       public void sets_molWeight_from_molWeight()
       {
+         A.CallTo(() => dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation).Returns("Mol weight");
          var importerPresenter = A.Fake<IImporterPresenter>();
          var result = sut.ImportDataSets(
             importerPresenter,
             metaDataCategories,
             new List<ColumnInfo>(),
-            A.Fake<DataImporterSettings>(),
-            "",
-            "Mol weight");
+            dataImporterSettings
+         );
          importerPresenter.OnTriggerImport += Raise.With(eventArgs);
          var molWeight = 22.0;
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
