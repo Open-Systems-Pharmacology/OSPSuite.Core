@@ -14,11 +14,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       public string Input => View.Input;
 
-      public void InitView()
-      {
-         
-      }
-
       public MetaDataParameterEditorPresenter(
          IMetaDataParameterEditorView view
       ) : base(view)

@@ -106,13 +106,7 @@ namespace OSPSuite.UI.Views.Importer
                _presenter.SetSubEditorSettingsForMapping(model);
                return _repositoryMappingPopupContainerEdit;
             case MetaDataFormatParameter md:
-               var metaDataCategory = _metaDataCategories.FirstOrDefault(x => x.Name == model.MappingName);
-               if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
-               {
-                  _presenter.SetSubEditorSettingsForMetaData(model);
-                  return _repositoryMetaDataPopupContainerEdit;
-               }
-               return _disabledPopupContainerEdit;
+               return (_presenter.ShouldManualInputOnMetaDataBeEnabled(model)) ? _repositoryMetaDataPopupContainerEdit : _disabledPopupContainerEdit;
          }
          return _disabledPopupContainerEdit;         
       }
@@ -132,12 +126,12 @@ namespace OSPSuite.UI.Views.Importer
         _presenter.UpdateMetaDataForModel();
       }
 
-      public void FillMappingSubView(IView view)
+      public void FillMappingView(IView view)
       {
          _mappingPopupControl.FillWith(view);
       }
 
-      public void FillMetaDataSubView(IView view)
+      public void FillMetaDataView(IView view)
       {
          _metaDataPopupControl.FillWith(view);
       }

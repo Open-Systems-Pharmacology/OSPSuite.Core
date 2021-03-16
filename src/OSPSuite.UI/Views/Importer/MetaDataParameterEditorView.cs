@@ -12,6 +12,11 @@ namespace OSPSuite.UI.Views.Importer
       public MetaDataParameterEditorView()
       {
          InitializeComponent();
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
          this.manualnputLayoutControlItem.Text = Captions.Importer.ManualInput;
       }
 

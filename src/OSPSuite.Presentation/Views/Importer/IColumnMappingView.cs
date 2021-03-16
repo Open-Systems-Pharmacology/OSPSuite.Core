@@ -110,8 +110,8 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
       void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories);
       void RefreshData();
-      void FillMappingSubView(IView view);
-      void FillMetaDataSubView(IView view);
+      void FillMappingView(IView view);
+      void FillMetaDataView(IView view);
       void CloseEditor();
    }
 }

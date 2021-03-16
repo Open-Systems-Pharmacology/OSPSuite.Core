@@ -128,7 +128,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
          }
-         catch (Exception exception)
+         catch (InconsistenMoleculeAndMoleWeightException exception)
          {
             _view.ShowErrorMessage(exception.Message);
          }

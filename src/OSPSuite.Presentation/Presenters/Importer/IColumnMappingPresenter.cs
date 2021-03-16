@@ -64,7 +64,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ClearMapping();
       void ValidateMapping();
       void SetSubEditorSettingsForMapping(ColumnMappingDTO model);
-      void SetSubEditorSettingsForMetaData(ColumnMappingDTO model);
+      bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model);
       void UpdateDescriptrionForModel();
       void UpdateMetaDataForModel();
       void SetDescriptionForRow(ColumnMappingDTO model);

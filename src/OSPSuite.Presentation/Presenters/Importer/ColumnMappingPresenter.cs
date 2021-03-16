@@ -36,8 +36,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
-         View.FillMappingSubView(_mappingParameterEditorPresenter.BaseView);
-         View.FillMetaDataSubView(_metaDataParameterEditorPresenter.BaseView);
+         View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
+         View.FillMetaDataView(_metaDataParameterEditorPresenter.BaseView);
       }
 
       public void SetSettings(
@@ -139,19 +139,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
-         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys.Select(v => v);
+         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys;
          _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
       public void UpdateMetaDataForModel()
       {
-         if (_currentModel == null)
-            return;
+         if (_currentModel == null) return;
+
          var metaData = _currentModel.Source as MetaDataFormatParameter;
-         if (metaData == null)
-         {
-            return;
-         }
+         if (metaData == null) return;
+
          _mappings.First(m => m.MappingName == metaData.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
          metaData.ColumnName = _metaDataParameterEditorPresenter.Input;
          ValidateMapping();
@@ -206,9 +204,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.RefreshData();
          _view.CloseEditor();
       }
-      public void SetSubEditorSettingsForMetaData(ColumnMappingDTO model)
+      public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
-         _currentModel = model;
+         var metaDataCategory = _metaDataCategories.FirstOrDefault(x => x.Name == model.MappingName);
+         if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+         {
+            _currentModel = model;
+            return true;
+         }
+
+         return false;
       }
 
       public void SetSubEditorSettingsForMapping(ColumnMappingDTO model)
