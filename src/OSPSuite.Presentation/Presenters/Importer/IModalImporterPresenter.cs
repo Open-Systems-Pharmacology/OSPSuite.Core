@@ -57,6 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == moleculeName)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(moleculeName)))?.Value;
                   var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(molWeightName);
 
+
                   if (moleculeDescription != null)
                   {
                      if (string.IsNullOrEmpty(molecularWeightDescription))
@@ -66,14 +67,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      }
                      else
                      {
-                        if (moleculeDescription != molecularWeightDescription)
+                        if (Math.Abs(double.Parse(moleculeDescription) - double.Parse(molecularWeightDescription)) > double.Epsilon)
                            throw new InconsistenMoleculeAndMoleWeightException();
                      }
                   }
                   if (!string.IsNullOrEmpty(molecularWeightDescription))
                   {
                      double molWeight;
-                     if (Double.TryParse(molecularWeightDescription, out molWeight))
+                     if (double.TryParse(molecularWeightDescription, out molWeight))
                      {
                         dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
                      }
