@@ -67,7 +67,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      }
                      else
                      {
-                        if (Math.Abs(double.Parse(moleculeDescription) - double.Parse(molecularWeightDescription)) > double.Epsilon)
+                        double molWeight;
+                        double moleculeMolWeight;
+                        double.TryParse(moleculeDescription, out moleculeMolWeight);
+                        double.TryParse(molecularWeightDescription, out molWeight);
+                        if (Math.Abs(moleculeMolWeight - molWeight) > double.Epsilon)
                            throw new InconsistenMoleculeAndMoleWeightException();
                      }
                   }
