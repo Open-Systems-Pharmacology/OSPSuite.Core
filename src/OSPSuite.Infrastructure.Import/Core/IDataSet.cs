@@ -36,7 +36,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void ThrowsOnNan(double indicator)
       {
-         if (_data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Value == indicator || double.IsNaN(point.Value)))))
+         if (_data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Measurement == indicator || double.IsNaN(point.Measurement)))))
             throw new NanException();
       }
 
@@ -47,7 +47,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             var mainColumns = dataSet.Data.Where(pair => pair.Key.ColumnInfo.IsMandatory).Select(pair => pair.Value).ToList();
             foreach (var column in mainColumns)
             {
-               var elements = column.Where(p => p.Value == indicator || double.IsNaN(p.Value));
+               var elements = column.Where(p => p.Measurement == indicator || double.IsNaN(p.Measurement));
                removeRowsContainingElements(elements.ToList(), column, dataSet);
             }
          }

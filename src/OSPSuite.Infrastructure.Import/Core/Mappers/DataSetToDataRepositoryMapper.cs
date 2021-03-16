@@ -97,14 +97,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //loop over view rows to get the sorted values.
          foreach (var value in column.Value)
          {
-            var adjustedValue =
-               (value == null || (double.IsNaN(value.Value) && double.IsNaN(value.Lloq))) ?
-               double.NaN :
-               (
-                  double.IsNaN(value.Value) || (value.Value < value.Lloq) ?
-                  value.Lloq / 2 :
-                  value.Value
-               );
+            var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unit != null)
@@ -157,6 +150,15 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          //meta data information and input parameters currently not handled
          dataRepository.Add(dataColumn);
+      }
+
+      private double truncateUsingLLOQ(SimulationPoint value)
+      {
+         if (value == null) return double.NaN;
+         if (double.IsNaN(value.Lloq)) return value.Measurement;
+         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq) return value.Lloq / 2;
+
+         return value.Measurement;
       }
 
       private static DataColumn findColumnByName(IEnumerable<DataColumn> columns, string name)

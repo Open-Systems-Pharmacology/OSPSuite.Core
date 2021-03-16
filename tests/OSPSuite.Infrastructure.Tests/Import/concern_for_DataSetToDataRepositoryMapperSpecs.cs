@@ -46,19 +46,19 @@ namespace OSPSuite.Infrastructure.Import
                   new SimulationPoint()
                   {
                      Unit = "s",
-                     Value = 0,
+                     Measurement = 0,
                      Lloq = double.NaN
                   },
                   new SimulationPoint()
                   {
                      Unit = "s",
-                     Value = 1,
+                     Measurement = 1,
                      Lloq = double.NaN
                   },
                   new SimulationPoint()
                   {
                      Unit = "s",
-                     Value = 2,
+                     Measurement = 2,
                      Lloq = double.NaN
                   }
                } 
@@ -82,19 +82,19 @@ namespace OSPSuite.Infrastructure.Import
                   new SimulationPoint()
                   {
                      Unit = "mol",
-                     Value = 10,
+                     Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
                      Unit = "mol",
-                     Value = 0.1,
+                     Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
                      Unit = "mol",
-                     Value = double.NaN,
+                     Measurement = double.NaN,
                      Lloq = 1
                   }
                }
