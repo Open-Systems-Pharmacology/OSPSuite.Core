@@ -172,6 +172,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          foreach (var headerName in _emptyColumns)
          {
+            var index = _headers[headerName].Index;
+            foreach (var header in _headers.Where(h => h.Index > index))
+               header.DecrementIndex();
             _headers.Remove(headerName);
          }
       }
