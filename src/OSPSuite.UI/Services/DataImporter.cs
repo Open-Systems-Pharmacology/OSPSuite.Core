@@ -13,6 +13,8 @@ using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Extensions;
+using OSPSuite.Presentation.Core;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -25,13 +27,16 @@ namespace OSPSuite.UI.Services
       private readonly IImporter _importer;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IApplicationController _applicationController;
+
 
       public DataImporter(
          Utility.Container.IContainer container,
          IDialogCreator dialogCreator,
          IImporter importer,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         IDataSetToDataRepositoryMapper dataRepositoryMapper
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IApplicationController applicationController
       )
       {
          _container = container;
@@ -39,6 +44,7 @@ namespace OSPSuite.UI.Services
          _importer = importer;
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _dataRepositoryMapper = dataRepositoryMapper;
+         _applicationController = applicationController;
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
@@ -126,6 +132,28 @@ namespace OSPSuite.UI.Services
 
             return result;
          }
+      }
+
+      public (IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted) 
+         ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport, IEnumerable<DataRepository> existingDataSets)
+      {
+         var newDataSets = dataSetsToImport.Where(x => existingDataSets.Any(y => y.ExtendedProperties == x.ExtendedProperties));
+         var dataSetsToBeDeleted = existingDataSets.Where(x => existingDataSets.Any(y => y.ExtendedProperties == x.ExtendedProperties));
+         var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
+         
+
+         using (var reloadPresenter = _applicationController.Start<IImporterReloadPresenter>())
+         {
+            reloadPresenter.AddDeletedDataSets(dataSetsToBeDeleted.AllNames());
+            reloadPresenter.AddNewDataSets(newDataSets.AllNames());
+            reloadPresenter.AddOverwrittenDataSets(overwrittenDataSets.AllNames());
+            reloadPresenter.Show();
+
+            if (reloadPresenter.Canceled())
+               return (null, null, null);
+         }
+
+         return (newDataSets, overwrittenDataSets, dataSetsToBeDeleted);
       }
    }
 }

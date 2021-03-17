@@ -26,5 +26,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
+
+      (IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted)
+         ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport,
+            IEnumerable<DataRepository> existingDataSets);
    }
 }
