@@ -5,8 +5,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class SimulationPoint
    {
-      public double Value { get; set; }
-      public double? Lloq { get; set; }
+      public double Measurement { get; set; }
+      public double Lloq { get; set; }
       public string Unit { get; set; }
    }
    public interface IDataFormat
