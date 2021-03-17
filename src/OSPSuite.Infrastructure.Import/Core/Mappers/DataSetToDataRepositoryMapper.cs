@@ -10,7 +10,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
    public interface IDataSetToDataRepositoryMapper
    {
-      DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName);
+      DataRepository ConvertImportDataSet(ImportedDataSet dataSet);
    }
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
@@ -21,28 +21,25 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          _dimensionFactory = dimensionFactory;
       }
-      public DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName)
+      public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
-         var ( parsedDataSet, sheetIndex)  = getDataSet(dataSource, dataSetIndex);
-         var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
-         var sheetName = dataSetPair.Key;
-         var configuration = dataSource.GetImporterConfiguration();
-         var dataRepository = new DataRepository { Name = dataSource.NamesFromConvention().ElementAt(dataSetIndex) };
+         var sheetName = dataSet.SheetName;
+         var dataRepository = new DataRepository { Name = dataSet.Name };
 
-         foreach (var metaDataDescription in dataSource.EnumerateMetaData().ElementAt(dataSetIndex))
+         foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
-            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Key, Value = metaDataDescription.Value });
+            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
 
-         addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
+         addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
 
-         foreach (var column in parsedDataSet.Data)
+         foreach (var column in dataSet.ParsedDataSet.Data)
          {
-            convertParsedDataColumn(dataRepository, column, configuration.FileName);
+            convertParsedDataColumn(dataRepository, column, dataSet.FileName);
          }
 
          //associate columns
-         foreach (var column in parsedDataSet.Data)
+         foreach (var column in dataSet.ParsedDataSet.Data)
          {
             if (string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
                continue;
@@ -185,24 +182,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private static bool containsColumnByName(IEnumerable<DataColumn> columns, string name)
       {
          return columns.Any(col => col.Name == name);
-      }
-
-      private (ParsedDataSet dataSet, int sheetIndex) getDataSet (IDataSource dataSource, int dataSetIndex)
-      {
-         var sheetIndex = 0;
-         var sheet = dataSource.DataSets.GetEnumerator();
-         while (sheet.MoveNext() && dataSetIndex >= 0)
-         {
-            if (sheet.Current.Data.Count() > dataSetIndex)
-               return ( sheet.Current.Data.ElementAt(dataSetIndex), sheetIndex);
-            else
-            {
-               dataSetIndex -= sheet.Current.Data.Count();
-               sheetIndex++;
-            }
-         }
-
-         return (null,0);
       }
    }
 }

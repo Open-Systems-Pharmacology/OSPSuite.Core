@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
-         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
          _confirmationPresenter.PlotDataRepository(dataRepository);
       }
 

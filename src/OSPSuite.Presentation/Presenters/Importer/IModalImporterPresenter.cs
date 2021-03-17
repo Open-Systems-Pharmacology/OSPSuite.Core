@@ -43,45 +43,42 @@ namespace OSPSuite.Presentation.Presenters.Importer
          presenter.OnTriggerImport += (s, d) =>
          {
             var i = 0;
-            foreach (var pair in d.DataSource.DataSets.KeyValues)
+            foreach (var dataSet in d.DataSource.DataSets.SelectMany(ds => ds.Data))
             {
-               foreach (var data in pair.Value.Data)
+               var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource.DataSetAt(i++));
+               dataRepo.ConfigurationId = id;
+               var molecule = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+               var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
+               var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+
+               if (moleculeDescription != null)
                {
-                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource, i++, pair.Key);
-                  dataRepo.ConfigurationId = id;
-                  var molecule = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
-                  var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
-                  var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-
-                  if (moleculeDescription != null)
+                  if (string.IsNullOrEmpty(molecularWeightDescription))
                   {
-                     if (string.IsNullOrEmpty(molecularWeightDescription))
-                     {
-                        molecularWeightDescription = moleculeDescription;
-                        if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
-                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
-                     }
-                     else
-                     {
-                        double molWeight;
-                        double moleculeMolWeight;
-                        double.TryParse(moleculeDescription, out moleculeMolWeight);
-                        double.TryParse(molecularWeightDescription, out molWeight);
-                        if (Math.Abs(moleculeMolWeight - molWeight) > Constants.DOUBLE_RELATIVE_EPSILON)
-                           throw new InconsistenMoleculeAndMoleWeightException();
-                     }
+                     molecularWeightDescription = moleculeDescription;
+                     if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
+                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
                   }
-                  if (!string.IsNullOrEmpty(molecularWeightDescription))
+                  else
                   {
                      double molWeight;
-                     if (double.TryParse(molecularWeightDescription, out molWeight))
-                     {
-                        dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
-                     }
+                     double moleculeMolWeight;
+                     double.TryParse(moleculeDescription, out moleculeMolWeight);
+                     double.TryParse(molecularWeightDescription, out molWeight);
+                     if (Math.Abs(moleculeMolWeight - molWeight) > Constants.DOUBLE_RELATIVE_EPSILON)
+                        throw new InconsistenMoleculeAndMoleWeightException();
                   }
-                  result.Add(dataRepo);
                }
+               if (!string.IsNullOrEmpty(molecularWeightDescription))
+               {
+                  double molWeight;
+                  if (double.TryParse(molecularWeightDescription, out molWeight))
+                  {
+                     dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+                  }
+               }
+               result.Add(dataRepo);
                   
             }
          };
