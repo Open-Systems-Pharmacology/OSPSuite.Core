@@ -21,10 +21,6 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          dataSource = A.Fake<IDataSource>();
-         A.CallTo(() => dataSource.NamesFromConvention()).Returns(new List<string>() { "dataSet" });
-         A.CallTo(() => dataSource.GetImporterConfiguration()).Returns(new Core.ImporterConfiguration() { FileName = "file" });
-         var cache = new Cache<string, IDataSet>();
-         var dataSet = new DataSet();
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             { 
@@ -100,12 +96,15 @@ namespace OSPSuite.Infrastructure.Import
                }
             }
          };
-         dataSet.AddData(new List<ParsedDataSet>() 
-         {
-            new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData)
-         });
-         cache.Add("sheet1", dataSet);
-         A.CallTo(() => dataSource.DataSets).Returns(cache);
+         A.CallTo(() => dataSource.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+            (
+               "file",
+               "sheet1",
+               new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData),
+               "name",
+               new List<MetaDataInstance>()
+            )
+         );
          var dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(Constants.Dimension.NO_DIMENSION);
          sut = new DataSetToDataRepositoryMapper(dimensionFactory);
