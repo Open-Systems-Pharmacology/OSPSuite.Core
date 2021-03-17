@@ -154,9 +154,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
       private double truncateUsingLLOQ(SimulationPoint value)
       {
-         if (value == null) return double.NaN;
-         if (double.IsNaN(value.Lloq)) return value.Measurement;
-         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq) return value.Lloq / 2;
+         if (value == null) 
+            return double.NaN;
+         
+         if (double.IsNaN(value.Lloq)) 
+            return value.Measurement;
+         
+         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq) 
+            return value.Lloq / 2;
 
          return value.Measurement;
       }
