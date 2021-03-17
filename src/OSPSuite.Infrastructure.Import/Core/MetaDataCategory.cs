@@ -1,9 +1,10 @@
-﻿using System;
+﻿using OSPSuite.Core.Domain;
+using System;
 using System.Collections.Generic;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class MetaDataCategory
+   public class MetaDataCategory : IWithName
    {
       public string Name { get; set; }
       public string DisplayName { get; set; }

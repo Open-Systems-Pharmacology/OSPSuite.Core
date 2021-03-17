@@ -206,7 +206,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
-         var metaDataCategory = _metaDataCategories.FirstOrDefault(x => x.Name == model.MappingName);
+         var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
          if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
          {
             _currentModel = model;
@@ -311,9 +311,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      public IEnumerable<ImageComboBoxOption> GetAvailableRowsFor(ColumnMappingDTO model)
+      public IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model)
       {
-         var options = new List<ImageComboBoxOption>();
+         var options = new List<RowOptionDTO>();
          if (model == null)
             return options;
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
@@ -322,19 +322,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
                if (!metaDataCategory.ListOfValues.Values.Contains(model.ExcelColumn))
-                  options.Add(new ImageComboBoxOption() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
-               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new ImageComboBoxOption() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
+               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
             }
          }
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
          {
-            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+            options.Add(new RowOptionDTO() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
          else if (model.Source != null && !(model.Source is AddGroupByFormatParameter) && !(model.Source is MetaDataFormatParameter))
          {
-            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+            options.Add(new RowOptionDTO() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
-         options.AddRange(availableColumns().Select(c => new ImageComboBoxOption() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
+         options.AddRange(availableColumns().Select(c => new RowOptionDTO() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
          return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
       }
 

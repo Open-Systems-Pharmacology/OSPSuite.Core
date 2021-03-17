@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Views.Importer
       }
    }
 
-   public class ImageComboBoxOption
+   public class RowOptionDTO
    {
       public string Description { get; set; }
       public int ImageIndex { get; set; }

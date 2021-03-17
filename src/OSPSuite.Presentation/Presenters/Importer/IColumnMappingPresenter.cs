@@ -56,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetDataFormat(IDataFormat format);
       void SetRawData(UnformattedData rawData);
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
-      IEnumerable<ImageComboBoxOption> GetAvailableRowsFor(ColumnMappingDTO model);
+      IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
       void AddGroupBy(AddGroupByFormatParameter source);

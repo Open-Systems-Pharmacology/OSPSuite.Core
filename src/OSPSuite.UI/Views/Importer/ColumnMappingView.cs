@@ -301,7 +301,7 @@ namespace OSPSuite.UI.Views.Importer
          }*/);
       }
 
-      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<ImageComboBoxOption> options)
+      private void fillComboBoxItems(RepositoryItemComboBox editor, IEnumerable<RowOptionDTO> options)
       {
          editor.Items.Clear();
          editor.NullText = Captions.Importer.NoneEditorNullText;

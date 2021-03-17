@@ -87,7 +87,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_importing_data : ConcernForModalImporterPresenter
    {
-      [TestCase]
+      [Observation]
       public void sets_molWeight_from_molecule()
       {
          dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
@@ -103,7 +103,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
       }
 
-      [TestCase]
+      [Observation]
       public void should_throw_when_inconsistent_mol_weight()
       {
          dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
@@ -118,7 +118,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          The.Action(() => importerPresenter.OnTriggerImport += Raise.With(eventArgs)).ShouldThrowAn<InconsistenMoleculeAndMoleWeightException>();
       }
 
-      [TestCase]
+      [Observation]
       public void sets_molWeight_from_molWeight()
       {
          dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
