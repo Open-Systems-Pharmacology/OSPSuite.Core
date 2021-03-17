@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
-         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
          _confirmationPresenter.PlotDataRepository(dataRepository);
       }
 
@@ -179,7 +179,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
                      for (var i = 0; i < measurementColumn.Value.Count(); i++)
                      {
-                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Value))
+                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
                            continue;
 
                         if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=

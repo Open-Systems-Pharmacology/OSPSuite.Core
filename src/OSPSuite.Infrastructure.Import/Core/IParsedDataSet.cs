@@ -41,14 +41,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          return result;
       }
 
-      public IReadOnlyDictionary<string, string> EnumerateMetaData(IEnumerable<MetaDataMappingConverter> mappings, string sheetName)
+      public IReadOnlyList<MetaDataInstance> EnumerateMetaData(IEnumerable<MetaDataMappingConverter> mappings)
       {
-         var result = new Dictionary<string, string>();
-         for (var i = 0; i < mappings.Count(); i++)
-         {
-            result.Add(mappings.ElementAt(i).Id, Description.ElementAt(i).Value);
-         }
-         return result;
+         return mappings.Select((m, i) => new MetaDataInstance(m.Id, Description.ElementAt(i).Value)).ToList();
       }
 
       public string ValueForColumn(int columnId)

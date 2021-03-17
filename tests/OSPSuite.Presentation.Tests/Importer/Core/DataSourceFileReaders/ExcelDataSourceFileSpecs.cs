@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public abstract class ConcernForExcelDataSourceFile : ContextSpecification<ExcelDataSourceFile>
    {
       protected string _excelFilePath;
-      private string _excelFile = "sample1.xlsx";
+      protected string _excelFile = "sample1.xlsx";
       protected override void Context()
       {
          sut = new ExcelDataSourceFile(A.Fake<IImportLogger>())
@@ -36,11 +36,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class When_reading_excel : ConcernForExcelDataSourceFile
    {
       [TestCase]
+      public void headers_are_ajusted_on_empty_columns()
+      {
+         sut.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sample2.xlsx");
+         var columns = sut.DataSheets.ElementAt(0).RawData.GetHeaders();
+         columns.Count().ShouldBeEqualTo(4);
+         for (var i = 0; i < 4; i++)
+         {
+            sut.DataSheets.ElementAt(0).RawData.GetColumnDescription(columns.ElementAt(i)).Index.ShouldBeEqualTo(i);
+         }
+      }
+
+      [TestCase]
       public void path_is_set()
       {
          sut.Path.ShouldBeEqualTo(_excelFilePath);
       }
-
 
       [TestCase]
       public void headers_are_read_first_sheet()
@@ -135,6 +146,5 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
          sut.DataSheets.ElementAt(2).RawData.GetCell("Double",0).ShouldBeEqualTo("0.000341012439638598");
       }
-
    }
 }

@@ -10,7 +10,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
    public interface IDataSetToDataRepositoryMapper
    {
-      DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName);
+      DataRepository ConvertImportDataSet(ImportedDataSet dataSet);
    }
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
@@ -21,28 +21,25 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          _dimensionFactory = dimensionFactory;
       }
-      public DataRepository ConvertImportDataSet(IDataSource dataSource, int dataSetIndex, string dataSetName)
+      public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
-         var ( parsedDataSet, sheetIndex)  = getDataSet(dataSource, dataSetIndex);
-         var dataSetPair = dataSource.DataSets.KeyValues.ElementAt(sheetIndex);
-         var sheetName = dataSetPair.Key;
-         var configuration = dataSource.GetImporterConfiguration();
-         var dataRepository = new DataRepository { Name = dataSource.NamesFromConvention().ElementAt(dataSetIndex) };
+         var sheetName = dataSet.SheetName;
+         var dataRepository = new DataRepository { Name = dataSet.Name };
 
-         foreach (var metaDataDescription in dataSource.EnumerateMetaData().ElementAt(dataSetIndex))
+         foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
-            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Key, Value = metaDataDescription.Value });
+            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
 
-         addExtendedPropertyForSource(configuration.FileName, sheetName, dataRepository);
+         addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
 
-         foreach (var column in parsedDataSet.Data)
+         foreach (var column in dataSet.ParsedDataSet.Data)
          {
-            convertParsedDataColumn(dataRepository, column, configuration.FileName);
+            convertParsedDataColumn(dataRepository, column, dataSet.FileName);
          }
 
          //associate columns
-         foreach (var column in parsedDataSet.Data)
+         foreach (var column in dataSet.ParsedDataSet.Data)
          {
             if (string.IsNullOrEmpty(column.Key.ColumnInfo.RelatedColumnOf))
                continue;
@@ -102,12 +99,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          //loop over view rows to get the sorted values.
          foreach (var value in column.Value)
          {
-            if (value == null || double.IsNaN(value.Value)) //but we actually should not be allowing this at all right?
+            var adjustedValue = truncateUsingLLOQ(value);
+            if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unit != null)
-               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), value.Value);
+               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
             else
-               values[i++] = (float) value.Value;
+               values[i++] = (float) adjustedValue;
          }
 
          dataColumn.Values = values;
@@ -156,6 +154,20 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          dataRepository.Add(dataColumn);
       }
 
+      private double truncateUsingLLOQ(SimulationPoint value)
+      {
+         if (value == null) 
+            return double.NaN;
+         
+         if (double.IsNaN(value.Lloq)) 
+            return value.Measurement;
+         
+         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq) 
+            return value.Lloq / 2;
+
+         return value.Measurement;
+      }
+
       private static DataColumn findColumnByName(IEnumerable<DataColumn> columns, string name)
       {
          var column = columns.FirstOrDefault(col => col.Name == name);
@@ -185,24 +197,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private static bool containsColumnByName(IEnumerable<DataColumn> columns, string name)
       {
          return columns.Any(col => col.Name == name);
-      }
-
-      private (ParsedDataSet dataSet, int sheetIndex) getDataSet (IDataSource dataSource, int dataSetIndex)
-      {
-         var sheetIndex = 0;
-         var sheet = dataSource.DataSets.GetEnumerator();
-         while (sheet.MoveNext() && dataSetIndex >= 0)
-         {
-            if (sheet.Current.Data.Count() > dataSetIndex)
-               return ( sheet.Current.Data.ElementAt(dataSetIndex), sheetIndex);
-            else
-            {
-               dataSetIndex -= sheet.Current.Data.Count();
-               sheetIndex++;
-            }
-         }
-
-         return (null,0);
       }
    }
 }

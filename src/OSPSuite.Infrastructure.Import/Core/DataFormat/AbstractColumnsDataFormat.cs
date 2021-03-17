@@ -262,8 +262,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
-               Value = result,
-               Unit = unit
+               Measurement = result,
+               Unit = unit,
+               Lloq = double.NaN
             };
          if (element.StartsWith("<"))
          {
@@ -277,7 +278,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          return new SimulationPoint()
          {
-            Value = double.NaN,
+            Measurement = double.NaN,
             Unit = unit
          };
       }
@@ -296,13 +297,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
-               Value = result,
+               Measurement = result,
                Lloq = lloq,
                Unit = unit
             };
          return new SimulationPoint()
          {
-            Value = double.NaN,
+            Measurement = double.NaN,
             Lloq = lloq,
             Unit = unit
          };

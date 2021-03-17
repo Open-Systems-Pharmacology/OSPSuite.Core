@@ -124,7 +124,7 @@ namespace OSPSuite.UI.Services
             {
                foreach (var data in pair.Value.Data)
                {
-                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource, i++, pair.Key);
+                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
                   dataRepo.ConfigurationId = configuration.Id;
                   result.Add(dataRepo);
                }
