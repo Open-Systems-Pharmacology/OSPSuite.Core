@@ -150,7 +150,7 @@ namespace OSPSuite.UI.Services
             reloadPresenter.Show();
 
             if (reloadPresenter.Canceled())
-               return (null, null, null);
+               return (Enumerable.Empty<DataRepository>(), Enumerable.Empty<DataRepository>(), Enumerable.Empty<DataRepository>());
          }
 
          return (newDataSets, overwrittenDataSets, dataSetsToBeDeleted);

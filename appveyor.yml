@@ -50,6 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
+    - 785-importer-reload-redesign
 
 test:
   assemblies:
