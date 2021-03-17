@@ -8,6 +8,7 @@ using OSPSuite.R.Services;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
+using IDataRepositoryTask = OSPSuite.R.Services.IDataRepositoryTask;
 
 namespace OSPSuite.R
 {
@@ -19,11 +20,11 @@ namespace OSPSuite.R
 
    public static class Api
    {
-      private static IContainer _container;
+      public static IContainer Container { get; private set; }
 
       public static void InitializeOnce(ApiConfig apiConfig)
       {
-         _container = ApplicationStartup.Initialize(apiConfig);
+         Container = ApplicationStartup.Initialize(apiConfig);
       }
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
@@ -52,13 +53,15 @@ namespace OSPSuite.R
 
       public static IFullPathDisplayResolver GetFullPathDisplayResolver() => resolveTask<IFullPathDisplayResolver>();
 
+      public static IDataRepositoryTask GetDataRepositoryTask() => resolveTask<IDataRepositoryTask>();
+
       public static IOSPSuiteLogger GetLogger() => resolveTask<IOSPSuiteLogger>();
 
       private static T resolveTask<T>()
       {
          try
          {
-            return _container.Resolve<T>();
+            return Container.Resolve<T>();
          }
          catch (Exception e)
          {
