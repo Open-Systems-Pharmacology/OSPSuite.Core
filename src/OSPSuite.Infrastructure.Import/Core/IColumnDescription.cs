@@ -27,6 +27,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public int Index { get; private set; }
+      
+      public void DecrementIndex()
+      {
+         Index--;
+      }
 
       public IReadOnlyList<string> ExistingValues => (IReadOnlyList<string>)_existingValues;
 

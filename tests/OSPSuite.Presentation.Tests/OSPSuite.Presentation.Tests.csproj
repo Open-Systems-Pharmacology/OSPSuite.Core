@@ -33,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\sample2.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\sample1.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
