@@ -116,7 +116,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         result = sut.ConvertImportDataSet(dataSource, 0, "dataSet");
+         result = sut.ConvertImportDataSet(dataSource.DataSetAt(0));
       }
 
       [Observation]
