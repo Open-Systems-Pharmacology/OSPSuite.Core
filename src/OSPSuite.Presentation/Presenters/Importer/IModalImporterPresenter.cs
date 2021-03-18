@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      double moleculeMolWeight;
                      double.TryParse(moleculeDescription, out moleculeMolWeight);
                      double.TryParse(molecularWeightDescription, out molWeight);
-                     if (ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
+                     if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
                         throw new InconsistenMoleculeAndMoleWeightException();
                   }
                }
