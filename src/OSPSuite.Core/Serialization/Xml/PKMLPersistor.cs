@@ -150,8 +150,8 @@ namespace OSPSuite.Core.Serialization.Xml
          return !(entityToSerialize.IsAnImplementationOf<IBuildingBlock>() ||
                   entityToSerialize.IsAnImplementationOf<IModelCoreSimulation>() ||
                   entityToSerialize.IsAnImplementationOf<IBuildConfiguration>() ||
-                  entityToSerialize.IsAnImplementationOf<IModel>()) ||
-                  entityToSerialize.IsAnImplementationOf<DataRepository>();
+                  entityToSerialize.IsAnImplementationOf<IModel>() ||
+                  entityToSerialize.IsAnImplementationOf<DataRepository>());
       }
 
       private XElement serializeFormulas(IFormulaCache formulas, SerializationContext serializationContext)

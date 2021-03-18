@@ -29,10 +29,16 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
-      ///    Returns all columns defiend in the repository
+      ///    Returns all columns defined in the repository
       /// </summary>
       public virtual IEnumerable<DataColumn> Columns => this;
 
+
+      /// <summary>
+      ///    Returns all columns defined in the repository as array (for R)
+      /// </summary>
+      public virtual DataColumn[] ColumnsAsArray => _allColumns.ToArray();
+      
       /// <summary>
       ///    Adds a column to the repository and adds BaseGrid, if not already available
       /// </summary>
@@ -125,15 +131,9 @@ namespace OSPSuite.Core.Domain.Data
          column.Repository = this;
       }
 
-      public override string ToString()
-      {
-         return Name;
-      }
+      public override string ToString() => Name;
 
-      private bool hasExtendedPropertyFor(string propertyName)
-      {
-         return ExtendedProperties.Contains(propertyName);
-      }
+      private bool hasExtendedPropertyFor(string propertyName) => ExtendedProperties.Contains(propertyName);
 
       /// <summary>
       ///    Gets the value for the named property from the underlying DataRepository
@@ -152,12 +152,12 @@ namespace OSPSuite.Core.Domain.Data
       ///    Inserts the values defined in <paramref name="columnValues" /> at the index found in the base column for the value
       ///    <paramref name="baseValue" />.
       ///    Values will be either replaced (there is already an entry with the same time exactly) or inserted at the right index
-      ///    to prevent the required base grid monotonie.
+      ///    to prevent the required base grid monotony.
       ///    In the case of an insertion, a <c>float.Nan</c> values will be inserted for columns using the base grid and for
       ///    which a value was not provided in <paramref name="columnValues" />
       /// </summary>
       /// <param name="baseValue">Value (e.g. time value) in base unit for which column values should be updated/inserted</param>
-      /// <param name="columnValues">Cache containg the id of the columns to update as key and the corresponding value.</param>
+      /// <param name="columnValues">Cache containing the id of the columns to update as key and the corresponding value.</param>
       public void InsertValues(float baseValue, Cache<string, float> columnValues)
       {
          var baseGrid = BaseGrid;
@@ -198,21 +198,13 @@ namespace OSPSuite.Core.Domain.Data
          InsertValues(newBaseGridValue, columnValues);
       }
 
-      public virtual void RemoveValuesAt(int index)
-      {
-         _allColumns.Each(c => c.RemoveValueAt(index));
-      }
+      public virtual void RemoveValuesAt(int index) => _allColumns.Each(c => c.RemoveValueAt(index));
 
-      private IEnumerable<DataColumn> columnsThatWereNotUpdated(Cache<string, float> columnValues)
-      {
-         return AllButBaseGrid()
-            .Where(x => !columnValues.Contains(x.Id));
-      }
+      private IEnumerable<DataColumn> columnsThatWereNotUpdated(Cache<string, float> columnValues) => AllButBaseGrid().Where(x => !columnValues.Contains(x.Id));
 
-      public IEnumerable<DataColumn> AllButBaseGrid()
-      {
-         return _allColumns.Where(x => !x.IsBaseGrid());
-      }
+      public IEnumerable<DataColumn> AllButBaseGrid() => _allColumns.Where(x => !x.IsBaseGrid());
+
+      public DataColumn[] AllButBaseGridAsArray() => AllButBaseGrid().ToArray();
 
       public float ConvertBaseValueForColumn(string columnId, float valueInDisplayUnit)
       {
