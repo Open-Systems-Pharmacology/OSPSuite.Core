@@ -30,9 +30,7 @@ namespace OSPSuite.UI.Services
          Utility.Container.IContainer container,
          IDialogCreator dialogCreator,
          IImporter importer,
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         IDataSetToDataRepositoryMapper dataRepositoryMapper,
-         IApplicationController applicationController
+         IApplicationController applicationController,
          IDataSetToDataRepositoryMapper dataRepositoryMapper
       )
       {
