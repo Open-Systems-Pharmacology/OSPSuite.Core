@@ -1,15 +1,12 @@
-﻿using DevExpress.XtraEditors;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,22 +20,67 @@ namespace OSPSuite.UI.Services
       private readonly Utility.Container.IContainer _container;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporter _importer;
-      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
 
       public DataImporter(
          Utility.Container.IContainer container,
          IDialogCreator dialogCreator,
          IImporter importer,
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
          IDataSetToDataRepositoryMapper dataRepositoryMapper
       )
       {
          _container = container;
          _dialogCreator = dialogCreator;
          _importer = importer;
-         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _dataRepositoryMapper = dataRepositoryMapper;
+      }
+
+      public IList<MetaDataCategory> DefaultMetaDataCategories()
+      {
+         var categories = new List<MetaDataCategory>();
+
+         var speciesCategory = createMetaDataCategory<string>(ObservedData.Species, isMandatory: true, isListOfValuesFixed: true);
+         categories.Add(speciesCategory);
+
+         var organCategory = createMetaDataCategory<string>(ObservedData.Organ, isMandatory: true, isListOfValuesFixed: true);
+         organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         categories.Add(organCategory);
+
+         var compCategory = createMetaDataCategory<string>(ObservedData.Compartment, isMandatory: true, isListOfValuesFixed: true);
+         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         categories.Add(compCategory);
+
+         var moleculeCategory = createMetaDataCategory<string>(ObservedData.Molecule);
+         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         categories.Add(moleculeCategory);
+
+         // Add non-mandatory metadata categories
+         var molecularWeightCategory = createMetaDataCategory<double>(ObservedData.MolecularWeight);
+         molecularWeightCategory.MinValue = 0;
+         molecularWeightCategory.MinValueAllowed = false;
+         categories.Add(molecularWeightCategory);
+         categories.Add(createMetaDataCategory<string>(ObservedData.StudyId));
+         categories.Add(createMetaDataCategory<string>(ObservedData.Gender, isListOfValuesFixed: true));
+         categories.Add(createMetaDataCategory<string>(ObservedData.Dose));
+         categories.Add(createMetaDataCategory<string>(ObservedData.Route));
+         categories.Add(createMetaDataCategory<string>(ObservedData.PatientId));
+
+         return categories;
+      }
+
+      private static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
+      {
+         var category = new MetaDataCategory
+         {
+            Name = descriptiveName,
+            DisplayName = descriptiveName,
+            Description = descriptiveName,
+            MetaDataType = typeof(T),
+            IsMandatory = isMandatory,
+            IsListOfValuesFixed = isListOfValuesFixed
+         };
+
+         return category;
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(

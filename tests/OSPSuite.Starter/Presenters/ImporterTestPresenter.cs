@@ -36,7 +36,7 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
       private readonly IDataImporter _dataImporter;
-      private readonly OSPSuite.Utility.Container.IContainer _container;
+      private readonly IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter,
          IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository)
@@ -118,7 +118,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");
@@ -150,7 +150,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");
@@ -162,9 +162,11 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
          (
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );
@@ -175,8 +177,10 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );

@@ -26,5 +26,11 @@ namespace OSPSuite.Infrastructure.Import.Services
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
+
+      /// <summary>
+      /// Creates a default list of meta data categories that could still be modified by the caller
+      /// </summary>
+      /// <returns>a list of meta data categories</returns>
+      IList<MetaDataCategory> DefaultMetaDataCategories();
    }
 }

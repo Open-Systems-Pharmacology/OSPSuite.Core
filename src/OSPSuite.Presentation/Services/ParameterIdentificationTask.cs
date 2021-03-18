@@ -228,9 +228,9 @@ namespace OSPSuite.Presentation.Services
 
       private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
       {
-         var organ = observedData.ExtendedPropertyValueFor(ObservedData.ORGAN);
-         var compartment = observedData.ExtendedPropertyValueFor(ObservedData.COMPARTMENT);
-         var molecule = observedData.ExtendedPropertyValueFor(ObservedData.MOLECULE);
+         var organ = observedData.ExtendedPropertyValueFor(ObservedData.Organ);
+         var compartment = observedData.ExtendedPropertyValueFor(ObservedData.Compartment);
+         var molecule = observedData.ExtendedPropertyValueFor(ObservedData.Molecule);
 
          if (organ == null || compartment == null || molecule == null)
             return false;

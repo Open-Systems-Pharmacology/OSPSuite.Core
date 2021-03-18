@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
-using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
 

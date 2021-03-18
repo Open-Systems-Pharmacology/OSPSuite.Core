@@ -297,11 +297,11 @@ namespace OSPSuite.Presentation.Services
          A.CallTo(() => simulationQuantitySelection.Path).Returns(_outputPath);
          _parameterIdentification.AddOutputMapping(new OutputMapping {WeightedObservedData = new WeightedObservedData(_observedData2), OutputSelection = simulationQuantitySelection});
 
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.MOLECULE, Value = "Drug"});
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.ORGAN, Value = "Liver"});
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.COMPARTMENT, Value = "Cell"});
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.Molecule, Value = "Drug"});
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.Organ, Value = "Liver"});
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.Compartment, Value = "Cell"});
 
-         _observedData3.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.ORGAN, Value = "Kidney"});
+         _observedData3.ExtendedProperties.Add(new ExtendedProperty<string> {Name = ObservedData.Organ, Value = "Kidney"});
       }
 
       protected override void Because()
