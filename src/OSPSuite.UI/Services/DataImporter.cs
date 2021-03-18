@@ -90,13 +90,14 @@ namespace OSPSuite.UI.Services
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
-         IReadOnlyList<MetaDataCategory> metaDataCategories, 
-         IReadOnlyList<ColumnInfo> columnInfos, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       )
       {
 
-         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter,
+            Constants.DirectoryKey.OBSERVED_DATA);
 
          if (string.IsNullOrEmpty(path))
             return (new List<DataRepository>(), null);
@@ -127,7 +128,8 @@ namespace OSPSuite.UI.Services
                importerPresenter.LoadConfiguration(configuration);
                using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings).DataRepositories;
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings)
+                     .DataRepositories;
                }
             }
          }
@@ -176,13 +178,19 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public (IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted) 
-         ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport, IEnumerable<DataRepository> existingDataSets)
+      public Cache<string, IEnumerable<DataRepository>> ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport,
+         IEnumerable<DataRepository> existingDataSets)
       {
-         var newDataSets = dataSetsToImport.Where(x => existingDataSets.Any(y => y.ExtendedProperties == x.ExtendedProperties));
-         var dataSetsToBeDeleted = existingDataSets.Where(x => existingDataSets.Any(y => y.ExtendedProperties == x.ExtendedProperties));
+         var result = new Cache<string, IEnumerable<DataRepository>>();
+
+         var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet));
+         result.Add(Constants.ImporterConstants.DATA_SETS_TO_BE_NEWLY_IMPORTED, newDataSets);
+
+         var dataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet));
+         result.Add(Constants.ImporterConstants.DATA_SETS_TO_BE_DELETED, dataSetsToBeDeleted);
+
          var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
-         
+         result.Add(Constants.ImporterConstants.DATA_SETS_TO_BE_OVERWRITTEN, overwrittenDataSets);
 
          using (var reloadPresenter = _applicationController.Start<IImporterReloadPresenter>())
          {
@@ -192,10 +200,38 @@ namespace OSPSuite.UI.Services
             reloadPresenter.Show();
 
             if (reloadPresenter.Canceled())
-               return (Enumerable.Empty<DataRepository>(), Enumerable.Empty<DataRepository>(), Enumerable.Empty<DataRepository>());
+               return new Cache<string, IEnumerable<DataRepository>>()
+               {
+                  {Constants.ImporterConstants.DATA_SETS_TO_BE_DELETED, Enumerable.Empty<DataRepository>()}, 
+                  {Constants.ImporterConstants.DATA_SETS_TO_BE_NEWLY_IMPORTED,Enumerable.Empty<DataRepository>()},
+                  {Constants.ImporterConstants.DATA_SETS_TO_BE_OVERWRITTEN,Enumerable.Empty<DataRepository>()},
+               };
          }
 
-         return (newDataSets, overwrittenDataSets, dataSetsToBeDeleted);
+         return result;
+      }
+
+
+      private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
+      {
+         foreach (var dataRepo in dataRepositoryList)
+         {
+            var result = true;
+            foreach (var keyValuePair in targetDataRepository.ExtendedProperties.KeyValues)
+            {
+               if (dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject.ToString() != keyValuePair.Value.ValueAsObject.ToString())
+               {
+                  result = false;
+                  break;
+               }
+            }
+
+            if (result)
+               return true;
+         }
+
+         return false;
       }
    }
 }
+

@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using System.Collections.Generic;
+using OSPSuite.Utility.Collections;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
@@ -27,8 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       );
 
-      (IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted)
-         ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport,
+      Cache<string, IEnumerable<DataRepository>> ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport,
             IEnumerable<DataRepository> existingDataSets);
             
       /// <summary>

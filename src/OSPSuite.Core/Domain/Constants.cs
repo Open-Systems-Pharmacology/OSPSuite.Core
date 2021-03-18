@@ -601,6 +601,10 @@ namespace OSPSuite.Core.Domain
       public static class ImporterConstants
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+
+         public const string DATA_SETS_TO_BE_DELETED = "toDeleteDataSets";
+         public const string DATA_SETS_TO_BE_OVERWRITTEN = "toOverwriteDataSets";
+         public const string DATA_SETS_TO_BE_NEWLY_IMPORTED = "newDataSets";
       }
    }
 }
