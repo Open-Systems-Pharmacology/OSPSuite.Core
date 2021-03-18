@@ -5,12 +5,12 @@ using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
-   public class SimulationWithPopulationConcurrentSetting
+   public class SimulationWithPopulationConcurrentOptions
    {
       public IModelCoreSimulation Simulation { get; private set; }
       public IndividualValuesCache Population { get; private set; }
 
-      public SimulationWithPopulationConcurrentSetting(IModelCoreSimulation simulation, IndividualValuesCache population)
+      public SimulationWithPopulationConcurrentOptions(IModelCoreSimulation simulation, IndividualValuesCache population)
       {
          Simulation = simulation;
          Population = population;
@@ -18,19 +18,19 @@ namespace OSPSuite.R.Services
    }
 
    /// <summary>
-   /// Settings to run simulations concurrently
+   /// Options to run simulations concurrently
    /// </summary>
-   public class SimulationRunnerConcurrentSettings
+   public class SimulationRunnerConcurrentOptions
    {
-      private IList<SimulationWithPopulationConcurrentSetting> _simulationWithPopulation = new List<SimulationWithPopulationConcurrentSetting>();
+      private IList<SimulationWithPopulationConcurrentOptions> _simulationsWithPopulations = new List<SimulationWithPopulationConcurrentOptions>();
 
       /// <summary>
       /// List of Simulation/Population pairs
       /// </summary>
-      public IReadOnlyList<SimulationWithPopulationConcurrentSetting> SimulationWithPopulation
+      public IReadOnlyList<SimulationWithPopulationConcurrentOptions> SimulationsWithPopulations
       {
          get {
-            return (IReadOnlyList<SimulationWithPopulationConcurrentSetting>)_simulationWithPopulation;
+            return (IReadOnlyList<SimulationWithPopulationConcurrentOptions>)_simulationsWithPopulations;
          }
       }
       /// <summary>
@@ -45,7 +45,7 @@ namespace OSPSuite.R.Services
       /// <param name="population">Population definition</param>
       public void Add(IModelCoreSimulation simulation, IndividualValuesCache population)
       {
-         _simulationWithPopulation.Add(new SimulationWithPopulationConcurrentSetting(simulation, population));
+         _simulationsWithPopulations.Add(new SimulationWithPopulationConcurrentOptions(simulation, population));
       }
 
       /// <summary>
@@ -54,7 +54,7 @@ namespace OSPSuite.R.Services
       /// <param name="simulation"></param>
       public void Add(IModelCoreSimulation simulation)
       {
-         _simulationWithPopulation.Add(new SimulationWithPopulationConcurrentSetting(simulation, null));
+         _simulationsWithPopulations.Add(new SimulationWithPopulationConcurrentOptions(simulation, null));
       }
    }
 }

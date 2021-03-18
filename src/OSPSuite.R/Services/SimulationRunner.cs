@@ -82,15 +82,15 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults[] RunConcurrently(SimulationRunnerConcurrentSettings settings)
+      public SimulationResults[] RunConcurrently(SimulationRunnerConcurrentOptions options)
       {
          var tasks = new List<Task<SimulationResults>>();
-         foreach (var setting in settings.SimulationWithPopulation)
+         foreach (var setting in options.SimulationsWithPopulations)
          {
             if (setting.Population != null)
-               tasks.Add(RunAsync(setting.Simulation, setting.Population, settings.simulationRunOptions));
+               tasks.Add(RunAsync(setting.Simulation, setting.Population, options.simulationRunOptions));
             else
-               tasks.Add(RunAsync(setting.Simulation, settings.simulationRunOptions));
+               tasks.Add(RunAsync(setting.Simulation, options.simulationRunOptions));
          }
          Task.WaitAll(tasks.ToArray());
          return tasks.Select(t => t.Result).ToArray();
