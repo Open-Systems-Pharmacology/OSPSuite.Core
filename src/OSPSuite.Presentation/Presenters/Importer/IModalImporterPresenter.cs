@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Views.Importer;
@@ -66,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                      double moleculeMolWeight;
                      double.TryParse(moleculeDescription, out moleculeMolWeight);
                      double.TryParse(molecularWeightDescription, out molWeight);
-                     if (Math.Abs(moleculeMolWeight - molWeight) > Constants.DOUBLE_RELATIVE_EPSILON)
+                     if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
                         throw new InconsistenMoleculeAndMoleWeightException();
                   }
                }

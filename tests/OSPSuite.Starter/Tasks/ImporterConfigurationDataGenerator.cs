@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
+
 namespace OSPSuite.Starter.Tasks
 {
    public interface IImporterConfigurationDataGenerator
    {
+      void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
       IReadOnlyList<ColumnInfo> DefaultPKSimConcentrationImportConfiguration();
-      IReadOnlyList<MetaDataCategory> DefaultPKSimMetaDataCategories();
       IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultTestMetaDataCategories();
       IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
@@ -128,9 +129,9 @@ namespace OSPSuite.Starter.Tasks
          var categories = new List<MetaDataCategory>();
          var molWeightCategory = new MetaDataCategory
          {
-            Name = "MolWeight",
-            DisplayName = "Molecular weight [Molecular weight]",
-            Description = "Molecular weight",
+            Name = ObservedData.MolecularWeight,
+            DisplayName = ObservedData.MolecularWeight,
+            Description = ObservedData.MolecularWeight,
             MetaDataType = typeof(double),
             IsMandatory = false,
             MinValue = 0,
@@ -139,15 +140,15 @@ namespace OSPSuite.Starter.Tasks
          categories.Add(molWeightCategory);
 
 
-         var organCategory = createMetaDataCategory<string>(ObservedData.ORGAN, isMandatory: false, isListOfValuesFixed: true,
+         var organCategory = createMetaDataCategory<string>(ObservedData.Organ, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(organCategory);
 
-         var compartmentCategory = createMetaDataCategory<string>(ObservedData.COMPARTMENT, isMandatory: false, isListOfValuesFixed: true,
+         var compartmentCategory = createMetaDataCategory<string>(ObservedData.Compartment, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(compartmentCategory);
 
-         var moleculeCategory = createMetaDataCategory<string>(ObservedData.MOLECULE, isMandatory: false, isListOfValuesFixed: true,
+         var moleculeCategory = createMetaDataCategory<string>(ObservedData.Molecule, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(moleculeCategory);
 
@@ -159,42 +160,14 @@ namespace OSPSuite.Starter.Tasks
          metaDataCategory.ListOfValues.Add("Undefined", "Undefined");
       }
 
-      public IReadOnlyList<MetaDataCategory> DefaultPKSimMetaDataCategories()
+      public void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories)
       {
-         var categories = new List<MetaDataCategory>();
-
-         var speciesCategory = speciesMetaDataCategory();
-         categories.Add(speciesCategory);
-
-         var organCategory = getOrganCategory();
-         categories.Add(organCategory);
-
-         var compCategory = getCompartmentCategory();
-         categories.Add(compCategory);
-
-         var concentrationCategory = getMoleculeCategory();
-         categories.Add(concentrationCategory);
-
-         categories.Add(createMetaDataCategory<string>("Molecular Weight"));
-
-         categories.Add(createMetaDataCategory<string>("Study Id"));
-         categories.Add(createMetaDataCategory<string>("Gender"));
-         categories.Add(createMetaDataCategory<string>("Dose"));
-         categories.Add(createMetaDataCategory<string>("Route"));
-         categories.Add(createMetaDataCategory<string>("Patient Id"));
-
-         return categories;
-      }
-
-      private static MetaDataCategory getMoleculeCategory()
-      {
-         var metaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
+         var metaDataCategory = metaDataCategories.FindByName(ObservedData.Molecule);
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
          metaDataCategory.ListOfValues.Add("JustOne", "22");
          metaDataCategory.ShouldListOfValuesBeIncluded = true;
          metaDataCategory.SelectDefaultValue = true;
-         return metaDataCategory;
       }
 
       private static MetaDataCategory getCompartmentCategory()

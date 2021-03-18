@@ -30,5 +30,11 @@ namespace OSPSuite.Infrastructure.Import.Services
       (IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted)
          ReloadFromConfiguration(IEnumerable<DataRepository> dataSetsToImport,
             IEnumerable<DataRepository> existingDataSets);
+            
+      /// <summary>
+      /// Creates a default list of meta data categories that could still be modified by the caller
+      /// </summary>
+      /// <returns>a list of meta data categories</returns>
+      IList<MetaDataCategory> DefaultMetaDataCategories();
    }
 }
