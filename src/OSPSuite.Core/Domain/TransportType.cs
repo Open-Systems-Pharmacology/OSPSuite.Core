@@ -5,15 +5,16 @@ namespace OSPSuite.Core.Domain
    [Flags]
    public enum TransportType
    {
-      Efflux= 2 << 0,
-      Influx= 2 << 1,
-      PgpLike= 2 << 2,
-      Secretion= 2 << 3,
-      Elimination= 2 << 4,
-      Diffusion= 2 << 5,
-      Convection= 2 << 6,
-      Passive = Secretion | Elimination | Diffusion|Convection,
-      Active = Influx| Efflux| PgpLike,
+      Efflux = 2 << 0,
+      Influx = 2 << 1,
+      PgpLike = 2 << 2,
+      Secretion = 2 << 3,
+      Elimination = 2 << 4,
+      Diffusion = 2 << 5,
+      Convection = 2 << 6,
+      BiDirectional = 2 << 7,
+      Passive = Secretion | Elimination | Diffusion | Convection,
+      Active = Influx | Efflux | PgpLike | BiDirectional,
    }
 
    public static class TransportTypeExtensions
