@@ -127,6 +127,11 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
+      /// Required for R
+      /// </summary>
+      public virtual float[] ValuesAsArray => Values.ToArray();
+
+      /// <summary>
       ///    Returns the internal array of values. Its size is in either 1 (constant array) or equal to baseGrid dimension
       /// </summary>
       public virtual List<float> InternalValues
@@ -218,10 +223,7 @@ namespace OSPSuite.Core.Domain.Data
 
       internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache => _relatedColumnsCache;
 
-      public override string ToString()   
-      {
-         return Name;
-      }
+      public override string ToString() => Name;
 
       internal void InsertValueAt(int index, float value)
       {

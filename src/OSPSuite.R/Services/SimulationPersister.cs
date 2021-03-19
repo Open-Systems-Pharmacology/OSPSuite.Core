@@ -16,9 +16,6 @@ namespace OSPSuite.R.Services
    public class SimulationPersister : ISimulationPersister
    {
       private readonly CorePersistor _simulationPersistor;
-      private readonly IDimensionFactory _dimensionFactory;
-      private readonly IObjectBaseFactory _objectBaseFactory;
-      private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IObjectIdResetter _objectIdResetter;
 
       public SimulationPersister(
@@ -29,15 +26,12 @@ namespace OSPSuite.R.Services
          IObjectIdResetter objectIdResetter)
       {
          _simulationPersistor = simulationPersistor;
-         _dimensionFactory = dimensionFactory;
-         _objectBaseFactory = objectBaseFactory;
-         _cloneManagerForModel = cloneManagerForModel;
          _objectIdResetter = objectIdResetter;
       }
 
       public Simulation LoadSimulation(string fileName, bool resetIds = true)
       {
-         var simulationTransfer = _simulationPersistor.Load(fileName, _dimensionFactory, _objectBaseFactory, new WithIdRepository(), _cloneManagerForModel);
+         var simulationTransfer = _simulationPersistor.Load(fileName);
          var simulation = simulationTransfer.Simulation;
          if(resetIds)
             _objectIdResetter.ResetIdFor(simulation);
