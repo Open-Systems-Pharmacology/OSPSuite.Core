@@ -223,10 +223,7 @@ namespace OSPSuite.Core.Domain.Data
 
       internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache => _relatedColumnsCache;
 
-      public override string ToString()   
-      {
-         return Name;
-      }
+      public override string ToString() => Name;
 
       internal void InsertValueAt(int index, float value)
       {

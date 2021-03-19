@@ -10,6 +10,8 @@ namespace OSPSuite.Core.Domain.Data
 {
    public class DataRepository : ObjectBase, IEnumerable<DataColumn>
    {
+      public string _configurationId;
+
       protected readonly ICache<string, DataColumn> _allColumns = new Cache<string, DataColumn>(col => col.Id);
 
       /// <summary>
@@ -33,12 +35,11 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public virtual IEnumerable<DataColumn> Columns => this;
 
-
       /// <summary>
       ///    Returns all columns defined in the repository as array (for R)
       /// </summary>
       public virtual DataColumn[] ColumnsAsArray => _allColumns.ToArray();
-      
+
       /// <summary>
       ///    Adds a column to the repository and adds BaseGrid, if not already available
       /// </summary>
@@ -204,7 +205,10 @@ namespace OSPSuite.Core.Domain.Data
 
       public IEnumerable<DataColumn> AllButBaseGrid() => _allColumns.Where(x => !x.IsBaseGrid());
 
-      public DataColumn[] AllButBaseGridAsArray() => AllButBaseGrid().ToArray();
+      /// <summary>
+      ///    Returns all columns except the base grid in the repository as array (for R)
+      /// </summary>
+      public DataColumn[] AllButBaseGridAsArray => AllButBaseGrid().ToArray();
 
       public float ConvertBaseValueForColumn(string columnId, float valueInDisplayUnit)
       {
@@ -225,8 +229,6 @@ namespace OSPSuite.Core.Domain.Data
       {
          return AllButBaseGrid().Where(column => column.DataInfo.Origin == ColumnOrigins.Observation);
       }
-
-      public string _configurationId;
 
       public string ConfigurationId
       {
