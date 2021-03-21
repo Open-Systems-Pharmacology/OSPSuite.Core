@@ -7,7 +7,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class DataSetSelectedEventArgs : EventArgs
    {
-      public string Key { get; set; }
       public int Index { get; set; }
    }
 
@@ -21,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetKeys(IEnumerable<string> keys);
       void SetNamingConventions(IEnumerable<string> namingConventions);
       void ImportData();
-      void DataSetSelected(string key, int index);
+      void DataSetSelected(int index);
       void PlotDataRepository(DataRepository dataRepository);
       void SetDataSetNames(IEnumerable<string> names);
 
