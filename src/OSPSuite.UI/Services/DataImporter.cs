@@ -10,6 +10,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Presentation.Core;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -17,22 +18,23 @@ namespace OSPSuite.UI.Services
 {
    public class DataImporter : IDataImporter
    {
-      private readonly Utility.Container.IContainer _container;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporter _importer;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IApplicationController _applicationController;
+
 
       public DataImporter(
-         Utility.Container.IContainer container,
          IDialogCreator dialogCreator,
          IImporter importer,
+         IApplicationController applicationController,
          IDataSetToDataRepositoryMapper dataRepositoryMapper
       )
       {
-         _container = container;
          _dialogCreator = dialogCreator;
          _importer = importer;
          _dataRepositoryMapper = dataRepositoryMapper;
+         _applicationController = applicationController;
       }
 
       public IList<MetaDataCategory> DefaultMetaDataCategories()
@@ -84,22 +86,23 @@ namespace OSPSuite.UI.Services
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
-         IReadOnlyList<MetaDataCategory> metaDataCategories, 
-         IReadOnlyList<ColumnInfo> columnInfos, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       )
       {
 
-         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter,
+            Constants.DirectoryKey.OBSERVED_DATA);
 
          if (string.IsNullOrEmpty(path))
             return (new List<DataRepository>(), null);
 
-         using (var importerPresenter = _container.Resolve<IImporterPresenter>())
+         using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
          {
             importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
             importerPresenter.SetSourceFile(path);
-            using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
+            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
                return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
             }
@@ -115,13 +118,14 @@ namespace OSPSuite.UI.Services
       {
          if (dataImporterSettings.PromptForConfirmation)
          {
-            using (var importerPresenter = _container.Resolve<IImporterPresenter>())
+            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
             {
                importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
                importerPresenter.LoadConfiguration(configuration);
-               using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
+               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings).DataRepositories;
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings)
+                     .DataRepositories;
                }
             }
          }
@@ -169,5 +173,37 @@ namespace OSPSuite.UI.Services
             return result;
          }
       }
+
+      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
+         IReadOnlyList<DataRepository> existingDataSets)
+      {
+         var result = new ReloadDataSets
+         {
+            NewDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet)),
+            DataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet))
+         };
+
+         result.OverwrittenDataSets = dataSetsToImport.Except(result.NewDataSets);
+
+         using (var reloadPresenter = _applicationController.Start<IImporterReloadPresenter>())
+         {
+            reloadPresenter.AddDeletedDataSets(result.DataSetsToBeDeleted.AllNames());
+            reloadPresenter.AddNewDataSets(result.NewDataSets.AllNames());
+            reloadPresenter.AddOverwrittenDataSets(result.OverwrittenDataSets.AllNames());
+            reloadPresenter.Show();
+
+            if (reloadPresenter.Canceled())
+               return new ReloadDataSets();
+         }
+
+         return result;
+      }
+
+
+      private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
+      {
+         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair => dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject == keyValuePair.Value.ValueAsObject));
+      }
    }
 }
+
