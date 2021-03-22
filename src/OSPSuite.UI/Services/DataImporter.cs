@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
@@ -9,7 +8,6 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
