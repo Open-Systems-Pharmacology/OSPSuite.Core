@@ -21,10 +21,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
       }
 
-      public void Dispose()
-      {
-      }
-
       public bool ShouldClose { get; }
       public void Show()
       {
