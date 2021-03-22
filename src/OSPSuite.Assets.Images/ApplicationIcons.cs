@@ -482,6 +482,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ClearHistory = AddNamedIcon("Delete", "ClearHistory");
       public static readonly ApplicationIcon AmountObservedData = AddNamedIcon("AmountObservedData", "AmountObservedData");
       public static readonly ApplicationIcon AmountObservedDataForMolecule = AddNamedIcon("AmountObservedDataForMolecule", "AmountObservedDataForMolecule");
+      public static readonly ApplicationIcon BiDirectional = AddNamedIcon("BiDirectional", "BiDirectional");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
