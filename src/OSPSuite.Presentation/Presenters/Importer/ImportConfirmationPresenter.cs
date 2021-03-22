@@ -18,6 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
       {
          _chartPresenter = chartPresenter;
+         _chartPresenter.LogLinSelectionEnabled = true;
          _dataPresenter = dataPresenter;
          View.AddChartView(_chartPresenter.BaseView);
          View.AddDataView(_dataPresenter.View);
