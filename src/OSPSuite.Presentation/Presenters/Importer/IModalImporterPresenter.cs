@@ -18,7 +18,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporterPresenter presenter, 
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string configurationId = null
       );
    }
 
@@ -35,7 +36,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporterPresenter presenter, 
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string configurationId = null
       )
       {
          List<DataRepository> result = new List<DataRepository>();
@@ -59,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   {
                      molecularWeightDescription = moleculeDescription;
                      if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
-                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
+                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
                   }
                   else
                   {
@@ -84,7 +86,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          };
          var configuration = presenter.GetConfiguration();
-         configuration.Id = id;
+         configuration.Id = configurationId ?? id;
          _view.AttachImporterPresenter(presenter);
          _view.Display();
          return (result, configuration);

@@ -124,7 +124,7 @@ namespace OSPSuite.UI.Services
                importerPresenter.LoadConfiguration(configuration);
                using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings)
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings, configuration.Id)
                      .DataRepositories;
                }
             }
