@@ -1394,14 +1394,16 @@ namespace OSPSuite.Assets
          return $"Alias '{alias}' is already used in formula '{formula}'";
       }
 
-      public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath)
+      public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath) => CouldNotLoadObjectFromFile(pkmlFileFullPath, ObjectTypes.Simulation);
+
+      public static string CouldNotLoadObjectFromFile(string pkmlFileFullPath, string objectType)
       {
-         return $"Could not load simulation. Make sure that the file '{pkmlFileFullPath}' is a simulation file.";
+         return $"Could not load {objectType.ToLowerInvariant()}. Make sure that the file '{pkmlFileFullPath}' is a {objectType.ToLowerInvariant()} file.";
       }
 
-      public static string CannotLoadRelatedItemCreatedWithAnotherApplication(string relatedItemType, string relatedItemName, string realtedItemApplication, string currentApplication)
+      public static string CannotLoadRelatedItemCreatedWithAnotherApplication(string relatedItemType, string relatedItemName, string relatedItemApplication, string currentApplication)
       {
-         return $"{relatedItemType} '{relatedItemName}' was created with {realtedItemApplication} and cannot be loaded in {currentApplication}.";
+         return $"{relatedItemType} '{relatedItemName}' was created with {relatedItemApplication} and cannot be loaded in {currentApplication}.";
       }
 
       public static string CouldNotLoadTemplateFromFile(string templateFilePath)

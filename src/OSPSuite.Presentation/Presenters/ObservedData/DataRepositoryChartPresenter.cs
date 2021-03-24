@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    IListener<ObservedDataTableChangedEvent>
    {
       Action<int> HotTracked { set; }
+      bool LogLinSelectionEnabled { get; set; }
    }
 
    public class DataRepositoryChartPresenter : AbstractSubPresenter<IDataRepositoryChartView, IDataRepositoryChartPresenter>, IDataRepositoryChartPresenter
@@ -44,6 +45,12 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public Action<int> HotTracked
       {
          set { _simpleChartPresenter.HotTracked = value; }
+      }
+
+      public bool LogLinSelectionEnabled
+      {
+         get => _simpleChartPresenter.LogLinSelectionEnabled;
+         set => _simpleChartPresenter.LogLinSelectionEnabled = value;
       }
 
       private void plotObservedData(DataRepository dataRepository)

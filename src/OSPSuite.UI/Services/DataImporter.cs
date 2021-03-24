@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;

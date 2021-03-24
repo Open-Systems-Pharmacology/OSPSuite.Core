@@ -130,10 +130,10 @@ namespace OSPSuite.Core.Serialization.Xml
          DimensionFactory = null;
          _dataRepositories.Clear();
          _dataReferenceCache.Clear();
-         ClearFomulaCache();
+         ClearFormulaCache();
       }
 
-      public void ClearFomulaCache()
+      public void ClearFormulaCache()
       {
          Formulas.Clear();
          clearCache();

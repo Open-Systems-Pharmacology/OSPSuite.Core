@@ -2,8 +2,6 @@ using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
@@ -46,12 +44,9 @@ namespace OSPSuite.Core
          _simulationPersistor.Save(x1, _filePath);
          File.Exists(_filePath).ShouldBeTrue();
 
-         var deserializationDimensionFactory = IoC.Resolve<IDimensionFactory>();
-         var deserializationObjectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
          var deserializationObjectBaseRepository = IoC.Resolve<IWithIdRepository>();
-         var cloneManagerForModel = IoC.Resolve<ICloneManagerForModel>();
 
-         var x2 = _simulationPersistor.Load(_filePath, deserializationDimensionFactory, deserializationObjectBaseFactory, deserializationObjectBaseRepository, cloneManagerForModel);
+         var x2 = _simulationPersistor.Load(_filePath, deserializationObjectBaseRepository);
 
          AssertForSpecs.AreEqualSimulationTransfer(x1, x2);
 
@@ -67,12 +62,9 @@ namespace OSPSuite.Core
          _pkmlPersistor.SaveToPKML(_simulation.BuildConfiguration.MoleculeStartValues, _filePath);
          File.Exists(_filePath).ShouldBeTrue();
 
-         var deserializationDimensionFactory = IoC.Resolve<IDimensionFactory>();
-         var deserializationObjectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
          var deserializationObjectBaseRepository = IoC.Resolve<IWithIdRepository>();
-         var cloneManagerForModel = IoC.Resolve<ICloneManagerForModel>();
 
-         The.Action(() => _simulationPersistor.Load(_filePath, deserializationDimensionFactory, deserializationObjectBaseFactory, deserializationObjectBaseRepository, cloneManagerForModel))
+         The.Action(() => _simulationPersistor.Load(_filePath, deserializationObjectBaseRepository))
             .ShouldThrowAn<OSPSuiteException>();
       }
    }

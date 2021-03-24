@@ -26,15 +26,19 @@ namespace OSPSuite.Core.Domain.Data
       /// <returns>An enumerable of IExtendedProperty which is a key-value pairing of metadata</returns>
       public static IEnumerable<IExtendedProperty> IntersectingMetaData(this IReadOnlyList<DataRepository> dataRepositories)
       {
-         return dataRepositories.SelectMany(repository => repository.ExtendedProperties).
-            Distinct(new ExtendedPropertyComparer(ep => ep.Name)).
-            Where(x => dataRepositories.All(repos => repos.ExtendedProperties.Contains(x.Name))).
-            Select(x => new ExtendedProperty<string>
-            {
+         return dataRepositories.SelectMany(repository => repository.ExtendedProperties)
+            .Distinct(new ExtendedPropertyComparer(ep => ep.Name))
+            .Where(x => dataRepositories.All(repos => repos.ExtendedProperties.Contains(x.Name)))
+            .Select(x => new ExtendedProperty<string> {
                Name = x.Name,
                Value = valueMapper(dataRepositories.SelectMany(repository => repository.ExtendedProperties)
                   .Where(ep => ep.IsNamed(x.Name)), x)
             });
+      }
+
+      public static DataColumn FirstDataColumn(this DataRepository dataRepository)
+      {
+         return dataRepository.AllButBaseGrid().First(x => x.DataInfo.Origin != ColumnOrigins.ObservationAuxiliary);
       }
 
       private static string valueMapper(IEnumerable<IExtendedProperty> properties, IExtendedProperty value)

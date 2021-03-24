@@ -34,19 +34,15 @@ namespace OSPSuite.Core.Domain
 
       public string Description
       {
-         set
-         {
-            _description = value;
-            OnPropertyChanged();
-         }
-         get { return _description; }
+         get => _description;
+         set => SetProperty(ref _description, value);
       }
 
       public string DisplayName => FullName?? Name;
 
       public string FullName
       {
-         get { return _fullName; }
+         get => _fullName;
          set
          {
             _fullName = value;
@@ -57,7 +53,7 @@ namespace OSPSuite.Core.Domain
 
       public string Name
       {
-         get { return _name; }
+         get => _name;
          set
          {
             _name = value;
@@ -68,6 +64,7 @@ namespace OSPSuite.Core.Domain
       }
 
       public IReadOnlyList<T> ListOfValues => _listOfValues;
+
       public IReadOnlyList<object> ListOfValuesAsObjects => _listOfValues.Cast<object>().ToList();
 
       public void AddToListOfValues(T value)
@@ -77,14 +74,8 @@ namespace OSPSuite.Core.Domain
 
       public object ValueAsObject
       {
-         get
-         {
-            return Value;
-         }
-         set
-         {
-            Value = value.ConvertedTo<T>();
-         }
+         get => Value;
+         set => Value = value.ConvertedTo<T>();
       }
 
       public IExtendedProperty Clone()
@@ -98,24 +89,16 @@ namespace OSPSuite.Core.Domain
 
       public bool ReadOnly
       {
-         set
-         {
-            _readOnly = value;
-            OnPropertyChanged(() => ReadOnly);
-         }
-         get { return _readOnly; }
+         get => _readOnly;
+         set => SetProperty(ref _readOnly,  value);
       }
 
       private T _value;
 
       public T Value
       {
-         get { return _value; }
-         set
-         {
-            _value = value;
-            OnPropertyChanged(() => Value);
-         }
+         get => _value;
+         set => SetProperty(ref _value, value);
       }
    }
 }
