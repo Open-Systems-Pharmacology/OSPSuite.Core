@@ -124,12 +124,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                   dataSet.EnumerateMetaData(_mappings)
                );
             }
-            else
-            {
-               index -= sheet.Current.Data.Count();
-               sheetIndex++;
-               accumulatedIndexes += sheet.Current.Data.Count();
-            }
+
+            index -= sheet.Current.Data.Count();
+            sheetIndex++;
+            accumulatedIndexes += sheet.Current.Data.Count();
          }
 
          return null;

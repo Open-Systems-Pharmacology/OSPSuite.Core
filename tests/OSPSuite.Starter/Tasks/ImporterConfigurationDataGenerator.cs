@@ -129,9 +129,9 @@ namespace OSPSuite.Starter.Tasks
          var categories = new List<MetaDataCategory>();
          var molWeightCategory = new MetaDataCategory
          {
-            Name = ObservedData.MolecularWeight,
-            DisplayName = ObservedData.MolecularWeight,
-            Description = ObservedData.MolecularWeight,
+            Name = Constants.ObservedData.MOLECULARWEIGHT,
+            DisplayName = Constants.ObservedData.MOLECULARWEIGHT,
+            Description = Constants.ObservedData.MOLECULARWEIGHT,
             MetaDataType = typeof(double),
             IsMandatory = false,
             MinValue = 0,
@@ -140,15 +140,15 @@ namespace OSPSuite.Starter.Tasks
          categories.Add(molWeightCategory);
 
 
-         var organCategory = createMetaDataCategory<string>(ObservedData.Organ, isMandatory: false, isListOfValuesFixed: true,
+         var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(organCategory);
 
-         var compartmentCategory = createMetaDataCategory<string>(ObservedData.Compartment, isMandatory: false, isListOfValuesFixed: true,
+         var compartmentCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(compartmentCategory);
 
-         var moleculeCategory = createMetaDataCategory<string>(ObservedData.Molecule, isMandatory: false, isListOfValuesFixed: true,
+         var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE, isMandatory: false, isListOfValuesFixed: true,
             fixedValuesRetriever: addUndefinedValueTo);
          categories.Add(moleculeCategory);
 
@@ -162,7 +162,7 @@ namespace OSPSuite.Starter.Tasks
 
       public void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories)
       {
-         var metaDataCategory = metaDataCategories.FindByName(ObservedData.Molecule);
+         var metaDataCategory = metaDataCategories.FindByName(Constants.ObservedData.MOLECULE);
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
          metaDataCategory.ListOfValues.Add("JustOne", "22");

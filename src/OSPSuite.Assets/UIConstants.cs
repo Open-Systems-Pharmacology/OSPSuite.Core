@@ -2239,17 +2239,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";
       public static readonly string ObservedDataMoleculeDescription = "Molecule for which the data was measured";
-      public static readonly string Organ = "Organ";
-      public static readonly string Compartment = "Compartment";
-      public static readonly string Molecule = "Molecule";
       public static readonly string MoleculeNameDescription = "Name of the molecule for which the data were measured";
-      public static readonly string MolecularWeight = "Molecular Weight";
-      public static readonly string Species = "Species";
-      public static readonly string StudyId = "Study Id";
-      public static readonly string Route = "Route";
-      public static readonly string PatientId = "Patient Id";
-      public static readonly string Gender = "Gender";
-      public static readonly string Dose = "Dose";
    }
 
    public static class Colors

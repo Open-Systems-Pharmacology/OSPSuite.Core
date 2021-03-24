@@ -10,7 +10,6 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
@@ -228,9 +227,9 @@ namespace OSPSuite.Presentation.Services
 
       private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
       {
-         var organ = observedData.ExtendedPropertyValueFor(ObservedData.Organ);
-         var compartment = observedData.ExtendedPropertyValueFor(ObservedData.Compartment);
-         var molecule = observedData.ExtendedPropertyValueFor(ObservedData.Molecule);
+         var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
+         var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
+         var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
 
          if (organ == null || compartment == null || molecule == null)
             return false;

@@ -63,21 +63,8 @@ namespace OSPSuite.UI.Views.Importer
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
-         _repositoryMappingPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
-         _repositoryMappingPopupContainerEdit.PopupControl = _mappingPopupControl;
-         _repositoryMappingPopupContainerEdit.CloseOnOuterMouseClick = false;
-         _repositoryMappingPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
-         _repositoryMappingPopupContainerEdit.CloseUp += (o, e) => closeUpMapping(e);
-         _repositoryMappingPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
-         _repositoryMappingPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
-
-         _repositoryMetaDataPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
-         _repositoryMetaDataPopupContainerEdit.PopupControl = _metaDataPopupControl;
-         _repositoryMetaDataPopupContainerEdit.CloseOnOuterMouseClick = false;
-         _repositoryMetaDataPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
-         _repositoryMetaDataPopupContainerEdit.CloseUp += (o, e) => closeUpMetaData(e);
-         _repositoryMetaDataPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
-         _repositoryMetaDataPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+         initializeButton(_repositoryMappingPopupContainerEdit);
+         initializeButton(_repositoryMetaDataPopupContainerEdit);
 
          _disabledPopupContainerEdit.Enabled = false;
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
@@ -98,6 +85,16 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
+      private void initializeButton (RepositoryItemPopupContainerEdit button)
+      {
+         button.Buttons[0].Kind = ButtonPredefines.Combo;
+         button.PopupControl = _mappingPopupControl;
+         button.CloseOnOuterMouseClick = false;
+         button.QueryDisplayText += (o, e) => queryDisplayText(e);
+         button.CloseUp += (o, e) => closeUpMapping(e);
+         button.CloseUpKey = new KeyShortcut(Keys.Enter);
+         button.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+      }
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
          switch (model.Source)

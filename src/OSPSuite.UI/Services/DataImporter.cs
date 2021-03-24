@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
@@ -41,31 +42,31 @@ namespace OSPSuite.UI.Services
       {
          var categories = new List<MetaDataCategory>();
 
-         var speciesCategory = createMetaDataCategory<string>(ObservedData.Species, isMandatory: true, isListOfValuesFixed: true);
+         var speciesCategory = createMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
          categories.Add(speciesCategory);
 
-         var organCategory = createMetaDataCategory<string>(ObservedData.Organ, isMandatory: true, isListOfValuesFixed: true);
+         var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
          organCategory.Description = ObservedData.ObservedDataOrganDescription;
          categories.Add(organCategory);
 
-         var compCategory = createMetaDataCategory<string>(ObservedData.Compartment, isMandatory: true, isListOfValuesFixed: true);
+         var compCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
          compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
          categories.Add(compCategory);
 
-         var moleculeCategory = createMetaDataCategory<string>(ObservedData.Molecule);
+         var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
          moleculeCategory.Description = ObservedData.MoleculeNameDescription;
          categories.Add(moleculeCategory);
 
          // Add non-mandatory metadata categories
-         var molecularWeightCategory = createMetaDataCategory<double>(ObservedData.MolecularWeight);
+         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULARWEIGHT);
          molecularWeightCategory.MinValue = 0;
          molecularWeightCategory.MinValueAllowed = false;
          categories.Add(molecularWeightCategory);
-         categories.Add(createMetaDataCategory<string>(ObservedData.StudyId));
-         categories.Add(createMetaDataCategory<string>(ObservedData.Gender, isListOfValuesFixed: true));
-         categories.Add(createMetaDataCategory<string>(ObservedData.Dose));
-         categories.Add(createMetaDataCategory<string>(ObservedData.Route));
-         categories.Add(createMetaDataCategory<string>(ObservedData.PatientId));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
 
          return categories;
       }
@@ -177,13 +178,12 @@ namespace OSPSuite.UI.Services
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
          IReadOnlyList<DataRepository> existingDataSets)
       {
-         var result = new ReloadDataSets
-         {
-            NewDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet)),
-            DataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet))
-         };
+         var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet));
+         var dataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet));
+         var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
 
-         result.OverwrittenDataSets = dataSetsToImport.Except(result.NewDataSets);
+
+         var result = new ReloadDataSets(newDataSets, overwrittenDataSets, dataSetsToBeDeleted);
 
          using (var reloadPresenter = _applicationController.Start<IImporterReloadPresenter>())
          {
