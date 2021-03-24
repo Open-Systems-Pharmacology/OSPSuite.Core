@@ -56,15 +56,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetDataFormat(IDataFormat format);
       void SetRawData(UnformattedData rawData);
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
-      IEnumerable<ImageComboBoxOption> GetAvailableRowsFor(ColumnMappingDTO model);
+      IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
       void AddGroupBy(AddGroupByFormatParameter source);
       void ResetMapping();
       void ClearMapping();
       void ValidateMapping();
-      void SetSubEditorSettings(ColumnMappingDTO model);
+      void SetSubEditorSettingsForMapping(ColumnMappingDTO model);
+      bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model);
       void UpdateDescriptrionForModel();
+      void UpdateMetaDataForModel();
       void SetDescriptionForRow(ColumnMappingDTO model);
 
       event EventHandler OnMappingCompleted; //status: you can import

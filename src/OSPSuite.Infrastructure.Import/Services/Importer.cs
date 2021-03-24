@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics;
 using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 using IoC = OSPSuite.Utility.Container.IContainer;
 

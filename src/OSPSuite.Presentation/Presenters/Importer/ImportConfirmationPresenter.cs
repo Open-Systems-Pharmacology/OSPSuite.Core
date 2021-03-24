@@ -24,9 +24,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.AddDataView(_dataPresenter.View);
          _dataPresenter.DisableEdition();
       }
-      public void DataSetSelected(string key, int index)
+      public void DataSetSelected(int index)
       {
-         OnDataSetSelected.Invoke(this, new DataSetSelectedEventArgs { Key = key, Index = index });
+         OnDataSetSelected.Invoke(this, new DataSetSelectedEventArgs { Index = index });
       }
 
       public void PlotDataRepository(DataRepository dataRepository)

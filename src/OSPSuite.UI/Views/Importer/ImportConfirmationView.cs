@@ -85,6 +85,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          namesListBox.Items.Clear();
          namesListBox.Items.AddRange(names.ToArray());
+         namesListBox.SetSelected(0, true);
       }
 
       private void onButtonImportClick(object sender, EventArgs e)
@@ -126,7 +127,7 @@ namespace OSPSuite.UI.Views.Importer
 
          if (listBox.SelectedValue == null) return;  //here if null we have to empty the GUI
 
-         _presenter.DataSetSelected(listBox.SelectedValue.ToString(), listBox.SelectedIndex);
+         _presenter.DataSetSelected(listBox.SelectedIndex);
       }
 
       public override void InitializeResources()

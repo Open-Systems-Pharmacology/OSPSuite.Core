@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Views.Importer
       }
    }
 
-   public class ImageComboBoxOption
+   public class RowOptionDTO
    {
       public string Description { get; set; }
       public int ImageIndex { get; set; }
@@ -108,8 +108,10 @@ namespace OSPSuite.Presentation.Views.Importer
    public interface IColumnMappingView : IView<IColumnMappingPresenter>
    {
       void SetMappingSource(IList<ColumnMappingDTO> mappings);
+      void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories);
       void RefreshData();
-      void FillSubView(IView view);
+      void FillMappingView(IView view);
+      void FillMetaDataView(IView view);
       void CloseEditor();
    }
 }

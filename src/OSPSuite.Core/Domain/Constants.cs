@@ -442,6 +442,20 @@ namespace OSPSuite.Core.Domain
          public const int WARNING_THRESHOLD = 5;
       }
 
+      public static class ObservedData
+      {
+         public static readonly string ORGAN = "Organ";
+         public static readonly string COMPARTMENT = "Compartment";
+         public static readonly string MOLECULE = "Molecule";
+         public static readonly string MOLECULARWEIGHT = "Molecular Weight";
+         public static readonly string SPECIES = "Species";
+         public static readonly string STUDY_ID = "Study Id";
+         public static readonly string ROUTE = "Route";
+         public static readonly string PATIENT_ID = "Patient Id";
+         public static readonly string GENDER = "Gender";
+         public static readonly string DOSE = "Dose";
+      }
+
       public static class LLOQModes
       {
          public const string ONLY_OBSERVED_DATA = "OnlyObservedData";

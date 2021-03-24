@@ -16,6 +16,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       private string _token;
       private string _delimiter;
 
+      public string NameOfMetaDataHoldingMoleculeInformation { get; set; }
+
+      public string NameOfMetaDataHoldingMolecularWeightInformation { get; set; }
+
+      public bool PromptForConfirmation { get; set; } = true;
+
       /// <summary>
       ///    Gets the default naming convention for the imported observed data
       /// </summary>

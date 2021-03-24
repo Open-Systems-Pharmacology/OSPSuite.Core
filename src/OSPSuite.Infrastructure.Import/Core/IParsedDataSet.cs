@@ -41,6 +41,11 @@ namespace OSPSuite.Infrastructure.Import.Core
          return result;
       }
 
+      public IReadOnlyList<MetaDataInstance> EnumerateMetaData(IEnumerable<MetaDataMappingConverter> mappings)
+      {
+         return mappings.Select((m, i) => new MetaDataInstance(m.Id, Description.ElementAt(i).Value)).ToList();
+      }
+
       public string ValueForColumn(int columnId)
       {
          return Description.FirstOrDefault(md => md.Id == columnId)?.Value;

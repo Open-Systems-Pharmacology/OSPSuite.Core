@@ -365,6 +365,7 @@ namespace OSPSuite.Assets
          public static readonly string Confirmation = "Confirmation";
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
+         public static readonly string ManualInput = "Manual input";
          public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
          public static readonly string ConfirmationImport = "Import";
          public static readonly string NanAction = "Action";
@@ -1210,6 +1211,7 @@ namespace OSPSuite.Assets
       public static readonly string InavlidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileFormat = "The file format is not supported";
+      public static readonly string InconsistenMoleculeAndMoleWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
@@ -2239,9 +2241,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";
       public static readonly string ObservedDataMoleculeDescription = "Molecule for which the data was measured";
-      public static readonly string ORGAN = "Organ";
-      public static readonly string COMPARTMENT = "Compartment";
-      public static readonly string MOLECULE = "Molecule";
+      public static readonly string MoleculeNameDescription = "Name of the molecule for which the data were measured";
    }
 
    public static class Colors

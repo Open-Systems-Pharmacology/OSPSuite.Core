@@ -1,8 +1,8 @@
-﻿using OSPSuite.Assets;
+using System.Collections;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
@@ -11,6 +11,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Presentation.Core;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -18,40 +19,91 @@ namespace OSPSuite.UI.Services
 {
    public class DataImporter : IDataImporter
    {
-      private readonly Utility.Container.IContainer _container;
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporter _importer;
-      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IApplicationController _applicationController;
+
 
       public DataImporter(
-         Utility.Container.IContainer container,
          IDialogCreator dialogCreator,
          IImporter importer,
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
+         IApplicationController applicationController,
          IDataSetToDataRepositoryMapper dataRepositoryMapper
       )
       {
-         _container = container;
          _dialogCreator = dialogCreator;
          _importer = importer;
-         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _dataRepositoryMapper = dataRepositoryMapper;
+         _applicationController = applicationController;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings)
+      public IList<MetaDataCategory> DefaultMetaDataCategories()
+      {
+         var categories = new List<MetaDataCategory>();
+
+         var speciesCategory = createMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
+         categories.Add(speciesCategory);
+
+         var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
+         organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         categories.Add(organCategory);
+
+         var compCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
+         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         categories.Add(compCategory);
+
+         var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
+         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         categories.Add(moleculeCategory);
+
+         // Add non-mandatory metadata categories
+         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULARWEIGHT);
+         molecularWeightCategory.MinValue = 0;
+         molecularWeightCategory.MinValueAllowed = false;
+         categories.Add(molecularWeightCategory);
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+
+         return categories;
+      }
+
+      private static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
+      {
+         var category = new MetaDataCategory
+         {
+            Name = descriptiveName,
+            DisplayName = descriptiveName,
+            Description = descriptiveName,
+            MetaDataType = typeof(T),
+            IsMandatory = isMandatory,
+            IsListOfValuesFixed = isListOfValuesFixed
+         };
+
+         return category;
+      }
+
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings
+      )
       {
 
-         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter,
+            Constants.DirectoryKey.OBSERVED_DATA);
 
          if (string.IsNullOrEmpty(path))
             return (new List<DataRepository>(), null);
 
-         using (var importerPresenter = _container.Resolve<IImporterPresenter>())
+         using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
          {
             importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
             importerPresenter.SetSourceFile(path);
-            using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
+            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
                return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
             }
@@ -60,21 +112,21 @@ namespace OSPSuite.UI.Services
 
       public IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
-         bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       )
       {
-         if (promptForConfirmation)
+         if (dataImporterSettings.PromptForConfirmation)
          {
-            using (var importerPresenter = _container.Resolve<IImporterPresenter>())
+            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
             {
                importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
                importerPresenter.LoadConfiguration(configuration);
-               using (var importerModalPresenter = _container.Resolve<IModalImporterPresenter>())
+               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings).DataRepositories;
+                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings, configuration.Id)
+                     .DataRepositories;
                }
             }
          }
@@ -113,7 +165,7 @@ namespace OSPSuite.UI.Services
             {
                foreach (var data in pair.Value.Data)
                {
-                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource, i++, pair.Key);
+                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
                   dataRepo.ConfigurationId = configuration.Id;
                   result.Add(dataRepo);
                }
@@ -122,5 +174,36 @@ namespace OSPSuite.UI.Services
             return result;
          }
       }
+
+      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
+         IReadOnlyList<DataRepository> existingDataSets)
+      {
+         var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet));
+         var dataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet));
+         var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
+
+
+         var result = new ReloadDataSets(newDataSets, overwrittenDataSets, dataSetsToBeDeleted);
+
+         using (var reloadPresenter = _applicationController.Start<IImporterReloadPresenter>())
+         {
+            reloadPresenter.AddDeletedDataSets(result.DataSetsToBeDeleted.AllNames());
+            reloadPresenter.AddNewDataSets(result.NewDataSets.AllNames());
+            reloadPresenter.AddOverwrittenDataSets(result.OverwrittenDataSets.AllNames());
+            reloadPresenter.Show();
+
+            if (reloadPresenter.Canceled())
+               return new ReloadDataSets();
+         }
+
+         return result;
+      }
+
+
+      private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
+      {
+         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair => dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject == keyValuePair.Value.ValueAsObject));
+      }
    }
 }
+

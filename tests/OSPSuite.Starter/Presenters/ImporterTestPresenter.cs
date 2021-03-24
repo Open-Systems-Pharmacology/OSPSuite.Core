@@ -36,7 +36,7 @@ namespace OSPSuite.Starter.Presenters
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
       private readonly IDataImporter _dataImporter;
-      private readonly OSPSuite.Utility.Container.IContainer _container;
+      private readonly IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter,
          IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository)
@@ -51,6 +51,8 @@ namespace OSPSuite.Starter.Presenters
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
       {
+         settings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         settings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
          _dialogCreator.MessageBoxInfo(_dataImporter.ImportDataSets
          (
             categories,
@@ -109,11 +111,14 @@ namespace OSPSuite.Starter.Presenters
             var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = false;
+
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               false,
-               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");
@@ -138,12 +143,14 @@ namespace OSPSuite.Starter.Presenters
             var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = true;
 
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               true,
-               _dataGenerator.DefaultPKSimMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");
@@ -155,9 +162,11 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
          (
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );
@@ -168,8 +177,10 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );

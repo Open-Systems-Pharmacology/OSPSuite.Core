@@ -1,10 +1,31 @@
 ﻿using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using System.Collections.Generic;
+using System.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
+   public class ReloadDataSets
+   {
+      public IEnumerable<DataRepository> NewDataSets { get; }
+      public IEnumerable<DataRepository> OverwrittenDataSets{ get; }
+      public IEnumerable<DataRepository> DataSetsToBeDeleted { get; }
+
+      public ReloadDataSets()
+      {
+         NewDataSets = Enumerable.Empty<DataRepository>();
+         OverwrittenDataSets = Enumerable.Empty<DataRepository>();
+         DataSetsToBeDeleted = Enumerable.Empty<DataRepository>();
+      }
+
+      public ReloadDataSets( IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted )
+      {
+         NewDataSets = newDataSets;
+         OverwrittenDataSets = overwrittenDataSets;
+         DataSetsToBeDeleted = dataSetsToBeDeleted;
+      }
+   }
 
    public interface IDataImporter
    {
@@ -22,10 +43,18 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
-         bool promptForConfirmation,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
+
+      ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
+         IReadOnlyList<DataRepository> existingDataSets);
+            
+      /// <summary>
+      /// Creates a default list of meta data categories that could still be modified by the caller
+      /// </summary>
+      /// <returns>a list of meta data categories</returns>
+      IList<MetaDataCategory> DefaultMetaDataCategories();
    }
 }

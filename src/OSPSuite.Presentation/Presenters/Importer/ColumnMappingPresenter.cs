@@ -23,17 +23,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private UnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
+      private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       private ColumnMappingDTO _currentModel;
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
-         IMappingParameterEditorPresenter mappingParameterEditorPresenter
+         IMappingParameterEditorPresenter mappingParameterEditorPresenter,
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
       ) : base(view)
       {
          _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
-         View.FillSubView(_mappingParameterEditorPresenter.BaseView);
+         _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
+         View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
+         View.FillMetaDataView(_metaDataParameterEditorPresenter.BaseView);
       }
 
       public void SetSettings(
@@ -43,6 +47,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
+         View.SetMetaDataCategories(metaDataCategories);
       }
 
       public IDataFormat GetDataFormat()
@@ -134,8 +139,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
-         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Select(v => v.ToString());
+         var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys;
          _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
+      }
+
+      public void UpdateMetaDataForModel()
+      {
+         if (_currentModel == null) return;
+
+         var metaData = _currentModel.Source as MetaDataFormatParameter;
+         if (metaData == null) return;
+
+         _mappings.First(m => m.MappingName == metaData.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
+         metaData.ColumnName = _metaDataParameterEditorPresenter.Input;
+         ValidateMapping();
+         _view.RefreshData();
+         _view.CloseEditor();
       }
 
       public void UpdateDescriptrionForModel()
@@ -185,8 +204,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.RefreshData();
          _view.CloseEditor();
       }
+      public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
+      {
+         var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
+         if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+         {
+            _currentModel = model;
+            return true;
+         }
 
-      public void SetSubEditorSettings(ColumnMappingDTO model)
+         return false;
+      }
+
+      public void SetSubEditorSettingsForMapping(ColumnMappingDTO model)
       {
          _currentModel = model;
          _mappingParameterEditorPresenter.HideAll();
@@ -281,26 +311,30 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      public IEnumerable<ImageComboBoxOption> GetAvailableRowsFor(ColumnMappingDTO model)
+      public IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model)
       {
-         var options = new List<ImageComboBoxOption>();
+         var options = new List<RowOptionDTO>();
          if (model == null)
             return options;
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
-               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new ImageComboBoxOption() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+            {
+               if (!metaDataCategory.ListOfValues.Values.Contains(model.ExcelColumn))
+                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
+               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+            }
          }
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
          {
-            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+            options.Add(new RowOptionDTO() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
          else if (model.Source != null && !(model.Source is AddGroupByFormatParameter) && !(model.Source is MetaDataFormatParameter))
          {
-            options.Add(new ImageComboBoxOption() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+            options.Add(new RowOptionDTO() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
-         options.AddRange(availableColumns().Select(c => new ImageComboBoxOption() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
+         options.AddRange(availableColumns().Select(c => new RowOptionDTO() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
          return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
       }
 

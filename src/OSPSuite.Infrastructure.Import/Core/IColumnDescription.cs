@@ -22,7 +22,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public ColumnDescription(int index, List<string> existingValues, MeasurementLevel columnDataType)
       {
          Index = index;
-         _existingValues = existingValues;
+         _existingValues = existingValues ?? new List<string>();
          Level = columnDataType;
       }
 

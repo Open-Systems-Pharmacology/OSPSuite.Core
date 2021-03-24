@@ -126,6 +126,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             if (!metaData.SelectDefaultValue || metaData.DefaultValue == null) continue;
             var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
+            if (parameter == null)
+            {
+               parameter = new MetaDataFormatParameter(metaData.DefaultValue.ToString(), metaData.Name, false);
+               _dataSourceFile.Format.Parameters.Add(parameter);
+               return;
+            }
             parameter.ColumnName = metaData.DefaultValue.ToString();
             parameter.IsColumn = false;
          }

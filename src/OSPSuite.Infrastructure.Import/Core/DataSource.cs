@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
-using System.Reflection;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
@@ -24,6 +23,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
+      ImportedDataSet DataSetAt(int index);
    }
 
    public class DataSource : IDataSource
@@ -104,6 +104,63 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IEnumerable<string> NamesFromConvention()
       {
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
+      }
+
+      public ImportedDataSet DataSetAt(int index)
+      {
+         var sheetIndex = 0;
+         var sheet = DataSets.GetEnumerator();
+         var accumulatedIndexes = 0;
+         while (sheet.MoveNext() && index >= 0)
+         {
+            if (sheet.Current.Data.Count() > index)
+            {
+               var dataSet = sheet.Current.Data.ElementAt(index);
+               return new ImportedDataSet(
+                  _configuration.FileName,
+                  DataSets.Keys.ElementAt(sheetIndex),
+                  dataSet,
+                  NamesFromConvention().ElementAt(accumulatedIndexes + index),
+                  dataSet.EnumerateMetaData(_mappings)
+               );
+            }
+
+            index -= sheet.Current.Data.Count();
+            sheetIndex++;
+            accumulatedIndexes += sheet.Current.Data.Count();
+         }
+
+         return null;
+      }
+   }
+
+   public class MetaDataInstance
+   {
+      public string Name { get; private set; }
+      public string Value { get; private set; }
+
+      public MetaDataInstance(string name, string value)
+      {
+         Name = name;
+         Value = value;
+      }
+   }
+
+   public class ImportedDataSet
+   {
+      public string FileName { get; private set; }
+      public string SheetName { get; private set; }
+      public ParsedDataSet ParsedDataSet { get; private set; }
+      public string Name { get; private set; }
+      public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; private set; }
+
+      public ImportedDataSet(string fileName, string sheetName, ParsedDataSet parsedDataSet, string name, IReadOnlyList<MetaDataInstance> metaDataDescription)
+      {
+         FileName = fileName;
+         SheetName = sheetName;
+         ParsedDataSet = parsedDataSet;
+         Name = name;
+         MetaDataDescription = metaDataDescription;
       }
    }
 }

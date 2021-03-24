@@ -12,8 +12,6 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
-using DevExpress.Utils.CommonDialogs;
-using NPOI.OpenXmlFormats.Dml.Diagram;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -102,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
-         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource, e.Index, e.Key);
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
          _confirmationPresenter.PlotDataRepository(dataRepository);
       }
 
@@ -126,7 +124,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportData(object sender, EventArgs e)
       {
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
+         try
+         {
+            OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
+         }
+         catch (InconsistenMoleculeAndMoleWeightException exception)
+         {
+            _view.ShowErrorMessage(exception.Message);
+         }
       }
 
       private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
