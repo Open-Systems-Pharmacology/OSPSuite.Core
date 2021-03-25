@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Collections.Generic;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
@@ -37,9 +38,9 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] { 1e-3, 2e-3 });
-         _result_u = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "ug", new[] { 1e-3, 2e-3 });
-         _result_mc = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "mcg", new[] { 1e-3, 2e-3 });
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] {1e-3, 2e-3});
+         _result_u = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "ug", new[] {1e-3, 2e-3});
+         _result_mc = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "mcg", new[] {1e-3, 2e-3});
       }
 
       [Observation]
@@ -56,7 +57,7 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          //20 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", new[] { 1d, 2d, 3d }, molWeight: 20);
+         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", new[] {1d, 2d, 3d}, molWeight: 20);
       }
 
       [Observation]
@@ -76,7 +77,6 @@ namespace OSPSuite.R.Services
          sut.MuSymbol.ShouldBeEqualTo(sut.DimensionByName(Constants.Dimension.MOLAR_AMOUNT).BaseUnit.Name.Substring(0, 1));
       }
    }
-
 
    public class When_converting_a_double_value_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
@@ -112,7 +112,7 @@ namespace OSPSuite.R.Services
    {
       protected override void Because()
       {
-         _result = sut.ConvertToBaseUnit(Constants.Dimension.MASS_AMOUNT, "g", new []{1, 2, 3.0});
+         _result = sut.ConvertToBaseUnit(Constants.Dimension.MASS_AMOUNT, "g", new[] {1, 2, 3.0});
       }
 
       [Observation]
@@ -127,7 +127,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_an_exception()
       {
-        The.Action(() =>sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] { 1d, 2d, 3d })).ShouldThrowAn<UnableToResolveParametersException>();
+         The.Action(() => sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] {1d, 2d, 3d})).ShouldThrowAn<UnableToResolveParametersException>();
       }
    }
 
@@ -136,13 +136,13 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          //20 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] { 1d }, molWeight: 20);
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] {1d}, molWeight: 20);
       }
 
       [Observation]
       public void should_be_able_to_convert_the_array()
       {
-         _result.ShouldOnlyContainInOrder(1/20d);
+         _result.ShouldOnlyContainInOrder(1 / 20d);
       }
    }
 
@@ -154,10 +154,37 @@ namespace OSPSuite.R.Services
       {
          _dimensionNames = sut.AllAvailableDimensionNames();
       }
+
       [Observation]
       public void should_return_the_dimensions_names_sorted()
       {
          _dimensionNames[0].StartsWith("A").ShouldBeTrue();
+      }
+   }
+
+   public class When_retrieving_all_unit_names_defined_for_a_given_dimension : concern_for_DimensionTask
+   {
+      private string[] _unitNames;
+
+      protected override void Because()
+      {
+         _unitNames = sut.AllAvailableUnitNamesForDimension("Mass");
+      }
+
+      [Observation]
+      public void should_return_the_expected_units()
+      {
+         _unitNames.ShouldOnlyContain("kg", "g", "mg", "µg", "ng", "pg");
+      }
+   }
+
+
+   public class When_retrieving_all_unit_names_defined_for_a_dimension_that_does_not_exist : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.AllAvailableUnitNamesForDimension("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
       }
    }
 
