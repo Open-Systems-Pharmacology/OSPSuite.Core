@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -59,6 +60,11 @@ namespace OSPSuite.R.Services
       /// </summary>
       string[] AllAvailableDimensionNames();
 
+
+      /// <summary>
+      ///    Returns the name of all dimensions defined in the suite
+      /// </summary>
+      string[] AllAvailableUnitNamesForDimension(string dimensionName);
 
       /// <summary>
       /// Returns the µ-symbol to ensure that we can replace all special chars
@@ -209,6 +215,12 @@ namespace OSPSuite.R.Services
       public IDimension DimensionForStandardPKParameter(int standardPKParameterValue)
       {
          return DimensionForStandardPKParameter((StandardPKParameter) standardPKParameterValue);
+      }
+
+      public string[] AllAvailableUnitNamesForDimension(string dimensionName)
+      {
+         var dimension = DimensionByName(dimensionName);
+         return dimension.GetUnitNames().ToArray();
       }
 
       private double[] convertToUnit(IDimension dimension, string targetUnit, double? molWeight, params double[] valuesInBaseUnit)
