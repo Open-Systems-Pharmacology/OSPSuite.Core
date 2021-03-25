@@ -40,20 +40,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
          string configurationId = null
       )
       {
-         List<DataRepository> result = new List<DataRepository>();
+         var result = new List<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
          var id = Guid.NewGuid().ToString();
          presenter.OnTriggerImport += (s, d) =>
          {
-            var i = 0;
-            foreach (var dataSet in d.DataSource.DataSets.SelectMany(ds => ds.Data))
+            for (var i = 0; i < d.DataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
             {
-               var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource.DataSetAt(i++));
+               var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(d.DataSource.DataSetAt(i));
                dataRepo.ConfigurationId = id;
-               var molecule = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
                var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
                var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
 
                if (moleculeDescription != null)
                {
@@ -65,18 +62,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   }
                   else
                   {
-                     double molWeight;
-                     double moleculeMolWeight;
-                     double.TryParse(moleculeDescription, out moleculeMolWeight);
-                     double.TryParse(molecularWeightDescription, out molWeight);
+                     double.TryParse(moleculeDescription, out var moleculeMolWeight);
+                     double.TryParse(molecularWeightDescription, out var molWeight);
                      if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
                         throw new InconsistenMoleculeAndMoleWeightException();
                   }
                }
                if (!string.IsNullOrEmpty(molecularWeightDescription))
                {
-                  double molWeight;
-                  if (double.TryParse(molecularWeightDescription, out molWeight))
+                  if (double.TryParse(molecularWeightDescription, out var molWeight))
                   {
                      dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
                   }
