@@ -16,6 +16,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Name);
          Map(x => x.Icon);
          Map(x => x.Description);
+         Map(x => x.ConfigurationId);
          MapEnumerable(x => x.Columns, x => x.Add);
          MapEnumerable(x => x.ExtendedProperties, addFunction);
       }
