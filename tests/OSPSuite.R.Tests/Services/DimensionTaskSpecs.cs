@@ -168,7 +168,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _unitNames = sut.AllAvailableUnitNamesForDimension("Mass");
+         _unitNames = sut.AllAvailableUnitNamesFor("Mass");
       }
 
       [Observation]
@@ -178,13 +178,51 @@ namespace OSPSuite.R.Services
       }
    }
 
-
    public class When_retrieving_all_unit_names_defined_for_a_dimension_that_does_not_exist : concern_for_DimensionTask
    {
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.AllAvailableUnitNamesForDimension("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
+         The.Action(() => sut.AllAvailableUnitNamesFor("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
+      }
+   }
+
+   public class When_retrieving_the_base_for_a_given_dimension : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_expected_unit()
+      {
+         sut.BaseUnitFor("Mass").ShouldBeEqualTo("kg");
+      }
+   }
+
+   public class When_retrieving_the_base_unit_for_an_unknown_dimension : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.BaseUnitFor("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
+      }
+   }
+
+   public class When_checking_if_a_dimension_has_a_unit : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_true_if_the_dimension_has_unit()
+      {
+         sut.HasUnit("Mass", "kg").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_the_false_if_the_dimension_does_not_have_the_unit()
+      {
+         sut.HasUnit("Mass", "cm").ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_dimension_is_not_found()
+      {
+         The.Action(() => sut.HasUnit("TOTO", "cm")).ShouldThrowAn<KeyNotFoundException>();
       }
    }
 

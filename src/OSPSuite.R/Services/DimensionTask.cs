@@ -14,7 +14,7 @@ namespace OSPSuite.R.Services
       IDimension DimensionForUnit(string unit);
 
       /// <summary>
-      ///    Returns the default dimension for the <paramref name="standardPKParameter" />. 
+      ///    Returns the default dimension for the <paramref name="standardPKParameter" />.
       /// </summary>
       IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter);
 
@@ -41,14 +41,14 @@ namespace OSPSuite.R.Services
       double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit, double molWeight);
       double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit);
 
-      double[] ConvertToBaseUnit(IDimension dimension,string displayUnit, double valueInDisplayUnit, double molWeight);
-      double[] ConvertToBaseUnit(IDimension dimension,string displayUnit, double valueInDisplayUnit);
+      double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit);
 
-      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double[] valuesInDisplayUnit, double molWeight);
-      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double[] valuesInDisplayUnit);
+      double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit);
 
-      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double valueInDisplayUnit, double molWeight);
-      double[] ConvertToBaseUnit(string dimensionName,string displayUnit, double valueInDisplayUnit);
+      double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double valueInDisplayUnit, double molWeight);
+      double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double valueInDisplayUnit);
 
       /// <summary>
       ///    Returns an array containing all dimensions defined in the suite
@@ -60,16 +60,27 @@ namespace OSPSuite.R.Services
       /// </summary>
       string[] AllAvailableDimensionNames();
 
-
       /// <summary>
       ///    Returns the name of all dimensions defined in the suite
       /// </summary>
-      string[] AllAvailableUnitNamesForDimension(string dimensionName);
+      string[] AllAvailableUnitNamesFor(string dimensionName);
 
       /// <summary>
-      /// Returns the µ-symbol to ensure that we can replace all special chars
+      ///    Returns the µ-symbol to ensure that we can replace all special chars
       /// </summary>
       string MuSymbol { get; }
+
+      /// <summary>
+      ///    Returns <c>true</c> if <paramref name="unit" /> exists in <paramref name="dimensionName" /> otherwise <c>false</c>
+      ///    Throws an exception if a dimension named <paramref name="dimensionName" /> does not exist
+      /// </summary>
+      bool HasUnit(string dimensionName, string unit);
+
+      /// <summary>
+      ///    Returns the baseUnit for the dimension named <paramref name="dimensionName" />.
+      ///    Throws an exception if a dimension named <paramref name="dimensionName" /> does not exist
+      /// </summary>
+      string BaseUnitFor(string dimensionName);
    }
 
    public class DimensionTask : IDimensionTask
@@ -82,6 +93,10 @@ namespace OSPSuite.R.Services
       {
          _dimensionFactory = dimensionFactory;
       }
+
+      public bool HasUnit(string dimensionName, string unit) => DimensionByName(dimensionName).HasUnit(unit);
+
+      public string BaseUnitFor(string dimensionName) => DimensionByName(dimensionName).BaseUnit.Name;
 
       public IDimension DimensionByName(string dimensionName) => _dimensionFactory.Dimension(dimensionName);
 
@@ -134,7 +149,7 @@ namespace OSPSuite.R.Services
 
       public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double[] valuesInDisplayUnit)
       {
-         return convertToBaseUnit(dimension, displayUnit, molWeight:null, valuesInDisplayUnit);
+         return convertToBaseUnit(dimension, displayUnit, molWeight: null, valuesInDisplayUnit);
       }
 
       public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit, double molWeight)
@@ -144,7 +159,7 @@ namespace OSPSuite.R.Services
 
       public double[] ConvertToBaseUnit(IDimension dimension, string displayUnit, double valueInDisplayUnit)
       {
-         return convertToBaseUnit(dimension, displayUnit, molWeight:null, valueInDisplayUnit);
+         return convertToBaseUnit(dimension, displayUnit, molWeight: null, valueInDisplayUnit);
       }
 
       public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit, double molWeight)
@@ -154,7 +169,7 @@ namespace OSPSuite.R.Services
 
       public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double[] valuesInDisplayUnit)
       {
-         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight:null, valuesInDisplayUnit);
+         return convertToBaseUnit(DimensionByName(dimensionName), displayUnit, molWeight: null, valuesInDisplayUnit);
       }
 
       public double[] ConvertToBaseUnit(string dimensionName, string displayUnit, double valueInDisplayUnit, double molWeight)
@@ -171,7 +186,6 @@ namespace OSPSuite.R.Services
 
       public string[] AllAvailableDimensionNames() => _dimensionFactory.DimensionNamesSortedByName;
 
-     
       public IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter)
       {
          switch (standardPKParameter)
@@ -217,7 +231,7 @@ namespace OSPSuite.R.Services
          return DimensionForStandardPKParameter((StandardPKParameter) standardPKParameterValue);
       }
 
-      public string[] AllAvailableUnitNamesForDimension(string dimensionName)
+      public string[] AllAvailableUnitNamesFor(string dimensionName)
       {
          var dimension = DimensionByName(dimensionName);
          return dimension.GetUnitNames().ToArray();
@@ -230,7 +244,7 @@ namespace OSPSuite.R.Services
          var unit = mergedDimension.Unit(targetUnit);
          return mergedDimension.BaseUnitValuesToUnitValues(unit, valuesInBaseUnit);
       }
-      
+
       private double[] convertToBaseUnit(IDimension dimension, string displayUnit, double? molWeight, params double[] valuesInDisplayUnit)
       {
          var converterContext = new DoubleArrayContext(dimension, molWeight);
