@@ -15,6 +15,9 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -28,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private DataImporterSettings _dataImporterSettings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
-      private readonly IDataSource _dataSource;
+      protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
       private readonly Utility.Container.IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
@@ -124,14 +127,47 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportData(object sender, EventArgs e)
       {
-         try
+         var dataRepositories = new List<DataRepository>();
+         var id = Guid.NewGuid().ToString();
+         for (var i = 0; i < _dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
-            OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataSource = _dataSource });
+            var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(i));
+            dataRepo.ConfigurationId = id;
+            var moleculeDescription = (_metaDataCategories?.FirstOrDefault(md => md.Name == _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(_dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
+            var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(_dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+            if (moleculeDescription != null)
+            {
+               if (string.IsNullOrEmpty(molecularWeightDescription))
+               {
+                  molecularWeightDescription = moleculeDescription;
+                  if (!string.IsNullOrEmpty(_dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
+                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
+               }
+               else
+               {
+                  double.TryParse(moleculeDescription, out var moleculeMolWeight);
+                  double.TryParse(molecularWeightDescription, out var molWeight);
+                  if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
+                  {
+                     _view.ShowErrorMessage(Error.InconsistenMoleculeAndMoleWeightException);
+                     return;
+                  }
+                     
+               }
+            }
+            if (!string.IsNullOrEmpty(molecularWeightDescription))
+            {
+               if (double.TryParse(molecularWeightDescription, out var molWeight))
+               {
+                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+               }
+            }
+            dataRepositories.Add(dataRepo);
          }
-         catch (InconsistenMoleculeAndMoleWeightException exception)
-         {
-            _view.ShowErrorMessage(exception.Message);
-         }
+         var configuration = GetConfiguration();
+         configuration.Id = id;
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
       }
 
       private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)

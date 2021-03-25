@@ -5,8 +5,12 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
+using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -16,7 +20,29 @@ using System.Linq;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public abstract class ConcernForModalImporterPresenter : ContextSpecification<ModalImporterPresenter>
+   internal class ImporterPresenterForTest : ImporterPresenter
+   {
+      public ImporterPresenterForTest(
+         IImporterView view,
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IImporter importer,
+         INanPresenter nanPresenter,
+         IImporterDataPresenter importerDataPresenter,
+         IImportConfirmationPresenter confirmationPresenter,
+         IColumnMappingPresenter columnMappingPresenter,
+         ISourceFilePresenter sourceFilePresenter,
+         IDialogCreator dialogCreator,
+         IDimensionFactory dimensionFactory,
+         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
+         Utility.Container.IContainer container,
+         IDataSource dataSource
+      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, dimensionFactory, modelingXmlSerializerRepository, container)
+      {
+         _dataSource = dataSource;
+      }
+   }
+
+   public abstract class ConcernForModalImporterPresenter : ContextSpecification<ImporterPresenter>
    {
       protected ImportTriggeredEventArgs eventArgs;
       protected List<MetaDataCategory> metaDataCategories;
@@ -27,8 +53,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          dataImporterSettings = new DataImporterSettings();
          base.Context();
          var mapper = A.Fake<IDataSetToDataRepositoryMapper>();
-         sut = new ModalImporterPresenter(A.Fake<IModalImporterView>(), mapper);
-         eventArgs = new ImportTriggeredEventArgs();
          var cache = new Cache<string, IDataSet>();
          var dataSet = new DataSet();
          dataSet.AddData(new List<ParsedDataSet>() 
@@ -36,7 +60,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new ParsedDataSet(new List<(string ColumnName, IList<string> ExistingValues)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
          var dataSource = A.Fake<IDataSource>();
-         eventArgs.DataSource = dataSource;
          A.CallTo(() => dataSource.DataSets).Returns(cache);
          cache.Add("sheet1", dataSet);
          var dataRepository = new DataRepository { Name = "name" };
@@ -65,6 +88,28 @@ namespace OSPSuite.Presentation.Importer.Presenters
             moleculeMetaDataCategory,
             createMetaDataCategory<string>("Mol weight", isMandatory: false)
          };
+         var dataFormat = A.Fake<IDataFormat>();
+         A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>());
+         var dataSourceFile = A.Fake<IDataSourceFile>();
+         A.CallTo(() => dataSourceFile.Format).Returns(dataFormat);
+         var importerPresenter = A.Fake<IImporterDataPresenter>();
+         A.CallTo(() => importerPresenter.SetDataSource(A<string>.Ignored)).Returns(dataSourceFile);
+         sut = new ImporterPresenterForTest(
+            A.Fake<IImporterView>(),
+            mapper,
+            A.Fake<IImporter>(),
+            A.Fake<INanPresenter>(),
+            importerPresenter,
+            A.Fake<IImportConfirmationPresenter>(),
+            A.Fake<IColumnMappingPresenter>(),
+            A.Fake<ISourceFilePresenter>(),
+            A.Fake<IDialogCreator>(),
+            A.Fake<IDimensionFactory>(),
+            A.Fake<IOSPSuiteXmlSerializerRepository>(),
+            A.Fake<Utility.Container.IContainer>(),
+            dataSource);
+         sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>());
+         sut.SetSettings(metaDataCategories, new List<ColumnInfo>(), dataImporterSettings);
       }
 
       protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false, Action<MetaDataCategory> fixedValuesRetriever = null)
@@ -91,31 +136,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void sets_molWeight_from_molecule()
       {
          dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
-         var importerPresenter = A.Fake<IImporterPresenter>();
-         var result = sut.ImportDataSets(
-            importerPresenter,
-            metaDataCategories,
-            new List<ColumnInfo>(),
-            dataImporterSettings
-         );
-         importerPresenter.OnTriggerImport += Raise.With(eventArgs);
+         ImportTriggeredEventArgs result = null;
+         sut.OnTriggerImport += (_, e) => result = e;
+         sut.ImportData(this, null);
          var molWeight = 6.0;
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
       }
 
       [Observation]
-      public void should_throw_when_inconsistent_mol_weight()
+      public void should_not_invoke_when_inconsistent_mol_weight()
       {
          dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          var importerPresenter = A.Fake<IImporterPresenter>();
-         var result = sut.ImportDataSets(
-            importerPresenter,
-            metaDataCategories,
-            new List<ColumnInfo>(),
-            dataImporterSettings
-         );
-         The.Action(() => importerPresenter.OnTriggerImport += Raise.With(eventArgs)).ShouldThrowAn<InconsistenMoleculeAndMoleWeightException>();
+         ImportTriggeredEventArgs result = null;
+         sut.OnTriggerImport += (_, e) => result = e;
+         sut.ImportData(this, null);
+         Assert.IsNull(result);
       }
 
       [Observation]
@@ -123,13 +160,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          var importerPresenter = A.Fake<IImporterPresenter>();
-         var result = sut.ImportDataSets(
-            importerPresenter,
-            metaDataCategories,
-            new List<ColumnInfo>(),
-            dataImporterSettings
-         );
-         importerPresenter.OnTriggerImport += Raise.With(eventArgs);
+         ImportTriggeredEventArgs result = null;
+         sut.OnTriggerImport += (_, e) => result = e;
+         sut.ImportData(this, null);
          var molWeight = 22.0;
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
       }

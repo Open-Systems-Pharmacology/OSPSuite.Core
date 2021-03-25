@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Presentation.Views.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class ImportTriggeredEventArgs : EventArgs
    {
-      public IDataSource DataSource { get; set; }
+      public IReadOnlyList<DataRepository> DataRepositories { get; set; }
    }
 
    public interface IImporterPresenter : IDisposablePresenter
