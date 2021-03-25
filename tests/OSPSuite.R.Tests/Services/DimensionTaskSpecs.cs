@@ -226,6 +226,22 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_checking_if_a_dimension_exists_by_name : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_true_if_it_exists()
+      {
+         sut.HasDimension("Mass").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_false_otherwise()
+      {
+         sut.HasDimension("NOPE").ShouldBeFalse();
+      }
+
+   }
+
    public class When_retrieving_the_dimensions_for_standard_pk_parameters : concern_for_DimensionTask
    {
       [Observation]

@@ -14,6 +14,11 @@ namespace OSPSuite.R.Services
       IDimension DimensionForUnit(string unit);
 
       /// <summary>
+      ///    Returns <c>true</c> if a dimension named <paramref name="dimensionName" /> exists otherwise <c>false</c>
+      /// </summary>
+      bool HasDimension(string dimensionName);
+
+      /// <summary>
       ///    Returns the default dimension for the <paramref name="standardPKParameter" />.
       /// </summary>
       IDimension DimensionForStandardPKParameter(StandardPKParameter standardPKParameter);
@@ -101,6 +106,8 @@ namespace OSPSuite.R.Services
       public IDimension DimensionByName(string dimensionName) => _dimensionFactory.Dimension(dimensionName);
 
       public IDimension DimensionForUnit(string unit) => _dimensionFactory.DimensionForUnit(unit);
+
+      public bool HasDimension(string dimensionName) => _dimensionFactory.TryGetDimension(dimensionName, out _);
 
       public double[] ConvertToUnit(IDimension dimension, string targetUnit, double[] valuesInBaseUnit)
       {
