@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DevExpress.XtraEditors;
-using DevExpress.XtraGrid.Columns;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;

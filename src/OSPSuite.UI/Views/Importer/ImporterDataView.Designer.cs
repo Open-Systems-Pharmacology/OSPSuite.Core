@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using DevExpress.Utils;
+using OSPSuite.Assets;
 using System.Windows.Forms;
 
 namespace OSPSuite.UI.Views.Importer
@@ -67,50 +68,49 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl.Controls.Add(this.importerTabControl);
          this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
-         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(3197, 116, 650, 400);
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(3122, 2166);
+         this.rootLayoutControl.Size = new System.Drawing.Size(1457, 1050);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // useForImportCheckEdit
          // 
-         this.useForImportCheckEdit.Location = new System.Drawing.Point(4, 2108);
-         this.useForImportCheckEdit.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.useForImportCheckEdit.Location = new System.Drawing.Point(1, 1022);
          this.useForImportCheckEdit.Name = "useForImportCheckEdit";
          this.useForImportCheckEdit.Properties.Caption = "Use the filters for importing the data";
-         this.useForImportCheckEdit.Size = new System.Drawing.Size(1025, 47);
+         this.useForImportCheckEdit.Size = new System.Drawing.Size(480, 24);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
          // 
          // btnImport
          // 
-         this.btnImport.Location = new System.Drawing.Point(2723, 2108);
-         this.btnImport.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.btnImport.Location = new System.Drawing.Point(1270, 1022);
+         this.btnImport.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
          this.btnImport.Name = "btnImport";
-         this.btnImport.Size = new System.Drawing.Size(221, 54);
+         this.btnImport.Size = new System.Drawing.Size(105, 27);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
          this.btnImport.Text = "btnImport";
          // 
          // btnImportAll
          // 
-         this.btnImportAll.Location = new System.Drawing.Point(2952, 2108);
-         this.btnImportAll.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.btnImportAll.Location = new System.Drawing.Point(1377, 1022);
+         this.btnImportAll.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
          this.btnImportAll.Name = "btnImportAll";
-         this.btnImportAll.Size = new System.Drawing.Size(166, 54);
+         this.btnImportAll.Size = new System.Drawing.Size(79, 27);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
          this.btnImportAll.Text = "btnImportAll";
          // 
          // importerTabControl
          // 
-         this.importerTabControl.Location = new System.Drawing.Point(4, 4);
-         this.importerTabControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.importerTabControl.Location = new System.Drawing.Point(1, 1);
+         this.importerTabControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.importerTabControl.Name = "importerTabControl";
-         this.importerTabControl.Size = new System.Drawing.Size(3114, 2096);
+         this.importerTabControl.Size = new System.Drawing.Size(1455, 1019);
          this.importerTabControl.TabIndex = 5;
          // 
          // Root
@@ -125,7 +125,7 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutControlItem1});
          this.Root.Name = "Root";
          this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.Root.Size = new System.Drawing.Size(3122, 2166);
+         this.Root.Size = new System.Drawing.Size(1457, 1050);
          this.Root.TextVisible = false;
          // 
          // importerLayoutControlItem
@@ -133,44 +133,45 @@ namespace OSPSuite.UI.Views.Importer
          this.importerLayoutControlItem.Control = this.importerTabControl;
          this.importerLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.importerLayoutControlItem.Name = "importerLayoutControlItem";
-         this.importerLayoutControlItem.Size = new System.Drawing.Size(3122, 2104);
+         this.importerLayoutControlItem.Size = new System.Drawing.Size(1457, 1021);
          this.importerLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importerLayoutControlItem.TextVisible = false;
          // 
          // layoutItemImportAll
          // 
          this.layoutItemImportAll.Control = this.btnImportAll;
-         this.layoutItemImportAll.Location = new System.Drawing.Point(2948, 2104);
+         this.layoutItemImportAll.Location = new System.Drawing.Point(1376, 1021);
          this.layoutItemImportAll.Name = "layoutItemImportAll";
-         this.layoutItemImportAll.Size = new System.Drawing.Size(174, 62);
+         this.layoutItemImportAll.Size = new System.Drawing.Size(81, 29);
          this.layoutItemImportAll.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportAll.TextVisible = false;
          // 
          // layoutItemImportCurrent
          // 
          this.layoutItemImportCurrent.Control = this.btnImport;
-         this.layoutItemImportCurrent.Location = new System.Drawing.Point(2719, 2104);
+         this.layoutItemImportCurrent.Location = new System.Drawing.Point(1269, 1021);
          this.layoutItemImportCurrent.Name = "layoutItemImportCurrent";
-         this.layoutItemImportCurrent.Size = new System.Drawing.Size(229, 62);
+         this.layoutItemImportCurrent.Size = new System.Drawing.Size(107, 29);
          this.layoutItemImportCurrent.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportCurrent.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(1033, 2104);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(482, 1021);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1686, 62);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(787, 29);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.useForImportCheckEdit;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 2104);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 1021);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1033, 62);
+         this.layoutControlItem1.Size = new System.Drawing.Size(482, 29);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
+         this.layoutControlItem1.ContentVertAlignment = VertAlignment.Center;
          // 
          // dataViewingGridControl
          // 
@@ -190,12 +191,12 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // ImporterDataView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.rootLayoutControl);
-         this.Margin = new System.Windows.Forms.Padding(19, 21, 19, 21);
+         this.Margin = new System.Windows.Forms.Padding(9, 10, 9, 10);
          this.Name = "ImporterDataView";
-         this.Size = new System.Drawing.Size(3122, 2166);
+         this.Size = new System.Drawing.Size(1457, 1050);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
