@@ -60,8 +60,8 @@ namespace OSPSuite.UI.Views.Importer
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
-         initializeButton(_repositoryMappingPopupContainerEdit);
-         initializeButton(_repositoryMetaDataPopupContainerEdit);
+         initializeButton(_repositoryMappingPopupContainerEdit, _mappingPopupControl);
+         initializeButton(_repositoryMetaDataPopupContainerEdit, _metaDataPopupControl);
 
          _disabledPopupContainerEdit.Enabled = false;
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
@@ -82,13 +82,13 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      private void initializeButton (RepositoryItemPopupContainerEdit button)
+      private void initializeButton (RepositoryItemPopupContainerEdit button, PopupContainerControl control)
       {
          button.Buttons[0].Kind = ButtonPredefines.Combo;
-         button.PopupControl = _mappingPopupControl;
+         button.PopupControl = control;
          button.CloseOnOuterMouseClick = false;
          button.QueryDisplayText += (o, e) => queryDisplayText(e);
-         button.CloseUp += (o, e) => closeUpMapping(e);
+         button.CloseUp += (o, e) => closeUp(e);
          button.CloseUpKey = new KeyShortcut(Keys.Enter);
          button.AllowDropDownWhenReadOnly = DefaultBoolean.True;
       }
@@ -105,19 +105,12 @@ namespace OSPSuite.UI.Views.Importer
          return _disabledPopupContainerEdit;         
       }
 
-      private void closeUpMapping(CloseUpEventArgs e)
+      private void closeUp(CloseUpEventArgs e)
       {
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
 
          _presenter.UpdateDescriptrionForModel();
-      }
-
-      private void closeUpMetaData(CloseUpEventArgs e)
-      {
-         if (e.CloseMode == PopupCloseMode.Cancel)
-            return;
-        _presenter.UpdateMetaDataForModel();
       }
 
       public void FillMappingView(IView view)
