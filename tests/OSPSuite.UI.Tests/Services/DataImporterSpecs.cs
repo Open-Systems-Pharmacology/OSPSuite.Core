@@ -97,13 +97,6 @@ namespace OSPSuite.UI.Services
    {
       private ReloadDataSets _result;
 
-      protected override void Context()
-      {
-         base.Context();
-
-
-      }
-
       protected override void Because()
       {
          _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);

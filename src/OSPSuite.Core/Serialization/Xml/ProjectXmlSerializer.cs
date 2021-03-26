@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.JournalPath);
          Map(x => x.DisplayUnits);
          Map(x => x.Favorites);
+         MapEnumerable(x => x.AllImporterConfigurations, x => x.AddImporterConfiguration);
          MapEnumerable(x => x.AllClassifications, x => x.AddClassification);
          MapEnumerable(x => x.AllClassifiables, x => x.AddClassifiable);
          MapEnumerable(x => x.ChartTemplates, x => x.AddChartTemplate);
