@@ -47,7 +47,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
-         View.SetMetaDataCategories(metaDataCategories);
       }
 
       public IDataFormat GetDataFormat()

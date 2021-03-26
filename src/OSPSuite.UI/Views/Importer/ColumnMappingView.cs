@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
@@ -14,7 +13,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -43,7 +41,6 @@ namespace OSPSuite.UI.Views.Importer
       private readonly PopupContainerControl _mappingPopupControl = new PopupContainerControl();
       private readonly PopupContainerControl _metaDataPopupControl = new PopupContainerControl();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
-      private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       
       public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
@@ -247,11 +244,6 @@ namespace OSPSuite.UI.Views.Importer
       public void SetMappingSource(IList<ColumnMappingDTO> mappings)
       {
          _gridViewBinder.BindToSource(mappings);
-      }
-
-      public void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories)
-      {
-         _metaDataCategories = metaDataCategories;
       }
 
       public void CloseEditor()
