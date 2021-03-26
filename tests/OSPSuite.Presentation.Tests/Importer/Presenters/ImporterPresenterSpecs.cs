@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public abstract class ConcernForModalImporterPresenter : ContextSpecification<ImporterPresenter>
+   public abstract class ConcernForImporterPresenter : ContextSpecification<ImporterPresenter>
    {
       protected ImportTriggeredEventArgs eventArgs;
       protected List<MetaDataCategory> metaDataCategories;
@@ -130,7 +130,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_importing_data : ConcernForModalImporterPresenter
+   public class When_importing_data : ConcernForImporterPresenter
    {
       [Observation]
       public void sets_molWeight_from_molecule()
