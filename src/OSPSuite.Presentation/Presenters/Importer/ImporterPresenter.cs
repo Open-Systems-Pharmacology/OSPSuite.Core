@@ -129,6 +129,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var dataRepositories = new List<DataRepository>();
          var id = Guid.NewGuid().ToString();
+
+         //Pass ALL this to the Iimporter service and let everything be done there
          for (var i = 0; i < _dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
             var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(i));

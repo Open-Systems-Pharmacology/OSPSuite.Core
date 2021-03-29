@@ -11,6 +11,7 @@ using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -116,62 +117,73 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
-         if (dataImporterSettings.PromptForConfirmation)
+         var dataSource = new DataSource(_importer);
+         var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
+         dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
+         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
-            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+            Id = md.MetaDataId,
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+         }).Union
+         (
+            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-               importerPresenter.LoadConfiguration(configuration);
-               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
+               Id = md.ColumnName,
+               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            })
+         );
+         dataSource.SetMappings(dataSourceFile.Path, mappings);
+         dataSource.NanSettings = configuration.NanSettings;
+         dataSource.SetDataFormat(dataSourceFile.Format);
+         dataSource.SetNamingConvention(configuration.NamingConventions);
+         var sheets = new Cache<string, DataSheet>();
+         foreach (var key in configuration.LoadedSheets)
+         {
+            sheets.Add(key, dataSourceFile.DataSheets[key]);
+         }
+
+         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+
+         var result = new List<DataRepository>();
+         var i = 0;
+         foreach (var pair in dataSource.DataSets.KeyValues)
+         {
+            foreach (var data in pair.Value.Data)
+            {
+               var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
+               dataRepo.ConfigurationId = configuration.Id;
+
+
+               //this here is wrong in this context...it does not provide us with the correct molecularWeightDescription
+               var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
+               var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+               if (moleculeDescription != null)
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
-                     .DataRepositories;
+                  if (string.IsNullOrEmpty(molecularWeightDescription))
+                  {
+                     molecularWeightDescription = moleculeDescription;
+                     if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
+                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
+                  }
+                  else
+                  {
+                     double.TryParse(moleculeDescription, out var moleculeMolWeight);
+                     double.TryParse(molecularWeightDescription, out var molWeight);
+                  }
                }
+               if (!string.IsNullOrEmpty(molecularWeightDescription))
+               {
+                  if (double.TryParse(molecularWeightDescription, out var molWeight))
+                  {
+                     dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+                  }
+               }
+               result.Add(dataRepo);
             }
          }
-         else
-         {
-            var dataSource = new DataSource(_importer);
-            var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
-            dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
-            var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-            }).Union
-            (
-               dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-               {
-                  Id = md.ColumnName,
-                  Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-               })
-            );
-            dataSource.SetMappings(dataSourceFile.Path, mappings);
-            dataSource.NanSettings = configuration.NanSettings;
-            dataSource.SetDataFormat(dataSourceFile.Format);
-            dataSource.SetNamingConvention(configuration.NamingConventions);
-            var sheets = new Cache<string, DataSheet>();
-            foreach (var key in configuration.LoadedSheets)
-            {
-               sheets.Add(key, dataSourceFile.DataSheets[key]);
-            }
 
-            dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
-
-            var result = new List<DataRepository>();
-            var i = 0;
-            foreach (var pair in dataSource.DataSets.KeyValues)
-            {
-               foreach (var data in pair.Value.Data)
-               {
-                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
-                  dataRepo.ConfigurationId = configuration.Id;
-                  result.Add(dataRepo);
-               }
-            }
-
-            return result;
-         }
+         return result;
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
