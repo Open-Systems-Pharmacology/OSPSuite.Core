@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Infrastructure.Import.Services
@@ -25,17 +30,21 @@ namespace OSPSuite.Infrastructure.Import.Services
       int GetImageIndex(DataFormatParameter parameter);
       MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
 
+      IReadOnlyList<DataRepository> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+         DataImporterSettings dataImporterSettings, string id);
    }
 
    public class Importer : IImporter
    {
       private readonly IoC _container;
       private readonly IDataSourceFileParser _parser;
+      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
 
-      public Importer( IoC container, IDataSourceFileParser parser)
+      public Importer( IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper)
       {
          _container = container;
          _parser = parser;
+         _dataRepositoryMapper = dataRepositoryMapper;
       }
 
       public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
@@ -145,6 +154,56 @@ namespace OSPSuite.Infrastructure.Import.Services
             MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && cm.MappedColumn.ErrorStdDev.Equals("geometric")).Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
+      }
+
+      public IReadOnlyList<DataRepository> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+         DataImporterSettings dataImporterSettings, string id)
+      {
+         var dataRepositories = new List<DataRepository>();
+
+         for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
+         {
+            var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            dataRepo.ConfigurationId = id;
+            var moleculeDescription =
+               (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues
+                  .FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))
+               ?.Value;
+            var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+            if (moleculeDescription != null)
+            {
+               if (string.IsNullOrEmpty(molecularWeightDescription))
+               {
+                  molecularWeightDescription = moleculeDescription;
+                  if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
+                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
+                        {Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription});
+               }
+               else
+               {
+                  double.TryParse(moleculeDescription, out var moleculeMolWeight);
+                  double.TryParse(molecularWeightDescription, out var molWeight);
+
+                  if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
+                  {
+                     throw new InconsistentMoleculeAndMoleWeightException();
+                  }
+               }
+            }
+
+            if (!string.IsNullOrEmpty(molecularWeightDescription))
+            {
+               if (double.TryParse(molecularWeightDescription, out var molWeight))
+               {
+                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+               }
+            }
+
+            dataRepositories.Add(dataRepo);
+         }
+
+         return dataRepositories;
       }
    }
 

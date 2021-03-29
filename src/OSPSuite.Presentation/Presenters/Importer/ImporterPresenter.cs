@@ -28,6 +28,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IImportConfirmationPresenter _confirmationPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IImporter _importer;
       private DataImporterSettings _dataImporterSettings;
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
@@ -65,6 +66,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource = new DataSource(importer);
          _container = container;
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
+         _importer = importer;
 
          _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
@@ -127,45 +129,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportData(object sender, EventArgs e)
       {
-         var dataRepositories = new List<DataRepository>();
          var id = Guid.NewGuid().ToString();
-
-         //Pass ALL this to the Iimporter service and let everything be done there
-         for (var i = 0; i < _dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
+         IReadOnlyList<DataRepository> dataRepositories;
+         try
          {
-            var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(i));
-            dataRepo.ConfigurationId = id;
-            var moleculeDescription = (_metaDataCategories?.FirstOrDefault(md => md.Name == _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(_dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
-            var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(_dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-            if (moleculeDescription != null)
-            {
-               if (string.IsNullOrEmpty(molecularWeightDescription))
-               {
-                  molecularWeightDescription = moleculeDescription;
-                  if (!string.IsNullOrEmpty(_dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
-                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
-               }
-               else
-               {
-                  double.TryParse(moleculeDescription, out var moleculeMolWeight);
-                  double.TryParse(molecularWeightDescription, out var molWeight);
-                  if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
-                  {
-                     _view.ShowErrorMessage(Error.InconsistenMoleculeAndMoleWeightException);
-                     return;
-                  }
-                     
-               }
-            }
-            if (!string.IsNullOrEmpty(molecularWeightDescription))
-            {
-               if (double.TryParse(molecularWeightDescription, out var molWeight))
-               {
-                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
-               }
-            }
-            dataRepositories.Add(dataRepo);
+            dataRepositories = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id);
+         }
+         catch (InconsistentMoleculeAndMoleWeightException exception)
+         {
+            _view.ShowErrorMessage(exception.Message);
+            return;
          }
          var configuration = GetConfiguration();
          configuration.Id = id;

@@ -143,6 +143,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
       }
 
+      //ToDo: move to ImporterSpecs
+      /*
       [Observation]
       public void should_not_invoke_when_inconsistent_mol_weight()
       {
@@ -153,7 +155,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.OnTriggerImport += (_, e) => result = e;
          sut.ImportData(this, null);
          Assert.IsNull(result);
-      }
+      }*/
 
       [Observation]
       public void sets_molWeight_from_molWeight()

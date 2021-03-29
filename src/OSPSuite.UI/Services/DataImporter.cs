@@ -144,46 +144,7 @@ namespace OSPSuite.UI.Services
 
          dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
 
-         var result = new List<DataRepository>();
-         var i = 0;
-         foreach (var pair in dataSource.DataSets.KeyValues)
-         {
-            foreach (var data in pair.Value.Data)
-            {
-               var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
-               dataRepo.ConfigurationId = configuration.Id;
-
-
-               //this here is wrong in this context...it does not provide us with the correct molecularWeightDescription
-               var moleculeDescription = (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues.FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))?.Value;
-               var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-               if (moleculeDescription != null)
-               {
-                  if (string.IsNullOrEmpty(molecularWeightDescription))
-                  {
-                     molecularWeightDescription = moleculeDescription;
-                     if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
-                        dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription });
-                  }
-                  else
-                  {
-                     double.TryParse(moleculeDescription, out var moleculeMolWeight);
-                     double.TryParse(molecularWeightDescription, out var molWeight);
-                  }
-               }
-               if (!string.IsNullOrEmpty(molecularWeightDescription))
-               {
-                  if (double.TryParse(molecularWeightDescription, out var molWeight))
-                  {
-                     dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
-                  }
-               }
-               result.Add(dataRepo);
-            }
-         }
-
-         return result;
+         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings,configuration.Id);
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,

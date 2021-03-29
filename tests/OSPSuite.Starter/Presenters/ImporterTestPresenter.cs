@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Forms;
 using System.Xml.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
