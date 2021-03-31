@@ -154,8 +154,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ImportTriggeredEventArgs result = null;
          sut.OnTriggerImport += (_, e) => result = e;
          sut.ImportData(this, null);
+
+         //to check how an exception is being tested in unit tests
+         //A.CallTo(Sut.ImportData()).Throws<>()
+
          Assert.IsNull(result);
-      }*/
+      }
+*/
 
       [Observation]
       public void sets_molWeight_from_molWeight()
