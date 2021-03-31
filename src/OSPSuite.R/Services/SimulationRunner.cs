@@ -36,6 +36,7 @@ namespace OSPSuite.R.Services
    {
       Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs);
       SimulationResults Run(SimulationRunArgs simulationRunArgs);
+      SimulationResults[] RunConcurrently(SimulationRunnerConcurrentOptions options);
    }
 
    public class SimulationRunner : ISimulationRunner
