@@ -67,17 +67,6 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_returning_the_mu_symbol_to_be_used_for_conversion : concern_for_DimensionTask
-   {
-      [Observation]
-      public void should_return_the_expected_symbol()
-      {
-         sut.MuSymbol.ShouldBeEqualTo("µ");
-         //also verifies that we are using the value defined in the dimension files
-         sut.MuSymbol.ShouldBeEqualTo(sut.DimensionByName(Constants.Dimension.MOLAR_AMOUNT).BaseUnit.Name.Substring(0, 1));
-      }
-   }
-
    public class When_converting_a_double_value_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
       protected override void Because()

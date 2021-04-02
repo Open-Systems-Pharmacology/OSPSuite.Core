@@ -66,14 +66,9 @@ namespace OSPSuite.R.Services
       string[] AllAvailableDimensionNames();
 
       /// <summary>
-      ///    Returns the name of all dimensions defined in the suite
+      ///    Returns the name of all units defined in the suite for the given <paramref name="dimensionName"/>
       /// </summary>
       string[] AllAvailableUnitNamesFor(string dimensionName);
-
-      /// <summary>
-      ///    Returns the µ-symbol to ensure that we can replace all special chars
-      /// </summary>
-      string MuSymbol { get; }
 
       /// <summary>
       ///    Returns <c>true</c> if <paramref name="unit" /> exists in <paramref name="dimensionName" /> otherwise <c>false</c>
@@ -91,8 +86,6 @@ namespace OSPSuite.R.Services
    public class DimensionTask : IDimensionTask
    {
       private readonly IDimensionFactory _dimensionFactory;
-
-      public string MuSymbol { get; } = "µ";
 
       public DimensionTask(IDimensionFactory dimensionFactory)
       {
