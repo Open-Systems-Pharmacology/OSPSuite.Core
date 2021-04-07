@@ -62,6 +62,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Importer\ModalImporterView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Views\Importer\MetaDataParameterEditorView.cs">
       <SubType>UserControl</SubType>
     </Compile>
