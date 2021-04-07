@@ -88,7 +88,7 @@ namespace OSPSuite.R.Services
          var tasks = new List<Task<SimulationResults>>();
          foreach (var simulation in options.Simulations)
          {
-            tasks.Add(RunAsync(simulation, options.simulationRunOptions));
+            tasks.Add(RunAsyncForConcurrentRun(simulation, options.simulationRunOptions));
          }
          Task.WaitAll(tasks.ToArray());
          return tasks.Select(t => t.Result).ToArray();
@@ -142,6 +142,16 @@ namespace OSPSuite.R.Services
          {
             _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
             var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
+            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+         });
+      }
+
+      public Task<SimulationResults> RunAsyncForConcurrentRun(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
+      {
+         return Task.Run(() =>
+         {
+            _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
+            var simulationResults = ((ISimModelManager) _simModelManager.Clone()).RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
             return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
          });
       }

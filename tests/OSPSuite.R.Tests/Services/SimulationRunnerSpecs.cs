@@ -185,6 +185,7 @@ namespace OSPSuite.R.Services
       public void should_run_the_simulations()
       {
          Assert.IsNotNull(_results);
+         Assert.IsTrue(_results.All(r => r.ElementAt(0).AllValues.SelectMany(v => v.Values).Count() > 0));
       }
    }
 }
