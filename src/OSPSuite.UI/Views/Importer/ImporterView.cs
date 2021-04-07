@@ -49,8 +49,8 @@ namespace OSPSuite.UI.Views.Importer
                return;
             _presenter.SaveConfiguration(fileDialog.FileName);
          });
-         saveMappingBtn.Text = Captions.Importer.SaveConfiguration;
-         saveMappingBtnLayoutControlItem.AdjustButtonSize();
+         saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
+         saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

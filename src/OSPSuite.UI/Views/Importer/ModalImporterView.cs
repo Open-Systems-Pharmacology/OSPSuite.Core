@@ -150,6 +150,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.ClientSize = new System.Drawing.Size(1161, 756);
+         this.Margin = new System.Windows.Forms.Padding(0);
          this.Controls.Add(this.importerLayoutControl);
          this.Name = "ModalImporterView";
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
