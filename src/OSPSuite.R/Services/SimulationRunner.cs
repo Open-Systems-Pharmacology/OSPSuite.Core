@@ -86,12 +86,9 @@ namespace OSPSuite.R.Services
       public SimulationResults[] RunConcurrently(SimulationRunnerConcurrentOptions options)
       {
          var tasks = new List<Task<SimulationResults>>();
-         foreach (var setting in options.SimulationsWithPopulations)
+         foreach (var simulation in options.Simulations)
          {
-            if (setting.Population != null)
-               tasks.Add(RunAsync(setting.Simulation, setting.Population, options.simulationRunOptions));
-            else
-               tasks.Add(RunAsync(setting.Simulation, options.simulationRunOptions));
+            tasks.Add(RunAsync(simulation, options.simulationRunOptions));
          }
          Task.WaitAll(tasks.ToArray());
          return tasks.Select(t => t.Result).ToArray();

@@ -165,9 +165,10 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _simulationPersister = Api.GetSimulationPersister();
          _options = new SimulationRunnerConcurrentOptions();
-         _options.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml")));
-         _options.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
-         _options.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("multiple_dosing.pkml")));
+         _options.Simulations.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml")));
+         _options.Simulations.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
+         _options.Simulations.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
+         _options.Simulations.Add(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("multiple_dosing.pkml")));
       }
 
       protected override void Context()
