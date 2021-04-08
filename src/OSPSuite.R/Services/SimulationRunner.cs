@@ -94,16 +94,6 @@ namespace OSPSuite.R.Services
          return tasks.Select(t => t.Result).ToArray();
       }
 
-      public SimulationResults Run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
-      {
-         return RunAsync(simulation, simulationRunOptions).Result;
-      }
-
-      public SimulationResults Run(IModelCoreSimulation simulation, IndividualValuesCache population, SimulationRunOptions simulationRunOptions = null)
-      {
-         return RunAsync(simulation, population, simulationRunOptions).Result;
-      }
-
       private async Task<SimulationResults> runAsync(
          IModelCoreSimulation simulation, 
          IndividualValuesCache population, 
