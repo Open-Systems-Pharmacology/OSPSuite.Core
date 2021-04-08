@@ -73,7 +73,7 @@ namespace OSPSuite.R.Domain
    {
       private SimulationBatchOptions _simulationBatchOptions;
       private SimulationResults[] _results;
-      private List<SimulationBatchRunValues> _simulationBatchRunValuesCollection;
+      private SimulationBatchRunConcurrentlyOptions _simulationBatchRunValuesCollection;
 
       public override void GlobalContext()
       {
@@ -96,78 +96,34 @@ namespace OSPSuite.R.Domain
 
       protected override void Because()
       {
-         _simulationBatchRunValuesCollection = new List<SimulationBatchRunValues>();
-         _simulationBatchRunValuesCollection.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection = new SimulationBatchRunConcurrentlyOptions();
+         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.0 },
             ParameterValues = new[] { 3.5, 0.53 }
          });
-         _simulationBatchRunValuesCollection.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
          {
             InitialValues = new[] { 9.0 },
             ParameterValues = new[] { 3.4, 0.50 }
          });
-         _simulationBatchRunValuesCollection.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.5 },
             ParameterValues = new[] { 3.6, 0.55 }
          });
-         _results = sut.RunConcurrently(_simulationBatchRunValuesCollection.ToArray());
+         _results = sut.RunConcurrently(_simulationBatchRunValuesCollection);
       }
 
       [Observation]
       public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
       {
-         for (var i = 0; i < _simulationBatchRunValuesCollection.Count; i++)
+         for (var i = 0; i < _simulationBatchRunValuesCollection.SimulationBatchRunValues.Count; i++)
          {
-            var result = sut.Run(_simulationBatchRunValuesCollection[i]);
+            var result = sut.Run(_simulationBatchRunValuesCollection.SimulationBatchRunValues[i]);
             result.Time.Values.ShouldBeEqualTo(_results[i].Time.Values);
             result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(_results[i].ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
          }
-      }
-
-      [Observation]
-      public void should_throw_on_wrong_parameters()
-      {
-         var collection = new object[] { 22, 34 };
-         The.Action(() => sut.RunConcurrently(collection.ToArray())).ShouldThrowAn<InvalidArgumentException>();
-      }
-   }
-
-   public class When_running_a_batch_simulation_run_concurrently_with_wrong_params : concern_for_SimulationBatch
-   {
-      private SimulationBatchOptions _simulationBatchOptions;
-      private SimulationResults[] _results;
-      private List<object> _simulationBatchRunValuesCollection;
-
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationBatchOptions = new SimulationBatchOptions
-         {
-            VariableMolecules = new[]
-            {
-               new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
-            },
-
-            VariableParameters = new[]
-            {
-               new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-               new[] {"Organism", "Hematocrit"}.ToPathString(),
-            }
-         };
-         sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
-      }
-
-      protected override void Because()
-      {
-         
-      }
-
-      [Observation]
-      public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
-      {
-         
       }
    }
 

@@ -48,6 +48,11 @@ namespace OSPSuite.R.Domain
       public double[] MoleculeValues => InitialValues.ToNetArray(InitialValue);
    }
 
+   public class SimulationBatchRunConcurrentlyOptions
+   {
+      public IList<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
+   }
+
    public class SimulationBatch : IDisposable
    {
       private readonly ISimModelBatch _simModelBatch;
@@ -130,11 +135,9 @@ namespace OSPSuite.R.Domain
       ///    This is really the only method that will be called from R
       /// </summary>
       /// <returns>Results of the simulation runs</returns>
-      public SimulationResults[] RunConcurrently(object[] simulationBatchRunValuesCollection)
+      public SimulationResults[] RunConcurrently(SimulationBatchRunConcurrentlyOptions simulationBatchRunValuesCollection)
       {
-         var simulationBatches = simulationBatchRunValuesCollection.OfType<SimulationBatchRunValues>().ToList();
-         if (simulationBatches.Count != simulationBatchRunValuesCollection.Length) throw new InvalidArgumentException("simulationBatchRunValuesCollection parameter should be a list of SimulationBatchRunValues");
-         return RunAsync(simulationBatches).Select(s => s.Result).ToArray();
+         return RunAsync(simulationBatchRunValuesCollection.SimulationBatchRunValues).Select(s => s.Result).ToArray();
       }
 
       protected virtual void Cleanup()
