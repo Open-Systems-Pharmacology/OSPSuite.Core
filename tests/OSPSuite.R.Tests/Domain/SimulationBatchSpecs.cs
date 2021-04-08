@@ -97,17 +97,17 @@ namespace OSPSuite.R.Domain
       protected override void Because()
       {
          _simulationBatchRunValuesCollection = new SimulationBatchRunConcurrentlyOptions();
-         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection.AddSimulationBAtchRunValues(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.0 },
             ParameterValues = new[] { 3.5, 0.53 }
          });
-         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection.AddSimulationBAtchRunValues(new SimulationBatchRunValues
          {
             InitialValues = new[] { 9.0 },
             ParameterValues = new[] { 3.4, 0.50 }
          });
-         _simulationBatchRunValuesCollection.SimulationBatchRunValues.Add(new SimulationBatchRunValues
+         _simulationBatchRunValuesCollection.AddSimulationBAtchRunValues(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.5 },
             ParameterValues = new[] { 3.6, 0.55 }

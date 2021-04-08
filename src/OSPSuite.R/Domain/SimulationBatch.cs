@@ -50,7 +50,13 @@ namespace OSPSuite.R.Domain
 
    public class SimulationBatchRunConcurrentlyOptions
    {
-      public IList<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
+      private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
+      public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues { get => _simulationBatchRunValues; }
+
+      public void AddSimulationBAtchRunValues(SimulationBatchRunValues runValues)
+      {
+         _simulationBatchRunValues.Add(runValues);
+      }
    }
 
    public class SimulationBatch : IDisposable
