@@ -53,7 +53,7 @@ namespace OSPSuite.R.Domain
       private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
       public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues { get => _simulationBatchRunValues; }
 
-      public void AddSimulationBAtchRunValues(SimulationBatchRunValues runValues)
+      public void AddSimulationBatchRunValues(SimulationBatchRunValues runValues)
       {
          _simulationBatchRunValues.Add(runValues);
       }
