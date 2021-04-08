@@ -191,6 +191,11 @@ namespace OSPSuite.Infrastructure.Import.Services
                   }
                }
             }
+            else
+            {
+               dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
+               { Name = dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation, Value = "" });
+            }
 
             if (!string.IsNullOrEmpty(molecularWeightDescription))
             {
