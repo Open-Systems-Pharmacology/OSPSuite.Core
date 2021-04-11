@@ -424,6 +424,8 @@ namespace OSPSuite.Assets
             return $"The column {parameter} will be used for grouping by";
          }
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
+
+         public static string NamingPatternHint = "Automatically generates names replacing words surrounded by {} with like named meta data values.";
          public static string MetaDataHint(string parameter, string target)
          {
             return $"The column {parameter} will be used as meta data to extract the following data: {target}";

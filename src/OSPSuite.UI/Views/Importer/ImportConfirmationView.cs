@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DevExpress.XtraEditors;
+using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -131,6 +132,8 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          Caption = Captions.Importer.Confirmation;
          ApplicationIcon = ApplicationIcons.Parameter;
+         namingConventionComboBoxEdit.ToolTip = Captions.Importer.NamingPatternHint;
       }
    }
+   
 }
