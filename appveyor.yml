@@ -33,7 +33,7 @@ build:
   use_snupkg_format: true
   project: OSPSuite.Core.sln
 
-skip_branch_with_pr: true
+skip_branch_with_pr: false
 
 pull_requests: 
   do_not_increment_build_number: false
