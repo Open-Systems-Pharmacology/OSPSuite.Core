@@ -14,6 +14,7 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -48,6 +49,12 @@ namespace OSPSuite.UI.Views.Importer
          separatorControlItem.Text = Captions.Importer.Separator;
          buttonAddLayoutControlItem.AdjustButtonSize();
          importButtonLayoutControlItem.AdjustButtonSize();
+         namingPatternDropDownLabelControl.AsDescription();
+         namingPatternDropDownLabelControl.Text = Captions.Importer.NamingPatternDescription.FormatForDescription();
+         namingPatternDropDownLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;
+         namingPatternPanelLabelControl.AsDescription();
+         namingPatternPanelLabelControl.Text = Captions.Importer.NamingPatternPanelDescription.FormatForDescription();
+         namingPatternPanelLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
@@ -132,7 +139,6 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          Caption = Captions.Importer.Confirmation;
          ApplicationIcon = ApplicationIcons.Parameter;
-         namingConventionComboBoxEdit.ToolTip = Captions.Importer.NamingPatternHint;
       }
    }
    

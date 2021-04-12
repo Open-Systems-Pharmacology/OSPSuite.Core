@@ -425,7 +425,12 @@ namespace OSPSuite.Assets
          }
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
 
-         public static string NamingPatternHint = "Automatically generates names replacing words surrounded by {} with like named meta data values.";
+         public static string NamingPatternDescription = "Automatically generates names replacing words surrounded by <b>{}</b> with like named meta data values.";
+
+         public static string NamingPatternPanelDescription = "Select one or more names from the list and the separator between them. " +
+                                                              "By clicking the <b>Add keys</b> button, " +
+                                                              "keys will be added to the naming pattern, separated by the selected separator";
+
          public static string MetaDataHint(string parameter, string target)
          {
             return $"The column {parameter} will be used as meta data to extract the following data: {target}";
