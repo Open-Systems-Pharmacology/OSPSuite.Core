@@ -191,7 +191,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                   }
                }
             }
-            else
+            else if (dataRepo.ExtendedProperties.All(p => p.Name != dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation))
             {
                dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
                { Name = dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation, Value = "" });
