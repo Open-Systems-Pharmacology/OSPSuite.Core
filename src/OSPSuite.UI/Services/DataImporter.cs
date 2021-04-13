@@ -117,6 +117,20 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
+         if (dataImporterSettings.PromptForConfirmation)
+         {
+            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+            {
+               importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
+               importerPresenter.LoadConfiguration(configuration);
+               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
+               {
+                  return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
+                     .DataRepositories;
+               }
+            }
+         }
+
          var dataSource = new DataSource(_importer);
          var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
          dataSourceFile.Format.CopyParametersFromConfiguration(configuration);

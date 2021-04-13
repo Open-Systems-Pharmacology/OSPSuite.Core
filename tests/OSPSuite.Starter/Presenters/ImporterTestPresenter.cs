@@ -141,6 +141,7 @@ namespace OSPSuite.Starter.Presenters
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
             dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = true;
 
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (

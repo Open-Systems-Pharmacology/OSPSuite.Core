@@ -20,6 +20,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string NameOfMetaDataHoldingMolecularWeightInformation { get; set; }
 
+      public bool PromptForConfirmation { get; set; } = false;
+
       /// <summary>
       ///    Gets the default naming convention for the imported observed data
       /// </summary>
