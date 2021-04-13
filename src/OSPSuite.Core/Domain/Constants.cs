@@ -616,6 +616,7 @@ namespace OSPSuite.Core.Domain
       public static class ImporterConstants
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+         public static readonly string Undefined = "Undefined";
       }
    }
 }

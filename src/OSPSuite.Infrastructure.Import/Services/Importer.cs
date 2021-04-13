@@ -194,7 +194,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             else if (dataRepo.ExtendedProperties.All(p => p.Name != dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation))
             {
                dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
-               { Name = dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation, Value = "" });
+               { Name = dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation, Value = Constants.ImporterConstants.Undefined });
             }
 
             if (!string.IsNullOrEmpty(molecularWeightDescription))
