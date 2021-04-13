@@ -111,7 +111,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
-         if (errorColumnDTO == null || errorColumnDTO.Source == null) return;
+         if (errorColumnDTO?.Source == null) return;
 
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
