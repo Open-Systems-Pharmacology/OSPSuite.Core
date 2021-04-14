@@ -176,9 +176,6 @@ namespace OSPSuite.Infrastructure.Import.Services
                if (string.IsNullOrEmpty(molecularWeightDescription))
                {
                   molecularWeightDescription = moleculeDescription;
-                  if (!string.IsNullOrEmpty(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation))
-                     dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
-                        {Name = dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation, Value = moleculeDescription});
                }
                else
                {
@@ -191,11 +188,6 @@ namespace OSPSuite.Infrastructure.Import.Services
                   }
                }
             }
-            else if (dataRepo.ExtendedProperties.All(p => p.Name != dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation))
-            {
-               dataRepo.ExtendedProperties.Add(new ExtendedProperty<string>()
-               { Name = dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation, Value = Constants.ImporterConstants.Undefined });
-            }
 
             if (!string.IsNullOrEmpty(molecularWeightDescription))
             {
@@ -205,6 +197,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                }
             }
 
+            dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
             dataRepositories.Add(dataRepo);
          }
 
