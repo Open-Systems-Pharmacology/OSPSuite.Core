@@ -29,7 +29,9 @@ namespace OSPSuite.UI.Views.Importer
 
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
-            namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+            namingConventionComboBoxEdit.EditValue += 
+               (string.IsNullOrEmpty(namingConventionComboBoxEdit.EditValue.ToString()) ? "" : separatorComboBoxEdit.SelectedItem.ToString()) +
+               String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
