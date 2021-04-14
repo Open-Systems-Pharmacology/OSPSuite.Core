@@ -320,7 +320,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
-               if (!metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
+               if (model.ExcelColumn != null && !metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
                   options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
             }
