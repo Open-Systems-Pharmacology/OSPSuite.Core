@@ -49,7 +49,9 @@ namespace OSPSuite.UI.Views.Importer
             _presenter.SaveConfiguration(fileDialog.FileName);
          });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
+         applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
+         applyMappingLayoutControlItem.AdjustLargeButtonSize();
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

@@ -50,6 +50,9 @@ namespace OSPSuite.UI.Views.Importer
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.saveMappingBtnLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.applyMappingBtn = new OSPSuite.UI.Controls.UxSimpleButton();
+         this.applyMappingLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -65,10 +68,13 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.saveMappingBtnLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.applyMappingLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
+         this.rootLayoutControl.Controls.Add(this.applyMappingBtn);
          this.rootLayoutControl.Controls.Add(this.saveMappingBtn);
          this.rootLayoutControl.Controls.Add(this.sourceFilePanelControl);
          this.rootLayoutControl.Controls.Add(this.nanPanelControl);
@@ -139,7 +145,9 @@ namespace OSPSuite.UI.Views.Importer
             this.splitterItem1,
             this.sourceFileLayoutControlItem,
             this.saveMappingBtnLayoutControlItem,
-            this.emptySpaceItem2});
+            this.emptySpaceItem2,
+            this.applyMappingLayoutControlItem,
+            this.emptySpaceItem1});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(2805, 1608);
          this.Root.TextVisible = false;
@@ -192,7 +200,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.saveMappingBtnLayoutControlItem.Control = this.saveMappingBtn;
          this.saveMappingBtnLayoutControlItem.Location = new System.Drawing.Point(0, 1528);
-         this.saveMappingBtnLayoutControlItem.Name = "layoutControlItem1";
+         this.saveMappingBtnLayoutControlItem.Name = "applyMappingLayoutControlItem";
          this.saveMappingBtnLayoutControlItem.Size = new System.Drawing.Size(657, 58);
          this.saveMappingBtnLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.saveMappingBtnLayoutControlItem.TextVisible = false;
@@ -200,10 +208,36 @@ namespace OSPSuite.UI.Views.Importer
          // emptySpaceItem2
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.Location = new System.Drawing.Point(657, 1528);
+         this.emptySpaceItem2.Location = new System.Drawing.Point(961, 1528);
          this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(599, 58);
+         this.emptySpaceItem2.Size = new System.Drawing.Size(295, 58);
          this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
+         // 
+         // applyMappingBtn
+         // 
+         this.applyMappingBtn.Location = new System.Drawing.Point(717, 1541);
+         this.applyMappingBtn.Name = "applyMappingBtn";
+         this.applyMappingBtn.Size = new System.Drawing.Size(253, 54);
+         this.applyMappingBtn.StyleController = this.rootLayoutControl;
+         this.applyMappingBtn.TabIndex = 10;
+         this.applyMappingBtn.Text = "applyMappingBtn";
+         // 
+         // applyMappingLayoutControlItem
+         // 
+         this.applyMappingLayoutControlItem.Control = this.applyMappingBtn;
+         this.applyMappingLayoutControlItem.Location = new System.Drawing.Point(704, 1528);
+         this.applyMappingLayoutControlItem.Name = "applyMappingLayoutControlItem";
+         this.applyMappingLayoutControlItem.Size = new System.Drawing.Size(257, 58);
+         this.applyMappingLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.applyMappingLayoutControlItem.TextVisible = false;
+         // 
+         // emptySpaceItem1
+         // 
+         this.emptySpaceItem1.AllowHotTrack = false;
+         this.emptySpaceItem1.Location = new System.Drawing.Point(657, 1528);
+         this.emptySpaceItem1.Name = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(47, 58);
+         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // ImporterView
          // 
@@ -228,6 +262,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.saveMappingBtnLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.applyMappingLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -248,5 +284,8 @@ namespace OSPSuite.UI.Views.Importer
       private UxSimpleButton saveMappingBtn;
       private DevExpress.XtraLayout.LayoutControlItem saveMappingBtnLayoutControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
+      private UxSimpleButton applyMappingBtn;
+      private DevExpress.XtraLayout.LayoutControlItem applyMappingLayoutControlItem;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
    }
 }
