@@ -52,6 +52,7 @@ namespace OSPSuite.UI.Views.Importer
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
+         applyMappingLayoutControlItem.Visibility = LayoutVisibility.Never;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
