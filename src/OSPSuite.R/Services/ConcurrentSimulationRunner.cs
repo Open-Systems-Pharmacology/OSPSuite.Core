@@ -15,6 +15,9 @@ namespace OSPSuite.R.Services
       /// </summary>
       SimulationRunOptions SimulationRunOptions { get; set; }
 
+      /// <summary>
+      /// Number of cores to use concurrently. Use 0 or a negative value for using the maximum available.
+      /// </summary>
       int NumberOfCores { get; set; }
 
       /// <summary>

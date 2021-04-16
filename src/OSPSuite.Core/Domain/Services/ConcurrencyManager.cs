@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
-         numberOfCoresToUse = Math.Max(numberOfCoresToUse, data.Count);
+         numberOfCoresToUse = Math.Min(numberOfCoresToUse, data.Count);
 
          var results = new ConcurrentDictionary<TData, TResult>();
          //Starts one task per core
