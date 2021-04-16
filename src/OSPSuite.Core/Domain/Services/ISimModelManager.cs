@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
       }
    }
 
-   public interface ISimModelManager : ICloneable
+   public interface ISimModelManager
    {
       /// <summary>
       ///    Run simulation using given options or the default if not specified

@@ -107,10 +107,5 @@ namespace OSPSuite.Core.Domain.Services
          if (_canceled) return;
          actionToExecute();
       }
-
-      public object Clone()
-      {
-         return new SimModelManager(_simModelExporter, _simModelSimulationFactory, _dataFactory);
-      }
    }
 }

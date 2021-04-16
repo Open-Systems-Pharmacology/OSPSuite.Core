@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Services
    public abstract class SimModelManagerBase
    {
       protected ISimModelExporter _simModelExporter;
-      protected readonly ISimModelSimulationFactory _simModelSimulationFactory;
+      private readonly ISimModelSimulationFactory _simModelSimulationFactory;
       public event EventHandler Terminated = delegate { };
 
       protected SimModelManagerBase(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory)

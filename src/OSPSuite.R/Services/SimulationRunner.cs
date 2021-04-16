@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -36,7 +34,6 @@ namespace OSPSuite.R.Services
    {
       Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs);
       SimulationResults Run(SimulationRunArgs simulationRunArgs);
-      SimulationResults[] RunConcurrently(SimulationRunnerConcurrentOptions options);
    }
 
    public class SimulationRunner : ISimulationRunner
@@ -83,17 +80,6 @@ namespace OSPSuite.R.Services
          _populationRunner.SimulationProgress -= simulationProgress;
       }
 
-      public SimulationResults[] RunConcurrently(SimulationRunnerConcurrentOptions options)
-      {
-         var tasks = new List<Task<SimulationResults>>();
-         foreach (var simulation in options.Simulations)
-         {
-            tasks.Add(RunAsyncForConcurrentRun(simulation, options.simulationRunOptions));
-         }
-         Task.WaitAll(tasks.ToArray());
-         return tasks.Select(t => t.Result).ToArray();
-      }
-
       private async Task<SimulationResults> runAsync(
          IModelCoreSimulation simulation, 
          IndividualValuesCache population, 
@@ -132,16 +118,6 @@ namespace OSPSuite.R.Services
          {
             _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
             var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
-            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-         });
-      }
-
-      public Task<SimulationResults> RunAsyncForConcurrentRun(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
-      {
-         return Task.Run(() =>
-         {
-            _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-            var simulationResults = ((ISimModelManager) _simModelManager.Clone()).RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
             return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
          });
       }

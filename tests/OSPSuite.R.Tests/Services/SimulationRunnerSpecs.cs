@@ -153,39 +153,4 @@ namespace OSPSuite.R.Services
             .MustHaveHappened();
       }
    }
-
-   public class When_running_simulations_concurrently : ContextForIntegration<ISimulationRunner>
-   {
-      private ISimulationPersister _simulationPersister;
-      private SimulationResults[] _results;
-      private SimulationRunnerConcurrentOptions _options;
-
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationPersister = Api.GetSimulationPersister();
-         _options = new SimulationRunnerConcurrentOptions();
-         _options.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml")));
-         _options.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
-         _options.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
-         _options.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("multiple_dosing.pkml")));
-      }
-
-      protected override void Context()
-      {
-         sut = Api.GetSimulationRunner();
-      }
-
-      protected override void Because()
-      {
-         _results = sut.RunConcurrently(_options);
-      }
-
-      [Observation]
-      public void should_run_the_simulations()
-      {
-         Assert.IsNotNull(_results);
-         Assert.IsTrue(_results.All(r => r.ElementAt(0).AllValues.SelectMany(v => v.Values).Count() > 0));
-      }
-   }
 }
