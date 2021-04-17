@@ -45,6 +45,8 @@ namespace OSPSuite.Core.Domain.Services
                //While there is data left
                while (data.TryDequeue(out var datum))
                {
+                  if (cancellationToken.IsCancellationRequested) return;
+
                   //Invoke the action on it and store the result
                   var result = await action.Invoke(coreIndex, cancellationToken, datum);
                   results.TryAdd(datum, result);
