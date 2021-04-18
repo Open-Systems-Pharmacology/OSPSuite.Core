@@ -1,5 +1,6 @@
 ﻿﻿using System.Windows.Forms;
  using DevExpress.XtraEditors;
+ using DevExpress.XtraLayout.Utils;
  using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -48,11 +49,19 @@ namespace OSPSuite.UI.Views.Importer
                return;
             _presenter.SaveConfiguration(fileDialog.FileName);
          });
+         applyMappingBtn.Click += (s, a) => OnEvent(() =>
+         {
+            var fileDialog = new OpenFileDialog{ };
+            fileDialog.Title = Captions.Importer.ApplyConfiguration;
+
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+               return;
+            _presenter.LoadConfigurationWithoutImporting(fileDialog.FileName);
+         });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
-         applyMappingLayoutControlItem.Visibility = LayoutVisibility.Never;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

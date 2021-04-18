@@ -28,5 +28,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void LoadConfiguration(ImporterConfiguration configuration);
 
       ImporterConfiguration GetConfiguration();
+      void LoadConfigurationWithoutImporting(string fileDialogFileName);
    }
 }

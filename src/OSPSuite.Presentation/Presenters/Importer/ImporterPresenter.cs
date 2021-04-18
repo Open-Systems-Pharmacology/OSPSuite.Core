@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
@@ -298,7 +299,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void LoadConfiguration(ImporterConfiguration configuration)
       {
          openFile(configuration.FileName);
-         ApplyConfiguration(configuration);
+         applyConfiguration(configuration);
+         loadImportedDataSetsFromConfiguration(configuration.FilterString);
       }
 
       private void openFile(string configurationFileName)
@@ -307,14 +309,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile = _importerDataPresenter.SetDataSource(configurationFileName);
       }
 
-      public void ApplyConfiguration(ImporterConfiguration configuration)
+      private void applyConfiguration(ImporterConfiguration configuration)
       {
          _configuration = configuration;
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          _columnMappingPresenter.ValidateMapping();
          _dataSource.SetNamingConvention(_configuration.NamingConventions);
-         _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
+         _nanPresenter.Settings = configuration.NanSettings;
+         if (configuration.NanSettings != null)
+            _nanPresenter.FillNaNSettings();
+         _importerDataPresenter.SetFilter(configuration.FilterString);
+      }
+
+      private void loadImportedDataSetsFromConfiguration(string filterString)
+      {
+         _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention()); //this could probably be in the apply
+         //About NanSettings: we do actually read the nanSettings in import dataSheets
+         //we just never update the editor on the view, which actually is a problem
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _configuration.LoadedSheets)
          {
@@ -325,10 +337,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
          }
-
          try
          {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString);
+            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, filterString);
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
@@ -340,7 +351,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public ImporterConfiguration GetConfiguration() {
          _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
+         _configuration.FilterString = _importerDataPresenter.GetFilter();
          return _configuration;
+      }
+
+      public void LoadConfigurationWithoutImporting(string fileDialogFileName)
+      {
+         if (fileDialogFileName.IsNullOrEmpty()) return;
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
+            var xel = XElement.Load(fileDialogFileName);
+            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+
+            applyConfiguration(configuration);
+         }
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };

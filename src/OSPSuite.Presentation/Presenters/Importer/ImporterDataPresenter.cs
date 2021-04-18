@@ -83,9 +83,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria()});
       }
 
+      public string GetFilter()
+      {
+         return  _view.GetFilter();
+      }
+
       public void TriggerOnDataChanged()
       {
          OnDataChanged.Invoke(this, null);
+      }
+
+      public void SetFilter(string FilterString)
+      {
+         _view.SetFilter(FilterString);
       }
 
       private DataSheet getSingleSheet(string sheetName)

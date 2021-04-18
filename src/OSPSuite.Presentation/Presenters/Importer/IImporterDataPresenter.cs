@@ -58,6 +58,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       Cache<string, DataSheet> Sheets { get; set; }
       string GetActiveFilterCriteria();
+      string GetFilter();
       void TriggerOnDataChanged();
+      void SetFilter(string FilterString);
    }
 }
