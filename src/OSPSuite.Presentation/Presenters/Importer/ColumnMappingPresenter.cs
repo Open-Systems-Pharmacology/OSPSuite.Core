@@ -589,5 +589,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler OnMappingCompleted = delegate { };
 
       public event EventHandler<MissingMappingEventArgs> OnMissingMapping = delegate { };
+      public IEnumerable<string> GetAllAvailableExcelColumns()
+      {
+         return _format.ExcelColumnNames;
+      }
    }
 }

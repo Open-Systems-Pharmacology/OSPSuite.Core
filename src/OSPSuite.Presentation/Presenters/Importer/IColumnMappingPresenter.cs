@@ -72,5 +72,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       event EventHandler OnMappingCompleted; //status: you can import
 
       event EventHandler<MissingMappingEventArgs> OnMissingMapping;
+      IEnumerable<string> GetAllAvailableExcelColumns();
    }
 }

@@ -40,6 +40,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ImporterConfiguration _configuration = new ImporterConfiguration();
       private readonly IDimensionFactory _dimensionFactory;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      private readonly IDialogCreator _dialogCreator;
 
 
       public ImporterPresenter(
@@ -68,6 +69,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _container = container;
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _importer = importer;
+         _dialogCreator = dialogCreator;
 
          _sourceFilePresenter.Title = Captions.Importer.PleaseSelectDataFile;
          _sourceFilePresenter.Filter = Captions.Importer.ImportFileFilter;
@@ -311,8 +313,26 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void applyConfiguration(ImporterConfiguration configuration)
       {
+         var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
+
+         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
+
+         if (listOfNonExistingColumns.Any())
+         {
+            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns + String.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName)));
+
+            if (confirm == ViewResult.No)
+               return;
+
+            foreach (var element in listOfNonExistingColumns)
+            {
+               configuration.Parameters.Remove(element);
+            }
+         }
+
          _configuration = configuration;
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
+
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          _columnMappingPresenter.ValidateMapping();
          _dataSource.SetNamingConvention(_configuration.NamingConventions);

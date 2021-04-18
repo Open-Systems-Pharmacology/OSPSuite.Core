@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Import
    public class ImporterConfiguration : IWithId
    {
       private List<DataFormatParameter> _parameters = new List<DataFormatParameter>();
-      public IReadOnlyList<DataFormatParameter> Parameters { 
+      public List<DataFormatParameter> Parameters { 
          get => _parameters;
       }
       public void CloneParametersFrom(IReadOnlyList<DataFormatParameter> parameters)

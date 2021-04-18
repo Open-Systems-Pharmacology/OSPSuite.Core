@@ -407,6 +407,8 @@ namespace OSPSuite.Assets
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
 
+         public static readonly string ConfirmDroppingExcelColumns = "The following excel columns do not exist in the current file. The corresponding mappings from the configuration will be lost. Do you want to continue? \n \n \n";
+
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          
          public static readonly string AddGroupByTitle = "Add group by";
