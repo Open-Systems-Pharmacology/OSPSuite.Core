@@ -39,21 +39,18 @@ namespace OSPSuite.Core.Domain.Services
 
          var results = new ConcurrentDictionary<TData, TResult>();
          //Starts one task per core
-         var tasks = Enumerable.Range(0, numberOfCoresToUse).Select(coreIndex =>
-            //TODO  we do not need the Task.Run.
-            Task.Run(async () =>
+         var tasks = Enumerable.Range(0, numberOfCoresToUse).Select(async coreIndex =>
+         {
+            //While there is data left
+            while (concurrentData.TryDequeue(out var datum))
             {
-               //While there is data left
-               while (concurrentData.TryDequeue(out var datum))
-               {
-                  cancellationToken.ThrowIfCancellationRequested();
+               cancellationToken.ThrowIfCancellationRequested();
 
-                  //Invoke the action on it and store the result
-                  var result = await action.Invoke(coreIndex, cancellationToken, datum);
-                  results.TryAdd(datum, result);
-               }
-            }, cancellationToken)
-         ).ToList();
+               //Invoke the action on it and store the result
+               var result = await action.Invoke(coreIndex, cancellationToken, datum);
+               results.TryAdd(datum, result);
+            }
+         }).ToList();
 
          await Task.WhenAll(tasks);
          //all tasks are completed. Can return results
