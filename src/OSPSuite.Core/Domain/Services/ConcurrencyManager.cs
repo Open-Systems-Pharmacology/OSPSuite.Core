@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="action">A function to run on each worker on each piece of data</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
-      Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, ConcurrentQueue<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action);
+      Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IEnumerable<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action);
    }
 
    public class ConcurrencyManager : IConcurrencyManager
@@ -31,11 +31,12 @@ namespace OSPSuite.Core.Domain.Services
          _coreUserSettings = coreUserSettings;
       }
 
-      public async Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, ConcurrentQueue<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
+      public async Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IEnumerable<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
       {
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
-         numberOfCoresToUse = Math.Min(numberOfCoresToUse, data.Count);
+         var concurrentData = new ConcurrentQueue<TData>(data);
+         numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
 
          var results = new ConcurrentDictionary<TData, TResult>();
          //Starts one task per core
@@ -43,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
             Task.Run(async () =>
             {
                //While there is data left
-               while (data.TryDequeue(out var datum))
+               while (concurrentData.TryDequeue(out var datum))
                {
                   if (cancellationToken.IsCancellationRequested) return;
 

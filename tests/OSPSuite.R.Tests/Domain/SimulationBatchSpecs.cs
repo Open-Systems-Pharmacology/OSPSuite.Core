@@ -67,64 +67,6 @@ namespace OSPSuite.R.Domain
       }
    }
 
-   public class When_running_a_batch_simulation_run_concurrently : concern_for_SimulationBatch
-   {
-      private SimulationBatchOptions _simulationBatchOptions;
-      private SimulationResults[] _results;
-      private SimulationBatchRunConcurrentlyOptions _simulationBatchRunValuesCollection;
-
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationBatchOptions = new SimulationBatchOptions
-         {
-            VariableMolecules = new[]
-            {
-               new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
-            },
-
-            VariableParameters = new[]
-            {
-               new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-               new[] {"Organism", "Hematocrit"}.ToPathString(),
-            }
-         };
-         sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
-      }
-
-      protected override void Because()
-      {
-         _simulationBatchRunValuesCollection = new SimulationBatchRunConcurrentlyOptions();
-         _simulationBatchRunValuesCollection.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 10.0 },
-            ParameterValues = new[] { 3.5, 0.53 }
-         });
-         _simulationBatchRunValuesCollection.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 9.0 },
-            ParameterValues = new[] { 3.4, 0.50 }
-         });
-         _simulationBatchRunValuesCollection.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 10.5 },
-            ParameterValues = new[] { 3.6, 0.55 }
-         });
-         _results = sut.RunConcurrently(_simulationBatchRunValuesCollection);
-      }
-
-      [Observation]
-      public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
-      {
-         for (var i = 0; i < _simulationBatchRunValuesCollection.SimulationBatchRunValues.Count; i++)
-         {
-            var result = sut.Run(_simulationBatchRunValuesCollection.SimulationBatchRunValues[i]);
-            result.Time.Values.ShouldBeEqualTo(_results[i].Time.Values);
-            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(_results[i].ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
-         }
-      }
-   }
-
    public class When_running_a_batch_simulation_run_with_single_values : concern_for_SimulationBatch
    {
       private SimulationBatchOptions _simulationBatchOptions;

@@ -1,9 +1,13 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.R.Domain;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
@@ -21,9 +25,15 @@ namespace OSPSuite.R.Services
       int NumberOfCores { get; set; }
 
       /// <summary>
-      /// List of Simulations
+      /// Adds a simulation to the list of Simulations
       /// </summary>
       void AddSimulation(IModelCoreSimulation simulation);
+
+      /// <summary>
+      /// Adds a SimulationBatch to the list of SimulationBatches
+      /// </summary>
+      /// <param name="simulationBatch"></param>
+      void AddSimulationBatch(SimulationBatch simulationBatch);
 
       void Clear();
 
@@ -48,27 +58,53 @@ namespace OSPSuite.R.Services
       public int NumberOfCores { get; set; }
 
       private List<IModelCoreSimulation> _simulations = new List<IModelCoreSimulation>();
+      private List<SimulationBatch> _simulationBatches = new List<SimulationBatch>();
 
       public void AddSimulation(IModelCoreSimulation simulation)
       {
          _simulations.Add(simulation);
       }
 
+      public void AddSimulationBatch(SimulationBatch simulationBatch)
+      {
+         _simulationBatches.Add(simulationBatch);
+      }
+
       public void Clear()
       {
          _simulations.Clear();
+         _simulationBatches.Clear();
       }
 
       public SimulationResults[] RunConcurrently()
       {
-         var results = _concurrentManager.RunAsync<IModelCoreSimulation, SimulationResults>(
-            NumberOfCores,
-            new System.Threading.CancellationToken(false),
-            new ConcurrentQueue<IModelCoreSimulation>(_simulations),
-            async (coreIndex, cancellationToken, simulation) =>
-               await Api.GetSimulationRunner().RunAsync(new SimulationRunArgs() { Simulation = simulation, SimulationRunOptions = SimulationRunOptions })
-         ).Result;
-         return _simulations.Select(s => results[s]).ToArray();
+         //Currently we only allow for running simulations or simulation batches, but not both
+         if (_simulationBatches.Count > 0 && _simulations.Count > 0) 
+            //Temporal Exception. We should allow for mixing both use cases but we need to discuss first
+            throw new Exception("You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start");
+
+         if (_simulations.Count > 0)
+         {
+            var results = _concurrentManager.RunAsync(
+               NumberOfCores,
+               new CancellationToken(false),
+               new List<IModelCoreSimulation>(_simulations),
+               runSimulation
+            ).Result;
+            return _simulations.Select(s => results[s]).ToArray();
+         }
+
+         if (_simulationBatches.Count > 0)
+            return null;
+
+         return Enumerable.Empty<SimulationResults>().ToArray();
+      }
+
+      private async Task<SimulationResults> runSimulation(int coreIndex, CancellationToken cancellationToken, IModelCoreSimulation simulation)
+      {
+         return await Api.GetSimulationRunner().RunAsync(new SimulationRunArgs() { Simulation = simulation, SimulationRunOptions = SimulationRunOptions });
       }
    }
+
+
 }

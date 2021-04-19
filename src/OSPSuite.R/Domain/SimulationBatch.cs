@@ -114,20 +114,6 @@ namespace OSPSuite.R.Domain
          });
       }
 
-      public IEnumerable<Task<SimulationResults>> RunAsync(IEnumerable<SimulationBatchRunValues> simulationBatchRunValuesCollection)
-      {
-         return simulationBatchRunValuesCollection.Select(simulationBatchRunValues => 
-            Task.Run(() =>
-            {
-               var simModelBatch = (SimModelBatch)_simModelBatch.Clone();
-               simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
-               simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
-               var simulationResults = simModelBatch.RunSimulation();
-               return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-            })
-         );
-      }
-
       /// <summary>
       ///    Updates the parameter values and species initial values of the simulation and run the simulation synchronously.
       ///    This is really the only method that will be called from R
@@ -135,16 +121,6 @@ namespace OSPSuite.R.Domain
       /// <returns>Results of the simulation run</returns>
       public SimulationResults Run(SimulationBatchRunValues simulationBatchRunValues) =>
          RunAsync(simulationBatchRunValues).Result;
-
-      /// <summary>
-      ///    Updates the parameter values and species initial values of the simulations and run the simulations concurrently.
-      ///    This is really the only method that will be called from R
-      /// </summary>
-      /// <returns>Results of the simulation runs</returns>
-      public SimulationResults[] RunConcurrently(SimulationBatchRunConcurrentlyOptions simulationBatchRunValuesCollection)
-      {
-         return RunAsync(simulationBatchRunValuesCollection.SimulationBatchRunValues).Select(s => s.Result).ToArray();
-      }
 
       protected virtual void Cleanup()
       {
