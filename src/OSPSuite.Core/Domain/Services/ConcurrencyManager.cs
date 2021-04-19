@@ -10,7 +10,6 @@ namespace OSPSuite.Core.Domain.Services
    public interface IConcurrencyManager
    {
       /// <summary>
-      /// 
       /// </summary>
       /// <typeparam name="TData">Data type to consume by the worker function</typeparam>
       /// <typeparam name="TResult">Data produced by the worker function</typeparam>
@@ -19,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="action">A function to run on each worker on each piece of data</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
-      Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IEnumerable<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action);
+      Task<IReadOnlyDictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IReadOnlyList<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action);
    }
 
    public class ConcurrencyManager : IConcurrencyManager
@@ -31,7 +30,7 @@ namespace OSPSuite.Core.Domain.Services
          _coreUserSettings = coreUserSettings;
       }
 
-      public async Task<Dictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IEnumerable<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
+      public async Task<IReadOnlyDictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IReadOnlyList<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
       {
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
@@ -41,12 +40,13 @@ namespace OSPSuite.Core.Domain.Services
          var results = new ConcurrentDictionary<TData, TResult>();
          //Starts one task per core
          var tasks = Enumerable.Range(0, numberOfCoresToUse).Select(coreIndex =>
+            //TODO  we do not need the Task.Run.
             Task.Run(async () =>
             {
                //While there is data left
                while (concurrentData.TryDequeue(out var datum))
                {
-                  if (cancellationToken.IsCancellationRequested) return;
+                  cancellationToken.ThrowIfCancellationRequested();
 
                   //Invoke the action on it and store the result
                   var result = await action.Invoke(coreIndex, cancellationToken, datum);
@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Domain.Services
          await Task.WhenAll(tasks);
          //all tasks are completed. Can return results
 
-         return results.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+         return results;
       }
    }
 }
