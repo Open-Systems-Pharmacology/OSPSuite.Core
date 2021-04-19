@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -84,7 +85,7 @@ namespace OSPSuite.R.Services
          //Currently we only allow for running simulations or simulation batches, but not both
          if (_simulationBatches.Count > 0 && _simulations.Count > 0)
             //Temporal Exception. We should allow for mixing both use cases but we need to discuss first
-            throw new OSPSuiteException("You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start");
+            throw new OSPSuiteException(Error.InvalidMixOfSimulationAndSimulationBatch);
 
          _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
