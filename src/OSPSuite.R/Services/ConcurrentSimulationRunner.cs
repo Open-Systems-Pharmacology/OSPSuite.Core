@@ -59,6 +59,7 @@ namespace OSPSuite.R.Services
 
       private readonly List<IModelCoreSimulation> _simulations = new List<IModelCoreSimulation>();
       private readonly List<SimulationBatch> _simulationBatches = new List<SimulationBatch>();
+      private CancellationTokenSource _cancellationTokenSource;
 
       public void AddSimulation(IModelCoreSimulation simulation)
       {
@@ -74,6 +75,8 @@ namespace OSPSuite.R.Services
       {
          _simulations.Clear();
          _simulationBatches.Clear();
+         if (_cancellationTokenSource != null)
+            _cancellationTokenSource.Cancel();
       }
 
       public SimulationResults[] RunConcurrently()
@@ -83,11 +86,12 @@ namespace OSPSuite.R.Services
             //Temporal Exception. We should allow for mixing both use cases but we need to discuss first
             throw new OSPSuiteException("You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start");
 
+         _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
-         {
+         { 
             var results = _concurrentManager.RunAsync(
                NumberOfCores,
-               new CancellationToken(false),
+               _cancellationTokenSource.Token,
                _simulations,
                runSimulation
             ).Result;
