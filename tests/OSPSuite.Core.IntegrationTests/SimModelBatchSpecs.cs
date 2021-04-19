@@ -53,7 +53,7 @@ namespace OSPSuite.Core
             _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
          };
 
-         sut = new SimModelBatch(simModelExporter, simModelSimulationFactory, _dataFactory, A.Fake<ICloneManagerForModel>());
+         sut = new SimModelBatch(simModelExporter, simModelSimulationFactory, _dataFactory);
       }
    }
 

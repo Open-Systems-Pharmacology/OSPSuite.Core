@@ -25,7 +25,6 @@ namespace OSPSuite.Core.Domain.Services
          simModelExporter, simModelSimulationFactory)
       {
          _dataFactory = dataFactory;
-         _simModelExporter = simModelExporter;
       }
 
       public IReadOnlyList<string> VariableParameterPaths { get; private set; }
