@@ -319,7 +319,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (listOfNonExistingColumns.Any())
          {
-            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns + String.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName)));
+            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.AlreadyExistingExcelColumns + String.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName)) + Captions.Importer.ConfirmDroppingExcelColumns);
 
             if (confirm == ViewResult.No)
                return;
@@ -381,7 +381,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
-            var xel = XElement.Load(fileDialogFileName);
+            var xel = XElement.Load(fileDialogFileName); //ToDo: if it is not a compatible file => unhandled exception
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             applyConfiguration(configuration);
