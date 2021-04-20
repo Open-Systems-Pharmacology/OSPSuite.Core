@@ -100,6 +100,9 @@ namespace OSPSuite.R.Services
 
       public void AddSimulationBatchOption(SimulationWithBatchOptions simulationWithBatchOptions)
       {
+         if (simulationWithBatchOptions.SimulationBatchRunValues.Any(value => string.IsNullOrEmpty(value.Id) || _simulationBatches.Any(simulationBatch => simulationBatch.SimulationBatchRunValues.Any(otherValue => otherValue.Id == value.Id))))
+            throw new OSPSuiteException(Error.InvalidSimulationBatchRunValuesId);
+
          _simulationBatches.Add(simulationWithBatchOptions);
       }
 
