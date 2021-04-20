@@ -23,17 +23,20 @@ namespace OSPSuite.Core.Domain.Services
 
    public class ConcurrencyManager : IConcurrencyManager
    {
-      private readonly ICoreUserSettings _coreUserSettings;
-
+      //private readonly ICoreUserSettings _coreUserSettings;
+      private int _maximumNumberOfCoresToUse = 2;
+      //TODO: Check with Michael why ICoreUserSettings is not available through container on Core
+      /*
       public ConcurrencyManager(ICoreUserSettings coreUserSettings)
       {
          _coreUserSettings = coreUserSettings;
       }
-
+      */
       public async Task<IReadOnlyDictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IReadOnlyList<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
       {
          if (numberOfCoresToUse <= 0)
-            numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
+            //    numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
+            numberOfCoresToUse = _maximumNumberOfCoresToUse;
          var concurrentData = new ConcurrentQueue<TData>(data);
          numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
 

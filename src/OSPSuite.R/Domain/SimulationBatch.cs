@@ -31,6 +31,9 @@ namespace OSPSuite.R.Domain
 
    public class SimulationBatchRunValues
    {
+      //Id to recognize it when running concurrently
+      public string Id { get; set; }
+
       //Potentially null
       public double[] ParameterValues { get; set; }
 
