@@ -57,6 +57,8 @@ namespace OSPSuite.R
 
       public static IOSPSuiteLogger GetLogger() => resolveTask<IOSPSuiteLogger>();
 
+      public static IConcurrentSimulationRunner GetConcurrentSimulationRunner() => resolveTask<IConcurrentSimulationRunner>();
+
       private static T resolveTask<T>()
       {
          try

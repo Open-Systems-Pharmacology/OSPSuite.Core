@@ -48,17 +48,6 @@ namespace OSPSuite.R.Domain
       public double[] MoleculeValues => InitialValues.ToNetArray(InitialValue);
    }
 
-   public class SimulationBatchRunConcurrentlyOptions
-   {
-      private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
-      public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues { get => _simulationBatchRunValues; }
-
-      public void AddSimulationBatchRunValues(SimulationBatchRunValues runValues)
-      {
-         _simulationBatchRunValues.Add(runValues);
-      }
-   }
-
    public class SimulationBatch : IDisposable
    {
       private readonly ISimModelBatch _simModelBatch;

@@ -13,6 +13,23 @@ using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
+   public class SimulationBatchRunConcurrentlyOptions
+   {
+      private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
+      public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues { get => _simulationBatchRunValues; }
+
+      public void AddSimulationBatchRunValues(SimulationBatchRunValues runValues)
+      {
+         _simulationBatchRunValues.Add(runValues);
+      }
+   }
+
+   class SimulationBatchWithOptions
+   {
+      public SimulationBatch SimulationBatch { get; set; }
+      public SimulationBatchRunConcurrentlyOptions SimulationBatchRunConcurrentlyOptions { get; set; }
+   }
+
    public interface IConcurrentSimulationRunner : IDisposable
    {
       /// <summary>
@@ -33,8 +50,9 @@ namespace OSPSuite.R.Services
       /// <summary>
       ///    Adds a SimulationBatch to the list of SimulationBatches
       /// </summary>
-      /// <param name="simulationBatch"></param>
-      void AddSimulationBatch(SimulationBatch simulationBatch);
+      /// <param name="simulationBatch">the batch</param>
+      /// <param name="simulationBatchRunConcurrentlyOptions">the options to run the batch</param>
+      void AddSimulationBatchOption(SimulationBatch simulationBatch, SimulationBatchRunConcurrentlyOptions simulationBatchRunConcurrentlyOptions);
 
       void Clear();
 
@@ -59,7 +77,7 @@ namespace OSPSuite.R.Services
       public int NumberOfCores { get; set; }
 
       private readonly List<IModelCoreSimulation> _simulations = new List<IModelCoreSimulation>();
-      private readonly List<SimulationBatch> _simulationBatches = new List<SimulationBatch>();
+      private readonly Dictionary<SimulationBatch, List<SimulationBatchRunConcurrentlyOptions>> _simulationBatches = new Dictionary<SimulationBatch, List<SimulationBatchRunConcurrentlyOptions>>();
       private CancellationTokenSource _cancellationTokenSource;
 
       public void AddSimulation(IModelCoreSimulation simulation)
@@ -67,9 +85,12 @@ namespace OSPSuite.R.Services
          _simulations.Add(simulation);
       }
 
-      public void AddSimulationBatch(SimulationBatch simulationBatch)
+      public void AddSimulationBatchOption(SimulationBatch simulationBatch, SimulationBatchRunConcurrentlyOptions simulationBatchRunConcurrentlyOptions)
       {
-         _simulationBatches.Add(simulationBatch);
+         if (_simulationBatches.ContainsKey(simulationBatch))
+            _simulationBatches[simulationBatch].Add(simulationBatchRunConcurrentlyOptions);
+         else
+            _simulationBatches.Add(simulationBatch, new List<SimulationBatchRunConcurrentlyOptions>() { simulationBatchRunConcurrentlyOptions });
       }
 
       public void Clear()
@@ -84,7 +105,6 @@ namespace OSPSuite.R.Services
       {
          //Currently we only allow for running simulations or simulation batches, but not both
          if (_simulationBatches.Count > 0 && _simulations.Count > 0)
-            //Temporal Exception. We should allow for mixing both use cases but we need to discuss first
             throw new OSPSuiteException(Error.InvalidMixOfSimulationAndSimulationBatch);
 
          _cancellationTokenSource = new CancellationTokenSource();
@@ -100,7 +120,15 @@ namespace OSPSuite.R.Services
          }
 
          if (_simulationBatches.Count > 0)
-            return null;
+         {
+            var results = _concurrentManager.RunAsync(
+               NumberOfCores,
+               _cancellationTokenSource.Token,
+               _simulationBatches.SelectMany(kv => ),
+               runSimulation
+            ).Result;
+            return _simulations.Select(s => results[s]).ToArray();
+         }
 
          return Array.Empty<SimulationResults>();
       }
@@ -110,6 +138,8 @@ namespace OSPSuite.R.Services
          //We want a new instance every time that's why we are not injecting SimulationRunner in constructor
          return Api.GetSimulationRunner().RunAsync(new SimulationRunArgs {Simulation = simulation, SimulationRunOptions = SimulationRunOptions});
       }
+
+      private Task<SimulationResults> runSimulationBatch(int coreIndex, CancellationToken cancellationToken, )
 
       #region Disposable properties
 
