@@ -403,8 +403,15 @@ namespace OSPSuite.Assets
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
+         public static readonly string ApplyConfiguration = "Apply configuration";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
+
+         public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
+         {
+            return "The following excel columns do not exist in the current file. \n \n" + listOfExcelColumns +
+                   "\n \n The corresponding mappings from the configuration will be lost. Do you want to continue?  \n \n \n";
+         }
 
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          
@@ -424,6 +431,13 @@ namespace OSPSuite.Assets
             return $"The column {parameter} will be used for grouping by";
          }
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
+
+         public static string NamingPatternDescription = "Automatically generates names replacing words surrounded by <b>{}</b> with like named meta data values.";
+
+         public static string NamingPatternPanelDescription = "Select one or more names from the list and the separator between them. " +
+                                                              "By clicking the <b>Add keys</b> button, " +
+                                                              "keys will be added to the naming pattern, separated by the selected separator";
+
          public static string MetaDataHint(string parameter, string target)
          {
             return $"The column {parameter} will be used as meta data to extract the following data: {target}";

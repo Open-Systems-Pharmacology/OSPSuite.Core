@@ -1,5 +1,6 @@
 ﻿﻿using System.Windows.Forms;
  using DevExpress.XtraEditors;
+ using DevExpress.XtraLayout.Utils;
  using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -7,7 +8,6 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -41,16 +41,16 @@ namespace OSPSuite.UI.Views.Importer
 
          saveMappingBtn.Click += (s, a) => OnEvent(() =>
          {
-            var fileDialog = new SaveFileDialog { };
-            fileDialog.Title = Captions.Importer.SaveConfiguration;
-            fileDialog.Filter = Constants.Filter.XML_FILE_FILTER;
-
-            if (fileDialog.ShowDialog() != DialogResult.OK)
-               return;
-            _presenter.SaveConfiguration(fileDialog.FileName);
+            _presenter.SaveConfiguration();
          });
-         saveMappingBtn.Text = Captions.Importer.SaveConfiguration;
-         saveMappingBtnLayoutControlItem.AdjustButtonSize();
+         applyMappingBtn.Click += (s, a) => OnEvent(() =>
+         {
+            _presenter.LoadConfigurationWithoutImporting();
+         });
+         saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
+         applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
+         saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
+         applyMappingLayoutControlItem.AdjustLargeButtonSize();
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

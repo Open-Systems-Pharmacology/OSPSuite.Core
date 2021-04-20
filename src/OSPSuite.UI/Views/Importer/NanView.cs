@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraEditors.Controls;
+﻿using DevExpress.Utils.Extensions;
+using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
@@ -15,7 +16,7 @@ namespace OSPSuite.UI.Views.Importer
       public NanView()
       {
          InitializeComponent();
-         fillNanOptions();
+         initializeNanOptions();
          actionImageComboBoxEdit.SelectedValueChanged += (s, a) => OnEvent(() =>
          {
             _presenter.Settings.Action = (NanSettings.ActionType) actionImageComboBoxEdit.SelectedIndex;
@@ -28,7 +29,7 @@ namespace OSPSuite.UI.Views.Importer
          });
       }
 
-      private void fillNanOptions()
+      private void initializeNanOptions()
       {
          actionImageComboBoxEdit.Properties.Items.Clear();
          actionImageComboBoxEdit.Properties.Items.Add(new ImageComboBoxItem(NanSettings.ActionType.IgnoreRow)
@@ -47,6 +48,13 @@ namespace OSPSuite.UI.Views.Importer
       public void AttachPresenter(INanPresenter presenter)
       {
          _presenter = presenter;
+
+      }
+
+      public void FillNanSettings(NanSettings settings)
+      {
+         indicatorTextEdit.Text = settings.Indicator;
+         actionImageComboBoxEdit.SelectedIndex = settings.Action == NanSettings.ActionType.IgnoreRow ? 0 : 1;
       }
 
       public override void InitializeResources()

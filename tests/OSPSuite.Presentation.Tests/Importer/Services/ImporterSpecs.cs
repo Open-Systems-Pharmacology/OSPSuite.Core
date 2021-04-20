@@ -2,13 +2,13 @@
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Presentation.Importer.Core;
 using OSPSuite.Utility.Container;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
@@ -36,6 +36,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IUnformattedData _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
+      protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
 
@@ -56,8 +57,9 @@ namespace OSPSuite.Presentation.Importer.Services
          A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos, null)).Returns(1);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
+         _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper);
       }
    }
 
@@ -200,6 +202,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IUnformattedData _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
+      protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
@@ -228,8 +231,9 @@ namespace OSPSuite.Presentation.Importer.Services
 
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat() });
          _parser = A.Fake<IDataSourceFileParser>();
+         _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper);
       }
    }
 

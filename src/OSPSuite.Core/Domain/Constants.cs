@@ -100,6 +100,7 @@ namespace OSPSuite.Core.Domain
       public const string STD_DEV_ARITHMETIC = "Arithmetic Standard Deviation";
       public const string AUXILIARY_TYPE = "AuxiliaryType";
       public const string FILE = "File";
+      public const string SOURCE = "Source";
       public const string SHEET = "Sheet";
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
@@ -615,6 +616,7 @@ namespace OSPSuite.Core.Domain
       public static class ImporterConstants
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+         public static readonly string Undefined = "Undefined";
       }
    }
 }

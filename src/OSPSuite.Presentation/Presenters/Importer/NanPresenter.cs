@@ -1,6 +1,5 @@
 ﻿using System;
 using OSPSuite.Core.Import;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -14,10 +13,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
       }
 
-      public NanSettings Settings { get; } = new NanSettings();
+      public NanSettings Settings { get; set; } = new NanSettings();
       public void NewNaNSettings()
       {
          OnNaNSettingsChanged.Invoke(this, new EventArgs());
+      }
+
+      public void FillNaNSettings()
+      {
+         _view.FillNanSettings(Settings);
       }
 
       public event EventHandler OnNaNSettingsChanged = delegate { };

@@ -222,5 +222,9 @@ namespace OSPSuite.UI.Views.Importer
       }
 
       public string SelectedTab { get; set; }
+      public string GetFilter()
+      {
+         return DevExpress.Data.Filtering.CriteriaToWhereClauseHelper.GetDataSetWhere(dataViewingGridView.ActiveFilterCriteria);
+      }
    }
 }

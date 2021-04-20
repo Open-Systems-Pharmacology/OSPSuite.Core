@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows.Forms;
 using System.Xml.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
@@ -113,12 +110,11 @@ namespace OSPSuite.Starter.Presenters
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
             dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
-            dataImporterSettings.PromptForConfirmation = false;
 
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");
@@ -150,7 +146,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
             ).Count() + " data sets successfully imported");

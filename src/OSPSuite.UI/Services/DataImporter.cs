@@ -1,4 +1,3 @@
-using System.Collections;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -12,6 +11,7 @@ using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -105,7 +105,7 @@ namespace OSPSuite.UI.Services
             importerPresenter.SetSourceFile(path);
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
-               return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings);
+               return importerModalPresenter.ImportDataSets(importerPresenter);
             }
          }
       }
@@ -125,54 +125,40 @@ namespace OSPSuite.UI.Services
                importerPresenter.LoadConfiguration(configuration);
                using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
                {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, metaDataCategories, columnInfos, dataImporterSettings, configuration.Id)
+                  return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
                      .DataRepositories;
                }
             }
          }
-         else
+
+         var dataSource = new DataSource(_importer);
+         var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
+         dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
+         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
-            var dataSource = new DataSource(_importer);
-            var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
-            dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
-            var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            Id = md.MetaDataId,
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+         }).Union
+         (
+            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-            }).Union
-            (
-               dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-               {
-                  Id = md.ColumnName,
-                  Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-               })
-            );
-            dataSource.SetMappings(dataSourceFile.Path, mappings);
-            dataSource.NanSettings = configuration.NanSettings;
-            dataSource.SetDataFormat(dataSourceFile.Format);
-            dataSource.SetNamingConvention(configuration.NamingConventions);
-            var sheets = new Cache<string, DataSheet>();
-            foreach (var key in configuration.LoadedSheets)
-            {
-               sheets.Add(key, dataSourceFile.DataSheets[key]);
-            }
-
-            dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
-
-            var result = new List<DataRepository>();
-            var i = 0;
-            foreach (var pair in dataSource.DataSets.KeyValues)
-            {
-               foreach (var data in pair.Value.Data)
-               {
-                  var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i++));
-                  dataRepo.ConfigurationId = configuration.Id;
-                  result.Add(dataRepo);
-               }
-            }
-
-            return result;
+               Id = md.ColumnName,
+               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            })
+         );
+         dataSource.SetMappings(dataSourceFile.Path, mappings);
+         dataSource.NanSettings = configuration.NanSettings;
+         dataSource.SetDataFormat(dataSourceFile.Format);
+         dataSource.SetNamingConvention(configuration.NamingConventions);
+         var sheets = new Cache<string, DataSheet>();
+         foreach (var key in configuration.LoadedSheets)
+         {
+            sheets.Add(key, dataSourceFile.DataSheets[key]);
          }
+
+         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+
+         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings,configuration.Id);
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
@@ -202,7 +188,7 @@ namespace OSPSuite.UI.Services
 
       private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
       {
-         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair => dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject == keyValuePair.Value.ValueAsObject));
+         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair => dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject.ToString() == keyValuePair.Value.ValueAsObject.ToString()));
       }
    }
 }

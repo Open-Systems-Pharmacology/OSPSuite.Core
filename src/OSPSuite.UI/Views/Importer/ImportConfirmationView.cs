@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DevExpress.XtraEditors;
-using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -31,7 +29,9 @@ namespace OSPSuite.UI.Views.Importer
 
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
          buttonAdd.Click += (s, a) => OnEvent(() =>
-            namingConventionComboBoxEdit.EditValue += String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+            namingConventionComboBoxEdit.EditValue += 
+               (string.IsNullOrEmpty(namingConventionComboBoxEdit.EditValue.ToString()) ? "" : separatorComboBoxEdit.SelectedItem.ToString()) +
+               String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);
@@ -51,6 +51,12 @@ namespace OSPSuite.UI.Views.Importer
          separatorControlItem.Text = Captions.Importer.Separator;
          buttonAddLayoutControlItem.AdjustButtonSize();
          importButtonLayoutControlItem.AdjustButtonSize();
+         namingPatternDropDownLabelControl.AsDescription();
+         namingPatternDropDownLabelControl.Text = Captions.Importer.NamingPatternDescription.FormatForDescription();
+         namingPatternDropDownLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;
+         namingPatternPanelLabelControl.AsDescription();
+         namingPatternPanelLabelControl.Text = Captions.Importer.NamingPatternPanelDescription.FormatForDescription();
+         namingPatternPanelLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;
       }
 
       public void AttachPresenter(IImportConfirmationPresenter presenter)
@@ -137,4 +143,5 @@ namespace OSPSuite.UI.Views.Importer
          ApplicationIcon = ApplicationIcons.Parameter;
       }
    }
+   
 }

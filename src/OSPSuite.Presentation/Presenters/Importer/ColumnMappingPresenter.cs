@@ -47,7 +47,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
-         View.SetMetaDataCategories(metaDataCategories);
       }
 
       public IDataFormat GetDataFormat()
@@ -112,7 +111,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
-         if (errorColumnDTO == null) return;
+         if (errorColumnDTO?.Source == null) return;
 
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
@@ -321,9 +320,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
-               if (!metaDataCategory.ListOfValues.Values.Contains(model.ExcelColumn))
+               if (model.ExcelColumn != null && !metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
                   options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
-               options.AddRange(metaDataCategory.ListOfValues.Values.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+               options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
             }
          }
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
@@ -590,5 +589,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler OnMappingCompleted = delegate { };
 
       public event EventHandler<MissingMappingEventArgs> OnMissingMapping = delegate { };
+      public IEnumerable<string> GetAllAvailableExcelColumns()
+      {
+         return _format.ExcelColumnNames;
+      }
    }
 }

@@ -184,12 +184,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                   as IExtendedProperty;
             if (sourceProperty != null)
             {
-               sourceProperty.Name = "Source";
+               sourceProperty.Name = Constants.SOURCE;
                sourceProperty.ValueAsObject = fileName;
                dataRepository.ExtendedProperties.Add(sourceProperty);
             }
-
-            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.FILE, Value = fileName });
+            
             dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.SHEET, Value = sheetName });
          }
       }

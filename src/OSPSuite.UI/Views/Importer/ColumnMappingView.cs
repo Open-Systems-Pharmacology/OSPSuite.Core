@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
@@ -14,7 +13,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -43,7 +41,6 @@ namespace OSPSuite.UI.Views.Importer
       private readonly PopupContainerControl _mappingPopupControl = new PopupContainerControl();
       private readonly PopupContainerControl _metaDataPopupControl = new PopupContainerControl();
       private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
-      private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       
       public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
@@ -63,8 +60,8 @@ namespace OSPSuite.UI.Views.Importer
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
-         initializeButton(_repositoryMappingPopupContainerEdit);
-         initializeButton(_repositoryMetaDataPopupContainerEdit);
+         initializeButton(_repositoryMappingPopupContainerEdit, _mappingPopupControl);
+         initializeButton(_repositoryMetaDataPopupContainerEdit, _metaDataPopupControl);
 
          _disabledPopupContainerEdit.Enabled = false;
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
@@ -85,13 +82,13 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      private void initializeButton (RepositoryItemPopupContainerEdit button)
+      private void initializeButton (RepositoryItemPopupContainerEdit button, PopupContainerControl control)
       {
          button.Buttons[0].Kind = ButtonPredefines.Combo;
-         button.PopupControl = _mappingPopupControl;
+         button.PopupControl = control;
          button.CloseOnOuterMouseClick = false;
          button.QueryDisplayText += (o, e) => queryDisplayText(e);
-         button.CloseUp += (o, e) => closeUpMapping(e);
+         button.CloseUp += (o, e) => closeUp(e);
          button.CloseUpKey = new KeyShortcut(Keys.Enter);
          button.AllowDropDownWhenReadOnly = DefaultBoolean.True;
       }
@@ -108,19 +105,12 @@ namespace OSPSuite.UI.Views.Importer
          return _disabledPopupContainerEdit;         
       }
 
-      private void closeUpMapping(CloseUpEventArgs e)
+      private void closeUp(CloseUpEventArgs e)
       {
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
 
          _presenter.UpdateDescriptrionForModel();
-      }
-
-      private void closeUpMetaData(CloseUpEventArgs e)
-      {
-         if (e.CloseMode == PopupCloseMode.Cancel)
-            return;
-        _presenter.UpdateMetaDataForModel();
       }
 
       public void FillMappingView(IView view)
@@ -247,11 +237,6 @@ namespace OSPSuite.UI.Views.Importer
       public void SetMappingSource(IList<ColumnMappingDTO> mappings)
       {
          _gridViewBinder.BindToSource(mappings);
-      }
-
-      public void SetMetaDataCategories(IReadOnlyList<MetaDataCategory> metaDataCategories)
-      {
-         _metaDataCategories = metaDataCategories;
       }
 
       public void CloseEditor()
