@@ -107,8 +107,7 @@ namespace OSPSuite.R.Services
       {
          _simulations.Clear();
          _simulationBatches.Clear();
-         if (_cancellationTokenSource != null)
-            _cancellationTokenSource.Cancel();
+         _cancellationTokenSource?.Cancel();
       }
 
       public ConcurrentSimulationResults[] RunConcurrently()
