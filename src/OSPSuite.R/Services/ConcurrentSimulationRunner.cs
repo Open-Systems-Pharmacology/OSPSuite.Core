@@ -39,9 +39,9 @@ namespace OSPSuite.R.Services
          SimulationResults = results;
          AdditionalId = additionalId;
       }
-      public string SimulationId { get; private set; }
-      public string AdditionalId { get; private set; }
-      public SimulationResults SimulationResults { get; private set; }
+      public string SimulationId { get; }
+      public string AdditionalId { get; }
+      public SimulationResults SimulationResults { get; }
    }
 
    public interface IConcurrentSimulationRunner : IDisposable
