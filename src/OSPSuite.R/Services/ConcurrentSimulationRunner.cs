@@ -130,7 +130,7 @@ namespace OSPSuite.R.Services
 
          if (_simulationBatches.Count > 0)
          {
-            return _concurrentManager.RunAsync<SimulationBatchRunOptions, ConcurrentSimulationResults>(
+            return _concurrentManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
                _simulationBatches.SelectMany(sb => sb.SimulationBatchRunValues.Select(rv => new SimulationBatchRunOptions() { Simulation = sb.Simulation, SimulationBatchOptions = sb.SimulationBatchOptions, SimulationBatchRunValues = rv })).ToList(),
