@@ -165,10 +165,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
             dataRepo.ConfigurationId = id;
-            var moleculeDescription =
-               (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)?.ListOfValues
-                  .FirstOrDefault(v => v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)))
-               ?.Value;
+
+            var moleculeDescription = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
             var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
             if (moleculeDescription != null)
@@ -184,7 +182,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
                   if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
                   {
-                     throw new InconsistentMoleculeAndMoleWeightException();
+                     throw new InconsistentMoleculeAndMolWeightException();
                   }
                }
             }
@@ -202,6 +200,16 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
 
          return dataRepositories;
+      }
+
+      private static string extractMoleculeDescription(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
+      {
+         var metaDataCategoryForMoleculeDescription =
+            (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation));
+         var moleculeDescription = metaDataCategoryForMoleculeDescription?.ListOfValues.FirstOrDefault(v =>
+            v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)).Value;
+         
+         return moleculeDescription;
       }
    }
 

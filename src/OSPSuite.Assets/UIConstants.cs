@@ -407,9 +407,11 @@ namespace OSPSuite.Assets
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
 
-         //ToDo: Create a function out of these two
-         public static readonly string AlreadyExistingExcelColumns = "The following excel columns do not exist in the current file. \n \n";
-         public static readonly string ConfirmDroppingExcelColumns = "\n \n The corresponding mappings from the configuration will be lost. Do you want to continue?  \n \n \n";
+         public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
+         {
+            return "The following excel columns do not exist in the current file. \n \n" + listOfExcelColumns +
+                   "\n \n The corresponding mappings from the configuration will be lost. Do you want to continue?  \n \n \n";
+         }
 
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          
@@ -1223,7 +1225,7 @@ namespace OSPSuite.Assets
       public static readonly string InavlidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileFormat = "The file format is not supported";
-      public static readonly string InconsistentMoleculeAndMoleWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
+      public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 

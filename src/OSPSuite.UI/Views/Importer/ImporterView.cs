@@ -41,22 +41,11 @@ namespace OSPSuite.UI.Views.Importer
 
          saveMappingBtn.Click += (s, a) => OnEvent(() =>
          {
-            var fileDialog = new SaveFileDialog { };
-            fileDialog.Title = Captions.Importer.SaveConfiguration;
-            fileDialog.Filter = Constants.Filter.XML_FILE_FILTER;
-
-            if (fileDialog.ShowDialog() != DialogResult.OK)
-               return;
-            _presenter.SaveConfiguration(fileDialog.FileName);
+            _presenter.SaveConfiguration();
          });
          applyMappingBtn.Click += (s, a) => OnEvent(() =>
          {
-            var fileDialog = new OpenFileDialog{ };
-            fileDialog.Title = Captions.Importer.ApplyConfiguration;
-
-            if (fileDialog.ShowDialog() != DialogResult.OK)
-               return;
-            _presenter.LoadConfigurationWithoutImporting(fileDialog.FileName);
+            _presenter.LoadConfigurationWithoutImporting();
          });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);

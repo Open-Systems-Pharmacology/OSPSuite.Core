@@ -138,7 +138,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             dataRepositories = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id);
          }
-         catch (InconsistentMoleculeAndMoleWeightException exception)
+         catch (InconsistentMoleculeAndMolWeightException exception)
          {
             _view.ShowErrorMessage(exception.Message);
             return;
@@ -286,8 +286,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _configuration.FileName = path;
       }
 
-      public void SaveConfiguration(string fileName)
+      public void SaveConfiguration()
       {
+         var fileName = _dialogCreator.AskForFileToSave(Captions.Importer.SaveConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
+
+         if (string.IsNullOrEmpty(fileName)) return;
 
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
@@ -319,7 +322,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (listOfNonExistingColumns.Any())
          {
-            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.AlreadyExistingExcelColumns + String.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName)) + Captions.Importer.ConfirmDroppingExcelColumns);
+            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns( string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
 
             if (confirm == ViewResult.No)
                return;
@@ -375,13 +378,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return _configuration;
       }
 
-      public void LoadConfigurationWithoutImporting(string fileDialogFileName)
+      public void LoadConfigurationWithoutImporting()
       {
-         if (fileDialogFileName.IsNullOrEmpty()) return;
+         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
+
+         if (fileName.IsNullOrEmpty()) return;
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
-            var xel = XElement.Load(fileDialogFileName); //ToDo: if it is not a compatible file => unhandled exception
+            var xel = XElement.Load(fileName);
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             applyConfiguration(configuration);

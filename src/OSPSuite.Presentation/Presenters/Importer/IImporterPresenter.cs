@@ -23,11 +23,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
 
-      void SaveConfiguration(string fileName);
+      void SaveConfiguration();
 
       void LoadConfiguration(ImporterConfiguration configuration);
 
       ImporterConfiguration GetConfiguration();
-      void LoadConfigurationWithoutImporting(string fileDialogFileName);
+      void LoadConfigurationWithoutImporting();
    }
 }

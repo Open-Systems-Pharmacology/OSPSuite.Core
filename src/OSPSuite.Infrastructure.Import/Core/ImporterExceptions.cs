@@ -17,9 +17,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
    }
 
-   public class InconsistentMoleculeAndMoleWeightException : OSPSuiteException
+   public class InconsistentMoleculeAndMolWeightException : OSPSuiteException
    {
-      public InconsistentMoleculeAndMoleWeightException() : base(Error.InconsistentMoleculeAndMoleWeightException)
+      public InconsistentMoleculeAndMolWeightException() : base(Error.InconsistentMoleculeAndMolWeightException)
       {
       }
    }
