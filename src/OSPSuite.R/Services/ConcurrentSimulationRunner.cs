@@ -18,22 +18,12 @@ namespace OSPSuite.R.Services
       public IModelCoreSimulation Simulation { get; set; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
-      private List<SimulationBatchRunValues> _pendingForInitialization = new List<SimulationBatchRunValues>();
-      private Dictionary<SimulationBatchRunValues, SimulationBatch> _simulationBatches = new Dictionary<SimulationBatchRunValues, SimulationBatch>();
-      public IReadOnlyDictionary<SimulationBatchRunValues, SimulationBatch> SimulationBatches => _simulationBatches;
+      internal List<SimulationBatchRunValues> _pendingForInitialization = new List<SimulationBatchRunValues>();
+      internal Dictionary<SimulationBatchRunValues, SimulationBatch> _simulationBatches = new Dictionary<SimulationBatchRunValues, SimulationBatch>();
       public void AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
          SimulationBatchRunValues.Add(simulationBatchRunValues);
          _pendingForInitialization.Add(simulationBatchRunValues);
-      }
-      public void Initialize(IConcurrencyManager concurrentManager, int NumberOfCores, CancellationToken cancellationToken)
-      {
-         concurrentManager.RunAsync(NumberOfCores, cancellationToken, _pendingForInitialization, async (core, ct, simulationBatchRunValues) =>
-         {
-            _simulationBatches.Add(simulationBatchRunValues, Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
-            return true;
-         });
-         _pendingForInitialization.Clear();
       }
    }
 
@@ -92,11 +82,11 @@ namespace OSPSuite.R.Services
 
    public class ConcurrentSimulationRunner : IConcurrentSimulationRunner
    {
-      private readonly IConcurrencyManager _concurrentManager;
+      private readonly IConcurrencyManager _concurrencyManager;
 
       public ConcurrentSimulationRunner(IConcurrencyManager concurrentManager)
       {
-         _concurrentManager = concurrentManager;
+         _concurrencyManager = concurrentManager;
       }
 
       public SimulationRunOptions SimulationRunOptions { get; set; }
@@ -127,6 +117,30 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource?.Cancel();
       }
 
+      private void initializeBatches()
+      {
+         _concurrencyManager.RunAsync
+         (
+            NumberOfCores, 
+            _cancellationTokenSource.Token, 
+            _simulationBatches.SelectMany
+            (
+               batchOptions => batchOptions._pendingForInitialization.Select
+               (
+                  pending => new Tuple<SimulationWithBatchOptions, SimulationBatchRunValues>(batchOptions, pending)
+               )
+            ).ToList(), 
+            async (core, ct, simulationBatchRunValuesWithItsOptions) =>
+            {
+               var options = simulationBatchRunValuesWithItsOptions.Item1;
+               var values = simulationBatchRunValuesWithItsOptions.Item2;
+               options._simulationBatches.Add(values, Api.GetSimulationBatchFactory().Create(options.Simulation, options.SimulationBatchOptions));
+               return true;
+            }
+         );
+         _simulationBatches.ForEach(batchOptions => batchOptions._pendingForInitialization.Clear());
+      }
+
       public ConcurrentSimulationResults[] RunConcurrently()
       {
          //Currently we only allow for running simulations or simulation batches, but not both
@@ -136,7 +150,7 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
          {
-            return _concurrentManager.RunAsync(
+            return _concurrencyManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
                _simulations,
@@ -146,14 +160,15 @@ namespace OSPSuite.R.Services
 
          if (_simulationBatches.Count > 0)
          {
-            _simulationBatches.ForEach(batch => batch.Initialize(_concurrentManager, NumberOfCores, _cancellationTokenSource.Token));
-            return _concurrentManager.RunAsync(
+            initializeBatches();            
+            
+            return _concurrencyManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
                _simulationBatches.SelectMany(sb => sb.SimulationBatchRunValues.Select(rv => new SimulationBatchRunOptions()
                {
                   Simulation = sb.Simulation,
-                  SimulationBatch = sb.SimulationBatches[rv],
+                  SimulationBatch = sb._simulationBatches[rv],
                   SimulationBatchOptions = sb.SimulationBatchOptions,
                   SimulationBatchRunValues = rv
                })).ToList(),
