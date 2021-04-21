@@ -18,15 +18,29 @@ namespace OSPSuite.R.Services
       public IModelCoreSimulation Simulation { get; set; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
+      private List<SimulationBatchRunValues> _pendingForInitialization = new List<SimulationBatchRunValues>();
+      private Dictionary<SimulationBatchRunValues, SimulationBatch> _simulationBatches = new Dictionary<SimulationBatchRunValues, SimulationBatch>();
+      public IReadOnlyDictionary<SimulationBatchRunValues, SimulationBatch> SimulationBatches => _simulationBatches;
       public void AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
          SimulationBatchRunValues.Add(simulationBatchRunValues);
+         _pendingForInitialization.Add(simulationBatchRunValues);
+      }
+      public void Initialize(IConcurrencyManager concurrentManager, int NumberOfCores, CancellationToken cancellationToken)
+      {
+         concurrentManager.RunAsync(NumberOfCores, cancellationToken, _pendingForInitialization, async (core, ct, simulationBatchRunValues) =>
+         {
+            _simulationBatches.Add(simulationBatchRunValues, Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
+            return true;
+         });
+         _pendingForInitialization.Clear();
       }
    }
 
    class SimulationBatchRunOptions
    {
       public IModelCoreSimulation Simulation { get; set; }
+      public SimulationBatch SimulationBatch { get; set; }
       public SimulationBatchRunValues SimulationBatchRunValues { get; set; }
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
    }
@@ -121,7 +135,7 @@ namespace OSPSuite.R.Services
 
          _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
-         { 
+         {
             return _concurrentManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
@@ -132,10 +146,17 @@ namespace OSPSuite.R.Services
 
          if (_simulationBatches.Count > 0)
          {
+            _simulationBatches.ForEach(batch => batch.Initialize(_concurrentManager, NumberOfCores, _cancellationTokenSource.Token));
             return _concurrentManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
-               _simulationBatches.SelectMany(sb => sb.SimulationBatchRunValues.Select(rv => new SimulationBatchRunOptions() { Simulation = sb.Simulation, SimulationBatchOptions = sb.SimulationBatchOptions, SimulationBatchRunValues = rv })).ToList(),
+               _simulationBatches.SelectMany(sb => sb.SimulationBatchRunValues.Select(rv => new SimulationBatchRunOptions()
+               {
+                  Simulation = sb.Simulation,
+                  SimulationBatch = sb.SimulationBatches[rv],
+                  SimulationBatchOptions = sb.SimulationBatchOptions,
+                  SimulationBatchRunValues = rv
+               })).ToList(),
                runSimulationBatch
             ).Result.Values.ToArray();
          }
@@ -156,7 +177,7 @@ namespace OSPSuite.R.Services
       {
          return new ConcurrentSimulationResults(
             simulationBatchWithOptions.Simulation.Id,
-            await Api.GetSimulationBatchFactory().Create(simulationBatchWithOptions.Simulation, simulationBatchWithOptions.SimulationBatchOptions).RunAsync(simulationBatchWithOptions.SimulationBatchRunValues),
+            await simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues),
             simulationBatchWithOptions.SimulationBatchRunValues.Id
          );
       }
