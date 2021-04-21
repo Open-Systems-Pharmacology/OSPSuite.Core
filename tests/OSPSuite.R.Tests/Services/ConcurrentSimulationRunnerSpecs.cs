@@ -5,6 +5,7 @@ using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Domain;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace OSPSuite.R.Services
@@ -48,10 +49,12 @@ namespace OSPSuite.R.Services
 
    public class When_running_a_batch_simulation_run_concurrently : ContextForIntegration<IConcurrentSimulationRunner>
    {
-      private SimulationWithBatchOptions _simulationWithBatchOptions;
+      private SettingsForConcurrentltyRunSimulationBatch _simulationWithBatchOptions;
       private ISimulationPersister _simulationPersister;
       private ConcurrentSimulationResults[] _results;
       private IModelCoreSimulation _simulation;
+      private List<string> _ids = new List<string>();
+      private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
       public override void GlobalContext()
       {
@@ -59,7 +62,7 @@ namespace OSPSuite.R.Services
          _simulationPersister = Api.GetSimulationPersister();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
-         _simulationWithBatchOptions = new SimulationWithBatchOptions()
+         _simulationWithBatchOptions = new SettingsForConcurrentltyRunSimulationBatch()
          {
             Simulation = _simulation,
             SimulationBatchOptions = new SimulationBatchOptions
@@ -76,29 +79,6 @@ namespace OSPSuite.R.Services
                }
             }
          };
-         _simulationWithBatchOptions.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 10.0 },
-            ParameterValues = new[] { 3.5, 0.53 },
-            Id = "A"
-         });
-         _simulationWithBatchOptions.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 9.0 },
-            ParameterValues = new[] { 3.4, 0.50 },
-            Id = "B"
-         });
-         _simulationWithBatchOptions.AddSimulationBatchRunValues(new SimulationBatchRunValues
-         {
-            InitialValues = new[] { 10.5 },
-            ParameterValues = new[] { 3.6, 0.55 },
-            Id = "C"
-         });
-      }
-
-      protected override void Context()
-      {
-         base.Context();
 
          sut = Api.GetConcurrentSimulationRunner();
          sut.AddSimulationBatchOption(_simulationWithBatchOptions);
@@ -106,17 +86,37 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 10.0 },
+            ParameterValues = new[] { 3.5, 0.53 }
+         });
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 9.0 },
+            ParameterValues = new[] { 3.4, 0.50 }
+         });
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 10.5 },
+            ParameterValues = new[] { 3.6, 0.55 }
+         });
+         _ids.Add(_simulationWithBatchOptions.AddSimulationBatchRunValues(_simulationBatchRunValues[0]));
+         _ids.Add(_simulationWithBatchOptions.AddSimulationBatchRunValues(_simulationBatchRunValues[1]));
+         _ids.Add(_simulationWithBatchOptions.AddSimulationBatchRunValues(_simulationBatchRunValues[2]));
+
          _results = sut.RunConcurrently();
       }
 
       [Observation]
       public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
       {
-         for (var i = 0; i < _results.Length; i++)
+         foreach (var id in _ids)
          {
-            var result = Api.GetSimulationBatchFactory().Create(_simulation, _simulationWithBatchOptions.SimulationBatchOptions).Run(_simulationWithBatchOptions.SimulationBatchRunValues.FirstOrDefault(v => v.Id == _results[i].AdditionalId));
-            result.Time.Values.ShouldBeEqualTo(_results[i].SimulationResults.Time.Values);
-            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(_results[i].SimulationResults.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
+            var result = Api.GetSimulationBatchFactory().Create(_simulation, _simulationWithBatchOptions.SimulationBatchOptions).Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id));
+            var concurrentResult = _results.FirstOrDefault(r => r.Id == id);
+            result.Time.Values.ShouldBeEqualTo(concurrentResult.SimulationResults.Time.Values);
+            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(concurrentResult.SimulationResults.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
          }
       }
    }

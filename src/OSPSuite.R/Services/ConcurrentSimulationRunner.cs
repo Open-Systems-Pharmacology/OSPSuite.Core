@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,17 +14,18 @@ using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
-   public class SimulationWithBatchOptions
+   public class SettingsForConcurrentltyRunSimulationBatch
    {
       public IModelCoreSimulation Simulation { get; set; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
-      internal List<SimulationBatchRunValues> _pendingForInitialization = new List<SimulationBatchRunValues>();
-      internal Dictionary<SimulationBatchRunValues, SimulationBatch> _simulationBatches = new Dictionary<SimulationBatchRunValues, SimulationBatch>();
-      public void AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
+      internal ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
+      public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
+         var id = Guid.NewGuid().ToString();
+         simulationBatchRunValues.Id = id;
          SimulationBatchRunValues.Add(simulationBatchRunValues);
-         _pendingForInitialization.Add(simulationBatchRunValues);
+         return id;
       }
    }
 
@@ -37,14 +39,12 @@ namespace OSPSuite.R.Services
 
    public class ConcurrentSimulationResults
    {
-      public ConcurrentSimulationResults(string simulationId, SimulationResults results, string additionalId = null)
+      public ConcurrentSimulationResults(string id, SimulationResults results)
       {
-         SimulationId = simulationId;
+         Id = id;
          SimulationResults = results;
-         AdditionalId = additionalId;
       }
-      public string SimulationId { get; }
-      public string AdditionalId { get; }
+      public string Id { get; }
       public SimulationResults SimulationResults { get; }
    }
 
@@ -69,7 +69,7 @@ namespace OSPSuite.R.Services
       ///    Adds a SimulationBatch to the list of SimulationBatches
       /// </summary>
       /// <param name="simulationWithBatchOptions">the options to run the batch</param>
-      void AddSimulationBatchOption(SimulationWithBatchOptions simulationWithBatchOptions);
+      void AddSimulationBatchOption(SettingsForConcurrentltyRunSimulationBatch simulationWithBatchOptions);
 
       void Clear();
 
@@ -94,7 +94,7 @@ namespace OSPSuite.R.Services
       public int NumberOfCores { get; set; }
 
       private readonly List<IModelCoreSimulation> _simulations = new List<IModelCoreSimulation>();
-      private readonly List<SimulationWithBatchOptions> _simulationBatches = new List<SimulationWithBatchOptions>();
+      private readonly List<SettingsForConcurrentltyRunSimulationBatch> _listOfSettingsForConcurrentltyRunSimulationBatch = new List<SettingsForConcurrentltyRunSimulationBatch>();
       private CancellationTokenSource _cancellationTokenSource;
 
       public void AddSimulation(IModelCoreSimulation simulation)
@@ -102,49 +102,42 @@ namespace OSPSuite.R.Services
          _simulations.Add(simulation);
       }
 
-      public void AddSimulationBatchOption(SimulationWithBatchOptions simulationWithBatchOptions)
+      public void AddSimulationBatchOption(SettingsForConcurrentltyRunSimulationBatch settings)
       {
-         if (simulationWithBatchOptions.SimulationBatchRunValues.Any(value => string.IsNullOrEmpty(value.Id) || _simulationBatches.Any(simulationBatch => simulationBatch.SimulationBatchRunValues.Any(otherValue => otherValue.Id == value.Id))))
-            throw new OSPSuiteException(Error.InvalidSimulationBatchRunValuesId);
-
-         _simulationBatches.Add(simulationWithBatchOptions);
+         _listOfSettingsForConcurrentltyRunSimulationBatch.Add(settings);
       }
 
       public void Clear()
       {
          _simulations.Clear();
-         _simulationBatches.Clear();
+         _listOfSettingsForConcurrentltyRunSimulationBatch.Clear();
          _cancellationTokenSource?.Cancel();
       }
 
-      private void initializeBatches()
+      private async void initializeBatches()
       {
-         _concurrencyManager.RunAsync
+         await _concurrencyManager.RunAsync
          (
-            NumberOfCores, 
-            _cancellationTokenSource.Token, 
-            _simulationBatches.SelectMany
+            NumberOfCores,
+            _cancellationTokenSource.Token,
+            _listOfSettingsForConcurrentltyRunSimulationBatch.SelectMany
             (
-               batchOptions => batchOptions._pendingForInitialization.Select
-               (
-                  pending => new Tuple<SimulationWithBatchOptions, SimulationBatchRunValues>(batchOptions, pending)
-               )
-            ).ToList(), 
-            async (core, ct, simulationBatchRunValuesWithItsOptions) =>
+               settings => Enumerable.Range(0, settings.SimulationBatchRunValues.Count - settings._simulationBatches.Count).Select(_ => settings)
+            ).ToList(),
+            (core, ct, settings) =>
             {
-               var options = simulationBatchRunValuesWithItsOptions.Item1;
-               var values = simulationBatchRunValuesWithItsOptions.Item2;
-               options._simulationBatches.Add(values, Api.GetSimulationBatchFactory().Create(options.Simulation, options.SimulationBatchOptions));
-               return true;
+               settings._simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(settings.Simulation, settings.SimulationBatchOptions));
+               var completedTask = new TaskCompletionSource<Boolean>();
+               completedTask.SetResult(true);
+               return completedTask.Task;
             }
          );
-         _simulationBatches.ForEach(batchOptions => batchOptions._pendingForInitialization.Clear());
       }
 
       public ConcurrentSimulationResults[] RunConcurrently()
       {
          //Currently we only allow for running simulations or simulation batches, but not both
-         if (_simulationBatches.Count > 0 && _simulations.Count > 0)
+         if (_listOfSettingsForConcurrentltyRunSimulationBatch.Count > 0 && _simulations.Count > 0)
             throw new OSPSuiteException(Error.InvalidMixOfSimulationAndSimulationBatch);
 
          _cancellationTokenSource = new CancellationTokenSource();
@@ -158,22 +151,23 @@ namespace OSPSuite.R.Services
             ).Result.Values.ToArray();
          }
 
-         if (_simulationBatches.Count > 0)
+         if (_listOfSettingsForConcurrentltyRunSimulationBatch.Count > 0)
          {
-            initializeBatches();            
-            
-            return _concurrencyManager.RunAsync(
+            initializeBatches();
+            var results = _concurrencyManager.RunAsync(
                NumberOfCores,
                _cancellationTokenSource.Token,
-               _simulationBatches.SelectMany(sb => sb.SimulationBatchRunValues.Select(rv => new SimulationBatchRunOptions()
+               _listOfSettingsForConcurrentltyRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
                   Simulation = sb.Simulation,
-                  SimulationBatch = sb._simulationBatches[rv],
+                  SimulationBatch = sb._simulationBatches.ElementAt(i),
                   SimulationBatchOptions = sb.SimulationBatchOptions,
                   SimulationBatchRunValues = rv
                })).ToList(),
                runSimulationBatch
             ).Result.Values.ToArray();
+            _listOfSettingsForConcurrentltyRunSimulationBatch.ForEach(settings => settings.SimulationBatchRunValues.Clear());
+            return results;
          }
 
          return Array.Empty<ConcurrentSimulationResults>();
@@ -191,9 +185,8 @@ namespace OSPSuite.R.Services
       private async Task<ConcurrentSimulationResults> runSimulationBatch(int coreIndex, CancellationToken cancellationToken, SimulationBatchRunOptions simulationBatchWithOptions)
       {
          return new ConcurrentSimulationResults(
-            simulationBatchWithOptions.Simulation.Id,
-            await simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues),
-            simulationBatchWithOptions.SimulationBatchRunValues.Id
+            simulationBatchWithOptions.SimulationBatchRunValues.Id,
+            await simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues)
          );
       }
 
