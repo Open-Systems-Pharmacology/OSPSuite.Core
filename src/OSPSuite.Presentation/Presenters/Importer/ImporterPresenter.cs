@@ -317,8 +317,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void applyConfiguration(ImporterConfiguration configuration)
       {
          var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
-
-         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
+         var mappings = configuration.Parameters.OfType<MappingDataFormatParameter>();
+         var listOfNonExistingColumns = mappings.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
 
          if (listOfNonExistingColumns.Any())
          {

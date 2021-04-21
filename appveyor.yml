@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - importer-corrections
 
 test:
   assemblies:
