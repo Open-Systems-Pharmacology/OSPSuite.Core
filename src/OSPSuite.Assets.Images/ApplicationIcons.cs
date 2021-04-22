@@ -26,7 +26,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon AgingSimulationGreen = AddNamedIcon("AgingSimulationGreen");
       public static readonly ApplicationIcon AgingSimulationRed = AddNamedIcon("AgingSimulationRed");
       public static readonly ApplicationIcon Application = AddNamedIcon("Application");
-      public static readonly ApplicationIcon Applications = AddNamedIcon("Application");
+      public static readonly ApplicationIcon Applications = AddNamedIcon("Application", "Applications");
       public static readonly ApplicationIcon ApplicationsError = AddNamedIcon("ApplicationError", "ApplicationsError");
       public static readonly ApplicationIcon ApplicationSettings = AddNamedIcon("Settings", "ApplicationSettings");
       public static readonly ApplicationIcon ApplyAll = AddNamedIcon("ApplyAll");
@@ -55,7 +55,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Cattle = AddNamedIcon("Cattle");
       public static readonly ApplicationIcon CattleGreen = AddNamedIcon("CattleGreen");
       public static readonly ApplicationIcon CattleRed = AddNamedIcon("CattleRed");
-      public static readonly ApplicationIcon Cecum = AddNamedIcon("Caecum");
+      public static readonly ApplicationIcon Cecum = AddNamedIcon("Caecum", "Cecum");
       public static readonly ApplicationIcon CheckAll = AddNamedIcon("CheckAll");
       public static readonly ApplicationIcon CheckSelected = AddNamedIcon("CheckSelected");
       public static readonly ApplicationIcon Clone = AddNamedIcon("SimulationClone", "Clone");
@@ -92,7 +92,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon DogGreen = AddNamedIcon("DogGreen");
       public static readonly ApplicationIcon DogRed = AddNamedIcon("DogRed");
       public static readonly ApplicationIcon Down = AddNamedIcon("Down");
-      public static readonly ApplicationIcon Drug = AddNamedIcon("Molecule");
+      public static readonly ApplicationIcon Drug = AddNamedIcon("Molecule", "Drug");
       public static readonly ApplicationIcon Duodenum = AddNamedIcon("Duodenum");
       public static readonly ApplicationIcon DxError = AddNamedIcon("ErrorProvider");
       public static readonly ApplicationIcon Edit = AddNamedIcon("Edit");
