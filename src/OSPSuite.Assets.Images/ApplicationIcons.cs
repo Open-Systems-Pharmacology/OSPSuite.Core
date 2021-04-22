@@ -483,6 +483,11 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon AmountObservedData = AddNamedIcon("AmountObservedData", "AmountObservedData");
       public static readonly ApplicationIcon AmountObservedDataForMolecule = AddNamedIcon("AmountObservedDataForMolecule", "AmountObservedDataForMolecule");
       public static readonly ApplicationIcon BiDirectional = AddNamedIcon("BiDirectional", "BiDirectional");
+      public static readonly ApplicationIcon Breasts = AddNamedIcon("Breasts", "Breasts");
+      public static readonly ApplicationIcon Endometrium = AddNamedIcon("Endometrium", "Endometrium");
+      public static readonly ApplicationIcon Endosome = AddNamedIcon("Endosome", "Endosome");
+      public static readonly ApplicationIcon Fetus = AddNamedIcon("Fetus", "Fetus");
+      public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta", "Placenta");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
