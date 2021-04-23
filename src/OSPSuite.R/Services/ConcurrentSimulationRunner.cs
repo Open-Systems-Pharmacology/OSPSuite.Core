@@ -25,7 +25,7 @@ namespace OSPSuite.R.Services
          _simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
          return true;
       }
-      public IReadOnlyList<SimulationBatch> SimulationBatches { get => (IReadOnlyList<SimulationBatch>)_simulationBatches; }
+      public IEnumerable<SimulationBatch> SimulationBatches { get => _simulationBatches; }
       public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
          var id = Guid.NewGuid().ToString();
@@ -174,7 +174,7 @@ namespace OSPSuite.R.Services
                _listOfSettingsForConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
                   Simulation = sb.Simulation,
-                  SimulationBatch = sb.SimulationBatches[i],
+                  SimulationBatch = sb.SimulationBatches.ElementAt(i),
                   SimulationBatchOptions = sb.SimulationBatchOptions,
                   SimulationBatchRunValues = rv
                })).ToList(),
@@ -192,7 +192,7 @@ namespace OSPSuite.R.Services
 
 
       public ConcurrentSimulationResults[] RunConcurrently() => RunConcurrentlyAsync().Result.ToArray();
-
+            
       private async Task<ConcurrentSimulationResults> runSimulation(int coreIndex, CancellationToken cancellationToken, IModelCoreSimulation simulation)
       {
          //We want a new instance every time that's why we are not injecting SimulationRunner in constructor
