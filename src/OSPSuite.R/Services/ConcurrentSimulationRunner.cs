@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NPOI.SS.Formula.Functions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -20,9 +19,13 @@ namespace OSPSuite.R.Services
       public IModelCoreSimulation Simulation { get; set; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
-
-      //TODO Maybe some encapsulation here
-      internal ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
+      private ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
+      internal int MissingBatchesCount { get => SimulationBatchRunValues.Count - _simulationBatches.Count; }
+      internal bool AddNewBatch() {
+         _simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
+         return true;
+      }
+      public IReadOnlyList<SimulationBatch> SimulationBatches { get => (IReadOnlyList<SimulationBatch>)_simulationBatches; }
       public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
          var id = Guid.NewGuid().ToString();
@@ -129,13 +132,9 @@ namespace OSPSuite.R.Services
             (
                //That could be computed in teh settings?
                //add a comment explaining what's going on
-               settings => Enumerable.Range(0, settings.SimulationBatchRunValues.Count - settings._simulationBatches.Count).Select(_ => settings)
+               settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
-            (core, ct, settings) =>
-            {
-               settings._simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(settings.Simulation, settings.SimulationBatchOptions));
-               return Task.FromResult(true);
-            }
+            (core, ct, settings) => Task.FromResult(settings.AddNewBatch())
          );
       }
 
@@ -167,7 +166,7 @@ namespace OSPSuite.R.Services
                _listOfSettingsForConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
                   Simulation = sb.Simulation,
-                  SimulationBatch = sb._simulationBatches.ElementAt(i),
+                  SimulationBatch = sb.SimulationBatches[i],
                   SimulationBatchOptions = sb.SimulationBatchOptions,
                   SimulationBatchRunValues = rv
                })).ToList(),
