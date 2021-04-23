@@ -20,7 +20,7 @@ namespace OSPSuite.R.Services
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
       private ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
-      internal int MissingBatchesCount { get => SimulationBatchRunValues.Count - _simulationBatches.Count; }
+      internal int MissingBatchesCount { get => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count); }
       internal bool AddNewBatch() {
          _simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
          return true;
@@ -77,6 +77,9 @@ namespace OSPSuite.R.Services
       /// <param name="simulationWithBatchOptions">the options to run the batch</param>
       void AddSimulationBatchOption(SettingsForConcurrentRunSimulationBatch simulationWithBatchOptions);
 
+      /// <summary>
+      /// Clear all data for freshly start
+      /// </summary>
       void Clear();
 
       /// <summary>
@@ -85,6 +88,10 @@ namespace OSPSuite.R.Services
       /// <returns></returns>
       ConcurrentSimulationResults[] RunConcurrently();
 
+      /// <summary>
+      /// After initialization phase, run all simulations or simulationBatches Async
+      /// </summary>
+      /// <returns></returns>
       Task<IEnumerable<ConcurrentSimulationResults>> RunConcurrentlyAsync();
    }
 
@@ -130,8 +137,9 @@ namespace OSPSuite.R.Services
             _cancellationTokenSource.Token,
             _listOfSettingsForConcurrentRunSimulationBatch.SelectMany
             (
-               //That could be computed in teh settings?
-               //add a comment explaining what's going on
+               //The batch creation is expensive so we store the created batches from one RunConcurrently call
+               //to the next one. It might happen though that the later call needs more batches than the former
+               //so for each needed batch, we create a new one.
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
             (core, ct, settings) => Task.FromResult(settings.AddNewBatch())
@@ -173,7 +181,8 @@ namespace OSPSuite.R.Services
                runSimulationBatch
             );
 
-            //What are we doing here? Why are clearing?
+            //After one RunConcurrently call, we need to forget the SimulationBatchRunValues and expect the new set of values. So the caller has to
+            //specify new SimulationBatchRunValues before each RunConccurrently call.
             _listOfSettingsForConcurrentRunSimulationBatch.ForEach(settings => settings.SimulationBatchRunValues.Clear());
             return results.Values; 
          }
