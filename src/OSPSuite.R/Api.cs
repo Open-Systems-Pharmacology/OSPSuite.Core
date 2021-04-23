@@ -1,4 +1,5 @@
 ﻿using System;
+using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
@@ -56,6 +57,8 @@ namespace OSPSuite.R
       public static IDataRepositoryTask GetDataRepositoryTask() => resolveTask<IDataRepositoryTask>();
 
       public static IOSPSuiteLogger GetLogger() => resolveTask<IOSPSuiteLogger>();
+
+      public static IConcurrentSimulationRunner GetConcurrentSimulationRunner() => resolveTask<IConcurrentSimulationRunner>();
 
       private static T resolveTask<T>()
       {

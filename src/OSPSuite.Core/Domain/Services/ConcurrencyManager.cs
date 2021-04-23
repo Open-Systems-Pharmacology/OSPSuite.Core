@@ -23,17 +23,11 @@ namespace OSPSuite.Core.Domain.Services
 
    public class ConcurrencyManager : IConcurrencyManager
    {
-      private readonly ICoreUserSettings _coreUserSettings;
-
-      public ConcurrencyManager(ICoreUserSettings coreUserSettings)
-      {
-         _coreUserSettings = coreUserSettings;
-      }
-
+      private readonly int _maximumNumberOfCoresToUse = Math.Max(1, Environment.ProcessorCount - 1);
       public async Task<IReadOnlyDictionary<TData, TResult>> RunAsync<TData, TResult>(int numberOfCoresToUse, CancellationToken cancellationToken, IReadOnlyList<TData> data, Func<int, CancellationToken, TData, Task<TResult>> action)
       {
          if (numberOfCoresToUse <= 0)
-            numberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse;
+            numberOfCoresToUse = _maximumNumberOfCoresToUse;
          var concurrentData = new ConcurrentQueue<TData>(data);
          numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
 
@@ -55,6 +49,7 @@ namespace OSPSuite.Core.Domain.Services
          await Task.WhenAll(tasks);
          //all tasks are completed. Can return results
 
+         var tt = results.Values;
          return results;
       }
    }
