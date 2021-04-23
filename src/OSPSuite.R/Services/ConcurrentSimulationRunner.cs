@@ -135,11 +135,14 @@ namespace OSPSuite.R.Services
          (
             NumberOfCores,
             _cancellationTokenSource.Token,
+            //The batch creation is expensive so we store the created batches from one RunConcurrently call
+            //to the next one. It might happen though that the later call needs more batches than the former
+            //so for each needed batch, we create a new one.
+            //The iteration occurs on the list of _listOfSettingsForConcurrentRunSimulationBatch (over different
+            //simulation objects), taking for each settings (or simulation) a list with the missing batches 
+            //(one for each MissingBatchesCount) to add a new batch on such a settings object
             _listOfSettingsForConcurrentRunSimulationBatch.SelectMany
             (
-               //The batch creation is expensive so we store the created batches from one RunConcurrently call
-               //to the next one. It might happen though that the later call needs more batches than the former
-               //so for each needed batch, we create a new one.
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
             (core, ct, settings) => Task.FromResult(settings.AddNewBatch())
