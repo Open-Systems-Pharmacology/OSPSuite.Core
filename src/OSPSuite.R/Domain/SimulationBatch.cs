@@ -31,6 +31,9 @@ namespace OSPSuite.R.Domain
 
    public class SimulationBatchRunValues
    {
+      //Id to recognize it when running concurrently
+      public string Id { get; set; }
+
       //Potentially null
       public double[] ParameterValues { get; set; }
 
@@ -46,17 +49,6 @@ namespace OSPSuite.R.Domain
       public double[] Values => ParameterValues.ToNetArray(ParameterValue);
 
       public double[] MoleculeValues => InitialValues.ToNetArray(InitialValue);
-   }
-
-   public class SimulationBatchRunConcurrentlyOptions
-   {
-      private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
-      public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues { get => _simulationBatchRunValues; }
-
-      public void AddSimulationBatchRunValues(SimulationBatchRunValues runValues)
-      {
-         _simulationBatchRunValues.Add(runValues);
-      }
    }
 
    public class SimulationBatch : IDisposable
