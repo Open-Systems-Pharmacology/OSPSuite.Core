@@ -36,6 +36,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       bool DeleteAll();
 
+      void UpdateMolWeight(DataRepository observedData);
       void AddObservedDataToProject(DataRepository observedData);
 
       void AddImporterConfigurationToProject(ImporterConfiguration congfigurations);
@@ -110,6 +111,8 @@ namespace OSPSuite.Core.Domain.Services
       {
          return Delete(_executionContext.Project.AllObservedData);
       }
+
+      public abstract void UpdateMolWeight(DataRepository observedData);
 
       public bool Delete(DataRepository observedData)
       {

@@ -111,5 +111,9 @@ namespace OSPSuite.Core.Services
       public override void Rename(DataRepository observedData)
       {
       }
+
+      public override void UpdateMolWeight(DataRepository observedData)
+      {
+      }
    }
 }

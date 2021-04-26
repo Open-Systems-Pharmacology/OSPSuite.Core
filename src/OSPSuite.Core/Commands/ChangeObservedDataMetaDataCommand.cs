@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using Command = OSPSuite.Assets.Command;
 
@@ -21,9 +22,20 @@ namespace OSPSuite.Core.Commands
       {
          changeMetaDataInRepository();
 
+         updateMoleCule(context);
+
          Description = Command.SetMetaDataChangedCommandDescription(_metaDataChanged.OldName, _metaDataChanged.OldValue, _metaDataChanged.NewName, _metaDataChanged.NewValue);
          SetBuildingBlockParameters(context);
          context.PublishEvent(new ObservedDataMetaDataChangedEvent(_observedData));
+      }
+
+      private void updateMoleCule(IOSPSuiteExecutionContext context)
+      {
+         if(_metaDataChanged.NewName != Constants.ObservedData.MOLECULE) return;
+
+         var service = context.Resolve<IObservedDataTask>();
+         service.UpdateMolWeight(_observedData);
+         //context.Publish
       }
 
       private void changeMetaDataInRepository()
