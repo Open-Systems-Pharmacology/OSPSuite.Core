@@ -122,13 +122,13 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource?.Cancel();
       }
 
-      private int NumberOfCores() => SimulationRunOptions?.NumberOfCoresToUse ?? 0;
+      private int numberOfCores() => SimulationRunOptions?.NumberOfCoresToUse ?? 0;
 
       private Task initializeBatches()
       {
           return _concurrencyManager.RunAsync
          (
-            NumberOfCores(),
+            numberOfCores(),
             _cancellationTokenSource.Token,
             //The batch creation is expensive so we store the created batches from one RunConcurrently call
             //to the next one. It might happen though that the later call needs more batches than the former
@@ -154,7 +154,7 @@ namespace OSPSuite.R.Services
          if (_simulations.Count > 0)
          {
             var results = await _concurrencyManager.RunAsync(
-               NumberOfCores(),
+               numberOfCores(),
                _cancellationTokenSource.Token,
                _simulations,
                runSimulation
@@ -167,7 +167,7 @@ namespace OSPSuite.R.Services
             await initializeBatches();
 
             var results = await _concurrencyManager.RunAsync(
-               NumberOfCores(),
+               numberOfCores(),
                _cancellationTokenSource.Token,
                _listOfSettingsForConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
