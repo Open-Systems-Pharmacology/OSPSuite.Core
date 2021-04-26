@@ -22,20 +22,19 @@ namespace OSPSuite.Core.Commands
       {
          changeMetaDataInRepository();
 
-         updateMoleCule(context);
+         updateMolecule(context);
 
          Description = Command.SetMetaDataChangedCommandDescription(_metaDataChanged.OldName, _metaDataChanged.OldValue, _metaDataChanged.NewName, _metaDataChanged.NewValue);
          SetBuildingBlockParameters(context);
          context.PublishEvent(new ObservedDataMetaDataChangedEvent(_observedData));
       }
 
-      private void updateMoleCule(IOSPSuiteExecutionContext context)
+      private void updateMolecule(IOSPSuiteExecutionContext context)
       {
          if(_metaDataChanged.NewName != Constants.ObservedData.MOLECULE) return;
 
          var service = context.Resolve<IObservedDataTask>();
          service.UpdateMolWeight(_observedData);
-         //context.Publish
       }
 
       private void changeMetaDataInRepository()
