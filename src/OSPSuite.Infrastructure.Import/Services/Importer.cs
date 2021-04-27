@@ -151,7 +151,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                .Where(col => col.IsMandatory && subset.All(cm =>
                   cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
                .ToList(),
-            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && cm.MappedColumn.ErrorStdDev.Equals("geometric")).Select(cm => cm.MappedColumn.Name)
+            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && (cm.MappedColumn.ErrorStdDev == null || cm.MappedColumn.ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC))).Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
       }
