@@ -48,7 +48,7 @@ namespace OSPSuite.Starter.Bootstrapping
          initializeDependency();
          fillDimensions(IoC.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
-         configureLogger(IoC.Container, LogLevel.Information);
+         configureLogger(IoC.Container, LogLevel.Critical);
       }
 
       private static void configureLogger(IContainer container, LogLevel logLevel)
@@ -59,7 +59,7 @@ namespace OSPSuite.Starter.Bootstrapping
             .AddLoggingBuilderConfiguration(builder =>
                builder
                   .SetMinimumLevel(logLevel)
-                  .AddFile("log.txt")
+                  .AddFile("log.txt", logLevel)
             );
       }
 
