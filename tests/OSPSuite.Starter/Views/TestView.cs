@@ -58,7 +58,7 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
          startEmptyFormButton.Text = "Start Empty Form";
-         startLoggerButton.Text = "Strt Logger Test";
+         startLoggerButton.Text = "Start Logger Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)
