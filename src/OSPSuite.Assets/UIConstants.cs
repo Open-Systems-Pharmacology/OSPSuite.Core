@@ -406,7 +406,10 @@ namespace OSPSuite.Assets
          public static readonly string ApplyConfiguration = "Apply configuration";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
-
+         public static readonly string ReloadWillCauseChangeOfDataSets = "Reloading will cause the following changes in observed data. Do you really want to reload?";
+         public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
+         public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
+         public static readonly string ReloadData = "Reload Data";
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
             return "The following excel columns do not exist in the current file. \n \n" + listOfExcelColumns +
