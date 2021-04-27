@@ -29,6 +29,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.startImporterLoadTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startImporterReloadTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startEmptyFormButton = new DevExpress.XtraEditors.SimpleButton();
          this.startMatrixTestButton = new DevExpress.XtraEditors.SimpleButton();
@@ -66,8 +67,9 @@
          this.layoutControlItem16 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem17 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem18 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.startImporterLoadTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.layoutControlItem19 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.startLoggerButton = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutControlItem20 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -91,11 +93,13 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem17)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem18)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem19)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem20)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.startLoggerButton);
          this.layoutControl.Controls.Add(this.startImporterLoadTestButton);
          this.layoutControl.Controls.Add(this.startImporterReloadTestButton);
          this.layoutControl.Controls.Add(this.startEmptyFormButton);
@@ -124,6 +128,15 @@
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // startImporterLoadTestButton
+         // 
+         this.startImporterLoadTestButton.Location = new System.Drawing.Point(12, 229);
+         this.startImporterLoadTestButton.Name = "startImporterLoadTestButton";
+         this.startImporterLoadTestButton.Size = new System.Drawing.Size(473, 27);
+         this.startImporterLoadTestButton.StyleController = this.layoutControl;
+         this.startImporterLoadTestButton.TabIndex = 22;
+         this.startImporterLoadTestButton.Text = "startImporterLoadTestButton";
+         // 
          // startImporterReloadTestButton
          // 
          this.startImporterReloadTestButton.Location = new System.Drawing.Point(12, 198);
@@ -135,7 +148,7 @@
          // 
          // startEmptyFormButton
          // 
-         this.startEmptyFormButton.Location = new System.Drawing.Point(12, 570);
+         this.startEmptyFormButton.Location = new System.Drawing.Point(12, 601);
          this.startEmptyFormButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startEmptyFormButton.Name = "startEmptyFormButton";
          this.startEmptyFormButton.Size = new System.Drawing.Size(473, 27);
@@ -326,7 +339,8 @@
             this.layoutControlItem16,
             this.layoutControlItem17,
             this.layoutControlItem18,
-            this.layoutControlItem19});
+            this.layoutControlItem19,
+            this.layoutControlItem20});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Size = new System.Drawing.Size(497, 650);
          this.layoutControlGroup1.TextVisible = false;
@@ -478,9 +492,9 @@
          // layoutControlItem17
          // 
          this.layoutControlItem17.Control = this.startEmptyFormButton;
-         this.layoutControlItem17.Location = new System.Drawing.Point(0, 558);
+         this.layoutControlItem17.Location = new System.Drawing.Point(0, 589);
          this.layoutControlItem17.Name = "layoutControlItem17";
-         this.layoutControlItem17.Size = new System.Drawing.Size(477, 72);
+         this.layoutControlItem17.Size = new System.Drawing.Size(477, 41);
          this.layoutControlItem17.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem17.TextVisible = false;
          // 
@@ -493,15 +507,6 @@
          this.layoutControlItem18.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem18.TextVisible = false;
          // 
-         // startImporterLoadTestButton
-         // 
-         this.startImporterLoadTestButton.Location = new System.Drawing.Point(12, 229);
-         this.startImporterLoadTestButton.Name = "startImporterLoadTestButton";
-         this.startImporterLoadTestButton.Size = new System.Drawing.Size(473, 27);
-         this.startImporterLoadTestButton.StyleController = this.layoutControl;
-         this.startImporterLoadTestButton.TabIndex = 22;
-         this.startImporterLoadTestButton.Text = "startImporterLoadTestButton";
-         // 
          // layoutControlItem19
          // 
          this.layoutControlItem19.Control = this.startImporterLoadTestButton;
@@ -510,6 +515,24 @@
          this.layoutControlItem19.Size = new System.Drawing.Size(477, 31);
          this.layoutControlItem19.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem19.TextVisible = false;
+         // 
+         // startLoggerButton
+         // 
+         this.startLoggerButton.Location = new System.Drawing.Point(12, 570);
+         this.startLoggerButton.Name = "startLoggerButton";
+         this.startLoggerButton.Size = new System.Drawing.Size(473, 27);
+         this.startLoggerButton.StyleController = this.layoutControl;
+         this.startLoggerButton.TabIndex = 23;
+         this.startLoggerButton.Text = "startLoggerButton";
+         // 
+         // layoutControlItem20
+         // 
+         this.layoutControlItem20.Control = this.startLoggerButton;
+         this.layoutControlItem20.Location = new System.Drawing.Point(0, 558);
+         this.layoutControlItem20.Name = "layoutControlItem20";
+         this.layoutControlItem20.Size = new System.Drawing.Size(477, 31);
+         this.layoutControlItem20.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem20.TextVisible = false;
          // 
          // TestView
          // 
@@ -542,6 +565,7 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem17)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem18)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem19)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem20)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -587,5 +611,7 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem18;
       private DevExpress.XtraEditors.SimpleButton startImporterLoadTestButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem19;
+      private DevExpress.XtraEditors.SimpleButton startLoggerButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem20;
    }
 }

@@ -33,6 +33,7 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Click += (sender, args) => OnEvent(_presenter.StartHistogramTest);
          startMatrixTestButton.Click += (sender, args) => OnEvent(_presenter.StartMatrixTest);
          startEmptyFormButton.Click += (sender, args) => OnEvent(_presenter.StartEmptyFormTest);
+         startLoggerButton.Click += (sender, args) => OnEvent(_presenter.StartLoggerTest);
       }
 
       public override void InitializeResources()
@@ -57,6 +58,7 @@ namespace OSPSuite.Starter.Views
          startHistogramTestButton.Text = "Start Histogram Test";
          startMatrixTestButton.Text = "Start Matrix Test";
          startEmptyFormButton.Text = "Start Empty Form";
+         startLoggerButton.Text = "Strt Logger Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)
