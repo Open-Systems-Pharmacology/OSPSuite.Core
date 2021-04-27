@@ -21,9 +21,10 @@ namespace OSPSuite.R.Services
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
       private ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
       internal int MissingBatchesCount { get => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count); }
-      internal bool AddNewBatch() {
-         _simulationBatches.Enqueue(Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions));
-         return true;
+      internal SimulationBatch AddNewBatch() {
+         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
+         _simulationBatches.Enqueue(batch);
+         return batch;
       }
       public IEnumerable<SimulationBatch> SimulationBatches { get => _simulationBatches; }
       public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
@@ -41,17 +42,6 @@ namespace OSPSuite.R.Services
       public SimulationBatch SimulationBatch { get; set; }
       public SimulationBatchRunValues SimulationBatchRunValues { get; set; }
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
-   }
-
-   public class ConcurrentSimulationResults
-   {
-      public ConcurrentSimulationResults(string id, SimulationResults results)
-      {
-         Id = id;
-         SimulationResults = results;
-      }
-      public string Id { get; }
-      public SimulationResults SimulationResults { get; }
    }
 
    public interface IConcurrentSimulationRunner : IDisposable
@@ -81,13 +71,13 @@ namespace OSPSuite.R.Services
       ///    Runs all preset settings concurrently
       /// </summary>
       /// <returns></returns>
-      ConcurrentSimulationResults[] RunConcurrently();
+      ConcurrencyManagerResult<SimulationResults>[] RunConcurrently();
 
       /// <summary>
       /// After initialization phase, run all simulations or simulationBatches Async
       /// </summary>
       /// <returns></returns>
-      Task<IEnumerable<ConcurrentSimulationResults>> RunConcurrentlyAsync();
+      Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync();
    }
 
    public class ConcurrentSimulationRunner : IConcurrentSimulationRunner
@@ -140,11 +130,12 @@ namespace OSPSuite.R.Services
             (
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
+            data => new Guid().ToString(),
             (core, ct, settings) => Task.FromResult(settings.AddNewBatch())
          );
       }
 
-      public async Task<IEnumerable<ConcurrentSimulationResults>> RunConcurrentlyAsync()
+      public async Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync()
       {
          //Currently we only allow for running simulations or simulation batches, but not both
          if (_listOfSettingsForConcurrentRunSimulationBatch.Count > 0 && _simulations.Count > 0)
@@ -157,6 +148,7 @@ namespace OSPSuite.R.Services
                numberOfCores(),
                _cancellationTokenSource.Token,
                _simulations,
+               simulation => simulation.Id,
                runSimulation
             );
             return results.Values;
@@ -176,6 +168,7 @@ namespace OSPSuite.R.Services
                   SimulationBatchOptions = sb.SimulationBatchOptions,
                   SimulationBatchRunValues = rv
                })).ToList(),
+               sb => sb.SimulationBatchRunValues.Id,
                runSimulationBatch
             );
 
@@ -185,27 +178,23 @@ namespace OSPSuite.R.Services
             return results.Values; 
          }
 
-         return Enumerable.Empty<ConcurrentSimulationResults>();
+         return Enumerable.Empty<ConcurrencyManagerResult<SimulationResults>>();
       }
 
 
-      public ConcurrentSimulationResults[] RunConcurrently() => RunConcurrentlyAsync().Result.ToArray();
-            
-      private async Task<ConcurrentSimulationResults> runSimulation(int coreIndex, CancellationToken cancellationToken, IModelCoreSimulation simulation)
+      public ConcurrencyManagerResult<SimulationResults>[] RunConcurrently() => RunConcurrentlyAsync().Result.ToArray();
+
+      
+
+      private async Task<SimulationResults> runSimulation(int coreIndex, CancellationToken cancellationToken, IModelCoreSimulation simulation)
       {
          //We want a new instance every time that's why we are not injecting SimulationRunner in constructor
-         return new ConcurrentSimulationResults(
-            simulation.Id,
-            await Api.GetSimulationRunner().RunAsync(new SimulationRunArgs { Simulation = simulation, SimulationRunOptions = SimulationRunOptions })
-         );
+         return await Api.GetSimulationRunner().RunAsync(new SimulationRunArgs { Simulation = simulation, SimulationRunOptions = SimulationRunOptions });
       }
 
-      private async Task<ConcurrentSimulationResults> runSimulationBatch(int coreIndex, CancellationToken cancellationToken, SimulationBatchRunOptions simulationBatchWithOptions)
+      private async Task<SimulationResults> runSimulationBatch(int coreIndex, CancellationToken cancellationToken, SimulationBatchRunOptions simulationBatchWithOptions)
       {
-         return new ConcurrentSimulationResults(
-            simulationBatchWithOptions.SimulationBatchRunValues.Id,
-            await simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues)
-         );
+         return await simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues);
       }
 
       #region Disposable properties
