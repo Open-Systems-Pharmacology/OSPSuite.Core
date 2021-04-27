@@ -232,9 +232,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
             var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
-            var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO.Source).MappedColumn;
+            var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO?.Source)?.MappedColumn;
 
-            if (!relatedColumn.Unit.ColumnName.IsNullOrEmpty())
+            if (relatedColumn != null && !relatedColumn.Unit.ColumnName.IsNullOrEmpty())
             {
                _mappingParameterEditorPresenter.SetUnitColumnSelection();
                columns.Add(relatedColumn.Unit.ColumnName);
