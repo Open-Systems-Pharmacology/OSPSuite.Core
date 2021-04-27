@@ -16,17 +16,26 @@ namespace OSPSuite.R.Services
 {
    public class SettingsForConcurrentRunSimulationBatch
    {
-      public IModelCoreSimulation Simulation { get; set; }
+      public IModelCoreSimulation Simulation { get; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
-      public SimulationBatchOptions SimulationBatchOptions { get; set; }
+      public SimulationBatchOptions SimulationBatchOptions { get; }
       private ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
       internal int MissingBatchesCount { get => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count); }
+
+      public SettingsForConcurrentRunSimulationBatch(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
+      {
+         Simulation = simulation;
+         SimulationBatchOptions = simulationBatchOptions;
+      }
+
       internal SimulationBatch AddNewBatch() {
          var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
          _simulationBatches.Enqueue(batch);
          return batch;
       }
+
       public IEnumerable<SimulationBatch> SimulationBatches { get => _simulationBatches; }
+      
       public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
          var id = Guid.NewGuid().ToString();

@@ -64,23 +64,23 @@ namespace OSPSuite.R.Services
          _simulationPersister = Api.GetSimulationPersister();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
-         _simulationWithBatchOptions = new SettingsForConcurrentRunSimulationBatch()
-         {
-            Simulation = _simulation,
-            SimulationBatchOptions = new SimulationBatchOptions
-               {
+         _simulationWithBatchOptions = new SettingsForConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
                   VariableMolecules = new[]
-               {
-                  new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
-               },
+                  {
+                     new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+                  },
 
                   VariableParameters = new[]
-               {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
-               }
+                  {
+                     new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                     new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  }
             }
-         };
+         );
 
          sut = Api.GetConcurrentSimulationRunner();
          sut.AddSimulationBatchOption(_simulationWithBatchOptions);
