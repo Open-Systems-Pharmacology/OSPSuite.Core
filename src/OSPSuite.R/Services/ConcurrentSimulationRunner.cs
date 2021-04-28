@@ -62,11 +62,6 @@ namespace OSPSuite.R.Services
       SimulationRunOptions SimulationRunOptions { get; set; }
 
       /// <summary>
-      ///    Number of cores to use concurrently. Use 0 or a negative value for using the maximum available.
-      /// </summary>
-      int NumberOfCores { get; set; }
-
-      /// <summary>
       ///    Adds a simulation to the list of Simulations
       /// </summary>
       void AddSimulation(IModelCoreSimulation simulation);
@@ -106,8 +101,6 @@ namespace OSPSuite.R.Services
 
       public SimulationRunOptions SimulationRunOptions { get; set; }
 
-      public int NumberOfCores { get; set; }
-
       private readonly List<IModelCoreSimulation> _simulations = new List<IModelCoreSimulation>();
       private readonly List<SettingsForConcurrentRunSimulationBatch> _listOfSettingsForConcurrentRunSimulationBatch = new List<SettingsForConcurrentRunSimulationBatch>();
       private CancellationTokenSource _cancellationTokenSource;
@@ -129,11 +122,13 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource?.Cancel();
       }
 
+      private int numberOfCores() => SimulationRunOptions?.NumberOfCoresToUse ?? 0;
+
       private Task initializeBatches()
       {
           return _concurrencyManager.RunAsync
          (
-            NumberOfCores,
+            numberOfCores(),
             _cancellationTokenSource.Token,
             //The batch creation is expensive so we store the created batches from one RunConcurrently call
             //to the next one. It might happen though that the later call needs more batches than the former
@@ -159,7 +154,7 @@ namespace OSPSuite.R.Services
          if (_simulations.Count > 0)
          {
             var results = await _concurrencyManager.RunAsync(
-               NumberOfCores,
+               numberOfCores(),
                _cancellationTokenSource.Token,
                _simulations,
                runSimulation
@@ -172,7 +167,7 @@ namespace OSPSuite.R.Services
             await initializeBatches();
 
             var results = await _concurrencyManager.RunAsync(
-               NumberOfCores,
+               numberOfCores(),
                _cancellationTokenSource.Token,
                _listOfSettingsForConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {

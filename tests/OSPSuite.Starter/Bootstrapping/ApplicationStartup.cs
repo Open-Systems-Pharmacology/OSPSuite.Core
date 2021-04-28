@@ -9,6 +9,7 @@ using DevExpress.XtraBars;
 using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraEditors;
 using DevExpress.XtraTabbedMdi;
+using Microsoft.Extensions.Logging;
 using OSPSuite.Core;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -25,6 +26,7 @@ using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Export;
 using OSPSuite.Infrastructure.Import;
 using OSPSuite.Infrastructure.Serialization;
+using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -46,6 +48,19 @@ namespace OSPSuite.Starter.Bootstrapping
          initializeDependency();
          fillDimensions(IoC.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
+         configureLogger(IoC.Container, LogLevel.Critical);
+      }
+
+      private static void configureLogger(IContainer container, LogLevel logLevel)
+      {
+         var loggerCreator = container.Resolve<ILoggerCreator>();
+
+         loggerCreator
+            .AddLoggingBuilderConfiguration(builder =>
+               builder
+                  .SetMinimumLevel(logLevel)
+                  .AddFile("log.txt", logLevel)
+            );
       }
 
       private static void loadPKParameterRepository(IContainer container)

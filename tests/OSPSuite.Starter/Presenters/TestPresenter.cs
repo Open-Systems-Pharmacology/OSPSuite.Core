@@ -31,6 +31,7 @@ namespace OSPSuite.Starter.Presenters
       void StartHistogramTest();
       void StartMatrixTest();
       void StartEmptyFormTest();
+      void StartLoggerTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -41,13 +42,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly ISensitivityAnalysisStarter _sensitivityAnalysisStarter;
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
-      private readonly IImporterConfigurationDataGenerator _dataGenerator;
-
-
+      private readonly IOSPSuiteLogger _logger;
+      
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
          ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
-         IDialogCreator dialogCreator) : base(view)
+         IOSPSuiteLogger logger) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -55,7 +55,13 @@ namespace OSPSuite.Starter.Presenters
          _sensitivityAnalysisStarter = sensitivityAnalysisStarter;
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
-         _dataGenerator = dataGenerator;
+         _logger = logger;
+      }
+
+      public void StartLoggerTest()
+      {
+         _logger.AddCriticalError("Critical");
+         _logger.AddInfo("Info");
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
