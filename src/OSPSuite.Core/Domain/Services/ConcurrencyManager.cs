@@ -7,19 +7,27 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public class ConcurrencyManagerResult<TResult>
+   public class ConcurrencyManagerResult<TResult> where TResult : class
    {
       public string Id { get; }
       public bool Succeeded { get; }
       public string ErrorMessage { get; }
       public TResult Result { get; }
 
-      public ConcurrencyManagerResult(string id, bool succeeded, TResult result, string error)
+      public ConcurrencyManagerResult(string id, TResult result)
       {
          Id = id;
-         Succeeded = succeeded;
-         ErrorMessage = error;
+         Succeeded = true;
+         ErrorMessage = "";
          Result = result;
+      }
+
+      public ConcurrencyManagerResult(string id, string errorMessage)
+      {
+         Id = id;
+         Succeeded = false;
+         ErrorMessage = errorMessage;
+         Result = null;
       }
    }
 
@@ -94,31 +102,25 @@ namespace OSPSuite.Core.Domain.Services
          int coreId, 
          CancellationToken cancellationToken, 
          Func<int, CancellationToken, TData, Task<TResult>> task, 
-         TData args, Func<TData, string> id
+         TData input, Func<TData, string> id
       ) where TResult : class
       {
-         TResult simulationResult;
          try
          {
-            simulationResult = await task.Invoke(coreId, cancellationToken, args);
+            return new ConcurrencyManagerResult<TResult>
+            (
+               id(input),
+               result: await task.Invoke(coreId, cancellationToken, input)
+            );
          }
          catch (Exception e)
          {
             return new ConcurrencyManagerResult<TResult>
             (
-               id(args),
-               false,
-               null,
-               e.Message
+               id(input),
+               errorMessage: e.Message
             );
          }
-         return new ConcurrencyManagerResult<TResult>
-         (
-            id(args),
-            true,
-            simulationResult,
-            ""
-         );
       }
    }
 }
