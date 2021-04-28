@@ -36,10 +36,15 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       bool DeleteAll();
 
+      /// <summary>
+      ///    Update the molecular weight for an observed data set from the value of the
+      ///    corresponding molecule in the project.
+      ///    When f.e. the selected Molecule of a data set gets changed, 
+      ///    the MolWeight of the data set can get updated by calling this function.
+      /// </summary>
       void UpdateMolWeight(DataRepository observedData);
       void AddObservedDataToProject(DataRepository observedData);
-
-      void AddImporterConfigurationToProject(ImporterConfiguration congfigurations);
+      void AddImporterConfigurationToProject(ImporterConfiguration configuration);
    }
 
    public abstract class ObservedDataTask : IObservedDataTask

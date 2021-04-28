@@ -33,8 +33,8 @@ namespace OSPSuite.Core.Commands
       {
          if(_metaDataChanged.NewName != Constants.ObservedData.MOLECULE) return;
 
-         var service = context.Resolve<IObservedDataTask>();
-         service.UpdateMolWeight(_observedData);
+         var observedDataTask = context.Resolve<IObservedDataTask>();
+         observedDataTask.UpdateMolWeight(_observedData);
       }
 
       private void changeMetaDataInRepository()
