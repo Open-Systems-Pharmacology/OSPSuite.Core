@@ -268,7 +268,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             };
          if (element.StartsWith("<"))
          {
-            double.TryParse(element.Substring(1), out result);
+            double.TryParse(element.Substring(1), out result); //here we get the error #1719
+            //for some reason the parsing n PK sim is being done with a different culture than Core...
             return new SimulationPoint()
             {
                Lloq = result,
