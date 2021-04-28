@@ -43,6 +43,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    the MolWeight of the data set can get updated by calling this function.
       /// </summary>
       void UpdateMolWeight(DataRepository observedData);
+
       void AddObservedDataToProject(DataRepository observedData);
       void AddImporterConfigurationToProject(ImporterConfiguration configuration);
    }
