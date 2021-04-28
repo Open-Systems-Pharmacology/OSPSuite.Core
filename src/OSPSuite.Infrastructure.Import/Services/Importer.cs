@@ -195,6 +195,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                }
             }
 
+            //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
             dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
             dataRepositories.Add(dataRepo);
          }
