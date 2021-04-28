@@ -3,6 +3,8 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Domain;
 using System.Collections.Generic;
@@ -20,7 +22,7 @@ namespace OSPSuite.R.Services
    public class When_running_simulations_concurrently : ContextForIntegration<IConcurrentSimulationRunner>
    {
       private ISimulationPersister _simulationPersister;
-      private ConcurrentSimulationResults[] _results;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
 
       protected override void Context()
       {
@@ -43,7 +45,7 @@ namespace OSPSuite.R.Services
       public void should_run_the_simulations()
       {
          Assert.IsNotNull(_results);
-         Assert.IsTrue(_results.All(r => r.SimulationResults.ElementAt(0).AllValues.SelectMany(v => v.Values).Count() > 0));
+         Assert.IsTrue(_results.All(r => r.Result.ElementAt(0).AllValues.SelectMany(v => v.Values).Count() > 0));
       }
    }
 
@@ -51,7 +53,7 @@ namespace OSPSuite.R.Services
    {
       private SettingsForConcurrentRunSimulationBatch _simulationWithBatchOptions;
       private ISimulationPersister _simulationPersister;
-      private ConcurrentSimulationResults[] _results;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
       private IModelCoreSimulation _simulation;
       private List<string> _ids = new List<string>();
       private List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
@@ -62,23 +64,23 @@ namespace OSPSuite.R.Services
          _simulationPersister = Api.GetSimulationPersister();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
-         _simulationWithBatchOptions = new SettingsForConcurrentRunSimulationBatch()
-         {
-            Simulation = _simulation,
-            SimulationBatchOptions = new SimulationBatchOptions
-               {
+         _simulationWithBatchOptions = new SettingsForConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
                   VariableMolecules = new[]
-               {
-                  new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
-               },
+                  {
+                     new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+                  },
 
                   VariableParameters = new[]
-               {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
-               }
+                  {
+                     new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                     new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  }
             }
-         };
+         );
 
          sut = Api.GetConcurrentSimulationRunner();
          sut.AddSimulationBatchOption(_simulationWithBatchOptions);
@@ -115,8 +117,8 @@ namespace OSPSuite.R.Services
          {
             var result = Api.GetSimulationBatchFactory().Create(_simulation, _simulationWithBatchOptions.SimulationBatchOptions).Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id));
             var concurrentResult = _results.FirstOrDefault(r => r.Id == id);
-            result.Time.Values.ShouldBeEqualTo(concurrentResult.SimulationResults.Time.Values);
-            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(concurrentResult.SimulationResults.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
+            result.Time.Values.ShouldBeEqualTo(concurrentResult.Result.Time.Values);
+            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(concurrentResult.Result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
          }
       }
    }
