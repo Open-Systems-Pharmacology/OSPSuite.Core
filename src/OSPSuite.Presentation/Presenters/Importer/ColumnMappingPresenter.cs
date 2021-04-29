@@ -322,7 +322,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                if (model.ExcelColumn != null && !metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
                {
-                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
+                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
                }
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
                {
