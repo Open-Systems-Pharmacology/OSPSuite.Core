@@ -5,6 +5,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.ObservedData;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -43,7 +44,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var conventions = _conventions.ToList();
          if (_dataRepository != null)
-            conventions.Insert(0, string.Join(_view.SelectedSeparator, _dataRepository.ExtendedProperties.Select(ep => $"{{{ep.Name}}}")));
+         {
+            var separator = _view.SelectedSeparator;
+            if (string.IsNullOrEmpty(separator))
+               separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+            conventions.Insert(0, string.Join(separator, _dataRepository.ExtendedProperties.Select(ep => $"{{{ep.Name}}}")));
+         }
          _view.SetNamingConventions(conventions);
          _lastNamingPattern = conventions.First();
       }

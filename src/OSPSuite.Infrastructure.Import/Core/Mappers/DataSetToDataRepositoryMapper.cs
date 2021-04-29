@@ -184,7 +184,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                   as IExtendedProperty;
             if (sourceProperty != null)
             {
-               sourceProperty.Name = Constants.SOURCE;
+               sourceProperty.Name = Constants.FILE;
                sourceProperty.ValueAsObject = fileName;
                dataRepository.ExtendedProperties.Add(sourceProperty);
             }
