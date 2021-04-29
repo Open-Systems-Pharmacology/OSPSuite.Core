@@ -14,18 +14,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
-      private readonly IDialogCreator _dialogCreator;
       public char Separator { get; set; }
 
-      public CsvDataSourceFile(IImportLogger logger, IDialogCreator dialogCreator) : base(logger)
-      {
-         _dialogCreator = dialogCreator;
-      }
+      public CsvDataSourceFile(IImportLogger logger) : base(logger) {}
       protected override Cache<string, DataSheet> LoadFromFile(string path)
       {
          try
          {
-            _dialogCreator.
+            //here: _presenter.setFileName(path)
             using (var reader = new CsvReaderDisposer(path, Separator))
             {
                var csv = reader.Csv;
