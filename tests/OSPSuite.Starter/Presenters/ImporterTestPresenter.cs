@@ -160,6 +160,7 @@ namespace OSPSuite.Starter.Presenters
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
          var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
+         _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
          (
             (IReadOnlyList<MetaDataCategory>)metaDataCategories,
