@@ -44,7 +44,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                .Substring(1, units.Length - 2) //remove the brackets
                .Trim()                         //remove whitespace
                .Split(',')                     //split comma separated list
-               .Where(unitName => _dimensionFactory.Dimensions.SelectMany(dimension => dimension.Units).Any(unitFromDimension => unitFromDimension.Name == unitName)) //only accepts valid units
+               .Where(unitName => _dimensionFactory.DimensionForUnit(unitName) != null) //only accepts valid units
                .FirstOrDefault() ?? UnitDescription.InvalidUnit;     //default = ?
             rank++;
             return new UnitDescription(unit);
