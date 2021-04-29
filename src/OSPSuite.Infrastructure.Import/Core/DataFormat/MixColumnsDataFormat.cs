@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Import;
@@ -12,7 +12,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private const string _name = "Mixin";
       private const string _description = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
       public override string Name => _name;
+      private IDimensionFactory _dimensionFactory;
       public override string Description => _description;
+      public MixColumnsDataFormat(IDimensionFactory dimensionFactory)
+      {
+         _dimensionFactory = dimensionFactory;
+      }
       protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
          if (data.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
@@ -39,6 +44,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                .Substring(1, units.Length - 2) //remove the brackets
                .Trim()                         //remove whitespace
                .Split(',')                     //split comma separated list
+               .Where(unitName => _dimensionFactory.DimensionForUnit(unitName) != null) //only accepts valid units
                .FirstOrDefault() ?? UnitDescription.InvalidUnit;     //default = ?
             rank++;
             return new UnitDescription(unit);

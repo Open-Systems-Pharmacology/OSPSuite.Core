@@ -399,11 +399,12 @@ namespace OSPSuite.Assets
          public static readonly string CloseAllTabsButThis = "close all tabs but this";
          public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
          public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
-         public static readonly string Title = "Importer";
+         public static readonly string Title = "Import Observed Data";
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
          public static readonly string ApplyConfiguration = "Apply configuration";
+         public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
 

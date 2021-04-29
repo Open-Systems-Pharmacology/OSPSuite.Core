@@ -321,8 +321,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
                if (model.ExcelColumn != null && !metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
-                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
-               options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v => new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) }));
+               {
+                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
+               }
+               options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
+               {
+                  var iconIndex = ApplicationIcons.IconIndex(v);
+                  if (iconIndex == -1)
+                     iconIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
+                  return new RowOptionDTO() { Description = v, ImageIndex = iconIndex };
+               }));
             }
          }
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))

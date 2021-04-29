@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             A.Fake<IOSPSuiteXmlSerializerRepository>(),
             A.Fake<Utility.Container.IContainer>(),
             dataSource);
-         sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>());
+         sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>(), "");
          sut.SetSettings(metaDataCategories, new List<ColumnInfo>(), dataImporterSettings);
       }
 

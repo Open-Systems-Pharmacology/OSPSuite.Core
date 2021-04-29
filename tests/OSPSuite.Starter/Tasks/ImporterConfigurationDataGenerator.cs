@@ -15,6 +15,7 @@ namespace OSPSuite.Starter.Tasks
    public interface IImporterConfigurationDataGenerator
    {
       void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
+      void AddOrganValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
       IReadOnlyList<ColumnInfo> DefaultPKSimConcentrationImportConfiguration();
       IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultTestMetaDataCategories();
@@ -166,21 +167,22 @@ namespace OSPSuite.Starter.Tasks
          metaDataCategory.IsListOfValuesFixed = true;
          metaDataCategory.DefaultValue = "JustOne";
          metaDataCategory.ListOfValues.Add("JustOne", "22");
+         metaDataCategory.ListOfValues.Add("Skin", "20");
          metaDataCategory.ShouldListOfValuesBeIncluded = true;
          metaDataCategory.SelectDefaultValue = true;
       }
 
-      private static MetaDataCategory getCompartmentCategory()
+      public void AddOrganValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories)
       {
-         var compartmentCategory = createMetaDataCategory<string>("Compartment", isMandatory: true, isListOfValuesFixed: true, fixedValuesRetriever: category =>
-         {
-            category.ListOfValues.Add("Tissue", "Tissue");
-            category.ListOfValues.Add("Interstitial", "Interstitial");
-            category.ListOfValues.Add("Intracellular", "Intracellular");
-            category.ListOfValues.Add("Urine", "Urine");
-         });
-         compartmentCategory.Description = "Compartment";
-         return compartmentCategory;
+         var metaDataCategory = metaDataCategories.FindByName(Constants.ObservedData.ORGAN);
+         metaDataCategory.IsListOfValuesFixed = true;
+         metaDataCategory.DefaultValue = "VenousBlood";
+         metaDataCategory.ListOfValues.Add("VenousBlood", "Venous Blood");
+         metaDataCategory.ListOfValues.Add("ArterialBlood", "Arterial Blood");
+         metaDataCategory.ListOfValues.Add("PeripherialVenousBlood", "Peripherial Venous Blood");
+         metaDataCategory.ListOfValues.Add("Skin", "Skin");
+         metaDataCategory.ShouldListOfValuesBeIncluded = true;
+         metaDataCategory.SelectDefaultValue = true;
       }
 
       private static MetaDataCategory getOrganCategory()
