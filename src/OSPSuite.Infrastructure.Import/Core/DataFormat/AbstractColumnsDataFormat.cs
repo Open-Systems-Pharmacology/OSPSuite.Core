@@ -257,7 +257,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
-         var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+         var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
+
+         if (columnDescription == null)
+            throw new MissingColumnException(currentParameter.ColumnName);
+
+         var element = row.Data.ElementAt(columnDescription.Index).Trim();
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
@@ -293,7 +298,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (lloqIndex < 0 || !double.TryParse(row.Data.ElementAt(lloqIndex).Trim(), out var lloq))
             lloq = double.NaN;
 
-         var element = row.Data.ElementAt(data.GetColumnDescription(currentParameter.ColumnName).Index).Trim();
+         var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
+         
+         if (columnDescription == null)
+            throw new MissingColumnException(currentParameter.ColumnName);
+         
+         var element = row.Data.ElementAt(columnDescription.Index).Trim();
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {

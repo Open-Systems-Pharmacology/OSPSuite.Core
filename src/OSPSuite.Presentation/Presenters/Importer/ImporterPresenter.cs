@@ -156,7 +156,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
             _configuration.FilterString = args.Filter;
          }
-         catch (Exception e) when (e is NanException || e is ErrorUnitException)
+         catch (Exception e) when (e is NanException || e is ErrorUnitException || e is MissingColumnException)
          {
             {
                _view.ShowErrorMessage(e.Message);
