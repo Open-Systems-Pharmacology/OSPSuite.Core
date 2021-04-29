@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.UI.Views.Importer
+﻿using OSPSuite.Assets;
+
+namespace OSPSuite.UI.Views.Importer
 {
    partial class ModalImporterView
    {
@@ -39,6 +41,7 @@
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.importerPanelControl)).BeginInit();
          this.SuspendLayout();
+         this.Text = Captions.Importer.Title;
          // 
          // btnCancel
          // 
