@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          DataImporterSettings dataImporterSettings
       );
 
-      void SetSourceFile(string path);
+      bool SetSourceFile(string path);
 
       event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
 
