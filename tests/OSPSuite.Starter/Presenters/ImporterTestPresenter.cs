@@ -55,7 +55,7 @@ namespace OSPSuite.Starter.Presenters
             categories,
             columns,
             settings
-         ).DataRepositories.Count() + " data sets successfully imported");
+         ).DataRepositories?.Count() + " data sets successfully imported");
       }
 
       public void StartWithTestForGroupBySettings()
@@ -117,7 +117,7 @@ namespace OSPSuite.Starter.Presenters
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
-            ).Count() + " data sets successfully imported");
+            )?.Count() + " data sets successfully imported");
          }
       }
 
@@ -149,7 +149,7 @@ namespace OSPSuite.Starter.Presenters
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
                dataImporterSettings
-            ).Count() + " data sets successfully imported");
+            )?.Count() + " data sets successfully imported");
          }
       }
 

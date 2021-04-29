@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -128,8 +129,7 @@ namespace OSPSuite.UI.Views.Importer
          this.labelControl1.Size = new System.Drawing.Size(1073, 33);
          this.labelControl1.StyleController = this.layoutControl1;
          this.labelControl1.TabIndex = 7;
-         this.labelControl1.Text = "Reloading will cause the following cahnges in observed data. Do you really want t" +
-    "o reload?";
+         this.labelControl1.Text = Captions.Importer.ReloadWillCauseChangeOfDataSets;
          // 
          // newListBoxControl
          // 
@@ -185,7 +185,7 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem2.Location = new System.Drawing.Point(477, 55);
          this.layoutControlItem2.Name = "layoutControlItem2";
          this.layoutControlItem2.Size = new System.Drawing.Size(520, 638);
-         this.layoutControlItem2.Text = "Datasets that will be overwritten";
+         this.layoutControlItem2.Text = Captions.Importer.DataSetsWillBeOverwritten;
          this.layoutControlItem2.TextLocation = DevExpress.Utils.Locations.Top;
          this.layoutControlItem2.TextSize = new System.Drawing.Size(412, 33);
          // 
@@ -195,7 +195,7 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem3.Location = new System.Drawing.Point(997, 55);
          this.layoutControlItem3.Name = "layoutControlItem3";
          this.layoutControlItem3.Size = new System.Drawing.Size(436, 638);
-         this.layoutControlItem3.Text = "New datasets that will be imported";
+         this.layoutControlItem3.Text = Captions.Importer.NewDataStetsWillBeImported;
          this.layoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top;
          this.layoutControlItem3.TextSize = new System.Drawing.Size(412, 33);
          // 
@@ -220,11 +220,11 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Caption = "Reload Data";
+         this.Caption = Captions.Importer.ReloadData;
          this.ClientSize = new System.Drawing.Size(1453, 830);
          this.Controls.Add(this.layoutControl1);
          this.Name = "ImporterReloadView";
-         this.Text = "Reload Data";
+         this.Text = Captions.Importer.ReloadData;
          this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.layoutControl1, 0);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();

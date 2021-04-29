@@ -407,6 +407,17 @@ namespace OSPSuite.Assets
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
+         public static readonly string ReloadWillCauseChangeOfDataSets = "Reloading will cause the following changes in observed data. Do you really want to reload?";
+         public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
+         public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
+         public static readonly string ReloadData = "Reload Data";
+
+         public static string FileFormatNotSupported(string fileName)
+         {
+            return "The file: \n \n" + fileName +
+                   "\n \n that you are trying to load does not comply to one of the supported formats. \n \n" +
+                   "You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats \n \n \n";
+         }
 
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
