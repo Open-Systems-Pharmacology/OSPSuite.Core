@@ -11,6 +11,8 @@ using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.Importer.Services 
 {
@@ -229,7 +231,7 @@ namespace OSPSuite.Presentation.Importer.Services
             new MetaDataCategory() {Name = "Route"}
          };
 
-         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat() });
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat(new DimensionFactory()) });
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
@@ -372,6 +374,47 @@ namespace OSPSuite.Presentation.Importer.Services
       {
          var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
          formats.First().ShouldBeAnInstanceOf(typeof(MixColumnsDataFormat));
+      }
+   }
+
+   public class When_listing_available_formats_on_mixin_format_with_invalid_unit : ConcernForImporter2
+   {
+      protected override void Because()
+      {
+         _basicFormat = new TestUnformattedData
+         (
+            new Cache<string, ColumnDescription>()
+            {
+               {
+                  "Time [invalidUnit]",
+                  new ColumnDescription(5, null,ColumnDescription.MeasurementLevel.Numeric )
+               },
+               {
+                  "Concentration",
+                  new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
+               },
+               {
+                  "Concentration_unit",
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+               },
+               {
+                  "Error",
+                  new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
+               },
+               {
+                  "Error_unit",
+                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+
+               }
+            }
+         );
+      }
+
+      [TestCase]
+      public void the_invalid_unit_is_detected()
+      {
+         var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
+         (formats.First().Parameters.First(parameter => parameter.ColumnName == "Time [invalidUnit]") as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
       }
    }
 }
