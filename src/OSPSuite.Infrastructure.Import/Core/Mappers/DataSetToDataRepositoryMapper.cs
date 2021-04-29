@@ -26,12 +26,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var sheetName = dataSet.SheetName;
          var dataRepository = new DataRepository { Name = dataSet.Name };
 
+         addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
+
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
             dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
-
-         addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
 
          foreach (var column in dataSet.ParsedDataSet.Data)
          {

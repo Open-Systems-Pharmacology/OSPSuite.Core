@@ -13,6 +13,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
+      private DataRepository _dataRepository;
+      private List<string> _conventions;
 
       public ImportConfirmationPresenter(IImportConfirmationView view,
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
@@ -31,8 +33,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void PlotDataRepository(DataRepository dataRepository)
       {
+         _dataRepository = dataRepository;
+         addDefaultNamingConvention();
          _chartPresenter.EditObservedData(dataRepository);
          _dataPresenter.EditObservedData(dataRepository);
+      }
+
+      private void addDefaultNamingConvention()
+      {
+         var conventions = _conventions.ToList();
+         if (_dataRepository != null)
+            conventions.Insert(0, string.Join(_view.SelectedSeparator, _dataRepository.ExtendedProperties.Select(ep => $"{{{ep.Name}}}")));
+         _view.SetNamingConventions(conventions);
+         _lastNamingPattern = conventions.First();
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
@@ -51,13 +64,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (namingConventions == null)
             throw new NullNamingConventionsException();
 
-         var conventions = namingConventions.ToList();
+         _conventions = namingConventions.ToList();
 
-         if (conventions.Count == 0)
+         if (_conventions.Count == 0)
             throw new EmptyNamingConventionsException();
 
-         _view.SetNamingConventions(conventions);
-         _lastNamingPattern = conventions.First();
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs { NamingConvention = _lastNamingPattern });
       }
 
