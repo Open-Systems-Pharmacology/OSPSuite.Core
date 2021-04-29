@@ -235,6 +235,7 @@ namespace OSPSuite.Core.Domain
          public const string XML_EXTENSION = ".xml";
          public const string JOURNAL_EXTENSION = ".sbj";
          public const string CSV_EXTENSION = ".csv";
+         public const string NONMEM_EXTENSION = ".nmdat";
          public const string PDF_EXTENSION = ".pdf";
          public const string PKML_EXTENSION = ".pkml";
          public const string XLS_EXTENSION = ".xls";
