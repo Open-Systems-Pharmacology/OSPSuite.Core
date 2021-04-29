@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private string _lastNamingPattern = "";
       private DataRepository _dataRepository;
       private List<string> _conventions;
+      private IEnumerable<string> _keys;
 
       public ImportConfirmationPresenter(IImportConfirmationView view,
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
@@ -35,7 +36,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void PlotDataRepository(DataRepository dataRepository)
       {
          _dataRepository = dataRepository;
-         addDefaultNamingConvention();
          _chartPresenter.EditObservedData(dataRepository);
          _dataPresenter.EditObservedData(dataRepository);
       }
@@ -43,13 +43,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void addDefaultNamingConvention()
       {
          var conventions = _conventions.ToList();
-         if (_dataRepository != null)
-         {
-            var separator = _view.SelectedSeparator;
-            if (string.IsNullOrEmpty(separator))
-               separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
-            conventions.Insert(0, string.Join(separator, _dataRepository.ExtendedProperties.Select(ep => $"{{{ep.Name}}}")));
-         }
+         var separator = _view.SelectedSeparator;
+         if (string.IsNullOrEmpty(separator))
+            separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+         conventions.Insert(0, string.Join(separator, _keys.Select(k => $"{{{k}}}")));
          _view.SetNamingConventions(conventions);
          _lastNamingPattern = conventions.First();
       }
@@ -63,9 +60,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetKeys(IEnumerable<string> keys)
       {
          View.SetNamingConventionKeys(keys);
+         _keys = keys;
       }
 
-      public void SetNamingConventions (IEnumerable<string> namingConventions)
+      public void SetNamingConventions(IEnumerable<string> namingConventions)
       {
          if (namingConventions == null)
             throw new NullNamingConventionsException();
@@ -74,6 +72,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_conventions.Count == 0)
             throw new EmptyNamingConventionsException();
+
+         addDefaultNamingConvention();
 
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs { NamingConvention = _lastNamingPattern });
       }
