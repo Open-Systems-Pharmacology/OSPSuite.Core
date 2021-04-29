@@ -28,6 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          var lowerCasePath = path.ToLower();
          if (_csvExtensions.Any(lowerCasePath.EndsWith))
          {
+            _csvDataSourceFile.Separator = 
             _csvDataSourceFile.Path = path;
             return _csvDataSourceFile;
          }

@@ -7,16 +7,26 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public interface ICsvDataSourceFile : IDataSourceFile { }
+   public interface ICsvDataSourceFile : IDataSourceFile
+   { 
+      char Separator { get; set; }
+   }
 
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
-      public CsvDataSourceFile(IImportLogger logger) : base(logger) { }
+      private readonly IDialogCreator _dialogCreator;
+      public char Separator { get; set; }
+
+      public CsvDataSourceFile(IImportLogger logger, IDialogCreator dialogCreator) : base(logger)
+      {
+         _dialogCreator = dialogCreator;
+      }
       protected override Cache<string, DataSheet> LoadFromFile(string path)
       {
          try
          {
-            using (var reader = new CsvReaderDisposer(path))
+            _dialogCreator.
+            using (var reader = new CsvReaderDisposer(path, Separator))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
