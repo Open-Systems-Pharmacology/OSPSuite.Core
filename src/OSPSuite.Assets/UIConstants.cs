@@ -413,15 +413,21 @@ namespace OSPSuite.Assets
 
          public static string FileFormatNotSupported(string fileName)
          {
-            return "The file: \n \n" + fileName +
-                   "\n \n that you are trying to load does not comply to one of the supported formats. \n \n" +
-                   "You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats \n \n \n";
+            var sb = new StringBuilder();
+            sb.AppendLine($"The file: \n \n'{fileName}' \n ");
+            sb.AppendLine("that you are trying to load does not comply to one of the supported formats.");
+            sb.AppendLine("You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats");
+            return sb.ToString();
          }
+
 
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
-            return "The following excel columns do not exist in the current file. \n \n" + listOfExcelColumns +
-                   "\n \n The corresponding mappings from the configuration will be lost. Do you want to continue?  \n \n \n";
+            var sb = new StringBuilder();
+            sb.AppendLine($"The following excel columns do not exist in the current file. \n \n'{listOfExcelColumns}' ");
+            sb.AppendLine();
+            sb.AppendLine("The corresponding mappings from the configuration will be lost. Do you want to continue?");
+            return sb.ToString();
          }
 
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";

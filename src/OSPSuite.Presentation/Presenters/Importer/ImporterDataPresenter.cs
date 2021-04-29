@@ -122,9 +122,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
 
          if (_dataSourceFile == null)
-         {
             return null;
-         }
+         
 
          setDefaultMetaData();
          createSheetsForViewing();
