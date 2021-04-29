@@ -11,7 +11,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class DataSourceFileParser : IDataSourceFileParser
    {
-      private readonly string[] _csvExtensions = { Constants.Filter.CSV_EXTENSION };
+      private readonly string[] _csvExtensions = { Constants.Filter.CSV_EXTENSION, Constants.Filter.NONMEM_EXTENSION };
       private readonly string[] _excelExtensions = { Constants.Filter.XLS_EXTENSION, Constants.Filter.XLSX_EXTENSION };
 
       private readonly ICsvDataSourceFile _csvDataSourceFile;
