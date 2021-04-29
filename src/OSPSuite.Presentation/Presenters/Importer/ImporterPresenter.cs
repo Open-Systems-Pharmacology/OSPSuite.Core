@@ -18,7 +18,6 @@ using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -301,9 +300,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void LoadConfiguration(ImporterConfiguration configuration)
+      public void LoadConfiguration(ImporterConfiguration configuration, string fileName)
       {
-         openFile(configuration.FileName);
+         openFile(fileName);
          applyConfiguration(configuration);
          loadImportedDataSetsFromConfiguration(configuration.FilterString);
       }

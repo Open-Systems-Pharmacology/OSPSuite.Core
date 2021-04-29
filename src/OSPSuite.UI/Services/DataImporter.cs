@@ -121,8 +121,11 @@ namespace OSPSuite.UI.Services
          {
             using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
             {
+               var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+               if (string.IsNullOrEmpty(fileName))
+                  return Enumerable.Empty<DataRepository>().ToList();
                importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-               importerPresenter.LoadConfiguration(configuration);
+               importerPresenter.LoadConfiguration(configuration, fileName);
                using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
                {
                   return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
