@@ -122,13 +122,13 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
+         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         if (string.IsNullOrEmpty(fileName))
+            return Enumerable.Empty<DataRepository>().ToList();
          if (dataImporterSettings.PromptForConfirmation)
          {
             using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
             {
-               var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
-               if (string.IsNullOrEmpty(fileName))
-                  return Enumerable.Empty<DataRepository>().ToList();
                importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
                importerPresenter.LoadConfiguration(configuration, fileName);
                using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
@@ -140,7 +140,7 @@ namespace OSPSuite.UI.Services
          }
 
          var dataSource = new DataSource(_importer);
-         var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
+         var dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
 
          if (dataSourceFile == null)
          {
