@@ -11,7 +11,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class DataSourceFileParser : IDataSourceFileParser
    {
-      private readonly string[] _csvExtensions = { Constants.Filter.CSV_EXTENSION };
+      private readonly string[] _csvExtensions = { Constants.Filter.CSV_EXTENSION, Constants.Filter.NONMEM_EXTENSION };
       private readonly string[] _excelExtensions = { Constants.Filter.XLS_EXTENSION, Constants.Filter.XLSX_EXTENSION };
 
       private readonly ICsvDataSourceFile _csvDataSourceFile;
@@ -25,12 +25,13 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public IDataSourceFile For(string path)
       {
-         if (_csvExtensions.Any(path.EndsWith))
+         var lowerCasePath = path.ToLower();
+         if (_csvExtensions.Any(lowerCasePath.EndsWith))
          {
             _csvDataSourceFile.Path = path;
             return _csvDataSourceFile;
          }
-         if (_excelExtensions.Any(path.EndsWith))
+         if (_excelExtensions.Any(lowerCasePath.EndsWith))
          {
             _excelDataSourceFile.Path = path;
             return _excelDataSourceFile;

@@ -237,7 +237,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
-         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);
+         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList());
          View.EnableConfirmationView();
       }
 
@@ -277,12 +277,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          onImporterDataChanged(this, args);
       }
 
-      public void SetSourceFile(string path)
+      public bool SetSourceFile(string path)
       {
          _sourceFilePresenter.SetFilePath(path);
          _dataSourceFile = _importerDataPresenter.SetDataSource(path);
+
+         if (_dataSourceFile == null)
+            return false;
+
          _columnMappingPresenter.ValidateMapping();
          _configuration.FileName = path;
+
+         return true;
       }
 
       public void SaveConfiguration()

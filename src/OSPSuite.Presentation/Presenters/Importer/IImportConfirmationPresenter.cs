@@ -17,8 +17,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface IImportConfirmationPresenter : IPresenter<IImportConfirmationView>
    {
       void TriggerNamingConventionChanged(string namingConvention);
-      void SetKeys(IEnumerable<string> keys);
-      void SetNamingConventions(IEnumerable<string> namingConventions);
+      void SetKeys(IReadOnlyList<string> keys);
+      void SetNamingConventions(IReadOnlyList<string> namingConventions);
       void ImportData();
       void DataSetSelected(int index);
       void PlotDataRepository(DataRepository dataRepository);

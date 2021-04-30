@@ -11,7 +11,6 @@ using OSPSuite.Utility.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 
@@ -102,7 +101,13 @@ namespace OSPSuite.UI.Services
          using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
          {
             importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-            importerPresenter.SetSourceFile(path);
+
+            if (!importerPresenter.SetSourceFile(path))
+            {
+               _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(path));
+               return (new List<DataRepository>(), null);
+            }
+
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
                return importerModalPresenter.ImportDataSets(importerPresenter);
@@ -117,13 +122,13 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
+         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         if (string.IsNullOrEmpty(fileName))
+            return Enumerable.Empty<DataRepository>().ToList();
          if (dataImporterSettings.PromptForConfirmation)
          {
             using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
             {
-               var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
-               if (string.IsNullOrEmpty(fileName))
-                  return Enumerable.Empty<DataRepository>().ToList();
                importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
                importerPresenter.LoadConfiguration(configuration, fileName);
                using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
@@ -135,7 +140,14 @@ namespace OSPSuite.UI.Services
          }
 
          var dataSource = new DataSource(_importer);
-         var dataSourceFile = _importer.LoadFile(columnInfos, configuration.FileName, metaDataCategories);
+         var dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
+
+         if (dataSourceFile == null)
+         {
+            _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(configuration.FileName));
+            return new List<DataRepository>();
+         }
+
          dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
