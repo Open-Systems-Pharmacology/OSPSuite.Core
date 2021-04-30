@@ -125,7 +125,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
 
-         SetSourceFile(dataSourceFileName);
+         if (!SetSourceFile(dataSourceFileName))
+         {
+            _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(dataSourceFileName));
+            return;
+         }
          _view.DisableConfirmationView();
       }
 
@@ -279,12 +283,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public bool SetSourceFile(string path)
       {
-         _sourceFilePresenter.SetFilePath(path);
          _dataSourceFile = _importerDataPresenter.SetDataSource(path);
-
+         
          if (_dataSourceFile == null)
             return false;
 
+         _sourceFilePresenter.SetFilePath(path);
          _columnMappingPresenter.ValidateMapping();
          _configuration.FileName = path;
 
