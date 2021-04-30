@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private string _lastNamingPattern = "";
       private DataRepository _dataRepository;
       private List<string> _conventions;
-      private IEnumerable<string> _keys;
+      private IReadOnlyList<string> _keys;
 
       public ImportConfirmationPresenter(IImportConfirmationView view,
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
@@ -57,13 +57,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs {NamingConvention = namingConvention});
       }
 
-      public void SetKeys(IEnumerable<string> keys)
+      public void SetKeys(IReadOnlyList<string> keys)
       {
          View.SetNamingConventionKeys(keys);
          _keys = keys;
       }
 
-      public void SetNamingConventions(IEnumerable<string> namingConventions)
+      public void SetNamingConventions(IReadOnlyList<string> namingConventions)
       {
          if (namingConventions == null)
             throw new NullNamingConventionsException();
