@@ -31,7 +31,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          _columnOffsetOn = columnOffsetOn;
          _sheetEnumerator = _book.GetEnumerator();
-         _isTypeXlsx = Path.GetExtension(path).Equals(Constants.Filter.XLSX_EXTENSION);
+         _isTypeXlsx = Path.GetExtension(path.ToLower()).Equals(Constants.Filter.XLSX_EXTENSION);
          _formulaEvaluator = _book.GetCreationHelper().CreateFormulaEvaluator();
       }
 
@@ -49,7 +49,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          _sheetEnumerator = _book.GetEnumerator();
          _columnOffsetOn = columnOffsetOn;
-         _isTypeXlsx = Path.GetExtension(path).Equals(Constants.Filter.XLSX_EXTENSION);
+         _isTypeXlsx = Path.GetExtension(path.ToLower()).Equals(Constants.Filter.XLSX_EXTENSION);
       }
 
       public bool MoveToNextSheet()
