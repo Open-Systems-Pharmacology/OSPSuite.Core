@@ -238,7 +238,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
-         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions);
+         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList());
          View.EnableConfirmationView();
       }
 
