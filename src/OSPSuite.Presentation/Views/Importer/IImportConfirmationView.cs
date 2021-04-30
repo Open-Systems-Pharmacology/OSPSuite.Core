@@ -13,5 +13,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void ShowSelectedDataSet(DataRepository dataRepository);
       void AddChartView(IView chartView);
       void AddDataView(IDataRepositoryDataView dataView);
+      string SelectedSeparator { get; }
    }
 }

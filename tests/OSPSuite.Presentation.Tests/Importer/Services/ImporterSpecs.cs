@@ -158,7 +158,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void replaces_filename()
       {
-         var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, _fileName, _dataSets, _mappings);
+         var names = sut.NamesFromConvention(_prefix + "{Source}" + _postfix, _fileName, _dataSets, _mappings);
          names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
       }
@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void replaces_filename_without_extension()
       {
-         var names = sut.NamesFromConvention(_prefix + "{File}" + _postfix, $"{_fileName}.{_fileExtension}", _dataSets, _mappings);
+         var names = sut.NamesFromConvention(_prefix + "{Source}" + _postfix, $"{_fileName}.{_fileExtension}", _dataSets, _mappings);
          names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldBeEqualTo(_prefix + _fileName + _postfix);
       }
@@ -193,7 +193,7 @@ namespace OSPSuite.Presentation.Importer.Services
       [TestCase]
       public void names_should_be_different()
       {
-         var names = sut.NamesFromConvention(_prefix + "{File}.{Id1}-{Id2}" + _postfix, _fileName, _dataSets, _mappings);
+         var names = sut.NamesFromConvention(_prefix + "{Source}.{Id1}-{Id2}" + _postfix, _fileName, _dataSets, _mappings);
          names.Count().ShouldBeEqualTo(2);
          names.ElementAt(0).ShouldNotBeEqualTo(names.ElementAt(1));
       }

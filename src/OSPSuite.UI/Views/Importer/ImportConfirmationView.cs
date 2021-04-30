@@ -22,6 +22,10 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IImportConfirmationPresenter _presenter;
       private List<string> _namingConventionOptions = new List<string>();
+      public string SelectedSeparator
+      {
+         get => separatorComboBoxEdit.SelectedText;
+      }
 
       public ImportConfirmationView()
       {
@@ -63,8 +67,6 @@ namespace OSPSuite.UI.Views.Importer
       {
          _presenter = presenter;
       }
-
-
 
       public void SetNamingConventions(IEnumerable<string> options, string selected = null)
       {

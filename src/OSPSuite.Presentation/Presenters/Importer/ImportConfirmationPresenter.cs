@@ -5,6 +5,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.ObservedData;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -13,6 +14,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
+      private DataRepository _dataRepository;
+      private List<string> _conventions;
+      private IReadOnlyList<string> _keys;
 
       public ImportConfirmationPresenter(IImportConfirmationView view,
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
@@ -31,8 +35,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void PlotDataRepository(DataRepository dataRepository)
       {
+         _dataRepository = dataRepository;
          _chartPresenter.EditObservedData(dataRepository);
          _dataPresenter.EditObservedData(dataRepository);
+      }
+
+      private void addDefaultNamingConvention()
+      {
+         var conventions = _conventions.ToList();
+         var separator = _view.SelectedSeparator;
+         if (string.IsNullOrEmpty(separator))
+            separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+         conventions.Insert(0, string.Join(separator, _keys.Select(k => $"{{{k}}}")));
+         _view.SetNamingConventions(conventions);
+         _lastNamingPattern = conventions.First();
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
@@ -41,23 +57,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs {NamingConvention = namingConvention});
       }
 
-      public void SetKeys(IEnumerable<string> keys)
+      public void SetKeys(IReadOnlyList<string> keys)
       {
          View.SetNamingConventionKeys(keys);
+         _keys = keys;
       }
 
-      public void SetNamingConventions (IEnumerable<string> namingConventions)
+      public void SetNamingConventions(IReadOnlyList<string> namingConventions)
       {
          if (namingConventions == null)
             throw new NullNamingConventionsException();
 
-         var conventions = namingConventions.ToList();
+         _conventions = namingConventions.ToList();
 
-         if (conventions.Count == 0)
+         if (_conventions.Count == 0)
             throw new EmptyNamingConventionsException();
 
-         _view.SetNamingConventions(conventions);
-         _lastNamingPattern = conventions.First();
+         addDefaultNamingConvention();
+
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs { NamingConvention = _lastNamingPattern });
       }
 
