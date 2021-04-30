@@ -99,8 +99,7 @@ namespace OSPSuite.Core.Domain
       public const string STD_DEV_GEOMETRIC = "Geometric Standard Deviation";
       public const string STD_DEV_ARITHMETIC = "Arithmetic Standard Deviation";
       public const string AUXILIARY_TYPE = "AuxiliaryType";
-      public const string FILE = "File";
-      public const string SOURCE = "Source";
+      public const string FILE = "Source";
       public const string SHEET = "Sheet";
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
@@ -235,6 +234,7 @@ namespace OSPSuite.Core.Domain
          public const string XML_EXTENSION = ".xml";
          public const string JOURNAL_EXTENSION = ".sbj";
          public const string CSV_EXTENSION = ".csv";
+         public const string NONMEM_EXTENSION = ".nmdat";
          public const string PDF_EXTENSION = ".pdf";
          public const string PKML_EXTENSION = ".pkml";
          public const string XLS_EXTENSION = ".xls";

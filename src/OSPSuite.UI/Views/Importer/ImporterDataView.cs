@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.Utils;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraTab;
 using DevExpress.XtraTab.ViewInfo;
@@ -31,6 +32,7 @@ namespace OSPSuite.UI.Views.Importer
          importerTabControl.SelectedPageChanged += (s, a) => OnEvent(onSelectedPageChanged, s, a);
          importerTabControl.CloseButtonClick += (s, a) => OnEvent(onCloseTab, s, a);
          importerTabControl.MouseDown += (s, a) => OnEvent(onTabControlMouseDown, s, a);
+         importerTabControl.ClosePageButtonShowMode = ClosePageButtonShowMode.InAllTabPageHeaders;
          _contextMenuSelectedTab = "";
          sheetImportedFlag = false;
          allSheetsImportedFlag = false;
@@ -109,6 +111,7 @@ namespace OSPSuite.UI.Views.Importer
          //importerTabControl.TabPages.Remove(page);
          _dataPresenter.RemoveTab(page.Text);
          _dataPresenter.RefreshTabs();
+         hideCloseButtonForSingleTab();
       }
 
       private void onCloseAllButThisTab(object sender, EventArgs e)
@@ -173,6 +176,14 @@ namespace OSPSuite.UI.Views.Importer
          {
             importerTabControl.TabPages.Add(sheetName);
          }
+
+         hideCloseButtonForSingleTab();
+      }
+
+      private void hideCloseButtonForSingleTab()
+      {
+         if (importerTabControl.TabPages.Count == 1)
+            importerTabControl.TabPages.FirstOrDefault().ShowCloseButton = DefaultBoolean.False;
       }
 
       public void ClearTabs()

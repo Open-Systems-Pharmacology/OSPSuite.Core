@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -89,6 +90,10 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          var dataSource = _parser.For(fileName);
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos, metaDataCategories).ToList();
+         
+         if (dataSource.AvailableFormats.Count == 0)
+            return null;
+
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          //TODO: check that all sheets are supporting the formats...
          
@@ -195,6 +200,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                }
             }
 
+            //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
             dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
             dataRepositories.Add(dataRepo);
          }
