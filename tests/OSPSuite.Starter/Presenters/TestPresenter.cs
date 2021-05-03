@@ -60,7 +60,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartLoggerTest()
       {
-         _logger.AddCriticalError("Critical");
+         _logger.AddCriticalError("Critical", "Category3");
          _logger.AddInfo("Info");
       }
 
