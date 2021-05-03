@@ -40,14 +40,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataPresenter.EditObservedData(dataRepository);
       }
 
-      private void addDefaultNamingConvention()
+      private void addDefaultNamingConvention(string selectedNamingConvention)
       {
          var conventions = _conventions.ToList();
          var separator = _view.SelectedSeparator;
          if (string.IsNullOrEmpty(separator))
             separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
          conventions.Insert(0, string.Join(separator, _keys.Select(k => $"{{{k}}}")));
-         _view.SetNamingConventions(conventions);
+         _view.SetNamingConventions(conventions, selectedNamingConvention);
          _lastNamingPattern = conventions.First();
       }
 
@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _keys = keys;
       }
 
-      public void SetNamingConventions(IReadOnlyList<string> namingConventions)
+      public void SetNamingConventions(IReadOnlyList<string> namingConventions, string selectedNamingConvention)
       {
          if (namingConventions == null)
             throw new NullNamingConventionsException();
@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (_conventions.Count == 0)
             throw new EmptyNamingConventionsException();
 
-         addDefaultNamingConvention();
+         addDefaultNamingConvention(selectedNamingConvention);
 
          OnNamingConventionChanged.Invoke(this, new NamingConventionChangedEventArgs { NamingConvention = _lastNamingPattern });
       }

@@ -209,7 +209,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter)
+      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
       {
          if (!sheets.Any()) return;
 
@@ -241,7 +241,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
-         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList());
+         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
          View.EnableConfirmationView();
       }
 
@@ -314,7 +314,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          openFile(fileName);
          applyConfiguration(configuration);
-         loadImportedDataSetsFromConfiguration(configuration.FilterString);
+         loadImportedDataSetsFromConfiguration(configuration);
       }
 
       private void openFile(string configurationFileName)
@@ -347,14 +347,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
          _columnMappingPresenter.ValidateMapping();
-         _dataSource.SetNamingConvention(_configuration.NamingConventions);
          _nanPresenter.Settings = configuration.NanSettings;
          if (configuration.NanSettings != null)
             _nanPresenter.FillNaNSettings();
          _importerDataPresenter.SetFilter(configuration.FilterString);
+         _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
       }
 
-      private void loadImportedDataSetsFromConfiguration(string filterString)
+      private void loadImportedDataSetsFromConfiguration(ImporterConfiguration configuration)
       {
          _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention()); //this could probably be in the apply
          //About NanSettings: we do actually read the nanSettings in import dataSheets
@@ -371,7 +371,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          try
          {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, filterString);
+            var namingConvention = configuration.NamingConventions;
+            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
+            _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
