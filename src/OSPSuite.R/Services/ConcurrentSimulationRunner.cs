@@ -19,6 +19,7 @@ namespace OSPSuite.R.Services
       public IModelCoreSimulation Simulation { get; }
       public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
       public SimulationBatchOptions SimulationBatchOptions { get; }
+      public string[] RunValuesIds { get => SimulationBatchRunValues.Select(srv => srv.Id).ToArray(); }
       private ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
       internal int MissingBatchesCount { get => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count); }
 
