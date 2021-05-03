@@ -229,7 +229,10 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetFilter(string filter)
       {
+         if (string.IsNullOrEmpty(filter)) return;
+
          dataViewingGridView.ActiveFilterString = filter;
+         useForImportCheckEdit.Checked = true;
       }
 
       public string SelectedTab { get; set; }
