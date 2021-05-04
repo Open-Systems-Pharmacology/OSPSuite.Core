@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface ICsvSeparatorSelectorView : IView<ICsvSeparatorSelectorPresenter>
+   public interface ICsvSeparatorSelectorView : IModalView<ICsvSeparatorSelectorPresenter>
    {
       void SetFileName(string fileName);
    }

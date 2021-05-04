@@ -7,29 +7,33 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public interface ICsvDataSourceFile : IDataSourceFile
-   { 
-      char Separator { get; set; }
-   }
+   public interface ICsvDataSourceFile : IDataSourceFile {}
 
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
-      public char Separator { get; set; }
+      private readonly ICsvSeparatorSelector _csvSeparatorSelector;
 
-      public CsvDataSourceFile(IImportLogger logger) : base(logger) {}
+      public CsvDataSourceFile(IImportLogger logger, ICsvSeparatorSelector csvSeparatorSelector) : base(logger)
+      {
+         _csvSeparatorSelector = csvSeparatorSelector;
+      }
       protected override Cache<string, DataSheet> LoadFromFile(string path)
       {
          try
          {
-            //here: _presenter.setFileName(path)
-            using (var reader = new CsvReaderDisposer(path, Separator))
+            var separator = _csvSeparatorSelector.GetCsvSeparator(path);
+
+            //if separator selection dialog was cancelled, abort
+            if (separator == '\0')
+               return null;
+
+            using (var reader = new CsvReaderDisposer(path, separator))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               DataSheet dataSheet = new DataSheet();
-               dataSheet.RawData = new UnformattedData();
+               var dataSheet = new DataSheet {RawData = new UnformattedData()};
 
                for (var i = 0; i < headers.Length; i++)
                   dataSheet.RawData.AddColumn(headers[i], i);

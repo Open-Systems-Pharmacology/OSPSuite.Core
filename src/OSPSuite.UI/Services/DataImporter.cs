@@ -106,7 +106,7 @@ namespace OSPSuite.UI.Services
             {
                _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(path));
                return (new List<DataRepository>(), null);
-            }
+            }//ok, so we could check whether the importerPresenter.smthng is null, and this is the 2nd option
 
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {

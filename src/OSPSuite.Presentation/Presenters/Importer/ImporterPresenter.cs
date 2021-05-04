@@ -287,6 +287,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          
          if (_dataSourceFile == null)
             return false;
+         //here fe if datasourcefile = canceledCsv, return true
 
          _sourceFilePresenter.SetFilePath(path);
          _columnMappingPresenter.ValidateMapping();

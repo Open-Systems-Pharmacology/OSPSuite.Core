@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -121,9 +122,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
 
          if (_dataSourceFile == null)
-            return null;
+            return new CsvDataSourceFile();
          
-
          setDefaultMetaData();
          createSheetsForViewing();
          View.SetGridSource();
