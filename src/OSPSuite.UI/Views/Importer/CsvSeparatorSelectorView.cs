@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -12,16 +13,22 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          fillSeparatorComboBox();
+         separatorComboBoxEdit.EditValueChanged += onSeparatorChanged;
       }
 
       private void fillSeparatorComboBox()
       {
-         var separatorList = new List<char>() {',', '.', ' '};
+         var separatorList = new List<char>() {',', '.', ' ', ';'};
 
          foreach (var separator in separatorList)
          {
             separatorComboBoxEdit.Properties.Items.Add(separator);
          }
+      }
+
+      private void onSeparatorChanged(object sender, EventArgs e)
+      {
+         _presenter.SelectedSeparator = char.Parse(separatorComboBoxEdit.SelectedItem.ToString());
       }
 
       public void AttachPresenter(ICsvSeparatorSelectorPresenter presenter)
@@ -31,7 +38,8 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetFileName(string fileName)
       {
-         separatorDescriptionLayoutControlItem.Text = Captions.Importer.CsvSeparatorDescription(fileName);
+         separatorDescriptionLabelControl.Text = Captions.Importer.CsvSeparatorDescription(fileName);
+         separatorComboBoxEdit.SelectedIndex = 0;
       }
    }
 }

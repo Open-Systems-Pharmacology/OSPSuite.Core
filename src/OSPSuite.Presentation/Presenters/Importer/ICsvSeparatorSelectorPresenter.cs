@@ -7,12 +7,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetFileName(string fileName);
       char GetCsvSeparator();
       bool Canceled();
+      char SelectedSeparator { get; set; }
    }
 
    public class CsvSeparatorSelectorPresenter : AbstractDisposablePresenter<ICsvSeparatorSelectorView, ICsvSeparatorSelectorPresenter>,
       ICsvSeparatorSelectorPresenter
    {
-      private char selectedSeparator;
+      public char SelectedSeparator { get; set; }
       public CsvSeparatorSelectorPresenter(ICsvSeparatorSelectorView view) : base(view)
       {
       }
@@ -25,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public char GetCsvSeparator()
       {
-         return ',';
+         return SelectedSeparator;
       }
 
       public bool Canceled()

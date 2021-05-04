@@ -413,7 +413,7 @@ namespace OSPSuite.Assets
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
-
+         public static readonly string SeparatorSelection = "Separator Selection";
          public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file '{fileName}'";
 
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
