@@ -205,7 +205,7 @@ namespace OSPSuite.UI.Services
       {
          return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
             keyValuePair.Key == Constants.FILE || //Ignore source
-            dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject.ToString() == keyValuePair.Value.ValueAsObject.ToString()
+            Equals(dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject)
          ));
       }
    }
