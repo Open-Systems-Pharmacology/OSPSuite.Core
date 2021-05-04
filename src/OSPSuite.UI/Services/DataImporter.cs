@@ -203,7 +203,10 @@ namespace OSPSuite.UI.Services
 
       private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
       {
-         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair => dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject.ToString() == keyValuePair.Value.ValueAsObject.ToString()));
+         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
+            keyValuePair.Key == Constants.FILE || //Ignore source
+            Equals(dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject)
+         ));
       }
    }
 }
