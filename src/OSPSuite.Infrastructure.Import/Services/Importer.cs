@@ -90,7 +90,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos, metaDataCategories).ToList();
          
          if (dataSource.AvailableFormats.Count == 0)
-            return null;
+            throw new UnsupportedFormatException(fileName);
 
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          

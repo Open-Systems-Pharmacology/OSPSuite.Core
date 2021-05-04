@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;

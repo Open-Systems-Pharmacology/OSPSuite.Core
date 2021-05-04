@@ -122,7 +122,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
 
          if (_dataSourceFile == null)
-            return new CsvDataSourceFile();
+            return null;
          
          setDefaultMetaData();
          createSheetsForViewing();

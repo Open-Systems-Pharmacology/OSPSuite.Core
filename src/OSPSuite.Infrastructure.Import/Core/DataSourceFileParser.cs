@@ -37,7 +37,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             return _excelDataSourceFile;
          }
 
-         throw new UnsupportedFormatException();
+         throw new UnsupportedFileTypeException();
       }
    }
 }
