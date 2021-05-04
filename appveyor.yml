@@ -36,10 +36,10 @@ build:
 skip_branch_with_pr: true
 
 pull_requests: 
-  do_not_increment_build_number: true
+  do_not_increment_build_number: false
 
 nuget: 
-  disable_publish_on_pr: false 
+  disable_publish_on_pr: true
 
 skip_tags: true
 
