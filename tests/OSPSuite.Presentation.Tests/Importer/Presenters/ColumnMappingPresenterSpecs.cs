@@ -16,6 +16,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataFormat _basicFormat;
       protected IColumnMappingView _view;
       protected IImporter _importer;
+      protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
+      protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
@@ -26,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
                new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
                new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-               //new MetaDataFormatParameter("Sp", "Species"),
+               new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
                new GroupByDataFormatParameter("Study id")
             });
          _view = A.Fake<IColumnMappingView>();
@@ -43,7 +45,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true },
-            new ColumnInfo() { Name = "Error", IsMandatory = false }
+            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
@@ -63,7 +65,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
                IsMandatory = false
             }
          };
-         sut = new ColumnMappingPresenter(_view, _importer, A.Fake<IMappingParameterEditorPresenter>(), A.Fake<IMetaDataParameterEditorPresenter>());
+         _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
+         _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
       }
    }
 
@@ -89,41 +93,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_getting_available_options : ConcernForColumnMappingPresenter
+   public class When_initializing_error_unit : ConcernForColumnMappingPresenter
    {
-      protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
-      protected DataImporterSettings _dataImporterSettings;
-
-      protected override void Context()
-      {
-         base.Context();
-         _metaDataCategories = A.Fake<IReadOnlyList<MetaDataCategory>>();
-         _columnInfos = new List<ColumnInfo>() 
-         {
-            new ColumnInfo() { DisplayName = "Time" },
-            new ColumnInfo() { DisplayName = "Concentration" }
-         };
-         _dataImporterSettings = A.Fake<DataImporterSettings>();
-      }
-
       protected override void Because()
       {
          base.Because();
          sut.SetSettings(_metaDataCategories, _columnInfos);
          sut.SetDataFormat(_basicFormat);
+         sut.InitializeErrorUnit();
       }
 
-      /*[TestCase]
-      public void fills_correct_options()
+      [TestCase]
+      public void the_unit_is_properly_set()
       {
-         var options = sut.GetAvailableOptionsFor(
-      (ColumnMappingDTO.ColumnType.Mapping, "Time", "", A.Fake<DataFormatParameter>(), 0));
-         var columnMappingOptions = options.ToList();
-         columnMappingOptions.Count().ShouldBeEqualTo(3);
-         columnMappingOptions.ElementAt(0).Label.ShouldBeEqualTo("Time(min)");
-         columnMappingOptions.ElementAt(1).Label.ShouldBeEqualTo("<None>");
-         columnMappingOptions.ElementAt(2).Label.ShouldBeEqualTo("Group by");
-      }*/
+         Assert.AreEqual(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit, _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+      }
    }
 }
