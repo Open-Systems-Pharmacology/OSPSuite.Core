@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
@@ -273,7 +274,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             };
          if (element.StartsWith("<"))
          {
-            double.TryParse(element.Substring(1), out result);
+            var separatorChar = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+            
+            var lloqString = element.Substring(1).Replace(',', separatorChar).Replace('.',separatorChar);
+            double.TryParse(lloqString, out result);
             return new SimulationPoint()
             {
                Lloq = result,
