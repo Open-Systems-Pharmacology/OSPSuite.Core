@@ -200,13 +200,17 @@ namespace OSPSuite.UI.Services
          return result;
       }
 
+      public bool AreFromSameSource(DataRepository sourceDataRepository, DataRepository targetDataRepository)
+      {
+         return targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
+            keyValuePair.Key == Constants.FILE || //Ignore source
+            Equals(sourceDataRepository.ExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject)
+         );
+      }
 
       private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
       {
-         return dataRepositoryList.Any(dataRepo => targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
-            keyValuePair.Key == Constants.FILE || //Ignore source
-            Equals(dataRepo.ExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject)
-         ));
+         return dataRepositoryList.Any(dataRepo => AreFromSameSource(dataRepo, targetDataRepository));
       }
    }
 }

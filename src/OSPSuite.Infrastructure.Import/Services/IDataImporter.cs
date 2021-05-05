@@ -56,5 +56,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// </summary>
       /// <returns>a list of meta data categories</returns>
       IList<MetaDataCategory> DefaultMetaDataCategories();
+
+      /// <summary>
+      /// Compares if two data repositories come from the same data
+      /// </summary>
+      /// <param name="sourceDataRepository"></param>
+      /// <param name="targetDataRepository"></param>
+      /// <returns></returns>
+      bool AreFromSameSource(DataRepository sourceDataRepository, DataRepository targetDataRepository);
    }
 }
