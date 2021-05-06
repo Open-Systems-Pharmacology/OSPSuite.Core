@@ -8,6 +8,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Import;
 using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -107,6 +108,29 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_unit_is_properly_set()
       {
          Assert.AreEqual(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit, _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+      }
+   }
+
+   public class When_initializing_error_unit_on_initialized_error : ConcernForColumnMappingPresenter
+   {
+      protected override void Because()
+      {
+         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() {
+               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
+               new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
+               new GroupByDataFormatParameter("Study id")
+            });
+         base.Because();
+         sut.SetSettings(_metaDataCategories, _columnInfos);
+         sut.SetDataFormat(_basicFormat);
+         sut.InitializeErrorUnit();
+      }
+
+      [TestCase]
+      public void the_unit_is_properly_set()
+      {
+         Assert.AreEqual("g/l", _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit);
       }
    }
 }

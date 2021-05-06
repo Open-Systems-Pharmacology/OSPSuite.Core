@@ -203,6 +203,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.RefreshData();
          _view.CloseEditor();
       }
+
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
          var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
