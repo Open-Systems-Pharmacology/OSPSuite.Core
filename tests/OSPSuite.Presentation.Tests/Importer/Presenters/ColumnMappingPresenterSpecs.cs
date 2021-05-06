@@ -230,7 +230,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
       }
 
       protected override void Because()
@@ -239,7 +239,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
-            "Error",
+            "Concentration",
             _parameters[1],
             0,
             _columnInfos[1]
@@ -266,6 +266,75 @@ namespace OSPSuite.Presentation.Importer.Presenters
             A<string>.Ignored,
             false
          )).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_editor_settings_for_error : ConcernForColumnMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
+      }
+
+      protected override void Because()
+      {
+         base.Because();
+         sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[2],
+            0,
+            _columnInfos[2]
+         ));
+      }
+
+      [TestCase]
+      public void the_errors_are_properly_set()
+      {
+         A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeOptions
+         (
+            A<IEnumerable<string>>.That.Matches(l => l.Contains(Constants.STD_DEV_ARITHMETIC) && l.Contains(Constants.STD_DEV_GEOMETRIC)),
+            A<string>.Ignored
+         )).MustHaveHappened();
+      }
+   }
+
+   public class When_getting_available_rows_for : ConcernForColumnMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
+      }
+
+      [TestCase]
+      public void the_rows_for_are_properly_populated()
+      {
+         var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[2],
+            0,
+            _columnInfos[2]
+         ));
+         Assert.IsTrue(res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration"));
+      }
+
+      [TestCase]
+      public void the_options_for_are_properly_populated()
+      {
+         var res = sut.GetAvailableOptionsFor(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[2],
+            0,
+            _columnInfos[2]
+         ));
+         Assert.IsTrue(res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration")));
       }
    }
 }
