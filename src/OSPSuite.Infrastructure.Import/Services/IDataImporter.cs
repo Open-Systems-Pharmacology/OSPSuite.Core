@@ -60,9 +60,9 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <summary>
       /// Compares if two data repositories come from the same data
       /// </summary>
-      /// <param name="sourceDataRepository"></param>
-      /// <param name="targetDataRepository"></param>
+      /// <param name="sourceDataRepository">source DataRepository to compare with</param>
+      /// <param name="targetDataRepository">target DataRepository to compare with</param>
       /// <returns></returns>
-      bool AreFromSameSource(DataRepository sourceDataRepository, DataRepository targetDataRepository);
+      bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
    }
 }
