@@ -422,6 +422,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private IEnumerable<string> availableColumns()
       {
+         var temp = _format.ExcelColumnNames
+            .Where
+            (
+               cn =>
+                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
+                  _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
+                  _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
+            );
          return _format.ExcelColumnNames
             .Where
             (

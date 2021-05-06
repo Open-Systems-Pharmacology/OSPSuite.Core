@@ -9,6 +9,7 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Import;
 using System.Collections.Generic;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -134,11 +135,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_updating_description_for_model_with_first_error_type : ConcernForColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(0);
+      }
+
       protected override void Because()
       {
          base.Because();
-         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(0);
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping, 
@@ -159,11 +165,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_updating_description_for_model_with_second_error_type : ConcernForColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+      }
+
       protected override void Because()
       {
          base.Because();
-         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -184,13 +195,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_updating_description_for_model_for_observation : ConcernForColumnMappingPresenter
    {
-      protected override void Because()
+      protected override void Context()
       {
-         base.Because();
+         base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
          A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
          A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+      }
+
+      protected override void Because()
+      {
+         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -206,6 +222,57 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_lloq_is_properly_set()
       {
          Assert.AreEqual("Col1", (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn);
+      }
+   }
+
+   public class When_setting_editor_settings_for_mapping : ConcernForColumnMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+      }
+
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+         sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[1],
+            0,
+            _columnInfos[1]
+         ));
+      }
+
+      [TestCase]
+      public void the_units_are_properly_set()
+      {
+         A.CallTo(() => _mappingParameterEditorPresenter.SetUnitOptions
+         (
+            A<Column>.That.Matches(c => c.Name == "Concentration"), 
+            A<IEnumerable<IDimension>>.Ignored, 
+            A<IEnumerable<string>>.That.Matches(l => l.Contains("Col1") && l.Contains("Col2"))
+         )).MustHaveHappened();
+      }
+
+      [TestCase]
+      public void the_lloq_is_properly_set()
+      {
+         A.CallTo(() => _mappingParameterEditorPresenter.SetLloqOptions
+         (
+            A<IEnumerable<string>>.That.Matches(l => l.Contains("Col1") && l.Contains("Col2")),
+            A<string>.Ignored,
+            false
+         )).MustHaveHappened();
       }
    }
 }
