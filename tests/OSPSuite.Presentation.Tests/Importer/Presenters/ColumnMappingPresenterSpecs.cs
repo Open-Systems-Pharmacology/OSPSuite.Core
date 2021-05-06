@@ -230,19 +230,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
-         A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
       }
 
       protected override void Because()
       {
          base.Because();
-         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
-         A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
-         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
