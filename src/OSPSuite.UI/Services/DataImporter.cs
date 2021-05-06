@@ -1,3 +1,4 @@
+using System;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -102,9 +103,13 @@ namespace OSPSuite.UI.Services
          {
             importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
 
-            if (!importerPresenter.SetSourceFile(path))
+            try
             {
-               _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(path));
+               if (!importerPresenter.SetSourceFile(path)) return (new List<DataRepository>(), null);
+            }
+            catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
+            {
+               _dialogCreator.MessageBoxError(e.Message);
                return (new List<DataRepository>(), null);
             }
 
@@ -140,11 +145,20 @@ namespace OSPSuite.UI.Services
          }
 
          var dataSource = new DataSource(_importer);
-         var dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
+         IDataSourceFile dataSourceFile = null;
+
+         try
+         { 
+            dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
+         }
+         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
+         {
+            _dialogCreator.MessageBoxError(e.Message);
+            return new List<DataRepository>();
+         }
 
          if (dataSourceFile == null)
          {
-            _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(configuration.FileName));
             return new List<DataRepository>();
          }
 

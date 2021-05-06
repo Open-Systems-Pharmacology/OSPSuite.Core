@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -84,18 +83,16 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
-         //var filename = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA, fileName);
-         //in the presenter : if string == "" (Cancel clicked), then do not try to parse
-
-
          var dataSource = _parser.For(fileName);
+
+         if (dataSource.DataSheets == null) return null;
+
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets.ElementAt(0).RawData, columnInfos, metaDataCategories).ToList();
          
          if (dataSource.AvailableFormats.Count == 0)
-            return null;
+            throw new UnsupportedFormatException(fileName);
 
          dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
-         //TODO: check that all sheets are supporting the formats...
          
          return dataSource;
       }

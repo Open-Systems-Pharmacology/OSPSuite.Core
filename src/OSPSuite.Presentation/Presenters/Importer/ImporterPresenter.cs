@@ -125,11 +125,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (string.IsNullOrEmpty(dataSourceFileName)) return;
 
-         if (!SetSourceFile(dataSourceFileName))
+         try
          {
-            _dialogCreator.MessageBoxError(Captions.Importer.FileFormatNotSupported(dataSourceFileName));
+            if (!SetSourceFile(dataSourceFileName)) return;
+         }
+         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
+         {
+            _view.ShowErrorMessage(e.Message);
             return;
          }
+
          _view.DisableConfirmationView();
       }
 
