@@ -1,7 +1,6 @@
 ﻿using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
@@ -265,6 +264,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
+         
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
@@ -274,10 +274,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             };
          if (element.StartsWith("<"))
          {
-            var separatorChar = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-            
-            var lloqString = element.Substring(1).Replace(',', separatorChar).Replace('.',separatorChar);
-            double.TryParse(lloqString, out result);
+            result = element.Substring(1).ConvertedTo<double>();
             return new SimulationPoint()
             {
                Lloq = result,
