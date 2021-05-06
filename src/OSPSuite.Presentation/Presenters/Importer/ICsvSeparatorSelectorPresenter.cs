@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface ICsvSeparatorSelectorPresenter : IDisposablePresenter
    {
       void SetFileName(string fileName);
-      char GetCsvSeparator();
+      char? GetCsvSeparator();
       bool Canceled();
       char SelectedSeparator { get; set; }
    }
@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.Display();
       }
 
-      public char GetCsvSeparator()
+      public char? GetCsvSeparator()
       {
          return SelectedSeparator;
       }

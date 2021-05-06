@@ -24,10 +24,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
             var separator = _csvSeparatorSelector.GetCsvSeparator(path);
 
             //if separator selection dialog was cancelled, abort
-            if (separator == '\0')
-               return null;
-
-            using (var reader = new CsvReaderDisposer(path, separator))
+            if (!(separator is char separatorCharacter)) return null;
+ 
+            using (var reader = new CsvReaderDisposer(path, separatorCharacter))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();

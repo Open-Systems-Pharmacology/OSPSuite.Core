@@ -13,13 +13,13 @@ namespace OSPSuite.UI.Services
          _applicationController = applicationController;
       }
 
-      public char GetCsvSeparator(string fileName)
+      public char? GetCsvSeparator(string fileName)
       {
          using (var csvSeparatorPresenter = _applicationController.Start<ICsvSeparatorSelectorPresenter>())
          {
             csvSeparatorPresenter.SetFileName(fileName);
 
-            return csvSeparatorPresenter.Canceled() ? '\0' : csvSeparatorPresenter.GetCsvSeparator();
+            return csvSeparatorPresenter.Canceled() ? null : csvSeparatorPresenter.GetCsvSeparator();
          }
       }
    }
