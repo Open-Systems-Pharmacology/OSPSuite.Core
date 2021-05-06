@@ -116,8 +116,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
-         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC) return;
-
+         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+         {
+            errorColumn.Unit = new UnitDescription("");
+            return;
+         }
 
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
          var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source).MappedColumn;
