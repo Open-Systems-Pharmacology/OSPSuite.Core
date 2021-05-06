@@ -132,12 +132,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_updating_description_for_model : ConcernForColumnMappingPresenter
+   public class When_updating_description_for_model_with_first_error_type : ConcernForColumnMappingPresenter
    {
       protected override void Because()
       {
          base.Because();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(0);
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping, 
@@ -153,6 +154,31 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_ErrorStdDev_is_properly_set()
       {
          Assert.AreEqual(Constants.STD_DEV_ARITHMETIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
+      }
+   }
+
+   public class When_updating_description_for_model_with_second_error_type : ConcernForColumnMappingPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[2],
+            0,
+            _columnInfos[2]
+         ));
+         sut.UpdateDescriptrionForModel();
+      }
+
+      [TestCase]
+      public void the_ErrorStdDev_is_properly_set()
+      {
+         Assert.AreEqual(Constants.STD_DEV_GEOMETRIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
       }
    }
 }
