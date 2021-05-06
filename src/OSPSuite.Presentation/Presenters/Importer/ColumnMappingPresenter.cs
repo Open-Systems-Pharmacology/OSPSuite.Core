@@ -194,7 +194,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else //in this case the column is a measurement column
          {
             var columns = new List<string>() { column.LloqColumn };
-            if (column.LloqColumn != "")
+            if (!string.IsNullOrEmpty(column.LloqColumn))
             {
                columns.Add("");
             }

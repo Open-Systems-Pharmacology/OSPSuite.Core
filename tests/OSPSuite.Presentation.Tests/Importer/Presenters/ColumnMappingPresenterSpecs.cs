@@ -181,4 +181,31 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Assert.AreEqual(Constants.STD_DEV_GEOMETRIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
       }
    }
+
+   public class When_updating_description_for_model_for_observation : ConcernForColumnMappingPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
+         A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+         sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
+            _parameters[1],
+            0,
+            _columnInfos[1]
+         ));
+         sut.UpdateDescriptrionForModel();
+      }
+
+      [TestCase]
+      public void the_lloq_is_properly_set()
+      {
+         Assert.AreEqual("Col1", (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn);
+      }
+   }
 }
