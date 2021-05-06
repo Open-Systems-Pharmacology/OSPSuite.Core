@@ -21,17 +21,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>() 
+      {
+         new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+         new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
+         new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
+         new GroupByDataFormatParameter("Study id")
+      };
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() { 
-               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-               new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
-               new GroupByDataFormatParameter("Study id")
-            });
+         A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
@@ -39,21 +41,28 @@ namespace OSPSuite.Presentation.Importer.Presenters
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
       }
 
+      protected override void Because()
+      {
+         base.Because();
+         sut.SetSettings(_metaDataCategories, _columnInfos);
+         sut.SetDataFormat(_basicFormat);
+      }
+
       protected override void Context()
       {
          base.Context();
          _columnInfos = new List<ColumnInfo>()
          {
-            new ColumnInfo() { Name = "Time", IsMandatory = true },
-            new ColumnInfo() { Name = "Concentration", IsMandatory = true },
-            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
+            new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory()
             {
                Name = "Time",
-               IsMandatory = true
+               IsMandatory = true,
             },
             new MetaDataCategory()
             {
@@ -74,13 +83,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_setting_data_format : ConcernForColumnMappingPresenter
    {
-      protected override void Because()
-      {
-         base.Because();
-         sut.SetSettings(_metaDataCategories, _columnInfos);
-         sut.SetDataFormat(_basicFormat);
-      }
-
       [TestCase]
       public void identify_basic_format()
       {
@@ -99,8 +101,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Because()
       {
          base.Because();
-         sut.SetSettings(_metaDataCategories, _columnInfos);
-         sut.SetDataFormat(_basicFormat);
          sut.InitializeErrorUnit();
       }
 
@@ -122,8 +122,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
                new GroupByDataFormatParameter("Study id")
             });
          base.Because();
-         sut.SetSettings(_metaDataCategories, _columnInfos);
-         sut.SetDataFormat(_basicFormat);
          sut.InitializeErrorUnit();
       }
 
@@ -131,6 +129,30 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_unit_is_properly_set()
       {
          Assert.AreEqual("", _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit);
+      }
+   }
+
+   public class When_updating_description_for_model : ConcernForColumnMappingPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.Mapping, 
+            "Error", 
+            _parameters[2],
+            0,
+            _columnInfos[2]
+         ));
+         sut.UpdateDescriptrionForModel();
+      }
+
+      [TestCase]
+      public void the_ErrorStdDev_is_properly_set()
+      {
+         Assert.AreEqual(Constants.STD_DEV_ARITHMETIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
       }
    }
 }
