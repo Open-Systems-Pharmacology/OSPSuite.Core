@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             result = d.DataRepositories;
          };
-         var configuration = presenter.GetConfiguration();
+         var configuration = presenter.UpdateAndGetConfiguration();
          if (!string.IsNullOrEmpty(configurationId))
          {
             configuration.Id = configurationId;

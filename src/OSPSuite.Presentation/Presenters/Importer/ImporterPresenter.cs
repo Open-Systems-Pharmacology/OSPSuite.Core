@@ -146,7 +146,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _view.ShowErrorMessage(exception.Message);
             return;
          }
-         var configuration = GetConfiguration();
+         var configuration = UpdateAndGetConfiguration();
          configuration.Id = id;
          OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
       }
@@ -176,37 +176,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         foreach (var column in _columnInfos.Where(c => !c.IsAuxiliary()))
-         {
-            foreach (var relatedColumn in _columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
-            {
-               foreach (var dataSet in dataSource.DataSets)
-               {
-                  foreach (var set in dataSet.Data)
-                  {
-                     var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
-                     var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
-
-                     if (errorColumn.Key == null)
-                        return;
-
-                     if (_dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == Constants.Dimension.NO_DIMENSION
-                         || _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == null)
-                        continue;
-
-                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
-                     {
-                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
-                           continue;
-
-                        if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
-                            _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
-                           throw new ErrorUnitException();
-                     }
-                  }
-               }
-            }
-         }
+         if (dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
+            throw new ErrorUnitException();
       }
 
       private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
@@ -303,7 +274,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
-            _configuration = GetConfiguration();
+            _configuration = UpdateAndGetConfiguration();
             var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
             var element = serializer.Serialize(_configuration, serializationContext);
             element.Save(fileName);
@@ -383,7 +354,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      public ImporterConfiguration GetConfiguration() {
+      public ImporterConfiguration UpdateAndGetConfiguration() {
          _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
          _configuration.FilterString = _importerDataPresenter.GetFilter();
          return _configuration;
