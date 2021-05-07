@@ -44,23 +44,36 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public abstract class ConcernForImporterPresenter : ContextSpecification<ImporterPresenter>
    {
-      protected ImportTriggeredEventArgs eventArgs;
-      protected List<MetaDataCategory> metaDataCategories;
-      protected DataImporterSettings dataImporterSettings;
+      protected ImportTriggeredEventArgs _eventArgs;
+      protected List<MetaDataCategory> _metaDataCategories;
+      protected DataImporterSettings _dataImporterSettings;
+      protected IImporter _importer;
+      protected IImporterView _importerView;
+      protected INanPresenter _nanPresenter;
+      protected IDataSetToDataRepositoryMapper _mapper;
+      protected IImporterDataPresenter _importerDataPresenter;
+      protected IImportConfirmationPresenter _importConfirmationPresenter;
+      protected IDataSource _dataSource;
+      protected IColumnMappingPresenter _columnMappingPresenter;
+      protected ISourceFilePresenter _sourceFilePresenter;
+      protected IDialogCreator _dialogCreator;
+      protected IDimensionFactory _dimensionFactory;
+      protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
+      protected Utility.Container.IContainer _container;
 
       protected override void Context()
       {
-         dataImporterSettings = new DataImporterSettings();
+         _dataImporterSettings = new DataImporterSettings();
          base.Context();
-         var mapper = A.Fake<IDataSetToDataRepositoryMapper>();
+         _mapper = A.Fake<IDataSetToDataRepositoryMapper>();
          var cache = new Cache<string, IDataSet>();
          var dataSet = new DataSet();
          dataSet.AddData(new List<ParsedDataSet>() 
          {
             new ParsedDataSet(new List<(string ColumnName, IList<string> ExistingValues)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
-         var dataSource = A.Fake<IDataSource>();
-         A.CallTo(() => dataSource.DataSets).Returns(cache);
+         _dataSource = A.Fake<IDataSource>();
+         A.CallTo(() => _dataSource.DataSets).Returns(cache);
          cache.Add("sheet1", dataSet);
          var dataRepository = new DataRepository { Name = "name" };
          dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Molecule", Value = "Molecule1" });
@@ -74,7 +87,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var moleculeDataColumn = new DataColumn("Measurement", A.Fake<IDimension>(), dataColumn);
          dataColumn.DataInfo = dataInfo;
          dataRepository.Add(moleculeDataColumn);
-         A.CallTo(() => mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(dataRepository);
+         A.CallTo(() => _mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(dataRepository);
 
          var moleculeMetaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          moleculeMetaDataCategory.IsListOfValuesFixed = true;
@@ -83,7 +96,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          moleculeMetaDataCategory.ShouldListOfValuesBeIncluded = true;
          moleculeMetaDataCategory.SelectDefaultValue = true;
 
-         metaDataCategories = new List<MetaDataCategory>()
+         _metaDataCategories = new List<MetaDataCategory>()
          {
             moleculeMetaDataCategory,
             createMetaDataCategory<string>("Mol weight", isMandatory: false)
@@ -92,24 +105,34 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>());
          var dataSourceFile = A.Fake<IDataSourceFile>();
          A.CallTo(() => dataSourceFile.Format).Returns(dataFormat);
-         var importerPresenter = A.Fake<IImporterDataPresenter>();
-         A.CallTo(() => importerPresenter.SetDataSource(A<string>.Ignored)).Returns(dataSourceFile);
+         _importerDataPresenter = A.Fake<IImporterDataPresenter>();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(dataSourceFile);
+         _importerView = A.Fake<IImporterView>();
+         _importer = A.Fake<IImporter>();
+         _nanPresenter = A.Fake<INanPresenter>();
+         _importConfirmationPresenter = A.Fake<IImportConfirmationPresenter>();
+         _columnMappingPresenter = A.Fake<IColumnMappingPresenter>();
+         _sourceFilePresenter = A.Fake<ISourceFilePresenter>();
+         _dialogCreator = A.Fake<IDialogCreator>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
+         _ospSuiteXmlSerializerRepository = A.Fake<IOSPSuiteXmlSerializerRepository>();
+         _container = A.Fake<Utility.Container.IContainer>();
          sut = new ImporterPresenterForTest(
-            A.Fake<IImporterView>(),
-            mapper,
-            A.Fake<IImporter>(),
-            A.Fake<INanPresenter>(),
-            importerPresenter,
-            A.Fake<IImportConfirmationPresenter>(),
-            A.Fake<IColumnMappingPresenter>(),
-            A.Fake<ISourceFilePresenter>(),
-            A.Fake<IDialogCreator>(),
-            A.Fake<IDimensionFactory>(),
-            A.Fake<IOSPSuiteXmlSerializerRepository>(),
-            A.Fake<Utility.Container.IContainer>(),
-            dataSource);
+            _importerView,
+            _mapper,
+            _importer,
+            _nanPresenter,
+            _importerDataPresenter,
+            _importConfirmationPresenter,
+            _columnMappingPresenter,
+            _sourceFilePresenter,
+            _dialogCreator,
+            _dimensionFactory,
+            _ospSuiteXmlSerializerRepository,
+            _container,
+            _dataSource);
          sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>(), "");
-         sut.SetSettings(metaDataCategories, new List<ColumnInfo>(), dataImporterSettings);
+         sut.SetSettings(_metaDataCategories, new List<ColumnInfo>(), _dataImporterSettings);
       }
 
       protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false, Action<MetaDataCategory> fixedValuesRetriever = null)
@@ -135,7 +158,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void sets_molWeight_from_molecule()
       {
-         dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          ImportTriggeredEventArgs result = null;
          sut.OnTriggerImport += (_, e) => result = e;
          sut.ImportData(this, null);
@@ -165,7 +188,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void sets_molWeight_from_molWeight()
       {
-         dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
+         _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          var importerPresenter = A.Fake<IImporterPresenter>();
          ImportTriggeredEventArgs result = null;
          sut.OnTriggerImport += (_, e) => result = e;
