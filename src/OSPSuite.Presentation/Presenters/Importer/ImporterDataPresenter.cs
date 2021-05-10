@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -11,7 +10,7 @@ using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 { 
-   class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
+   public class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
    {
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
@@ -49,11 +48,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _dataSourceFile.DataSheets.KeyValues)
          {
-            if (!Sheets.Keys.Contains(element.Key))
-            {
-               Sheets.Add(element.Key, element.Value);
-               sheets.Add(element.Key, element.Value);
-            }
+            if (Sheets.Keys.Contains(element.Key)) continue;
+            Sheets.Add(element.Key, element.Value);
+            sheets.Add(element.Key, element.Value);
          }
 
          if (sheets.Count == 0) return;

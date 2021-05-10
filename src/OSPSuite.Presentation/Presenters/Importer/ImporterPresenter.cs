@@ -176,7 +176,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         if (dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
+         if (!dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
             throw new ErrorUnitException();
       }
 
