@@ -59,6 +59,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDimensionFactory _dimensionFactory;
       protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
       protected Utility.Container.IContainer _container;
+      protected IDataSourceFile _dataSourceFile;
 
       protected override void Context()
       {
@@ -102,10 +103,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>());
-         var dataSourceFile = A.Fake<IDataSourceFile>();
-         A.CallTo(() => dataSourceFile.Format).Returns(dataFormat);
+         _dataSourceFile = A.Fake<IDataSourceFile>();
+         A.CallTo(() => _dataSourceFile.Format).Returns(dataFormat);
          _importerDataPresenter = A.Fake<IImporterDataPresenter>();
-         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(dataSourceFile);
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
          _importerView = A.Fake<IImporterView>();
          _importer = A.Fake<IImporter>();
          _nanPresenter = A.Fake<INanPresenter>();
@@ -319,11 +320,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_mapping_completed : ConcernForImporterPresenter
+   public class When_mapping_completed_with_loaded_data : ConcernForImporterPresenter
    {
       protected override void Because()
       {
          base.Because();
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", A.Fake<DataSheet>());
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -331,6 +336,68 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void invokes_column_mapping_presenter()
       {
          A.CallTo(() => _importerDataPresenter.onCompletedMapping()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void shows_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustHaveHappened();
+      }
+   }
+
+   public class When_mapping_completed_without_loaded_data : ConcernForImporterPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
+      }
+
+      [Observation]
+      public void does_not_show_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustNotHaveHappened();
+      }
+   }
+
+   public class When_mapping_completed_with_loaded_data_with_wrong_mapping : ConcernForImporterPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(false);
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", A.Fake<DataSheet>());
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
+      }
+
+      [Observation]
+      public void does_not_show_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustNotHaveHappened();
+      }
+   }
+
+   public class When_mapping_is_missing : ConcernForImporterPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         _columnMappingPresenter.OnMissingMapping += Raise.With(new MissingMappingEventArgs());
+      }
+
+      [Observation]
+      public void invokes_importer_data_presenter()
+      {
+         A.CallTo(() => _importerDataPresenter.onMissingMapping()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void hides_confirmation_view()
+      {
+         A.CallTo(() => _importerView.DisableConfirmationView()).MustHaveHappened();
       }
    }
 

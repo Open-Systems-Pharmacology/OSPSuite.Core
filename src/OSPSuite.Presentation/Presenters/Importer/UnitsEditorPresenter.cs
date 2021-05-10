@@ -13,7 +13,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IEnumerable<IDimension> _dimensions;
       private string _selectedUnit { get; set; }
       private string _selectedColumn { get; set; }
-      private IDimensionFactory _dimensionFactory;
       private bool _columnMapping;
 
       public UnitDescription Unit
@@ -24,9 +23,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public UnitsEditorPresenter(IUnitsEditorView view, IDimensionFactory dimensionFactory) : base(view)
+      public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
       {
-         _dimensionFactory = dimensionFactory;
       }
 
       public void SetOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
