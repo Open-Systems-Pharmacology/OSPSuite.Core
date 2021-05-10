@@ -14,7 +14,6 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Extensions;
@@ -40,7 +39,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDimensionFactory _dimensionFactory;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
-
 
       public ImporterPresenter(
          IImporterView view,
@@ -88,7 +86,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
             _configuration.NamingConventions = a.NamingConvention;
          };
-         _importerDataPresenter.OnImportSheets += ImportSheetsFromDataPresenter;
+         _importerDataPresenter.OnImportSheets += loadSheetsFromDataPresenter;
          _nanPresenter.OnNaNSettingsChanged += (s, a) =>
          {
             _columnMappingPresenter.ValidateMapping();
@@ -151,11 +149,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
       }
 
-      private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
+      private void loadSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
       {
          try
          {
-            importSheets(args.DataSourceFile, args.Sheets, args.Filter);
+            loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
             _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
             _configuration.FilterString = args.Filter;
@@ -176,11 +174,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         if (dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
+         if (!dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
             throw new ErrorUnitException();
       }
 
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
+      private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
       {
          if (!sheets.Any()) return;
 
@@ -230,6 +228,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
          _importerDataPresenter.onMissingMapping();
+         View.DisableConfirmationView();
       }
 
       private void onImporterDataChanged(object sender, EventArgs args)
@@ -237,7 +236,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.DataSets.Clear();
          try
          {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
+            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
@@ -343,7 +342,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          try
          {
             var namingConvention = configuration.NamingConventions;
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
+            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
             _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
