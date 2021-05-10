@@ -1,7 +1,4 @@
 ﻿using OSPSuite.Presentation.Views.Importer;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
