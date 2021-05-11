@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
@@ -29,6 +30,7 @@ namespace OSPSuite.R.Services
       protected IParameter _clearance;
       protected MoleculeAmount _liverIntracellularMoleculeAmount;
       protected ISimulation _simulation;
+      protected IParameter _paramWithRHS;
 
       public override void GlobalContext()
       {
@@ -52,10 +54,12 @@ namespace OSPSuite.R.Services
          _volumeKidney = DomainHelperForSpecs.ConstantParameterWithValue(14).WithName(Constants.Parameters.VOLUME);
          _height = DomainHelperForSpecs.ConstantParameterWithValue(175).WithName("Height");
          _weight = DomainHelperForSpecs.ConstantParameterWithValue(75).WithName("Weight");
+         _paramWithRHS = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("RHSParam");
+         _paramWithRHS.RHSFormula = new ExplicitFormula();
 
          _clearance = DomainHelperForSpecs.ConstantParameterWithValue(5).WithName("CL");
 
-         _organism.AddChildren(_liver, _kidney, _height, _weight, _volumeOrganism);
+         _organism.AddChildren(_liver, _kidney, _height, _weight, _volumeOrganism, _paramWithRHS);
          _liver.AddChildren(_liverIntracellular, _volumeLiver);
          _liverIntracellular.AddChildren(_volumeLiverCell, _liverIntracellularSubContainer);
          _liverIntracellularSubContainer.Add(_clearance);
@@ -240,7 +244,8 @@ namespace OSPSuite.R.Services
       {
          var parameters = new[]
          {
-            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS
+
          };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
@@ -279,6 +284,24 @@ namespace OSPSuite.R.Services
       {
          var containers = new[] {_kidney, _liver, _liverIntracellular, _kidneyIntracellular, _liverIntracellularSubContainer,};
          var expected = containers.Select(x => x.EntityPath()).ToArray();
+         _result.ShouldOnlyContain(expected);
+      }
+   }
+
+   public class When_returning_all_state_variable_parameters_from_a_given_container : concern_for_ContainerTask
+   {
+      private string[] _result;
+
+      protected override void Because()
+      {
+         _result = sut.AllStateVariableParameterPathsIn(_organism);
+      }
+
+      [Observation]
+      public void should_only_return_parameters_with_a_RHS_formula_defined()
+      {
+         var parameters = new[] {_paramWithRHS};
+         var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
       }
    }
