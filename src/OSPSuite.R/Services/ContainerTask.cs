@@ -35,11 +35,13 @@ namespace OSPSuite.R.Services
       string[] AllContainerPathsIn(IContainer container);
       string[] AllMoleculesPathsIn(IContainer container);
       string[] AllParameterPathsIn(IContainer container);
+      string[] AllStateVariableParameterPathsIn(IContainer container);
 
       string[] AllQuantityPathsIn(IModelCoreSimulation simulation);
       string[] AllContainerPathsIn(IModelCoreSimulation simulation);
       string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
       string[] AllParameterPathsIn(IModelCoreSimulation simulation);
+      string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
 
    }
 
@@ -101,6 +103,7 @@ namespace OSPSuite.R.Services
       public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<IMoleculeAmount>(container);
 
       public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
+      public string[] AllStateVariableParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container, isStateVariableParameter);
 
       public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) =>  AllQuantityPathsIn(simulation?.Model?.Root);
 
@@ -109,6 +112,7 @@ namespace OSPSuite.R.Services
       public string[] AllMoleculesPathsIn(IModelCoreSimulation simulation) => AllMoleculesPathsIn(simulation?.Model?.Root);
 
       public string[] AllParameterPathsIn(IModelCoreSimulation simulation) => AllParameterPathsIn(simulation?.Model?.Root);
+      public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {
@@ -116,6 +120,8 @@ namespace OSPSuite.R.Services
       }
 
       private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<IMoleculeAmount>();
+
+      private bool isStateVariableParameter(IParameter parameter) => !(parameter.RHSFormula == null);
 
       private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
