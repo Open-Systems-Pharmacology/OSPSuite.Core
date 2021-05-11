@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Text;
-using NPOI.SS.UserModel;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   interface IImportFromExcelTask
+   public interface IImportFromExcelTask
    {
       /// <summary>
       /// Retrieves all the appropriate sheet names from an excel file
