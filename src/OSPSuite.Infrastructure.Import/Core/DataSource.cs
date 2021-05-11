@@ -151,6 +151,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
+                     if (measurementColumn.Value.Count != errorColumn.Value.Count)
+                        throw new MismatchingArrayLengthsException();
+
                      if (errorColumn.Key == null)
                         return true;
 
