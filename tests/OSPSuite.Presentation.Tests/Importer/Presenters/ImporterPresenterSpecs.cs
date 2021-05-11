@@ -203,11 +203,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_setting_wrong_data_source : ConcernForImporterPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(null);
+      }
 
       protected override void Because()
       {
          base.Because();
-         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(null).Once();
          sut.SetDataSource("path");
       }
 
