@@ -14,7 +14,6 @@ using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Extensions;
@@ -40,7 +39,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDimensionFactory _dimensionFactory;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
-
 
       public ImporterPresenter(
          IImporterView view,
@@ -88,7 +86,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
             _configuration.NamingConventions = a.NamingConvention;
          };
-         _importerDataPresenter.OnImportSheets += ImportSheetsFromDataPresenter;
+         _importerDataPresenter.OnImportSheets += loadSheetsFromDataPresenter;
          _nanPresenter.OnNaNSettingsChanged += (s, a) =>
          {
             _columnMappingPresenter.ValidateMapping();
@@ -151,16 +149,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _view.ShowErrorMessage(exception.Message);
             return;
          }
-         var configuration = GetConfiguration();
+         var configuration = UpdateAndGetConfiguration();
          configuration.Id = id;
          OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
       }
 
-      private void ImportSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
+      private void loadSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
       {
          try
          {
-            importSheets(args.DataSourceFile, args.Sheets, args.Filter);
+            loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
             _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
             _configuration.FilterString = args.Filter;
@@ -181,40 +179,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         foreach (var column in _columnInfos.Where(c => !c.IsAuxiliary()))
-         {
-            foreach (var relatedColumn in _columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
-            {
-               foreach (var dataSet in dataSource.DataSets)
-               {
-                  foreach (var set in dataSet.Data)
-                  {
-                     var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
-                     var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
-
-                     if (errorColumn.Key == null)
-                        return;
-
-                     if (_dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == Constants.Dimension.NO_DIMENSION
-                         || _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == null)
-                        continue;
-
-                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
-                     {
-                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
-                           continue;
-
-                        if (_dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
-                            _dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
-                           throw new ErrorUnitException();
-                     }
-                  }
-               }
-            }
-         }
+         if (!dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
+            throw new ErrorUnitException();
       }
 
-      private void importSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
+      private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
       {
          if (!sheets.Any()) return;
 
@@ -264,6 +233,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
          _importerDataPresenter.onMissingMapping();
+         View.DisableConfirmationView();
       }
 
       private void onImporterDataChanged(object sender, EventArgs args)
@@ -271,7 +241,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.DataSets.Clear();
          try
          {
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
+            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
@@ -308,7 +278,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
-            _configuration = GetConfiguration();
+            _configuration = UpdateAndGetConfiguration();
             var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
             var element = serializer.Serialize(_configuration, serializationContext);
             element.Save(fileName);
@@ -377,7 +347,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          try
          {
             var namingConvention = configuration.NamingConventions;
-            importSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
+            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
             _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
@@ -388,7 +358,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      public ImporterConfiguration GetConfiguration() {
+      public ImporterConfiguration UpdateAndGetConfiguration() {
          _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
          _configuration.FilterString = _importerDataPresenter.GetFilter();
          return _configuration;

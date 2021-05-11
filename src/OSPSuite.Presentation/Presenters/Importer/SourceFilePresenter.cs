@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          DirectoryKey = string.Empty;
       }
 
-      public void OpenFileDialog( string initFileName)
+      public void OpenFileDialog(string initFileName)
       {
          if (!CheckBeforeSelectFile()) return;
 
