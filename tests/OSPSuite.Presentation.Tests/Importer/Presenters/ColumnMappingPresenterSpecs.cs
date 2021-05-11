@@ -27,7 +27,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
          new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
-         new GroupByDataFormatParameter("Study id")
+         new GroupByDataFormatParameter("Study id"),
+         new MetaDataFormatParameter("Molecule", "Col1", true)
       };
 
       public override void GlobalContext()
@@ -72,8 +73,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
             },
             new MetaDataCategory()
             {
-               DisplayName = "Error",
+               Name = "Error",
                IsMandatory = false
+            },
+            new MetaDataCategory()
+            {
+               Name = "Molecule",
+               IsMandatory = false,
+               ShouldListOfValuesBeIncluded = true
             }
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
@@ -317,6 +324,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       [Observation]
       public void the_rows_for_are_properly_populated()
+      {
+         var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.MetaData,
+            "Molecule",
+            _parameters[4],
+            0,
+            _columnInfos[2]
+         ));
+         Assert.AreEqual(1, res.Where(r => r.Description == "Molecule").Count());
+      }
+
+      [Observation]
+      public void the_selected_excel_column_should_not_repeat()
       {
          var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
          (
