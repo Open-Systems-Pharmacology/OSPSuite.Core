@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using NPOI.HSSF.UserModel;
@@ -8,9 +9,8 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into extensions
+   public class ExcelReader : IDisposable
    {
-      //we could get this info here or in getCurrentRow, but make sure we do it once
       private IWorkbook _book;
       private IEnumerator<ISheet> _sheetEnumerator;
       private IEnumerator _rowEnumerator;
@@ -82,6 +82,21 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
 
          return true;
+      }
+
+      public IEnumerable<string> RetrieveExcelSheets(bool excludeEmptySheets)
+      {
+         for (var i = 0; i < _book.NumberOfSheets; i++)
+         {
+            if (!excludeEmptySheets || !isSheetEmpty(_book.GetSheetAt(i)))
+               yield return _book.GetSheetName(i);
+         }
+      }
+
+      private bool isSheetEmpty(ISheet sheet)
+      {
+
+         return sheet.LastRowNum == -1 || sheet.GetRow(sheet.LastRowNum)?.GetCell(0) == null;
       }
 
       private string getCellStringValue(ICell cell)
@@ -177,6 +192,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          
          return (HSSFRow) enumerator.Current;
+      }
+
+      public void Dispose()
+      {
+         _sheetEnumerator?.Dispose();
       }
    }
 }
