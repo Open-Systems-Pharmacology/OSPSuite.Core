@@ -84,7 +84,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_setting_data_format : ConcernForColumnMappingPresenter
    {
-      [TestCase]
+      [Observation]
       public void identify_basic_format()
       {
          A.CallTo(
@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.InitializeErrorUnit();
       }
 
-      [TestCase]
+      [Observation]
       public void the_unit_is_properly_set()
       {
          Assert.AreEqual(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit, _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
@@ -114,19 +114,25 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_initializing_error_unit_on_initialized_error : ConcernForColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() 
+         {
+            new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
+            new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
+            new GroupByDataFormatParameter("Study id")
+         });
+      }
+
       protected override void Because()
       {
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() {
-               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-               new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
-               new GroupByDataFormatParameter("Study id")
-            });
          base.Because();
          sut.InitializeErrorUnit();
       }
 
-      [TestCase]
+      [Observation]
       public void the_unit_is_properly_set()
       {
          Assert.AreEqual("", _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit);
@@ -156,7 +162,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.UpdateDescriptrionForModel();
       }
 
-      [TestCase]
+      [Observation]
       public void the_ErrorStdDev_is_properly_set()
       {
          Assert.AreEqual(Constants.STD_DEV_ARITHMETIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
@@ -186,7 +192,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.UpdateDescriptrionForModel();
       }
 
-      [TestCase]
+      [Observation]
       public void the_ErrorStdDev_is_properly_set()
       {
          Assert.AreEqual(Constants.STD_DEV_GEOMETRIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
@@ -218,7 +224,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.UpdateDescriptrionForModel();
       }
 
-      [TestCase]
+      [Observation]
       public void the_lloq_is_properly_set()
       {
          Assert.AreEqual("Col1", (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn);
@@ -246,7 +252,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ));
       }
 
-      [TestCase]
+      [Observation]
       public void the_units_are_properly_set()
       {
          A.CallTo(() => _mappingParameterEditorPresenter.SetUnitOptions
@@ -257,7 +263,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          )).MustHaveHappened();
       }
 
-      [TestCase]
+      [Observation]
       public void the_lloq_is_properly_set()
       {
          A.CallTo(() => _mappingParameterEditorPresenter.SetLloqOptions
@@ -290,7 +296,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ));
       }
 
-      [TestCase]
+      [Observation]
       public void the_errors_are_properly_set()
       {
          A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeOptions
@@ -309,7 +315,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
       }
 
-      [TestCase]
+      [Observation]
       public void the_rows_for_are_properly_populated()
       {
          var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
@@ -323,7 +329,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Assert.IsTrue(res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration"));
       }
 
-      [TestCase]
+      [Observation]
       public void the_options_for_are_properly_populated()
       {
          var res = sut.GetAvailableOptionsFor(new ColumnMappingDTO

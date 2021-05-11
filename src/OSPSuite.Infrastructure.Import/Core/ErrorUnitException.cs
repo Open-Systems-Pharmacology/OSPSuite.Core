@@ -5,7 +5,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class ErrorUnitException : Exception
    {
-      public ErrorUnitException() : base(Error.InavlidErrorDimension)
+      public ErrorUnitException() : base(Error.InvalidErrorDimension)
       {
       }
    }

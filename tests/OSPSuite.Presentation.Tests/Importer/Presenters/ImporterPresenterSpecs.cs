@@ -201,27 +201,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_wrong_data_source : ConcernForImporterPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(null);
-      }
-
-      protected override void Because()
-      {
-         base.Because();
-         sut.SetDataSource("path");
-      }
-
-      [Observation]
-      public void sets_column_mapping_presenter_settings()
-      {
-         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.Ignored)).MustHaveHappened();
-      }
-   }
-
    public class When_setting_data_source : ConcernForImporterPresenter
    {
       protected override void Context()

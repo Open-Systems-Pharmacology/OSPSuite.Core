@@ -51,7 +51,7 @@ namespace OSPSuite.R.Services
 
    public class When_running_a_batch_simulation_run_concurrently : ContextForIntegration<IConcurrentSimulationRunner>
    {
-      private SettingsForConcurrentRunSimulationBatch _simulationWithBatchOptions;
+      private ConcurrentRunSimulationBatch _simulationWithBatchOptions;
       private ISimulationPersister _simulationPersister;
       private ConcurrencyManagerResult<SimulationResults>[] _results;
       private IModelCoreSimulation _simulation;
@@ -64,7 +64,7 @@ namespace OSPSuite.R.Services
          _simulationPersister = Api.GetSimulationPersister();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
-         _simulationWithBatchOptions = new SettingsForConcurrentRunSimulationBatch
+         _simulationWithBatchOptions = new ConcurrentRunSimulationBatch
          (
             _simulation,
             new SimulationBatchOptions

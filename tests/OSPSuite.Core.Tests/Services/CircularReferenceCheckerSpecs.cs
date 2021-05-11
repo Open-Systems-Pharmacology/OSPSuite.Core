@@ -204,19 +204,19 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_validating_the_references_used_in_a_quantity_resutling_in_formula_with_circular_references : When_checking_circular_references_in_a_model
+   public class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_circular_references : When_checking_circular_references_in_a_model
    {
       protected override void Context()
       {
          base.Context();
 
-         var forumula1 = new ExplicitFormula("PAR2");
-         forumula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA2").WithAlias("PAR2"));
-         _parameter1.Formula = forumula1;
+         var formula1 = new ExplicitFormula("PAR2");
+         formula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA2").WithAlias("PAR2"));
+         _parameter1.Formula = formula1;
 
-         var forumula2 = new ExplicitFormula("PAR1");
-         forumula2.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA1").WithAlias("PAR1"));
-         _parameter2.Formula = forumula2;
+         var formula2 = new ExplicitFormula("PAR1");
+         formula2.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA1").WithAlias("PAR1"));
+         _parameter2.Formula = formula2;
       }
 
       [Observation]
@@ -226,15 +226,15 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_validating_the_references_used_in_a_quantity_resutling_in_formula_with_a_rhs_circular_references : When_checking_circular_references_in_a_model
+   public class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_a_rhs_circular_references : When_checking_circular_references_in_a_model
    {
       protected override void Context()
       {
          base.Context();
 
-         var forumula1 = new ExplicitFormula("PAR1");
-         forumula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA1").WithAlias("PAR1"));
-         _parameter1.RHSFormula = forumula1;
+         var formula1 = new ExplicitFormula("PAR1");
+         formula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA1").WithAlias("PAR1"));
+         _parameter1.RHSFormula = formula1;
       }
 
       [Observation]
