@@ -264,6 +264,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
+         
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
@@ -273,7 +274,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             };
          if (element.StartsWith("<"))
          {
-            double.TryParse(element.Substring(1), out result);
+            result = element.Substring(1).ConvertedTo<double>();
             return new SimulationPoint()
             {
                Lloq = result,

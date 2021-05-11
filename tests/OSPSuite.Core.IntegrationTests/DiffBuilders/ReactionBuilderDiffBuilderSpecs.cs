@@ -156,15 +156,15 @@ namespace OSPSuite.Core.DiffBuilders
          r2.AddEduct(new ReactionPartnerBuilder("Drug", 1));
          r2.AddEduct(new ReactionPartnerBuilder("Metab", 1));
          r2.AddModifier("Cyp");
-         var p12Forumla = new ConstantFormula(3).WithDimension(concentrationDimension);
-         var p12 = new Parameter().WithName("P1").WithFormula(p12Forumla).WithParentContainer(r2);
+         var p12Formula = new ConstantFormula(3).WithDimension(concentrationDimension);
+         var p12 = new Parameter().WithName("P1").WithFormula(p12Formula).WithParentContainer(r2);
 
          _object1 = r1;
          _object2 = r2;
 
          _preferredUnit = concentrationDimension.Units.ElementAt(0);
          A.CallTo(() => displayUnitRetriever.PreferredUnitFor(p1Formula,null)).Returns(_preferredUnit);
-         A.CallTo(() => displayUnitRetriever.PreferredUnitFor(p12Forumla, null)).Returns(_preferredUnit);
+         A.CallTo(() => displayUnitRetriever.PreferredUnitFor(p12Formula, null)).Returns(_preferredUnit);
 
       }
 

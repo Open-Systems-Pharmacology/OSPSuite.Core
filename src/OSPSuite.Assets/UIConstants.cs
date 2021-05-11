@@ -407,20 +407,14 @@ namespace OSPSuite.Assets
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
-         public static readonly string ReloadWillCauseChangeOfDataSets = "Reloading will cause the following changes in observed data. Do you really want to reload?";
+         public static readonly string ReloadWillCauseChangeOfDataSets =
+            "Reloading will cause the following changes in observed data. Do you really want to reload?";
+
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
-
-         public static string FileFormatNotSupported(string fileName)
-         {
-            var sb = new StringBuilder();
-            sb.AppendLine($"The file: \n \n'{fileName}' \n ");
-            sb.AppendLine("that you are trying to load does not comply to one of the supported formats.");
-            sb.AppendLine("You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats");
-            return sb.ToString();
-         }
-
+         public static readonly string SeparatorSelection = "Separator Selection";
+         public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file '{fileName}'";
 
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
@@ -1240,9 +1234,18 @@ namespace OSPSuite.Assets
       public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
       public static readonly string InvalidFileException = "An error occurred while reading the file. Please check the content";
       public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
-      public static readonly string InavlidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
+      public static readonly string InvalidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
-      public static readonly string UnsupportedFileFormat = "The file format is not supported";
+      public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
+      public static string UnsupportedFileFormat(string fileName)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"The file: \n \n'{fileName}' \n ");
+         sb.AppendLine("that you are trying to load does not comply to one of the supported formats.");
+         sb.AppendLine("You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats");
+         return sb.ToString();
+      }
+
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";

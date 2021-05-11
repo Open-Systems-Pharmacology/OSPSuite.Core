@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain
       public const string PRODUCT_SITE = "www.open-systems-pharmacology.org";
       public const string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
       public const string HELP_NAMESPACE = "http://docs.open-systems-pharmacology.org";
-      public const string FORUM_SITE = "forum.open-systems-pharmacology.org";
+      public const string FORUM_SITE = "http://forum.open-systems-pharmacology.org";
       public const string SUITE_NAME = "Open Systems Pharmacology Suite";
 
       public const float DEFAULT_WEIGHT = 1;

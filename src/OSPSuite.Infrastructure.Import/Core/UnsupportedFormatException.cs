@@ -5,7 +5,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class UnsupportedFormatException : Exception
    {
-      public UnsupportedFormatException() : base(Error.UnsupportedFileFormat)
+      public UnsupportedFormatException(string fileName) : base(Error.UnsupportedFileFormat(fileName))
       {
       }
    }
