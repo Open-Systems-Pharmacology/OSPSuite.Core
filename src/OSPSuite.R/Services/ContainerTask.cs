@@ -42,7 +42,6 @@ namespace OSPSuite.R.Services
       string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
       string[] AllParameterPathsIn(IModelCoreSimulation simulation);
       string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
-
    }
 
    public class ContainerTask : IContainerTask
@@ -103,15 +102,17 @@ namespace OSPSuite.R.Services
       public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<IMoleculeAmount>(container);
 
       public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
+
       public string[] AllStateVariableParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container, isStateVariableParameter);
 
-      public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) =>  AllQuantityPathsIn(simulation?.Model?.Root);
+      public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) => AllQuantityPathsIn(simulation?.Model?.Root);
 
       public string[] AllContainerPathsIn(IModelCoreSimulation simulation) => AllContainerPathsIn(simulation?.Model?.Root);
 
       public string[] AllMoleculesPathsIn(IModelCoreSimulation simulation) => AllMoleculesPathsIn(simulation?.Model?.Root);
 
       public string[] AllParameterPathsIn(IModelCoreSimulation simulation) => AllParameterPathsIn(simulation?.Model?.Root);
+
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
@@ -121,7 +122,7 @@ namespace OSPSuite.R.Services
 
       private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<IMoleculeAmount>();
 
-      private bool isStateVariableParameter(IParameter parameter) => !(parameter.RHSFormula == null);
+      private bool isStateVariableParameter(IParameter parameter) => parameter.RHSFormula != null;
 
       private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
@@ -161,7 +162,7 @@ namespace OSPSuite.R.Services
          {
             if (string.Equals(entry, WILD_CARD))
             {
-               // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
+               // At least one occurrence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
                pattern.Add($"{ALL_BUT_PATH_DELIMITER}?");
                pattern.Add(PATH_DELIMITER);
             }
