@@ -114,14 +114,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_initializing_error_unit_on_initialized_error : ConcernForColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() 
+         {
+            new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
+            new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
+            new GroupByDataFormatParameter("Study id")
+         });
+      }
+
       protected override void Because()
       {
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() {
-               new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-               new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-               new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
-               new GroupByDataFormatParameter("Study id")
-            });
          base.Because();
          sut.InitializeErrorUnit();
       }
@@ -303,6 +309,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_getting_available_rows_for : ConcernForColumnMappingPresenter
    {
+      protected IEnumerable<RowOptionDTO> _rows;
       protected override void Context()
       {
          base.Context();
@@ -312,7 +319,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase]
       public void the_rows_for_are_properly_populated()
       {
-         var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
+         _rows = sut.GetAvailableRowsFor(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
             "Error",
@@ -320,13 +327,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         Assert.IsTrue(res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration"));
+         Assert.IsTrue(_rows.Any(r => r.Description == "Col1") && _rows.Any(r => r.Description == "Col2") && _rows.Any(r => r.Description == "Error") && _rows.Any(r => r.Description == "Concentration"));
       }
 
       [TestCase]
       public void the_options_for_are_properly_populated()
       {
-         var res = sut.GetAvailableOptionsFor(new ColumnMappingDTO
+         _rows = sut.GetAvailableOptionsFor(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
             "Error",
@@ -334,7 +341,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         Assert.IsTrue(res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration")));
+         Assert.IsTrue(_rows.Any(r => r.Label.StartsWith("Col1")) && _rows.Any( c => c.Label.StartsWith("Col2")) && _rows.Any(r => r.Label.StartsWith("Error")) && _rows.Any(r => r.Label.StartsWith("Concentration")));
       }
    }
 }
