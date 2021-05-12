@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
@@ -42,6 +43,26 @@ namespace OSPSuite.R.Services
       string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
       string[] AllParameterPathsIn(IModelCoreSimulation simulation);
       string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
+
+      /// <summary>
+      ///    Returns names of base units of entities with given path (may contain wildcards)
+      /// </summary>
+      string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns names of dimension of entities with given path (may contain wildcards)
+      /// </summary>
+      string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
+      /// </summary>
+      bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
+      /// </summary>
+      void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path);
    }
 
    public class ContainerTask : IContainerTask
@@ -114,6 +135,18 @@ namespace OSPSuite.R.Services
       public string[] AllParameterPathsIn(IModelCoreSimulation simulation) => AllParameterPathsIn(simulation?.Model?.Root);
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
+
+      public string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path) =>
+         AllQuantitiesMatching(simulation, path).Select(x => x.BaseUnitName()).ToArray();
+
+      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Select(x => x.DimensionName()).ToArray();
+
+      public bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Select(x => x.Formula.IsExplicit()).ToArray();
+
+      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {

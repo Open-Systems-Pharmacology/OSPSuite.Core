@@ -46,6 +46,7 @@ namespace OSPSuite.R.Services
          _liverIntracellular = new Container().WithName(INTRACELLULAR);
          _kidneyIntracellular = new Container().WithName(INTRACELLULAR);
          _volumeLiver = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(Constants.Parameters.VOLUME);
+         _volumeLiver.Formula = new ExplicitFormula("1+2");
          _volumeOrganism = DomainHelperForSpecs.ConstantParameterWithValue(20).WithName(Constants.Parameters.VOLUME);
          _volumeLiverCell = DomainHelperForSpecs.ConstantParameterWithValue(5).WithName(Constants.Parameters.VOLUME);
          _liverIntracellularSubContainer = new Container().WithName("Intracellular Sub Container");
@@ -70,7 +71,7 @@ namespace OSPSuite.R.Services
          _liverIntracellularMoleculeAmount = new MoleculeAmount().WithName("Drug");
          _liverIntracellular.Add(_liverIntracellularMoleculeAmount);
 
-         _simulation= A.Fake<ISimulation>();
+         _simulation = A.Fake<ISimulation>();
          _simulation.Model.Root = _organism;
       }
 
@@ -245,7 +246,6 @@ namespace OSPSuite.R.Services
          var parameters = new[]
          {
             _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS
-
          };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
@@ -303,6 +303,39 @@ namespace OSPSuite.R.Services
          var parameters = new[] {_paramWithRHS};
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
+      }
+   }
+
+   public class When_retrieving_the_is_formula_flag_for_a_given_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_return_the_expected_entries()
+      {
+         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(false);
+
+         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}Vol")).ShouldBeEmpty();
+
+         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD, Constants.Parameters.VOLUME)).ShouldOnlyContainInOrder(
+            true, false, false, false);
+      }
+   }
+
+
+   public class When_retrieving_the_base_unit_names_for_a_given_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_return_the_expected_entries()
+      {
+         sut.BaseUnitNamesFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell.Dimension.BaseUnit.Name);
+      }
+   }
+
+   public class When_retrieving_the_base_dimensions_names_for_a_given_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_return_the_expected_entries()
+      {
+         sut.DimensionNamesFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell.Dimension.Name);
       }
    }
 }
