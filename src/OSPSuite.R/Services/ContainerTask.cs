@@ -115,6 +115,27 @@ namespace OSPSuite.R.Services
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
+      public String[] BaseUnitNameFromPath(IModelCoreSimulation simulation, string path)
+      {
+         var unitNames = new List<string>();
+         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
+         foreach (var quantity in allQuantities)
+         {
+            unitNames.Add(WithDimensionExtensions.BaseUnitName(quantity));
+         }
+         return unitNames.ToArray();
+      }
+      public String[] DimensionNameFromPath(IModelCoreSimulation simulation, string path)
+      {
+         var unitNames = new List<string>();
+         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
+         foreach (var quantity in allQuantities)
+         {
+            unitNames.Add(WithDimensionExtensions.DimensionName(quantity));
+         }
+         return unitNames.ToArray();
+      }
+
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {
          return _coreContainerTask.CacheAllChildrenSatisfying(container, filterFunc ?? (x => true)).Keys.ToArray();
