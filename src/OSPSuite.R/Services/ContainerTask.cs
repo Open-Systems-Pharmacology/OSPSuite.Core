@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
@@ -42,6 +43,26 @@ namespace OSPSuite.R.Services
       string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
       string[] AllParameterPathsIn(IModelCoreSimulation simulation);
       string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
+
+      /// <summary>
+      ///    Returns names of base units of entities with given path (may contain wildcards)
+      /// </summary>
+      string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns names of dimension of entities with given path (may contain wildcards)
+      /// </summary>
+      string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
+      /// </summary>
+      bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
+      /// </summary>
+      void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path);
    }
 
    public class ContainerTask : IContainerTask
@@ -115,52 +136,17 @@ namespace OSPSuite.R.Services
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
-      // Return names of base units of entities with given path (may contain wildcards) 
-      public string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path)
-      {
-         var unitNames = new List<string>();
-         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
-         foreach (var quantity in allQuantities)
-         {
-            unitNames.Add(WithDimensionExtensions.BaseUnitName(quantity));
-         }
-         return unitNames.ToArray();
-      }
+      public string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path) =>
+         AllQuantitiesMatching(simulation, path).Select(x => x.BaseUnitName()).ToArray();
 
-      // Return names of dimension of entities with given path (may contain wildcards) 
-      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path)
-      {
-         var dimensionNames = new List<string>();
-         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
-         foreach (var quantity in allQuantities)
-         {
-            dimensionNames.Add(WithDimensionExtensions.DimensionName(quantity));
-         }
-         return dimensionNames.ToArray();
-      }
+      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Select(x => x.DimensionName()).ToArray();
 
-      // Return if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
-      public Boolean[] IsExplicitFormulaFromPath(IModelCoreSimulation simulation, string path)
-      {
-         var isFormulas = new List<bool>();
-         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
-         foreach (var quantity in allQuantities)
-         {
-            isFormulas.Add(Core.Domain.Formulas.FormulaExtensions.IsExplicit(quantity.Formula));
-         }
-         return isFormulas.ToArray();
-      }
+      public bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Select(x => x.Formula.IsExplicit()).ToArray();
 
-      // Add quantities with given path (may contain wildcards) to output selections of the simulation.
-      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path)
-      {
-         var allQuantities = AllQuantitiesMatching(simulation?.Model?.Root, path);
-         var outputSelections = simulation.OutputSelections;
-         foreach (var quantity in allQuantities)
-         {
-            outputSelections.AddQuantity(quantity);
-         }
-      }
+      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) => 
+         AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {
