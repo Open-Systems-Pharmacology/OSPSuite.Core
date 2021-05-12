@@ -115,9 +115,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
-         if ((errorColumn.Unit.SelectedUnit != "?") && (errorColumn.Unit.ColumnName != "")) return;
-         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC) return;
-
+         if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
+         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+         {
+            errorColumn.Unit = new UnitDescription("");
+            return;
+         }
 
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
          var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source).MappedColumn;
@@ -165,7 +168,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var column = ((MappingDataFormatParameter)_currentModel.Source).MappedColumn;
          column.Unit = _mappingParameterEditorPresenter.Unit;
-         if (column.Unit.ColumnName != null && !string.IsNullOrEmpty(column.Unit.ColumnName))
+         if (!string.IsNullOrEmpty(column.Unit.ColumnName))
          {
             column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
          }
@@ -191,7 +194,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else //in this case the column is a measurement column
          {
             var columns = new List<string>() { column.LloqColumn };
-            if (column.LloqColumn != "")
+            if (!string.IsNullOrEmpty(column.LloqColumn))
             {
                columns.Add("");
             }
@@ -203,6 +206,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.RefreshData();
          _view.CloseEditor();
       }
+
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
          var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
@@ -505,6 +509,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             model.Source = null;
             _format.Parameters.RemoveAt(index);
          }
+         ValidateMapping();
          View.RefreshData();
       }
 

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -24,6 +27,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
+      bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory);
    }
 
    public class DataSource : IDataSource
@@ -131,6 +135,48 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
 
          return null;
+      }
+
+      //TODO: test it!!!
+      public bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory)
+      {
+         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
+         {
+            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            {
+               foreach (var dataSet in DataSets)
+               {
+                  foreach (var set in dataSet.Data)
+                  {
+                     var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
+                     var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
+
+                     if (measurementColumn.Value.Count != errorColumn.Value.Count)
+                        throw new MismatchingArrayLengthsException();
+
+                     if (errorColumn.Key == null)
+                        return true;
+
+                     var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
+                     if (errorDimension == Constants.Dimension.NO_DIMENSION
+                         || errorDimension == null 
+                         || errorDimension.Name == Constants.Dimension.FRACTION)
+                        continue;
+
+                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                     {
+                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
+                           continue;
+
+                        if (dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
+                            dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
+                           return false;
+                     }
+                  }
+               }
+            }
+         }
+         return true;
       }
    }
 

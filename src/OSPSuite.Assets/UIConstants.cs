@@ -1248,7 +1248,8 @@ namespace OSPSuite.Assets
 
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
-      
+      public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+
       public static string MissingColumnException(string missingColumn) => $"The column '{missingColumn}' that you have mapped is missing from at least one of the sheets you are trying to load";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";

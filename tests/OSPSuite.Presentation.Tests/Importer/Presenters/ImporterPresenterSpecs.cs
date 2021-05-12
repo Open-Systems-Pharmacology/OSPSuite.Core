@@ -1,7 +1,6 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -17,6 +16,7 @@ using OSPSuite.Utility.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -42,25 +42,39 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public abstract class ConcernForImporterPresenter : ContextSpecification<ImporterPresenter>
+   public abstract class concern_for_ImporterPresenter : ContextSpecification<ImporterPresenter>
    {
-      protected ImportTriggeredEventArgs eventArgs;
-      protected List<MetaDataCategory> metaDataCategories;
-      protected DataImporterSettings dataImporterSettings;
+      protected ImportTriggeredEventArgs _eventArgs;
+      protected List<MetaDataCategory> _metaDataCategories;
+      protected DataImporterSettings _dataImporterSettings;
+      protected IImporter _importer;
+      protected IImporterView _importerView;
+      protected INanPresenter _nanPresenter;
+      protected IDataSetToDataRepositoryMapper _mapper;
+      protected IImporterDataPresenter _importerDataPresenter;
+      protected IImportConfirmationPresenter _importConfirmationPresenter;
+      protected IDataSource _dataSource;
+      protected IColumnMappingPresenter _columnMappingPresenter;
+      protected ISourceFilePresenter _sourceFilePresenter;
+      protected IDialogCreator _dialogCreator;
+      protected IDimensionFactory _dimensionFactory;
+      protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
+      protected Utility.Container.IContainer _container;
+      protected IDataSourceFile _dataSourceFile;
 
       protected override void Context()
       {
-         dataImporterSettings = new DataImporterSettings();
+         _dataImporterSettings = new DataImporterSettings();
          base.Context();
-         var mapper = A.Fake<IDataSetToDataRepositoryMapper>();
+         _mapper = A.Fake<IDataSetToDataRepositoryMapper>();
          var cache = new Cache<string, IDataSet>();
          var dataSet = new DataSet();
-         dataSet.AddData(new List<ParsedDataSet>() 
+         dataSet.AddData(new List<ParsedDataSet>()
          {
             new ParsedDataSet(new List<(string ColumnName, IList<string> ExistingValues)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
-         var dataSource = A.Fake<IDataSource>();
-         A.CallTo(() => dataSource.DataSets).Returns(cache);
+         _dataSource = A.Fake<IDataSource>();
+         A.CallTo(() => _dataSource.DataSets).Returns(cache);
          cache.Add("sheet1", dataSet);
          var dataRepository = new DataRepository { Name = "name" };
          dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Molecule", Value = "Molecule1" });
@@ -74,7 +88,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var moleculeDataColumn = new DataColumn("Measurement", A.Fake<IDimension>(), dataColumn);
          dataColumn.DataInfo = dataInfo;
          dataRepository.Add(moleculeDataColumn);
-         A.CallTo(() => mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(dataRepository);
+         A.CallTo(() => _mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(dataRepository);
 
          var moleculeMetaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          moleculeMetaDataCategory.IsListOfValuesFixed = true;
@@ -83,33 +97,43 @@ namespace OSPSuite.Presentation.Importer.Presenters
          moleculeMetaDataCategory.ShouldListOfValuesBeIncluded = true;
          moleculeMetaDataCategory.SelectDefaultValue = true;
 
-         metaDataCategories = new List<MetaDataCategory>()
+         _metaDataCategories = new List<MetaDataCategory>()
          {
             moleculeMetaDataCategory,
             createMetaDataCategory<string>("Mol weight", isMandatory: false)
          };
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>());
-         var dataSourceFile = A.Fake<IDataSourceFile>();
-         A.CallTo(() => dataSourceFile.Format).Returns(dataFormat);
-         var importerPresenter = A.Fake<IImporterDataPresenter>();
-         A.CallTo(() => importerPresenter.SetDataSource(A<string>.Ignored)).Returns(dataSourceFile);
+         _dataSourceFile = A.Fake<IDataSourceFile>();
+         A.CallTo(() => _dataSourceFile.Format).Returns(dataFormat);
+         _importerDataPresenter = A.Fake<IImporterDataPresenter>();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
+         _importerView = A.Fake<IImporterView>();
+         _importer = A.Fake<IImporter>();
+         _nanPresenter = A.Fake<INanPresenter>();
+         _importConfirmationPresenter = A.Fake<IImportConfirmationPresenter>();
+         _columnMappingPresenter = A.Fake<IColumnMappingPresenter>();
+         _sourceFilePresenter = A.Fake<ISourceFilePresenter>();
+         _dialogCreator = A.Fake<IDialogCreator>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
+         _ospSuiteXmlSerializerRepository = A.Fake<IOSPSuiteXmlSerializerRepository>();
+         _container = A.Fake<Utility.Container.IContainer>();
          sut = new ImporterPresenterForTest(
-            A.Fake<IImporterView>(),
-            mapper,
-            A.Fake<IImporter>(),
-            A.Fake<INanPresenter>(),
-            importerPresenter,
-            A.Fake<IImportConfirmationPresenter>(),
-            A.Fake<IColumnMappingPresenter>(),
-            A.Fake<ISourceFilePresenter>(),
-            A.Fake<IDialogCreator>(),
-            A.Fake<IDimensionFactory>(),
-            A.Fake<IOSPSuiteXmlSerializerRepository>(),
-            A.Fake<Utility.Container.IContainer>(),
-            dataSource);
+            _importerView,
+            _mapper,
+            _importer,
+            _nanPresenter,
+            _importerDataPresenter,
+            _importConfirmationPresenter,
+            _columnMappingPresenter,
+            _sourceFilePresenter,
+            _dialogCreator,
+            _dimensionFactory,
+            _ospSuiteXmlSerializerRepository,
+            _container,
+            _dataSource);
          sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>(), "");
-         sut.SetSettings(metaDataCategories, new List<ColumnInfo>(), dataImporterSettings);
+         sut.SetSettings(_metaDataCategories, new List<ColumnInfo>(), _dataImporterSettings);
       }
 
       protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false, Action<MetaDataCategory> fixedValuesRetriever = null)
@@ -130,12 +154,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_importing_data : ConcernForImporterPresenter
+   public class When_importing_data : concern_for_ImporterPresenter
    {
       [Observation]
       public void sets_molWeight_from_molecule()
       {
-         dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          ImportTriggeredEventArgs result = null;
          sut.OnTriggerImport += (_, e) => result = e;
          sut.ImportData(this, null);
@@ -143,30 +167,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
       }
 
-      //ToDo: move to ImporterSpecs
-      /*
-      [Observation]
-      public void should_not_invoke_when_inconsistent_mol_weight()
-      {
-         dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
-         dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
-         var importerPresenter = A.Fake<IImporterPresenter>();
-         ImportTriggeredEventArgs result = null;
-         sut.OnTriggerImport += (_, e) => result = e;
-         sut.ImportData(this, null);
-
-         //to check how an exception is being tested in unit tests
-         //A.CallTo(Sut.ImportData()).Throws<>()
-
-         Assert.IsNull(result);
-      }
-*/
-
       [Observation]
       public void sets_molWeight_from_molWeight()
       {
-         dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
-         var importerPresenter = A.Fake<IImporterPresenter>();
+         _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
          ImportTriggeredEventArgs result = null;
          sut.OnTriggerImport += (_, e) => result = e;
          sut.ImportData(this, null);
@@ -175,4 +179,242 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_setting_settings : concern_for_ImporterPresenter
+   {
+      protected IReadOnlyList<ColumnInfo> _columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();
+
+      protected override void Because()
+      {
+         sut.SetSettings(_metaDataCategories, _columnInfos, _dataImporterSettings);
+      }
+
+      [Observation]
+      public void sets_column_mapping_presenter_settings()
+      {
+         A.CallTo(() => _columnMappingPresenter.SetSettings(_metaDataCategories, _columnInfos)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void sets_importer_data_presenter_settings()
+      {
+         A.CallTo(() => _importerDataPresenter.SetSettings(_metaDataCategories, _columnInfos)).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_data_source : concern_for_ImporterPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(A.Fake<IDataSourceFile>());
+      }
+
+      protected override void Because()
+      {
+         sut.SetDataSource("path");
+      }
+
+      [Observation]
+      public void sets_column_mapping_presenter_settings()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.Ignored)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_import_data : concern_for_ImporterPresenter
+   {
+      protected bool triggered = false;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.UpdateAndGetConfiguration().Id = null;
+         sut.OnTriggerImport += (o, a) => triggered = true;
+      }
+
+      protected override void Because()
+      {
+         sut.ImportData(A.Fake<object>(), A.Fake<EventArgs>());
+      }
+
+      [Observation]
+      public void generates_ids()
+      {
+         sut.UpdateAndGetConfiguration().Id.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void triggers_import()
+      {
+         triggered.ShouldBeTrue();
+      }
+   }
+
+   public class When_format_changed : concern_for_ImporterPresenter
+   {
+      protected FormatChangedEventArgs _args;
+
+      protected override void Context()
+      {
+         base.Context();
+         var dataFormat = A.Fake<IDataFormat>();
+         A.CallTo(() => dataFormat.Parameters).Returns(Enumerable.Empty<DataFormatParameter>().ToList());
+         _args = new FormatChangedEventArgs() { Format = dataFormat };
+      }
+
+      protected override void Because()
+      {
+         _importerDataPresenter.OnFormatChanged += Raise.With(_args);
+      }
+
+      [Observation]
+      public void invokes_column_mapping_presenter()
+      {
+         A.CallTo(() => _columnMappingPresenter.SetDataFormat(_args.Format)).MustHaveHappened();
+      }
+   }
+
+   public class When_tab_changed : concern_for_ImporterPresenter
+   {
+      protected TabChangedEventArgs _args;
+
+      protected override void Context()
+      {
+         base.Context();
+         _args = new TabChangedEventArgs() { TabData = new UnformattedData() };
+      }
+
+      protected override void Because()
+      {
+         _importerDataPresenter.OnTabChanged += Raise.With(_args);
+      }
+
+      [Observation]
+      public void invokes_column_mapping_presenter()
+      {
+         A.CallTo(() => _columnMappingPresenter.SetRawData(_args.TabData)).MustHaveHappened();
+      }
+   }
+
+   public class When_mapping_completed_with_loaded_data : concern_for_ImporterPresenter
+   {
+      protected override void Because()
+      {
+         base.Because();
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", A.Fake<DataSheet>());
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
+      }
+
+      [Observation]
+      public void invokes_column_mapping_presenter()
+      {
+         A.CallTo(() => _importerDataPresenter.onCompletedMapping()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void shows_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustHaveHappened();
+      }
+   }
+
+   public class When_mapping_completed_without_loaded_data : concern_for_ImporterPresenter
+   {
+      protected override void Because()
+      {
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
+      }
+
+      [Observation]
+      public void does_not_show_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustNotHaveHappened();
+      }
+   }
+
+   public class When_mapping_completed_with_loaded_data_with_wrong_mapping : concern_for_ImporterPresenter
+   {
+      protected override void Because()
+      {
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(false);
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", A.Fake<DataSheet>());
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
+      }
+
+      [Observation]
+      public void does_not_show_confirmation_view()
+      {
+         A.CallTo(() => _importerView.EnableConfirmationView()).MustNotHaveHappened();
+      }
+   }
+
+   public class When_mapping_is_missing : concern_for_ImporterPresenter
+   {
+      protected override void Because()
+      {
+         _columnMappingPresenter.OnMissingMapping += Raise.With(new MissingMappingEventArgs());
+      }
+
+      [Observation]
+      public void invokes_importer_data_presenter()
+      {
+         A.CallTo(() => _importerDataPresenter.onMissingMapping()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void hides_confirmation_view()
+      {
+         A.CallTo(() => _importerView.DisableConfirmationView()).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_empty_wrong_source_file : concern_for_ImporterPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(null);
+      }
+
+      [Observation]
+      public void returns_false()
+      {
+         var path = "path";
+         sut.SetSourceFile(path).ShouldBeFalse();
+         A.CallTo(() => _sourceFilePresenter.SetFilePath(path)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_setting_empty_source_file : concern_for_ImporterPresenter
+   {
+      protected string path = "path";
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(A.Fake<IDataSourceFile>());
+      }
+
+      protected override void Because()
+      {
+         sut.SetSourceFile(path);
+      }
+
+      [Observation]
+      public void must_set_file_path_on_source_file_presenter()
+      {
+         A.CallTo(() => _sourceFilePresenter.SetFilePath(path)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void must_validate_mapping()
+      {
+         A.CallTo(() => _columnMappingPresenter.ValidateMapping()).MustHaveHappened();
+      }
+   }
 }
