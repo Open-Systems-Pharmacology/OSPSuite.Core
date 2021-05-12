@@ -223,7 +223,7 @@ namespace OSPSuite.R.Services
       {
          var parameters = new[]
          {
-            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS
          };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
