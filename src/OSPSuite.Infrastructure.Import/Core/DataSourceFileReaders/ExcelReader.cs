@@ -9,7 +9,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public class ExcelReader : IDisposable
+   public class ExcelReader
    {
       private IWorkbook _book;
       private IEnumerator<ISheet> _sheetEnumerator;
@@ -192,11 +192,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          
          return (HSSFRow) enumerator.Current;
-      }
-
-      public void Dispose()
-      {
-         _sheetEnumerator?.Dispose();
       }
    }
 }

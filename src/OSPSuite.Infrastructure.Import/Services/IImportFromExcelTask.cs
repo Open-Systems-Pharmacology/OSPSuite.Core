@@ -79,10 +79,14 @@ namespace OSPSuite.Infrastructure.Import.Services
          var dataTablesList = new List<DataTable>();
          while (reader.MoveToNextSheet())
          {
-            if (!reader.MoveToNextRow()) continue; //we should check this.maybe we should return an empty dataTable in this case
-            if (!string.IsNullOrEmpty(sheetName) && reader.CurrentSheet.SheetName.Equals(sheetName)) continue;
+            if (!string.IsNullOrEmpty(sheetName) && !reader.CurrentSheet.SheetName.Equals(sheetName)) continue;
             var dataTable = new DataTable { TableName = reader.CurrentSheet.SheetName };
-            
+            if (!reader.MoveToNextRow())
+            {
+               dataTablesList.Add(dataTable);
+               continue;
+            }
+
             if (firstRowAsCaption)
             {
                foreach (var column in reader.CurrentRow.Select(header => new DataColumn(header)))
