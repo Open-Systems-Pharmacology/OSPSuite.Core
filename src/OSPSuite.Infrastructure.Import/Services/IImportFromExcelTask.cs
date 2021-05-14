@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
@@ -46,7 +47,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
          catch
          {
-            return Enumerable.Empty<string>().ToList();
+            return Array.Empty<string>();
          }
       }
 

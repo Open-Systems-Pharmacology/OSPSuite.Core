@@ -96,5 +96,12 @@ using OSPSuite.Infrastructure.Import.Services;
       {
          _results.ShouldNotBeNull();
       }
+
+      [Observation]
+      public void should_import_correct_values()
+      {
+         _results.Rows[2][2].ToString().ShouldBeEqualTo("min");
+         _results.Rows[3][0].ToString().ShouldBeEqualTo("A|B|F");
+      }
    }
 }

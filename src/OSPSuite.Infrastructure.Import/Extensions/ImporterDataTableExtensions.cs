@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using NPOI.SS.UserModel;
 
 namespace OSPSuite.Infrastructure.Import.Extensions
 {
-   public static class ExcelReadingExtensions
+   public static class ImporterDataTableExtensions
    {
       /// <summary>
       /// Adds a list of values as a row to a DataTable
@@ -13,10 +12,11 @@ namespace OSPSuite.Infrastructure.Import.Extensions
       public static void AddRowToDataTable(this DataTable dataTable, IReadOnlyList<string> rowValues)
       {
          var dataRow = dataTable.NewRow();
-         var i = 0; //IS THIS ZERO ACTUALLY RIGHT????
+         var i = 0;
          foreach (var cellContent in rowValues)
          {
             dataRow[i] = cellContent;
+            i++;
          }
 
          dataTable.Rows.Add(dataRow);
