@@ -353,7 +353,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(false);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
