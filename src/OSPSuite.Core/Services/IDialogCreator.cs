@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Services
 
    public interface IDialogCreator
    {
-      void MessageBoxError(string message);
+      void MessageBoxError(string message, bool hyperlink = false);
 
       ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton = ViewResult.Yes);
 

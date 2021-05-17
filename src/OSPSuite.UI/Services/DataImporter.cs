@@ -109,7 +109,7 @@ namespace OSPSuite.UI.Services
             }
             catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
             {
-               _dialogCreator.MessageBoxError(e.Message);
+               _dialogCreator.MessageBoxError(e.Message, true);
                return (new List<DataRepository>(), null);
             }
 
@@ -153,7 +153,7 @@ namespace OSPSuite.UI.Services
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
-            _dialogCreator.MessageBoxError(e.Message);
+            _dialogCreator.MessageBoxError(e.Message, true);
             return new List<DataRepository>();
          }
 

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
+using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -25,9 +27,19 @@ namespace OSPSuite.UI.Services
          _applicationConfiguration = applicationConfiguration;
       }
 
-      public void MessageBoxError(string message)
+      public void MessageBoxError(string message, bool hyperlink)
       {
-         XtraMessageBox.Show(message, _applicationConfiguration.ProductNameWithTrademark, MessageBoxButtons.OK, MessageBoxIcon.Error);
+         var args = new XtraMessageBoxArgs { Caption = _applicationConfiguration.ProductNameWithTrademark, Text = message, Buttons = new DialogResult[] {
+            DialogResult.OK } ,
+            Icon = DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Error), AllowHtmlText = DefaultBoolean.True };
+         
+         if (hyperlink)
+            args.HyperlinkClick += delegate (object sender, HyperlinkClickEventArgs e) 
+            {
+               System.Diagnostics.Process.Start(e.Link);
+            };
+
+         XtraMessageBox.Show(args);
       }
 
       public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton= ViewResult.Yes)

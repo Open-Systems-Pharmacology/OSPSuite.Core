@@ -217,7 +217,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void sets_column_mapping_presenter_settings()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.Ignored)).MustNotHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
       }
    }
 

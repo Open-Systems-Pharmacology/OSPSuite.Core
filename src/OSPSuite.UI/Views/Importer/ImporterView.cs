@@ -1,9 +1,9 @@
-﻿﻿using System.Windows.Forms;
- using DevExpress.XtraEditors;
- using DevExpress.XtraLayout.Utils;
- using DevExpress.XtraTab;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using DevExpress.Utils;
+using DevExpress.XtraEditors;
+using DevExpress.XtraTab;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -29,7 +29,18 @@ namespace OSPSuite.UI.Views.Importer
 
       public void ShowErrorMessage(string message)
       {
-         XtraMessageBox.Show(this, message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+         var args = new XtraMessageBoxArgs
+         {
+            Caption = "",
+            Text = message,
+            Buttons = new DialogResult[] {
+            DialogResult.OK },
+            Icon = DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Error),
+            AllowHtmlText = DefaultBoolean.True
+         };
+
+         args.HyperlinkClick += delegate(object sender, HyperlinkClickEventArgs e) { System.Diagnostics.Process.Start(e.Link); };
+         XtraMessageBox.Show(args);
       }
 
       public override void InitializeResources()
