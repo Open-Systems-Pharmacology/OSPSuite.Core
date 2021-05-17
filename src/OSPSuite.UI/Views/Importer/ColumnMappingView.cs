@@ -20,7 +20,9 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -344,15 +346,24 @@ namespace OSPSuite.UI.Views.Importer
 
          if (model is MappingDataFormatParameter mapping)
          {
-            var str = $"Units: {mapping.MappedColumn.Unit.SelectedUnit}";
+            var str = "";
+
+            if (!mapping.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+            {
+               str += $"Units Col: {mapping.MappedColumn.Unit.ColumnName}, ";
+            }
+            else if (!mapping.MappedColumn.Unit.SelectedUnit.IsNullOrEmpty() && mapping.MappedColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC)
+               str += $"Units: {mapping.MappedColumn.Unit.SelectedUnit}, ";
+
+
             if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
             {
-               str += $", LLOQ: {mapping.MappedColumn.LloqColumn}";
+               str += $"LLOQ: {mapping.MappedColumn.LloqColumn}, ";
             }
 
             if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
             {
-               str += $", Error: {mapping.MappedColumn.ErrorStdDev}";
+               str += $"Error: {mapping.MappedColumn.ErrorStdDev}";
             }
 
             return str;

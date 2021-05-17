@@ -438,10 +438,21 @@ namespace OSPSuite.Assets
          {
             return $"The column {parameter} will be mapped into {target} with units as {unit}";
          }
+         public static string MappingHintUnitColumn(string parameter, string target, string unitColumn)
+         {
+            return $"The column {parameter} will be mapped into {target} and column {unitColumn} will be mapped into unit";
+         }
+         public static string MappingHintNoUnit(string parameter, string target)
+         {
+            return $"The column {parameter} will be mapped into {target}";
+         }
          public static string GroupByHint(string parameter)
          {
             return $"The column {parameter} will be used for grouping by";
          }
+
+         public static string MappingHintGeometricError = "Geometric standard deviation";
+
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
 
          public static string NamingPatternDescription = "Automatically generates names replacing words surrounded by <b>{}</b> with like named meta data values.";

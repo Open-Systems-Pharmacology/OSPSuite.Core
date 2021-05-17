@@ -1,4 +1,6 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Import
 {
@@ -128,8 +130,19 @@ namespace OSPSuite.Core.Import
 
       public override string TooltipDescription()
       {
-         
-         return Captions.Importer.MappingHint(ColumnName, MappedColumn.Name, MappedColumn.Unit.SelectedUnit);
+         if (MappedColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+            return Captions.Importer.MappingHintGeometricError;
+
+         if (!MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+         {
+            return Captions.Importer.MappingHintUnitColumn(ColumnName, MappedColumn.Name, MappedColumn.Unit.ColumnName);
+         }
+
+         if (!MappedColumn.Unit.SelectedUnit.IsNullOrEmpty())
+            return Captions.Importer.MappingHint(ColumnName, MappedColumn.Name, MappedColumn.Unit.SelectedUnit);
+
+
+         return Captions.Importer.MappingHintNoUnit(ColumnName, MappedColumn.Name);
       }
 
       public override string TooltipTitle()

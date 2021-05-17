@@ -90,7 +90,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                };
                if (columnInfos.First(ci => ci.DisplayName == header).IsAuxiliary())
                {
-                  col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+                  if(units.ColumnName == "" && units.SelectedUnit == UnitDescription.InvalidUnit)
+                     col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
+                  else
+                     col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
                }
                _parameters.Add(new MappingDataFormatParameter
                (
