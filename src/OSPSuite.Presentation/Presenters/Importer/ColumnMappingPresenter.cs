@@ -481,7 +481,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else if (model.Source is AddGroupByFormatParameter)
          {
             model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
-            _format.Parameters.Add(model.Source);
+            _format.Parameters.Add(model.Source); 
+            setDataFormat(_format.Parameters);
          }
          else
          {
@@ -491,8 +492,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
             }
          }
-
-         setDataFormat(_format.Parameters);
       }
 
       public void ClearRow(ColumnMappingDTO model)
