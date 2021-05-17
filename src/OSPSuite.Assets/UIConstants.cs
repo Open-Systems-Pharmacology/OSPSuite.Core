@@ -189,6 +189,7 @@ namespace OSPSuite.Assets
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeObserver = "Molecule Observer";
       public static readonly string ContainerObserver = "Container Observer";
+      public static readonly string UnitsEditorCaption = "Unit Settings";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
