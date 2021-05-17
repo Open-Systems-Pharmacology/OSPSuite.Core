@@ -298,13 +298,21 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_mapping_completed_with_loaded_data : concern_for_ImporterPresenter
    {
+      protected Cache<string, DataSheet> _sheets;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         _sheets = new Cache<string, DataSheet>();
+         _sheets.Add("sheet1", A.Fake<DataSheet>());
+      }
+
       protected override void Because()
       {
          base.Because();
-         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
-         var sheets = new Cache<string, DataSheet>();
-         sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -338,12 +346,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_mapping_completed_with_loaded_data_with_wrong_mapping : concern_for_ImporterPresenter
    {
+      protected Cache<string, DataSheet> _sheets;
+
       protected override void Because()
       {
          A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(false);
-         var sheets = new Cache<string, DataSheet>();
-         sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+         _sheets = new Cache<string, DataSheet>();
+         _sheets.Add("sheet1", A.Fake<DataSheet>());
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
