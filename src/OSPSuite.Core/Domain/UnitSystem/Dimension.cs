@@ -253,9 +253,15 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       private bool hasUnitWithSynonym(string unitName) => _units.Any(x => x.HasSynonym(unitName));
 
-      public bool HasUnit(string unitName) => _units.Contains(unitName) || hasUnitWithSynonym(unitName);
+      public bool HasUnit(string unitName)
+      {
+         if (unitName == null)
+            return false;
 
-      public bool HasUnit(Unit unit) => unit != null && HasUnit(unit.Name);
+         return _units.Contains(unitName) || hasUnitWithSynonym(unitName);
+      }
+
+      public bool HasUnit(Unit unit) => HasUnit(unit?.Name);
 
       public bool CanConvertToUnit(string unitName) => HasUnit(unitName);
 

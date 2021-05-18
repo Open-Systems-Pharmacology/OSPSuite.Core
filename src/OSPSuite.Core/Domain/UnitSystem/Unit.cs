@@ -96,7 +96,10 @@ namespace OSPSuite.Core.Domain.UnitSystem
          FactorFormula = factor.ToString(NumberFormatInfo.InvariantInfo);
       }
 
-      public virtual bool HasSynonym(string name) => _unitSynonyms.Contains(name);
+      public virtual bool HasSynonym(string name)
+      {
+         return name != null && _unitSynonyms.Contains(name);
+      }
 
       internal virtual void AddUnitSynonym(string name) => AddUnitSynonym(new UnitSynonym(name));
 
