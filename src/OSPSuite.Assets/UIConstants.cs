@@ -146,6 +146,7 @@ namespace OSPSuite.Assets
       public static readonly string SensitivityAnalysisFolder = "Sensitivity Analyses";
       public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
+      public static readonly string ErrorType = "Error type";
       public static readonly string Delete = "Delete";
       public static readonly string Clear = "Clear";
       public static readonly string SelectSimulations = "Select Simulations";
@@ -189,6 +190,7 @@ namespace OSPSuite.Assets
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeObserver = "Molecule Observer";
       public static readonly string ContainerObserver = "Container Observer";
+      public static readonly string UnitsEditorCaption = "Unit Settings";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {

@@ -142,7 +142,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.unitsLayoutControlItem.Control = this.unitsPanelControl;
          this.unitsLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.unitsLayoutControlItem.Name = "Units";
+         this.unitsLayoutControlItem.Name = "UnitsLayoutControlItem";
          this.unitsLayoutControlItem.Size = new System.Drawing.Size(1658, 143);
          this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
@@ -159,7 +159,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.lloqLayoutControlItem.Control = this.lloqPanelControl;
          this.lloqLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.lloqLayoutControlItem.Name = "Lloq";
+         this.lloqLayoutControlItem.Name = "lloqLayoutControlItem";
          this.lloqLayoutControlItem.Size = new System.Drawing.Size(1658, 136);
          this.lloqLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
@@ -176,7 +176,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.errorTypeLayoutControlItem.Control = this.errorTypePanelControl;
          this.errorTypeLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.errorTypeLayoutControlItem.Name = "Error type";
+         this.errorTypeLayoutControlItem.Name = "errorTypeLayoutControlItem";
          this.errorTypeLayoutControlItem.Size = new System.Drawing.Size(1658, 160);
          this.errorTypeLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
