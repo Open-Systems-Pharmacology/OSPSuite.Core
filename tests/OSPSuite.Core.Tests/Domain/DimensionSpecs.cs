@@ -55,12 +55,12 @@ namespace OSPSuite.Core.Domain
       {
          sut.UnitOrDefault("dm").ShouldBeEqualTo(_unitWithSynonym);
       }
+
       [Observation]
       public void should_return_the_default_unit_if_the_unit_is_null()
       {
          sut.UnitOrDefault(null).ShouldBeEqualTo(sut.DefaultUnit);
       }
-
    }
 
    public class When_checking_if_a_dimension_supports_a_unit : concern_for_Dimension
@@ -91,7 +91,6 @@ namespace OSPSuite.Core.Domain
          sut.FindUnit("KM").ShouldNotBeNull();
          sut.FindUnit("DM_3").ShouldBeEqualTo(_unitWithSynonym);
          sut.FindUnit("min2/m3").ShouldNotBeNull();
-
       }
 
       [Observation]
