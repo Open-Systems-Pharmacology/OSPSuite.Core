@@ -14,6 +14,12 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IMappingParameterEditorPresenter _presenter;
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         unitsLayoutControlItem.Name = Captions.UnitsEditorCaption;
+      }
+
       public MappingParameterEditorView()
       {
          InitializeComponent();

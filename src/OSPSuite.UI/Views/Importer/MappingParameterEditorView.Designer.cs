@@ -142,7 +142,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.unitsLayoutControlItem.Control = this.unitsPanelControl;
          this.unitsLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.unitsLayoutControlItem.Name = Captions.UnitsEditorCaption;
+         this.unitsLayoutControlItem.Name = "UnitsLayoutControlItem";
          this.unitsLayoutControlItem.Size = new System.Drawing.Size(1658, 143);
          this.unitsLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
          // 
