@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Dynamic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -152,7 +154,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
                      if (measurementColumn.Value.Count != errorColumn.Value.Count)
-                        throw new MismatchingArrayLengthsException();
+                        throw new OSPSuiteException(Error.MismatchingArrayLengths);
 
                      if (errorColumn.Key == null)
                         return true;
