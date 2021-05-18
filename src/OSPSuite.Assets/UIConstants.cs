@@ -425,6 +425,15 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
+         public static string SheetsNotFound(List<string> listOfSheetNames)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following excel sheets were not found in the file and will not be imported ");
+            sb.AppendLine();
+            listOfSheetNames.ForEach(item => sb.Append(item + "\n"));
+            return sb.ToString();
+         }
+
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          
          public static readonly string AddGroupByTitle = "Add group by";
