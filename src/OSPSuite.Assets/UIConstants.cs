@@ -1614,10 +1614,9 @@ namespace OSPSuite.Assets
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
 
-      public static string TypeNotSupported(string typeName)
-      {
-         return $"{typeName} is not currently been handled";
-      }
+      public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
+
+      public static string CannotSetValueByPathUsingWildCard(string path) => $"Setting value by path is not supported for path containing wildcard ({path})";
    }
 
    public static class Validation

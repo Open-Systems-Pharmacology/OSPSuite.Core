@@ -63,6 +63,14 @@ namespace OSPSuite.R.Services
       ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
       /// </summary>
       void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Sets the value of the quantity by path
+      /// </summary>
+      /// <param name="simulation">Simulation containing the value to set</param>
+      /// <param name="path">Full path. Wild card not allowed</param>
+      /// <param name="value">Value to set in base unit</param>
+      void SetValueByPath(IModelCoreSimulation simulation, string path, double value);
    }
 
    public class ContainerTask : IContainerTask
@@ -139,14 +147,27 @@ namespace OSPSuite.R.Services
       public string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Select(x => x.BaseUnitName()).ToArray();
 
-      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path) => 
+      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Select(x => x.DimensionName()).ToArray();
 
-      public bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path) => 
+      public bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Select(x => x.Formula.IsExplicit()).ToArray();
 
-      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) => 
+      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
+
+      public void SetValueByPath(IModelCoreSimulation simulation, string path, double value)
+      {
+         if (path.Contains(WILD_CARD))
+            throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
+
+         var pathArray = path.ToPathArray();
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         if (quantity == null)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         quantity.Value = value;
+      }
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {

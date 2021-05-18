@@ -338,4 +338,26 @@ namespace OSPSuite.R.Services
          sut.DimensionNamesFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell.Dimension.Name);
       }
    }
+
+   public class When_setting_a_value_by_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_throw_an_exception_if_the_path_contains_wild_cards()
+      {
+         The.Action(()=>sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), 5)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_path_does_not_exist_in_the_simulation()
+      {
+         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_set_the_value_of_the_parameter_as_expected_otherwise()
+      {
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666);
+         _volumeLiverCell.Value.ShouldBeEqualTo(666);
+      }
+   }
 }
