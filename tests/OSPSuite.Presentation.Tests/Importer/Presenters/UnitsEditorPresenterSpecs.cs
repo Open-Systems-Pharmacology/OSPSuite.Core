@@ -1,19 +1,17 @@
-﻿
-
+﻿using System.Collections.Generic;
 using FakeItEasy;
-using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
-using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public abstract class ConcernForUnitsEditorPresenter : ContextSpecification<UnitsEditorPresenter>
+   public abstract class concern_for_UnitsEditorPresenter : ContextSpecification<UnitsEditorPresenter>
    {
       protected IUnitsEditorView _view;
+
       protected override void Context()
       {
          _view = A.Fake<IUnitsEditorView>();
@@ -21,12 +19,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_options_set_no_column : ConcernForUnitsEditorPresenter
+   public class When_options_set_no_column : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         base.Because();
-         sut.SetOptions(new Column() { Unit = new UnitDescription("min") }, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -36,12 +33,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_options_set_from_column : ConcernForUnitsEditorPresenter
+   public class When_options_set_from_column : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         base.Because();
-         sut.SetOptions(new Column() { Unit = new UnitDescription("min", "columnName") }, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min", "columnName")}, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -51,12 +47,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_options_set_no_dimensions : ConcernForUnitsEditorPresenter
+   public class When_options_set_no_dimensions : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         base.Because();
-         sut.SetOptions(new Column() { Unit = new UnitDescription("min") }, new List<IDimension>() { new Dimension() }, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, new List<IDimension>() {new Dimension()}, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -66,12 +61,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_options_set_with_dimensions : ConcernForUnitsEditorPresenter
+   public class When_options_set_with_dimensions : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         base.Because();
-         sut.SetOptions(new Column() { Unit = new UnitDescription("min") }, new List<IDimension>() { new Dimension(), new Dimension() }, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]

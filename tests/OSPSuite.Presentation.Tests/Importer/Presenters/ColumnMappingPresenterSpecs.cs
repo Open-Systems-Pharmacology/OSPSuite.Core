@@ -13,7 +13,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
-   public abstract class ConcernForColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
+   public abstract class concern_for_ColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
    {
       protected IDataFormat _basicFormat;
       protected IColumnMappingView _view;
@@ -27,8 +27,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
          new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
-         new GroupByDataFormatParameter("Study id"),
-         new MetaDataFormatParameter("Molecule", "Col1", true)
+         new GroupByDataFormatParameter("Study id")
       };
 
       public override void GlobalContext()
@@ -43,9 +42,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
       }
 
-      protected override void Because()
+      protected void UpdateSettings()
       {
-         base.Because();
          sut.SetSettings(_metaDataCategories, _columnInfos);
          sut.SetDataFormat(_basicFormat);
       }
@@ -73,14 +71,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             },
             new MetaDataCategory()
             {
-               Name = "Error",
+               DisplayName = "Error",
                IsMandatory = false
-            },
-            new MetaDataCategory()
-            {
-               Name = "Molecule",
-               IsMandatory = false,
-               ShouldListOfValuesBeIncluded = true
             }
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
@@ -89,8 +81,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_data_format : ConcernForColumnMappingPresenter
+   public class When_setting_data_format : concern_for_ColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+      }
+
       [Observation]
       public void identify_basic_format()
       {
@@ -104,11 +102,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_initializing_error_unit : ConcernForColumnMappingPresenter
+   public class When_initializing_error_unit : concern_for_ColumnMappingPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+      }
+
       protected override void Because()
       {
-         base.Because();
          sut.InitializeErrorUnit();
       }
 
@@ -119,7 +122,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_initializing_error_unit_on_initialized_error : ConcernForColumnMappingPresenter
+   public class When_initializing_error_unit_on_initialized_error : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
@@ -131,11 +134,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
             new GroupByDataFormatParameter("Study id")
          });
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.InitializeErrorUnit();
       }
 
@@ -146,18 +149,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_updating_description_for_model_with_first_error_type : ConcernForColumnMappingPresenter
+   public class When_updating_description_for_model_with_first_error_type : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
          A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(0);
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping, 
@@ -176,18 +179,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_updating_description_for_model_with_second_error_type : ConcernForColumnMappingPresenter
+   public class When_updating_description_for_model_with_second_error_type : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
          A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -206,7 +209,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_updating_description_for_model_for_observation : ConcernForColumnMappingPresenter
+   public class When_updating_description_for_model_for_observation : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
@@ -215,11 +218,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
          A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -238,17 +241,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_editor_settings_for_mapping : ConcernForColumnMappingPresenter
+   public class When_setting_editor_settings_for_mapping : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -282,17 +285,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_editor_settings_for_error : ConcernForColumnMappingPresenter
+   public class When_setting_editor_settings_for_error : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
+         UpdateSettings();
       }
 
       protected override void Because()
       {
-         base.Because();
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
             ColumnMappingDTO.ColumnType.Mapping,
@@ -314,30 +317,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_getting_available_rows_for : ConcernForColumnMappingPresenter
+   public class When_getting_available_rows_for : concern_for_ColumnMappingPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Concentration", "Error", "Col1", "Col2" });
+         UpdateSettings();
       }
 
       [Observation]
       public void the_rows_for_are_properly_populated()
-      {
-         var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
-         (
-            ColumnMappingDTO.ColumnType.MetaData,
-            "Molecule",
-            _parameters[4],
-            0,
-            _columnInfos[2]
-         ));
-         Assert.AreEqual(1, res.Where(r => r.Description == "Molecule").Count());
-      }
-
-      [Observation]
-      public void the_selected_excel_column_should_not_repeat()
       {
          var res = sut.GetAvailableRowsFor(new ColumnMappingDTO
          (

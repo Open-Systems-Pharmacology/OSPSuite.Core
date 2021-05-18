@@ -159,8 +159,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                      if (errorColumn.Key == null)
                         return true;
 
-                     if (dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == Constants.Dimension.NO_DIMENSION
-                         || dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit) == null)
+                     var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
+                     if (errorDimension == Constants.Dimension.NO_DIMENSION
+                         || errorDimension == null 
+                         || errorDimension.Name == Constants.Dimension.FRACTION)
                         continue;
 
                      for (var i = 0; i < measurementColumn.Value.Count(); i++)

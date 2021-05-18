@@ -8,9 +8,8 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public class ExcelReader //or maybe rename it to excelReaderExtensions - or make it into extensions
+   public class ExcelReader
    {
-      //we could get this info here or in getCurrentRow, but make sure we do it once
       private IWorkbook _book;
       private IEnumerator<ISheet> _sheetEnumerator;
       private IEnumerator _rowEnumerator;
@@ -19,7 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       private bool _isTypeXlsx;
       private readonly IFormulaEvaluator _formulaEvaluator;
 
-      public ISheet CurrentSheet { get; private set; } 
+      public ISheet CurrentSheet { get; private set; }
       public List<string> CurrentRow { get; private set; } = new List<string>();
 
       public ExcelReader(string path, bool columnOffsetOn = true)
@@ -84,9 +83,22 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          return true;
       }
 
+      public IEnumerable<string> RetrieveExcelSheets(bool excludeEmptySheets = true)
+      {
+         for (var i = 0; i < _book.NumberOfSheets; i++)
+         {
+            if (!excludeEmptySheets || !isSheetEmpty(_book.GetSheetAt(i)))
+               yield return _book.GetSheetName(i);
+         }
+      }
+
+      private bool isSheetEmpty(ISheet sheet)
+      {
+         return sheet.LastRowNum == -1 || sheet.GetRow(sheet.LastRowNum)?.GetCell(0) == null;
+      }
+
       private string getCellStringValue(ICell cell)
       {
-
          var cellValue = _formulaEvaluator.Evaluate(cell);
 
          if (cellValue == null) return "";
@@ -108,7 +120,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
          if (cell.CellType == CellType.Numeric)
             return true;
-         
+
          var value = cell.ToString().TrimStart();
          if (value.IndexOf('<') == 0)
             value = value.Substring(1);
@@ -116,7 +128,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          return double.TryParse(value, out _);
       }
 
-      public List<ColumnDescription.MeasurementLevel> GetMeasurementLevels(int rowLength) //IMPORTANT: should be called after headers have been read!!!!
+      public List<ColumnDescription.MeasurementLevel>
+         GetMeasurementLevels(int rowLength) //IMPORTANT: should be called after headers have been read!!!!
       {
          var resultList = new List<ColumnDescription.MeasurementLevel>();
          var currentExcelRow = getCurrentExcelRow(_rowEnumerator);
@@ -175,7 +188,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          {
             return (XSSFRow) enumerator.Current;
          }
-         
+
          return (HSSFRow) enumerator.Current;
       }
    }
