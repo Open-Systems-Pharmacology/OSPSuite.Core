@@ -18,6 +18,8 @@ namespace OSPSuite.UI.Views.Importer
       {
          base.InitializeResources();
          unitsLayoutControlItem.Name = Captions.UnitsEditorCaption;
+         this.lloqLayoutControlItem.Name = Captions.LLOQ;
+         this.errorTypeLayoutControlItem.Name = Captions.ErrorType;
       }
 
       public MappingParameterEditorView()
