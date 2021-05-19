@@ -430,7 +430,7 @@ namespace OSPSuite.Assets
             var sb = new StringBuilder();
             sb.AppendLine("The following excel sheets were not found in the file and will not be imported ");
             sb.AppendLine();
-            listOfSheetNames.ForEach(item => sb.Append(item + "\n"));
+            listOfSheetNames.ForEach(item => sb.AppendLine(item));
             return sb.ToString();
          }
 
