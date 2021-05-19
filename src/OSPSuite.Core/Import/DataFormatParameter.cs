@@ -134,13 +134,10 @@ namespace OSPSuite.Core.Import
             return Captions.Importer.MappingHintGeometricError;
 
          if (!MappedColumn.Unit.ColumnName.IsNullOrEmpty())
-         {
             return Captions.Importer.MappingHintUnitColumn(ColumnName, MappedColumn.Name, MappedColumn.Unit.ColumnName);
-         }
-
+         
          if (!MappedColumn.Unit.SelectedUnit.IsNullOrEmpty())
             return Captions.Importer.MappingHint(ColumnName, MappedColumn.Name, MappedColumn.Unit.SelectedUnit);
-
 
          return Captions.Importer.MappingHintNoUnit(ColumnName, MappedColumn.Name);
       }
