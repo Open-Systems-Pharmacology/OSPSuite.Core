@@ -311,12 +311,12 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(false);
+         The.Action(() => sut.IsExplicitFormulaFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"))).ShouldThrowAn<OSPSuiteException>();
 
-         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}Vol")).ShouldBeEmpty();
+         The.Action(() => sut.IsExplicitFormulaFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"))).ShouldThrowAn<OSPSuiteException>();
 
-         sut.IsExplicitFormulasFromPath(_simulation, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD, Constants.Parameters.VOLUME)).ShouldOnlyContainInOrder(
-            true, false, false, false);
+         sut.IsExplicitFormulaFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeFalse();
+         sut.IsExplicitFormulaFromPath(_simulation, pathFrom(_liver.Name,  Constants.Parameters.VOLUME)).ShouldBeTrue();
       }
    }
 
@@ -326,7 +326,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.BaseUnitNamesFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell.Dimension.BaseUnit.Name);
+         sut.BaseUnitNameFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeEqualTo(_volumeLiverCell.Dimension.BaseUnit.Name);
       }
    }
 
@@ -335,7 +335,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.DimensionNamesFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell.Dimension.Name);
+         sut.DimensionNameFromPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeEqualTo(_volumeLiverCell.Dimension.Name);
       }
    }
 

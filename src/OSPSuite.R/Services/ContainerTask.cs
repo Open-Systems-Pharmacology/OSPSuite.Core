@@ -45,19 +45,25 @@ namespace OSPSuite.R.Services
       string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
 
       /// <summary>
-      ///    Returns names of base units of entities with given path (may contain wildcards)
+      ///    Returns names of base units of entities with given path. 
       /// </summary>
-      string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path);
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      string BaseUnitNameFromPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Returns names of dimension of entities with given path (may contain wildcards)
       /// </summary>
-      string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path);
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      string DimensionNameFromPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Returns if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
       /// </summary>
-      bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path);
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      bool IsExplicitFormulaFromPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
@@ -144,14 +150,11 @@ namespace OSPSuite.R.Services
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
-      public string[] BaseUnitNamesFromPath(IModelCoreSimulation simulation, string path) =>
-         AllQuantitiesMatching(simulation, path).Select(x => x.BaseUnitName()).ToArray();
+      public string BaseUnitNameFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).BaseUnitName();
 
-      public string[] DimensionNamesFromPath(IModelCoreSimulation simulation, string path) =>
-         AllQuantitiesMatching(simulation, path).Select(x => x.DimensionName()).ToArray();
+      public string DimensionNameFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).DimensionName();
 
-      public bool[] IsExplicitFormulasFromPath(IModelCoreSimulation simulation, string path) =>
-         AllQuantitiesMatching(simulation, path).Select(x => x.Formula.IsExplicit()).ToArray();
+      public bool IsExplicitFormulaFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).Formula.IsExplicit();
 
       public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
@@ -167,6 +170,19 @@ namespace OSPSuite.R.Services
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
 
          quantity.Value = value;
+      }
+
+      private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path)
+      {
+         if (path.Contains(WILD_CARD))
+            throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
+
+         var pathArray = path.ToPathArray();
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         if (quantity == null)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         return quantity;
       }
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
