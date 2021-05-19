@@ -338,11 +338,11 @@ namespace OSPSuite.UI.Views.Importer
       }
    }
 
-   internal class SettingsFormatter : IFormatter<DataFormatParameter>
+   class SettingsFormatter : IFormatter<DataFormatParameter>
    {
       public string Format(DataFormatParameter model)
       {
-         if (model == null || !(model is MappingDataFormatParameter mapping)) return string.Empty;
+         if (model == null || !(model is MappingDataFormatParameter mapping)) return Captions.EmptyColumn;
 
          var listOfMappings = new List<string>();
 
@@ -357,7 +357,7 @@ namespace OSPSuite.UI.Views.Importer
          if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
             listOfMappings.Add($"Error: {mapping.MappedColumn.ErrorStdDev}");
 
-         return listOfMappings.ToString(", ");
+         return !listOfMappings.Any() ? Captions.EmptyColumn : listOfMappings.ToString(", ");
       }
    }
 }
