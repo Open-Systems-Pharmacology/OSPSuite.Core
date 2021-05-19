@@ -49,26 +49,26 @@ namespace OSPSuite.R.Services
       /// </summary>
       /// <param name="simulation">Simulation to use to find the quantity by path</param>
       /// <param name="path">Absolute path of the quantity</param>
-      string BaseUnitNameFromPath(IModelCoreSimulation simulation, string path);
+      string BaseUnitNameByPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Returns names of dimension of entities with given path (may contain wildcards)
       /// </summary>
       /// <param name="simulation">Simulation to use to find the quantity by path</param>
       /// <param name="path">Absolute path of the quantity</param>
-      string DimensionNameFromPath(IModelCoreSimulation simulation, string path);
+      string DimensionNameByPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Returns if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
       /// </summary>
       /// <param name="simulation">Simulation to use to find the quantity by path</param>
       /// <param name="path">Absolute path of the quantity</param>
-      bool IsExplicitFormulaFromPath(IModelCoreSimulation simulation, string path);
+      bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
       /// </summary>
-      void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path);
+      void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Sets the value of the quantity by path
@@ -150,13 +150,13 @@ namespace OSPSuite.R.Services
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
-      public string BaseUnitNameFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).BaseUnitName();
+      public string BaseUnitNameByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).BaseUnitName();
 
-      public string DimensionNameFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).DimensionName();
+      public string DimensionNameByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).DimensionName();
 
-      public bool IsExplicitFormulaFromPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).Formula.IsExplicit();
+      public bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).Formula.IsExplicit();
 
-      public void AddQuantitiesToSimulationOutputFromPath(IModelCoreSimulation simulation, string path) =>
+      public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
 
       public void SetValueByPath(IModelCoreSimulation simulation, string path, double value)
