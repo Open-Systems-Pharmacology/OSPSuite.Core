@@ -357,7 +357,7 @@ namespace OSPSuite.UI.Views.Importer
          if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
             listOfMappings.Add($"Error: {mapping.MappedColumn.ErrorStdDev}");
 
-         return !listOfMappings.Any() ? string.Empty : listOfMappings.ToString(", ");
+         return listOfMappings.ToString(", ");
       }
    }
 }
