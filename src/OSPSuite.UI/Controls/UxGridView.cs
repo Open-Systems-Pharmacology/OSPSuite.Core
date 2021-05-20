@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Controls
       /// <summary>
       ///    Color used for cell that are locked/disabled (End of gradient)
       /// </summary>
-      protected Color _colorDisabled = Color.LightGray;
+      protected Color _colorDisabled = Colors.Disabled;
 
       public UxGridView(GridControl gridControl) : base(gridControl)
       {

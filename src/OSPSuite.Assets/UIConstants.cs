@@ -146,6 +146,7 @@ namespace OSPSuite.Assets
       public static readonly string SensitivityAnalysisFolder = "Sensitivity Analyses";
       public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
+      public static readonly string ErrorType = "Error type";
       public static readonly string Delete = "Delete";
       public static readonly string Clear = "Clear";
       public static readonly string SelectSimulations = "Select Simulations";
@@ -189,6 +190,7 @@ namespace OSPSuite.Assets
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeObserver = "Molecule Observer";
       public static readonly string ContainerObserver = "Container Observer";
+      public static readonly string UnitsEditorCaption = "Unit Settings";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -425,6 +427,15 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
+         public static string SheetsNotFound(List<string> listOfSheetNames)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following excel sheets were not found in the file and will not be imported ");
+            sb.AppendLine();
+            listOfSheetNames.ForEach(item => sb.AppendLine(item));
+            return sb.ToString();
+         }
+
          public static readonly string UseFiltersForImport = "Use the filters for importing the data";
          
          public static readonly string AddGroupByTitle = "Add group by";
@@ -438,10 +449,21 @@ namespace OSPSuite.Assets
          {
             return $"The column {parameter} will be mapped into {target} with units as {unit}";
          }
+         public static string MappingHintUnitColumn(string parameter, string target, string unitColumn)
+         {
+            return $"The column {parameter} will be mapped into {target} and column {unitColumn} will be mapped into unit";
+         }
+         public static string MappingHintNoUnit(string parameter, string target)
+         {
+            return $"The column {parameter} will be mapped into {target}";
+         }
          public static string GroupByHint(string parameter)
          {
             return $"The column {parameter} will be used for grouping by";
          }
+
+         public static string MappingHintGeometricError = "Geometric standard deviation";
+
          public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
 
          public static string NamingPatternDescription = "Automatically generates names replacing words surrounded by <b>{}</b> with like named meta data values.";
@@ -1612,10 +1634,9 @@ namespace OSPSuite.Assets
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
 
-      public static string TypeNotSupported(string typeName)
-      {
-         return $"{typeName} is not currently been handled";
-      }
+      public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
+
+      public static string CannotSetValueByPathUsingWildCard(string path) => $"Setting value by path is not supported for path containing wildcard ({path})";
    }
 
    public static class Validation
@@ -2307,7 +2328,7 @@ namespace OSPSuite.Assets
       /// </summary>
       public static Color ChartDiagramBack = Color.White;
 
-      public static readonly Color Disabled = Color.LightGray;
+      public static Color Disabled = Color.FromArgb(255, 247, 247, 249);
 
       public static Color BelowLLOQ => Color.LightSkyBlue;
       public static Color DefaultRowColor => Color.White;

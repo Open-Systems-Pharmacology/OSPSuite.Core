@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
@@ -20,7 +21,9 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -334,31 +337,27 @@ namespace OSPSuite.UI.Views.Importer
          _presenter.ClearMapping();
       }
    }
-   
+
    class SettingsFormatter : IFormatter<DataFormatParameter>
    {
       public string Format(DataFormatParameter model)
       {
-         if (model == null)
-            return "";
+         if (model == null || !(model is MappingDataFormatParameter mapping)) return Captions.EmptyColumn;
 
-         if (model is MappingDataFormatParameter mapping)
-         {
-            var str = $"Units: {mapping.MappedColumn.Unit.SelectedUnit}";
-            if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
-            {
-               str += $", LLOQ: {mapping.MappedColumn.LloqColumn}";
-            }
+         var listOfMappings = new List<string>();
 
-            if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
-            {
-               str += $", Error: {mapping.MappedColumn.ErrorStdDev}";
-            }
+         if (!mapping.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+            listOfMappings.Add($"Units Col: {mapping.MappedColumn.Unit.ColumnName}");
+         else if (!mapping.MappedColumn.Unit.SelectedUnit.IsNullOrEmpty() && mapping.MappedColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC)
+            listOfMappings.Add($"Units: {mapping.MappedColumn.Unit.SelectedUnit}");
 
-            return str;
-         }
+         if (!string.IsNullOrEmpty(mapping.MappedColumn.LloqColumn))
+            listOfMappings.Add($"LLOQ: {mapping.MappedColumn.LloqColumn}");
 
-         return " ";
+         if (!string.IsNullOrEmpty(mapping.MappedColumn.ErrorStdDev))
+            listOfMappings.Add($"Error: {mapping.MappedColumn.ErrorStdDev}");
+
+         return !listOfMappings.Any() ? Captions.EmptyColumn : listOfMappings.ToString(", ");
       }
    }
 }

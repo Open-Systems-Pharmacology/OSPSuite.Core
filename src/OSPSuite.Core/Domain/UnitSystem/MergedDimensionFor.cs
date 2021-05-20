@@ -81,6 +81,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public Unit FindUnit(string unitName, bool ignoreCase = false)
       {
+         if (unitName == null)
+            return null;
+
          return SourceDimension.FindUnit(unitName, ignoreCase) ??
                 TargetDimensions.Select(x => x.FindUnit(unitName, ignoreCase)).FirstOrDefault();
       }

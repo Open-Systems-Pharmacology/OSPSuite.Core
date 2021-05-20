@@ -180,10 +180,19 @@ namespace OSPSuite.UI.Services
          dataSource.SetDataFormat(dataSourceFile.Format);
          dataSource.SetNamingConvention(configuration.NamingConventions);
          var sheets = new Cache<string, DataSheet>();
+         var missingSheets = new List<string>();
          foreach (var key in configuration.LoadedSheets)
          {
+            if (!dataSourceFile.DataSheets.Contains(key))
+            {
+               missingSheets.Add(key);
+               continue;
+            }
             sheets.Add(key, dataSourceFile.DataSheets[key]);
          }
+
+         if(missingSheets.Count != 0)
+            _dialogCreator.MessageBoxError(Captions.Importer.SheetsNotFound(missingSheets));
 
          dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
 

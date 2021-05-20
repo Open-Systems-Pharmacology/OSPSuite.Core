@@ -6,7 +6,7 @@ using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
-   public abstract class ConcernForSourceFilePresenter : ContextSpecification<SourceFilePresenter>
+   public abstract class concern_for_SourceFilePresenter : ContextSpecification<SourceFilePresenter>
    {
       protected IDialogCreator _dialogCreator;
       protected ISourceFileControl _view;
@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_show_dialog : ConcernForSourceFilePresenter
+   public class When_show_dialog : concern_for_SourceFilePresenter
    {
       [Observation]
       public void could_be_intercepted()

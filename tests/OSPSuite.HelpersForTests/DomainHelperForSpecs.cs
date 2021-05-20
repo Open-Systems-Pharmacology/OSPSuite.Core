@@ -237,6 +237,11 @@ namespace OSPSuite.Helpers
       {
          return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "PKAnalysesFiles", fileNameWithoutExtension + ".csv");
       }
+
+      public static string ExcelImportFilePathFor(string fileNameWithoutExtension)
+      {
+         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "ExcelImport", fileNameWithoutExtension + ".xlsx");
+      }
    }
 
    public class PathCacheForSpecs<T> : PathCache<T> where T : class, IEntity

@@ -324,10 +324,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
-               if (model.ExcelColumn != null && !metaDataCategory.ListOfValues.Keys.Contains(model.ExcelColumn))
-               {
-                  options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
-               }
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
                {
                   var iconIndex = ApplicationIcons.IconIndex(v);
@@ -481,7 +477,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else if (model.Source is AddGroupByFormatParameter)
          {
             model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
-            _format.Parameters.Add(model.Source);
+            _format.Parameters.Add(model.Source); 
+            setDataFormat(_format.Parameters);
          }
          else
          {
@@ -491,8 +488,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
                (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
             }
          }
-
-         setDataFormat(_format.Parameters);
       }
 
       public void ClearRow(ColumnMappingDTO model)
