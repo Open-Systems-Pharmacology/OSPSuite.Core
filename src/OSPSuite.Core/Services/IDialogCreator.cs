@@ -10,9 +10,16 @@ namespace OSPSuite.Core.Services
       No
    }
 
+   public enum ViewIcon
+   {
+      Information,
+      Error,
+      Question
+   }
+
    public interface IDialogCreator
    {
-      void MessageBoxError(string message, bool hyperlink = false);
+      void MessageBoxError(string message);
 
       ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton = ViewResult.Yes);
 

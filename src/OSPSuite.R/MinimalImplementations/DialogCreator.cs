@@ -6,7 +6,7 @@ namespace OSPSuite.R.MinimalImplementations
 {
    public class DialogCreator : IDialogCreator
    {
-      public void MessageBoxError(string message, bool hyperlink) => Console.WriteLine(message);
+      public void MessageBoxError(string message) => Console.WriteLine(message);
 
       public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton) => ViewResult.Yes;
 
