@@ -1264,7 +1264,7 @@ namespace OSPSuite.Assets
          var sb = new StringBuilder();
          sb.AppendLine($"The file: \n \n'{fileName}' \n ");
          sb.AppendLine("that you are trying to load does not comply to one of the supported formats.");
-         sb.AppendLine("You can find a documentation of the supported formats here: https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats");
+         sb.AppendLine("You can find a documentation of the supported formats <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>");
          return sb.ToString();
       }
 

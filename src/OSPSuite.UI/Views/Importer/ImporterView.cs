@@ -1,9 +1,9 @@
-﻿﻿using System.Windows.Forms;
- using DevExpress.XtraEditors;
- using DevExpress.XtraLayout.Utils;
- using DevExpress.XtraTab;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using DevExpress.Utils;
+using DevExpress.XtraEditors;
+using DevExpress.XtraTab;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -25,11 +25,6 @@ namespace OSPSuite.UI.Views.Importer
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
          nanLayoutControlItem.AdjustControlHeight(80);
-      }
-
-      public void ShowErrorMessage(string message)
-      {
-         XtraMessageBox.Show(this, message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
       public override void InitializeResources()

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -27,7 +30,35 @@ namespace OSPSuite.UI.Services
 
       public void MessageBoxError(string message)
       {
-         XtraMessageBox.Show(message, _applicationConfiguration.ProductNameWithTrademark, MessageBoxButtons.OK, MessageBoxIcon.Error);
+         showMessageBox(message, new[] { DialogResult.OK }, getIcon(SystemIcons.Error));
+      }
+
+      public void MessageBoxInfo(string message)
+      {
+         showMessageBox(message, new[] {DialogResult.OK}, getIcon(SystemIcons.Information));
+      }
+
+      private void showMessageBox(string message, DialogResult[] buttons, Icon icon)
+      {
+         XtraMessageBox.Show(createMessageBoxArgs(message, buttons, icon));
+      }
+
+      private XtraMessageBoxArgs createMessageBoxArgs(string message, DialogResult[] buttons, Icon icon, int defaultButtonIndex = 0)
+      {
+         var args = new XtraMessageBoxArgs
+         {
+            Caption = _applicationConfiguration.ProductNameWithTrademark,
+            Text = message,
+            Buttons = buttons,
+            Icon = icon,
+            DefaultButtonIndex = defaultButtonIndex,
+            AllowHtmlText = DefaultBoolean.True
+         };
+
+         if (containsHyperlink(message))
+            args.HyperlinkClick += (o,e) => { System.Diagnostics.Process.Start(e.Link); };
+         
+         return args;
       }
 
       public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton= ViewResult.Yes)
@@ -37,7 +68,8 @@ namespace OSPSuite.UI.Services
 
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes)
       {
-         return showQuestionMessageBox(message, MessageBoxButtons.YesNoCancel, yes, no, cancel, defaultButton);
+         return showQuestionMessageBox(message, new[] {
+            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton);
       }
 
       public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes)
@@ -47,16 +79,17 @@ namespace OSPSuite.UI.Services
 
       public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes)
       {
-         return showQuestionMessageBox(message, MessageBoxButtons.YesNo, yes, no, string.Empty, defaultButton);
+         return showQuestionMessageBox(message, new [] {
+            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton);
       }
 
-      private ViewResult showQuestionMessageBox(string message, MessageBoxButtons buttons, string yes, string no, string cancel, ViewResult defaultButton)
+      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton)
       {
          var currentLocalizer = Localizer.Active;
          try
          {
             Localizer.Active = new XtraMessageBoxLocalizer(yes, no, cancel);
-            return _mapper.MapFrom(XtraMessageBox.Show(message, _applicationConfiguration.ProductNameWithTrademark, buttons, MessageBoxIcon.Question, defaultButtonFrom(defaultButton)));
+            return _mapper.MapFrom(XtraMessageBox.Show(createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton))));
          }
          finally
          {
@@ -64,23 +97,29 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      private MessageBoxDefaultButton defaultButtonFrom(ViewResult defaultButton)
+      private Icon getIcon(Icon icon)
       {
-         if (defaultButton == ViewResult.Yes)
-            return MessageBoxDefaultButton.Button1;
-
-         if (defaultButton == ViewResult.No)
-            return MessageBoxDefaultButton.Button2;
-
-         if (defaultButton == ViewResult.Cancel)
-            return MessageBoxDefaultButton.Button3;
-
-         return MessageBoxDefaultButton.Button1;
+         return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(icon);
       }
 
-      public void MessageBoxInfo(string message)
+      private int defaultButtonFrom(ViewResult defaultButton)
       {
-         XtraMessageBox.Show(message, _applicationConfiguration.ProductNameWithTrademark, MessageBoxButtons.OK, MessageBoxIcon.Information);
+         switch (defaultButton)
+         {
+            case ViewResult.Yes:
+               return 0;
+            case ViewResult.No:
+               return 1;
+            case ViewResult.Cancel:
+               return 2;
+            default:
+               return 0;
+         }
+      }
+
+      private bool containsHyperlink(string message)
+      {
+         return message.Contains("href");
       }
 
       public string AskForFileToOpen(string title, string filter, string directoryKey, string defaultFileName = null, string defaultDirectory = null)
