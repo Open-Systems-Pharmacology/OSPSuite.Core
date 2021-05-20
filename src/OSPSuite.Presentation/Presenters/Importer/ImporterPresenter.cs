@@ -129,7 +129,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
-            _view.ShowErrorMessage(e.Message);
+            _dialogCreator.MessageBoxError(e.Message);
             return;
          }
 
@@ -146,7 +146,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (InconsistentMoleculeAndMolWeightException exception)
          {
-            _view.ShowErrorMessage(exception.Message);
+            _dialogCreator.MessageBoxError(exception.Message);
             return;
          }
          var configuration = UpdateAndGetConfiguration();
@@ -166,7 +166,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          catch (Exception e) when (e is NanException || e is ErrorUnitException || e is MissingColumnException)
          {
             {
-               _view.ShowErrorMessage(e.Message);
+               _dialogCreator.MessageBoxError(e.Message);
                _view.DisableConfirmationView();
                foreach (var sheetName in args.Sheets.Keys)
                {
@@ -245,7 +245,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
-            _view.ShowErrorMessage(e.Message);
+            _dialogCreator.MessageBoxError(e.Message);
             _view.DisableConfirmationView();
          }
       }
@@ -352,7 +352,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException)
          {
-            _view.ShowErrorMessage(e.Message);
+            _dialogCreator.MessageBoxError(e.Message);
          }
 
          _importerDataPresenter.DisableImportedSheets();

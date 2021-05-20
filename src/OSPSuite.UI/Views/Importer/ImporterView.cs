@@ -27,22 +27,6 @@ namespace OSPSuite.UI.Views.Importer
          nanLayoutControlItem.AdjustControlHeight(80);
       }
 
-      public void ShowErrorMessage(string message)
-      {
-         var args = new XtraMessageBoxArgs
-         {
-            Caption = "",
-            Text = message,
-            Buttons = new DialogResult[] {
-            DialogResult.OK },
-            Icon = DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Error),
-            AllowHtmlText = DefaultBoolean.True
-         };
-
-         args.HyperlinkClick += delegate(object sender, HyperlinkClickEventArgs e) { System.Diagnostics.Process.Start(e.Link); };
-         XtraMessageBox.Show(args);
-      }
-
       public override void InitializeResources()
       {
          base.InitializeResources();

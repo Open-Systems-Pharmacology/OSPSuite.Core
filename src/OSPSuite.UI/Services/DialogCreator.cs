@@ -37,6 +37,7 @@ namespace OSPSuite.UI.Services
       {
          showMessageBox(message, new[] {DialogResult.OK}, getIcon(ViewIcon.Information));
       }
+
       private void showMessageBox(string message, DialogResult[] buttons, Icon icon)
       {
          XtraMessageBox.Show(createMessageBoxArgs(message, buttons, icon));
