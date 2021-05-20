@@ -10,13 +10,6 @@ namespace OSPSuite.Core.Services
       No
    }
 
-   public enum ViewIcon
-   {
-      Information,
-      Error,
-      Question
-   }
-
    public interface IDialogCreator
    {
       void MessageBoxError(string message);

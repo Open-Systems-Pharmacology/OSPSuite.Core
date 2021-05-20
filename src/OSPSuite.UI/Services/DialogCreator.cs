@@ -30,12 +30,12 @@ namespace OSPSuite.UI.Services
 
       public void MessageBoxError(string message)
       {
-         showMessageBox(message, new[] { DialogResult.OK }, getIcon(ViewIcon.Error));
+         showMessageBox(message, new[] { DialogResult.OK }, getIcon(SystemIcons.Error));
       }
 
       public void MessageBoxInfo(string message)
       {
-         showMessageBox(message, new[] {DialogResult.OK}, getIcon(ViewIcon.Information));
+         showMessageBox(message, new[] {DialogResult.OK}, getIcon(SystemIcons.Information));
       }
 
       private void showMessageBox(string message, DialogResult[] buttons, Icon icon)
@@ -56,7 +56,7 @@ namespace OSPSuite.UI.Services
          };
 
          if (containsHyperlink(message))
-            args.HyperlinkClick += delegate(object sender, HyperlinkClickEventArgs e) { System.Diagnostics.Process.Start(e.Link); };
+            args.HyperlinkClick += (o,e) => { System.Diagnostics.Process.Start(e.Link); };
          
          return args;
       }
@@ -89,7 +89,7 @@ namespace OSPSuite.UI.Services
          try
          {
             Localizer.Active = new XtraMessageBoxLocalizer(yes, no, cancel);
-            return _mapper.MapFrom(XtraMessageBox.Show(createMessageBoxArgs(message, buttons.ToArray(), getIcon(ViewIcon.Question), defaultButtonFrom(defaultButton))));
+            return _mapper.MapFrom(XtraMessageBox.Show(createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton))));
          }
          finally
          {
@@ -97,19 +97,9 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      private Icon getIcon(ViewIcon icon)
+      private Icon getIcon(Icon icon)
       {
-         switch (icon)
-         {
-            case ViewIcon.Error:
-               return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Error);
-            case ViewIcon.Information:
-               return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Information);
-            case ViewIcon.Question:
-               return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Question);
-            default:
-               return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(SystemIcons.Error);
-         }
+         return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(icon);
       }
 
       private int defaultButtonFrom(ViewResult defaultButton)
