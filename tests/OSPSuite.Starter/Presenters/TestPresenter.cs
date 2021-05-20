@@ -32,6 +32,7 @@ namespace OSPSuite.Starter.Presenters
       void StartMatrixTest();
       void StartEmptyFormTest();
       void StartLoggerTest();
+      void StartDialogCreatorTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -43,11 +44,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly ICommandBrowserStarter _commandBrowserStarter;
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly IOSPSuiteLogger _logger;
-      
+      private readonly IDialogCreator _dialogCreator;
+
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
          ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
-         IOSPSuiteLogger logger) : base(view)
+         IOSPSuiteLogger logger, IDialogCreator dialogCreator) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -56,12 +58,22 @@ namespace OSPSuite.Starter.Presenters
          _commandBrowserStarter = commandBrowserStarter;
          _simpleUIStarter = simpleUIStarter;
          _logger = logger;
+         _dialogCreator = dialogCreator;
       }
 
       public void StartLoggerTest()
       {
          _logger.AddCriticalError("Critical", "Category3");
          _logger.AddInfo("Info");
+      }
+
+      public void StartDialogCreatorTest()
+      {
+         _dialogCreator.MessageBoxError("This is an error message");
+         _dialogCreator.MessageBoxInfo("this is an info message");
+         _dialogCreator.MessageBoxYesNoCancel("This is a YesNoCancelMessage");
+         _dialogCreator.MessageBoxYesNoCancel(
+            "And this is a message with a <href =https://docs.open-systems-pharmacology.org> hyperlink </href>");
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter
