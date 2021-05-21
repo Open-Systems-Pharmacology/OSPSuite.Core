@@ -161,7 +161,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void UpdateDescriptrionForModel()
       {
-         if (!(_currentModel.Source is MappingDataFormatParameter))
+         if (!(_currentModel.Source is MappingDataFormatParameter) && !ShouldManualInputOnMetaDataBeEnabled(_currentModel))
          {
             return;
          }
@@ -210,13 +210,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
          var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
-         if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
+         if (metaDataCategory != null && metaDataCategory.AllowsManualInput)
          {
             _currentModel = model;
             return true;
          }
 
          return false;
+      }
+
+      public bool ShouldManualInputOnMetaDataBeEnabled(DataFormatParameter parameter)
+      {
+         var model = _mappings.FirstOrDefault(m => m.Source == parameter);
+         if (model == null)
+            return false;
+
+         return ShouldManualInputOnMetaDataBeEnabled(model);
       }
 
       public void SetSubEditorSettingsForMapping(ColumnMappingDTO model)
@@ -319,9 +328,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var options = new List<RowOptionDTO>();
          if (model == null)
             return options;
+         var excelColumns = availableColumns();
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
+            if (model.Source != null && !(model.Source as MetaDataFormatParameter).IsColumn && !metaDataCategory.ListOfValues.Keys.Union(excelColumns).Contains(model.ExcelColumn))
+               options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
@@ -341,7 +353,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             options.Add(new RowOptionDTO() { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
-         options.AddRange(availableColumns().Select(c => new RowOptionDTO() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
+         options.AddRange(excelColumns.Select(c => new RowOptionDTO() { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
          return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
       }
 

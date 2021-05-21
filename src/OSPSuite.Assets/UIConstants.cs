@@ -191,6 +191,7 @@ namespace OSPSuite.Assets
       public static readonly string MoleculeObserver = "Molecule Observer";
       public static readonly string ContainerObserver = "Container Observer";
       public static readonly string UnitsEditorCaption = "Unit Settings";
+      public static readonly string EditManually = "Edit manually";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
