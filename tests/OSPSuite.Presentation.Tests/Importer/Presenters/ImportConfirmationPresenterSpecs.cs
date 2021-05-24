@@ -9,7 +9,7 @@ using OSPSuite.Presentation.Presenters.ObservedData;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
-   public abstract class ConcernForImportConfirmationPresenter : ContextSpecification<ImportConfirmationPresenter>
+   public abstract class concern_for_ImportConfirmationPresenter : ContextSpecification<ImportConfirmationPresenter>
    {
       protected IImportConfirmationView _view;
       protected IDataRepositoryChartPresenter _dataRepositoryChartPresenter;
@@ -31,15 +31,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_naming_conventions : ConcernForImportConfirmationPresenter
+   public class When_setting_naming_conventions : concern_for_ImportConfirmationPresenter
    {
-      [TestCase]
+      [Observation]
       public void null_naming_conventions_throws_exception()
       {
          Assert.Throws<NullNamingConventionsException>(()=> sut.SetNamingConventions(null, null));
       }
 
-      [TestCase]
+      [Observation]
       public void empty_naming_conventions_throws_exception()
       {
          Assert.Throws<EmptyNamingConventionsException>(() => sut.SetNamingConventions(new List<string>(), null));
