@@ -55,6 +55,7 @@ namespace OSPSuite.UI.Services
 
          var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
          moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         moleculeCategory.AllowsManualInput = true;
          categories.Add(moleculeCategory);
 
          // Add non-mandatory metadata categories

@@ -169,7 +169,6 @@ namespace OSPSuite.Starter.Tasks
          metaDataCategory.ListOfValues.Add("JustOne", "22");
          metaDataCategory.ListOfValues.Add("Skin", "20");
          metaDataCategory.ShouldListOfValuesBeIncluded = true;
-         metaDataCategory.AllowsManualInput = true;
          metaDataCategory.SelectDefaultValue = true;
       }
 
