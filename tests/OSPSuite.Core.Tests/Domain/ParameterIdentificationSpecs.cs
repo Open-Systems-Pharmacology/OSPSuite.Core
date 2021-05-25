@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain
 
    public class When_removing_a_simulation_from_a_parameter_identification : concern_for_ParameterIdentification
    {
-      private IdentificationParameter _identificationParameterReferncingOnlySimulation;
+      private IdentificationParameter _identificationParameterReferencingOnlySimulation;
       private IdentificationParameter _identificationParameterReferencingManySimulation;
       private ParameterSelection _parameterSelection1;
       private ParameterSelection _parameterSelection2;
@@ -80,13 +80,13 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _identificationParameterReferncingOnlySimulation = new IdentificationParameter();
+         _identificationParameterReferencingOnlySimulation = new IdentificationParameter();
          _otherSimulation = A.Fake<ISimulation>();
          _parameterSelection1 = new ParameterSelection(_simulation, new QuantitySelection("A", QuantityType.Parameter));
          _parameterSelection2 = new ParameterSelection(_simulation, new QuantitySelection("B", QuantityType.Parameter));
          _parameterSelection3 = new ParameterSelection(_otherSimulation, new QuantitySelection("C", QuantityType.Parameter));
 
-         _identificationParameterReferncingOnlySimulation.AddLinkedParameter(_parameterSelection1);
+         _identificationParameterReferencingOnlySimulation.AddLinkedParameter(_parameterSelection1);
          _identificationParameterReferencingManySimulation = new IdentificationParameter();
          _identificationParameterReferencingManySimulation.AddLinkedParameter(_parameterSelection2);
          _identificationParameterReferencingManySimulation.AddLinkedParameter(_parameterSelection3);
@@ -94,7 +94,7 @@ namespace OSPSuite.Core.Domain
          sut.AddOutputMapping(_outputMapping);
          sut.AddSimulation(_simulation);
          sut.AddSimulation(_otherSimulation);
-         sut.AddIdentificationParameter(_identificationParameterReferncingOnlySimulation);
+         sut.AddIdentificationParameter(_identificationParameterReferencingOnlySimulation);
          sut.AddIdentificationParameter(_identificationParameterReferencingManySimulation);
       }
 
@@ -126,9 +126,63 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_remove_any_identification_parameter_that_is_left_empty()
       {
-         sut.AllIdentificationParameters.ShouldNotContain(_identificationParameterReferncingOnlySimulation);
+         sut.AllIdentificationParameters.ShouldNotContain(_identificationParameterReferencingOnlySimulation);
       }
    }
+
+   public class When_removing_a_simulation_from_a_parameter_identification_that_is_not_used_as_output_but_only_in_identification_parameters : concern_for_ParameterIdentification
+   {
+      private IdentificationParameter _identificationParameterReferencingOnlySimulation;
+      private IdentificationParameter _identificationParameterReferencingManySimulation;
+      private ParameterSelection _parameterSelection1;
+      private ParameterSelection _parameterSelection2;
+      private ParameterSelection _parameterSelection3;
+      private ISimulation _otherSimulation;
+
+      protected override void Context()
+      {
+         base.Context();
+         _identificationParameterReferencingOnlySimulation = new IdentificationParameter();
+         _otherSimulation = A.Fake<ISimulation>();
+         _parameterSelection1 = new ParameterSelection(_simulation, new QuantitySelection("A", QuantityType.Parameter));
+         _parameterSelection2 = new ParameterSelection(_simulation, new QuantitySelection("B", QuantityType.Parameter));
+         _parameterSelection3 = new ParameterSelection(_otherSimulation, new QuantitySelection("C", QuantityType.Parameter));
+
+         _identificationParameterReferencingOnlySimulation.AddLinkedParameter(_parameterSelection1);
+         _identificationParameterReferencingManySimulation = new IdentificationParameter();
+         _identificationParameterReferencingManySimulation.AddLinkedParameter(_parameterSelection2);
+         _identificationParameterReferencingManySimulation.AddLinkedParameter(_parameterSelection3);
+
+         sut.AddIdentificationParameter(_identificationParameterReferencingOnlySimulation);
+         sut.AddIdentificationParameter(_identificationParameterReferencingManySimulation);
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveSimulation(_simulation);
+      }
+
+      [Observation]
+      public void should_not_have_the_simulation_anymore()
+      {
+         sut.UsesSimulation(_simulation).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_remove_the_linked_parameter_belonging_to_the_simulation()
+      {
+         sut.AllIdentificationParameters.ShouldContain(_identificationParameterReferencingManySimulation);
+         _identificationParameterReferencingManySimulation.AllLinkedParameters.Count.ShouldBeEqualTo(1);
+         _identificationParameterReferencingManySimulation.AllLinkedParameters[0].Simulation.ShouldBeEqualTo(_otherSimulation);
+      }
+
+      [Observation]
+      public void should_remove_any_identification_parameter_that_is_left_empty()
+      {
+         sut.AllIdentificationParameters.ShouldNotContain(_identificationParameterReferencingOnlySimulation);
+      }
+   }
+
 
    public class When_checking_if_any_output_of_a_given_simulation_are_mapped_in_the_parameter_identification : concern_for_ParameterIdentification
    {

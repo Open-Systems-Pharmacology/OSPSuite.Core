@@ -1,16 +1,12 @@
 ﻿using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
