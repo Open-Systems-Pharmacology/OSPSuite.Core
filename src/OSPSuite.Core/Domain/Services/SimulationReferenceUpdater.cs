@@ -1,22 +1,22 @@
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public interface ISimulationReferenceUpdater
    {
       /// <summary>
-      /// Removes references to <paramref name="simulation"/> from all parameter identifications and sensitivity analyses in the project
+      ///    Removes references to <paramref name="simulation" /> from all parameter identifications and sensitivity analyses in
+      ///    the project
       /// </summary>
       void RemoveSimulationFromParameterIdentificationsAndSensitivityAnalyses(ISimulation simulation);
 
-      void SwapSimulationInParameterAnalysables(ISimulation oldsimulation, ISimulation newSimulation);
+      void SwapSimulationInParameterAnalysables(ISimulation oldSimulation, ISimulation newSimulation);
    }
-
 
    public class SimulationReferenceUpdater : ISimulationReferenceUpdater
    {
@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void removeSimulationFromParameterIdentification(ISimulation simulation)
       {
-         var parameterIdentificationsUsingSimulation = _executionContext.Project.AllParameterIdentifications.Where(pi => pi.AnyOutputOfSimulationMapped(simulation));
+         var parameterIdentificationsUsingSimulation = _executionContext.Project.AllParameterIdentifications.Where(pi => pi.UsesSimulation(simulation));
 
          parameterIdentificationsUsingSimulation.Each(identification =>
          {
@@ -84,19 +84,18 @@ namespace OSPSuite.Core.Domain.Services
          identification.AllOutputMappings.Where(x => x.UsesSimulation(simulation)).ToList().Each(identification.RemoveOutputMapping);
       }
 
-      public void SwapSimulationInParameterAnalysables(ISimulation oldsimulation, ISimulation newSimulation)
+      public void SwapSimulationInParameterAnalysables(ISimulation oldSimulation, ISimulation newSimulation)
       {
-         var parameterAnalysables = _executionContext.Project.AllParameterAnalysables.Where(x => x.UsesSimulation(oldsimulation));
+         var parameterAnalysables = _executionContext.Project.AllParameterAnalysables.Where(x => x.UsesSimulation(oldSimulation));
 
-         parameterAnalysables.Each(parameterAnalysable => swapSimulationInParameterAnalyzable(oldsimulation, newSimulation, parameterAnalysable));
+         parameterAnalysables.Each(parameterAnalysable => swapSimulationInParameterAnalyzable(oldSimulation, newSimulation, parameterAnalysable));
       }
 
-      private void swapSimulationInParameterAnalyzable(ISimulation oldsimulation, ISimulation newSimulation, IParameterAnalysable parameterAnalysable)
+      private void swapSimulationInParameterAnalyzable(ISimulation oldSimulation, ISimulation newSimulation, IParameterAnalysable parameterAnalysable)
       {
          _executionContext.Load(parameterAnalysable);
-         parameterAnalysable.SwapSimulations(oldsimulation, newSimulation);
-         _executionContext.PublishEvent(new SimulationReplacedInParameterAnalyzableEvent(parameterAnalysable, oldsimulation, newSimulation));
+         parameterAnalysable.SwapSimulations(oldSimulation, newSimulation);
+         _executionContext.PublishEvent(new SimulationReplacedInParameterAnalyzableEvent(parameterAnalysable, oldSimulation, newSimulation));
       }
    }
-
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
@@ -85,15 +85,14 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return parameterSelection.Simulation != null && _allLinkedParameters.Contains(parameterSelection);
       }
 
-      public void RemovedLinkedParameter(IQuantity quantity)
-      {
-         RemovedLinkedParameter(LinkedParameterFor(quantity));
-      }
+      public void RemovedLinkedParameter(IQuantity quantity) => RemovedLinkedParameter(LinkedParameterFor(quantity));
 
       public ParameterSelection LinkedParameterFor(IQuantity quantity)
       {
          return _allLinkedParameters.Find(x => Equals(x.Quantity, quantity));
       }
+
+      public bool UsesSimulation(ISimulation simulation) => LinkedParametersFor(simulation).Any();
 
       public IEnumerable<ParameterSelection> LinkedParametersFor(ISimulation simulation)
       {
