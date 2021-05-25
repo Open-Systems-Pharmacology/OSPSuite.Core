@@ -19,6 +19,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public bool ShouldListOfValuesBeIncluded { get; set; } = false;
 
+      public bool AllowsManualInput { get; set; } = false;
+
       public bool SelectDefaultValue { get; set; } = false;
 
       /// <summary>

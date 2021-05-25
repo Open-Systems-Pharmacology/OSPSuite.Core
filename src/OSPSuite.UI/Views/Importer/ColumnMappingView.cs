@@ -43,7 +43,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly PopupContainerControl _mappingPopupControl = new PopupContainerControl();
       private readonly PopupContainerControl _metaDataPopupControl = new PopupContainerControl();
-      private readonly SettingsFormatter _settingsFormatter = new SettingsFormatter();
+      private SettingsFormatter _settingsFormatter;
       
       public ColumnMappingView(IImageListRetriever imageListRetriever)
       {
@@ -63,8 +63,8 @@ namespace OSPSuite.UI.Views.Importer
          var unitInformationTip = new SuperToolTip();
          unitInformationTip.Items.Add(Captions.Importer.UnitInformationDescription);
 
-         initializeButton(_repositoryMappingPopupContainerEdit, _mappingPopupControl);
-         initializeButton(_repositoryMetaDataPopupContainerEdit, _metaDataPopupControl);
+         initializeButton(_repositoryMappingPopupContainerEdit, _mappingPopupControl, closeUpMapping);
+         initializeButton(_repositoryMetaDataPopupContainerEdit, _metaDataPopupControl, closeUpMetaData);
 
          _disabledPopupContainerEdit.Enabled = false;
          _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
@@ -85,15 +85,15 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      private void initializeButton (RepositoryItemPopupContainerEdit button, PopupContainerControl control)
+      private void initializeButton (RepositoryItemPopupContainerEdit button, PopupContainerControl control, Action<CloseUpEventArgs> closeUpHandler)
       {
          button.Buttons[0].Kind = ButtonPredefines.Combo;
          button.PopupControl = control;
          button.CloseOnOuterMouseClick = false;
          button.QueryDisplayText += (o, e) => queryDisplayText(e);
-         button.CloseUp += (o, e) => closeUp(e);
+         button.CloseUp += (o, e) => closeUpHandler(e);
          button.CloseUpKey = new KeyShortcut(Keys.Enter);
-         button.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+         button.AllowDropDownWhenReadOnly = DefaultBoolean.False;
       }
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
@@ -108,12 +108,20 @@ namespace OSPSuite.UI.Views.Importer
          return _disabledPopupContainerEdit;         
       }
 
-      private void closeUp(CloseUpEventArgs e)
+      private void closeUpMapping(CloseUpEventArgs e)
       {
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
 
          _presenter.UpdateDescriptrionForModel();
+      }
+
+      private void closeUpMetaData(CloseUpEventArgs e)
+      {
+         if (e.CloseMode == PopupCloseMode.Cancel)
+            return;
+
+         _presenter.UpdateMetaDataForModel();
       }
 
       public void FillMappingView(IView view)
@@ -129,6 +137,7 @@ namespace OSPSuite.UI.Views.Importer
       public void AttachPresenter(IColumnMappingPresenter presenter)
       {
          _presenter = presenter;
+         _settingsFormatter = new SettingsFormatter(_presenter);
       }
 
       private RepositoryItem editButtonRepository(ColumnMappingDTO model)
@@ -136,7 +145,6 @@ namespace OSPSuite.UI.Views.Importer
          var repo = new UxRepositoryItemComboBox(columnMappingGridView) {AllowNullInput = DefaultBoolean.True};
          repo.Items.Clear();
 
-         repo.Items.Add(new ComboBoxItem(""));
          return repo;
       }
 
@@ -200,7 +208,7 @@ namespace OSPSuite.UI.Views.Importer
             .WithCaption(UIConstants.EMPTY_COLUMN)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithRepository(removeRepository)
-            .WithFixedWidth(UIConstants.Size.BUTTON_WIDTH);
+            .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
          {
@@ -340,8 +348,17 @@ namespace OSPSuite.UI.Views.Importer
 
    class SettingsFormatter : IFormatter<DataFormatParameter>
    {
+      private IColumnMappingPresenter _presenter;
+
+      public SettingsFormatter(IColumnMappingPresenter presenter)
+      {
+         _presenter = presenter;
+      }
+
       public string Format(DataFormatParameter model)
       {
+         if ((model is MetaDataFormatParameter) && _presenter.ShouldManualInputOnMetaDataBeEnabled(model)) return Captions.EditManually;
+
          if (model == null || !(model is MappingDataFormatParameter mapping)) return Captions.EmptyColumn;
 
          var listOfMappings = new List<string>();
