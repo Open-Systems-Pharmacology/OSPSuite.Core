@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FakeItEasy;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;

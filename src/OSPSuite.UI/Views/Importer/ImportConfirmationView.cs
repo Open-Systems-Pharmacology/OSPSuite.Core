@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DevExpress.XtraEditors;
-using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -35,7 +34,7 @@ namespace OSPSuite.UI.Views.Importer
          buttonAdd.Click += (s, a) => OnEvent(() =>
             namingConventionComboBoxEdit.EditValue += 
                (string.IsNullOrEmpty(namingConventionComboBoxEdit.EditValue.ToString()) ? "" : separatorComboBoxEdit.SelectedItem.ToString()) +
-               String.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
+               string.Join(separatorComboBoxEdit.SelectedItem.ToString(), keysListBox.SelectedItems.Select(i => $"{{{i.ToString()}}}"))
          );
          importButton.Click += (s, a) => OnEvent(onButtonImportClick, s, a);
          namesListBox.SelectedIndexChanged += (s, a) => OnEvent(onDataSetNameSelected, s, a);

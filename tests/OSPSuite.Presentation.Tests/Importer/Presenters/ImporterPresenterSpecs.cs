@@ -306,12 +306,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-      }
-
-      protected override void Because()
-      {
-         base.Because();
-         
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }

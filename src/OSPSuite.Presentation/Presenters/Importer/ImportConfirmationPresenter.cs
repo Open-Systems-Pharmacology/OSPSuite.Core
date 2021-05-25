@@ -14,7 +14,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
       private string _lastNamingPattern = "";
-      private DataRepository _dataRepository;
       private List<string> _conventions;
       private IReadOnlyList<string> _keys;
 
@@ -35,7 +34,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void PlotDataRepository(DataRepository dataRepository)
       {
-         _dataRepository = dataRepository;
          _chartPresenter.EditObservedData(dataRepository);
          _dataPresenter.EditObservedData(dataRepository);
       }
