@@ -154,6 +154,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _mappings.First(m => m.MappingName == metaData.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
          metaData.ColumnName = _metaDataParameterEditorPresenter.Input;
+         metaData.IsColumn = false;
          ValidateMapping();
          _view.RefreshData();
          _view.CloseEditor();
@@ -161,7 +162,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void UpdateDescriptrionForModel()
       {
-         if (!(_currentModel.Source is MappingDataFormatParameter) && !ShouldManualInputOnMetaDataBeEnabled(_currentModel))
+         if (!(_currentModel.Source is MappingDataFormatParameter))
          {
             return;
          }
