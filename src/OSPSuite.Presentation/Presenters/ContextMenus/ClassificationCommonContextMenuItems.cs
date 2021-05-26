@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       public static IMenuBarButton RemoveEmptyClassificationsMenu(IExplorerPresenter presenter)
       {
          return CreateMenuButton.WithCaption(MenuNames.RemoveEmptyGroups)
-            .WithActionCommand(presenter.RemoveEmptyClassifcations)
+            .WithActionCommand(presenter.RemoveEmptyClassifications)
             .WithIcon(ApplicationIcons.Delete);
       }
 
