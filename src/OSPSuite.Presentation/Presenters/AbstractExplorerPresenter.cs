@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
@@ -14,6 +12,8 @@ using OSPSuite.Presentation.Presenters.Nodes;
 using OSPSuite.Presentation.Regions;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -50,7 +50,7 @@ namespace OSPSuite.Presentation.Presenters
       ///    The node who's sub-classification nodes should be removed. Leafs remain and are attached to
       ///    the parent
       /// </param>
-      /// <param name="removeParent">Specifes whether the parent node should be remove or not. Default is <c>false</c></param>
+      /// <param name="removeParent">Specifies whether the parent node should be remove or not. Default is <c>false</c></param>
       /// <param name="removeData">Specifies whether the data should also be removed. Defaults is <c>false</c></param>
       void RemoveChildrenClassifications(ITreeNode<IClassification> parentClassificationNode, bool removeParent = false, bool removeData = false);
 
@@ -63,9 +63,9 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    Starts the workflow allowing the user to add an arbitrary <see cref="IClassification" /> under the parent
       ///    <see cref="IClassification" />
-      ///    represented by the <paramref name="parentClassificatonNode" />
+      ///    represented by the <paramref name="parentClassificationNode" />
       /// </summary>
-      void CreateClassificationUnder(ITreeNode<IClassification> parentClassificatonNode);
+      void CreateClassificationUnder(ITreeNode<IClassification> parentClassificationNode);
 
       /// <summary>
       ///    Allows the user to rename the <see cref="IClassification" /> represented by the
@@ -75,10 +75,10 @@ namespace OSPSuite.Presentation.Presenters
       void RenameClassification(ITreeNode<IClassification> classificationNode);
 
       /// <summary>
-      ///    Removes all classifications defined in the projecct that have no <see cref="IClassifiable" /> children (direct or
+      ///    Removes all classifications defined in the project that have no <see cref="IClassifiable" /> children (direct or
       ///    indirect).
       /// </summary>
-      void RemoveEmptyClassifcations();
+      void RemoveEmptyClassifications();
 
       /// <summary>
       ///    returns true is the <paramref name="node" /> can be dragged otherwise false
@@ -128,7 +128,7 @@ namespace OSPSuite.Presentation.Presenters
       void EnsureNodeVisible(ITreeNode treeNode);
 
       /// <summary>
-      ///    Returns <c>true</c> if multiselect can be applied for the current node selection otherwise <c>false</c>
+      ///    Returns <c>true</c> if multi-select can be applied for the current node selection otherwise <c>false</c>
       /// </summary>
       bool AllowMultiSelectFor(IEnumerable<ITreeNode> selectedNodes);
 
@@ -146,13 +146,13 @@ namespace OSPSuite.Presentation.Presenters
 
       /// <summary>
       ///    Adds a <see cref="IClassifiable" /> to the tree either under its parent if defined or under the node with type
-      ///    <paramref name="rootNodeType" /> oterhwiseExpVoiew
+      ///    <paramref name="rootNodeType" /> otherwise
       ///    and use the method <paramref name="addClassifiableToTree" /> to create the node
       /// </summary>
       ITreeNode AddClassifiableToTree<T>(T classifiable, RootNodeType rootNodeType, Func<ITreeNode<IClassification>, T, ITreeNode> addClassifiableToTree) where T : IClassifiable;
 
       /// <summary>
-      ///    Addds the <paramref name="classifiableNode" /> under the <paramref name="classificationNode" /> if defined or
+      ///    Adds the <paramref name="classifiableNode" /> under the <paramref name="classificationNode" /> if defined or
       ///    directly in the view otherwise
       /// </summary>
       void AddClassifiableNodeToView(ITreeNode classifiableNode, ITreeNode<IClassification> classificationNode = null);
@@ -189,10 +189,10 @@ namespace OSPSuite.Presentation.Presenters
 
       protected abstract void AddProjectToTree(IProject project);
 
-      public virtual void CreateClassificationUnder(ITreeNode<IClassification> parentClassificatonNode)
+      public virtual void CreateClassificationUnder(ITreeNode<IClassification> parentClassificationNode)
       {
-         if (parentClassificatonNode == null) return;
-         _classificationPresenter.CreateClassificationFolderUnder(parentClassificatonNode);
+         if (parentClassificationNode == null) return;
+         _classificationPresenter.CreateClassificationFolderUnder(parentClassificationNode);
       }
 
       public override void Initialize()
@@ -281,6 +281,7 @@ namespace OSPSuite.Presentation.Presenters
          if (removeParent)
             RemoveClassification(parentClassificationNode);
       }
+
       public virtual ITreeNode AddSubjectToClassifyToTree<TSubject, TClassifiable>(TSubject subject, Func<TClassifiable, ITreeNode> addClassifiableToTree)
          where TSubject : IWithId, IWithName
          where TClassifiable : Classifiable<TSubject>, new()
@@ -312,9 +313,10 @@ namespace OSPSuite.Presentation.Presenters
       public virtual void RenameClassification(ITreeNode<IClassification> classificationNode)
       {
          _classificationPresenter.RenameClassification(classificationNode);
+         RefreshTreeAfterRename();
       }
 
-      public virtual void RemoveEmptyClassifcations()
+      public virtual void RemoveEmptyClassifications()
       {
          _classificationPresenter.RemoveEmptyClassifcations();
       }
@@ -359,11 +361,11 @@ namespace OSPSuite.Presentation.Presenters
          if (Equals(classifiableNode.ParentNode, targetClassificationNode))
             return false;
 
-         var dragClassifcationNode = classifiableNode as ITreeNode<IClassification>;
-         if (dragClassifcationNode == null)
+         var dragClassificationNode = classifiableNode as ITreeNode<IClassification>;
+         if (dragClassificationNode == null)
             return CanDrop(classifiableNode, targetClassificationNode);
 
-         return _classificationPresenter.CanMove(dragClassifcationNode, targetClassificationNode);
+         return _classificationPresenter.CanMove(dragClassificationNode, targetClassificationNode);
       }
 
       protected virtual bool CanDrop(ITreeNode<IClassifiable> classifiableNode, ITreeNode<IClassification> classificationNode)
@@ -379,6 +381,14 @@ namespace OSPSuite.Presentation.Presenters
       public virtual void Handle(ProjectClosedEvent eventToHandle)
       {
          _view.DestroyNodes();
+      }
+
+      protected void RefreshTreeAfterRename()
+      {
+         //Required to ensure that we cater for name that is longer than view port
+         var node = _view.AddNode(new TextNode("", Guid.NewGuid().ToString()));
+         //remove the node right away
+         _view.RemoveNode(node);
       }
    }
 }
