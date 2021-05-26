@@ -24,7 +24,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      private ColumnMappingDTO _currentModel;
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
@@ -145,36 +144,37 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
-      public void UpdateMetaDataForModel()
+      public void UpdateMetaDataForModel(MetaDataFormatParameter mappingSource)
       {
-         if (_currentModel == null) return;
+         if (mappingSource == null)
+            return;
 
-         var metaData = _currentModel.Source as MetaDataFormatParameter;
-         if (metaData == null) return;
-
-         _mappings.First(m => m.MappingName == metaData.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
-         metaData.ColumnName = _metaDataParameterEditorPresenter.Input;
-         metaData.IsColumn = false;
+         _mappings.First(m => m.MappingName == mappingSource.MetaDataId).ExcelColumn = _metaDataParameterEditorPresenter.Input;
+         mappingSource.ColumnName = _metaDataParameterEditorPresenter.Input;
+         mappingSource.IsColumn = false;
          ValidateMapping();
          _view.RefreshData();
          _view.CloseEditor();
       }
 
-      public void UpdateDescriptrionForModel()
+      public void UpdateDescriptionForModel(MappingDataFormatParameter mappingSource)
       {
-         if (!(_currentModel.Source is MappingDataFormatParameter))
-         {
+         if (mappingSource == null) 
             return;
-         }
 
-         var column = ((MappingDataFormatParameter)_currentModel.Source).MappedColumn;
+         var model = _mappings.FirstOrDefault(x => x.Source == mappingSource);
+
+         if (model == null) 
+            return;
+
+         var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
          column.Unit = _mappingParameterEditorPresenter.Unit;
          if (!string.IsNullOrEmpty(column.Unit.ColumnName))
          {
             column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
          }
 
-         if (_currentModel.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase())
          {
             ValidateMapping();
             _view.RefreshData();
@@ -182,7 +182,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         if (_currentModel.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary())
          {
             if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
                column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -211,13 +211,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)
       {
          var metaDataCategory = _metaDataCategories.FindByName(model.MappingName);
-         if (metaDataCategory != null && metaDataCategory.AllowsManualInput)
-         {
-            _currentModel = model;
-            return true;
-         }
-
-         return false;
+         return metaDataCategory != null && metaDataCategory.AllowsManualInput;
       }
 
       public bool ShouldManualInputOnMetaDataBeEnabled(DataFormatParameter parameter)
@@ -231,7 +225,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSubEditorSettingsForMapping(ColumnMappingDTO model)
       {
-         _currentModel = model;
          _mappingParameterEditorPresenter.HideAll();
          if (!(model.Source is MappingDataFormatParameter))
             return;
@@ -255,6 +248,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
             else
                _mappingParameterEditorPresenter.SetUnitsManualSelection();
+         }
+         else
+         {
+            var errorColumnDTO = _mappings.FirstOrDefault(c => c.ColumnInfo?.RelatedColumnOf == model.MappingName);
+            var errorColumn = ((MappingDataFormatParameter)errorColumnDTO?.Source)?.MappedColumn;
+            if (errorColumn?.Unit != null && !errorColumn.Unit.ColumnName.IsNullOrEmpty())
+            {
+               columns.Add(errorColumn.Unit.ColumnName);
+            }
          }
 
          _mappingParameterEditorPresenter.SetUnitOptions(

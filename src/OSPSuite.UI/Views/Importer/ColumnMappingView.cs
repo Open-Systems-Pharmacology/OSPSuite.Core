@@ -113,7 +113,7 @@ namespace OSPSuite.UI.Views.Importer
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
 
-         _presenter.UpdateDescriptrionForModel();
+         _presenter.UpdateDescriptionForModel(e.Value as MappingDataFormatParameter);
       }
 
       private void closeUpMetaData(CloseUpEventArgs e)
@@ -121,7 +121,7 @@ namespace OSPSuite.UI.Views.Importer
          if (e.CloseMode == PopupCloseMode.Cancel)
             return;
 
-         _presenter.UpdateMetaDataForModel();
+         _presenter.UpdateMetaDataForModel(e.Value as MetaDataFormatParameter);
       }
 
       public void FillMappingView(IView view)
