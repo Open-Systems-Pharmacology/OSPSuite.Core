@@ -169,7 +169,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         sut.UpdateDescriptrionForModel();
+         sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
       }
 
       [Observation]
@@ -199,7 +199,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         sut.UpdateDescriptrionForModel();
+         sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
       }
 
       [Observation]
@@ -231,7 +231,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[1]
          ));
-         sut.UpdateDescriptrionForModel();
+         sut.UpdateDescriptionForModel(_parameters[1] as MappingDataFormatParameter);
       }
 
       [Observation]
