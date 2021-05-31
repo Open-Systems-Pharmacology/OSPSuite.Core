@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.UICommands
       [Observation]
       public void should_leverage_the_observed_data_task_to_remove_the_observed_data()
       {
-         A.CallTo(() => _observedDataTask.Delete(_repositories)).MustHaveHappened();
+         A.CallTo(() => _observedDataTask.Delete(_repositories, false)).MustHaveHappened();
       }
    }
 }
