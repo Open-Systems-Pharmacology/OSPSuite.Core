@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       IDimension[] DimensionsSortedByName { get; }
 
       /// <summary>
-      /// Returns the name of all dimensions sorted by names
+      ///    Returns the name of all dimensions sorted by names
       /// </summary>
       string[] DimensionNamesSortedByName { get; }
 
@@ -32,7 +32,6 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// </summary>
       bool TryGetDimension(string dimensionName, out IDimension dimension);
 
-
       IDimension MergedDimensionFor<T>(T hasDimension) where T : IWithDimension;
 
       /// <summary>
@@ -45,7 +44,8 @@ namespace OSPSuite.Core.Domain.UnitSystem
       void AddMergingInformation(IDimensionMergingInformation mergingInformation);
 
       /// <summary>
-      /// Returns <c>true</c> if there is some merging information defined between the source and target dimension otherwise <c>false</c> 
+      ///    Returns <c>true</c> if there is some merging information defined between the source and target dimension otherwise
+      ///    <c>false</c>
       /// </summary>
       bool HasMergingInformation(IDimension sourceDimension, IDimension targetDimension);
 
@@ -67,12 +67,20 @@ namespace OSPSuite.Core.Domain.UnitSystem
       IDimension GetOrAddRHSDimensionFor(IDimension dimension);
 
       /// <summary>
-      ///    Retrieve the dimension containing a unit <paramref name="unitName" /> or null if not found
+      ///    Retrieves the dimension containing a unit <paramref name="unitName" /> or null if not found.
+      ///    This methods looks for synonyms and also supports different case (e.g. mL and ml)
       /// </summary>
       /// <param name="unitName">The unit string that will be searched for. For example 'mg' or 's'</param>
-      /// <returns>The dimension associated with the unit name</returns>
+      /// <returns>The dimension associated with the unit if found or null otherwise</returns>
       IDimension DimensionForUnit(string unitName);
 
+      /// <summary>
+      ///    Retrieves the dimension containing unit <paramref name="unitName" /> as well as the corresponding unit instance
+      ///    or null if not found. This methods looks for synonyms and also supports different case (e.g. mL and ml)
+      /// </summary>
+      /// <param name="unitName">The unit string that will be searched for. For example 'mg' or 's'</param>
+      /// <returns>The dimension and unit associated with the unit if found or null otherwise</returns>
+      (IDimension dimension, Unit unit) FindUnit(string unitName);
 
       /// <summary>
       ///    This is a dimension that will only have one unit and assume tha the user is saving the value in the expected base
