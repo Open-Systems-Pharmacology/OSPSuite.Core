@@ -119,6 +119,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
          return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
       }
 
+      public (IDimension dimension, Unit unit) FindUnit(string unitName)
+      {
+         var dimension = DimensionForUnit(unitName);
+         return (dimension, dimension?.FindUnit(unitName, ignoreCase: true));
+      }
+
       public IDimension CreateUserDefinedDimension(string dimensionName, string unit)
       {
          return new Dimension(Constants.Dimension.NO_DIMENSION.BaseRepresentation, dimensionName, unit);
