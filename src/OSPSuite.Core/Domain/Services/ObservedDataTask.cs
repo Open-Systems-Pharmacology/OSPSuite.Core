@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Services;
-using Command = OSPSuite.Assets.Command;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
+using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -23,10 +23,10 @@ namespace OSPSuite.Core.Domain.Services
       bool Delete(DataRepository observedData);
 
       /// <summary>
-      ///    Deletes the <paramref name="observedDataEnumerable" /> from the project.
-      ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c>
+      ///    Deletes the <paramref name="observedDataEnumerable" /> from the project. User prompt can be turned off (<paramref name="silent"/> set to <c>true</c>).
+      ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c> (only if the <paramref name="silent"/> flag is set to <c>false</c> which is the default)
       /// </summary>
-      bool Delete(IEnumerable<DataRepository> observedDataEnumerable);
+      bool Delete(IEnumerable<DataRepository> observedDataEnumerable, bool silent = false);
 
       void Export(DataRepository observedData);
 
@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Update the molecular weight for an observed data set from the value of the
       ///    corresponding molecule in the project.
-      ///    When f.e. the selected Molecule of a data set gets changed, 
+      ///    When f.e. the selected Molecule of a data set gets changed,
       ///    the MolWeight of the data set can get updated by calling this function.
       /// </summary>
       void UpdateMolWeight(DataRepository observedData);
@@ -65,16 +65,13 @@ namespace OSPSuite.Core.Domain.Services
          _objectTypeResolver = objectTypeResolver;
       }
 
-      public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved)
+      public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
       {
          var observedDataToRemoveList = observedDataToBeRemoved.ToList();
 
          var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
 
-         observedDataToRemoveList.Each(x =>
-         {
-            usedInAnalyzablesCache[x] = allUsersOfObservedData(x);
-         });
+         observedDataToRemoveList.Each(x => { usedInAnalyzablesCache[x] = allUsersOfObservedData(x); });
 
          var observedDataThatCanBeRemoved = observedDataToRemoveList.Where(x => !usedInAnalyzablesCache[x].Any()).ToList();
          var observedDataNotDeleted = observedDataToRemoveList.Except(observedDataThatCanBeRemoved);
@@ -84,11 +81,12 @@ namespace OSPSuite.Core.Domain.Services
          if (!observedDataThatCanBeRemoved.Any())
             throw new CannotDeleteObservedDataException(observedDataNotDeletedMessage);
 
-
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeletedMessage));
-
-         if (viewResult == ViewResult.No)
-            return false;
+         if (!silent)
+         {
+            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeletedMessage));
+            if (viewResult == ViewResult.No)
+               return false;
+         }
 
          return deleteAll(observedDataThatCanBeRemoved);
       }
@@ -101,15 +99,15 @@ namespace OSPSuite.Core.Domain.Services
 
       private bool deleteAll(IEnumerable<DataRepository> observedDataToDelete)
       {
-         var macoCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
+         var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
          {
             CommandType = Command.CommandTypeDelete,
             ObjectType = ObjectTypes.ObservedData,
             Description = Command.ObservedDataDeletedFromProject,
          };
 
-         observedDataToDelete.Each(x => macoCommand.Add(new RemoveObservedDataFromProjectCommand(x)));
-         _executionContext.AddToHistory(macoCommand.Run(_executionContext));
+         observedDataToDelete.Each(x => macroCommand.Add(new RemoveObservedDataFromProjectCommand(x)));
+         _executionContext.AddToHistory(macroCommand.Run(_executionContext));
          return true;
       }
 
@@ -184,5 +182,4 @@ namespace OSPSuite.Core.Domain.Services
       //TODO See if code can be merged between APPS
       public abstract void Rename(DataRepository observedData);
    }
-
 }
