@@ -243,7 +243,10 @@ namespace OSPSuite.R.Services
             }
             else
             {
-               pattern.Add(entry.Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER));
+               pattern.Add(entry
+                  .Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER)
+                  .Replace("(", "\\(")
+                  .Replace(")", "\\)"));
                pattern.Add(PATH_DELIMITER);
             }
          }
