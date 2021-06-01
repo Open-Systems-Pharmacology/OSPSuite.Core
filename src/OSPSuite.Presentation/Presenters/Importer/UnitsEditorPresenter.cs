@@ -12,6 +12,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private Column _importDataColumn;
       private IEnumerable<IDimension> _dimensions;
       private string _selectedUnit { get; set; }
+      private IDimension _selectedDimension { get; set; }
       private string _selectedColumn { get; set; }
       private bool _columnMapping;
 
@@ -44,7 +45,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          this.DoWithinExceptionHandler(() =>
          {
-            _selectedUnit = (_dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First()).DefaultUnit.Name;
+            _selectedDimension = _dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First();
+            _selectedUnit = _selectedDimension.DefaultUnit.Name;
             SetUnit();
             fillUnits(_selectedUnit);
          });
@@ -100,13 +102,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (useDimensionSelector())
          {
-            View.FillUnitComboBox(findSelectedOrDefaultDimension(selectedUnit).Units, selectedUnit);
+            View.FillUnitComboBox(_selectedDimension.Units, selectedUnit);
          }
 
          if (_dimensions == null || !_dimensions.Any())
             return;
 
-         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units).Where(u => !string.IsNullOrEmpty(u.Name)), selectedUnit);
+         View.FillUnitComboBox(_selectedDimension.Units, selectedUnit);
       }
 
       private IDimension findSelectedOrDefaultDimension(string selectedUnit)

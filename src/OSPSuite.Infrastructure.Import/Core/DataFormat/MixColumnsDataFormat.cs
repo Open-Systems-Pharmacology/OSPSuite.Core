@@ -53,7 +53,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
-            return new UnitDescription();
+            return new UnitDescription(""); //in this case return the default unit for Dimensionless
          }
          keys.Remove(unitKey);
          rank++;
