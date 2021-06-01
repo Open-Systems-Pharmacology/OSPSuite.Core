@@ -25,7 +25,6 @@ namespace OSPSuite.UI.Views.Importer
       public MappingParameterEditorView()
       {
          InitializeComponent();
-         lloqLayoutControlItem.Text = Captions.Importer.LLOQ.FormatForLabel(false);
          unitsLayoutControlItem.TextLocation = Locations.Top;
          errorTypeLayoutControlItem.TextLocation = Locations.Top;
          lloqLayoutControlItem.TextLocation = Locations.Top;
