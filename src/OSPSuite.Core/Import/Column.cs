@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Import
 {
@@ -50,6 +51,7 @@ namespace OSPSuite.Core.Import
       public string Name { get; set; }
 
       public UnitDescription Unit { get; set; }
+      public IDimension Dimension { get; set; }
 
       public string LloqColumn { get; set; }
 

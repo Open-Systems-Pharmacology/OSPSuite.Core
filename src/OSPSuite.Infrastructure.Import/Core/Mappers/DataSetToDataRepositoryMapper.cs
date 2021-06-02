@@ -15,12 +15,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
-      private readonly IDimensionFactory _dimensionFactory;
 
-      public DataSetToDataRepositoryMapper(IDimensionFactory dimensionFactory)
-      {
-         _dimensionFactory = dimensionFactory;
-      }
       public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
@@ -59,12 +54,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> column, string fileName)
       {
          DataColumn dataColumn;
-         //so the dimension is calculated correctly but with the wrong function
-         //for now it stays like this, cause otherwise we have to have the association
-         //var dimension_test = _dimensionFactory.Dimension(column.Key.Name);
-         //otherwise we can also just get the defaultDimension from the columnInfos when we
-         //create the extended column
-         var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit) ?? Constants.Dimension.NO_DIMENSION;
+
+         IDimension dimension;
+
+         if (column.Key.Column.Dimension == null)
+            dimension = 
+
+         var dimension = column.Key.Column.Dimension;
 
          if (column.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);

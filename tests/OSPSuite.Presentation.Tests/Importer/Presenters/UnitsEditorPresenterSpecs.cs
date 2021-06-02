@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FakeItEasy;
-using System.Linq;
 using OSPSuite.BDDHelper;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, new List<IDimension>() {new Dimension()}, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension = A.Fake<IDimension>()},  new List<IDimension>() {}, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -66,7 +66,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.TIME, "min") }, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]

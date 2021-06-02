@@ -28,7 +28,8 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column() 
                   {
                      Name = "Time",
-                     Unit = new UnitDescription("s")
+                     Unit = new UnitDescription("s"),
+                     Dimension = Constants.Dimension.NO_DIMENSION
                   },
                   ColumnInfo = new ColumnInfo()
                   {
@@ -64,7 +65,8 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("mol")
+                     Unit = new UnitDescription("mol"),
+                     Dimension = Constants.Dimension.NO_DIMENSION
                   },
                   ColumnInfo = new ColumnInfo()
                   {
@@ -104,9 +106,7 @@ namespace OSPSuite.Infrastructure.Import
                new List<MetaDataInstance>()
             )
          );
-         var dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(Constants.Dimension.NO_DIMENSION);
-         sut = new DataSetToDataRepositoryMapper(dimensionFactory);
+         sut = new DataSetToDataRepositoryMapper();
       }
    }
 

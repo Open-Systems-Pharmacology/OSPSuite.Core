@@ -18,6 +18,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataFormat _basicFormat;
       protected IColumnMappingView _view;
       protected IImporter _importer;
+      protected IDimensionFactory _dimensionFactory;
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -37,6 +38,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
@@ -77,7 +79,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
       }
    }
 

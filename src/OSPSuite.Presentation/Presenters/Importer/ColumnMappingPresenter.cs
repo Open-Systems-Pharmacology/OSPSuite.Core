@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
@@ -24,15 +25,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
+      private readonly IDimensionFactory _dimensionFactory;
+
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
-         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
+         IDimensionFactory dimensionFactory
       ) : base(view)
       {
          _importer = importer;
+         _dimensionFactory = dimensionFactory;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
@@ -168,10 +173,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
 
          var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
-         column.Unit = _mappingParameterEditorPresenter.Unit;
-         if (!string.IsNullOrEmpty(column.Unit.ColumnName))
+         if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
             column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
+            (column.Dimension, _ ) = _dimensionFactory.FindUnit(column.Unit.SelectedUnit);
+         }
+         else
+         {
+            column.Unit = _mappingParameterEditorPresenter.Unit;
+            column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
 
          if (model.ColumnInfo.IsBase())

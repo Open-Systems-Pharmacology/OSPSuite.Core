@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.LloqColumn);
          Map(x => x.Name);
          Map(x => x.Unit);
+         Map(x => x.Dimension);
       }
 
       protected override void TypedDeserialize(Column objectToDeserialize, XElement outputToDeserialize, SerializationContext context)

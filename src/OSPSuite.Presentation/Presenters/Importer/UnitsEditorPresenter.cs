@@ -12,8 +12,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private Column _importDataColumn;
       private IEnumerable<IDimension> _dimensions;
       private string _selectedUnit { get; set; }
-      private IDimension _selectedDimension { get; set; }
       private string _selectedColumn { get; set; }
+      public IDimension Dimension { get; private set; }
+
       private bool _columnMapping;
 
       public UnitDescription Unit
@@ -36,6 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMapping = importDataColumn.Unit.ColumnName != null;
          View.SetParams(_columnMapping, useDimensionSelector());
          fillDimensions(importDataColumn.Unit.SelectedUnit);
+         Dimension = importDataColumn.Dimension;
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
@@ -45,8 +47,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          this.DoWithinExceptionHandler(() =>
          {
-            _selectedDimension = _dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First();
-            _selectedUnit = _selectedDimension.DefaultUnit.Name;
+            Dimension = _dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First();
+            _selectedUnit = Dimension.DefaultUnit.Name;
             SetUnit();
             fillUnits(_selectedUnit);
          });
@@ -102,13 +104,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (useDimensionSelector())
          {
-            View.FillUnitComboBox(_selectedDimension.Units, selectedUnit);
+            View.FillUnitComboBox(Dimension.Units, selectedUnit);
          }
 
          if (_dimensions == null || !_dimensions.Any())
             return;
 
-         View.FillUnitComboBox(_selectedDimension.Units, selectedUnit);
+         View.FillUnitComboBox(Dimension.Units, selectedUnit);
       }
 
       private IDimension findSelectedOrDefaultDimension(string selectedUnit)
@@ -121,6 +123,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          this.DoWithinExceptionHandler(() =>
          {
             _importDataColumn.Unit = new UnitDescription(_selectedUnit);
+            _importDataColumn.Dimension = Dimension;
          });
       }
    }
