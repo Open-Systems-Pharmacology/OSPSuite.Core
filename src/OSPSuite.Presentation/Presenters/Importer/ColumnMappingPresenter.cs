@@ -193,7 +193,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
          }
          else

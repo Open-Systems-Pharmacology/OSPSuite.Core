@@ -94,31 +94,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void fillDimensions(string selectedUnit)
       {
-         if (useDimensionSelector())
-         {
-            var selectedDimension = Dimension != null ? Dimension.Name : findSelectedOrDefaultDimension(selectedUnit).Name;
-            View.FillDimensionComboBox(_dimensions, selectedDimension);
-         }
+         if (useDimensionSelector() && Dimension != null)
+            View.FillDimensionComboBox(_dimensions, Dimension.Name);
          else
             View.FillDimensionComboBox(new List<IDimension>(), "");
       }
 
       private void fillUnits(string selectedUnit)
       {
-         var units = Dimension != null ? Dimension.Units : findSelectedOrDefaultDimension(selectedUnit).Units;
+         if (useDimensionSelector() && Dimension != null)
+            View.FillUnitComboBox(Dimension.Units, selectedUnit);
 
-         if (useDimensionSelector())
-            View.FillUnitComboBox(units, selectedUnit);
-
-         if (_dimensions == null || !_dimensions.Any())
+         if (_dimensions == null || !_dimensions.Any() || Dimension == null)
             return;
 
-         View.FillUnitComboBox(Dimension.Units, selectedUnit);
-      }
-
-      private IDimension findSelectedOrDefaultDimension(string selectedUnit)
-      {
-         return _dimensions.FirstOrDefault(d => d.Units.Any(u => u.Name == selectedUnit)) ?? _dimensions.First();
+         View.FillUnitComboBox(Dimension?.Units, selectedUnit);
       }
 
       public void SetUnit()
