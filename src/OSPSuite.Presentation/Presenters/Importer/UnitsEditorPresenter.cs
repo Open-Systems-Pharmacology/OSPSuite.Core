@@ -95,22 +95,30 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void fillDimensions(string selectedUnit)
       {
          if (useDimensionSelector())
-            View.FillDimensionComboBox(_dimensions, Dimension.Name);
+         {
+            var selectedDimension = Dimension != null ? Dimension.Name : findSelectedOrDefaultDimension(selectedUnit).Name;
+            View.FillDimensionComboBox(_dimensions, selectedDimension);
+         }
          else
             View.FillDimensionComboBox(new List<IDimension>(), "");
       }
 
       private void fillUnits(string selectedUnit)
       {
+         var units = Dimension != null ? Dimension.Units : findSelectedOrDefaultDimension(selectedUnit).Units;
+
          if (useDimensionSelector())
-         {
-            View.FillUnitComboBox(Dimension.Units, selectedUnit);
-         }
+            View.FillUnitComboBox(units, selectedUnit);
 
          if (_dimensions == null || !_dimensions.Any())
             return;
 
          View.FillUnitComboBox(Dimension.Units, selectedUnit);
+      }
+
+      private IDimension findSelectedOrDefaultDimension(string selectedUnit)
+      {
+         return _dimensions.FirstOrDefault(d => d.Units.Any(u => u.Name == selectedUnit)) ?? _dimensions.First();
       }
 
       public void SetUnit()

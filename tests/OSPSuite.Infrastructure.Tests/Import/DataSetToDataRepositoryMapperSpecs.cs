@@ -106,7 +106,9 @@ namespace OSPSuite.Infrastructure.Import
                new List<MetaDataInstance>()
             )
          );
-         sut = new DataSetToDataRepositoryMapper();
+         var dimensionFactory = A.Fake<IDimensionFactory>();
+         A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(Constants.Dimension.NO_DIMENSION);
+         sut = new DataSetToDataRepositoryMapper(dimensionFactory);
       }
    }
 

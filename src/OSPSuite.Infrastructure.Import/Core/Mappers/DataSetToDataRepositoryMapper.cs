@@ -15,6 +15,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
+      private readonly IDimensionFactory _dimensionFactory;
+
+      public DataSetToDataRepositoryMapper(IDimensionFactory dimensionFactory)
+      {
+         _dimensionFactory = dimensionFactory;
+      }
+
       public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
@@ -54,7 +61,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          DataColumn dataColumn;
 
-         var dimension = column.Key.Column.Dimension;
+         IDimension dimension;
+         if (column.Key.Column.Dimension != null)
+            dimension = column.Key.Column.Dimension;
+         else
+            dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit) ?? Constants.Dimension.NO_DIMENSION;
+
 
          if (column.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
