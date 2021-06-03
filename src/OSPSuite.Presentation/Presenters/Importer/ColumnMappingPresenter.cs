@@ -126,13 +126,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var mappingColumn = ((MappingDataFormatParameter) mapping.Source).MappedColumn;
 
-         if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+        /* if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
             mappingColumn.Dimension =
-               _dimensionFactory.DimensionForUnit(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName)
+               _dimensionFactory.DimensionForUnit(_rawData.GetColumn(mappingColumn.Unit.ColumnName)
                   .First(u => !string.IsNullOrEmpty(u)));
-         else if (mappingColumn.Unit.SelectedUnit == "") //this here because "dimensionless" and fraction have both "" as default unit
-            mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
-         else
+         else */
             mappingColumn.Dimension = _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
       }
 
@@ -208,8 +206,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             column.Unit = _mappingParameterEditorPresenter.Unit;
             column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
-
-         setDimension(model);
 
          if (model.ColumnInfo.IsBase())
          {
