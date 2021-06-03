@@ -15,7 +15,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
-
       public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
@@ -55,11 +54,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          DataColumn dataColumn;
 
-         IDimension dimension;
-
-         if (column.Key.Column.Dimension == null)
-            dimension = 
-
          var dimension = column.Key.Column.Dimension;
 
          if (column.Key.ColumnInfo.IsBase())
@@ -82,12 +76,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          if (!string.IsNullOrEmpty(fileName))
             dataInfo.Source = fileName;
 
-         
-         var unit = (dimension != Constants.Dimension.NO_DIMENSION)
-            ? dimension.Unit(column.Key.Column.Unit.SelectedUnit)
-            : null;
-
-         dataInfo.DisplayUnitName = (unit != null ) ? unit.Name : string.Empty;
+         var unit = column.Key.Column.Unit.SelectedUnit;
+         dataInfo.DisplayUnitName = unit;
 
          var values = new float[column.Value.Count];
          var i = 0;

@@ -109,6 +109,31 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
+         setDimensionsForAllMappings();
+      }
+
+      private void setDimensionsForAllMappings()
+      {
+         foreach (var mapping in _mappings)
+         {
+            if (mapping.Source == null) return;
+
+            setDimension(mapping);
+         }
+      }
+
+      private void setDimension(ColumnMappingDTO mapping)
+      {
+         var mappingColumn = ((MappingDataFormatParameter) mapping.Source).MappedColumn;
+
+         if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+            mappingColumn.Dimension =
+               _dimensionFactory.DimensionForUnit(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName)
+                  .First(u => !string.IsNullOrEmpty(u)));
+         else if (mappingColumn.Unit.SelectedUnit == "") //this here because "dimensionless" and fraction have both "" as default unit
+            mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
+         else
+            mappingColumn.Dimension = _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
       }
 
       public void InitializeErrorUnit()
@@ -175,14 +200,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
-            (column.Dimension, _ ) = _dimensionFactory.FindUnit(column.Unit.SelectedUnit);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
+            column.Dimension = _dimensionFactory.DimensionForUnit(_mappingParameterEditorPresenter.Unit.SelectedUnit);
          }
          else
          {
             column.Unit = _mappingParameterEditorPresenter.Unit;
             column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
+
+         setDimension(model);
 
          if (model.ColumnInfo.IsBase())
          {
