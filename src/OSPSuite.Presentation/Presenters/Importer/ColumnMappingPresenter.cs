@@ -223,6 +223,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                column.Unit = new UnitDescription(""); //geometric error has no unit
+               column.Dimension = Constants.Dimension.NO_DIMENSION;
             }
          }
          else //in this case the column is a measurement column
