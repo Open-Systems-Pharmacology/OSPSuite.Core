@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
          MapEnumerable(x => x.Parameters, x => x.AddParameter);
          Map(x => x.FileName);
          Map(x => x.NamingConventions);
-         MapEnumerable(x => x.LoadedSheets, x => x.LoadedSheets.Add);
+         MapEnumerable(x => x.LoadedSheets, x => x.AddToLoadedSheets);
          Map(x => x.FilterString);
          Map(x => x.NanSettings);
          Map(x => x.Id);

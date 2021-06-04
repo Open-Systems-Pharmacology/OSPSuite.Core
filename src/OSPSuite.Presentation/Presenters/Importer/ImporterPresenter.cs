@@ -160,7 +160,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
-            _configuration.LoadedSheets.AddRange(args.Sheets.Keys);
+            foreach (var sheet in args.Sheets.Keys)
+               _configuration.AddToLoadedSheets(sheet);
+            
             _configuration.FilterString = args.Filter;
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException || e is MissingColumnException)

@@ -27,12 +27,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          IReadOnlyList<DataRepository> result = null;
          _view.FillImporterPanel(presenter.BaseView);
+         var configuration = presenter.UpdateAndGetConfiguration();
 
          presenter.OnTriggerImport += (s, d) =>
          {
             result = d.DataRepositories;
+            configuration = presenter.UpdateAndGetConfiguration();
          };
-         var configuration = presenter.UpdateAndGetConfiguration();
+         
          if (!string.IsNullOrEmpty(configurationId))
          {
             configuration.Id = configurationId;
