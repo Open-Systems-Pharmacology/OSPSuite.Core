@@ -9,6 +9,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Infrastructure.Import
 {
@@ -20,6 +21,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          dataSource = A.Fake<IDataSource>();
+         var dimension = A.Fake<IDimension>();
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             { 
@@ -29,7 +31,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Name = "Time",
                      Unit = new UnitDescription("s"),
-                     Dimension = Constants.Dimension.NO_DIMENSION
+                     Dimension = dimension
                   },
                   ColumnInfo = new ColumnInfo()
                   {
@@ -106,8 +108,11 @@ namespace OSPSuite.Infrastructure.Import
                new List<MetaDataInstance>()
             )
          );
+         var testDimensionFactory = IoC.Resolve<IDimensionFactory>();
          var dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(Constants.Dimension.NO_DIMENSION);
+         A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(dimension);
+         A.CallTo(() => dimension.Unit(A<string>.Ignored)).Returns(A.Fake<Unit>());
+         //A.CallTo(() => dimension.UnitValueToBaseUnitValue(A<Unit>.Ignored, A<double> )).Returns(A.Fake<Unit>());
          sut = new DataSetToDataRepositoryMapper(dimensionFactory);
       }
    }

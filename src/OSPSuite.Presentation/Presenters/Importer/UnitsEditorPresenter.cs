@@ -96,6 +96,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (useDimensionSelector() && Dimension != null)
             View.FillDimensionComboBox(_dimensions, Dimension.Name);
+         else if ( Dimension == null && selectedUnit == UnitDescription.InvalidUnit)
+            View.FillDimensionComboBox(_dimensions, _dimensions.FirstOrDefault()?.Name);
          else
             View.FillDimensionComboBox(new List<IDimension>(), "");
       }

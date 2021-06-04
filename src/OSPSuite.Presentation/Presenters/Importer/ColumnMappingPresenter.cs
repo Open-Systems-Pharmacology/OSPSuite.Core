@@ -109,24 +109,27 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
-         setDimensionsForAllMappings();
+         setDimensionsForMappings();
       }
 
-      private void setDimensionsForAllMappings()
+      private void setDimensionsForMappings()
       {
          foreach (var mapping in _mappings)
          {
-            if (mapping.Source == null) return;
+            if (!(mapping.Source is MappingDataFormatParameter)) continue;
 
-            setDimension(mapping);
+            var mappingColumn = ((MappingDataFormatParameter)mapping.Source).MappedColumn;
+
+            //initial settings for fraction dimension
+            if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION && mappingColumn.Unit?.ColumnName == null && mappingColumn.Unit?.SelectedUnit == UnitDescription.InvalidUnit)
+            {
+               mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
+               mappingColumn.Unit = new UnitDescription("");
+               continue;
+            }
+
+            mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
          }
-      }
-
-      private void setDimension(ColumnMappingDTO mapping)
-      {
-         var mappingColumn = ((MappingDataFormatParameter) mapping.Source).MappedColumn;
-
-         mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
       }
 
       public void InitializeErrorUnit()

@@ -100,8 +100,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
-            else if (unit != null && !string.IsNullOrEmpty(value.Unit))
-               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
+            else if (unit != null && !string.IsNullOrEmpty(value.Unit)) //do we keep this like this, or do we get the Unit from _dimensionfactory?
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
             else
                values[i++] = (float) adjustedValue;
          }
