@@ -106,11 +106,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (useDimensionSelector() && Dimension != null)
             View.FillUnitComboBox(Dimension.Units, selectedUnit);
-
-         if (_dimensions == null || !_dimensions.Any() || Dimension == null)
-            return;
-
-         View.FillUnitComboBox(Dimension?.Units, selectedUnit);
       }
 
       public void SetUnit()
