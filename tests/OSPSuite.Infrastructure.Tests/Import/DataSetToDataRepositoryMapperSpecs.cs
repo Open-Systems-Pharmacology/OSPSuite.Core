@@ -9,19 +9,43 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Infrastructure.Import
 {
+   public class DimensionForUnitTests : Dimension
+   {
+      private Unit _fakeUnit;
+
+      public DimensionForUnitTests(Unit unit)
+      {
+         _fakeUnit = unit;
+      }
+
+      //hiding the method (since it is not virtual to override), to return the value unchanged
+      public new double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
+      {
+         return valueInUnit;
+      }
+
+      public new Unit Unit(string name)
+      {
+         return _fakeUnit;
+      }
+
+      public new string DefaultUnitName => "FakeUnit";
+   }
+
    public abstract class concern_for_DataSetToDataRepositoryMapperSpecs : ContextSpecification<DataSetToDataRepositoryMapper>
    {
       protected IDataSource dataSource;
       protected DataRepository result;
+      protected Unit unit;
 
       protected override void Context()
       {
          dataSource = A.Fake<IDataSource>();
-         var dimension = A.Fake<IDimension>();
+         unit = A.Fake<Unit>();
+         var dimension = new DimensionForUnitTests(unit);
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             { 
@@ -108,11 +132,10 @@ namespace OSPSuite.Infrastructure.Import
                new List<MetaDataInstance>()
             )
          );
-         var testDimensionFactory = IoC.Resolve<IDimensionFactory>();
+
          var dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(dimension);
-         A.CallTo(() => dimension.Unit(A<string>.Ignored)).Returns(A.Fake<Unit>());
-         //A.CallTo(() => dimension.UnitValueToBaseUnitValue(A<Unit>.Ignored, A<double> )).Returns(A.Fake<Unit>());
+         A.CallTo(() => Unit.Name()).Returns(dimension);
          sut = new DataSetToDataRepositoryMapper(dimensionFactory);
       }
    }
