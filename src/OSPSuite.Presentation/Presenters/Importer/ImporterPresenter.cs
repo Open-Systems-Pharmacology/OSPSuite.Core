@@ -160,14 +160,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
-            //ToDo: this is the only place sheets are added, so the check here does the job fine
-            //ideally LoadedSheets should be a HashSet - leaving it like this for now because of struggling 
-            //with serialization of HashSet
             foreach (var sheet in args.Sheets.Keys)
-            {
-               if (!_configuration.LoadedSheets.Contains(sheet))
-                  _configuration.LoadedSheets.Add(sheet);
-            }
+               _configuration.AddToLoadedSheets(sheet);
+            
             _configuration.FilterString = args.Filter;
          }
          catch (Exception e) when (e is NanException || e is ErrorUnitException || e is MissingColumnException)
