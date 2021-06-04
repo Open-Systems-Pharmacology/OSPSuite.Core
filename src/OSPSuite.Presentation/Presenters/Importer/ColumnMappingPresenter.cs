@@ -116,9 +116,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          foreach (var mapping in _mappings)
          {
-            if (!(mapping.Source is MappingDataFormatParameter)) continue;
-            var mappingColumn = ((MappingDataFormatParameter)mapping.Source).MappedColumn;
-            if (mappingColumn.Unit == null) continue;
+            var mappingColumn = (mapping.Source as MappingDataFormatParameter)?.MappedColumn;
+            if (mappingColumn?.Unit == null) 
+               continue;
 
             //initial settings for fraction dimension
             if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION && 

@@ -57,29 +57,30 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return dataRepository;
       }
 
-      private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> column, string fileName)
+      private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-
          IDimension dimension;
-         if (column.Key.Column.Dimension != null)
-            dimension = column.Key.Column.Dimension;
+         var unit = columnAndData.Key.Column.Unit.SelectedUnit;
+
+         if (columnAndData.Key.Column.Dimension != null)
+            dimension = columnAndData.Key.Column.Dimension;
          else
-            dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit) ?? Constants.Dimension.NO_DIMENSION;
+            dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
 
 
-         if (column.Key.ColumnInfo.IsBase())
-            dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
+         if (columnAndData.Key.ColumnInfo.IsBase())
+            dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
          else
          {
             
-            if (!containsColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName))
+            if (!containsColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName))
             {
                //convertParsedDataColumn(dataRepository, importDataTable.Columns.ItemByName(colInfo.BaseGridName));
                throw new Exception();
             }
-            var baseGrid = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName) as BaseGrid;
-            dataColumn = new DataColumn(column.Key.ColumnInfo.Name, dimension, baseGrid);
+            var baseGrid = findColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName) as BaseGrid;
+            dataColumn = new DataColumn(columnAndData.Key.ColumnInfo.Name, dimension, baseGrid);
          }
 
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
@@ -88,14 +89,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          if (!string.IsNullOrEmpty(fileName))
             dataInfo.Source = fileName;
 
-         var unit = column.Key.Column.Unit.SelectedUnit;
          dataInfo.DisplayUnitName = unit;
 
-         var values = new float[column.Value.Count];
+         var values = new float[columnAndData.Value.Count];
          var i = 0;
 
          //loop over view rows to get the sorted values.
-         foreach (var value in column.Value)
+         foreach (var value in columnAndData.Value)
          {
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
@@ -113,9 +113,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          if (propInfo != null)
          {
-            if (column.Key.ColumnInfo.IsAuxiliary())
+            if (columnAndData.Key.ColumnInfo.IsAuxiliary())
             {
-               switch (column.Key.ErrorDeviation)
+               switch (columnAndData.Key.ErrorDeviation)
                {
                   case Constants.STD_DEV_ARITHMETIC:
                      errorType = AuxiliaryType.ArithmeticStdDev;
@@ -140,7 +140,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          //special case: Origin
          //if AuxiliaryType is set, set Origin to ObservationAuxiliary else to Observation for standard columns
-         //type is set to BaseGrid for baseGrid column
+         //type is set to BaseGrid for baseGrid columnAndData
          if (dataColumn.IsBaseGrid())
             dataInfo.Origin = ColumnOrigins.BaseGrid;
          else
