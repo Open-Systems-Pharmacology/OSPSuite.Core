@@ -616,9 +616,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (measurementColumn == null) return;
 
          //either both measurement and error units should be coming from excel columns, or they should have the same dimension
-         if ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) &&
-             (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC) ||
-             (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension))
+         if (errorColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC && 
+             ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) ||
+              (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension)))
          {
             errorColumn.Unit = new UnitDescription();
             errorColumn.Dimension = measurementColumn.Dimension;
