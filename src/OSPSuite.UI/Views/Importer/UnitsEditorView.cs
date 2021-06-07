@@ -72,6 +72,7 @@ namespace OSPSuite.UI.Views.Importer
             }
             _unitLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
             _columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+            _presenter.FillDimensions(_unitComboBox.EditValue as string);
             onUnitComboBoxTextChanged();
          }
       }
