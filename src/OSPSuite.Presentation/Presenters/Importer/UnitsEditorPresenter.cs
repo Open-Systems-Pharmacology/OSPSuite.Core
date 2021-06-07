@@ -104,7 +104,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void fillUnits(string selectedUnit)
       {
-         if (useDimensionSelector() && Dimension != null)
+         if (Dimension != null)
             View.FillUnitComboBox(Dimension.Units, selectedUnit);
       }
 
