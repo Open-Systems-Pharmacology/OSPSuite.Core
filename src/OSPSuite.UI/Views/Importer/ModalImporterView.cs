@@ -1,4 +1,4 @@
-﻿using OSPSuite.Assets;
+﻿using System.Windows.Forms;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -22,7 +22,6 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AttachPresenter(IModalImporterPresenter presenter)
       {
-
       }
 
       public void FillImporterPanel(IView view)
@@ -30,13 +29,9 @@ namespace OSPSuite.UI.Views.Importer
          importerPanelControl.FillWith(view);
       }
 
-
       public void AttachImporterPresenter(IImporterPresenter presenter)
       {
-         presenter.OnTriggerImport += (s, d) =>
-         {
-            DialogResult = System.Windows.Forms.DialogResult.OK;
-         };
+         presenter.OnTriggerImport += (s, d) => { DialogResult = DialogResult.OK; };
       }
 
       public void SetBaseView(IView baseView)

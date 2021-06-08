@@ -1,15 +1,15 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IMappingParameterEditorPresenter : IDisposablePresenter
    {
       void HideAll();
-      void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
+      void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection);
       void SetErrorTypeOptions(IEnumerable<string> types, string selected);
       int SelectedLloq { get; }
@@ -27,43 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IUnitsEditorPresenter _unitsEditorPresenter;
       private readonly ILloqEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
-      private IEnumerable<IDimension> _dimensions;
 
-      public int SelectedLloq { get => _lloqEditorPresenter.SelectedIndex; }
-      public int SelectedErrorType { get => _errorEditorPresenter.SelectedIndex; }
-
-      public bool LloqFromColumn()
-      {
-         return _lloqEditorPresenter.LloqFromColumn();
-      }
-
-      public UnitDescription Unit
-      {
-         get => _unitsEditorPresenter.Unit;
-      }
-
-      public IDimension Dimension
-      {
-         get {
-            return _errorEditorPresenter.SelectedText == Constants.STD_DEV_GEOMETRIC ? Constants.Dimension.NO_DIMENSION : _unitsEditorPresenter.Dimension;
-         }
-      }
-
-      public void SetUnitColumnSelection()
-      {
-         _unitsEditorPresenter.SetUnitColumnSelection();
-      }
-
-      public void SetUnitsManualSelection()
-      {
-         _unitsEditorPresenter.SetUnitsManualSelection();
-      }
-
-      public void InitView()
-      {
-         View.ShowUnits();
-         _unitsEditorPresenter.ShowColumnToggle();
-      }
 
       public MappingParameterEditorPresenter(
          IMappingParameterEditorView view,
@@ -81,29 +45,60 @@ namespace OSPSuite.Presentation.Presenters.Importer
          errorEditorPresenter.OnOptionSelectionChanged += errorSelectionChanged;
       }
 
+      public int SelectedLloq => _lloqEditorPresenter.SelectedIndex;
+
+      public int SelectedErrorType => _errorEditorPresenter.SelectedIndex;
+
+      public bool LloqFromColumn()
+      {
+         return _lloqEditorPresenter.LloqFromColumn();
+      }
+
+      public UnitDescription Unit => _unitsEditorPresenter.Unit;
+
+      public IDimension Dimension => _errorEditorPresenter.SelectedText == Constants.STD_DEV_GEOMETRIC ? 
+         Constants.Dimension.NO_DIMENSION : 
+         _unitsEditorPresenter.Dimension;
+
+      public void SetUnitColumnSelection()
+      {
+         _unitsEditorPresenter.SetUnitColumnSelection();
+      }
+
+      public void SetUnitsManualSelection()
+      {
+         _unitsEditorPresenter.SetUnitsManualSelection();
+      }
+
+      public void InitView()
+      {
+         View.ShowUnits();
+         _unitsEditorPresenter.ShowColumnToggle();
+      }
+
+
       public void HideAll()
       {
          View.HideAll();
       }
 
-      public void SetUnitOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
+      public void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
-         _dimensions = dimensions;
-         _unitsEditorPresenter.SetOptions(importDataColumn, _dimensions, availableColumns);
+         _unitsEditorPresenter.SetOptions(importDataColumn, dimensions, availableColumns);
       }
 
       public void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection)
       {
-         _lloqEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", columns } }, lloqColumnsSelection);
+         _lloqEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", columns}}, lloqColumnsSelection);
          View.ShowLloq();
       }
 
       public void SetErrorTypeOptions(IEnumerable<string> types, string selected)
       {
-         _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() { { "", types } }, selected);
+         _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", types}}, selected);
          View.ShowErrorTypes();
 
-         if (selected!= null && selected.Equals(Constants.STD_DEV_GEOMETRIC))
+         if (selected != null && selected.Equals(Constants.STD_DEV_GEOMETRIC))
             View.HideUnits();
       }
 

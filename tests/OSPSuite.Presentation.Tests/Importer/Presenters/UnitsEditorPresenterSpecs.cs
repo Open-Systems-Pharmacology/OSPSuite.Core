@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 
@@ -24,7 +25,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min")}, A.Fake<IReadOnlyList<IDimension>>(), A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -38,7 +39,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min", "columnName")}, A.Fake<IEnumerable<IDimension>>(), A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min", "columnName")}, A.Fake<IReadOnlyList<IDimension>>(), A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -66,7 +67,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.TIME, "min") }, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension =DomainHelperForSpecs.TimeDimensionForSpecs() }, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]

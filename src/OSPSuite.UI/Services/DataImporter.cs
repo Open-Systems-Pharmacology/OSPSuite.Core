@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using DevExpress.XtraRichEdit.Internal;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -7,13 +10,11 @@ using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Utility.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using OSPSuite.Presentation.Core;
+using static OSPSuite.Assets.Captions.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
-
 
 namespace OSPSuite.UI.Services
 {
@@ -23,7 +24,6 @@ namespace OSPSuite.UI.Services
       private readonly IImporter _importer;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IApplicationController _applicationController;
-
 
       public DataImporter(
          IDialogCreator dialogCreator,
@@ -93,12 +93,12 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
+         var path = _dialogCreator.AskForFileToOpen(PleaseSelectDataFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
 
-         var path = _dialogCreator.AskForFileToOpen(Captions.Importer.PleaseSelectDataFile, Captions.Importer.ImportFileFilter,
-            Constants.DirectoryKey.OBSERVED_DATA);
+         (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) emptyImport = (Array.Empty<DataRepository>(), null);
 
          if (string.IsNullOrEmpty(path))
-            return (new List<DataRepository>(), null);
+            return emptyImport;
 
          using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
          {
@@ -106,12 +106,13 @@ namespace OSPSuite.UI.Services
 
             try
             {
-               if (!importerPresenter.SetSourceFile(path)) return (new List<DataRepository>(), null);
+               if (!importerPresenter.SetSourceFile(path))
+                  return emptyImport;
             }
             catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
             {
                _dialogCreator.MessageBoxError(e.Message);
-               return (new List<DataRepository>(), null);
+               return emptyImport;
             }
 
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
@@ -128,7 +129,7 @@ namespace OSPSuite.UI.Services
          DataImporterSettings dataImporterSettings
       )
       {
-         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         var fileName = _dialogCreator.AskForFileToOpen(OpenFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
          if (string.IsNullOrEmpty(fileName))
             return Enumerable.Empty<DataRepository>().ToList();
          if (dataImporterSettings.PromptForConfirmation)
@@ -149,7 +150,7 @@ namespace OSPSuite.UI.Services
          IDataSourceFile dataSourceFile = null;
 
          try
-         { 
+         {
             dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
@@ -189,15 +190,16 @@ namespace OSPSuite.UI.Services
                missingSheets.Add(key);
                continue;
             }
+
             sheets.Add(key, dataSourceFile.DataSheets[key]);
          }
 
-         if(missingSheets.Count != 0)
-            _dialogCreator.MessageBoxError(Captions.Importer.SheetsNotFound(missingSheets));
+         if (missingSheets.Count != 0)
+            _dialogCreator.MessageBoxError(SheetsNotFound(missingSheets));
 
          dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
 
-         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings,configuration.Id);
+         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id);
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
@@ -238,4 +240,3 @@ namespace OSPSuite.UI.Services
       }
    }
 }
-

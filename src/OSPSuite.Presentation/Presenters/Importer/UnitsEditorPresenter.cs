@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Views.Importer;
@@ -10,32 +11,26 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {
       private Column _importDataColumn;
-      private IEnumerable<IDimension> _dimensions;
-      private string _selectedUnit { get; set; }
-      private string _selectedColumn { get; set; }
+      private IReadOnlyList<IDimension> _dimensions;
+      private string _selectedUnit;
+      private string _selectedColumn;
       public IDimension Dimension { get; private set; }
 
       private bool _columnMapping;
 
-      public UnitDescription Unit
-      {
-         get
-         {
-            return new UnitDescription(_selectedUnit, _selectedColumn);
-         }
-      }
+      public UnitDescription Unit => new UnitDescription(_selectedUnit, _selectedColumn);
 
       public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
       {
       }
 
-      public void SetOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns)
+      public void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
          _columnMapping = importDataColumn.Unit.ColumnName != null;
-         View.SetParams(_columnMapping, useDimensionSelector());
+         View.SetParams(_columnMapping, useDimensionSelector);
          Dimension = importDataColumn.Dimension;
          FillDimensions(importDataColumn.Unit.SelectedUnit);
          fillUnits(importDataColumn.Unit.SelectedUnit);
@@ -43,11 +38,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.FillColumnComboBox(availableColumns);
       }
 
-      public void SelectDimension(string dimension)
+      public void SelectDimension(string dimensionName)
       {
          this.DoWithinExceptionHandler(() =>
          {
-            Dimension = _dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First();
+            Dimension = _dimensions.FirstOrDefault(d => string.Equals(d.Name, dimensionName)) ??
+                        _dimensions.FirstOrDefault() ??
+                        Constants.Dimension.NO_DIMENSION;
+
             _selectedUnit = Dimension.DefaultUnit.Name;
             SetUnit();
             fillUnits(_selectedUnit);
@@ -56,7 +54,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SelectColumn(string column)
       {
-         this.DoWithinExceptionHandler(() => {
+         this.DoWithinExceptionHandler(() =>
+         {
             _columnMapping = true;
             _selectedColumn = column;
          });
@@ -87,16 +86,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          });
       }
 
-      private bool useDimensionSelector()
-      {
-         return _dimensions.Count() > 1;
-      }
+      private bool useDimensionSelector => _dimensions.Count > 1;
 
       public void FillDimensions(string selectedUnit)
       {
-         if (useDimensionSelector() && Dimension != null)
+         if (useDimensionSelector && Dimension != null)
             View.FillDimensionComboBox(_dimensions, Dimension.Name);
-         else if ( Dimension == null && selectedUnit == UnitDescription.InvalidUnit)
+         else if (Dimension == null && selectedUnit == UnitDescription.InvalidUnit)
             View.FillDimensionComboBox(_dimensions, _dimensions.FirstOrDefault()?.Name);
          else
             View.FillDimensionComboBox(_dimensions, _dimensions.FirstOrDefault()?.Name ?? "");

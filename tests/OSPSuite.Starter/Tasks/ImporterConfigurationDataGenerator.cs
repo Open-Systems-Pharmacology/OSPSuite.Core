@@ -55,7 +55,7 @@ namespace OSPSuite.Starter.Tasks
             NullValuesHandling = NullValuesHandlingType.DeleteRow,
          };
 
-         timeColumn.DimensionInfos.Add(new DimensionInfo {Dimension = timeDimension, IsMainDimension = true});
+         timeColumn.SupportedDimensions.Add(timeDimension);
          columns.Add(timeColumn);
 
          var mainDimension = _dimensionFactory.Dimension("Concentration (molar)");
@@ -74,11 +74,7 @@ namespace OSPSuite.Starter.Tasks
          {
             if (dimension.Equals(timeDimension)) continue;
             if (dimension.Equals(noDimension)) continue;
-            measurementInfo.DimensionInfos.Add(new DimensionInfo
-            {
-               Dimension = dimension,
-               IsMainDimension = dimension.Equals(mainDimension)
-            });
+            measurementInfo.SupportedDimensions.Add(dimension);
          }
          columns.Add(measurementInfo);
 
@@ -96,11 +92,7 @@ namespace OSPSuite.Starter.Tasks
          foreach (var dimension in _dimensionFactory.Dimensions)
          {
             if (dimension.Equals(timeDimension)) continue;
-            errorInfo.DimensionInfos.Add(new DimensionInfo
-            {
-               Dimension = dimension,
-               IsMainDimension = dimension.Equals(mainDimension)
-            });
+            errorInfo.SupportedDimensions.Add(dimension);
          }
          columns.Add(errorInfo);
 
@@ -262,7 +254,7 @@ namespace OSPSuite.Starter.Tasks
             NullValuesHandling = NullValuesHandlingType.DeleteRow,
          };
 
-         timeColumn.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.Dimension("Time"), IsMainDimension = true});
+         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Time"));
          return timeColumn;
       }
 
@@ -368,9 +360,9 @@ namespace OSPSuite.Starter.Tasks
             RelatedColumnOf = concentrationInfo.Name
          };
 
-         errorInfo.DimensionInfos.Add(new DimensionInfo {Dimension = _molarConcentrationDimension, IsMainDimension = true});
-         errorInfo.DimensionInfos.Add(new DimensionInfo {Dimension = _massConcentrationDimension, IsMainDimension = false});
-         errorInfo.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.NoDimension, IsMainDimension = false});
+         errorInfo.SupportedDimensions.Add(_molarConcentrationDimension);
+         errorInfo.SupportedDimensions.Add(_massConcentrationDimension);
+         errorInfo.SupportedDimensions.Add(_dimensionFactory.NoDimension);
          return errorInfo;
       }
 
@@ -387,8 +379,8 @@ namespace OSPSuite.Starter.Tasks
             BaseGridName = timeColumn.Name
          };
 
-         concentrationInfo.DimensionInfos.Add(new DimensionInfo {Dimension = _molarConcentrationDimension, IsMainDimension = true});
-         concentrationInfo.DimensionInfos.Add(new DimensionInfo {Dimension = _massConcentrationDimension, IsMainDimension = false});
+         concentrationInfo.SupportedDimensions.Add(_molarConcentrationDimension);
+         concentrationInfo.SupportedDimensions.Add(_massConcentrationDimension);
          return concentrationInfo;
       }
 
@@ -412,7 +404,7 @@ namespace OSPSuite.Starter.Tasks
             NullValuesHandling = NullValuesHandlingType.Allowed,
             DataType = typeof(string)
          };
-         categoryColum.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.Dimension("Dimensionless"), IsMainDimension = true});
+         categoryColum.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(categoryColum);
 
          var dateCategory = new ColumnInfo
@@ -425,7 +417,7 @@ namespace OSPSuite.Starter.Tasks
             Description = "The date when the measurement was made",
             DataType = typeof(DateTime)
          };
-         dateCategory.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.Dimension("Dimensionless"), IsMainDimension = true});
+         dateCategory.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(dateCategory);
 
 
@@ -439,7 +431,7 @@ namespace OSPSuite.Starter.Tasks
             Description = "Has the measurement been approved?",
             DataType = typeof(bool)
          };
-         releasedColumn.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.Dimension("Dimensionless"), IsMainDimension = true});
+         releasedColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(releasedColumn);
          return columnInfos;
       }
@@ -459,7 +451,7 @@ namespace OSPSuite.Starter.Tasks
          };
 
 
-         ageColumn.DimensionInfos.Add(new DimensionInfo {Dimension = _ageInYearsDimension, IsMainDimension = true});
+         ageColumn.SupportedDimensions.Add(_ageInYearsDimension);
          columns.Add(ageColumn);
 
          var ontogenyFactor = new ColumnInfo
@@ -472,7 +464,7 @@ namespace OSPSuite.Starter.Tasks
             NullValuesHandling = NullValuesHandlingType.DeleteRow,
             BaseGridName = ageColumn.Name,
          };
-         ontogenyFactor.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.NoDimension, IsMainDimension = true});
+         ontogenyFactor.SupportedDimensions.Add(_dimensionFactory.NoDimension);
          columns.Add(ontogenyFactor);
 
          var geoMean = new ColumnInfo
@@ -487,7 +479,7 @@ namespace OSPSuite.Starter.Tasks
             RelatedColumnOf = ontogenyFactor.Name
          };
 
-         geoMean.DimensionInfos.Add(new DimensionInfo {Dimension = _dimensionFactory.NoDimension, IsMainDimension = true});
+         geoMean.SupportedDimensions.Add(_dimensionFactory.NoDimension);
          columns.Add(geoMean);
 
          return columns;

@@ -1,15 +1,16 @@
-﻿using OSPSuite.Core.Domain.Data;
+﻿using System;
+using System.Collections.Generic;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Import;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
-using System.Collections.Generic;
-using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IModalImporterPresenter : IDisposablePresenter
    {
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
-         IImporterPresenter presenter, 
+         IImporterPresenter presenter,
          string configurationId = null
       );
    }
@@ -21,28 +22,29 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
-         IImporterPresenter presenter, 
+         IImporterPresenter presenter,
          string configurationId = null
       )
       {
-         IReadOnlyList<DataRepository> result = null;
+         IReadOnlyList<DataRepository> results = Array.Empty<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
          var configuration = presenter.UpdateAndGetConfiguration();
 
          presenter.OnTriggerImport += (s, d) =>
          {
-            result = d.DataRepositories;
+            results = d.DataRepositories;
             configuration = presenter.UpdateAndGetConfiguration();
          };
-         
+
          if (!string.IsNullOrEmpty(configurationId))
          {
             configuration.Id = configurationId;
-            result.Each(r => r.ConfigurationId = configurationId);
+            results.Each(r => r.ConfigurationId = configurationId);
          }
+
          _view.AttachImporterPresenter(presenter);
          _view.Display();
-         return (result, configuration);
+         return (results, configuration);
       }
    }
 }

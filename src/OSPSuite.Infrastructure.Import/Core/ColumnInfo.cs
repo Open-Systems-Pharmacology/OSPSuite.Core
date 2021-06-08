@@ -10,7 +10,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string Name
       {
-         get { return _name; }
+         get => _name;
          set
          {
             _name = value;
@@ -29,11 +29,17 @@ namespace OSPSuite.Infrastructure.Import.Core
       ///    Column name of related column. The related column must have an auxiliary type as meta data category.
       /// </summary>
       public string RelatedColumnOf { get; set; }
-      public IList<DimensionInfo> DimensionInfos { get; private set; }
+
+      /// <summary>
+      ///    List of possible supported dimensions.This List may be empty if all dimensions are supported
+      /// </summary>
+      public IList<IDimension> SupportedDimensions { get; }
+
       public IDimension DefaultDimension { get; set; }
-      public IList<MetaDataCategory> MetaDataCategories { get; private set; }
+      public IList<MetaDataCategory> MetaDataCategories { get; }
 
       public Type DataType { get; set; }
+
       public ColumnInfo()
       {
          DataType = typeof(double);
@@ -42,7 +48,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          Description = string.Empty;
          NullValuesHandling = NullValuesHandlingType.DeleteRow;
          IsMandatory = true;
-         DimensionInfos = new List<DimensionInfo>();
+         SupportedDimensions = new List<IDimension>();
          DefaultDimension = null;
          MetaDataCategories = new List<MetaDataCategory>();
       }

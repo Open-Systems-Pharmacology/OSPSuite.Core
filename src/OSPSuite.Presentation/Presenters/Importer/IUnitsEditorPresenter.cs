@@ -6,11 +6,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public interface IUnitsEditorPresenter : IDisposablePresenter
    {
-      void SetOptions(Column importDataColumn, IEnumerable<IDimension> dimensions, IEnumerable<string> availableColumns);
+      void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       UnitDescription Unit { get; }
       IDimension Dimension { get; }
       void SetUnit();
-      void SelectDimension(string dimension);
+      void SelectDimension(string dimensionName);
       void SelectUnit(string unit);
       void SelectColumn(string column);
       void SetUnitColumnSelection();
