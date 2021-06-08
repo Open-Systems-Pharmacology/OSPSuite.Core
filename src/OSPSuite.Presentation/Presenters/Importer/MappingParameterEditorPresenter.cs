@@ -44,7 +44,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public IDimension Dimension
       {
-         get => _unitsEditorPresenter.Dimension;
+         get {
+            return _errorEditorPresenter.SelectedText == Constants.STD_DEV_GEOMETRIC ? Constants.Dimension.NO_DIMENSION : _unitsEditorPresenter.Dimension;
+         }
       }
 
       public void SetUnitColumnSelection()

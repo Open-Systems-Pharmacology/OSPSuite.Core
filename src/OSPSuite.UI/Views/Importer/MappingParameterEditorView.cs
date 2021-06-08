@@ -1,7 +1,6 @@
 ﻿using DevExpress.Utils;
 using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
-using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
