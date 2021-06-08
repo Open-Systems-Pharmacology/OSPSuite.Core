@@ -159,6 +159,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                      if (errorColumn.Key == null)
                         return true;
 
+                     //this should probably change to smthng that caomes from the Dimension (errorColumn.Key.Column.Dimension)
+                     //also we should check why we are excluding the checking of all these dimensions underneath
+                     //hm...NOPE...here we could also have a different dimension for different values in the column..
+                     //so we should probably differentiate if the unit comes from a column or if it is a specific value
                      var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
                      if (errorDimension == Constants.Dimension.NO_DIMENSION
                          || errorDimension == null 

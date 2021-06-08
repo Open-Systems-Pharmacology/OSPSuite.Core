@@ -13,6 +13,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IEnumerable<IDimension> _dimensions;
       private string _selectedUnit { get; set; }
       private string _selectedColumn { get; set; }
+      public IDimension Dimension { get; private set; }
+
       private bool _columnMapping;
 
       public UnitDescription Unit
@@ -34,7 +36,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _columnMapping = importDataColumn.Unit.ColumnName != null;
          View.SetParams(_columnMapping, useDimensionSelector());
-         fillDimensions(importDataColumn.Unit.SelectedUnit);
+         Dimension = importDataColumn.Dimension;
+         FillDimensions(importDataColumn.Unit.SelectedUnit);
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          View.FillColumnComboBox(availableColumns);
@@ -44,7 +47,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          this.DoWithinExceptionHandler(() =>
          {
-            _selectedUnit = (_dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First()).DefaultUnit.Name;
+            Dimension = _dimensions.FirstOrDefault(d => d.Name == dimension) ?? _dimensions.First();
+            _selectedUnit = Dimension.DefaultUnit.Name;
             SetUnit();
             fillUnits(_selectedUnit);
          });
@@ -88,30 +92,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return _dimensions.Count() > 1;
       }
 
-      private void fillDimensions(string selectedUnit)
+      public void FillDimensions(string selectedUnit)
       {
-         if (useDimensionSelector())
-            View.FillDimensionComboBox(_dimensions, findSelectedOrDefaultDimension(selectedUnit).Name);
+         if (useDimensionSelector() && Dimension != null)
+            View.FillDimensionComboBox(_dimensions, Dimension.Name);
+         else if ( Dimension == null && selectedUnit == UnitDescription.InvalidUnit)
+            View.FillDimensionComboBox(_dimensions, _dimensions.FirstOrDefault()?.Name);
          else
-            View.FillDimensionComboBox(new List<IDimension>(), "");
+            View.FillDimensionComboBox(_dimensions, _dimensions.FirstOrDefault()?.Name ?? "");
       }
 
       private void fillUnits(string selectedUnit)
       {
-         if (useDimensionSelector())
-         {
-            View.FillUnitComboBox(findSelectedOrDefaultDimension(selectedUnit).Units, selectedUnit);
-         }
-
-         if (_dimensions == null || !_dimensions.Any())
-            return;
-
-         View.FillUnitComboBox(_dimensions.SelectMany(d => d.Units).Where(u => !string.IsNullOrEmpty(u.Name)), selectedUnit);
-      }
-
-      private IDimension findSelectedOrDefaultDimension(string selectedUnit)
-      {
-         return _dimensions.FirstOrDefault(d => d.Units.Any(u => u.Name == selectedUnit)) ?? _dimensions.First();
+         if (Dimension != null)
+            View.FillUnitComboBox(Dimension.Units, selectedUnit);
       }
 
       public void SetUnit()
@@ -119,6 +113,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          this.DoWithinExceptionHandler(() =>
          {
             _importDataColumn.Unit = new UnitDescription(_selectedUnit);
+            _importDataColumn.Dimension = Dimension;
          });
       }
    }

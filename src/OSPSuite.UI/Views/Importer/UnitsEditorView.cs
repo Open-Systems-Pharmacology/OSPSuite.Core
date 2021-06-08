@@ -72,6 +72,7 @@ namespace OSPSuite.UI.Views.Importer
             }
             _unitLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
             _columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+            _presenter.FillDimensions(_unitComboBox.EditValue as string);
             onUnitComboBoxTextChanged();
          }
       }
@@ -132,7 +133,7 @@ namespace OSPSuite.UI.Views.Importer
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)
       {
          var dimensionList = dimensions as IDimension[] ?? dimensions.ToArray();
-         if (!dimensionList.Any())
+         if (!dimensionList.Any(d => d != null))
          {
             return;
          }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
@@ -24,15 +25,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
+      private readonly IDimensionFactory _dimensionFactory;
+
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
-         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
+         IDimensionFactory dimensionFactory
       ) : base(view)
       {
          _importer = importer;
+         _dimensionFactory = dimensionFactory;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
@@ -104,6 +109,29 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
+         setDimensionsForMappings();
+      }
+
+      private void setDimensionsForMappings()
+      {
+         foreach (var mapping in _mappings)
+         {
+            var mappingColumn = (mapping.Source as MappingDataFormatParameter)?.MappedColumn;
+            if (mappingColumn?.Unit == null) 
+               continue;
+
+            //initial settings for fraction dimension
+            if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION && 
+                mappingColumn.Unit.ColumnName.IsNullOrEmpty() && 
+                mappingColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
+            {
+               mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
+               mappingColumn.Unit = new UnitDescription(mappingColumn.Dimension.BaseUnit.Name);
+               continue;
+            }
+
+            mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+         }
       }
 
       public void InitializeErrorUnit()
@@ -168,10 +196,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
 
          var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
-         column.Unit = _mappingParameterEditorPresenter.Unit;
-         if (!string.IsNullOrEmpty(column.Unit.ColumnName))
+         if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(column.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), column.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), _mappingParameterEditorPresenter.Unit.ColumnName);
+            column.Dimension = null;
+         }
+         else
+         {
+            column.Unit = _mappingParameterEditorPresenter.Unit;
+            column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
 
          if (model.ColumnInfo.IsBase())
@@ -189,7 +222,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             else
             {
                column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
-               column.Unit = new UnitDescription(""); //geometric error has no unit
+               column.Dimension = Constants.Dimension.NO_DIMENSION;
+               column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
             }
          }
          else //in this case the column is a measurement column
@@ -235,6 +269,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _mappingParameterEditorPresenter.InitView();
 
          var columns = new List<string>() { column.Unit.ColumnName };
+         var dimensions = new List<IDimension>();
 
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
@@ -248,6 +283,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
             else
                _mappingParameterEditorPresenter.SetUnitsManualSelection();
+
+            if (relatedColumn != null)
+               dimensions.Add(relatedColumn.Dimension);
          }
          else
          {
@@ -257,17 +295,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                columns.Add(errorColumn.Unit.ColumnName);
             }
-         }
 
-         _mappingParameterEditorPresenter.SetUnitOptions(
-            column,
-            _columnInfos
+            dimensions.AddRange(_columnInfos
                .First(i => i.DisplayName == model.MappingName)
                .DimensionInfos
-               .Select(d => d.Dimension),
-               columns.Union(availableColumns())
-         );
+               .Select(d => d.Dimension));
+         }
 
+         _mappingParameterEditorPresenter.SetUnitOptions(column,dimensions, columns.Union(availableColumns()));
 
          if (model.ColumnInfo.IsBase())
             return;
@@ -580,17 +615,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
-         if (errorColumnDTO == null) return;
-
-         var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source)?.MappedColumn;
+         var errorColumn = ((MappingDataFormatParameter) errorColumnDTO?.Source)?.MappedColumn;
          if (errorColumn == null) return;
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
-         if (measurementColumnDTO == null) return;
-         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO.Source)?.MappedColumn;
+         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO?.Source)?.MappedColumn;
          if (measurementColumn == null) return;
 
-         if ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) && (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC))
+         //either both measurement and error units should be coming from excel columns, or they should have the same dimension
+         if (errorColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC && 
+             ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) ||
+              (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension)))
+         {
             errorColumn.Unit = new UnitDescription();
+            errorColumn.Dimension = measurementColumn.Dimension;
+         }
       }
 
       public void ValidateMapping()

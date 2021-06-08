@@ -21,6 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          _dimensionFactory = dimensionFactory;
       }
+
       public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
@@ -56,28 +57,30 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return dataRepository;
       }
 
-      private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> column, string fileName)
+      private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         //so the dimension is calculated correctly but with the wrong function
-         //for now it stays like this, cause otherwise we have to have the association
-         //var dimension_test = _dimensionFactory.Dimension(column.Key.Name);
-         //otherwise we can also just get the defaultDimension from the columnInfos when we
-         //create the extended column
-         var dimension = _dimensionFactory.DimensionForUnit(column.Key.Column.Unit.SelectedUnit) ?? Constants.Dimension.NO_DIMENSION;
+         IDimension dimension;
+         var unit = columnAndData.Key.Column.Unit.SelectedUnit;
 
-         if (column.Key.ColumnInfo.IsBase())
-            dataColumn = new BaseGrid(column.Key.ColumnInfo.Name, dimension);
+         if (columnAndData.Key.Column.Dimension != null)
+            dimension = columnAndData.Key.Column.Dimension;
+         else
+            dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
+
+
+         if (columnAndData.Key.ColumnInfo.IsBase())
+            dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
          else
          {
             
-            if (!containsColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName))
+            if (!containsColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName))
             {
                //convertParsedDataColumn(dataRepository, importDataTable.Columns.ItemByName(colInfo.BaseGridName));
                throw new Exception();
             }
-            var baseGrid = findColumnByName(dataRepository.Columns, column.Key.ColumnInfo.BaseGridName) as BaseGrid;
-            dataColumn = new DataColumn(column.Key.ColumnInfo.Name, dimension, baseGrid);
+            var baseGrid = findColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName) as BaseGrid;
+            dataColumn = new DataColumn(columnAndData.Key.ColumnInfo.Name, dimension, baseGrid);
          }
 
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
@@ -86,24 +89,19 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          if (!string.IsNullOrEmpty(fileName))
             dataInfo.Source = fileName;
 
-         
-         var unit = (dimension != Constants.Dimension.NO_DIMENSION)
-            ? dimension.Unit(column.Key.Column.Unit.SelectedUnit)
-            : null;
+         dataInfo.DisplayUnitName = unit;
 
-         dataInfo.DisplayUnitName = (unit != null ) ? unit.Name : string.Empty;
-
-         var values = new float[column.Value.Count];
+         var values = new float[columnAndData.Value.Count];
          var i = 0;
 
          //loop over view rows to get the sorted values.
-         foreach (var value in column.Value)
+         foreach (var value in columnAndData.Value)
          {
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
-            else if (unit != null && !string.IsNullOrEmpty(value.Unit))
-               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
+            else if (unit != null && !string.IsNullOrEmpty(value.Unit)) //do we keep this like this, or do we get the Unit from _dimensionfactory?
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
             else
                values[i++] = (float) adjustedValue;
          }
@@ -115,9 +113,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          if (propInfo != null)
          {
-            if (column.Key.ColumnInfo.IsAuxiliary())
+            if (columnAndData.Key.ColumnInfo.IsAuxiliary())
             {
-               switch (column.Key.ErrorDeviation)
+               switch (columnAndData.Key.ErrorDeviation)
                {
                   case Constants.STD_DEV_ARITHMETIC:
                      errorType = AuxiliaryType.ArithmeticStdDev;
@@ -142,7 +140,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          //special case: Origin
          //if AuxiliaryType is set, set Origin to ObservationAuxiliary else to Observation for standard columns
-         //type is set to BaseGrid for baseGrid column
+         //type is set to BaseGrid for baseGrid columnAndData
          if (dataColumn.IsBaseGrid())
             dataInfo.Origin = ColumnOrigins.BaseGrid;
          else

@@ -371,7 +371,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
 
          if (fileName.IsNullOrEmpty()) return;
-         using (var serializationContext = SerializationTransaction.Create(_container))
+         using (var serializationContext = SerializationTransaction.Create(_container, _container.Resolve<IDimensionFactory>()))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
             var xel = XElement.Load(fileName);

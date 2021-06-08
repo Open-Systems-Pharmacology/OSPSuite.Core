@@ -16,6 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       int SelectedErrorType { get; }
       bool LloqFromColumn();
       UnitDescription Unit { get; }
+      IDimension Dimension { get; }
       void SetUnitColumnSelection();
       void SetUnitsManualSelection();
       void InitView();
@@ -39,6 +40,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public UnitDescription Unit
       {
          get => _unitsEditorPresenter.Unit;
+      }
+
+      public IDimension Dimension
+      {
+         get {
+            return _errorEditorPresenter.SelectedText == Constants.STD_DEV_GEOMETRIC ? Constants.Dimension.NO_DIMENSION : _unitsEditorPresenter.Dimension;
+         }
       }
 
       public void SetUnitColumnSelection()
