@@ -2,13 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Autofac;
 using Castle.Facilities.TypedFactory;
-using DevExpress.LookAndFeel;
-using DevExpress.XtraBars;
-using DevExpress.XtraBars.Ribbon;
-using DevExpress.XtraEditors;
-using DevExpress.XtraTabbedMdi;
 using Microsoft.Extensions.Logging;
 using OSPSuite.Core;
 using OSPSuite.Core.Commands.Core;
@@ -18,10 +12,8 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
-using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure;
-using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Export;
 using OSPSuite.Infrastructure.Import;
@@ -29,12 +21,8 @@ using OSPSuite.Infrastructure.Serialization;
 using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Presentation.Regions;
 using OSPSuite.Starter.Presenters;
-using OSPSuite.Starter.Services;
 using OSPSuite.UI;
-using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -46,7 +34,7 @@ namespace OSPSuite.Starter.Bootstrapping
       public static void Initialize()
       {
          initializeDependency();
-         fillDimensions(IoC.Container.Resolve<IDimensionFactory>());
+         fillDimensions(IoC.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
          configureLogger(IoC.Container, LogLevel.Critical);
       }
