@@ -123,7 +123,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //initial settings for fraction dimension
             if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION && 
                 mappingColumn.Unit.ColumnName.IsNullOrEmpty() && 
-                mappingColumn.Unit?.SelectedUnit == UnitDescription.InvalidUnit)
+                mappingColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
             {
                mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
                mappingColumn.Unit = new UnitDescription(mappingColumn.Dimension.BaseUnit.Name);
