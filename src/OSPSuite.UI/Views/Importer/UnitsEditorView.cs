@@ -133,7 +133,7 @@ namespace OSPSuite.UI.Views.Importer
       public void FillDimensionComboBox(IEnumerable<IDimension> dimensions, string defaultValue)
       {
          var dimensionList = dimensions as IDimension[] ?? dimensions.ToArray();
-         if (!dimensionList.Any())
+         if (!dimensionList.Any(d => d != null))
          {
             return;
          }
