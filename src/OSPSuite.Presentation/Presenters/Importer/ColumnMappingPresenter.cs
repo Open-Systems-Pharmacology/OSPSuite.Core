@@ -222,8 +222,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             else
             {
                column.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
-               column.Unit = new UnitDescription(""); //geometric error has no unit
                column.Dimension = Constants.Dimension.NO_DIMENSION;
+               column.Unit = new UnitDescription(column.Dimension.BaseUnit.Name);
             }
          }
          else //in this case the column is a measurement column
