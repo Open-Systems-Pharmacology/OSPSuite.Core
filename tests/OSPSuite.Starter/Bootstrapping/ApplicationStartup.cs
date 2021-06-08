@@ -46,7 +46,7 @@ namespace OSPSuite.Starter.Bootstrapping
       public static void Initialize()
       {
          initializeDependency();
-         fillDimensions(IoC.Resolve<IDimensionFactory>());
+         fillDimensions(IoC.Container.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
          configureLogger(IoC.Container, LogLevel.Critical);
       }

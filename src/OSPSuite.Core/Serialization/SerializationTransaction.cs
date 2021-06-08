@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Serialization
          ICloneManagerForModel cloneManagerForModel = null, 
          IEnumerable<DataRepository> dataRepositories = null)
       {
-         return new SerializationContext(dimensionFactory ?? container.Resolve<IDimensionFactory>(), objectBaseFactory, withIdRepository, dataRepositories, cloneManagerForModel, container);
+         return new SerializationContext(dimensionFactory, objectBaseFactory, withIdRepository, dataRepositories, cloneManagerForModel, container);
       }
    }
 }
