@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -20,8 +19,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public string DisplayName { get; set; }
-      public string Description { get; set; }
-      public NullValuesHandlingType NullValuesHandling { get; set; }
       public bool IsMandatory { get; set; }
       public string BaseGridName { get; set; }
 
@@ -38,15 +35,10 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IDimension DefaultDimension { get; set; }
       public IList<MetaDataCategory> MetaDataCategories { get; }
 
-      public Type DataType { get; set; }
-
       public ColumnInfo()
       {
-         DataType = typeof(double);
          Name = string.Empty;
          DisplayName = string.Empty;
-         Description = string.Empty;
-         NullValuesHandling = NullValuesHandlingType.DeleteRow;
          IsMandatory = true;
          SupportedDimensions = new List<IDimension>();
          DefaultDimension = null;

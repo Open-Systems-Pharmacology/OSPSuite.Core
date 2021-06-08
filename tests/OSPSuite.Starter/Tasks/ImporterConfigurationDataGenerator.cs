@@ -49,10 +49,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = timeDimension,
             Name = "Time",
-            Description = "Time",
             DisplayName = "Time",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
          };
 
          timeColumn.SupportedDimensions.Add(timeDimension);
@@ -64,10 +62,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = mainDimension,
             Name = "Measurement",
-            Description = "Measurement",
             DisplayName = "Measurement",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
             BaseGridName = timeColumn.Name
          };
          foreach (var dimension in _dimensionFactory.Dimensions)
@@ -82,10 +78,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = mainDimension,
             Name = "Error",
-            Description = "Error",
             DisplayName = "Error",
             IsMandatory = false,
-            NullValuesHandling = NullValuesHandlingType.Allowed,
             BaseGridName = timeColumn.Name,
             RelatedColumnOf = measurementInfo.Name
          };
@@ -248,10 +242,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _dimensionFactory.Dimension("Time"),
             Name = "Time",
-            Description = "Time",
             DisplayName = "Time",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
          };
 
          timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Time"));
@@ -352,10 +344,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _molarConcentrationDimension,
             Name = "Error",
-            Description = "Error",
             DisplayName = "Error",
             IsMandatory = false,
-            NullValuesHandling = NullValuesHandlingType.Allowed,
             BaseGridName = timeColumn.Name,
             RelatedColumnOf = concentrationInfo.Name
          };
@@ -372,10 +362,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _molarConcentrationDimension,
             Name = "Concentration",
-            Description = "Concentration",
             DisplayName = "Concentration",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
             BaseGridName = timeColumn.Name
          };
 
@@ -399,10 +387,7 @@ namespace OSPSuite.Starter.Tasks
             BaseGridName = timeColumn.Name,
             DefaultDimension = _dimensionFactory.Dimension("Dimensionless"),
             Name = "Category",
-            Description = "The category of the experiment.",
             DisplayName = "Categorie of Experiment",
-            NullValuesHandling = NullValuesHandlingType.Allowed,
-            DataType = typeof(string)
          };
          categoryColum.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(categoryColum);
@@ -414,8 +399,6 @@ namespace OSPSuite.Starter.Tasks
             DefaultDimension = _dimensionFactory.Dimension("Dimensionless"),
             Name = "DateofMeasurement",
             DisplayName = "Date of Measurement",
-            Description = "The date when the measurement was made",
-            DataType = typeof(DateTime)
          };
          dateCategory.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(dateCategory);
@@ -428,8 +411,6 @@ namespace OSPSuite.Starter.Tasks
             DefaultDimension = _dimensionFactory.Dimension("Dimensionless"),
             Name = "Released?",
             DisplayName = "Approved?",
-            Description = "Has the measurement been approved?",
-            DataType = typeof(bool)
          };
          releasedColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
          columnInfos.Add(releasedColumn);
@@ -444,10 +425,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _ageInYearsDimension,
             Name = "Post Menstrual Age",
-            Description = "Post Menstrual Age",
             DisplayName = "Post Menstrual Age",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
          };
 
 
@@ -458,10 +437,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _dimensionFactory.NoDimension,
             Name = "Ontogeny Factor",
-            Description = "Post Menstrual Age",
             DisplayName = "Post Menstrual Age",
             IsMandatory = true,
-            NullValuesHandling = NullValuesHandlingType.DeleteRow,
             BaseGridName = ageColumn.Name,
          };
          ontogenyFactor.SupportedDimensions.Add(_dimensionFactory.NoDimension);
@@ -471,10 +448,8 @@ namespace OSPSuite.Starter.Tasks
          {
             DefaultDimension = _dimensionFactory.NoDimension,
             Name = "Standard Deviation",
-            Description = "Standard Deviation",
             DisplayName = "Standard Deviation",
             IsMandatory = false,
-            NullValuesHandling = NullValuesHandlingType.Allowed,
             BaseGridName = ageColumn.Name,
             RelatedColumnOf = ontogenyFactor.Name
          };
