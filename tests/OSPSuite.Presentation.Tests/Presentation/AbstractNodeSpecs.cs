@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.Presentation
    {
     
       [Observation]
-      public void should_return_all_the_nodes_defined_in_the_hiearchy_including_the_root_node()
+      public void should_return_all_the_nodes_defined_in_the_hierarchy_including_the_root_node()
       {
          sut.AllNodes.ShouldOnlyContain(_node1,_node2,_leaf1,_node11,_leaf21,_leaf111,sut);
       }
@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Presentation
    {
      
       [Observation]
-      public void should_return_only_the_leaf_nodes_defined_in_the_hiearchy()
+      public void should_return_only_the_leaf_nodes_defined_in_the_hierarchy()
       {
          sut.AllLeafNodes.ShouldOnlyContain( _leaf1,  _leaf21, _leaf111);
       }

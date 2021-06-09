@@ -270,7 +270,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _mappingParameterEditorPresenter.SetUnitOptions
          (
             A<Column>.That.Matches(c => c.Name == "Concentration"), 
-            A<IEnumerable<IDimension>>.Ignored, 
+            A<IReadOnlyList<IDimension>>.Ignored, 
             A<IEnumerable<string>>.That.Matches(l => l.Contains("Col1") && l.Contains("Col2"))
          )).MustHaveHappened();
       }
