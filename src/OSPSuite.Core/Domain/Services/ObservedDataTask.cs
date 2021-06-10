@@ -18,9 +18,10 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Deletes the <paramref name="observedData" /> from the project.
+      ///    If <paramref name="promptBeforeDeleting"/> then prompts the user before deleting
       ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c>
       /// </summary>
-      bool Delete(DataRepository observedData);
+      bool Delete(DataRepository observedData, bool promptBeforeDeleting = true);
 
       /// <summary>
       ///    Deletes the <paramref name="observedDataEnumerable" /> from the project. User prompt can be turned off (<paramref name="silent"/> set to <c>true</c>).
@@ -118,16 +119,19 @@ namespace OSPSuite.Core.Domain.Services
 
       public abstract void UpdateMolWeight(DataRepository observedData);
 
-      public bool Delete(DataRepository observedData)
+      public bool Delete(DataRepository observedData, bool promptBeforeDeleting = true)
       {
          var usersOfObservedData = allUsersOfObservedData(observedData).ToList();
 
          if (usersOfObservedData.Any())
             throw new CannotDeleteObservedDataException(observedData.Name, usersOfObservedData.Select(typeNamed).ToList());
 
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteObservedData(observedData.Name));
-         if (viewResult == ViewResult.No)
-            return false;
+         if (promptBeforeDeleting)
+         {
+            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteObservedData(observedData.Name));
+            if (viewResult == ViewResult.No)
+               return false;
+         }
 
          var removeCommand = new RemoveObservedDataFromProjectCommand(observedData).Run(_executionContext);
          _executionContext.AddToHistory(removeCommand);
