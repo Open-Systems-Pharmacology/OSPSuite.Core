@@ -18,6 +18,7 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Deletes the <paramref name="observedData" /> from the project.
+      ///    If <paramref name="promptBeforeDeleting"/> then prompts the user before deleting
       ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c>
       /// </summary>
       bool Delete(DataRepository observedData);
@@ -63,6 +64,11 @@ namespace OSPSuite.Core.Domain.Services
          _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
+      }
+
+      public bool Delete(DataRepository observedData)
+      {
+         return Delete(new [] { observedData });
       }
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
@@ -117,22 +123,6 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       public abstract void UpdateMolWeight(DataRepository observedData);
-
-      public bool Delete(DataRepository observedData)
-      {
-         var usersOfObservedData = allUsersOfObservedData(observedData).ToList();
-
-         if (usersOfObservedData.Any())
-            throw new CannotDeleteObservedDataException(observedData.Name, usersOfObservedData.Select(typeNamed).ToList());
-
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteObservedData(observedData.Name));
-         if (viewResult == ViewResult.No)
-            return false;
-
-         var removeCommand = new RemoveObservedDataFromProjectCommand(observedData).Run(_executionContext);
-         _executionContext.AddToHistory(removeCommand);
-         return true;
-      }
 
       private string typeNamed(IUsesObservedData usesObservedData)
       {
