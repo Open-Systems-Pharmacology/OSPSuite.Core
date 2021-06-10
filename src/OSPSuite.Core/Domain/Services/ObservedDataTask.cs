@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    If <paramref name="promptBeforeDeleting"/> then prompts the user before deleting
       ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c>
       /// </summary>
-      bool Delete(DataRepository observedData, bool promptBeforeDeleting = true);
+      bool Delete(DataRepository observedData);
 
       /// <summary>
       ///    Deletes the <paramref name="observedDataEnumerable" /> from the project. User prompt can be turned off (<paramref name="silent"/> set to <c>true</c>).
@@ -64,6 +64,11 @@ namespace OSPSuite.Core.Domain.Services
          _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
+      }
+
+      public bool Delete(DataRepository observedData)
+      {
+         return Delete(new [] { observedData });
       }
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
@@ -118,25 +123,6 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       public abstract void UpdateMolWeight(DataRepository observedData);
-
-      public bool Delete(DataRepository observedData, bool promptBeforeDeleting = true)
-      {
-         var usersOfObservedData = allUsersOfObservedData(observedData).ToList();
-
-         if (usersOfObservedData.Any())
-            throw new CannotDeleteObservedDataException(observedData.Name, usersOfObservedData.Select(typeNamed).ToList());
-
-         if (promptBeforeDeleting)
-         {
-            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteObservedData(observedData.Name));
-            if (viewResult == ViewResult.No)
-               return false;
-         }
-
-         var removeCommand = new RemoveObservedDataFromProjectCommand(observedData).Run(_executionContext);
-         _executionContext.AddToHistory(removeCommand);
-         return true;
-      }
 
       private string typeNamed(IUsesObservedData usesObservedData)
       {
