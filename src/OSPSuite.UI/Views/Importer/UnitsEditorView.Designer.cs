@@ -63,17 +63,17 @@
          this._layoutControl.Name = "_layoutControl";
          this._layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(3541, -85, 812, 500);
          this._layoutControl.Root = this._Root;
-         this._layoutControl.Size = new System.Drawing.Size(379, 136);
+         this._layoutControl.Size = new System.Drawing.Size(557, 145);
          this._layoutControl.TabIndex = 0;
          this._layoutControl.Text = "_layoutControl";
          // 
          // _columnComboBox
          // 
-         this._columnComboBox.Location = new System.Drawing.Point(212, 92);
+         this._columnComboBox.Location = new System.Drawing.Point(212, 96);
          this._columnComboBox.Name = "_columnComboBox";
          this._columnComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this._columnComboBox.Size = new System.Drawing.Size(155, 22);
+         this._columnComboBox.Size = new System.Drawing.Size(333, 22);
          this._columnComboBox.StyleController = this._layoutControl;
          this._columnComboBox.TabIndex = 8;
          // 
@@ -83,27 +83,29 @@
          this._columnsToggleSwitch.Name = "_columnsToggleSwitch";
          this._columnsToggleSwitch.Properties.OffText = "Off";
          this._columnsToggleSwitch.Properties.OnText = "On";
-         this._columnsToggleSwitch.Size = new System.Drawing.Size(155, 24);
+         this._columnsToggleSwitch.Size = new System.Drawing.Size(333, 24);
          this._columnsToggleSwitch.StyleController = this._layoutControl;
          this._columnsToggleSwitch.TabIndex = 7;
          // 
          // _dimensionsComboBox
          // 
-         this._dimensionsComboBox.Location = new System.Drawing.Point(212, 40);
+         this._dimensionsComboBox.Location = new System.Drawing.Point(211, 39);
+         this._dimensionsComboBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
          this._dimensionsComboBox.Name = "_dimensionsComboBox";
          this._dimensionsComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this._dimensionsComboBox.Size = new System.Drawing.Size(155, 22);
+         this._dimensionsComboBox.Size = new System.Drawing.Size(335, 22);
          this._dimensionsComboBox.StyleController = this._layoutControl;
          this._dimensionsComboBox.TabIndex = 6;
          // 
          // _unitComboBox
          // 
-         this._unitComboBox.Location = new System.Drawing.Point(212, 66);
+         this._unitComboBox.Location = new System.Drawing.Point(212, 68);
+         this._unitComboBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
          this._unitComboBox.Name = "_unitComboBox";
          this._unitComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this._unitComboBox.Size = new System.Drawing.Size(155, 22);
+         this._unitComboBox.Size = new System.Drawing.Size(333, 22);
          this._unitComboBox.StyleController = this._layoutControl;
          this._unitComboBox.TabIndex = 5;
          // 
@@ -117,15 +119,18 @@
             this._columnsToogleLayoutControlItem,
             this._columnLayoutControlItem});
          this._Root.Name = "Root";
-         this._Root.Size = new System.Drawing.Size(379, 136);
+         this._Root.Size = new System.Drawing.Size(557, 145);
          this._Root.TextVisible = false;
          // 
          // _unitLayoutControlItem
          // 
          this._unitLayoutControlItem.Control = this._unitComboBox;
-         this._unitLayoutControlItem.Location = new System.Drawing.Point(0, 54);
+         this._unitLayoutControlItem.Location = new System.Drawing.Point(0, 56);
+         this._unitLayoutControlItem.MaxSize = new System.Drawing.Size(0, 28);
+         this._unitLayoutControlItem.MinSize = new System.Drawing.Size(266, 28);
          this._unitLayoutControlItem.Name = "_unitLayoutControlItem";
-         this._unitLayoutControlItem.Size = new System.Drawing.Size(359, 26);
+         this._unitLayoutControlItem.Size = new System.Drawing.Size(537, 28);
+         this._unitLayoutControlItem.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
          this._unitLayoutControlItem.Text = "Unit";
          this._unitLayoutControlItem.TextSize = new System.Drawing.Size(197, 16);
          // 
@@ -133,8 +138,12 @@
          // 
          this._dimensionsLayoutControlItem.Control = this._dimensionsComboBox;
          this._dimensionsLayoutControlItem.Location = new System.Drawing.Point(0, 28);
+         this._dimensionsLayoutControlItem.MaxSize = new System.Drawing.Size(0, 28);
+         this._dimensionsLayoutControlItem.MinSize = new System.Drawing.Size(266, 28);
          this._dimensionsLayoutControlItem.Name = "_dimensionsLayoutControlItem";
-         this._dimensionsLayoutControlItem.Size = new System.Drawing.Size(359, 26);
+         this._dimensionsLayoutControlItem.Padding = new DevExpress.XtraLayout.Utils.Padding(1, 1, 1, 1);
+         this._dimensionsLayoutControlItem.Size = new System.Drawing.Size(537, 28);
+         this._dimensionsLayoutControlItem.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
          this._dimensionsLayoutControlItem.TextSize = new System.Drawing.Size(197, 16);
          // 
          // _columnsToogleLayoutControlItem
@@ -142,15 +151,15 @@
          this._columnsToogleLayoutControlItem.Control = this._columnsToggleSwitch;
          this._columnsToogleLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this._columnsToogleLayoutControlItem.Name = "_columnsToogleLayoutControlItem";
-         this._columnsToogleLayoutControlItem.Size = new System.Drawing.Size(359, 28);
+         this._columnsToogleLayoutControlItem.Size = new System.Drawing.Size(537, 28);
          this._columnsToogleLayoutControlItem.TextSize = new System.Drawing.Size(197, 16);
          // 
          // _columnLayoutControlItem
          // 
          this._columnLayoutControlItem.Control = this._columnComboBox;
-         this._columnLayoutControlItem.Location = new System.Drawing.Point(0, 80);
+         this._columnLayoutControlItem.Location = new System.Drawing.Point(0, 84);
          this._columnLayoutControlItem.Name = "_columnLayoutControlItem";
-         this._columnLayoutControlItem.Size = new System.Drawing.Size(359, 36);
+         this._columnLayoutControlItem.Size = new System.Drawing.Size(537, 41);
          this._columnLayoutControlItem.TextSize = new System.Drawing.Size(197, 16);
          // 
          // UnitsEditorView
@@ -160,7 +169,7 @@
          this.Controls.Add(this._layoutControl);
          this.Margin = new System.Windows.Forms.Padding(8);
          this.Name = "UnitsEditorView";
-         this.Size = new System.Drawing.Size(379, 136);
+         this.Size = new System.Drawing.Size(557, 145);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._layoutControl)).EndInit();
          this._layoutControl.ResumeLayout(false);
