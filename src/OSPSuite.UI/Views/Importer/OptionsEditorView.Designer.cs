@@ -45,23 +45,24 @@
          this.comboBoxLayoutControl.Controls.Add(this._comboBoxEdit);
          this.comboBoxLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.comboBoxLayoutControl.Location = new System.Drawing.Point(0, 0);
-         this.comboBoxLayoutControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.comboBoxLayoutControl.Margin = new System.Windows.Forms.Padding(0);
          this.comboBoxLayoutControl.Name = "comboBoxLayoutControl";
+         this.comboBoxLayoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(3140, -188, 812, 500);
          this.comboBoxLayoutControl.Root = this.Root;
-         this.comboBoxLayoutControl.Size = new System.Drawing.Size(364, 37);
+         this.comboBoxLayoutControl.Size = new System.Drawing.Size(425, 45);
          this.comboBoxLayoutControl.TabIndex = 0;
          this.comboBoxLayoutControl.Text = "layoutControl1";
          // 
          // _comboBoxEdit
          // 
-         this._comboBoxEdit.Location = new System.Drawing.Point(5, 5);
-         this._comboBoxEdit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this._comboBoxEdit.Location = new System.Drawing.Point(1, 11);
+         this._comboBoxEdit.Margin = new System.Windows.Forms.Padding(0);
          this._comboBoxEdit.Name = "_comboBoxEdit";
          this._comboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this._comboBoxEdit.Properties.Padding = new System.Windows.Forms.Padding(2);
          this._comboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this._comboBoxEdit.Size = new System.Drawing.Size(354, 24);
+         this._comboBoxEdit.Size = new System.Drawing.Size(402, 26);
          this._comboBoxEdit.StyleController = this.comboBoxLayoutControl;
          this._comboBoxEdit.TabIndex = 4;
          // 
@@ -72,7 +73,8 @@
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.comboBoxLayoutControlItem});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(364, 37);
+         this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 10, 10);
+         this.Root.Size = new System.Drawing.Size(404, 48);
          this.Root.TextVisible = false;
          // 
          // comboBoxLayoutControlItem
@@ -80,18 +82,19 @@
          this.comboBoxLayoutControlItem.Control = this._comboBoxEdit;
          this.comboBoxLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.comboBoxLayoutControlItem.Name = "comboBoxLayoutControlItem";
-         this.comboBoxLayoutControlItem.Size = new System.Drawing.Size(356, 29);
+         this.comboBoxLayoutControlItem.Padding = new DevExpress.XtraLayout.Utils.Padding(1, 1, 1, 1);
+         this.comboBoxLayoutControlItem.Size = new System.Drawing.Size(404, 28);
          this.comboBoxLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.comboBoxLayoutControlItem.TextVisible = false;
          // 
          // OptionsEditorView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.comboBoxLayoutControl);
          this.Margin = new System.Windows.Forms.Padding(0);
          this.Name = "OptionsEditorView";
-         this.Size = new System.Drawing.Size(364, 37);
+         this.Size = new System.Drawing.Size(425, 45);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.comboBoxLayoutControl)).EndInit();
          this.comboBoxLayoutControl.ResumeLayout(false);
