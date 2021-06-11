@@ -101,7 +101,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unit != null && !string.IsNullOrEmpty(value.Unit)) //do we keep this like this, or do we get the Unit from _dimensionfactory?
-               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.Unit(value.Unit), adjustedValue);
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.FindUnit(value.Unit, true), adjustedValue);
             else
                values[i++] = (float) adjustedValue;
          }
