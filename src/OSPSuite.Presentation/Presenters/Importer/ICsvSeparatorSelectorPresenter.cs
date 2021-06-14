@@ -1,4 +1,8 @@
-﻿using OSPSuite.Presentation.Views.Importer;
+﻿using OSPSuite.Assets;
+using OSPSuite.Presentation.Views.Importer;
+using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -20,8 +24,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetFileName(string fileName)
       {
-         _view.SetFileName(fileName);
+         _view.SetDescription(generateDescriptionFromFileName(fileName));
          _view.Display();
+      }
+
+      private string generateDescriptionFromFileName(string fileName)
+      {
+         var text = new StringBuilder();
+         text.AppendLine(Captions.Importer.CsvSeparatorDescription(fileName));
+         foreach (var line in File.ReadLines(fileName).Take(3))
+         {
+            text.AppendLine(line);
+         }
+         text.Append("...");
+         return text.ToString();
       }
 
       public char? GetCsvSeparator()
