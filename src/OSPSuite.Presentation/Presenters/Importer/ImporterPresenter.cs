@@ -162,18 +162,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _importerDataPresenter.DisableImportedSheets();
             foreach (var sheet in args.Sheets.Keys)
                _configuration.AddToLoadedSheets(sheet);
-            
+
             _configuration.FilterString = args.Filter;
          }
-         catch (Exception e) when (e is NanException || e is ErrorUnitException || e is MissingColumnException)
+         catch (Exception e)
          {
             {
-               _dialogCreator.MessageBoxError(e.Message);
-               _view.DisableConfirmationView();
+               var eMessage = e.Message;
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException))
+               {
+                  eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
+               }
+               
+               _dialogCreator.MessageBoxError(eMessage);
                foreach (var sheetName in args.Sheets.Keys)
                {
                   _importerDataPresenter.Sheets.Remove(sheetName);
-                  _view.DisableConfirmationView();
                }
             }
          }

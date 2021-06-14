@@ -412,6 +412,8 @@ namespace OSPSuite.Assets
          public static readonly string MappingTitle = "Mapping";
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";
+         public static readonly string UnexpectedExceptionWhenLoading =
+            "Unexpected exception when trying to load. File format probably not supported";
 
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
