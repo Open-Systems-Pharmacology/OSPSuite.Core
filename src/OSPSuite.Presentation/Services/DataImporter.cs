@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.XtraRichEdit.Internal;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -16,25 +14,22 @@ using OSPSuite.Utility.Collections;
 using static OSPSuite.Assets.Captions.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
-namespace OSPSuite.UI.Services
+namespace OSPSuite.Presentation.Services
 {
    public class DataImporter : IDataImporter
    {
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporter _importer;
-      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IApplicationController _applicationController;
 
       public DataImporter(
          IDialogCreator dialogCreator,
          IImporter importer,
-         IApplicationController applicationController,
-         IDataSetToDataRepositoryMapper dataRepositoryMapper
+         IApplicationController applicationController
       )
       {
          _dialogCreator = dialogCreator;
          _importer = importer;
-         _dataRepositoryMapper = dataRepositoryMapper;
          _applicationController = applicationController;
       }
 

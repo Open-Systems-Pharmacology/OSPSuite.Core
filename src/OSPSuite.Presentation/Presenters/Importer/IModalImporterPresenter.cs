@@ -17,8 +17,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
    {
-      public ModalImporterPresenter(IModalImporterView view) : base(view)
+      private readonly IImporterPresenter _importerPresenter;
+
+      public ModalImporterPresenter(IModalImporterView view, IImporterPresenter importerPresenter) : base(view)
       {
+         _importerPresenter = importerPresenter;
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
