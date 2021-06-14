@@ -4,6 +4,6 @@ namespace OSPSuite.Presentation.Views.Importer
 {
    public interface ICsvSeparatorSelectorView : IModalView<ICsvSeparatorSelectorPresenter>
    {
-      void SetFileName(string fileName);
+      void SetDescription(string description);
    }
 }

@@ -16,6 +16,12 @@ namespace OSPSuite.UI.Views.Importer
          separatorComboBoxEdit.EditValueChanged += onSeparatorChanged;
       }
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         separatorDescriptionLabelControl.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+      }
+
       private void fillSeparatorComboBox()
       {
          var separatorList = new List<char>() {',', '.', ' ', ';'};
@@ -36,27 +42,10 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
-      public void SetFileName(string fileName)
+      public void SetDescription(string description)
       {
-         separatorDescriptionLabelControl.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-         separatorDescriptionLabelControl.Text = Captions.Importer.CsvSeparatorDescription(fileName);
-         addRowsToText(fileName);
+         separatorDescriptionLabelControl.Text = description;
          separatorComboBoxEdit.SelectedIndex = 0;
-      }
-
-      private void addRowsToText(string fileName)
-      {
-         System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-         int counter = 0;
-         string line;
-         separatorDescriptionLabelControl.Text += ":\r\n";
-         while ((line = file.ReadLine()) != null && counter < 3)
-         {
-            separatorDescriptionLabelControl.Text += "\r\n" + line;
-            counter++;
-         }
-         separatorDescriptionLabelControl.Text += "\r\n...";
-         file.Close();
       }
    }
 }
