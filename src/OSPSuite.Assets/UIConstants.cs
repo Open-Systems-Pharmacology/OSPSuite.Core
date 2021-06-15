@@ -413,7 +413,7 @@ namespace OSPSuite.Assets
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";
          public static readonly string UnexpectedExceptionWhenLoading =
-            "Unexpected exception when trying to load. File format probably not supported";
+            "An unexpected error occurred while loading the file. The file format is probably not supported. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details";
 
          public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
