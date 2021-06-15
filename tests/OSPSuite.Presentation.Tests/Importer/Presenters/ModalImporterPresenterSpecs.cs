@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 
@@ -12,12 +13,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected IModalImporterView _view;
       protected IImporterPresenter _presenter;
+      protected IDialogCreator _dialogCreator;
 
       protected override void Context()
       {
          _view = A.Fake<IModalImporterView>();
          _presenter = A.Fake<IImporterPresenter>();
-         sut = new ModalImporterPresenter(_view);
+         _dialogCreator = A.Fake<IDialogCreator>();
+         sut = new ModalImporterPresenter(_view, _presenter, _dialogCreator);
       }
    }
 
@@ -27,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         (_result, _) = sut.ImportDataSets(_presenter);
+         (_result, _) = sut.ImportDataSets(null, null, null, "some file");
       }
 
       [Observation]
