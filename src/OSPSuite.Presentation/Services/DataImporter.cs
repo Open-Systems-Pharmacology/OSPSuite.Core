@@ -90,30 +90,12 @@ namespace OSPSuite.Presentation.Services
       {
          var path = _dialogCreator.AskForFileToOpen(PleaseSelectDataFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
 
-         (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) emptyImport = (Array.Empty<DataRepository>(), null);
-
          if (string.IsNullOrEmpty(path))
-            return emptyImport;
+            return (Array.Empty<DataRepository>(), null);
 
-         using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+         using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
-            importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-
-            try
-            {
-               if (!importerPresenter.SetSourceFile(path))
-                  return emptyImport;
-            }
-            catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
-            {
-               _dialogCreator.MessageBoxError(e.Message);
-               return emptyImport;
-            }
-
-            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
-            {
-               return importerModalPresenter.ImportDataSets(importerPresenter);
-            }
+            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, path);
          }
       }
 
@@ -125,19 +107,15 @@ namespace OSPSuite.Presentation.Services
       )
       {
          var fileName = _dialogCreator.AskForFileToOpen(OpenFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         
          if (string.IsNullOrEmpty(fileName))
             return Enumerable.Empty<DataRepository>().ToList();
+         
          if (dataImporterSettings.PromptForConfirmation)
          {
-            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
-               importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-               importerPresenter.LoadConfiguration(configuration, fileName);
-               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
-               {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
-                     .DataRepositories;
-               }
+               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, fileName, configuration);
             }
          }
 
