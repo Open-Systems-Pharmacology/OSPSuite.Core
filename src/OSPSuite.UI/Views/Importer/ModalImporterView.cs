@@ -29,9 +29,9 @@ namespace OSPSuite.UI.Views.Importer
          importerPanelControl.FillWith(view);
       }
 
-      public void AttachImporterPresenter(IImporterPresenter presenter)
+      public void CloseOnImport()
       {
-         presenter.OnTriggerImport += (s, d) => { DialogResult = DialogResult.OK; };
+         DialogResult = DialogResult.OK;
       }
 
       public void SetBaseView(IView baseView)

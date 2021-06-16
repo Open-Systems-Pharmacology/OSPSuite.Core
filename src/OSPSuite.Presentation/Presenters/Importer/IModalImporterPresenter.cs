@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -97,7 +96,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _view.AttachImporterPresenter(_importerPresenter);
+         _importerPresenter.OnTriggerImport += (s, d) => { _view.CloseOnImport(); };
          _view.Display();
          return (results, configuration);
       }
