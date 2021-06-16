@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 using IoC = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Infrastructure.Import.Services
@@ -32,6 +33,15 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       IReadOnlyList<DataRepository> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
+
+      (IReadOnlyList<DataRepository> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
+      (
+         ImporterConfiguration configuration,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         string fileName,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         DataImporterSettings dataImporterSettings
+      );
    }
 
    public class Importer : IImporter
@@ -213,6 +223,59 @@ namespace OSPSuite.Infrastructure.Import.Services
             v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)).Value;
          
          return moleculeDescription;
+      }
+
+      public (IReadOnlyList<DataRepository> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
+      (
+         ImporterConfiguration configuration,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         string fileName,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         DataImporterSettings dataImporterSettings
+      )
+      {
+         var dataSource = new DataSource(this);
+         IDataSourceFile dataSourceFile = null;
+
+         dataSourceFile = LoadFile(columnInfos, fileName, metaDataCategories);
+
+         if (dataSourceFile == null)
+         {
+            return (Enumerable.Empty<DataRepository>().ToList(), Enumerable.Empty<string>().ToList());
+         }
+
+         dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
+         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         {
+            Id = md.MetaDataId,
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+         }).Union
+         (
+            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            {
+               Id = md.ColumnName,
+               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+            })
+         );
+         dataSource.SetMappings(dataSourceFile.Path, mappings);
+         dataSource.NanSettings = configuration.NanSettings;
+         dataSource.SetDataFormat(dataSourceFile.Format);
+         dataSource.SetNamingConvention(configuration.NamingConventions);
+         var sheets = new Cache<string, DataSheet>();
+         var missingSheets = new List<string>();
+         foreach (var key in configuration.LoadedSheets)
+         {
+            if (!dataSourceFile.DataSheets.Contains(key))
+            {
+               missingSheets.Add(key);
+               continue;
+            }
+
+            sheets.Add(key, dataSourceFile.DataSheets[key]);
+         }
+
+         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         return (DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id), missingSheets);
       }
    }
 

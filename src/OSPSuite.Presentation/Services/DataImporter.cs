@@ -4,13 +4,11 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Utility.Collections;
 using static OSPSuite.Assets.Captions.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -119,60 +117,18 @@ namespace OSPSuite.Presentation.Services
             }
          }
 
-         var dataSource = new DataSource(_importer);
-         IDataSourceFile dataSourceFile = null;
-
          try
          {
-            dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
+            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, fileName, metaDataCategories, dataImporterSettings);
+            if (importedData.MissingSheets.Count != 0)
+               _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
+            return importedData.DataRepositories;
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return new List<DataRepository>();
          }
-
-         if (dataSourceFile == null)
-         {
-            return new List<DataRepository>();
-         }
-
-         dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-         }).Union
-         (
-            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-            })
-         );
-         dataSource.SetMappings(dataSourceFile.Path, mappings);
-         dataSource.NanSettings = configuration.NanSettings;
-         dataSource.SetDataFormat(dataSourceFile.Format);
-         dataSource.SetNamingConvention(configuration.NamingConventions);
-         var sheets = new Cache<string, DataSheet>();
-         var missingSheets = new List<string>();
-         foreach (var key in configuration.LoadedSheets)
-         {
-            if (!dataSourceFile.DataSheets.Contains(key))
-            {
-               missingSheets.Add(key);
-               continue;
-            }
-
-            sheets.Add(key, dataSourceFile.DataSheets[key]);
-         }
-
-         if (missingSheets.Count != 0)
-            _dialogCreator.MessageBoxError(SheetsNotFound(missingSheets));
-
-         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
-
-         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id);
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
