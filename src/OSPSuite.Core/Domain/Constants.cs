@@ -456,6 +456,9 @@ namespace OSPSuite.Core.Domain
          public static readonly string PATIENT_ID = "Patient Id";
          public static readonly string GENDER = "Gender";
          public static readonly string DOSE = "Dose";
+         public static readonly string PLASMA_COMPARTMENT = "Plasma";
+         public static readonly string PERIPHERAL_VENUS_BLOOD_ORGAN = "Peripheral Venous Blood";
+         public static readonly string VENUS_BLOOD_ORGAN = "Venous Blood";
       }
 
       public static class LLOQModes

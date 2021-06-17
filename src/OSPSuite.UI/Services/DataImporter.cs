@@ -47,10 +47,13 @@ namespace OSPSuite.UI.Services
 
          var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
          organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENUS_BLOOD_ORGAN);
+         organCategory.TopNames.Add(Constants.ObservedData.VENUS_BLOOD_ORGAN);
          categories.Add(organCategory);
 
          var compCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
          compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         compCategory.TopNames.Add(Constants.ObservedData.PLASMA_COMPARTMENT);
          categories.Add(compCategory);
 
          var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
