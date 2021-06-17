@@ -377,6 +377,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
                {
+                  metaDataCategory.ListOfImages.TryGetValue(v, out var value);
+                  if (value != null)
+                     return new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(value) };
+
                   var iconIndex = ApplicationIcons.IconIndex(v);
                   if (iconIndex == -1)
                      iconIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
