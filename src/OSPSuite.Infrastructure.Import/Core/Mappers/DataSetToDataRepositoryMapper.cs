@@ -100,7 +100,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          {
             if (!double.IsNaN(value.Lloq))
                lloqValue = value;
-            columnAndData.Value.FirstOrDefault(v => !double.IsNaN(v.Lloq));
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
