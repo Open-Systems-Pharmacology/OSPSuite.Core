@@ -399,7 +399,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
-         return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
+         var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);
+         return options.OrderBy(o => o.ImageIndex == metaDataIconIndex).ThenBy(o => o.Description);
       }
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)
