@@ -19,6 +19,9 @@ namespace OSPSuite.Core.Commands
 
       protected override void ExecuteWith(IOSPSuiteExecutionContext context)
       {
+         if (string.IsNullOrEmpty(_configuration.Id))
+            return;
+
          var project = context.Project;
          project.AddImporterConfiguration(_configuration);
          Description = Assets.Command.AddObservedDataToProjectDescription(_configuration.FileName, project.Name);
