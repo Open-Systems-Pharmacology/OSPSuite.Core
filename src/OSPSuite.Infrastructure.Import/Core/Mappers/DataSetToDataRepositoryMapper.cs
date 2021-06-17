@@ -94,9 +94,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var values = new float[columnAndData.Value.Count];
          var i = 0;
 
+         SimulationPoint lloqValue = null;
          //loop over view rows to get the sorted values.
          foreach (var value in columnAndData.Value)
          {
+            if (!double.IsNaN(value.Lloq))
+               lloqValue = value;
+            columnAndData.Value.FirstOrDefault(v => !double.IsNaN(v.Lloq));
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
@@ -105,6 +109,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             else
                values[i++] = (float) adjustedValue;
          }
+         if (lloqValue != null)
+            dataInfo.LLOQ = Convert.ToSingle(dimension.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit), lloqValue.Lloq));
 
          dataColumn.Values = values;
 
