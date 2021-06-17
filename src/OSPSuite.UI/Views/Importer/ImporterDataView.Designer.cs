@@ -188,6 +188,7 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.dataViewingGridView.GridControl = this.dataViewingGridControl;
          this.dataViewingGridView.Name = "dataViewingGridView";
+         this.dataViewingGridView.OptionsView.ColumnAutoWidth = false;
          // 
          // ImporterDataView
          // 
