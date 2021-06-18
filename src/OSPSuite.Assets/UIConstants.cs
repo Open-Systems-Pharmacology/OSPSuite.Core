@@ -406,7 +406,7 @@ namespace OSPSuite.Assets
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
-         public static readonly string ApplyConfiguration = "Apply configuration";
+         public static readonly string ApplyConfiguration = "Load configuration";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
