@@ -439,8 +439,9 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
-         public static readonly string UseFiltersForImport = "Use the filters for importing the data";
-         
+         public static readonly string UseFiltersForImport = "Use filters for importing data";
+         public static readonly string UseFiltersForImportTooltip = "When checked, the data comming from the file will also be filter by the importer. When unchecked, the filters only affect this view";
+
          public static readonly string AddGroupByTitle = "Add group by";
          public static readonly string MetaDataTitle = "Meta data";
          public static readonly string IgnoredParameterTitle = "Ignored parameter";

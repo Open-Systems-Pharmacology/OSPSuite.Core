@@ -1,6 +1,5 @@
 ﻿using DevExpress.Utils;
 using OSPSuite.Assets;
-using System.Windows.Forms;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -80,7 +79,8 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.useForImportCheckEdit.Location = new System.Drawing.Point(1, 1022);
          this.useForImportCheckEdit.Name = "useForImportCheckEdit";
-         this.useForImportCheckEdit.Properties.Caption = "Use the filters for importing the data";
+         this.useForImportCheckEdit.Properties.Caption = Captions.Importer.UseFiltersForImport;
+         this.useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
          this.useForImportCheckEdit.Size = new System.Drawing.Size(480, 24);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
