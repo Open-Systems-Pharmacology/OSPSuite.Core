@@ -1,40 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.XtraRichEdit.Internal;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Utility.Collections;
 using static OSPSuite.Assets.Captions.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
-namespace OSPSuite.UI.Services
+namespace OSPSuite.Presentation.Services
 {
    public class DataImporter : IDataImporter
    {
       private readonly IDialogCreator _dialogCreator;
       private readonly IImporter _importer;
-      private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IApplicationController _applicationController;
 
       public DataImporter(
          IDialogCreator dialogCreator,
          IImporter importer,
-         IApplicationController applicationController,
-         IDataSetToDataRepositoryMapper dataRepositoryMapper
+         IApplicationController applicationController
       )
       {
          _dialogCreator = dialogCreator;
          _importer = importer;
-         _dataRepositoryMapper = dataRepositoryMapper;
          _applicationController = applicationController;
       }
 
@@ -95,30 +88,12 @@ namespace OSPSuite.UI.Services
       {
          var path = _dialogCreator.AskForFileToOpen(PleaseSelectDataFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
 
-         (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) emptyImport = (Array.Empty<DataRepository>(), null);
-
          if (string.IsNullOrEmpty(path))
-            return emptyImport;
+            return (Array.Empty<DataRepository>(), null);
 
-         using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+         using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
-            importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-
-            try
-            {
-               if (!importerPresenter.SetSourceFile(path))
-                  return emptyImport;
-            }
-            catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
-            {
-               _dialogCreator.MessageBoxError(e.Message);
-               return emptyImport;
-            }
-
-            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
-            {
-               return importerModalPresenter.ImportDataSets(importerPresenter);
-            }
+            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, path);
          }
       }
 
@@ -130,76 +105,30 @@ namespace OSPSuite.UI.Services
       )
       {
          var fileName = _dialogCreator.AskForFileToOpen(OpenFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
+         
          if (string.IsNullOrEmpty(fileName))
             return Enumerable.Empty<DataRepository>().ToList();
+         
          if (dataImporterSettings.PromptForConfirmation)
          {
-            using (var importerPresenter = _applicationController.Start<IImporterPresenter>())
+            using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
-               importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
-               importerPresenter.LoadConfiguration(configuration, fileName);
-               using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
-               {
-                  return importerModalPresenter.ImportDataSets(importerPresenter, configuration.Id)
-                     .DataRepositories;
-               }
+               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, fileName, configuration);
             }
          }
 
-         var dataSource = new DataSource(_importer);
-         IDataSourceFile dataSourceFile = null;
-
          try
          {
-            dataSourceFile = _importer.LoadFile(columnInfos, fileName, metaDataCategories);
+            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, fileName, metaDataCategories, dataImporterSettings);
+            if (importedData.MissingSheets.Count != 0)
+               _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
+            return importedData.DataRepositories;
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return new List<DataRepository>();
          }
-
-         if (dataSourceFile == null)
-         {
-            return new List<DataRepository>();
-         }
-
-         dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-         }).Union
-         (
-            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
-            {
-               Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
-            })
-         );
-         dataSource.SetMappings(dataSourceFile.Path, mappings);
-         dataSource.NanSettings = configuration.NanSettings;
-         dataSource.SetDataFormat(dataSourceFile.Format);
-         dataSource.SetNamingConvention(configuration.NamingConventions);
-         var sheets = new Cache<string, DataSheet>();
-         var missingSheets = new List<string>();
-         foreach (var key in configuration.LoadedSheets)
-         {
-            if (!dataSourceFile.DataSheets.Contains(key))
-            {
-               missingSheets.Add(key);
-               continue;
-            }
-
-            sheets.Add(key, dataSourceFile.DataSheets[key]);
-         }
-
-         if (missingSheets.Count != 0)
-            _dialogCreator.MessageBoxError(SheetsNotFound(missingSheets));
-
-         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
-
-         return _importer.DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id);
       }
 
       public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
