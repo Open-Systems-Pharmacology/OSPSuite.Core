@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          IReadOnlyList<DataRepository> results = Array.Empty<DataRepository>();
          _view.FillImporterPanel(presenter.BaseView);
-         var configuration = presenter.UpdateAndGetConfiguration();
+         ImporterConfiguration configuration = null;
 
          presenter.OnTriggerImport += (s, d) =>
          {
