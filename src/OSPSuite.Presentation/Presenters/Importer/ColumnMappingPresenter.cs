@@ -235,7 +235,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
 
             columns.AddRange(availableColumns());
-            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? columns[_mappingParameterEditorPresenter.SelectedLloq] : null;
+            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;
          }
 
          ValidateMapping();

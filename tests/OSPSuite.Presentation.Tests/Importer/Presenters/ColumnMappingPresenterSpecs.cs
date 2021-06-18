@@ -217,7 +217,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedLloq).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.LloqColumn).Returns("Col1");
          A.CallTo(() => _mappingParameterEditorPresenter.LloqFromColumn()).Returns(true);
          A.CallTo(() => _basicFormat.ExcelColumnNames).Returns(new List<string>() { "Time", "Observation", "Error", "Col1", "Col2" });
          UpdateSettings();
