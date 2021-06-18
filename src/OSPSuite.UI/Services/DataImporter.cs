@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Services
 
          var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
          organCategory.Description = ObservedData.ObservedDataOrganDescription;
-         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENUS_BLOOD_ORGAN);
+         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENOUS_BLOOD_ORGAN);
          organCategory.TopNames.Add(Constants.ObservedData.VENOUS_BLOOD_ORGAN);
          categories.Add(organCategory);
 

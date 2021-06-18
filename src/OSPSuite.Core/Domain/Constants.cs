@@ -457,7 +457,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string GENDER = "Gender";
          public static readonly string DOSE = "Dose";
          public static readonly string PLASMA_COMPARTMENT = "Plasma";
-         public static readonly string PERIPHERAL_VENUS_BLOOD_ORGAN = "Peripheral Venous Blood";
+         public static readonly string PERIPHERAL_VENOUS_BLOOD_ORGAN = "Peripheral Venous Blood";
          public static readonly string VENOUS_BLOOD_ORGAN = "VenousBlood";
       }
 
