@@ -12,11 +12,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection);
       void SetErrorTypeOptions(IEnumerable<string> types, string selected);
-      int SelectedLloq { get; }
       int SelectedErrorType { get; }
       bool LloqFromColumn();
       UnitDescription Unit { get; }
       IDimension Dimension { get; }
+      string LloqColumn { get; }
       void SetUnitColumnSelection();
       void SetUnitsManualSelection();
       void InitView();
@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          errorEditorPresenter.OnOptionSelectionChanged += errorSelectionChanged;
       }
 
-      public int SelectedLloq => _lloqEditorPresenter.SelectedIndex;
+      public string LloqColumn => _lloqEditorPresenter.LloqColumn;
 
       public int SelectedErrorType => _errorEditorPresenter.SelectedIndex;
 
@@ -89,7 +89,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection)
       {
-         _lloqEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", columns}}, lloqColumnsSelection);
+         _lloqEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", columns}}, lloqColumnsSelection, selected);
          View.ShowLloq();
       }
 

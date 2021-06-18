@@ -235,7 +235,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
 
             columns.AddRange(availableColumns());
-            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? columns[_mappingParameterEditorPresenter.SelectedLloq] : null;
+            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;
          }
 
          ValidateMapping();
@@ -377,6 +377,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
                {
+                  metaDataCategory.ListOfImages.TryGetValue(v, out var value);
+                  if (value != null)
+                     return new RowOptionDTO() { Description = v, ImageIndex = ApplicationIcons.IconIndex(value) };
+
                   var iconIndex = ApplicationIcons.IconIndex(v);
                   if (iconIndex == -1)
                      iconIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
@@ -395,7 +399,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
-         return options.OrderBy(o => o.ImageIndex).ThenBy(o => o.Description);
+         var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);
+         return options.OrderBy(o => o.ImageIndex == metaDataIconIndex).ThenBy(o => o.Description);
       }
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)
