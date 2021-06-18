@@ -81,8 +81,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) importDataSets(string configurationId)
       {
          IReadOnlyList<DataRepository> results = Array.Empty<DataRepository>();
+         ImporterConfiguration configuration = null;
          _view.FillImporterPanel(_importerPresenter.BaseView);
-         var configuration = _importerPresenter.UpdateAndGetConfiguration();
 
          _importerPresenter.OnTriggerImport += (s, d) =>
          {
