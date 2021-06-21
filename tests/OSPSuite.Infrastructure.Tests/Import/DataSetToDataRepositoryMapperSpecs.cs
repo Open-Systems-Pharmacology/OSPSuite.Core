@@ -21,7 +21,8 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          dataSource = A.Fake<IDataSource>();
-         var dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+         var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+         var concentrationDimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             { 
@@ -30,8 +31,8 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column() 
                   {
                      Name = "Time",
-                     Unit = new UnitDescription("s"),
-                     Dimension = dimension
+                     Unit = new UnitDescription("min"),
+                     Dimension = timeDimension
                   },
                   ColumnInfo = new ColumnInfo()
                   {
@@ -43,19 +44,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "s",
+                     Unit = "min",
                      Measurement = 0,
                      Lloq = double.NaN
                   },
                   new SimulationPoint()
                   {
-                     Unit = "s",
+                     Unit = "min",
                      Measurement = 1,
                      Lloq = double.NaN
                   },
                   new SimulationPoint()
                   {
-                     Unit = "s",
+                     Unit = "min",
                      Measurement = 2,
                      Lloq = double.NaN
                   }
@@ -67,8 +68,8 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("mol"),
-                     Dimension = Constants.Dimension.NO_DIMENSION
+                     Unit = new UnitDescription("µmol/l"),
+                     Dimension = concentrationDimension
                   },
                   ColumnInfo = new ColumnInfo()
                   {
@@ -80,19 +81,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "µmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "µmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "µmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -110,13 +111,13 @@ namespace OSPSuite.Infrastructure.Import
          );
 
          var dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => dimensionFactory.DimensionForUnit(A<string>.Ignored)).Returns(dimension);
+         A.CallTo(() => dimensionFactory.DimensionForUnit("min")).Returns(timeDimension);
+         A.CallTo(() => dimensionFactory.DimensionForUnit("µmol/l")).Returns(concentrationDimension);
 
          sut = new DataSetToDataRepositoryMapper(dimensionFactory);
       }
    }
 
-   [Ignore("dimension/dimensionFactory should be correctly mocked or resolved - will do right after vacation")]
    public class When_mapping_a_data_repository : concern_for_DataSetToDataRepositoryMapperSpecs
    {
       protected override void Because()
@@ -129,6 +130,12 @@ namespace OSPSuite.Infrastructure.Import
       {
          Assert.IsNotNull(result);
          Assert.AreEqual(new float[] { 10.0f, 0.5f, 0.5f }, result.ObservationColumns().First().Values.ToArray());
+      }
+
+      [Observation]
+      public void should_add_lloq_to_data_repository()
+      {
+         Assert.AreEqual(1.0f, result.ObservationColumns().First().DataInfo.LLOQ);
       }
    }
 }
