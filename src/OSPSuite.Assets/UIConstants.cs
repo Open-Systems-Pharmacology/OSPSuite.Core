@@ -1277,6 +1277,8 @@ namespace OSPSuite.Assets
 
       public static string MissingColumnException(string missingColumn) => $"The column '{missingColumn}' that you have mapped is missing from at least one of the sheets you are trying to load";
 
+      public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' that you are trying to load seems to not be of a supported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
+
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
       public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
