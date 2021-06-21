@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Extensions;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
@@ -73,6 +74,11 @@ namespace OSPSuite.R.Domain
          //This needs to be done after initialization of the SimModelBatch so that we can check parameters
          validate(simulationBatchOptions);
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
+      }
+
+      public void ExportToCPPCode(string outputFolder)
+      {
+         _simModelBatch.ExportToCPPCode(outputFolder, CodeExportMode.Values);
       }
 
       private void validate(SimulationBatchOptions simulationBatchOptions)

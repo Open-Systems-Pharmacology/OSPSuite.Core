@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OSPSuite.SimModel;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -32,5 +33,12 @@ namespace OSPSuite.Core.Domain.Services
       ///    simulation)
       /// </summary>
       IReadOnlyList<string> VariableMoleculePaths { get; }
+
+      /// <summary>
+      /// Export SimModel simulation as C++ code for compilation
+      /// </summary>
+      /// <param name="outputFolder">Folder where C++ code files will be created</param>
+      /// <param name="exportMode">Formula or Values mode. Formula-Mode can be applied only if the SimModel simulation was NOT yet finalized</param>
+      void ExportToCPPCode(string outputFolder, CodeExportMode exportMode);
    }
 }

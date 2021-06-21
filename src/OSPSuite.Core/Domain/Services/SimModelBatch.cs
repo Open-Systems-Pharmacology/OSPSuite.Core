@@ -150,6 +150,11 @@ namespace OSPSuite.Core.Domain.Services
          _simModelSimulation.SetSpeciesValues();
       }
 
+      public void ExportToCPPCode(string outputFolder, CodeExportMode exportMode)
+      {
+         _simModelSimulation.ExportToCode(outputFolder, CodeExportLanguage.Cpp, exportMode);
+      }
+
       #region Disposable properties
 
       private bool _disposed;
