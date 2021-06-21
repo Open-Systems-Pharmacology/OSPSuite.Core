@@ -72,9 +72,16 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          foreach (var sheetKeyValue in dataSheets.KeyValues)
          {
-            var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
-            dataSets.Add(sheetKeyValue.Key, data);
+            try
+            {
+               var data = new DataSet();
+               data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
+               dataSets.Add(sheetKeyValue.Key, data);
+            }
+            catch
+            {
+               throw new PossibleUnsupportedSheetFormatException(sheetKeyValue.Key);
+            }
          }
 
          foreach (var key in dataSets.Keys)

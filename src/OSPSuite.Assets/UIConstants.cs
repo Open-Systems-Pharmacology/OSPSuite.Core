@@ -1275,7 +1275,9 @@ namespace OSPSuite.Assets
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
 
-      public static string MissingColumnException(string missingColumn) => $"The column '{missingColumn}' that you have mapped is missing from at least one of the sheets you are trying to load";
+      public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+
+      public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' seems to be in an unsupported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 
