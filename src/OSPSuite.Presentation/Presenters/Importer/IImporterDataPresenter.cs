@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       event EventHandler<EventArgs> OnDataChanged;
 
       IDataSourceFile SetDataSource(string dataSourceFileName);
-      void SelectTab(string tabName);
+      bool SelectTab(string tabName);
       void RemoveTab(string tabName);
       void RemoveAllButThisTab(string tabName);
       void ImportDataForConfirmation();

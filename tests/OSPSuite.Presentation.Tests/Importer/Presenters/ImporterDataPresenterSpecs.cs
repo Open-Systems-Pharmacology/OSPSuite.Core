@@ -130,6 +130,28 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_selecting_an_already_deleted_tab : concern_for_ImporterDataPresenter
+   {
+      private bool _selectTabResult;
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+      }
+
+      protected override void Because()
+      {
+         _selectTabResult = sut.SelectTab("sheet5");
+      }
+
+      [Observation]
+      public void no_further_action_should_be_taken()
+      {
+         _selectTabResult.ShouldBeEqualTo(false);
+         A.CallTo(() => _view.SetGridSource("sheet5")).MustNotHaveHappened();
+      }
+   }
+
    public class When_loading_for_confirmation : concern_for_ImporterDataPresenter
    {
       protected List<string> sheets;
