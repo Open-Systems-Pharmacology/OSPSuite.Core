@@ -161,12 +161,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void SelectTab(string tabName)
+      public bool SelectTab(string tabName)
       {
+         if (!_dataSourceFile.DataSheets.Contains(tabName))
+            return false;
+
          var activeFilter = GetActiveFilterCriteria();
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
+
+         return true;
       }
 
       public void RemoveTab(string tabName)

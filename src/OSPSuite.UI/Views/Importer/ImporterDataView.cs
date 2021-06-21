@@ -142,12 +142,13 @@ namespace OSPSuite.UI.Views.Importer
       {
          if (importerTabControl.SelectedTabPage == null) return;
 
+         if (!_dataPresenter.SelectTab(e.Page.Text)) return;
+
          if (_dataPresenter.Sheets.Keys.Contains(e.Page.Text))
             DisableImportCurrentSheet();
          else
             enableImportCurrentSheet();
 
-         _dataPresenter.SelectTab(e.Page.Text);
          SelectedTab = e.Page.Text;
       }
 
