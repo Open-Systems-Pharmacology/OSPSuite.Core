@@ -152,6 +152,54 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_hidig_an_already_loaded_tab : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+         sut.ImportDataForConfirmation("sheet1");
+         sut.ImportDataForConfirmation("sheet2");
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveTab("sheet1");
+      }
+
+      [Observation]
+      public void no_further_action_should_be_taken()
+      {
+         sut.Sheets.Keys.Contains("sheet1").ShouldBeFalse();
+         sut.Sheets.Keys.Contains("sheet2").ShouldBeTrue();
+      }
+   }
+
+   public class When_hidig_all_already_loaded_tabs : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+         sut.ImportDataForConfirmation("sheet1");
+         sut.ImportDataForConfirmation("sheet2");
+         sut.ImportDataForConfirmation("sheet3");
+      }
+
+      protected override void Because()
+      {
+         sut.RemoveAllButThisTab("sheet1");
+      }
+
+      [Observation]
+      public void no_further_action_should_be_taken()
+      {
+         sut.Sheets.Keys.Contains("sheet1").ShouldBeTrue();
+         sut.Sheets.Keys.Contains("sheet2").ShouldBeFalse();
+         sut.Sheets.Keys.Contains("sheet3").ShouldBeFalse();
+      }
+   }
+
    public class When_loading_for_confirmation : concern_for_ImporterDataPresenter
    {
       protected List<string> sheets;
