@@ -440,7 +440,7 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string UseFiltersForImport = "Use filters for importing data";
-         public static readonly string UseFiltersForImportTooltip = "When checked, the data comming from the file will also be filter by the importer. When unchecked, the filters only affect this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
+         public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
 
          public static readonly string AddGroupByTitle = "Add group by";
          public static readonly string MetaDataTitle = "Meta data";
