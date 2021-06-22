@@ -75,6 +75,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
             {
                DisplayName = "Error",
                IsMandatory = false
+            },
+            new MetaDataCategory()
+            {
+               Name = "Molecule",
+               IsMandatory = false,
+               AllowsManualInput = true
             }
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
@@ -240,6 +246,34 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_lloq_is_properly_set()
       {
          Assert.AreEqual("Col1", (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn);
+      }
+   }
+
+   public class When_clearing_description_for_meta_data_model : concern_for_ColumnMappingPresenter
+   {
+      protected ColumnMappingDTO _model;
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         _model = new ColumnMappingDTO
+         (
+            ColumnMappingDTO.ColumnType.MetaData,
+            "Molecule",
+            new MetaDataFormatParameter("Col1", "Molecule"),
+            0
+         );
+         sut.ClearRow(_model);
+      }
+
+      [Observation]
+      public void the_column_is_cleared()
+      {
+         Assert.IsTrue(string.IsNullOrEmpty((_model.Source as MetaDataFormatParameter).ColumnName));
       }
    }
 
