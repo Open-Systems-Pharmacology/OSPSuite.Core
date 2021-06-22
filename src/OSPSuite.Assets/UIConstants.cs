@@ -365,7 +365,7 @@ namespace OSPSuite.Assets
          public static readonly string Mappings = "Mappings";
          public static readonly string FormatPlain = "Format";
          public static readonly string DataMapping = "Data Mapping";
-         public static readonly string Confirmation = "Confirmation";
+         public static readonly string Confirmation = "Import preview";
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
          public static readonly string ManualInput = "Manual input";
@@ -384,7 +384,7 @@ namespace OSPSuite.Assets
          public static readonly string ExtraColumn = "Edit extra fields";
          public static readonly string ErrorColumn = "Error";
          public static readonly string ErrorType = "Error type";
-         public static readonly string LoadAllSheets = "Load all sheets";
+         public static readonly string LoadAllSheets = "Add all sheets";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string MappingLayout = "Mapping";
@@ -396,7 +396,7 @@ namespace OSPSuite.Assets
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
          public static readonly string Column = "Column";
-         public static readonly string LoadCurrentSheet = "Load current sheet";
+         public static readonly string LoadCurrentSheet = "Add current sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
          public static readonly string SheetsAlreadyImported = "Imported";
          public static readonly string CloseAllTabsButThis = "close all tabs but this";
