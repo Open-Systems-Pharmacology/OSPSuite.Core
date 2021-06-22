@@ -196,9 +196,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
             DataSheet currentAlreadyLoaded = null;
             if (Sheets.Keys.Contains(tabName))
                currentAlreadyLoaded = Sheets[tabName];
+
             Sheets.Clear();
             if (currentAlreadyLoaded != null)
                Sheets.Add(tabName, currentAlreadyLoaded);
+            
             TriggerOnDataChanged();
          }
       }

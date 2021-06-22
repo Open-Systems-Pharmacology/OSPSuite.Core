@@ -170,8 +170,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void no_further_action_should_be_taken()
       {
-         sut.Sheets.Keys.Contains("sheet1").ShouldBeFalse();
-         sut.Sheets.Keys.Contains("sheet2").ShouldBeTrue();
+         sut.Sheets.Keys.ShouldNotContain("sheet1");
+         sut.Sheets.Keys.ShouldContain("sheet2");
       }
    }
 
@@ -194,9 +194,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void no_further_action_should_be_taken()
       {
-         sut.Sheets.Keys.Contains("sheet1").ShouldBeTrue();
-         sut.Sheets.Keys.Contains("sheet2").ShouldBeFalse();
-         sut.Sheets.Keys.Contains("sheet3").ShouldBeFalse();
+         sut.Sheets.Keys.ShouldContain("sheet1");
+         sut.Sheets.Keys.ShouldNotContain("sheet2");
+         sut.Sheets.Keys.ShouldNotContain("sheet3");
       }
    }
 
