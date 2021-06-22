@@ -96,7 +96,6 @@ namespace OSPSuite.UI.Views.Importer
          contextMenu.Items.Clear();
          contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsButThis, onCloseAllButThisTab));
          contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsToTheRight, onCloseAllTabsToTheRight));
-         contextMenu.Items.Add(new DXMenuItem(Captions.Importer.ResetAllTabs, ...));
          contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
 
