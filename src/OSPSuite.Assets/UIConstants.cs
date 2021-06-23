@@ -359,6 +359,7 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
          public static readonly string ResetMapping = "Reset Mapping";
+         public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add keys";
@@ -423,6 +424,7 @@ namespace OSPSuite.Assets
          public static readonly string SeparatorSelection = "Separator Selection";
          public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
 
+         public static readonly string SheetFormatNotSupported = "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
             var sb = new StringBuilder();
