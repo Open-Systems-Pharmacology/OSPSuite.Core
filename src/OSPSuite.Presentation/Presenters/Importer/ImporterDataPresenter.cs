@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
+      private string _currentSheetName;
       public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -33,6 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _sheetsForViewing = new Cache<string, DataTable>();
          Sheets = new Cache<string, DataSheet>();
+         _currentSheetName = string.Empty;
       }
 
       public List<string> GetSheetNames()
@@ -170,7 +172,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
-
+         _currentSheetName = tabName;
          return true;
       }
 
@@ -206,6 +208,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public string GetActiveFilterCriteria()
       {
          return View.GetActiveFilterCriteria();
+      }
+
+      public void GetFormatBasedOnCurrentSheet()
+      {
+         _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName);
+         SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
       }
    }
 }

@@ -597,6 +597,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
+      public void ResetMappingBasedOnCurrentSheet()
+      {
+         OnResetMappingBasedOnCurrentSheet(this, new EventArgs());
+      }
+
       public void ClearMapping()
       {
          var format = new List<DataFormatParameter>();
@@ -669,6 +674,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler OnMappingCompleted = delegate { };
 
       public event EventHandler<MissingMappingEventArgs> OnMissingMapping = delegate { };
+
+      public event EventHandler OnResetMappingBasedOnCurrentSheet = delegate { }; 
 
       public IEnumerable<string> GetAllAvailableExcelColumns()
       {
