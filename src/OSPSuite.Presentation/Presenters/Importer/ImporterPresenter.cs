@@ -99,6 +99,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
+         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += onResetMappingBasedOnCurrentSheet;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }
@@ -169,7 +170,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             {
                var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException))
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
                }
@@ -234,6 +235,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void onTabChanged(object sender, TabChangedEventArgs e)
       {
          _columnMappingPresenter.SetRawData(e.TabData);
+      }
+
+      private void onResetMappingBasedOnCurrentSheet(object sender, EventArgs e)
+      {
+         try
+         {
+            _importerDataPresenter.GetFormatBasedOnCurrentSheet();
+         }
+         catch (UnsupportedFormatException)
+         {
+            _dialogCreator.MessageBoxError(Captions.Importer.SheetFormatNotSupported);
+         }
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)

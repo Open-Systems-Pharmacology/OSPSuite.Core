@@ -45,7 +45,8 @@ namespace OSPSuite.Assets
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
-      public static readonly string CloseButton = "&Close";
+      public static readonly string 
+         Button = "&Close";
       public static readonly string Folder = "Folder";
       public static readonly string Rename = "Rename";
       public static readonly string Description = "Description";
@@ -358,6 +359,7 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
          public static readonly string ResetMapping = "Reset Mapping";
+         public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add keys";
@@ -365,7 +367,7 @@ namespace OSPSuite.Assets
          public static readonly string Mappings = "Mappings";
          public static readonly string FormatPlain = "Format";
          public static readonly string DataMapping = "Data Mapping";
-         public static readonly string Confirmation = "Confirmation";
+         public static readonly string Confirmation = "Import preview";
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
          public static readonly string ManualInput = "Manual input";
@@ -384,7 +386,7 @@ namespace OSPSuite.Assets
          public static readonly string ExtraColumn = "Edit extra fields";
          public static readonly string ErrorColumn = "Error";
          public static readonly string ErrorType = "Error type";
-         public static readonly string LoadAllSheets = "Load all sheets";
+         public static readonly string LoadAllSheets = "Add all sheets";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string MappingLayout = "Mapping";
@@ -396,17 +398,18 @@ namespace OSPSuite.Assets
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
          public static readonly string Column = "Column";
-         public static readonly string LoadCurrentSheet = "Load current sheet";
+         public static readonly string LoadCurrentSheet = "Add current sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
          public static readonly string SheetsAlreadyImported = "Imported";
-         public static readonly string CloseAllTabsButThis = "close all tabs but this";
-         public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
+         public static readonly string CloseAllTabsButThis = "Close all tabs but this";
+         public static readonly string CloseAllTabsToTheRight = "Close all tabs to the right";
+         public static readonly string ResetAllTabs = "Reopen all sheets";
          public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
          public static readonly string Title = "Import Observed Data";
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save configuration";
-         public static readonly string ApplyConfiguration = "Apply configuration";
+         public static readonly string ApplyConfiguration = "Load configuration";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group by";
          public static readonly string MappingTitle = "Mapping";
@@ -421,6 +424,7 @@ namespace OSPSuite.Assets
          public static readonly string SeparatorSelection = "Separator Selection";
          public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
 
+         public static readonly string SheetFormatNotSupported = "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
             var sb = new StringBuilder();
@@ -439,8 +443,9 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
-         public static readonly string UseFiltersForImport = "Use the filters for importing the data";
-         
+         public static readonly string UseFiltersForImport = "Use filters for importing data";
+         public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
+
          public static readonly string AddGroupByTitle = "Add group by";
          public static readonly string MetaDataTitle = "Meta data";
          public static readonly string IgnoredParameterTitle = "Ignored parameter";
@@ -1275,7 +1280,9 @@ namespace OSPSuite.Assets
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
 
-      public static string MissingColumnException(string missingColumn) => $"The column '{missingColumn}' that you have mapped is missing from at least one of the sheets you are trying to load";
+      public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+
+      public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' seems to be in an unsupported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
 

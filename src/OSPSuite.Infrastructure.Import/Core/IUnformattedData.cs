@@ -129,7 +129,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
 
-         if (_headers.Count != _rawDataTable.First().Count)
+         if (_rawDataTable.Count > 0 && (_headers.Count != _rawDataTable.First().Count))
          {
             maskFunction = (inputList) => inputList.Where((v, i) => indexList.Contains(i));
          }

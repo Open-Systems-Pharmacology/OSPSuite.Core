@@ -96,6 +96,7 @@ namespace OSPSuite.UI.Views.Importer
          contextMenu.Items.Clear();
          contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsButThis, onCloseAllButThisTab));
          contextMenu.Items.Add(new DXMenuItem(Captions.Importer.CloseAllTabsToTheRight, onCloseAllTabsToTheRight));
+         contextMenu.Items.Add(new DXMenuItem(Captions.Importer.ResetAllTabs, onReopenAllSheets));
          contextMenu.ShowPopup(importerTabControl, e.Location);
          _contextMenuSelectedTab = hi.Page.Text;
 
@@ -133,6 +134,11 @@ namespace OSPSuite.UI.Views.Importer
          _dataPresenter.RefreshTabs();
       }
 
+      private void onReopenAllSheets(object sender, EventArgs e)
+      {
+         _dataPresenter.ReopenAllSheets();
+      }
+
       private void onButtonImportClicked(object sender, EventArgs e)
       {
          _dataPresenter.ImportDataForConfirmation(importerTabControl.SelectedTabPage.Text);
@@ -142,12 +148,13 @@ namespace OSPSuite.UI.Views.Importer
       {
          if (importerTabControl.SelectedTabPage == null) return;
 
+         if (!_dataPresenter.SelectTab(e.Page.Text)) return;
+
          if (_dataPresenter.Sheets.Keys.Contains(e.Page.Text))
             DisableImportCurrentSheet();
          else
             enableImportCurrentSheet();
 
-         _dataPresenter.SelectTab(e.Page.Text);
          SelectedTab = e.Page.Text;
       }
 

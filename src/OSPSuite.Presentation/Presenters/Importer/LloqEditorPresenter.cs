@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.FillLloqSelector(_optionsEditorPresenter.BaseView);
       }
 
-      public string LloqColumn { get; private set; }
+      public string LloqColumn => _optionsEditorPresenter.SelectedText;
 
       public void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, bool lloqColumnsSelection, string selected = null)
       {
@@ -22,16 +22,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _optionsEditorPresenter.SetOptions(options, selected);
       }
 
-      public void SetLloqColumn(string column)
-      {
-         LloqColumn = column;
-      }
-
       public bool LloqFromColumn()
       {
          return View.IsLloqToggleOn();
       }
-
-      public int SelectedIndex => _optionsEditorPresenter.SelectedIndex;
    }
 }

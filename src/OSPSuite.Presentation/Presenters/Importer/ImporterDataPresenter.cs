@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
+      private string _currentSheetName;
       public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -33,6 +34,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importer = importer;
          _sheetsForViewing = new Cache<string, DataTable>();
          Sheets = new Cache<string, DataSheet>();
+         _currentSheetName = string.Empty;
       }
 
       public List<string> GetSheetNames()
@@ -161,17 +163,33 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void SelectTab(string tabName)
+      public bool SelectTab(string tabName)
       {
+         if (!_dataSourceFile.DataSheets.Contains(tabName))
+            return false;
+
          var activeFilter = GetActiveFilterCriteria();
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
+         _currentSheetName = tabName;
+         return true;
       }
 
       public void RemoveTab(string tabName)
       {
          _dataSourceFile.DataSheets.Remove(tabName);
+         if (Sheets.Keys.Contains(tabName))
+         {
+            Sheets.Remove(tabName);
+            TriggerOnDataChanged();
+         }
+      }
+
+      public void ReopenAllSheets()
+      {
+         _dataSourceFile.Path = _dataSourceFile.Path;
+         RefreshTabs();
       }
 
       public void RemoveAllButThisTab(string tabName)
@@ -181,6 +199,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.DataSheets.Clear();
          _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
          View.AddTabs(GetSheetNames());
+         if (Sheets.Keys.Any(k => k != tabName))
+         {
+            DataSheet currentAlreadyLoaded = null;
+            if (Sheets.Keys.Contains(tabName))
+               currentAlreadyLoaded = Sheets[tabName];
+
+            Sheets.Clear();
+            if (currentAlreadyLoaded != null)
+               Sheets.Add(tabName, currentAlreadyLoaded);
+            
+            TriggerOnDataChanged();
+         }
       }
 
       public void RefreshTabs()
@@ -201,6 +231,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public string GetActiveFilterCriteria()
       {
          return View.GetActiveFilterCriteria();
+      }
+
+      public void GetFormatBasedOnCurrentSheet()
+      {
+         _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName);
+         SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
       }
    }
 }

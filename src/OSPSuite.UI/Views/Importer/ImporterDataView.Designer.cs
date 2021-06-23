@@ -1,6 +1,5 @@
 ﻿using DevExpress.Utils;
 using OSPSuite.Assets;
-using System.Windows.Forms;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -32,6 +31,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void InitializeComponent()
       {
+         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImporterDataView));
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.useForImportCheckEdit = new DevExpress.XtraEditors.CheckEdit();
          this.btnImport = new DevExpress.XtraEditors.SimpleButton();
@@ -78,39 +78,42 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // useForImportCheckEdit
          // 
-         this.useForImportCheckEdit.Location = new System.Drawing.Point(1, 1022);
+         this.useForImportCheckEdit.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.True;
+         this.useForImportCheckEdit.Location = new System.Drawing.Point(2, 1022);
          this.useForImportCheckEdit.Name = "useForImportCheckEdit";
-         this.useForImportCheckEdit.Properties.Caption = "Use the filters for importing the data";
-         this.useForImportCheckEdit.Size = new System.Drawing.Size(480, 24);
+         this.useForImportCheckEdit.Properties.Caption = Captions.Importer.UseFiltersForImport;
+         this.useForImportCheckEdit.Size = new System.Drawing.Size(478, 24);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
+         this.useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
+         this.useForImportCheckEdit.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
          // 
          // btnImport
          // 
-         this.btnImport.Location = new System.Drawing.Point(1270, 1022);
-         this.btnImport.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+         this.btnImport.Location = new System.Drawing.Point(1271, 1021);
+         this.btnImport.Margin = new System.Windows.Forms.Padding(1);
          this.btnImport.Name = "btnImport";
-         this.btnImport.Size = new System.Drawing.Size(105, 27);
+         this.btnImport.Size = new System.Drawing.Size(103, 27);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
          this.btnImport.Text = "btnImport";
          // 
          // btnImportAll
          // 
-         this.btnImportAll.Location = new System.Drawing.Point(1377, 1022);
-         this.btnImportAll.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+         this.btnImportAll.Location = new System.Drawing.Point(1378, 1021);
+         this.btnImportAll.Margin = new System.Windows.Forms.Padding(1);
          this.btnImportAll.Name = "btnImportAll";
-         this.btnImportAll.Size = new System.Drawing.Size(79, 27);
+         this.btnImportAll.Size = new System.Drawing.Size(77, 27);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
          this.btnImportAll.Text = "btnImportAll";
          // 
          // importerTabControl
          // 
-         this.importerTabControl.Location = new System.Drawing.Point(1, 1);
+         this.importerTabControl.Location = new System.Drawing.Point(2, 2);
          this.importerTabControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.importerTabControl.Name = "importerTabControl";
-         this.importerTabControl.Size = new System.Drawing.Size(1455, 1019);
+         this.importerTabControl.Size = new System.Drawing.Size(1453, 1015);
          this.importerTabControl.TabIndex = 5;
          // 
          // Root
@@ -133,45 +136,45 @@ namespace OSPSuite.UI.Views.Importer
          this.importerLayoutControlItem.Control = this.importerTabControl;
          this.importerLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.importerLayoutControlItem.Name = "importerLayoutControlItem";
-         this.importerLayoutControlItem.Size = new System.Drawing.Size(1457, 1021);
+         this.importerLayoutControlItem.Size = new System.Drawing.Size(1457, 1019);
          this.importerLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importerLayoutControlItem.TextVisible = false;
          // 
          // layoutItemImportAll
          // 
          this.layoutItemImportAll.Control = this.btnImportAll;
-         this.layoutItemImportAll.Location = new System.Drawing.Point(1376, 1021);
+         this.layoutItemImportAll.Location = new System.Drawing.Point(1376, 1019);
          this.layoutItemImportAll.Name = "layoutItemImportAll";
-         this.layoutItemImportAll.Size = new System.Drawing.Size(81, 29);
+         this.layoutItemImportAll.Size = new System.Drawing.Size(81, 31);
          this.layoutItemImportAll.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportAll.TextVisible = false;
          // 
          // layoutItemImportCurrent
          // 
          this.layoutItemImportCurrent.Control = this.btnImport;
-         this.layoutItemImportCurrent.Location = new System.Drawing.Point(1269, 1021);
+         this.layoutItemImportCurrent.Location = new System.Drawing.Point(1269, 1019);
          this.layoutItemImportCurrent.Name = "layoutItemImportCurrent";
-         this.layoutItemImportCurrent.Size = new System.Drawing.Size(107, 29);
+         this.layoutItemImportCurrent.Size = new System.Drawing.Size(107, 31);
          this.layoutItemImportCurrent.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportCurrent.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(482, 1021);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(482, 1019);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(787, 29);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(787, 31);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem1
          // 
+         this.layoutControlItem1.ContentVertAlignment = DevExpress.Utils.VertAlignment.Center;
          this.layoutControlItem1.Control = this.useForImportCheckEdit;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 1021);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 1019);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(482, 29);
+         this.layoutControlItem1.Size = new System.Drawing.Size(482, 31);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
-         this.layoutControlItem1.ContentVertAlignment = VertAlignment.Center;
          // 
          // dataViewingGridControl
          // 

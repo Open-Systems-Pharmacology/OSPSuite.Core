@@ -97,13 +97,16 @@ namespace OSPSuite.UI.Views.Importer
       }
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
+         if (_presenter.ShouldManualInputOnMetaDataBeEnabled(model))
+            return _repositoryMetaDataPopupContainerEdit;
+
          switch (model.Source)
          {
             case MappingDataFormatParameter _:
                _presenter.SetSubEditorSettingsForMapping(model);
                return _repositoryMappingPopupContainerEdit;
             case MetaDataFormatParameter md:
-               return (_presenter.ShouldManualInputOnMetaDataBeEnabled(model)) ? _repositoryMetaDataPopupContainerEdit : _disabledPopupContainerEdit;
+               return _disabledPopupContainerEdit;
          }
          return _disabledPopupContainerEdit;         
       }
@@ -321,6 +324,8 @@ namespace OSPSuite.UI.Views.Importer
          menu.Items.Clear();
          menu.Items.Add(new DXMenuItem(Captions.Importer.ResetMapping, onCreateAutoMappingClick));
          menu.Items.Add(new DXMenuItem(Captions.Importer.ClearMapping, onClearMappingClick));
+         //actually here, we could recalculate the mapping and see if it is different
+         menu.Items.Add(new DXMenuItem(Captions.Importer.ResetMappingBasedOnCurrentSheet, onResetMappingCurrentSheetClick));
          menu.Show(mouseEventArgs.Location);
       }
 
@@ -338,6 +343,11 @@ namespace OSPSuite.UI.Views.Importer
       private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)
       {
          _presenter.ResetMapping();
+      }
+
+      private void onResetMappingCurrentSheetClick(object sender, EventArgs eventArgs)
+      {
+         _presenter.ResetMappingBasedOnCurrentSheet();
       }
 
       private void onClearMappingClick(object sender, EventArgs eventArgs)
