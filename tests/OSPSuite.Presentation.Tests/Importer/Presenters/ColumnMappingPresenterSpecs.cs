@@ -10,6 +10,7 @@ using OSPSuite.Core.Import;
 using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -126,7 +127,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         Assert.AreEqual(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit, _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit.ShouldBeEqualTo(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
       }
    }
 
@@ -153,7 +154,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         Assert.AreEqual("", _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit);
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit.ShouldBeEmpty();
       }
    }
 
@@ -183,7 +184,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_ErrorStdDev_is_properly_set()
       {
-         Assert.AreEqual(Constants.STD_DEV_ARITHMETIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
+         (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
    }
 
@@ -213,7 +214,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_ErrorStdDev_is_properly_set()
       {
-         Assert.AreEqual(Constants.STD_DEV_GEOMETRIC, (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev);
+         (_basicFormat.Parameters[2] as MappingDataFormatParameter).MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
       }
    }
 
@@ -245,7 +246,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_lloq_is_properly_set()
       {
-         Assert.AreEqual("Col1", (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn);
+         (_basicFormat.Parameters[1] as MappingDataFormatParameter).MappedColumn.LloqColumn.ShouldBeEqualTo("Col1");
       }
    }
 
@@ -273,7 +274,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_column_is_cleared()
       {
-         Assert.IsTrue(string.IsNullOrEmpty((_model.Source as MetaDataFormatParameter).ColumnName));
+         string.IsNullOrEmpty((_model.Source as MetaDataFormatParameter).ColumnName).ShouldBeTrue();
       }
    }
 
@@ -373,7 +374,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         Assert.IsTrue(res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration"));
+         (res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration")).ShouldBeTrue();
       }
 
       [Observation]
@@ -387,7 +388,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos[2]
          ));
-         Assert.IsTrue(res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration")));
+         (res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
       }
    }
 }
