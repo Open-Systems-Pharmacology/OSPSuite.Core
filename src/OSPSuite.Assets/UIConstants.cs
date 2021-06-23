@@ -45,7 +45,8 @@ namespace OSPSuite.Assets
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
-      public static readonly string CloseButton = "&Close";
+      public static readonly string 
+         Button = "&Close";
       public static readonly string Folder = "Folder";
       public static readonly string Rename = "Rename";
       public static readonly string Description = "Description";
@@ -399,9 +400,9 @@ namespace OSPSuite.Assets
          public static readonly string LoadCurrentSheet = "Add current sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
          public static readonly string SheetsAlreadyImported = "Imported";
-         public static readonly string CloseAllTabsButThis = "close all tabs but this";
-         public static readonly string CloseAllTabsToTheRight = "close all tabs to the right";
-         public static readonly string ResetAllTabs = "reopen all sheets";
+         public static readonly string CloseAllTabsButThis = "Close all tabs but this";
+         public static readonly string CloseAllTabsToTheRight = "Close all tabs to the right";
+         public static readonly string ResetAllTabs = "Reopen all sheets";
          public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
          public static readonly string Title = "Import Observed Data";
          public static readonly string LLOQ = "LLOQ";
