@@ -45,8 +45,7 @@ namespace OSPSuite.Assets
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
-      public static readonly string 
-         Button = "&Close";
+      public static readonly string CloseButton = "&Close";
       public static readonly string Folder = "Folder";
       public static readonly string Rename = "Rename";
       public static readonly string Description = "Description";
