@@ -384,6 +384,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model == null)
             return options;
          var excelColumns = availableColumns();
+         var topNames = new List<string>();
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
@@ -403,6 +404,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   return new RowOptionDTO() {Description = v, ImageIndex = iconIndex};
                }));
             }
+            topNames = metaDataCategory.TopNames;
          }
 
          if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
@@ -416,7 +418,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
          var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);
-         return options.OrderBy(o => o.ImageIndex == metaDataIconIndex).ThenBy(o => o.Description);
+         return options.OrderByDescending(o => topNames.Contains(o.Description)).ThenBy(o => o.ImageIndex == metaDataIconIndex).ThenBy(o => o.Description);
       }
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)

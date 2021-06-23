@@ -23,6 +23,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public bool SelectDefaultValue { get; set; } = false;
 
+      public List<string> TopNames { get; } = new List<string>();
+
       /// <summary>
       ///    List of images, if available
       /// </summary>
