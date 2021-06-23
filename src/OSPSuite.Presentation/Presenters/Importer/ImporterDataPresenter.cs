@@ -177,6 +177,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void RemoveTab(string tabName)
       {
          _dataSourceFile.DataSheets.Remove(tabName);
+         if (Sheets.Keys.Contains(tabName))
+         {
+            Sheets.Remove(tabName);
+            TriggerOnDataChanged();
+         }
       }
 
       public void RemoveAllButThisTab(string tabName)
@@ -186,6 +191,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.DataSheets.Clear();
          _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
          View.AddTabs(GetSheetNames());
+         if (Sheets.Keys.Any(k => k != tabName))
+         {
+            DataSheet currentAlreadyLoaded = null;
+            if (Sheets.Keys.Contains(tabName))
+               currentAlreadyLoaded = Sheets[tabName];
+
+            Sheets.Clear();
+            if (currentAlreadyLoaded != null)
+               Sheets.Add(tabName, currentAlreadyLoaded);
+            
+            TriggerOnDataChanged();
+         }
       }
 
       public void RefreshTabs()
