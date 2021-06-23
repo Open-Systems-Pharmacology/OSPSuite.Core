@@ -239,7 +239,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onResetMappingBasedOnCurrentSheet(object sender, EventArgs e)
       {
-         _importerDataPresenter.GetFormatBasedOnCurrentSheet();
+         try
+         {
+            _importerDataPresenter.GetFormatBasedOnCurrentSheet();
+         }
+         catch (UnsupportedFormatException)
+         {
+            _dialogCreator.MessageBoxError(Captions.Importer.SheetFormatNotSupported);
+         }
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
