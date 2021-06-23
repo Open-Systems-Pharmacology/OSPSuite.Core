@@ -439,8 +439,9 @@ namespace OSPSuite.Assets
             return sb.ToString();
          }
 
-         public static readonly string UseFiltersForImport = "Use the filters for importing the data";
-         
+         public static readonly string UseFiltersForImport = "Use filters for importing data";
+         public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
+
          public static readonly string AddGroupByTitle = "Add group by";
          public static readonly string MetaDataTitle = "Meta data";
          public static readonly string IgnoredParameterTitle = "Ignored parameter";
