@@ -184,6 +184,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
+      public void ReopenAllSheets()
+      {
+         _dataSourceFile.Path = _dataSourceFile.Path;
+         RefreshTabs();
+      }
+
       public void RemoveAllButThisTab(string tabName)
       {
          View.ClearTabs();

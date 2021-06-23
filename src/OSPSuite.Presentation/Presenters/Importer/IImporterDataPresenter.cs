@@ -44,6 +44,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       IDataSourceFile SetDataSource(string dataSourceFileName);
       bool SelectTab(string tabName);
       void RemoveTab(string tabName);
+      void ReopenAllSheets();
       void RemoveAllButThisTab(string tabName);
       void ImportDataForConfirmation();
       void onMissingMapping();
