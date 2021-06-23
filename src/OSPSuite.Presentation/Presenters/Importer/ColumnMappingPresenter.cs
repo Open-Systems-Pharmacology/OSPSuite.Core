@@ -362,6 +362,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
+      private bool columnNameHasManualInput(ColumnMappingDTO model, MetaDataCategory metaDataCategory)
+      {
+         if (model.Source == null)
+            return false;
+
+         var source =model.Source as MetaDataFormatParameter;
+
+         if (source.ColumnName == null)
+            return false;
+
+         if (source.IsColumn)
+            return false;
+
+         return !metaDataCategory.ListOfValues.Keys.Union(availableColumns()).Contains(model.ExcelColumn);
+      }
+
       public IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model)
       {
          var options = new List<RowOptionDTO>();
@@ -371,7 +387,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
-            if (model.Source != null && !(model.Source as MetaDataFormatParameter).IsColumn && !metaDataCategory.ListOfValues.Keys.Union(excelColumns).Contains(model.ExcelColumn))
+            if (columnNameHasManualInput(model, metaDataCategory))
                options.Add(new RowOptionDTO() {Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData)});
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
@@ -564,10 +580,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
-            var index = _format.Parameters.IndexOf(model.Source);
-            model.ExcelColumn = Captions.Importer.NoneEditorNullText;
-            model.Source = null;
-            _format.Parameters.RemoveAt(index);
+            if (ShouldManualInputOnMetaDataBeEnabled(model))
+            {
+               var source = model.Source as MetaDataFormatParameter;
+               _mappings.First(m => m.MappingName == source.MetaDataId).ExcelColumn = null;
+               source.ColumnName = null;
+               source.IsColumn = false;
+            }
+            else
+            {
+               var index = _format.Parameters.IndexOf(model.Source);
+               model.ExcelColumn = Captions.Importer.NoneEditorNullText;
+               model.Source = null;
+               _format.Parameters.RemoveAt(index);
+            }
          }
 
          ValidateMapping();

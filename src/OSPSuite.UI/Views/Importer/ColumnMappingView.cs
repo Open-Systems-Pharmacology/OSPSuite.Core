@@ -97,13 +97,16 @@ namespace OSPSuite.UI.Views.Importer
       }
       private RepositoryItem repositoryItemPopupContainerEdit(ColumnMappingDTO model)
       {
+         if (_presenter.ShouldManualInputOnMetaDataBeEnabled(model))
+            return _repositoryMetaDataPopupContainerEdit;
+
          switch (model.Source)
          {
             case MappingDataFormatParameter _:
                _presenter.SetSubEditorSettingsForMapping(model);
                return _repositoryMappingPopupContainerEdit;
             case MetaDataFormatParameter md:
-               return (_presenter.ShouldManualInputOnMetaDataBeEnabled(model)) ? _repositoryMetaDataPopupContainerEdit : _disabledPopupContainerEdit;
+               return _disabledPopupContainerEdit;
          }
          return _disabledPopupContainerEdit;         
       }
