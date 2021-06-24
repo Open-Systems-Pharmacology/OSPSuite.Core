@@ -31,10 +31,10 @@ namespace OSPSuite.Infrastructure.Import.Services
       int GetImageIndex(DataFormatParameter parameter);
       MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
 
-      IReadOnlyList<DataRepository> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
 
-      (IReadOnlyList<DataRepository> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
+      (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
          IReadOnlyList<ColumnInfo> columnInfos,
@@ -185,14 +185,15 @@ namespace OSPSuite.Infrastructure.Import.Services
          };
       }
 
-      public IReadOnlyList<DataRepository> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      public IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id)
       {
-         var dataRepositories = new List<DataRepository>();
+         var dataRepositories = new List<DataSetToDataRepositoryMappingResult>();
 
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
-            var dataRepo = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            var dataRepo = dataRepoMapping.DataRepository;
             dataRepo.ConfigurationId = id;
 
             var moleculeDescription = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
@@ -226,7 +227,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
             //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
             dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-            dataRepositories.Add(dataRepo);
+            dataRepositories.Add(dataRepoMapping);
          }
 
          return dataRepositories;
@@ -242,7 +243,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          return moleculeDescription;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
+      public (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
          IReadOnlyList<ColumnInfo> columnInfos,
@@ -258,7 +259,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          if (dataSourceFile == null)
          {
-            return (Enumerable.Empty<DataRepository>().ToList(), Enumerable.Empty<string>().ToList());
+            return (Enumerable.Empty<DataSetToDataRepositoryMappingResult>().ToList(), Enumerable.Empty<string>().ToList());
          }
 
          dataSourceFile.Format.CopyParametersFromConfiguration(configuration);

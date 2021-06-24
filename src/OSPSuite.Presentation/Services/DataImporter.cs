@@ -125,7 +125,7 @@ namespace OSPSuite.Presentation.Services
             var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, fileName, metaDataCategories, dataImporterSettings);
             if (importedData.MissingSheets.Count != 0)
                _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
-            return importedData.DataRepositories;
+            return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
