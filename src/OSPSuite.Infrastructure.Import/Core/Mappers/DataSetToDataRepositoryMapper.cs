@@ -1,16 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
+   public class DataSetToDataRepositoryMappingResult
+   {
+      public DataSetToDataRepositoryMappingResult(DataRepository dataRepository, string warningMessage = "")
+      {
+         WarningMessage = warningMessage;
+         DataRepository = dataRepository;
+      }
+
+      public string WarningMessage { get; private set; }
+
+      public DataRepository DataRepository { get; private set; }
+   }
+
    public interface IDataSetToDataRepositoryMapper
    {
-      DataRepository ConvertImportDataSet(ImportedDataSet dataSet);
+      DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet);
    }
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
@@ -22,7 +37,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          _dimensionFactory = dimensionFactory;
       }
 
-      public DataRepository ConvertImportDataSet(ImportedDataSet dataSet)
+      public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
          var dataRepository = new DataRepository { Name = dataSet.Name };
@@ -34,9 +49,10 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
 
+         var warningFlag = false;
          foreach (var column in dataSet.ParsedDataSet.Data)
          {
-            convertParsedDataColumn(dataRepository, column, dataSet.FileName);
+            warningFlag |= convertParsedDataColumnAndReturnWarningFlag(dataRepository, column, dataSet.FileName);
          }
 
          //associate columns
@@ -54,14 +70,15 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             relatedCol.AddRelatedColumn(col);
          }
 
-         return dataRepository;
+         return new DataSetToDataRepositoryMappingResult(dataRepository, warningFlag ? Captions.Importer.LLOQInconsistentValuesAt(dataSet.Name) : "");
       }
 
-      private void convertParsedDataColumn(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
+      private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
          IDimension dimension;
          var unit = columnAndData.Key.Column.Unit.SelectedUnit;
+         var warningFlag = false;
 
          if (columnAndData.Key.Column.Dimension != null)
             dimension = columnAndData.Key.Column.Dimension;
@@ -99,7 +116,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          foreach (var value in columnAndData.Value)
          {
             if (!double.IsNaN(value.Lloq))
+            {
+               if (lloqValue != null && !ValueComparer.AreValuesEqual(lloqValue.Lloq, value.Lloq))
+                  warningFlag = true;
                lloqValue = value;
+            }
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
@@ -155,6 +176,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          //meta data information and input parameters currently not handled
          dataRepository.Add(dataColumn);
+         return warningFlag;
       }
 
       private double truncateUsingLLOQ(SimulationPoint value)

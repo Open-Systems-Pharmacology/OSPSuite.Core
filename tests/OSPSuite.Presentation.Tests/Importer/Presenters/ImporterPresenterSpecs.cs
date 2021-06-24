@@ -88,7 +88,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var moleculeDataColumn = new DataColumn("Measurement", A.Fake<IDimension>(), dataColumn);
          dataColumn.DataInfo = dataInfo;
          dataRepository.Add(moleculeDataColumn);
-         A.CallTo(() => _mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(dataRepository);
+         A.CallTo(() => _mapper.ConvertImportDataSet(A<ImportedDataSet>.Ignored)).Returns(new DataSetToDataRepositoryMappingResult(dataRepository));
 
          var moleculeMetaDataCategory = createMetaDataCategory<string>("Molecule", isMandatory: true);
          moleculeMetaDataCategory.IsListOfValuesFixed = true;

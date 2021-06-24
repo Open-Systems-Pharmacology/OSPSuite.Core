@@ -107,7 +107,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
          var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
-         _confirmationPresenter.PlotDataRepository(dataRepository);
+         _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
@@ -143,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IReadOnlyList<DataRepository> dataRepositories;
          try
          {
-            dataRepositories = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id);
+            dataRepositories = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id).Select(drm => drm.DataRepository).ToList();
          }
          catch (InconsistentMoleculeAndMolWeightException exception)
          {

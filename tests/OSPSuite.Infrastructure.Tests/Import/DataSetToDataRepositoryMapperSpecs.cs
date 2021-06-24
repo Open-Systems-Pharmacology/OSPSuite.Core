@@ -1,6 +1,7 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -16,7 +17,7 @@ namespace OSPSuite.Infrastructure.Import
    public abstract class concern_for_DataSetToDataRepositoryMapperSpecs : ContextSpecification<DataSetToDataRepositoryMapper>
    {
       protected IDataSource dataSource;
-      protected DataRepository result;
+      protected DataSetToDataRepositoryMappingResult result;
 
       protected override void Context()
       {
@@ -83,7 +84,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Unit = "µmol/l",
                      Measurement = 10,
-                     Lloq = 1
+                     Lloq = 0.5
                   },
                   new SimulationPoint()
                   {
@@ -129,13 +130,27 @@ namespace OSPSuite.Infrastructure.Import
       public void should_use_lloq_halve_two()
       {
          Assert.IsNotNull(result);
-         Assert.AreEqual(new float[] { 10.0f, 0.5f, 0.5f }, result.ObservationColumns().First().Values.ToArray());
+         result.DataRepository.ObservationColumns().First().Values.ToArray().ShouldBeEqualTo(new float[] { 10.0f, 0.5f, 0.5f });
       }
 
       [Observation]
       public void should_add_lloq_to_data_repository()
       {
-         Assert.AreEqual(1.0f, result.ObservationColumns().First().DataInfo.LLOQ);
+         result.DataRepository.ObservationColumns().First().DataInfo.LLOQ.ShouldBeEqualTo(1.0f);
+      }
+   }
+
+   public class When_mapping_a_data_repository_with_inconsistent_lloq : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      protected override void Because()
+      {
+         result = sut.ConvertImportDataSet(dataSource.DataSetAt(0));
+      }
+
+      [Observation]
+      public void should_return_warning_message()
+      {
+         result.WarningMessage.ShouldNotBeEmpty();
       }
    }
 }
