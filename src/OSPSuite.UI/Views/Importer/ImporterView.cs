@@ -21,9 +21,6 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
-         previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
          nanLayoutControlItem.AdjustControlHeight(80);
       }
 
@@ -32,7 +29,7 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingName;
+         columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
 
          saveMappingBtn.Click += (s, a) => OnEvent(() =>
          {
