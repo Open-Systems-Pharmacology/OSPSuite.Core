@@ -421,7 +421,7 @@ namespace OSPSuite.Assets
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
          public static readonly string SeparatorSelection = "Separator Selection";
-         public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for data repository under name {dataRepositoryName}";
+         public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for data repository under name {dataRepositoryName}, are you sure you want to continue with import?";
          public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
 
          public static readonly string SheetFormatNotSupported = "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";

@@ -143,7 +143,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IReadOnlyList<DataRepository> dataRepositories;
          try
          {
-            dataRepositories = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id).Select(drm => drm.DataRepository).ToList();
+            var mappingResults = _importer.DataSourceToDataSets(_dataSource, _metaDataCategories, _dataImporterSettings, id);
+            var messageMapping = mappingResults.FirstOrDefault(m => !string.IsNullOrEmpty(m.WarningMessage));
+            if (messageMapping != null && _dialogCreator.MessageBoxYesNo(messageMapping.WarningMessage) == ViewResult.No)
+               return;
+
+            dataRepositories = mappingResults.Select(drm => drm.DataRepository).ToList();
          }
          catch (InconsistentMoleculeAndMolWeightException exception)
          {
