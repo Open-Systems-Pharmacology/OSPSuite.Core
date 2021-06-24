@@ -119,7 +119,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             {
                if (lloqValue != null && !ValueComparer.AreValuesEqual(lloqValue.Lloq, value.Lloq))
                   warningFlag = true;
-               lloqValue = value;
+               if (lloqValue == null || lloqValue.Lloq < value.Lloq)
+                  lloqValue = value;
             }
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))

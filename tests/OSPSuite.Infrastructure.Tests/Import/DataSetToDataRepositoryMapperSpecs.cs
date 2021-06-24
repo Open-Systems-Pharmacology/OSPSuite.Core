@@ -84,7 +84,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Unit = "µmol/l",
                      Measurement = 10,
-                     Lloq = 0.5
+                     Lloq = 2
                   },
                   new SimulationPoint()
                   {
@@ -132,12 +132,6 @@ namespace OSPSuite.Infrastructure.Import
          Assert.IsNotNull(result);
          result.DataRepository.ObservationColumns().First().Values.ToArray().ShouldBeEqualTo(new float[] { 10.0f, 0.5f, 0.5f });
       }
-
-      [Observation]
-      public void should_add_lloq_to_data_repository()
-      {
-         result.DataRepository.ObservationColumns().First().DataInfo.LLOQ.ShouldBeEqualTo(1.0f);
-      }
    }
 
    public class When_mapping_a_data_repository_with_inconsistent_lloq : concern_for_DataSetToDataRepositoryMapperSpecs
@@ -151,6 +145,12 @@ namespace OSPSuite.Infrastructure.Import
       public void should_return_warning_message()
       {
          result.WarningMessage.ShouldNotBeEmpty();
+      }
+
+      [Observation]
+      public void should_add_maximum_lloq_value_to_data_repository()
+      {
+         result.DataRepository.ObservationColumns().First().DataInfo.LLOQ.ShouldBeEqualTo(2.0f);
       }
    }
 }
