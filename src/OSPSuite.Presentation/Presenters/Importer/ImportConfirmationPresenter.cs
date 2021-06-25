@@ -6,6 +6,7 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Core.Domain;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -46,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
          conventions.Insert(0, string.Join(separator, _keys.Select(k => $"{{{k}}}")));
          _view.SetNamingConventions(conventions, selectedNamingConvention);
-         _lastNamingPattern = conventions.First();
+         _lastNamingPattern = selectedNamingConvention ?? conventions.First();
       }
 
       public void TriggerNamingConventionChanged(string namingConvention)
@@ -70,6 +71,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (_conventions.Count == 0)
             throw new EmptyNamingConventionsException();
+
+         if (selectedNamingConvention == null && !_lastNamingPattern.IsNullOrEmpty())
+            selectedNamingConvention = _lastNamingPattern;
 
          addDefaultNamingConvention(selectedNamingConvention);
 

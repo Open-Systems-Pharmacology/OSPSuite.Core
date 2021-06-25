@@ -342,6 +342,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          _configuration = configuration;
+         _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
 
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
@@ -350,7 +351,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (configuration.NanSettings != null)
             _nanPresenter.FillNaNSettings();
          _importerDataPresenter.SetFilter(configuration.FilterString);
-         _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
       }
 
       private void loadImportedDataSetsFromConfiguration(ImporterConfiguration configuration)

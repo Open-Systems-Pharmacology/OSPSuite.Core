@@ -51,6 +51,7 @@ namespace OSPSuite.UI.Views.Importer
                   namingConventionComboBoxEdit.EditValue.ToString()
             );
          });
+         namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
          separatorControlItem.Text = Captions.Importer.Separator;
          buttonAddLayoutControlItem.AdjustButtonSize();
          importButtonLayoutControlItem.AdjustButtonSize();
@@ -71,7 +72,6 @@ namespace OSPSuite.UI.Views.Importer
       {
          _namingConventionOptions = options.ToList();
          setNamingConventions(_namingConventionOptions, selected);
-         namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
       }
 
       private void setNamingConventions(IEnumerable<string> options, string selected)
