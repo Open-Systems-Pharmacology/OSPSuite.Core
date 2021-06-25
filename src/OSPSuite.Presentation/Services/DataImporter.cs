@@ -60,6 +60,7 @@ namespace OSPSuite.Presentation.Services
          molecularWeightCategory.MinValueAllowed = false;
          categories.Add(molecularWeightCategory);
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.SUBJECT_ID));
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
