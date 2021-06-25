@@ -106,8 +106,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
-         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
-         _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
+         try
+         {
+            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
+            _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
+         }
+         catch (InvalidArgumentException invalidException)
+         {
+            _dialogCreator.MessageBoxError(invalidException.Message);
+            _view.DisableConfirmationView();
+         }
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
@@ -227,8 +235,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
-         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
          View.EnableConfirmationView();
+         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
 
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
