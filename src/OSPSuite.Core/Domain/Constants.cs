@@ -454,7 +454,6 @@ namespace OSPSuite.Core.Domain
          public static readonly string SUBJECT_ID = "Subject Id";
          public static readonly string GROUP_ID = "Group Id";
          public static readonly string ROUTE = "Route";
-         public static readonly string PATIENT_ID = "Patient Id";
          public static readonly string GENDER = "Gender";
          public static readonly string DOSE = "Dose";
          public static readonly string PLASMA_COMPARTMENT = "Plasma";
