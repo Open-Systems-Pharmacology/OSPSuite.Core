@@ -150,8 +150,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
-         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO.Source).MappedColumn;
-         errorColumn.Unit = measurementColumn.Unit;
+         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO?.Source)?.MappedColumn;
+         
+         if (measurementColumn != null)
+            errorColumn.Unit = measurementColumn.Unit;
       }
 
       public void SetDataFormat(IDataFormat format)
