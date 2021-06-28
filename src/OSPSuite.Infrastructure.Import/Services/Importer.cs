@@ -113,7 +113,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
-         if (sheetName.IsNullOrEmpty())
+         if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
