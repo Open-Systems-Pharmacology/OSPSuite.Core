@@ -10,6 +10,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
 using OSPSuite.SimModel;
@@ -143,7 +144,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
+//         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, null, false);
          _exportFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
       }
 
@@ -174,6 +176,11 @@ namespace OSPSuite.Core
          {
             Console.SetOut(TestContext.Progress);
             Debug.WriteLine("Debug: Before export");
+
+            //var simulationPersistor = IoC.Resolve<ISimulationPersistor>();
+            //var simTransfer = new SimulationTransfer { Simulation = _modelCoreSimulation };
+            //simulationPersistor.Save(simTransfer, @"C:\SW-Dev\SimModel\CPPExportTest01.pkml");
+
             Console.WriteLine("Console: Before export");
             sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
             Debug.WriteLine("Debug: After export");
