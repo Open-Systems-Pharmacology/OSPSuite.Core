@@ -113,10 +113,12 @@ namespace OSPSuite.Core.Domain.Services
 
          //now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
-
-
+         
          //This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
          removeUndefinedLocalMoleculeParametersIn(model);
+
+         //now that we have removed potential nan parameters, let's make sure that no formula was actually using them
+         _referencesResolver.ResolveReferencesIn(model);
       }
 
       private void removeUndefinedLocalMoleculeParametersIn(IModel model)

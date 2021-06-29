@@ -488,6 +488,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Endosome = AddNamedIcon("Endosome");
       public static readonly ApplicationIcon Fetus = AddNamedIcon("Fetus");
       public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
+      public static readonly ApplicationIcon Myometrium = AddNamedIcon("Endometrium", "Myometrium");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
