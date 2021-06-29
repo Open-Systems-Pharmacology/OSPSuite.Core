@@ -44,6 +44,10 @@ namespace OSPSuite.Core.Domain.Services
       /// </param>
       void ExportToCPPCode(string outputFolder, CodeExportMode exportMode, string modelName = "");
 
+      //SimModel optionally caches XML used for loading a simulation as string.
+      //This XML string was used e.g. by the old Matlab-/R-Toolbox when saving a simulation to XML.
+      //C++ export also depends on the original XML string at the moment (not quite clear why).
+      //Because per default XML is NOT cached, we need to set the KeepXML-option to true BEFORE loading a simulation.
       bool KeepXMLNodeInSimModelSimulation { get; set; }
    }
 }
