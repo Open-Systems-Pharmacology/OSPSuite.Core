@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Services;
+using OSPSuite.SimModel;
 
 namespace OSPSuite.R.Domain
 {
@@ -191,6 +193,44 @@ namespace OSPSuite.R.Domain
       public void should_throw_an_error()
       {
          The.Action(() => _simulationBatchFactory.Create(_simulation, _simulationBatchOptions)).ShouldThrowAn<Exception>();
+      }
+   }
+
+   public class When_exporting_to_cpp_code : concern_for_SimulationBatch
+   {
+      private SimulationBatchOptions _simulationBatchOptions;
+      private string _exportFolder;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulationBatchOptions = new SimulationBatchOptions
+         {
+            VariableMolecules = new[]
+            {
+               new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+            },
+
+            VariableParameters = new[]
+            {
+               new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+               new[] {"Organism", "Hematocrit"}.ToPathString(),
+            }
+         };
+         sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
+         _exportFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      }
+
+      protected override void Because()
+      {
+         Directory.CreateDirectory(_exportFolder);
+         sut.ExportToCPPCode(_exportFolder, fullMode: false, "TestModel_Values");
+      }
+
+      [Observation]
+      public void should_export_cpp_code()
+      {
+         File.Exists(Path.Combine(_exportFolder, "TestModel_Values.cpp")).ShouldBeTrue();
       }
    }
 }

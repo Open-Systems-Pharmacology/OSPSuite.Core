@@ -39,6 +39,11 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <param name="outputFolder">Folder where C++ code files will be created</param>
       /// <param name="exportMode">Formula or Values mode. Formula-Mode can be applied only if the SimModel simulation was NOT yet finalized</param>
-      void ExportToCPPCode(string outputFolder, CodeExportMode exportMode);
+      /// <param name="modelName">Name of the model to be exported. If left empty: model will be named "Standard".
+      ///   If not empty: must be a valid file name AND a valid C++ identifier, otherwise the export will crash
+      /// </param>
+      void ExportToCPPCode(string outputFolder, CodeExportMode exportMode, string modelName = "");
+
+      bool KeepXMLNodeInSimModelSimulation { get; set; }
    }
 }

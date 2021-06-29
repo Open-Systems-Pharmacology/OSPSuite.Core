@@ -144,55 +144,21 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-//         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
-         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, null, false);
+         sut.KeepXMLNodeInSimModelSimulation = true;
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
          _exportFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
       }
 
       protected override void Because()
       {
-         //Directory.CreateDirectory(_exportFolder);
-         //try
-         //{
-         //   Debug.WriteLine("Debug: Before export");
-         //   sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
-         //   Debug.WriteLine("Debug: After export");
-         //}
-         //catch (OSPSuiteException ex)
-         //{
-         //   Debug.WriteLine(ex.ToString());
-         //}
-         //catch (Exception e)
-         //{
-         //   Debug.WriteLine(e);
-         //}
+         Directory.CreateDirectory(_exportFolder);
+         sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
       }
 
       [Observation]
       public void should_export_cpp_code()
       {
-         Directory.CreateDirectory(_exportFolder);
-         try
-         {
-            Console.SetOut(TestContext.Progress);
-            Debug.WriteLine("Debug: Before export");
-
-            //var simulationPersistor = IoC.Resolve<ISimulationPersistor>();
-            //var simTransfer = new SimulationTransfer { Simulation = _modelCoreSimulation };
-            //simulationPersistor.Save(simTransfer, @"C:\SW-Dev\SimModel\CPPExportTest01.pkml");
-
-            Console.WriteLine("Console: Before export");
-            sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
-            Debug.WriteLine("Debug: After export");
-         }
-         catch (OSPSuiteException ex)
-         {
-            Debug.WriteLine(ex.ToString());
-         }
-         catch (Exception e)
-         {
-            Debug.WriteLine(e);
-         }
+         File.Exists(Path.Combine(_exportFolder, "Standard.cpp")).ShouldBeTrue();
       }
 
    }
