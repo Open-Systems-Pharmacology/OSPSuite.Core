@@ -30,7 +30,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       void AddData(int rowIndex);
       IEnumerable<string> GetCellValidationErrorMessages(int rowIndex, int columnIndex, string newValue);
       int NumberOfObservations { get; }
-      void DisableEdition();
    }
 
    public class DataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataPresenter
@@ -43,10 +42,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          _dataRepositoryTask = dataRepositoryTask;
          _editObservedDataTask = editObservedDataTask;
-      }
-
-      public void DisableEdition()
-      {
          View.DisableEdition();
       }
 
