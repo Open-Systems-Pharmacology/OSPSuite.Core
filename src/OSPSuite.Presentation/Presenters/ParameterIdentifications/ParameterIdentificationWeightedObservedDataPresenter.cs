@@ -1,10 +1,13 @@
-﻿using OSPSuite.Core.Domain.ParameterIdentifications;
+﻿using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public interface IParameterIdentificationWeightedObservedDataPresenter : IPresenter<IParameterIdentificationWeightedObservedDataView>
+   public interface IParameterIdentificationWeightedObservedDataPresenter : IPresenter<IParameterIdentificationWeightedObservedDataView>, IListener<ObservedDataValueChangedEvent>
    {
       void Edit(WeightedObservedData weightedObservedData);
 
@@ -16,6 +19,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IWeightedDataRepositoryDataPresenter _dataPresenter;
       private readonly ISimpleChartPresenter _chartPresenter;
       private bool _alreadyEditing;
+      private WeightedObservedData _observedData;
 
       public ParameterIdentificationWeightedObservedDataPresenter(IParameterIdentificationWeightedObservedDataView view, IWeightedDataRepositoryDataPresenter dataPresenter, ISimpleChartPresenter chartPresenter) : base(view)
       {
@@ -32,6 +36,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          if (_alreadyEditing) return;
 
+         _observedData = weightedObservedData;
          _dataPresenter.EditObservedData(weightedObservedData);
          _chartPresenter.PlotObservedData(weightedObservedData);
          _chartPresenter.LogLinSelectionEnabled = true;
@@ -47,5 +52,19 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       }
 
       private void hotTracked(int rowIndex) => _dataPresenter.SelectRow(rowIndex);
+
+      private bool shouldHandleEvent(ObservedDataEvent eventToHandle)
+      {
+         return Equals(eventToHandle.ObservedData, _observedData.ObservedData);
+      }
+
+      public void Handle(ObservedDataValueChangedEvent eventToHandle)
+      {
+         if (!shouldHandleEvent(eventToHandle))
+            return;
+
+         _alreadyEditing = false;
+         Edit(_observedData);
+      }
    }
 }
