@@ -25,6 +25,7 @@ namespace OSPSuite.Core.Domain.Services
          simModelExporter, simModelSimulationFactory)
       {
          _dataFactory = dataFactory;
+         KeepXMLNodeInSimModelSimulation = false;
       }
 
       public IReadOnlyList<string> VariableParameterPaths { get; private set; }
@@ -50,7 +51,11 @@ namespace OSPSuite.Core.Domain.Services
          IReadOnlyList<string> variableMoleculePaths)
       {
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized);
-         var simulation = CreateSimulation(simulationExport, x => x.CheckForNegativeValues = false);
+         var simulation = CreateSimulation(simulationExport, x =>
+         {
+            x.CheckForNegativeValues = false;
+            x.KeepXMLNodeAsString = KeepXMLNodeInSimModelSimulation;
+         });
          setVariableParameters(simulation, variableParameterPaths);
          setVariableMolecules(simulation, variableMoleculePaths);
          FinalizeSimulation(simulation);
@@ -149,6 +154,17 @@ namespace OSPSuite.Core.Domain.Services
          _allVariableMolecules.Each(p => p.InitialValue = _initialValueCache[p.Path]);
          _simModelSimulation.SetSpeciesValues();
       }
+
+      public void ExportToCPPCode(string outputFolder, CodeExportMode exportMode, string modelName)
+      {
+         _simModelSimulation.ExportToCode(outputFolder, CodeExportLanguage.Cpp, exportMode, modelName);
+      }
+
+      /// <summary>
+      /// This property is only required by the export of a model to C++ and must be set to true in this case BEFORE
+      /// the SimModel simulation is loaded from XML.
+      /// </summary>
+      public bool KeepXMLNodeInSimModelSimulation { get; set; }
 
       #region Disposable properties
 

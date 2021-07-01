@@ -1,15 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
@@ -130,4 +136,31 @@ namespace OSPSuite.Core
          _simulationResult.Results.ShouldBeEqualTo(_result);
       }
    }
+
+   public class When_exporting_the_sim_model_simulation_to_c_plusplus_code : concern_for_SimModelBatch
+   {
+      private string _exportFolder;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.KeepXMLNodeInSimModelSimulation = true;
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
+         _exportFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      }
+
+      protected override void Because()
+      {
+         Directory.CreateDirectory(_exportFolder);
+         sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
+      }
+
+      [Observation]
+      public void should_export_cpp_code()
+      {
+         File.Exists(Path.Combine(_exportFolder, "Standard.cpp")).ShouldBeTrue();
+      }
+
+   }
+
 }
