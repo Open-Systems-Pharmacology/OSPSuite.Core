@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
@@ -45,7 +46,7 @@ namespace OSPSuite.R.Services
       string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
 
       /// <summary>
-      ///    Returns names of base units of entities with given path. 
+      ///    Returns names of base units of entities with given path.
       /// </summary>
       /// <param name="simulation">Simulation to use to find the quantity by path</param>
       /// <param name="path">Absolute path of the quantity</param>
@@ -76,7 +77,8 @@ namespace OSPSuite.R.Services
       /// <param name="simulation">Simulation containing the value to set</param>
       /// <param name="path">Full path. Wild card not allowed</param>
       /// <param name="value">Value to set in base unit</param>
-      void SetValueByPath(IModelCoreSimulation simulation, string path, double value);
+      /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
+      void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound);
    }
 
    public class ContainerTask : IContainerTask
@@ -84,6 +86,7 @@ namespace OSPSuite.R.Services
       private readonly IEntityPathResolver _entityPathResolver;
       private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
       private readonly ICoreContainerTask _coreContainerTask;
+      private readonly IOSPSuiteLogger _logger;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
       private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
       private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
@@ -91,11 +94,13 @@ namespace OSPSuite.R.Services
       public ContainerTask(
          IEntityPathResolver entityPathResolver,
          ISensitivityAnalysisTask sensitivityAnalysisTask,
-         ICoreContainerTask coreContainerTask)
+         ICoreContainerTask coreContainerTask,
+         IOSPSuiteLogger logger)
       {
          _entityPathResolver = entityPathResolver;
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
          _coreContainerTask = coreContainerTask;
+         _logger = logger;
       }
 
       public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path) =>
@@ -159,17 +164,23 @@ namespace OSPSuite.R.Services
       public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
 
-      public void SetValueByPath(IModelCoreSimulation simulation, string path, double value)
+      public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
       {
          if (path.Contains(WILD_CARD))
             throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
 
          var pathArray = path.ToPathArray();
          var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
-         if (quantity == null)
+         if (quantity != null)
+         {
+            quantity.Value = value;
+            return;
+         }
+
+         if (throwIfNotFound)
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
 
-         quantity.Value = value;
+         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
       }
 
       private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path)

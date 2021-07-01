@@ -330,10 +330,9 @@ namespace OSPSuite.R.Services
          The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"))).ShouldThrowAn<OSPSuiteException>();
 
          sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeFalse();
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name,  Constants.Parameters.VOLUME)).ShouldBeTrue();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, Constants.Parameters.VOLUME)).ShouldBeTrue();
       }
    }
-
 
    public class When_retrieving_the_base_unit_names_for_a_given_path : concern_for_ContainerTask
    {
@@ -358,22 +357,26 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_an_exception_if_the_path_contains_wild_cards()
       {
-         The.Action(()=>sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), 5)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), 5, true)).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_if_the_path_does_not_exist_in_the_simulation()
       {
-         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, true)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_not_throw_an_exception_if_the_path_does_not_exist_in_the_simulation_and_the_throw_flag_is_set_to_false()
+      {
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, false);
       }
 
       [Observation]
       public void should_set_the_value_of_the_parameter_as_expected_otherwise()
       {
-         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666);
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666, true);
          _volumeLiverCell.Value.ShouldBeEqualTo(666);
       }
    }
-
-  
 }
