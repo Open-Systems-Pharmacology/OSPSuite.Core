@@ -194,5 +194,12 @@ namespace OSPSuite.Core.Domain
          sut.DisplayUnit.ShouldBeEqualTo(_length.Unit("mm"));
       }
 
+      [Observation]
+      public void Retrieving_and_settings_values_as_array()
+      {
+         sut.ValuesAsArray = new[] {1d, 2d, 3d};
+         sut.ValuesAsArray.ShouldBeEqualTo(new[] {1d, 2d, 3d});
+      }
+
    }
 }

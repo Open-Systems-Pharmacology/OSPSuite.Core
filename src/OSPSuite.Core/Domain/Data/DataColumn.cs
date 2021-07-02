@@ -129,7 +129,11 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       /// Required for R
       /// </summary>
-      public virtual float[] ValuesAsArray => Values.ToArray();
+      public virtual double[] ValuesAsArray
+      {
+         get => Values.ToDoubleArray();
+         set => Values = value.ToFloatArray();
+      }
 
       /// <summary>
       ///    Returns the internal array of values. Its size is in either 1 (constant array) or equal to baseGrid dimension
