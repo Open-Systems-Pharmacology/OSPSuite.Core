@@ -15,28 +15,26 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _simulation = new ModelCoreSimulation();
-         var root = A.Fake<IContainer>();
-         A.CallTo(() => root.GetChildren<IEventGroup>()).Returns(new List<IEventGroup>() { A.Fake<IEventGroup>() });
-         _simulation.Model = A.Fake<IModel>();
-         A.CallTo(() => _simulation.Model.Root).Returns(root);
-         _simulation.BuildConfiguration = A.Fake<IBuildConfiguration>();
+         var root = new Container();
+         root.Add(new EventGroup());
+         _simulation.Model = new Model();
+         _simulation.Model.Root = root;
+         _simulation.BuildConfiguration = new BuildConfiguration();
          var reactionBuildingBlock = new ReactionBuildingBlock();
-         var reactionAtoB = A.Fake<IReactionBuilder>();
-         var reactionBtoA = A.Fake<IReactionBuilder>();
-         var partnerA = A.Fake<IReactionPartnerBuilder>();
-         A.CallTo(() => partnerA.MoleculeName).Returns("A");
-         var partnerB = A.Fake<IReactionPartnerBuilder>();
-         A.CallTo(() => partnerB.MoleculeName).Returns("B");
-         IEnumerable<IReactionPartnerBuilder> enumContainingA = new List<IReactionPartnerBuilder>() { partnerB };
-         IEnumerable<IReactionPartnerBuilder> enumContainingB = new List<IReactionPartnerBuilder>() { partnerA };
+         var reactionAtoB = new ReactionBuilder();
+         var reactionBtoA = new ReactionBuilder();
+         var partnerA = new ReactionPartnerBuilder("A", 0);
+         var partnerB = new ReactionPartnerBuilder("B", 0);
+
          //Making both reactions dependent on each other
-         A.CallTo(() => reactionAtoB.Products).Returns(enumContainingB);
-         A.CallTo(() => reactionBtoA.Products).Returns(enumContainingA);
-         A.CallTo(() => reactionAtoB.Educts).Returns(enumContainingA);
-         A.CallTo(() => reactionBtoA.Educts).Returns(enumContainingB);
+         reactionAtoB.AddProduct(partnerA);
+         reactionBtoA.AddProduct(partnerB);
+         reactionAtoB.AddEduct(partnerB);
+         reactionBtoA.AddEduct(partnerA);
          reactionBuildingBlock.Add(reactionAtoB);
          reactionBuildingBlock.Add(reactionBtoA);
-         A.CallTo(() => _simulation.BuildConfiguration.Reactions).Returns(reactionBuildingBlock);
+
+         _simulation.BuildConfiguration.Reactions = reactionBuildingBlock;
       }
 
       [Observation]
