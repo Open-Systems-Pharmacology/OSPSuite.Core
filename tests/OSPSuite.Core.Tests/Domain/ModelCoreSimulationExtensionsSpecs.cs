@@ -21,20 +21,21 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _simulation.Model.Root).Returns(root);
          _simulation.BuildConfiguration = A.Fake<IBuildConfiguration>();
          var reactionBuildingBlock = new ReactionBuildingBlock();
-         var reactionA = A.Fake<IReactionBuilder>();
-         var reactionB = A.Fake<IReactionBuilder>();
+         var reactionAtoB = A.Fake<IReactionBuilder>();
+         var reactionBtoA = A.Fake<IReactionBuilder>();
          var partnerA = A.Fake<IReactionPartnerBuilder>();
          A.CallTo(() => partnerA.MoleculeName).Returns("A");
          var partnerB = A.Fake<IReactionPartnerBuilder>();
          A.CallTo(() => partnerB.MoleculeName).Returns("B");
          IEnumerable<IReactionPartnerBuilder> enumContainingA = new List<IReactionPartnerBuilder>() { partnerB };
          IEnumerable<IReactionPartnerBuilder> enumContainingB = new List<IReactionPartnerBuilder>() { partnerA };
-         A.CallTo(() => reactionA.Products).Returns(enumContainingB);
-         A.CallTo(() => reactionB.Products).Returns(enumContainingA);
-         A.CallTo(() => reactionA.Educts).Returns(enumContainingA);
-         A.CallTo(() => reactionB.Educts).Returns(enumContainingB);
-         reactionBuildingBlock.Add(reactionA);
-         reactionBuildingBlock.Add(reactionB);
+         //Making both reactions dependent on each other
+         A.CallTo(() => reactionAtoB.Products).Returns(enumContainingB);
+         A.CallTo(() => reactionBtoA.Products).Returns(enumContainingA);
+         A.CallTo(() => reactionAtoB.Educts).Returns(enumContainingA);
+         A.CallTo(() => reactionBtoA.Educts).Returns(enumContainingB);
+         reactionBuildingBlock.Add(reactionAtoB);
+         reactionBuildingBlock.Add(reactionBtoA);
          A.CallTo(() => _simulation.BuildConfiguration.Reactions).Returns(reactionBuildingBlock);
       }
 
