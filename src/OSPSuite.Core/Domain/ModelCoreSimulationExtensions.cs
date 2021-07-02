@@ -39,11 +39,11 @@ namespace OSPSuite.Core.Domain
          var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
             .ToList();
 
-         return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications);
+         return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications, new List<string>());
       }
 
       private static IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName,
-         IReadOnlyList<IContainer> allApplications)
+         IReadOnlyList<IContainer> allApplications, List<string> alreadyCalculatedMolecules)
       {
          var applicationsForAppliedAncestorMolecule =
             allApplications.Where(c => c.GetSingleChildByName<IMoleculeAmount>(moleculeName) != null).ToList();
@@ -61,11 +61,12 @@ namespace OSPSuite.Core.Domain
          var producingMolecule = reactionsProducingMolecule(reactionsList, moleculeName);
          var distinctEductsFromReactions = eductNamesFromReactions(producingMolecule);
 
-         if (distinctEductsFromReactions.Count != 1)
+         if (distinctEductsFromReactions.Count != 1 || alreadyCalculatedMolecules.Contains(distinctEductsFromReactions[0]))
             return new List<IContainer>();
 
+         alreadyCalculatedMolecules.Add(distinctEductsFromReactions[0]);
          // Otherwise find 'parent applications' by looking recursively at reactions involving the named molecule where there is one educt and one product.
-         return getApplicationsForAppliedAncestorMolecule(reactionsList, distinctEductsFromReactions[0], allApplications).ToList();
+         return getApplicationsForAppliedAncestorMolecule(reactionsList, distinctEductsFromReactions[0], allApplications, alreadyCalculatedMolecules).ToList();
       }
 
       private static IReadOnlyList<string> eductNamesFromReactions(IEnumerable<IReactionBuilder> reactions)
