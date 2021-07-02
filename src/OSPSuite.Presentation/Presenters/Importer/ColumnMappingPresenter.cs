@@ -117,7 +117,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          foreach (var mapping in _mappings)
          {
             var mappingColumn = (mapping.Source as MappingDataFormatParameter)?.MappedColumn;
-            if (mappingColumn?.Unit == null)
+
+            //we also check whether dimension is already set, since this function is used also when a 
+            //groupBy parameter is being set, and in that case we do not want to reset the dimension
+            //based on the selected unit
+            if (mappingColumn?.Unit == null || mappingColumn.Dimension != null)
                continue;
 
             //initial settings for fraction dimension
