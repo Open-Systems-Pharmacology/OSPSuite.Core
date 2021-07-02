@@ -128,6 +128,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return null;
          
          setDefaultMetaData();
+         setMetaDataWithManualInput();
          createSheetsForViewing();
          View.SetGridSource();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
@@ -136,6 +137,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ResetImportButtons();
 
          return _dataSourceFile;
+      }
+
+      private void setMetaDataWithManualInput()
+      {
+         foreach (var metaData in _metaDataCategories)
+         {
+            if (!metaData.AllowsManualInput) 
+               continue;
+            
+            var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
+            if (parameter != null) 
+               continue;
+            
+            parameter = new MetaDataFormatParameter(null, metaData.Name, false);
+            _dataSourceFile.Format.Parameters.Add(parameter);
+            return;
+         }
       }
 
       private void setDefaultMetaData()

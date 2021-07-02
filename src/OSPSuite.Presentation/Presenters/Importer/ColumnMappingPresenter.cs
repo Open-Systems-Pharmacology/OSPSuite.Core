@@ -577,6 +577,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ClearRow(ColumnMappingDTO model)
       {
+         if (model.Source == null)
+            return;
+
          if (model.Source is GroupByDataFormatParameter)
          {
             _mappings.Remove(model);
