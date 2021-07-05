@@ -108,8 +108,15 @@ namespace OSPSuite.Infrastructure.Export
          var tableName = baseGrid.Repository != null ? baseGrid.Repository.Name : defaultTableName;
          if (string.IsNullOrEmpty(tableName))
             tableName = defaultTableName;
+         var correctedTableName = new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
 
-         return new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
+         while (correctedTableName.EndsWith("'") && correctedTableName.Length > 0)
+            correctedTableName = correctedTableName.Substring(0, correctedTableName.Length - 1);
+
+         while (correctedTableName.StartsWith("'") && correctedTableName.Length > 0)
+            correctedTableName = correctedTableName.Substring(1);
+
+         return correctedTableName;
       }
 
       private DataTable createTableFor(
