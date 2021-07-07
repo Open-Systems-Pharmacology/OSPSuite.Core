@@ -28,6 +28,9 @@ namespace OSPSuite.R.Domain
       public string[] Parameters => VariableParameters.ToNetArray(VariableParameter);
 
       public string[] Molecules => VariableMolecules.ToNetArray(VariableMolecule);
+
+      //Defaults to null. If true, it will trigger the calculation of sensitivity
+      public bool CalculateSensitivity { get; set; } = false;
    }
 
    public class SimulationBatchRunValues
@@ -57,6 +60,7 @@ namespace OSPSuite.R.Domain
       private readonly ISimModelBatch _simModelBatch;
       private readonly ISimulationResultsCreator _simulationResultsCreator;
       private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
+      private SimulationBatchOptions _simulationBatchOptions;
 
       public SimulationBatch(ISimModelBatch simModelBatch,
          ISimulationResultsCreator simulationResultsCreator,
@@ -75,11 +79,11 @@ namespace OSPSuite.R.Domain
          //C++ export also depends on the original XML string at the moment (not quite clear why).
          //Because per default XML is NOT cached, we need to set the KeepXML-option to true BEFORE loading a simulation.
          _simModelBatch.KeepXMLNodeInSimModelSimulation = true;
-
-         _simModelBatch.InitializeWith(simulation, simulationBatchOptions.Parameters, simulationBatchOptions.Molecules);
+         _simModelBatch.InitializeWith(simulation, simulationBatchOptions.Parameters, simulationBatchOptions.Molecules, simulationBatchOptions.CalculateSensitivity);
          //This needs to be done after initialization of the SimModelBatch so that we can check parameters
          validate(simulationBatchOptions);
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
+         _simulationBatchOptions = simulationBatchOptions;
       }
 
       /// <summary>
@@ -128,7 +132,12 @@ namespace OSPSuite.R.Domain
             _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
             _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
             var simulationResults = _simModelBatch.RunSimulation();
-            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+            var results = _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+            if (_simulationBatchOptions.CalculateSensitivity)
+               foreach (var result in results.First())
+                  foreach (var parameter in _simulationBatchOptions.Parameters)
+                     result.Sensitivities = _simModelBatch.SensitivityValuesFor(result.QuantityPath, parameter);
+            return results;
          });
       }
 

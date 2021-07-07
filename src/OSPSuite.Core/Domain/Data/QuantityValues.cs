@@ -20,6 +20,8 @@ namespace OSPSuite.Core.Domain.Data
 
       private float[] _values;
 
+      private double[] _sensitivities;
+
       /// <summary>
       ///    Only required because charts requires ColumnId to defined curves
       /// </summary>
@@ -45,6 +47,12 @@ namespace OSPSuite.Core.Domain.Data
       {
          get => _values;
          set => _values = value ?? new float[] {};
+      }
+
+      public virtual double[] Sensitivities
+      {
+         get => _sensitivities;
+         set => _sensitivities = value ?? new double[] {};
       }
 
       public virtual IReadOnlyList<string> PathList

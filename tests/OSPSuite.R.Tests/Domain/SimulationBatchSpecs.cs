@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Services;
 using OSPSuite.SimModel;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
 {
@@ -80,7 +82,9 @@ namespace OSPSuite.R.Domain
          {
             VariableMolecule= new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString(),
 
-            VariableParameter = new[] {"Organism", "Liver", "Volume"}.ToPathString()
+            VariableParameter = new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+
+            CalculateSensitivity = true
          };
          sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
       }
@@ -99,6 +103,12 @@ namespace OSPSuite.R.Domain
       public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
       {
          _results.Count.ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void should_calculate_sensitivities()
+      {
+         _results.First().Each(x => x.Sensitivities.Count().ShouldBeEqualTo(x.Values.Count()));
       }
    }
 
