@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImporterConfiguration fileName="sample1.xlsx" namingConventions="{Source}.{Sheet}.{Organ}.{Molecule}">
+  <Parameters>
+    <MappingDataFormatParameter columnName="time  [h]">
+      <MappedColumn name="Time" dimension="Time">
+        <Unit selectedUnit="h" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <MappingDataFormatParameter columnName="conc  [mg/l]">
+      <MappedColumn name="Concentration" dimension="Concentration (mass)">
+        <Unit selectedUnit="mg/l" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <MappingDataFormatParameter columnName="SD [mg/l]">
+      <MappedColumn errorStdDev="Arithmetic Standard Deviation" name="Error" dimension="Concentration (mass)">
+        <Unit selectedUnit="mg/l" />
+      </MappedColumn>
+    </MappingDataFormatParameter>
+    <MetaDataFormatParameter columnName="VenousBlood" metaDataId="Organ" isColumn="0" />
+    <MetaDataFormatParameter metaDataId="Molecule" isColumn="0" />
+  </Parameters>
+  <LoadedSheets>
+    <LoadedSheetsChild>Sheet1</LoadedSheetsChild>
+  </LoadedSheets>
+</ImporterConfiguration>

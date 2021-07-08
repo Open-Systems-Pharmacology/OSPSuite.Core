@@ -60,4 +60,13 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\importerConfiguration1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\sample1.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
