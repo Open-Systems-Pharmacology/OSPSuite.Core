@@ -91,7 +91,7 @@ namespace OSPSuite.Presentation.Services
          string dataFileName
       )
       {
-         if (string.IsNullOrEmpty(dataFileName))
+         if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return (Array.Empty<DataRepository>(), null);
 
          using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Services
          string dataFileName
       )
       {
-         if (string.IsNullOrEmpty(dataFileName))
+         if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return Enumerable.Empty<DataRepository>().ToList();
          
          if (dataImporterSettings.PromptForConfirmation)
