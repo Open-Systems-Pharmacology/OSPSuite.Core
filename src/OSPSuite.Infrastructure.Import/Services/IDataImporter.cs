@@ -35,17 +35,28 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="metaDataCategories">Specification of meta data of the table.</param>
       /// <param name="columnInfos">Specification of columns including specification of meta data.</param>
       /// <param name="dataImporterSettings">Settings used to initialize the view</param>
+      /// <param name="dataFileName">Path to the file containing the data</param>
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string dataFileName
       );
 
+      /// <summary>
+      ///    This function retrieves a list of imported DataRepositories.
+      /// </summary>
+      /// <param name="configuration">Configuration to use</param>
+      /// <param name="metaDataCategories">Specification of meta data of the table.</param>
+      /// <param name="columnInfos">Specification of columns including specification of meta data.</param>
+      /// <param name="dataImporterSettings">Settings used to initialize the view</param>
+      /// <param name="dataFileName">Path to the file containing the data</param>
       IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string dataFileName
       );
 
       ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,

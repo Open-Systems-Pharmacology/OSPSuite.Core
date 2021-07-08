@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
@@ -54,7 +55,8 @@ namespace OSPSuite.Starter.Presenters
          (
             categories,
             columns,
-            settings
+            settings,
+            _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
          ).DataRepositories?.Count() + " data sets successfully imported");
       }
 
@@ -116,7 +118,8 @@ namespace OSPSuite.Starter.Presenters
                configuration,
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings
+               dataImporterSettings,
+               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
          }
       }
@@ -148,7 +151,8 @@ namespace OSPSuite.Starter.Presenters
                configuration,
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
                _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-               dataImporterSettings
+               dataImporterSettings,
+               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
          }
       }

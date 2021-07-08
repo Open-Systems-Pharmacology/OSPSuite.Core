@@ -87,17 +87,16 @@ namespace OSPSuite.Presentation.Services
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string dataFileName
       )
       {
-         var path = _dialogCreator.AskForFileToOpen(PleaseSelectDataFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
-
-         if (string.IsNullOrEmpty(path))
+         if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return (Array.Empty<DataRepository>(), null);
 
          using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
-            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, path);
+            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName);
          }
       }
 
@@ -105,25 +104,24 @@ namespace OSPSuite.Presentation.Services
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
-         DataImporterSettings dataImporterSettings
+         DataImporterSettings dataImporterSettings,
+         string dataFileName
       )
       {
-         var fileName = _dialogCreator.AskForFileToOpen(OpenFile, ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA);
-         
-         if (string.IsNullOrEmpty(fileName))
+         if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return Enumerable.Empty<DataRepository>().ToList();
          
          if (dataImporterSettings.PromptForConfirmation)
          {
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
-               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, fileName, configuration);
+               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName, configuration);
             }
          }
 
          try
          {
-            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, fileName, metaDataCategories, dataImporterSettings);
+            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
             if (importedData.MissingSheets.Count != 0)
                _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
             return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
