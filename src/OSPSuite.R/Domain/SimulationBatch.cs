@@ -29,7 +29,7 @@ namespace OSPSuite.R.Domain
 
       public string[] Molecules => VariableMolecules.ToNetArray(VariableMolecule);
 
-      //Defaults to null. If true, it will trigger the calculation of sensitivity
+      //Defaults to false. If true, it will trigger the calculation of sensitivity
       public bool CalculateSensitivity { get; set; } = false;
    }
 
@@ -132,12 +132,11 @@ namespace OSPSuite.R.Domain
             _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
             _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
             var simulationResults = _simModelBatch.RunSimulation();
-            var results = _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-            if (_simulationBatchOptions.CalculateSensitivity)
-               foreach (var result in results.First())
-                  foreach (var parameter in _simulationBatchOptions.Parameters)
-                     result.Sensitivities = _simModelBatch.SensitivityValuesFor(result.QuantityPath, parameter);
-            return results;
+
+            if (!_simulationBatchOptions.CalculateSensitivity)
+               return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+
+            return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
          });
       }
 

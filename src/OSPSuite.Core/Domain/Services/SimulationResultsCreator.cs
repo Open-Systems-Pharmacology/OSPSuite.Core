@@ -8,23 +8,35 @@ namespace OSPSuite.Core.Domain.Services
    public interface ISimulationResultsCreator
    {
       SimulationResults CreateResultsFrom(DataRepository dataRepository);
+
+      SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters);
    }
 
    public class SimulationResultsCreator : ISimulationResultsCreator
    {
       public SimulationResults CreateResultsFrom(DataRepository dataRepository)
       {
+         return createResultsFrom(dataRepository, null, new string[] { });
+      }
+
+      public SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters)
+      {
+         return createResultsFrom(dataRepository, simModel, parameters);
+      }
+
+      private SimulationResults createResultsFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters)
+      {
          if (dataRepository.IsNull() || dataRepository.BaseGrid == null)
             return new NullSimulationResults();
 
-         var results = new SimulationResults {Time = valuesFrom(dataRepository.BaseGrid)};
-         
+         var results = new SimulationResults { Time = valuesFrom(dataRepository.BaseGrid, null, new string[] { }) };
+
          foreach (var columnsForIndividual in dataRepository.AllButBaseGrid().GroupBy(selectIndividualIndex))
          {
-            var individualResults = new IndividualResults {IndividualId = columnsForIndividual.Key, Time = results.Time};
+            var individualResults = new IndividualResults { IndividualId = columnsForIndividual.Key, Time = results.Time };
             foreach (var dataColumn in columnsForIndividual)
             {
-               individualResults.Add(valuesFrom(dataColumn, pathWithoutIndividualIndex(dataColumn, columnsForIndividual.Key)));
+               individualResults.Add(valuesFrom(dataColumn, pathWithoutIndividualIndex(dataColumn, columnsForIndividual.Key), simModel, parameters));
             }
 
             individualResults.UpdateQuantityTimeReference();
@@ -54,18 +66,19 @@ namespace OSPSuite.Core.Domain.Services
          return index;
       }
 
-      private QuantityValues valuesFrom(DataColumn dataColumn)
+      private QuantityValues valuesFrom(DataColumn dataColumn, ISimModelBatch simModel, string[] parameters)
       {
-         return valuesFrom(dataColumn, dataColumn.QuantityInfo.PathAsString);
+         return valuesFrom(dataColumn, dataColumn.QuantityInfo.PathAsString, simModel, parameters);
       }
 
-      private QuantityValues valuesFrom(DataColumn dataColumn, string quantityPath)
+      private QuantityValues valuesFrom(DataColumn dataColumn, string quantityPath, ISimModelBatch simModel, string[] parameters)
       {
          return new QuantityValues
          {
             ColumnId = dataColumn.Id,
             QuantityPath = quantityPath,
             Values = dataColumn.Values.ToArray(),
+            Sensitivities = parameters.ToDictionary(p => p, p => simModel?.SensitivityValuesFor(quantityPath, p))
          };
       }
    }
