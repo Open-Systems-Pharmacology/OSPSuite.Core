@@ -20,6 +20,8 @@ namespace OSPSuite.Core.Domain.Data
 
       private float[] _values;
 
+      private IReadOnlyDictionary<string, double[]> _sensitivities = new Dictionary<string, double[]>();
+
       /// <summary>
       ///    Only required because charts requires ColumnId to defined curves
       /// </summary>
@@ -45,6 +47,12 @@ namespace OSPSuite.Core.Domain.Data
       {
          get => _values;
          set => _values = value ?? new float[] {};
+      }
+
+      public virtual IReadOnlyDictionary<string, double[]> Sensitivities
+      {
+         get => _sensitivities;
+         set => _sensitivities = value ?? new Dictionary<string, double[]>();
       }
 
       public virtual IReadOnlyList<string> PathList
