@@ -71,6 +71,8 @@ namespace OSPSuite.R
 
       public static IOSPSuiteXmlSerializerRepository GetOSPSuiteXmlSerializerRepository() => resolveTask<IOSPSuiteXmlSerializerRepository>();
 
+      public static CsvSeparatorSelector GetCsvSeparatorSelector() => resolveTask<ICsvSeparatorSelector>() as CsvSeparatorSelector;
+
       private static T resolveTask<T>()
       {
          try

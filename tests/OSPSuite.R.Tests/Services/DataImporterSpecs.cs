@@ -58,6 +58,16 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_import_simple_data_from_csv()
+      {
+         var _importerConfiguration = getConfiguration("importerConfiguration1.csv.xml");
+         Api.GetCsvSeparatorSelector().CsvSeparator = ';';
+         var dataRepositories = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings, getFileFulName("sample1.csv"));
+
+         dataRepositories.Count.ShouldBeEqualTo(1);
+      }
+
+      [Observation]
       public void should_return_empty_on_invalid_file_name()
       {
          var _importerConfiguration = getConfiguration("importerConfiguration1.xml");
