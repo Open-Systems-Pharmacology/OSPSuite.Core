@@ -149,8 +149,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
             if (parameter != null) 
                continue;
-            
+
             parameter = new MetaDataFormatParameter(null, metaData.Name, false);
+            if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId))
+               continue;
+
             _dataSourceFile.Format.Parameters.Add(parameter);
             return;
          }
