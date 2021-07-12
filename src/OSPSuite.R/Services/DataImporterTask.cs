@@ -44,6 +44,7 @@ namespace OSPSuite.R.Services
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+         _dataImporterSettings.IgnoreSheetNamesAtImport = true;
          _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
          //Should actually ask for ICsvDynamicSeparatorSelector as a dependency but I do not currently know
          //how to serve two interfaces with the same singleton. If there is no way to do it with the current

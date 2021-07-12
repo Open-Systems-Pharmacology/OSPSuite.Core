@@ -22,6 +22,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public bool PromptForConfirmation { get; set; } = false;
 
+      public bool IgnoreSheetNamesAtImport { get; set; }
+
       /// <summary>
       ///    Gets the default naming convention for the imported observed data
       /// </summary>

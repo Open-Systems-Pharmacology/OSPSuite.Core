@@ -27,7 +27,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_import_simple_data_from_csv()
       {
-         sut.ImportCsvFromConfiguration(getFileFulName("importerConfiguration1.csv.xml"), getFileFulName("sample1.csv"), ';').Count.ShouldBeEqualTo(1);
+         sut.ImportCsvFromConfiguration(getFileFulName("importerConfiguration1.xml"), getFileFulName("sample1.csv"), ';').Count.ShouldBeEqualTo(1);
       }
 
       [Observation]
