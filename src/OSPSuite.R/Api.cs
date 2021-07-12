@@ -67,9 +67,7 @@ namespace OSPSuite.R
 
       public static IConcurrentSimulationRunner GetConcurrentSimulationRunner() => resolveTask<IConcurrentSimulationRunner>();
 
-      public static IDataImporter GetDataImporter() => resolveTask<IDataImporter>();
-
-      public static IOSPSuiteXmlSerializerRepository GetOSPSuiteXmlSerializerRepository() => resolveTask<IOSPSuiteXmlSerializerRepository>();
+      public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
 
       private static T resolveTask<T>()
       {
