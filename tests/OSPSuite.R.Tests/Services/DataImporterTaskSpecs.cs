@@ -13,7 +13,7 @@ namespace OSPSuite.R.Services
          sut = Api.GetDataImporterTask();
       }
 
-      protected string getFileFulName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
+      protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
    }
 
    public class When_importing_data_from_r : concern_for_DataImporter
@@ -21,19 +21,19 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_import_simple_data()
       {
-         sut.ImportXslxFromConfiguration(getFileFulName("importerConfiguration1.xml"), getFileFulName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
+         sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
 
       [Observation]
       public void should_import_simple_data_from_csv()
       {
-         sut.ImportCsvFromConfiguration(getFileFulName("importerConfiguration1.csv.xml"), getFileFulName("sample1.csv"), ';').Count.ShouldBeEqualTo(1);
+         sut.ImportCsvFromConfiguration(getFileFullName("importerConfiguration1.csv.xml"), getFileFullName("sample1.csv"), ';').Count.ShouldBeEqualTo(1);
       }
 
       [Observation]
       public void should_return_empty_on_invalid_file_name()
       {
-         sut.ImportXslxFromConfiguration(getFileFulName("importerConfiguration1.xml"), "").Count.ShouldBeEqualTo(0);
+         sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "").Count.ShouldBeEqualTo(0);
       }
    }
 }
