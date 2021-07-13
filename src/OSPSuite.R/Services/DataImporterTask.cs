@@ -13,8 +13,11 @@ namespace OSPSuite.R.Services
 {
    public interface IDataImporterTask
    {
+      ImporterConfiguration GetConfiguration(string fileName);
       IReadOnlyList<DataRepository> ImportXslxFromConfiguration(string configurationFileName, string dataFileName);
+      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataFileName);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationFileName, string dataFileName, char columnSeparator);
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataFileName, char columnSeparator);
    }
 
    public class DataImporterTask : IDataImporterTask
@@ -56,10 +59,23 @@ namespace OSPSuite.R.Services
          string dataFileName)
       {
          return _dataImporter.ImportFromConfiguration(
-            getConfiguration(configurationFileName), 
+            GetConfiguration(configurationFileName), 
             _metaDataCategories, 
             _columnInfos, 
             _dataImporterSettings, 
+            dataFileName
+         );
+      }
+
+      public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
+         ImporterConfiguration configuration,
+         string dataFileName)
+      {
+         return _dataImporter.ImportFromConfiguration(
+            configuration,
+            _metaDataCategories,
+            _columnInfos,
+            _dataImporterSettings,
             dataFileName
          );
       }
@@ -71,7 +87,7 @@ namespace OSPSuite.R.Services
       {
          _csvSeparatorSelector.CsvSeparator = columnSeparator;
          return _dataImporter.ImportFromConfiguration(
-            getConfiguration(configurationFileName),
+            GetConfiguration(configurationFileName),
             _metaDataCategories,
             _columnInfos,
             _dataImporterSettings,
@@ -79,7 +95,22 @@ namespace OSPSuite.R.Services
          );
       }
 
-      private ImporterConfiguration getConfiguration(string fileName)
+      public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
+         ImporterConfiguration configuration,
+         string dataFileName,
+         char columnSeparator)
+      {
+         _csvSeparatorSelector.CsvSeparator = columnSeparator;
+         return _dataImporter.ImportFromConfiguration(
+            configuration,
+            _metaDataCategories,
+            _columnInfos,
+            _dataImporterSettings,
+            dataFileName
+         );
+      }
+
+      public ImporterConfiguration GetConfiguration(string fileName)
       {
          using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
          {
