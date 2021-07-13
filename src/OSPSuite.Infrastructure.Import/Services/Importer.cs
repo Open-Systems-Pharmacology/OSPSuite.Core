@@ -281,7 +281,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          dataSource.SetNamingConvention(configuration.NamingConventions);
          var sheets = new Cache<string, DataSheet>();
          var missingSheets = new List<string>();
-         foreach (var key in configuration.LoadedSheets)
+         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.Keys : configuration.LoadedSheets;
+
+         foreach (var key in sheetList)
          {
             if (!dataSourceFile.DataSheets.Contains(key))
             {

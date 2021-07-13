@@ -1,0 +1,198 @@
+﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
+
+namespace OSPSuite.R.Services
+{
+   public class DataImporter : IDataImporter
+   {
+      private readonly IDialogCreator _dialogCreator;
+      private readonly IImporter _importer;
+      private readonly IDimensionFactory _dimensionFactory;
+      private readonly IDimension _molarConcentrationDimension;
+      private readonly IDimension _massConcentrationDimension;
+
+      public DataImporter(IDialogCreator dialogCreator, IImporter importer, IDimensionFactory dimensionFactory)
+      {
+         _dialogCreator = dialogCreator;
+         _importer = importer;
+         _dimensionFactory = dimensionFactory;
+         _molarConcentrationDimension = _dimensionFactory.Dimension("Concentration (molar)");
+         _massConcentrationDimension = _dimensionFactory.Dimension("Concentration (mass)");
+      }
+
+      public bool AreFromSameMetaDataCombination(
+         DataRepository sourceDataRepository, 
+         DataRepository targetDataRepository)
+      {
+         throw new NotImplementedException();
+      }
+
+      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(
+         IReadOnlyList<DataRepository> dataSetsToImport, 
+         IReadOnlyList<DataRepository> existingDataSets)
+      {
+         throw new NotImplementedException();
+      }
+
+      private static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
+      {
+         var category = new MetaDataCategory
+         {
+            Name = descriptiveName,
+            DisplayName = descriptiveName,
+            Description = descriptiveName,
+            MetaDataType = typeof(T),
+            IsMandatory = isMandatory,
+            IsListOfValuesFixed = isListOfValuesFixed
+         };
+
+         return category;
+      }
+
+      public IList<MetaDataCategory> DefaultMetaDataCategories()
+      {
+         var categories = new List<MetaDataCategory>();
+
+         var speciesCategory = createMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
+         categories.Add(speciesCategory);
+
+         var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
+         organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENOUS_BLOOD_ORGAN);
+         organCategory.TopNames.Add(Constants.ObservedData.VENOUS_BLOOD_ORGAN);
+         categories.Add(organCategory);
+
+         var compCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
+         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         compCategory.TopNames.Add(Constants.ObservedData.PLASMA_COMPARTMENT);
+         categories.Add(compCategory);
+
+         var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
+         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         moleculeCategory.AllowsManualInput = true;
+         categories.Add(moleculeCategory);
+
+         // Add non-mandatory metadata categories
+         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULARWEIGHT);
+         molecularWeightCategory.MinValue = 0;
+         molecularWeightCategory.MinValueAllowed = false;
+         categories.Add(molecularWeightCategory);
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.SUBJECT_ID));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GROUP_ID));
+
+         return categories;
+      }
+
+      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings,
+         string dataFileName)
+      {
+         throw new NotImplementedException();
+      }
+
+      public IReadOnlyList<DataRepository> ImportFromConfiguration(
+         ImporterConfiguration configuration, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<ColumnInfo> columnInfos, 
+         DataImporterSettings dataImporterSettings,
+         string dataFileName)
+      {
+         if (string.IsNullOrEmpty(dataFileName))
+            return Enumerable.Empty<DataRepository>().ToList();
+
+         try
+         {
+            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
+            if (importedData.MissingSheets.Count != 0)
+               _dialogCreator.MessageBoxError(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
+            return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
+         }
+         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
+         {
+            _dialogCreator.MessageBoxError(e.Message);
+            return new List<DataRepository>();
+         }
+      }
+
+      public IReadOnlyList<ColumnInfo> DefaultPKSimImportConfiguration()
+      {
+         var columns = new List<ColumnInfo>();
+         var timeColumn = createTimeColumn();
+
+         columns.Add(timeColumn);
+
+         var concentrationInfo = createConcentrationColumn(timeColumn);
+
+         columns.Add(concentrationInfo);
+
+         var errorInfo = createErrorColumn(timeColumn, concentrationInfo);
+
+         columns.Add(errorInfo);
+
+         return columns;
+      }
+
+      private ColumnInfo createTimeColumn()
+      {
+         var timeColumn = new ColumnInfo
+         {
+            DefaultDimension = _dimensionFactory.Dimension("Time"),
+            Name = "Time",
+            DisplayName = "Time",
+            IsMandatory = true,
+         };
+
+         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Time"));
+         return timeColumn;
+      }
+
+      private ColumnInfo createConcentrationColumn(ColumnInfo timeColumn)
+      {
+         var concentrationInfo = new ColumnInfo
+         {
+            DefaultDimension = _molarConcentrationDimension,
+            Name = "Concentration",
+            DisplayName = "Concentration",
+            IsMandatory = true,
+            BaseGridName = timeColumn.Name
+         };
+
+         concentrationInfo.SupportedDimensions.Add(_molarConcentrationDimension);
+         concentrationInfo.SupportedDimensions.Add(_massConcentrationDimension);
+         return concentrationInfo;
+      }
+
+      private ColumnInfo createErrorColumn(ColumnInfo timeColumn, ColumnInfo concentrationInfo)
+      {
+         var errorInfo = new ColumnInfo
+         {
+            DefaultDimension = _molarConcentrationDimension,
+            Name = "Error",
+            DisplayName = "Error",
+            IsMandatory = false,
+            BaseGridName = timeColumn.Name,
+            RelatedColumnOf = concentrationInfo.Name
+         };
+
+         errorInfo.SupportedDimensions.Add(_molarConcentrationDimension);
+         errorInfo.SupportedDimensions.Add(_massConcentrationDimension);
+         errorInfo.SupportedDimensions.Add(_dimensionFactory.NoDimension);
+         return errorInfo;
+      }
+   }
+}
