@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 using System;
 using System.IO;
 
@@ -64,10 +65,15 @@ namespace OSPSuite.R.Services
          var tempFileName = FileHelper.GenerateTemporaryFileName();
          var configuration = sut.GetConfiguration(getFileFullName("importerConfiguration1.xml"));
          sut.SaveConfiguration(configuration, tempFileName);
-         var savedFile = File.ReadAllText(tempFileName);
-         var originalFile = File.ReadAllText(getFileFullName("importerConfiguration1.xml"));
-         savedFile.ShouldBeEqualTo(originalFile);
+         var configurationCopy = sut.GetConfiguration(tempFileName);
          FileHelper.DeleteFile(tempFileName);
+
+         configurationCopy.FilterString.ShouldBeEqualTo(configuration.FilterString);
+         configurationCopy.Id.ShouldBeEqualTo(configuration.Id);
+         configurationCopy.LoadedSheets.ShouldBeEqualTo(configuration.LoadedSheets);
+         configurationCopy.NamingConventions.ShouldBeEqualTo(configuration.NamingConventions);
+         configurationCopy.NanSettings.ShouldBeEqualTo(configuration.NanSettings);
+         configurationCopy.Parameters.Each((p, i) => p.EquivalentTo(configuration.Parameters[i]).ShouldBeTrue());
       }
 
       [Observation]
