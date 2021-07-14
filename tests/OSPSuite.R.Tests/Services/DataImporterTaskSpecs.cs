@@ -1,5 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Import;
 using System;
 using System.IO;
 
@@ -24,7 +25,6 @@ namespace OSPSuite.R.Services
          sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
 
-
       [Observation]
       public void should_import_simple_data_from_csv()
       {
@@ -35,6 +35,36 @@ namespace OSPSuite.R.Services
       public void should_return_empty_on_invalid_file_name()
       {
          sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "").Count.ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void should_create_configuration()
+      {
+         sut.CreateConfiguration().ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_create_configuration_from_data()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample1.xlsx"));
+         configuration.Parameters.Count.ShouldBeEqualTo(3);
+         configuration.Parameters[0].ColumnName.ShouldBeEqualTo("time  [h]");
+         configuration.Parameters[1].ColumnName.ShouldBeEqualTo("conc  [mg/l]");
+         configuration.Parameters[2].ColumnName.ShouldBeEqualTo("SD [mg/l]");
+         (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("h");
+         (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
+         (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
+         sut.ImportXslxFromConfiguration(configuration, getFileFullName("sample1.xlsx")).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_save_configuration()
+      {
+         var tempFileName = "temp.config.xml";
+         var configuration = sut.GetConfiguration(getFileFullName("importerConfiguration1.xml"));
+         sut.SaveConfiguration(configuration, tempFileName);
+         File.ReadAllText(tempFileName).ShouldBeEqualTo(File.ReadAllText(getFileFullName("importerConfiguration1.xml")));
+         File.Delete(tempFileName);
       }
 
       [Observation]
