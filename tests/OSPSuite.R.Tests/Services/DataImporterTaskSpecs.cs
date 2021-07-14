@@ -1,6 +1,7 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Import;
+using OSPSuite.Utility;
 using System;
 using System.IO;
 
@@ -60,7 +61,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_save_configuration()
       {
-         var tempFileName = "temp.config.xml";
+         var tempFileName = FileHelper.GenerateTemporaryFileName();
          var configuration = sut.GetConfiguration(getFileFullName("importerConfiguration1.xml"));
          sut.SaveConfiguration(configuration, tempFileName);
          File.ReadAllText(tempFileName).ShouldBeEqualTo(File.ReadAllText(getFileFullName("importerConfiguration1.xml")));

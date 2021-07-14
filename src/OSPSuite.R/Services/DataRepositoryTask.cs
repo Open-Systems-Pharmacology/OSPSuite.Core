@@ -21,5 +21,10 @@ namespace OSPSuite.R.Services
       {
          return _pkmlPersistor.Load<DataRepository>(fileName);
       }
+
+      public void SaveDataRepository(DataRepository dataRepository, string fileName)
+      {
+         _pkmlPersistor.SaveToPKML(dataRepository, fileName);
+      }
    }
 }
