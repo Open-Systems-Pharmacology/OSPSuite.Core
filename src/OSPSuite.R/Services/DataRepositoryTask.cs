@@ -6,6 +6,8 @@ namespace OSPSuite.R.Services
    public interface IDataRepositoryTask
    {
       DataRepository LoadDataRepository(string fileName);
+
+      void SaveDataRepository(DataRepository dataRepository, string fileName);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask

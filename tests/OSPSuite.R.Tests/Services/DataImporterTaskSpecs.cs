@@ -64,8 +64,10 @@ namespace OSPSuite.R.Services
          var tempFileName = FileHelper.GenerateTemporaryFileName();
          var configuration = sut.GetConfiguration(getFileFullName("importerConfiguration1.xml"));
          sut.SaveConfiguration(configuration, tempFileName);
-         File.ReadAllText(tempFileName).ShouldBeEqualTo(File.ReadAllText(getFileFullName("importerConfiguration1.xml")));
-         File.Delete(tempFileName);
+         var savedFile = File.ReadAllText(tempFileName);
+         var originalFile = File.ReadAllText(getFileFullName("importerConfiguration1.xml"));
+         savedFile.ShouldBeEqualTo(originalFile);
+         FileHelper.DeleteFile(tempFileName);
       }
 
       [Observation]
