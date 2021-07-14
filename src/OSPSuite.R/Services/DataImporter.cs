@@ -7,6 +7,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -19,9 +20,11 @@ namespace OSPSuite.R.Services
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IDimension _molarConcentrationDimension;
       private readonly IDimension _massConcentrationDimension;
+      private readonly IOSPSuiteLogger _logger;
 
-      public DataImporter(IDialogCreator dialogCreator, IImporter importer, IDimensionFactory dimensionFactory)
+      public DataImporter(IDialogCreator dialogCreator, IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory)
       {
+         _logger = logger;
          _dialogCreator = dialogCreator;
          _importer = importer;
          _dimensionFactory = dimensionFactory;
@@ -112,20 +115,19 @@ namespace OSPSuite.R.Services
          DataImporterSettings dataImporterSettings,
          string dataFileName)
       {
-         if (string.IsNullOrEmpty(dataFileName))
-            return Enumerable.Empty<DataRepository>().ToList();
+         if (string.IsNullOrEmpty(dataFileName) || !File.Exists(dataFileName))
+            throw new Exception(Error.InvalidFile);
 
          try
          {
             var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
             if (importedData.MissingSheets.Count != 0)
-               _dialogCreator.MessageBoxError(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
+               _logger.AddWarning(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
             return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
-            _dialogCreator.MessageBoxError(e.Message);
-            return new List<DataRepository>();
+            throw new Exception(e.Message);
          }
       }
 
