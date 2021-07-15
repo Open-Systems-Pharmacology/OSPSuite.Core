@@ -3,6 +3,7 @@ using OSPSuite.Presentation.Views.Importer;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -35,14 +36,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          text.AppendLine(Captions.Importer.CsvSeparatorDescription(fileName));
          foreach (var line in File.ReadLines(fileName).Take(3))
          {
-            if (line.Length > LINE_LENGTH)
-            {
-               text.AppendLine(line.Substring(0, LINE_LENGTH) + "...");
-            }
-            else
-            {
-               text.AppendLine(line);
-            }
+            text.AppendLine(line.Substring(0, Math.Min(line.Length, LINE_LENGTH)) + (line.Length > LINE_LENGTH ? "..." : ""));
          }
          text.Append("...");
          return text.ToString();
