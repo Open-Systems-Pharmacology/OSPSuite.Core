@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class CsvSeparatorSelectorPresenter : AbstractDisposablePresenter<ICsvSeparatorSelectorView, ICsvSeparatorSelectorPresenter>,
       ICsvSeparatorSelectorPresenter
    {
+      private const int LINE_LENGTH = 100;
       public char SelectedSeparator { get; set; }
       public CsvSeparatorSelectorPresenter(ICsvSeparatorSelectorView view) : base(view)
       {
@@ -34,7 +35,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          text.AppendLine(Captions.Importer.CsvSeparatorDescription(fileName));
          foreach (var line in File.ReadLines(fileName).Take(3))
          {
-            text.AppendLine(line);
+            if (line.Length > LINE_LENGTH)
+            {
+               text.AppendLine(line.Substring(0, LINE_LENGTH) + "...");
+            }
+            else
+            {
+               text.AppendLine(line);
+            }
          }
          text.Append("...");
          return text.ToString();
