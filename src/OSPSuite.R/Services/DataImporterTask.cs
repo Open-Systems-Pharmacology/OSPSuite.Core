@@ -21,6 +21,7 @@ namespace OSPSuite.R.Services
       IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataFileName);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationFileName, string dataFileName, char columnSeparator);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataFileName, char columnSeparator);
+      bool IgnoreSheetNamesAtImport { get; set; }
    }
 
    public class DataImporterTask : IDataImporterTask
@@ -50,11 +51,17 @@ namespace OSPSuite.R.Services
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+         _dataImporterSettings.IgnoreSheetNamesAtImport = true;
          _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
          //Should actually ask for ICsvDynamicSeparatorSelector as a dependency but I do not currently know
          //how to serve two interfaces with the same singleton. If there is no way to do it with the current
          //implementation, then we need to extend but first I need to check if there is no support for it.
          _csvSeparatorSelector = csvSeparatorSelector as ICsvDynamicSeparatorSelector;
+      }
+
+      public bool IgnoreSheetNamesAtImport {
+         get => _dataImporterSettings.IgnoreSheetNamesAtImport;
+         set => _dataImporterSettings.IgnoreSheetNamesAtImport = value;
       }
 
       public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
