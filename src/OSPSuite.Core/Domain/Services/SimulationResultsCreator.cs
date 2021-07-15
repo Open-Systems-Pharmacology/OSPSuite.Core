@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Services
    {
       SimulationResults CreateResultsFrom(DataRepository dataRepository);
 
-      SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters);
+      SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModelBatch, string[] parameters);
    }
 
    public class SimulationResultsCreator : ISimulationResultsCreator
@@ -19,9 +19,9 @@ namespace OSPSuite.Core.Domain.Services
          return createResultsFrom(dataRepository, null, new string[] { });
       }
 
-      public SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters)
+      public SimulationResults CreateResultsWithSensitivitiesFrom(DataRepository dataRepository, ISimModelBatch simModelBatch, string[] parameters)
       {
-         return createResultsFrom(dataRepository, simModel, parameters);
+         return createResultsFrom(dataRepository, simModelBatch, parameters);
       }
 
       private SimulationResults createResultsFrom(DataRepository dataRepository, ISimModelBatch simModel, string[] parameters)
