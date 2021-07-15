@@ -33,7 +33,7 @@ namespace OSPSuite.R.Services
          base.Context();
          _dataRepository = DomainHelperForSpecs.ObservedData("TOTO", _dimensionTask.DimensionByName(Constants.Dimension.TIME), _dimensionTask.DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION));
          _dataRepositoryFile = FileHelper.GenerateTemporaryFileName();
-         _pkmlPersistor.SaveToPKML(_dataRepository, _dataRepositoryFile);
+         sut.SaveDataRepository(_dataRepository, _dataRepositoryFile);
       }
 
       protected override void Because()

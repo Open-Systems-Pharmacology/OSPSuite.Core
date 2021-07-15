@@ -39,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
       public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
-         var sheetName = dataSet.SheetName;
+         var sheetName = dataSet.SheetName; 
          var dataRepository = new DataRepository { Name = dataSet.Name };
 
          addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
