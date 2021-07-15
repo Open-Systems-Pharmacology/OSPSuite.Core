@@ -55,9 +55,9 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_return_empty_on_invalid_file_name()
+      public void should_throw_on_empty_file_name()
       {
-         sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "").Count.ShouldBeEqualTo(0);
+         The.Action(() => sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "")).ShouldThrowAn<Exception>();
       }
 
       [Observation]
