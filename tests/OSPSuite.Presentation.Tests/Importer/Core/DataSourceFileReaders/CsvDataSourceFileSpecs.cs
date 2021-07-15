@@ -14,29 +14,34 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
    public abstract class ConcernForCsvDataSourceFile : ContextSpecification<CsvDataSourceFile>
    {
-      protected string _csvFilePath;
-      private readonly string _csvFile = "sample1.csv";
+      protected string _csvFileCorrect = "sample1.csv";
+      protected string _csvFileCorrupt = "sample2.csv";
 
       protected override void Context()
       {
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
          A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns(',');
 
-         sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector)
-         {
-            Path = _csvFilePath
-         };
+         sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector);
       }
 
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _csvFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", _csvFile);
-      }
+      protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
    }
 
    public class When_reading_csv : ConcernForCsvDataSourceFile
    {
+      protected string _csvFilePath;
+
+      protected override void Context()
+      {
+         base.Context();
+         _csvFilePath = getFileFullName(_csvFileCorrect);
+      }
+      protected override void Because()
+      {
+         sut.Path = _csvFilePath;
+      }
+
       [TestCase]
       public void path_is_set()
       {
@@ -101,5 +106,22 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          }
       }
 
+   }
+
+   public class When_reading_corrupt_csv : ConcernForCsvDataSourceFile
+   {
+      protected string _csvFilePath;
+
+      protected override void Context()
+      {
+         base.Context();
+         _csvFilePath = getFileFullName(_csvFileCorrupt);
+      }
+
+      [Observation]
+      public void duplicate_header_file_throws_exception()
+      {
+         Assert.Throws<InvalidFileException>(() => sut.Path = _csvFilePath);
+      }
    }
 }

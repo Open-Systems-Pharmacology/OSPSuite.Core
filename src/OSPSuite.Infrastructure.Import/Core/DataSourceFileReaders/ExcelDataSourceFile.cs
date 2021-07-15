@@ -1,4 +1,5 @@
 ﻿using System;
+using NPOI.POIFS.Crypt;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
@@ -53,8 +54,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception ex)
          {
-            _logger.AddError(ex.ToString());
-            throw new InvalidFileException();
+            _logger.AddError(ex.Message);
+            throw new InvalidFileException(ex.Message);
          }
       }
    }
