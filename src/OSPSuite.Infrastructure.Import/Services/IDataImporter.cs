@@ -75,5 +75,14 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="targetDataRepository">target DataRepository to compare with</param>
       /// <returns></returns>
       bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
+
+      /// <summary>
+      /// Returns a new Configuration autodiscovered from the data contained in dataPath
+      /// </summary>
+      /// <param name="dataPath">File containing data</param>
+      /// <param name="columnInfos">Column infos description</param>
+      /// <param name="metaDataCategories">meta data description</param>
+      /// <returns></returns>
+      ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
    }
 }

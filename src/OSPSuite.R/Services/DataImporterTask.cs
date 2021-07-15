@@ -13,7 +13,10 @@ namespace OSPSuite.R.Services
 {
    public interface IDataImporterTask
    {
+      ImporterConfiguration CreateConfiguration();
       ImporterConfiguration GetConfiguration(string fileName);
+      ImporterConfiguration CreateConfigurationFor(string dataFileName);
+      void SaveConfiguration(ImporterConfiguration configuration, string path);
       IReadOnlyList<DataRepository> ImportXslxFromConfiguration(string configurationFileName, string dataFileName);
       IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataFileName);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationFileName, string dataFileName, char columnSeparator);
@@ -125,6 +128,26 @@ namespace OSPSuite.R.Services
 
             var xel = XElement.Load(fileName);
             return serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+         }
+      }
+
+      public ImporterConfiguration CreateConfiguration()
+      {
+         return new ImporterConfiguration();
+      }
+
+      public ImporterConfiguration CreateConfigurationFor(string dataFileName)
+      {
+         return _dataImporter.ConfigurationFromData(dataFileName, _columnInfos, _metaDataCategories);
+      }
+
+      public void SaveConfiguration(ImporterConfiguration configuration, string path)
+      {
+         using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
+
+            serializer.Serialize(configuration, serializationContext).Save(path);
          }
       }
    }

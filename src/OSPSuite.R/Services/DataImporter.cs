@@ -196,5 +196,15 @@ namespace OSPSuite.R.Services
          errorInfo.SupportedDimensions.Add(_dimensionFactory.NoDimension);
          return errorInfo;
       }
+
+      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         var configuration = new ImporterConfiguration();
+         configuration.CloneParametersFrom(_importer.LoadFile(columnInfos, dataPath, metaDataCategories).Format.Parameters.ToList());
+         configuration.FileName = dataPath;
+         configuration.Id = Guid.NewGuid().ToString();
+         configuration.NamingConventions = "";
+         return configuration;
+      }
    }
 }
