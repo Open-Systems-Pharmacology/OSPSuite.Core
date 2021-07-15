@@ -19,6 +19,22 @@ namespace OSPSuite.R.Services
    public class When_importing_data_from_r : concern_for_DataImporter
    {
       [Observation]
+      public void should_throw_on_invalid_file_name()
+      {
+         The.Action(() => 
+            sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample_non_existent.xlsx"))
+         ).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
+      public void should_throw_on_invalid_file_format()
+      {
+         The.Action(() =>
+            sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("importerConfiguration1.xml"))
+         ).ShouldThrowAn<Exception>();
+      }
+
+      [Observation]
       public void should_import_simple_data()
       {
          sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
