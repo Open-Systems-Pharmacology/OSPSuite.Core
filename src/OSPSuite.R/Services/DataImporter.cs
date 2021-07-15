@@ -203,6 +203,7 @@ namespace OSPSuite.R.Services
          configuration.CloneParametersFrom(_importer.LoadFile(columnInfos, dataPath, metaDataCategories).Format.Parameters.ToList());
          configuration.FileName = dataPath;
          configuration.Id = Guid.NewGuid().ToString();
+         configuration.NamingConventions = "";
          return configuration;
       }
    }
