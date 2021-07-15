@@ -60,7 +60,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          catch (Exception e)
          {
             _logger.AddError(e.ToString());
-            return null;
+            throw new InvalidFileException();
          }
       }
 
