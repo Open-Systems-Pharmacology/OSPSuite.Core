@@ -136,7 +136,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             if (!SetSourceFile(dataSourceFileName)) return;
          }
-         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
+         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException || e is InvalidObservedDataFileException)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return;

@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Assets;
-using System;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class MismatchingArrayLengthsException : Exception
+   public class MismatchingArrayLengthsException : OSPSuiteException
    {
       public MismatchingArrayLengthsException() : base(Error.MismatchingArrayLengths)
       {

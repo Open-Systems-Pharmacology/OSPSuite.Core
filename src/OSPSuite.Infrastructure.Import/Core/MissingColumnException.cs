@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Assets;
-using System;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class MissingColumnException : Exception
+   public class MissingColumnException : OSPSuiteException
    {
       public MissingColumnException(string missingColumn) : base(Error.MissingColumnException(missingColumn))
       {

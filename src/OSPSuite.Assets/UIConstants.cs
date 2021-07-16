@@ -1262,11 +1262,24 @@ namespace OSPSuite.Assets
       public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
       public static readonly string NamingConventionEmpty = "Column naming conventions cannot be empty.";
       public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
-      public static readonly string InvalidFileException = "An error occurred while reading the file. Please check the content";
       public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
       public static readonly string InvalidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
+
+      public static string InvalidObservedDataFile(string exceptionMessage)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine("An error occurred while reading the file. Please check the content.");
+
+         if (exceptionMessage.IsNullOrEmpty()) return sb.ToString();
+         sb.AppendLine("The exception thrown was:");
+         sb.AppendLine();
+         sb.AppendLine(exceptionMessage);
+
+         return sb.ToString();
+      }
+
       public static string UnsupportedFileFormat(string fileName)
       {
          var sb = new StringBuilder();

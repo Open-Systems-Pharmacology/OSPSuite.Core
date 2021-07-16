@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Assets;
-using System;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class InvalidMappingColumnException : Exception
+   public class InvalidMappingColumnException : OSPSuiteException
    {
       InvalidMappingColumnException() : base(Error.InvalidMappingColumn)
       {
