@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [Observation]
       public void duplicate_header_file_throws_exception()
       {
-         Assert.Throws<InvalidFileException>(() => sut.Path = _csvFilePath);
+         Assert.Throws<InvalidObservedDataFileException>(() => sut.Path = _csvFilePath);
       }
    }
 }

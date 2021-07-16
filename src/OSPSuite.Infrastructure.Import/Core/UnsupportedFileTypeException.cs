@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Assets;
-using System;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class UnsupportedFileTypeException : Exception
+   public class UnsupportedFileTypeException : OSPSuiteException
    {
       public UnsupportedFileTypeException() : base(Error.UnsupportedFileType)
       {

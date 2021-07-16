@@ -1267,7 +1267,7 @@ namespace OSPSuite.Assets
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
 
-      public static string InvalidFileException(string exceptionMessage)
+      public static string InvalidObservedDataFile(string exceptionMessage)
       {
          var sb = new StringBuilder();
          sb.AppendLine("An error occurred while reading the file. Please check the content.");

@@ -1,9 +1,9 @@
 ﻿using OSPSuite.Assets;
-using System;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class NanException : Exception
+   public class NanException : OSPSuiteException
    {
       public NanException() : base(Error.NaNOnData)
       {
