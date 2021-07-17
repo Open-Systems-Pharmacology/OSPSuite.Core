@@ -77,7 +77,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          DataColumn dataColumn;
          IDimension dimension;
-         var unit = columnAndData.Key.Column.Unit.SelectedUnit;
+         var unit = columnAndData.Value.First().Unit;
          var warningFlag = false;
 
          if (columnAndData.Key.Column.Dimension != null)
