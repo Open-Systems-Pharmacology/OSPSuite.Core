@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
+using DevExpress.XtraLayout.Utils;
 using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -89,6 +90,17 @@ namespace OSPSuite.UI.Views.Importer
       public void AddNanView(INanView nanView)
       {
          nanPanelControl.FillWith(nanView);
+      }
+
+      public void ShowExtraErrors(string errorMessage)
+      {
+         _labelExtraErrors.Text = errorMessage;
+         layoutControlItemExtraError.ContentVisible = true;
+      }
+      public void HideExtraErrors()
+      {
+         _labelExtraErrors.Text = "";
+         layoutControlItemExtraError.ContentVisible = false;
       }
    }
 }

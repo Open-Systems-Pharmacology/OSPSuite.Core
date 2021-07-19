@@ -108,12 +108,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
+            _view.HideExtraErrors();
             var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
             _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
          catch (InvalidArgumentException invalidException)
          {
-            _dialogCreator.MessageBoxError(invalidException.Message);
+            _view.ShowExtraErrors(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message));
             _view.DisableConfirmationView();
          }
       }
