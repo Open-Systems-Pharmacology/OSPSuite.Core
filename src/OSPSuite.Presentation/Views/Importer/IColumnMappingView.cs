@@ -21,8 +21,6 @@ namespace OSPSuite.Presentation.Views.Importer
 
       public ColumnInfo ColumnInfo { get; }
 
-      public string ErrorMessage { get; set; }
-
       private DataFormatParameter _source;
       public DataFormatParameter Source 
       {
