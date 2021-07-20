@@ -134,7 +134,37 @@ namespace OSPSuite.Presentation.Presenters.Importer
                continue;
             }
 
-            mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+            //this line should be removed
+            //mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+            //the dimension should exist in the supported dimensions. No idea what to do if it does not....if not let's just set it to invalid....if someone fe has kg for time.
+            //ALSO FIND ALL THE OTHER REFERENCES FOR DimensionForUnit AGAIN!!!
+            //this fixes the error but remains problematic, since when time is set to "days" the initial error is invalid
+            //we need a way to check whether a unit belongs to a dimension or not, or get all the dimensions for a specific unit, not just one
+            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappingColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
+               foreach (var dimension in supportedDimensions)
+               {
+                  if (!dimension.HasUnit(mappingColumn.Unit.SelectedUnit)) continue;
+                  mappingColumn.Dimension = dimension;
+                  break;
+               }
+               
+               var dimensionForUnit = _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+               if (!supportedDimensions.Contains(dimensionForUnit))
+               {
+                  //check all the dimensions
+                  mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension; //not sure this is correct
+                  
+                  //so, actually, the way we use the selected unit is a bit weird...
+                  if (mapping.ColumnInfo.DefaultDimension != null && !mapping.ColumnInfo.DefaultDimension.HasUnit(mappingColumn.Unit.SelectedUnit))
+                     mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               }
+               else
+                  mappingColumn.Dimension = dimensionForUnit;
+            }
          }
       }
 

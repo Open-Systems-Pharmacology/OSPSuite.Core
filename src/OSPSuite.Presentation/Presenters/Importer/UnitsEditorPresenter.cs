@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
       }
 
+      //still, I don't like this at all... this funtion should also make sure that the dimension it is setting exists in dimensions
       public void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _importDataColumn = importDataColumn;

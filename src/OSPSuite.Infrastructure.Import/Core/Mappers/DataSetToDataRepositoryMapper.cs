@@ -83,8 +83,16 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          if (columnAndData.Key.Column.Dimension != null)
             dimension = columnAndData.Key.Column.Dimension;
          else
-            dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
+            //dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
+            
+            /*
+         //OK. so here still we should not be using the dimension from unit. 
+         {
+            columnAndData.Key.ColumnInfo.SupportedDimensions
 
+              dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
+            }
+*/
 
          if (columnAndData.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
