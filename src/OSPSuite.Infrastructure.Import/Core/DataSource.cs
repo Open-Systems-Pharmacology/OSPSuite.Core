@@ -156,6 +156,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
                         throw new OSPSuiteException(Error.MismatchingArrayLengths);
 
+                     if (errorColumn.Value.Count == 0)
+                        throw new OSPSuiteException(Error.EmptyDataSet);
+
                      if (errorColumn.Key == null)
                         return true;
 
