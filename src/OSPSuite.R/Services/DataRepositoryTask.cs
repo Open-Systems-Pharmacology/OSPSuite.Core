@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
+using System;
 
 namespace OSPSuite.R.Services
 {
@@ -8,6 +9,10 @@ namespace OSPSuite.R.Services
       DataRepository LoadDataRepository(string fileName);
 
       void SaveDataRepository(DataRepository dataRepository, string fileName);
+
+      DataColumn GetErrorColumn(DataColumn column);
+
+      DataColumn AddErrorColumn(DataColumn column, string name = "yError", string errorType = null);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask
@@ -27,6 +32,29 @@ namespace OSPSuite.R.Services
       public void SaveDataRepository(DataRepository dataRepository, string fileName)
       {
          _pkmlPersistor.SaveToPKML(dataRepository, fileName);
+      }
+
+      public DataColumn GetErrorColumn(DataColumn column)
+      {
+         if (column.ContainsRelatedColumn(AuxiliaryType.ArithmeticStdDev))
+            return column.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
+
+         if (column.ContainsRelatedColumn(AuxiliaryType.GeometricStdDev))
+            return column.GetRelatedColumn(AuxiliaryType.GeometricStdDev);
+
+         return null;
+      }
+
+      public DataColumn AddErrorColumn(DataColumn column, string name = "yError", string errorType = null)
+      {
+         var errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
+
+         errorColumn.DisplayUnit = column.DisplayUnit;
+         AuxiliaryType auxiliaryType;
+         errorColumn.DataInfo.AuxiliaryType = Enum.TryParse(errorType, out auxiliaryType) ? auxiliaryType : AuxiliaryType.ArithmeticStdDev;
+         errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
+         column.AddRelatedColumn(errorColumn);
+	      return errorColumn;
       }
    }
 }
