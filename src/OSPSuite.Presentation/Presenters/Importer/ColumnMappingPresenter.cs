@@ -625,13 +625,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ResetMapping()
       {
-         setDataFormat(_originalFormat);
          if (_format != null)
          {
             _format.Parameters.Clear();
             foreach (var p in _originalFormat)
                _format.Parameters.Add(p);
          }
+         setDataFormat(_originalFormat);
       }
 
       public void ResetMappingBasedOnCurrentSheet()
