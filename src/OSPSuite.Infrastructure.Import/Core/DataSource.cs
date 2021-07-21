@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
       bool ValidateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos);
-      void ValidateUnits(IReadOnlyList<ColumnInfo> columnInfos);
+      void ValidateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -169,6 +169,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                            if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
                               continue;
 
+                           var temp1 = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit));
+                           var temp2 = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit));
+
                            if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
                                column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
                               return false;
@@ -190,7 +193,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          return true;
       }
-      public void ValidateUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      public void ValidateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var columnInfo in columnInfos)
          {
@@ -203,6 +206,8 @@ namespace OSPSuite.Infrastructure.Import.Core
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
                   {
+                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(column.Value.ElementAt(0).Unit));
+
                      for (var i = 0; i < column.Value.Count(); i++)
                      {
                         if (double.IsNaN(column.Value.ElementAt(i).Measurement))
@@ -210,6 +215,9 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                         if (!columnInfo.SupportedDimensions.Any(x => x.HasUnit(column.Value.ElementAt(i).Unit)))
                            throw new InvalidDimensionException(column.Value.ElementAt(i).Unit, columnInfo.DisplayName);
+
+                        if (columnInfo.SupportedDimensions.First(x => x.HasUnit(column.Value.ElementAt(i).Unit)) != dimensionOfFirstUnit)
+                           throw new InconsistentDimensionBetweenUnitsException(columnInfo.DisplayName);
                      }
                   }
                }

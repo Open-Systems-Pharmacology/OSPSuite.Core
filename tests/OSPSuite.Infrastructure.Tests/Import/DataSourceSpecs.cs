@@ -3,6 +3,7 @@ using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
@@ -14,17 +15,18 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IDimension _fakedTimeDimension;
-      protected IDimension _fakedConcentrationDimension;
+      protected IDimension _fakedConcentrationDimensionMolar;
+      protected IDimension _fakedConcentrationDimensionMass;
       protected IDimension _fakedErrorDimension;
       protected IImporter _fakedImporter;
       protected IDataSet _fakeDataSet;
-      //protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSet;
 
 
       protected override void Context()
       {
          _fakedTimeDimension = A.Fake<IDimension>();
-         _fakedConcentrationDimension = A.Fake<IDimension>();
+         _fakedConcentrationDimensionMolar = A.Fake<IDimension>(); 
+         _fakedConcentrationDimensionMass = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
@@ -37,7 +39,8 @@ namespace OSPSuite.Infrastructure.Import
          };
 
          _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMolar);
+         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMass);
          _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
@@ -79,7 +82,7 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("mol")
+                     Unit = new UnitDescription("pmol/l")
                   },
                   ColumnInfo = _columnInfos[1]
                },
@@ -87,19 +90,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -139,7 +142,9 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
-         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedTimeDimension.HasUnit("s")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimensionMolar.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimensionMass.HasUnit("ng/ml")).Returns(true);
          A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
 
          _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(),
@@ -149,11 +154,9 @@ namespace OSPSuite.Infrastructure.Import
          sut = new DataSource(_fakedImporter);
          sut.DataSets.Add("sheet1", _fakeDataSet);
       }
-
-
    }
 
-   public class When_validating_data_source : concern_for_DataSource
+   public class When_validating_geometric_error : concern_for_DataSource
    {
       private DataSet _dataSet;
 
@@ -201,7 +204,7 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("mol")
+                     Unit = new UnitDescription("pmol/l")
                   },
                   ColumnInfo = _columnInfos[1]
                },
@@ -209,19 +212,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -233,7 +236,8 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Error",
-                     Unit = new UnitDescription("")
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension = Constants.Dimension.NO_DIMENSION
                   },
                   ColumnInfo = _columnInfos[2]
                },
@@ -241,19 +245,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -279,7 +283,7 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
-   public class When_validating_consistent_manual_input_units : concern_for_DataSource
+   public class When_validating_consistent_column_input_units : concern_for_DataSource
    {
       private DataSet _dataSet;
 
@@ -326,7 +330,7 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("mol")
+                     Unit = new UnitDescription("pmol/l")
                   },
                   ColumnInfo = _columnInfos[1]
                },
@@ -334,19 +338,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "mol",
+                     Unit = "pmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -366,19 +370,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "",
+                     Unit = "pmol/l",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -401,5 +405,367 @@ namespace OSPSuite.Infrastructure.Import
          sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeTrue();
       }
 
+   }
+
+   public class When_validating_inconsistent_column_input_units : concern_for_DataSource
+   {
+      private DataSet _dataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s")
+                  },
+                  ColumnInfo = _columnInfos[0]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 1,
+                     Lloq = double.NaN
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 2,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("pmol/l")
+                  },
+                  ColumnInfo = _columnInfos[1]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 0.1,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = double.NaN,
+                     Lloq = 1
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("ng/ml")
+                  },
+                  ColumnInfo = _columnInfos[2]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "ng/ml",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "ng/ml",
+                     Measurement = 0.1,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "ng/ml",
+                     Measurement = double.NaN,
+                     Lloq = 1
+                  }
+               }
+            }
+         };
+         _dataSet = new DataSet();
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+      }
+      protected override void Because()
+      {
+         base.Because();
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeFalse();
+      }
+   }
+
+   //although we should never be able to reach such a scenario, still it should be caught
+   public class When_validating_consistent_manual_input_units : concern_for_DataSource
+   {
+      private DataSet _dataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s"),
+                     Dimension = _fakedTimeDimension
+                  },
+                  ColumnInfo = _columnInfos[0]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension =  _fakedConcentrationDimensionMass
+                  },
+                  ColumnInfo = _columnInfos[1]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = 1
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription(""),
+                     Dimension = _fakedConcentrationDimensionMolar
+                  },
+                  ColumnInfo = _columnInfos[2]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = 1
+                  }
+               }
+            }
+         };
+         _dataSet = new DataSet();
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+      }
+      protected override void Because()
+      {
+         base.Because();
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeFalse();
+      }
+   }
+
+   public class When_validating_inconsistent_error_units : concern_for_DataSource
+   {
+      private DataSet _dataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s")
+                  },
+                  ColumnInfo = _columnInfos[0]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension =  null
+                  },
+                  ColumnInfo = _columnInfos[1]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "ng/ml",
+                     Measurement = 10,
+                     Lloq = 1
+                  }
+               }
+            }
+         };
+         _dataSet = new DataSet();
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+      }
+      protected override void Because()
+      {
+         base.Because();
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         The.Action(() => sut.ValidateUnitsSupportedAndSameDimension(_columnInfos)).ShouldThrowAn<InconsistentDimensionBetweenUnitsException>();
+      }
+   }
+
+   public class When_validating_not_supported_error_units : concern_for_DataSource
+   {
+      private DataSet _dataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s")
+                  },
+                  ColumnInfo = _columnInfos[0]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension =  null
+                  },
+                  ColumnInfo = _columnInfos[1]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "ng/ml",
+                     Measurement = 10,
+                     Lloq = 1
+                  }
+               }
+            }
+         };
+         _dataSet = new DataSet();
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+      }
+      protected override void Because()
+      {
+         base.Because();
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+
+      [Observation]
+      public void should_be_valid()
+      {
+         The.Action(() => sut.ValidateUnitsSupportedAndSameDimension(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
+      }
    }
 }

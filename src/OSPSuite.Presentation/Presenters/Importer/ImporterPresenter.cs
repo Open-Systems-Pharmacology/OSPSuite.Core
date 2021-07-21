@@ -181,7 +181,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             {
                var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is InvalidDimensionException))
+               //ToDo: here this if with all those cases should be refactored. probably not for v10.
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException 
+                      || e is InvalidDimensionException || e is InconsistentDimensionBetweenUnitsException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
                }
@@ -197,7 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         dataSource.ValidateUnits(_columnInfos);
+         dataSource.ValidateUnitsSupportedAndSameDimension(_columnInfos);
          if (!dataSource.ValidateErrorAgainstMeasurement(_columnInfos))
             throw new ErrorUnitException();
       }
