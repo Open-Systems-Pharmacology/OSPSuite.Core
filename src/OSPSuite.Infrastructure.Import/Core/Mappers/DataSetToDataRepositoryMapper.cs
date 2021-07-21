@@ -5,7 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -30,13 +29,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
-      private readonly IDimensionFactory _dimensionFactory;
-
-      public DataSetToDataRepositoryMapper(IDimensionFactory dimensionFactory)
-      {
-         _dimensionFactory = dimensionFactory;
-      }
-
       public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName; 
@@ -76,23 +68,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         IDimension dimension;
-         var unit = columnAndData.Value.First().Unit;
+         var unit = columnAndData.Value.First().Unit; //could this be null????
          var warningFlag = false;
 
-         if (columnAndData.Key.Column.Dimension != null)
-            dimension = columnAndData.Key.Column.Dimension;
-         else
-            //dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
-            
-            /*
-         //OK. so here still we should not be using the dimension from unit. 
-         {
-            columnAndData.Key.ColumnInfo.SupportedDimensions
-
-              dimension = _dimensionFactory.DimensionForUnit(unit) ?? Constants.Dimension.NO_DIMENSION;
-            }
-*/
+         //what if there is no supported dimension that has this unit?
+         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(unit));
 
          if (columnAndData.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
@@ -132,7 +112,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             }
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
-               values[i++] = float.NaN;
+               values[i++] = float.NaN;   //let's check this comment here underneath
             else if (unit != null && !string.IsNullOrEmpty(value.Unit)) //do we keep this like this, or do we get the Unit from _dimensionfactory?
                values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.FindUnit(value.Unit, true), adjustedValue);
             else

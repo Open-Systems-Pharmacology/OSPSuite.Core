@@ -188,6 +188,12 @@ namespace OSPSuite.Infrastructure.Import
          };
 
 
+         //adding supported dimensions
+         _parsedDataSetLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionLLOQ);
+         _parsedDataSetLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionUnitFromColumn);
+         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionLLOQ);
+         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionUnitFromColumn);
+
          A.CallTo(() => _dataSourceLLOQ.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
@@ -208,12 +214,7 @@ namespace OSPSuite.Infrastructure.Import
             )
          );
 
-         var dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => dimensionFactory.DimensionForUnit("min")).Returns(timeDimension);
-         A.CallTo(() => dimensionFactory.DimensionForUnit("µmol/l")).Returns(_concentrationDimensionLLOQ);
-         A.CallTo(() => dimensionFactory.DimensionForUnit("µmol/min")).Returns(_concentrationDimensionUnitFromColumn);
-
-         sut = new DataSetToDataRepositoryMapper(dimensionFactory);
+         sut = new DataSetToDataRepositoryMapper();
       }
    }
 

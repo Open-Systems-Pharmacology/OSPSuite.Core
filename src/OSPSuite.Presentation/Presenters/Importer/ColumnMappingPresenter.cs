@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.Data.Filtering.Helpers;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -142,31 +143,25 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //we need a way to check whether a unit belongs to a dimension or not, or get all the dimensions for a specific unit, not just one
             if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
                mappingColumn.Dimension = null;
-            else
+            else //also, actually here we could check if unit is already invalid. in such a case we could just assign it. still the way it is right now it would work
             {
                var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
-               foreach (var dimension in supportedDimensions)
-               {
-                  if (!dimension.HasUnit(mappingColumn.Unit.SelectedUnit)) continue;
-                  mappingColumn.Dimension = dimension;
-                  break;
-               }
-               
-               var dimensionForUnit = _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
-               if (!supportedDimensions.Contains(dimensionForUnit))
-               {
-                  //check all the dimensions
-                  mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension; //not sure this is correct
-                  
-                  //so, actually, the way we use the selected unit is a bit weird...
-                  if (mapping.ColumnInfo.DefaultDimension != null && !mapping.ColumnInfo.DefaultDimension.HasUnit(mappingColumn.Unit.SelectedUnit))
-                     mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
-               }
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit ==  null)
+                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
                else
                   mappingColumn.Dimension = dimensionForUnit;
             }
          }
       }
+
+      private IDimension selectDimensionThatHasUnit(IList<IDimension> dimensions, string unit)
+      {
+         return dimensions.FirstOrDefault(x => x.HasUnit(unit));
+      }
+
+
 
       public void InitializeErrorUnit()
       {

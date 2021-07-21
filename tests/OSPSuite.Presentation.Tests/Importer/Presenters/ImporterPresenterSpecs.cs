@@ -32,11 +32,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IDimensionFactory dimensionFactory,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
          Utility.Container.IContainer container,
          IDataSource dataSource
-      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, dimensionFactory, modelingXmlSerializerRepository, container)
+      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, modelingXmlSerializerRepository, container)
       {
          _dataSource = dataSource;
       }
@@ -57,7 +56,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IColumnMappingPresenter _columnMappingPresenter;
       protected ISourceFilePresenter _sourceFilePresenter;
       protected IDialogCreator _dialogCreator;
-      protected IDimensionFactory _dimensionFactory;
       protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
       protected Utility.Container.IContainer _container;
       protected IDataSourceFile _dataSourceFile;
@@ -115,7 +113,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnMappingPresenter = A.Fake<IColumnMappingPresenter>();
          _sourceFilePresenter = A.Fake<ISourceFilePresenter>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         _dimensionFactory = A.Fake<IDimensionFactory>();
          _ospSuiteXmlSerializerRepository = A.Fake<IOSPSuiteXmlSerializerRepository>();
          _container = A.Fake<Utility.Container.IContainer>();
          sut = new ImporterPresenterForTest(
@@ -128,7 +125,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _columnMappingPresenter,
             _sourceFilePresenter,
             _dialogCreator,
-            _dimensionFactory,
             _ospSuiteXmlSerializerRepository,
             _container,
             _dataSource);
@@ -303,7 +299,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(true);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
@@ -327,7 +323,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(true);
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(true);
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -344,7 +340,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored, A<IDimensionFactory>.Ignored)).Returns(false);
+         A.CallTo(() => _dataSource.ValidateDataSource(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(false);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });

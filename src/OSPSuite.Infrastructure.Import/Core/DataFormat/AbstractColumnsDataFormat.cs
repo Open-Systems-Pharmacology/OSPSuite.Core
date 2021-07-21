@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Core.Import;
 
@@ -70,25 +71,26 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
 
-      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
+      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, List<IDimension> supportedDimensions,  ref double rank);
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
-         foreach (var header in columnInfos.Select(ci => ci.DisplayName))
+         foreach (var header in columnInfos)
          {
-            var headerKey = keys.FindHeader(header);
+            var headerName = header.DisplayName;
+            var headerKey = keys.FindHeader(headerName);
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, data, keys, ref rank);
+               var units = ExtractUnits(headerKey, data, keys, header.SupportedDimensions.ToList(), ref rank);
 
                var col = new Column()
                {
-                  Name = header,
+                  Name = headerName,
                   Unit = units,
                   LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                };
-               if (columnInfos.First(ci => ci.DisplayName == header).IsAuxiliary())
+               if (columnInfos.First(ci => ci.DisplayName == headerName).IsAuxiliary())
                {
                   if(units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
@@ -103,7 +105,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             }
             else
             {
-               missingKeys.Add(header);
+               missingKeys.Add(headerName);
             }
          }
       }
@@ -122,7 +124,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, data, keys, ref rank);
+            var units = ExtractUnits(headerKey, data, keys, columnInfos.First(ci => ci.DisplayName == header).SupportedDimensions.ToList(),  ref rank);
 
             var col = new Column()
             {

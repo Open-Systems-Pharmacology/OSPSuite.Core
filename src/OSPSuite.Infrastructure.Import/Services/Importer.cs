@@ -80,7 +80,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
                dataSets.Add(sheetKeyValue.Key, data);
             }
-            catch
+            catch (Exception e)
             {
                throw new PossibleUnsupportedSheetFormatException(sheetKeyValue.Key);
             }

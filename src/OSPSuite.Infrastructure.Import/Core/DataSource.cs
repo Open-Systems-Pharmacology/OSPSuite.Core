@@ -29,7 +29,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory);
+      bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -140,7 +140,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       //TODO: test it!!!
-      public bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory)
+      //also rename to smthg that makes more sense
+      public bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
@@ -163,7 +164,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                      //also we should check why we are excluding the checking of all these dimensions underneath
                      //hm...NOPE...here we could also have a different dimension for different values in the column..
                      //so we should probably differentiate if the unit comes from a column or if it is a specific value
-                     var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
+                     //var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
+                     var errorDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(0).Unit));
+
                      if (errorDimension == Constants.Dimension.NO_DIMENSION
                          || errorDimension == null 
                          || errorDimension.Name == Constants.Dimension.FRACTION)
@@ -174,8 +177,8 @@ namespace OSPSuite.Infrastructure.Import.Core
                         if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
                            continue;
 
-                        if (dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
-                            dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
+                        if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
+                           column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
                            return false;
                      }
                   }

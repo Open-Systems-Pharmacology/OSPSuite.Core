@@ -149,7 +149,7 @@ namespace OSPSuite.Presentation.Importer.Core
       protected override void Because()
       {
          base.Because();
-         _result = sut.ValidateDataSource(_columnInfos, _dimensionFactory);
+         _result = sut.ValidateDataSource(_columnInfos);
       }
 
       [Observation]
