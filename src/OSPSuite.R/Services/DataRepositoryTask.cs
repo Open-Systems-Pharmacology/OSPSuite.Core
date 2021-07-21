@@ -49,9 +49,15 @@ namespace OSPSuite.R.Services
       {
          var errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
 
-         errorColumn.DisplayUnit = column.DisplayUnit;
+         if (string.IsNullOrEmpty(errorType))
+            errorType = AuxiliaryType.ArithmeticStdDev.ToString();
+
          AuxiliaryType auxiliaryType;
-         errorColumn.DataInfo.AuxiliaryType = Enum.TryParse(errorType, out auxiliaryType) ? auxiliaryType : AuxiliaryType.ArithmeticStdDev;
+         if (!Enum.TryParse(errorType, out auxiliaryType))
+            throw new Exception();
+            
+         errorColumn.DataInfo.AuxiliaryType = auxiliaryType;
+         errorColumn.DisplayUnit = column.DisplayUnit;
          errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
          column.AddRelatedColumn(errorColumn);
 	      return errorColumn;

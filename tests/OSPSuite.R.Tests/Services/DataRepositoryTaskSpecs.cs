@@ -6,6 +6,7 @@ using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility;
+using System;
 using System.Linq;
 
 namespace OSPSuite.R.Services
@@ -98,6 +99,14 @@ namespace OSPSuite.R.Services
          errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
          errorColumn.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.ObservationAuxiliary);
          col.RelatedColumns.ShouldContain(errorColumn);
+      }
+
+      [Observation]
+      public void should_throw_on_bad_error_type()
+      {
+         var col = _loadedRepository.ObservationColumns().First();
+         var name = new ShortGuid().ToString();
+         The.Action(() => sut.AddErrorColumn(col, name, "something else")).ShouldThrowAn<Exception>();
       }
 
       [Observation]
