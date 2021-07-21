@@ -70,8 +70,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          DataColumn dataColumn;
          var unit = columnAndData.Value.First().Unit; //could this be null????
          var warningFlag = false;
-
-         //what if there is no supported dimension that has this unit?
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(unit));
 
          if (columnAndData.Key.ColumnInfo.IsBase())
@@ -112,8 +110,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             }
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
-               values[i++] = float.NaN;   //let's check this comment here underneath
-            else if (unit != null && !string.IsNullOrEmpty(value.Unit)) //do we keep this like this, or do we get the Unit from _dimensionfactory?
+               values[i++] = float.NaN;
+            else if (unit != null && !string.IsNullOrEmpty(value.Unit))
                values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.FindUnit(value.Unit, true), adjustedValue);
             else
                values[i++] = (float) adjustedValue;

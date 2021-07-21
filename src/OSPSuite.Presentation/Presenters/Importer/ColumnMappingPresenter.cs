@@ -135,15 +135,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
                continue;
             }
 
-            //this line should be removed
-            //mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
-            //the dimension should exist in the supported dimensions. No idea what to do if it does not....if not let's just set it to invalid....if someone fe has kg for time.
-            //ALSO FIND ALL THE OTHER REFERENCES FOR DimensionForUnit AGAIN!!!
-            //this fixes the error but remains problematic, since when time is set to "days" the initial error is invalid
-            //we need a way to check whether a unit belongs to a dimension or not, or get all the dimensions for a specific unit, not just one
             if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
                mappingColumn.Dimension = null;
-            else //also, actually here we could check if unit is already invalid. in such a case we could just assign it. still the way it is right now it would work
+            else
             {
                var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
                var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));

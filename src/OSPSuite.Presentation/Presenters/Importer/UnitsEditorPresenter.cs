@@ -24,7 +24,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
       }
 
-      //still, I don't like this at all... this funtion should also make sure that the dimension it is setting exists in dimensions
       public void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
          _importDataColumn = importDataColumn;
@@ -33,6 +32,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMapping = importDataColumn.Unit.ColumnName != null;
          View.SetParams(_columnMapping, useDimensionSelector);
          Dimension = importDataColumn.Dimension;
+
+         if (Dimension != null && !_dimensions.Contains(Dimension))
+            Dimension = _dimensions.FirstOrDefault();
+
          FillDimensions(importDataColumn.Unit.SelectedUnit);
          fillUnits(importDataColumn.Unit.SelectedUnit);
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
