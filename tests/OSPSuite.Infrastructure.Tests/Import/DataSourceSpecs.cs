@@ -1,40 +1,44 @@
-﻿using FakeItEasy;
-using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
-using OSPSuite.Core.Domain;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
-using System.Collections.Generic;
 
-namespace OSPSuite.Presentation.Importer.Core
+namespace OSPSuite.Infrastructure.Import
 {
-   public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<IDataSource>
-   {
-      protected IImporter _importer;
-      protected override void Context()
-      {
-         base.Context();
-         _importer = A.Fake<IImporter>();
-         sut = new DataSource(_importer);
-      }
-   }
-
-   public class When_validating_data_source : ConcernforDataFormat_DataFormatHeadersWithUnits
+   public abstract class concern_for_DataSource : ContextSpecification<IDataSource>
    {
       protected IReadOnlyList<ColumnInfo> _columnInfos;
-      protected IDimensionFactory _dimensionFactory;
-      protected bool _result;
+      protected IDimension _fakedTimeDimension;
+      protected IDimension _fakedConcentrationDimension;
+      protected IDimension _fakedErrorDimension;
+      protected IImporter _fakedImporter;
+      protected IDataSet _fakeDataSet;
+      //protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSet;
+
 
       protected override void Context()
       {
-         base.Context();
-         _columnInfos = new List<ColumnInfo>()  {
-            new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
+         _fakedTimeDimension = A.Fake<IDimension>();
+         _fakedConcentrationDimension = A.Fake<IDimension>();
+         _fakedErrorDimension = A.Fake<IDimension>();
+         _fakedImporter = A.Fake<IImporter>();
+         _fakeDataSet = new DataSet();
+
+         _columnInfos = new List<ColumnInfo>()
+         {
+            new ColumnInfo() { DisplayName = "Time", Name ="Time" },
+            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration"},
+            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
          };
+
+         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             {
@@ -134,30 +138,34 @@ namespace OSPSuite.Presentation.Importer.Core
                }
             }
          };
-         var dataSet = new DataSet();
-         dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
-         _dimensionFactory = A.Fake<IDimensionFactory>();
-         var fractionDimension = A.Fake<IDimension>();
-         A.CallTo(() => fractionDimension.Name).Returns(Constants.Dimension.FRACTION);
-         var otherDimension = A.Fake<IDimension>();
-         A.CallTo(() => otherDimension.Name).Returns("mol");
-         A.CallTo(() => _dimensionFactory.DimensionForUnit("")).Returns(fractionDimension);
-         A.CallTo(() => _dimensionFactory.DimensionForUnit("mol")).Returns(otherDimension);
-         sut.DataSets.Add("sheet1", dataSet);
-         
+         A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
+
+         _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(),
+            parsedData)});
+               
+
+         sut = new DataSource(_fakedImporter);
+         sut.DataSets.Add("sheet1", _fakeDataSet);
       }
 
-      protected override void Because()
+
+   }
+
+   public class When_validating_consistent_manual_input_units : concern_for_DataSource
+   {
+      protected override void Context()
       {
-         base.Because();
-         //sut.DataSets.Clear();
-         _result = sut.ValidateErrorAgainstMeasurement(_columnInfos);
+         base.Context();
+
       }
 
       [Observation]
-      public void geometric_error_does_not_check_units()
+      public void should_be_valid()
       {
-         Assert.IsTrue(_result);
+         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeTrue();
       }
+
    }
 }

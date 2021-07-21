@@ -181,7 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             {
                var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException))
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is InvalidDimensionException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
                }
@@ -197,7 +197,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         if (!dataSource.ValidateDataSource(_columnInfos))
+         dataSource.ValidateUnits(_columnInfos);
+         if (!dataSource.ValidateErrorAgainstMeasurement(_columnInfos))
             throw new ErrorUnitException();
       }
 

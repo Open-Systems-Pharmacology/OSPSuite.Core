@@ -29,7 +29,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos);
+      bool ValidateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos);
+      void ValidateUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -139,9 +140,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return null;
       }
 
-      //TODO: test it!!!
-      //also rename to smthg that makes more sense
-      public bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos)
+      public bool ValidateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
@@ -160,32 +159,62 @@ namespace OSPSuite.Infrastructure.Import.Core
                      if (errorColumn.Key == null)
                         return true;
 
-                     //this should probably change to smthng that caomes from the Dimension (errorColumn.Key.Column.Dimension)
-                     //also we should check why we are excluding the checking of all these dimensions underneath
-                     //hm...NOPE...here we could also have a different dimension for different values in the column..
-                     //so we should probably differentiate if the unit comes from a column or if it is a specific value
-                     //var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
-                     var errorDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(0).Unit));
+                     var errorDimension = errorColumn.Key.Column.Dimension;
+                     var measurementDimension = measurementColumn.Key.Column.Dimension;
 
-                     if (errorDimension == Constants.Dimension.NO_DIMENSION
-                         || errorDimension == null 
-                         || errorDimension.Name == Constants.Dimension.FRACTION)
-                        continue;
-
-                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                     if (errorDimension == null)
                      {
-                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
+                        for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                        {
+                           if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
+                              continue;
+
+                           if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
+                               column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
+                              return false;
+                        }
+                     }
+                     else
+                     {
+                        if (errorDimension == Constants.Dimension.NO_DIMENSION
+                            || errorDimension.Name == Constants.Dimension.FRACTION)
                            continue;
 
-                        if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
-                           column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
+                        if (measurementDimension != errorDimension)
                            return false;
                      }
                   }
                }
             }
          }
+
          return true;
+      }
+      public void ValidateUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         foreach (var columnInfo in columnInfos)
+         {
+            foreach (var dataSet in DataSets)
+            {
+               foreach (var set in dataSet.Data)
+               {
+                  var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
+
+                  //if unit comes from a column
+                  if (column.Key.Column.Dimension == null)
+                  {
+                     for (var i = 0; i < column.Value.Count(); i++)
+                     {
+                        if (double.IsNaN(column.Value.ElementAt(i).Measurement))
+                           continue;
+
+                        if (!columnInfo.SupportedDimensions.Any(x => x.HasUnit(column.Value.ElementAt(i).Unit)))
+                           throw new InvalidDimensionException(column.Value.ElementAt(i).Unit, columnInfo.DisplayName);
+                     }
+                  }
+               }
+            }
+         }
       }
    }
 
