@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Utility.Exceptions;
 using System;
 
 namespace OSPSuite.R.Services
@@ -55,7 +56,7 @@ namespace OSPSuite.R.Services
 
          AuxiliaryType auxiliaryType;
          if (!Enum.TryParse(errorType, out auxiliaryType))
-            throw new Exception(Error.InvalidAuxiliaryType);
+            throw new OSPSuiteException(Error.InvalidAuxiliaryType);
             
          errorColumn.DataInfo.AuxiliaryType = auxiliaryType;
          errorColumn.DisplayUnit = column.DisplayUnit;

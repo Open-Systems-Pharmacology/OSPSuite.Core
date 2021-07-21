@@ -6,6 +6,7 @@ using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
 using System;
 using System.Linq;
 
@@ -106,7 +107,7 @@ namespace OSPSuite.R.Services
       {
          var col = _loadedRepository.ObservationColumns().First();
          var name = new ShortGuid().ToString();
-         The.Action(() => sut.AddErrorColumn(col, name, "something else")).ShouldThrowAn<Exception>();
+         The.Action(() => sut.AddErrorColumn(col, name, "something else")).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
