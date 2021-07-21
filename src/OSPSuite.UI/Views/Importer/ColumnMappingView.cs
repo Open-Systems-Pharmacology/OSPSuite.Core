@@ -220,23 +220,13 @@ namespace OSPSuite.UI.Views.Importer
             columnMappingGridView.CloseEditor();
          });
 
-
-         _addButtonRepository.ButtonClick += (o, e) =>
-            OnEvent(() => _presenter.AddGroupBy(_gridViewBinder.FocusedElement.Source as AddGroupByFormatParameter));
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
       }
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
       {
          if (model.Source is AddGroupByFormatParameter)
-         {
-            if (string.IsNullOrEmpty(model.Source.ColumnName))
-            {
-               return _disabledRemoveButtonRepository;
-            }
-
             return _addButtonRepository;
-         }
 
          return model.Source == null || model.Source is AddGroupByFormatParameter
             ? _disabledRemoveButtonRepository

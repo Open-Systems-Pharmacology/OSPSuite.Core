@@ -203,7 +203,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
       {
-         if (!sheets.Any()) return;
+         if (!sheets.Any())
+         {
+            View.DisableConfirmationView();
+            return;
+         }
 
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
