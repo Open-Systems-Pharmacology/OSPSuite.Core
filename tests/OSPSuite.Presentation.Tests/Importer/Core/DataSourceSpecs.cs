@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using System.Collections.Generic;
 
@@ -246,9 +247,11 @@ namespace OSPSuite.Presentation.Importer.Core
       }
 
       [Observation]
-      public void geometric_error_does_not_check_units()
+      public void throw_on_empty_dataset()
       {
-         The.Action(() => sut.ValidateDataSource(_columnInfos, _dimensionFactory)).ShouldThrowAn<OSPSuiteException>();
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", new DataSheet() { RawData = new UnformattedData() });
+         The.Action(() => sut.AddSheets(sheets, _columnInfos, "")).ShouldThrowAn<EmptyDataSetsException>();
       }
    }
 }
