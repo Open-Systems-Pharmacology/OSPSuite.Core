@@ -184,7 +184,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             {
                var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException))
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is EmptyDataSetsException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
                }

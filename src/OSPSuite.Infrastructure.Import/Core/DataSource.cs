@@ -82,12 +82,19 @@ namespace OSPSuite.Infrastructure.Import.Core
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
-         foreach (var dataSet in DataSets)
+         foreach (var dataSet in DataSets.KeyValues)
          {
             if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
-               dataSet.ThrowsOnNan(indicator);
+            {
+               dataSet.Value.ThrowsOnNan(indicator);
+            }
             else
-               dataSet.ClearNan(indicator);
+            {
+               dataSet.Value.ClearNan(indicator);
+               var emptyDataSets = dataSet.Value.Data.Where(parsedDataSet => parsedDataSet.Data.All(column => column.Value.Count == 0));
+               var emptyDataSetsNames = emptyDataSets.Select(d => string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
+               throw new EmptyDataSetsException(emptyDataSetsNames);
+            }
          }
       }
 
@@ -155,9 +162,6 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
                         throw new OSPSuiteException(Error.MismatchingArrayLengths);
-
-                     if (errorColumn.Value.Count == 0)
-                        throw new OSPSuiteException(Error.EmptyDataSet);
 
                      if (errorColumn.Key == null)
                         return true;
