@@ -91,7 +91,10 @@ namespace OSPSuite.Infrastructure.Import.Core
             else
             {
                dataSet.Value.ClearNan(indicator);
-               var emptyDataSets = dataSet.Value.Data.Where(parsedDataSet => parsedDataSet.Data.All(column => column.Value.Count == 0));
+               var emptyDataSets = dataSet.Value.Data.Where(parsedDataSet => parsedDataSet.Data.All(column => column.Value.Count == 0)).ToList();
+               if (emptyDataSets.Count == 0)
+                  continue;
+
                var emptyDataSetsNames = emptyDataSets.Select(d => string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
                throw new EmptyDataSetsException(emptyDataSetsNames);
             }
