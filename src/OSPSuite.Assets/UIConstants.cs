@@ -1432,6 +1432,7 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
+      public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
 
       public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
 

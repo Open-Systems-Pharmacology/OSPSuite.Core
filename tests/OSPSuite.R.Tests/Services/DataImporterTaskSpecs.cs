@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using System;
 using System.IO;
@@ -26,7 +27,7 @@ namespace OSPSuite.R.Services
       {
          The.Action(() => 
             sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample_non_existent.xlsx"))
-         ).ShouldThrowAn<Exception>();
+         ).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -34,7 +35,7 @@ namespace OSPSuite.R.Services
       {
          The.Action(() =>
             sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("importerConfiguration1.xml"))
-         ).ShouldThrowAn<Exception>();
+         ).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -60,7 +61,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_on_empty_file_name()
       {
-         The.Action(() => sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "")).ShouldThrowAn<Exception>();
+         The.Action(() => sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "")).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]

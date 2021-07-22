@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -116,7 +117,7 @@ namespace OSPSuite.R.Services
          string dataFileName)
       {
          if (string.IsNullOrEmpty(dataFileName) || !File.Exists(dataFileName))
-            throw new Exception(Error.InvalidFile);
+            throw new OSPSuiteException(Error.InvalidFile);
 
          try
          {
@@ -127,7 +128,7 @@ namespace OSPSuite.R.Services
          }
          catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
          {
-            throw new Exception(e.Message);
+            throw new OSPSuiteException(e.Message);
          }
       }
 
