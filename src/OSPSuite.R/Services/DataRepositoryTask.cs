@@ -14,7 +14,7 @@ namespace OSPSuite.R.Services
 
       DataColumn GetErrorColumn(DataColumn column);
 
-      DataColumn AddErrorColumn(DataColumn column, string name = "yError", string errorType = null);
+      DataColumn AddErrorColumn(DataColumn column, string name, string errorType);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask
@@ -47,7 +47,7 @@ namespace OSPSuite.R.Services
          return null;
       }
 
-      public DataColumn AddErrorColumn(DataColumn column, string name = "yError", string errorType = null)
+      public DataColumn AddErrorColumn(DataColumn column, string name, string errorType)
       {
          var errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
 

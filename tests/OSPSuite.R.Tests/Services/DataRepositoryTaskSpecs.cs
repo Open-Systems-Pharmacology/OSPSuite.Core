@@ -77,7 +77,7 @@ namespace OSPSuite.R.Services
       public void should_create_error_column()
       {
          var col = _loadedRepository.ObservationColumns().First();
-         var errorColumn = sut.AddErrorColumn(col);
+         var errorColumn = sut.AddErrorColumn(col, "yError", AuxiliaryType.ArithmeticStdDev.ToString());
          errorColumn.Name.ShouldBeEqualTo("yError");
          errorColumn.Dimension.ShouldBeEqualTo(col.Dimension);
          errorColumn.BaseGrid.ShouldBeEqualTo(_loadedRepository.BaseGrid);
@@ -92,7 +92,7 @@ namespace OSPSuite.R.Services
       {
          var col = _loadedRepository.ObservationColumns().First();
          var name = new ShortGuid().ToString();
-         var errorColumn = sut.AddErrorColumn(col, name);
+         var errorColumn = sut.AddErrorColumn(col, name, AuxiliaryType.ArithmeticStdDev.ToString());
          errorColumn.Name.ShouldBeEqualTo(name);
          errorColumn.Dimension.ShouldBeEqualTo(col.Dimension);
          errorColumn.BaseGrid.ShouldBeEqualTo(_loadedRepository.BaseGrid);
@@ -114,7 +114,7 @@ namespace OSPSuite.R.Services
       public void should_get_error_column()
       {
          var col = _loadedRepository.ObservationColumns().First();
-         var errorColumn = sut.AddErrorColumn(col);
+         var errorColumn = sut.AddErrorColumn(col, "", AuxiliaryType.ArithmeticStdDev.ToString());
          sut.GetErrorColumn(col).ShouldBeEqualTo(errorColumn);
       }
 
