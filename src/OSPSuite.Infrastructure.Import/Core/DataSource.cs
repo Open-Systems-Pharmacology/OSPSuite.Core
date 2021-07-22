@@ -29,8 +29,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      bool ValidateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos);
-      void ValidateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos);
+      void ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -140,7 +139,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return null;
       }
 
-      public bool ValidateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
+      private void validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
@@ -153,11 +152,11 @@ namespace OSPSuite.Infrastructure.Import.Core
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
+                     if (errorColumn.Key == null)
+                        continue;
+
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
                         throw new OSPSuiteException(Error.MismatchingArrayLengths);
-
-                     if (errorColumn.Key == null)
-                        return true;
 
                      var errorDimension = errorColumn.Key.Column.Dimension;
                      var measurementDimension = measurementColumn.Key.Column.Dimension;
@@ -169,12 +168,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                            if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
                               continue;
 
-                           var temp1 = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit));
-                           var temp2 = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit));
-
                            if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
                                column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
-                              return false;
+                              throw new ErrorUnitException();
                         }
                      }
                      else
@@ -184,16 +180,14 @@ namespace OSPSuite.Infrastructure.Import.Core
                            continue;
 
                         if (measurementDimension != errorDimension)
-                           return false;
+                           throw new ErrorUnitException();
                      }
                   }
                }
             }
          }
-
-         return true;
       }
-      public void ValidateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
+      private void validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var columnInfo in columnInfos)
          {
@@ -202,6 +196,9 @@ namespace OSPSuite.Infrastructure.Import.Core
                foreach (var set in dataSet.Data)
                {
                   var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
+
+                  if (column.Key == null)
+                        continue;
 
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
@@ -223,6 +220,12 @@ namespace OSPSuite.Infrastructure.Import.Core
                }
             }
          }
+      }
+
+      void IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         validateUnitsSupportedAndSameDimension(columnInfos);
+         validateErrorAgainstMeasurement(columnInfos);
       }
    }
 

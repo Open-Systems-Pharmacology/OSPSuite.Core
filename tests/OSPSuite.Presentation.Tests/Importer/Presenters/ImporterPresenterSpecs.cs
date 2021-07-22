@@ -299,7 +299,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _dataSource.ValidateErrorAgainstMeasurement(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(true);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
@@ -323,7 +322,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         A.CallTo(() => _dataSource.ValidateErrorAgainstMeasurement(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(true);
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -340,7 +338,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         A.CallTo(() => _dataSource.ValidateErrorAgainstMeasurement(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(false);
+         A.CallTo(() => _dataSource.ValidateDataSourceUnits(A<IReadOnlyList<ColumnInfo>>.Ignored)).Throws<ErrorUnitException>();
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });

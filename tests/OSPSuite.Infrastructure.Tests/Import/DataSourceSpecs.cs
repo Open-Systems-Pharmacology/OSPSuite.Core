@@ -279,7 +279,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void geometric_error_does_not_check_units()
       {
-         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeTrue();
+         sut.ValidateDataSourceUnits(_columnInfos);
       }
    }
 
@@ -402,7 +402,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeTrue();
+         sut.ValidateDataSourceUnits(_columnInfos);
       }
 
    }
@@ -524,9 +524,9 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
-      public void should_be_valid()
+      public void should_not_be_valid()
       {
-         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeFalse();
+         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
       }
    }
 
@@ -617,7 +617,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         sut.ValidateErrorAgainstMeasurement(_columnInfos).ShouldBeFalse();
+         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<ErrorUnitException>();
       }
    }
 
@@ -691,7 +691,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         The.Action(() => sut.ValidateUnitsSupportedAndSameDimension(_columnInfos)).ShouldThrowAn<InconsistentDimensionBetweenUnitsException>();
+         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InconsistentDimensionBetweenUnitsException>();
       }
    }
 
@@ -765,7 +765,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         The.Action(() => sut.ValidateUnitsSupportedAndSameDimension(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
+         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
       }
    }
 }

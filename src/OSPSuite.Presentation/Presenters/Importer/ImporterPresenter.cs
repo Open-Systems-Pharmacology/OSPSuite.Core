@@ -199,9 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         dataSource.ValidateUnitsSupportedAndSameDimension(_columnInfos);
-         if (!dataSource.ValidateErrorAgainstMeasurement(_columnInfos))
-            throw new ErrorUnitException();
+         dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
