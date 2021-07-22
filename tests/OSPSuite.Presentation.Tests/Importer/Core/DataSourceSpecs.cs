@@ -187,27 +187,7 @@ namespace OSPSuite.Presentation.Importer.Core
                   },
                   ColumnInfo = _columnInfos[0]
                },
-               new List<SimulationPoint>()
-               {
-                  new SimulationPoint()
-                  {
-                     Unit = "s",
-                     Measurement = 0,
-                     Lloq = double.NaN
-                  },
-                  new SimulationPoint()
-                  {
-                     Unit = "s",
-                     Measurement = 1,
-                     Lloq = double.NaN
-                  },
-                  new SimulationPoint()
-                  {
-                     Unit = "s",
-                     Measurement = 2,
-                     Lloq = double.NaN
-                  }
-               }
+               new List<SimulationPoint>() { }
             },
             {
                new ExtendedColumn()
