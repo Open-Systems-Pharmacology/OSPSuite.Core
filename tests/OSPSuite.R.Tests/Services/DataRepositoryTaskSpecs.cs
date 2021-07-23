@@ -103,6 +103,20 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_error_column_with_geometric_error()
+      {
+         var col = _loadedRepository.ObservationColumns().First();
+         var name = new ShortGuid().ToString();
+         var errorColumn = sut.AddErrorColumn(col, name, AuxiliaryType.GeometricStdDev.ToString());
+         errorColumn.Name.ShouldBeEqualTo(name);
+         errorColumn.Dimension.ShouldBeEqualTo(Api.GetDimensionTask().DimensionByName("Dimensionless"));
+         errorColumn.BaseGrid.ShouldBeEqualTo(_loadedRepository.BaseGrid);
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
+         errorColumn.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.ObservationAuxiliary);
+         col.RelatedColumns.ShouldContain(errorColumn);
+      }
+
+      [Observation]
       public void should_throw_on_bad_error_type()
       {
          var col = _loadedRepository.ObservationColumns().First();

@@ -20,10 +20,12 @@ namespace OSPSuite.R.Services
    public class DataRepositoryTask : IDataRepositoryTask
    {
       private readonly IPKMLPersistor _pkmlPersistor;
+      private readonly IDimensionTask _dimensionTask;
 
-      public DataRepositoryTask(IPKMLPersistor pkmlPersistor)
+      public DataRepositoryTask(IPKMLPersistor pkmlPersistor, IDimensionTask dimensionTask)
       {
          _pkmlPersistor = pkmlPersistor;
+         _dimensionTask = dimensionTask;
       }
 
       public DataRepository LoadDataRepository(string fileName)
@@ -49,17 +51,28 @@ namespace OSPSuite.R.Services
 
       public DataColumn AddErrorColumn(DataColumn column, string name, string errorType)
       {
-         var errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
-
          if (string.IsNullOrEmpty(errorType))
             errorType = AuxiliaryType.ArithmeticStdDev.ToString();
 
          AuxiliaryType auxiliaryType;
          if (!Enum.TryParse(errorType, out auxiliaryType))
             throw new OSPSuiteException(Error.InvalidAuxiliaryType);
-            
+
+         DataColumn errorColumn = null;
+         switch (auxiliaryType)
+         {
+            case AuxiliaryType.ArithmeticStdDev:
+               errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
+               errorColumn.DisplayUnit = column.DisplayUnit;
+               break;
+            case AuxiliaryType.GeometricStdDev:
+               errorColumn = new DataColumn(name, _dimensionTask.DimensionByName("Dimensionless"), column.BaseGrid);
+               break;
+            default:
+               throw new OSPSuiteException(Error.InvalidAuxiliaryType);
+         }
+         
          errorColumn.DataInfo.AuxiliaryType = auxiliaryType;
-         errorColumn.DisplayUnit = column.DisplayUnit;
          errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
          column.AddRelatedColumn(errorColumn);
 	      return errorColumn;
