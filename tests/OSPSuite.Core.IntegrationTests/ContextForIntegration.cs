@@ -18,7 +18,13 @@ using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataFormat;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
+using OSPSuite.UI.Services;
+using OSPSuite.Presentation.Core;
+using OSPSuite.Infrastructure.Import.Core.Mappers;
 
 namespace OSPSuite.Core
 {
@@ -40,6 +46,15 @@ namespace OSPSuite.Core
          container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);
          container.Register<IDataRepositoryTask, DataRepositoryTask>();
+         container.Register<IImporter, Importer>();
+         container.Register<IDataSourceFileParser, DataSourceFileParser>();
+         container.Register<ICsvDataSourceFile, CsvDataSourceFile>();
+         container.Register<IImportLogger, ImportLogger>();
+         container.Register<ICsvSeparatorSelector, CsvSeparatorSelector>();
+         container.Register<IExcelDataSourceFile, ExcelDataSourceFile>();
+         container.Register<IDataSetToDataRepositoryMapper, DataSetToDataRepositoryMapper>();
+         container.Register<IDataFormat, MixColumnsDataFormat>();
+
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
@@ -47,6 +62,7 @@ namespace OSPSuite.Core
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
 
+         container.RegisterImplementationOf(A.Fake<IApplicationController>());
          container.RegisterImplementationOf(A.Fake<IObjectTypeResolver>());
          container.RegisterImplementationOf(A.Fake<IDisplayUnitRetriever>());
          container.RegisterImplementationOf(A.Fake<IOSPSuiteExecutionContext>());

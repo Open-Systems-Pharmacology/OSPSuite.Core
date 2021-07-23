@@ -29,10 +29,20 @@
     <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core.IntegrationTests\OSPSuite.Core.IntegrationTests.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\integrationSample1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSample1.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleMissingMapping.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\sample2.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

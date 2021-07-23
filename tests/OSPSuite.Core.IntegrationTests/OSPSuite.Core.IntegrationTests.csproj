@@ -49,7 +49,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 
