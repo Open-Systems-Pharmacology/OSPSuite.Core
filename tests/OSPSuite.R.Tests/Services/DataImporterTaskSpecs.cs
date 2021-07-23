@@ -44,6 +44,12 @@ namespace OSPSuite.R.Services
          sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
 
+      [Observation]
+      public void should_throw_on_invalid_file_type()
+      {
+         The.Action(() => sut.ImportXslxFromConfiguration(sut.CreateConfiguration(), getFileFullName("simple.pkml")).Count.ShouldBeEqualTo(0)).ShouldThrowAn<OSPSuiteException>();
+      }
+
 
       [Observation]
       public void should_import_simple_data_from_csv()
