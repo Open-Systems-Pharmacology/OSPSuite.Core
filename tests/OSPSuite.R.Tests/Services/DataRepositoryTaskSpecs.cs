@@ -109,7 +109,7 @@ namespace OSPSuite.R.Services
          var name = new ShortGuid().ToString();
          var errorColumn = sut.AddErrorColumn(col, name, AuxiliaryType.GeometricStdDev.ToString());
          errorColumn.Name.ShouldBeEqualTo(name);
-         errorColumn.Dimension.ShouldBeEqualTo(Api.GetDimensionTask().DimensionByName("Fraction"));
+         errorColumn.Dimension.ShouldBeEqualTo(Api.GetDimensionTask().DimensionByName("Dimensionless"));
          errorColumn.BaseGrid.ShouldBeEqualTo(_loadedRepository.BaseGrid);
          errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
          errorColumn.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.ObservationAuxiliary);

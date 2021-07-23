@@ -66,7 +66,7 @@ namespace OSPSuite.R.Services
                errorColumn.DisplayUnit = column.DisplayUnit;
                break;
             case AuxiliaryType.GeometricStdDev:
-               errorColumn = new DataColumn(name, _dimensionTask.DimensionByName("Fraction"), column.BaseGrid);
+               errorColumn = new DataColumn(name, _dimensionTask.DimensionByName("Dimensionless"), column.BaseGrid);
                break;
             default:
                throw new OSPSuiteException(Error.InvalidAuxiliaryType);
