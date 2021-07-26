@@ -150,7 +150,7 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_create_error_column()
+      public void should_create_meta_data()
       {
          sut.AddMetaData(_dataRepository, "meta_data", "value");
          _dataRepository.ExtendedPropertyValueFor("meta_data").ShouldBeEqualTo("value");
