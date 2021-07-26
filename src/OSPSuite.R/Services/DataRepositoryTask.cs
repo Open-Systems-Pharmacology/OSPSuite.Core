@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Exceptions;
@@ -15,6 +16,8 @@ namespace OSPSuite.R.Services
       DataColumn GetErrorColumn(DataColumn column);
 
       DataColumn AddErrorColumn(DataColumn column, string name, string errorType);
+
+      void AddMetaData(DataRepository dataRepository, string key, string value);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask
@@ -76,6 +79,11 @@ namespace OSPSuite.R.Services
          errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
          column.AddRelatedColumn(errorColumn);
 	      return errorColumn;
+      }
+
+      public void AddMetaData(DataRepository dataRepository, string key, string value)
+      {
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = key, Value = value });
       }
    }
 }
