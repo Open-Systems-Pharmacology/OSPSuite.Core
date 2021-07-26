@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       /// <summary>
       ///    List of possible supported dimensions.This List may be empty if all dimensions are supported
       /// </summary>
-      public IList<IDimension> SupportedDimensions { get; }
+      public List<IDimension> SupportedDimensions { get;}
 
       public IDimension DefaultDimension { get; set; }
       public IList<MetaDataCategory> MetaDataCategories { get; }

@@ -26,7 +26,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return lloqKey;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, List<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)

@@ -25,7 +25,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return null;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, List<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
          var units = Regex.Match(description, @"\[.+\]").Value;
          if (string.IsNullOrEmpty(units))

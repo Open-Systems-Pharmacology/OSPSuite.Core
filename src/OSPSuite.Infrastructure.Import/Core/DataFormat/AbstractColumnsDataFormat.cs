@@ -71,7 +71,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
 
-      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, List<IDimension> supportedDimensions,  ref double rank);
+      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions,  ref double rank);
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
@@ -82,7 +82,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, data, keys, header.SupportedDimensions.ToList(), ref rank);
+               var units = ExtractUnits(headerKey, data, keys, header.SupportedDimensions, ref rank);
 
                var col = new Column()
                {
@@ -124,7 +124,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, data, keys, columnInfos.First(ci => ci.DisplayName == header).SupportedDimensions.ToList(),  ref rank);
+            var units = ExtractUnits(headerKey, data, keys, columnInfos.First(ci => ci.DisplayName == header).SupportedDimensions,  ref rank);
 
             var col = new Column()
             {
