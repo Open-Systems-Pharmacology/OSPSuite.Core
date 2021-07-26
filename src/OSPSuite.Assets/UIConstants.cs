@@ -2347,7 +2347,7 @@ namespace OSPSuite.Assets
       /// <summary>
       ///    Color used for a plot back color (everything but diagram)
       /// </summary>
-      public static Color ChartBack = Color.Transparent;
+      public static Color ChartBack = Color.White;
 
       /// <summary>
       ///    Color used for a diagram back color
