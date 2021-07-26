@@ -138,4 +138,22 @@ namespace OSPSuite.R.Services
          FileHelper.DeleteFile(_dataRepositoryFile);
       }
    }
+
+   public class When_adding_metadata : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData("TOTO", _dimensionTask.DimensionByName(Constants.Dimension.TIME), _dimensionTask.DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION));
+      }
+
+      [Observation]
+      public void should_create_meta_data()
+      {
+         sut.AddMetaData(_dataRepository, "meta_data", "value");
+         _dataRepository.ExtendedPropertyValueFor("meta_data").ShouldBeEqualTo("value");
+      }
+   }
 }
