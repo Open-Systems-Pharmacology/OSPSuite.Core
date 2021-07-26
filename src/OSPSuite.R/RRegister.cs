@@ -32,6 +32,7 @@ namespace OSPSuite.R
 
             // This will be registered as singleton
             scan.ExcludeType<RGroupRepository>();
+            scan.ExcludeType<CsvSeparatorSelector>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
