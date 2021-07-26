@@ -44,7 +44,7 @@ namespace OSPSuite.R
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
          container.Register<IOSPSuiteLogger, RLogger, RLogger>(LifeStyle.Singleton);
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
-         container.Register<ICsvSeparatorSelector, CsvSeparatorSelector>(LifeStyle.Singleton);
+         container.Register<ICsvDynamicSeparatorSelector, ICsvSeparatorSelector, CsvSeparatorSelector>(LifeStyle.Singleton);
       }
    }
 }

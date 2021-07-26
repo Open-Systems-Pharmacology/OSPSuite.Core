@@ -38,7 +38,7 @@ namespace OSPSuite.R.Services
       public DataImporterTask(
          IDataImporter dataImporter, 
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         ICsvSeparatorSelector csvSeparatorSelector,
+         ICsvDynamicSeparatorSelector csvSeparatorSelector,
          IDimensionFactory dimensionFactory, 
          IContainer container
       )
@@ -56,7 +56,7 @@ namespace OSPSuite.R.Services
          //Should actually ask for ICsvDynamicSeparatorSelector as a dependency but I do not currently know
          //how to serve two interfaces with the same singleton. If there is no way to do it with the current
          //implementation, then we need to extend but first I need to check if there is no support for it.
-         _csvSeparatorSelector = csvSeparatorSelector as ICsvDynamicSeparatorSelector;
+         _csvSeparatorSelector = csvSeparatorSelector;
       }
 
       public bool IgnoreSheetNamesAtImport {
