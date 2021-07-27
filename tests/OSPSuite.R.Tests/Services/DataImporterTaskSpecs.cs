@@ -104,6 +104,30 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_configuration_with_correct_units_from_data_1()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample_header_units_test_1.xlsx"));
+         configuration.Parameters[0].ColumnName.ShouldBeEqualTo("[min] Time [h]");
+         configuration.Parameters[1].ColumnName.ShouldBeEqualTo("conc [mol/l] [mg/l]");
+         configuration.Parameters[2].ColumnName.ShouldBeEqualTo("[mg/l]SD ");
+         (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("h");
+         (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
+         (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("?");
+      }
+
+      [Observation]
+      public void should_create_configuration_with_correct_units_from_data_2()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample_header_units_test_2.xlsx"));
+         configuration.Parameters[0].ColumnName.ShouldBeEqualTo("[Time after dose] [h]");
+         configuration.Parameters[1].ColumnName.ShouldBeEqualTo("conc mg/l");
+         configuration.Parameters[2].ColumnName.ShouldBeEqualTo("SD [semester]");
+         (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("h");
+         (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("?");
+         (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("?");
+      }
+
+      [Observation]
       public void should_save_configuration()
       {
          var tempFileName = FileHelper.GenerateTemporaryFileName();
