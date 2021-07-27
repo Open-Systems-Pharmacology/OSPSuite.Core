@@ -26,7 +26,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
       {
-         var units = Regex.Match(description, @"\[.+\]").Value;
+         var units = Regex.Match(description, @"\[([^\]\[]*)\]$").Value;
          if (string.IsNullOrEmpty(units))
             return new UnitDescription();
          var unit = units
