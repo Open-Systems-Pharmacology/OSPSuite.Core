@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IDimensionFactory dimensionFactory
       ) : base(view)
       {
-         _importer = importer;
+         _importer = importer; 
          _dimensionFactory = dimensionFactory;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
@@ -223,12 +223,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter) model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), _mappingParameterEditorPresenter.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
          }
          else
          {
-            column.Unit = _mappingParameterEditorPresenter.Unit;
+            column.Unit = _mappingParameterEditorPresenter.Unit;  
             column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
 

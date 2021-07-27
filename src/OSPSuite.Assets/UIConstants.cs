@@ -1294,6 +1294,7 @@ namespace OSPSuite.Assets
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+      public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with folowwing empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
       public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
 
@@ -1434,6 +1435,7 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
+      public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
 
       public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
 
@@ -2349,7 +2351,7 @@ namespace OSPSuite.Assets
       /// <summary>
       ///    Color used for a plot back color (everything but diagram)
       /// </summary>
-      public static Color ChartBack = Color.Transparent;
+      public static Color ChartBack = Color.White;
 
       /// <summary>
       ///    Color used for a diagram back color

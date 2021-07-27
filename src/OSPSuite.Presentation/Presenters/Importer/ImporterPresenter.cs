@@ -182,7 +182,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                var eMessage = e.Message;
                //ToDo: here this if with all those cases should be refactored. probably not for v10.
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException 
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is EmptyDataSetsException
                       || e is InvalidDimensionException || e is InconsistentDimensionBetweenUnitsException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
