@@ -1,9 +1,9 @@
-﻿using OSPSuite.Assets;
+﻿using System;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Exceptions;
-using System;
 
 namespace OSPSuite.R.Services
 {
@@ -23,12 +23,10 @@ namespace OSPSuite.R.Services
    public class DataRepositoryTask : IDataRepositoryTask
    {
       private readonly IPKMLPersistor _pkmlPersistor;
-      private readonly IDimensionTask _dimensionTask;
 
-      public DataRepositoryTask(IPKMLPersistor pkmlPersistor, IDimensionTask dimensionTask)
+      public DataRepositoryTask(IPKMLPersistor pkmlPersistor)
       {
          _pkmlPersistor = pkmlPersistor;
-         _dimensionTask = dimensionTask;
       }
 
       public DataRepository LoadDataRepository(string fileName)
@@ -54,36 +52,31 @@ namespace OSPSuite.R.Services
 
       public DataColumn AddErrorColumn(DataColumn column, string name, string errorType)
       {
-         if (string.IsNullOrEmpty(errorType))
-            errorType = AuxiliaryType.ArithmeticStdDev.ToString();
-
-         AuxiliaryType auxiliaryType;
-         if (!Enum.TryParse(errorType, out auxiliaryType))
+         if (!Enum.TryParse(errorType, out AuxiliaryType auxiliaryType))
             throw new OSPSuiteException(Error.InvalidAuxiliaryType);
 
-         DataColumn errorColumn = null;
+         DataColumn errorColumn;
          switch (auxiliaryType)
          {
             case AuxiliaryType.ArithmeticStdDev:
-               errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
-               errorColumn.DisplayUnit = column.DisplayUnit;
+               errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid) {DisplayUnit = column.DisplayUnit};
                break;
             case AuxiliaryType.GeometricStdDev:
-               errorColumn = new DataColumn(name, _dimensionTask.DimensionByName("Dimensionless"), column.BaseGrid);
+               errorColumn = new DataColumn(name, Constants.Dimension.NO_DIMENSION, column.BaseGrid);
                break;
             default:
                throw new OSPSuiteException(Error.InvalidAuxiliaryType);
          }
-         
+
          errorColumn.DataInfo.AuxiliaryType = auxiliaryType;
          errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
          column.AddRelatedColumn(errorColumn);
-	      return errorColumn;
+         return errorColumn;
       }
 
       public void AddMetaData(DataRepository dataRepository, string key, string value)
       {
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = key, Value = value });
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = key, Value = value});
       }
    }
 }

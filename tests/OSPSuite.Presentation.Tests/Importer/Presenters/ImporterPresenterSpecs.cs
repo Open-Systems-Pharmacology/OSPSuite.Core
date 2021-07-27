@@ -1,6 +1,10 @@
-﻿using FakeItEasy;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -13,10 +17,7 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using OSPSuite.BDDHelper.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Importer.Presenters
@@ -34,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         Utility.Container.IContainer container,
+         IContainer container,
          IDataSource dataSource
       ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, modelingXmlSerializerRepository, container)
       {
@@ -58,7 +59,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected ISourceFilePresenter _sourceFilePresenter;
       protected IDialogCreator _dialogCreator;
       protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
-      protected Utility.Container.IContainer _container;
+      protected IContainer _container;
       protected IDataSourceFile _dataSourceFile;
       protected ImporterConfiguration _importerConfiguration;
 
@@ -76,9 +77,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = A.Fake<IDataSource>();
          A.CallTo(() => _dataSource.DataSets).Returns(cache);
          cache.Add("sheet1", dataSet);
-         var dataRepository = new DataRepository { Name = "name" };
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Molecule", Value = "Molecule1" });
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Mol weight", Value = 22.0.ToString() });
+         var dataRepository = new DataRepository {Name = "name"};
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = "Molecule", Value = "Molecule1"});
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = "Mol weight", Value = 22.0.ToString()});
 
          var dataColumn = new BaseGrid("Time", A.Fake<IDimension>());
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
@@ -116,7 +117,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sourceFilePresenter = A.Fake<ISourceFilePresenter>();
          _dialogCreator = A.Fake<IDialogCreator>();
          _ospSuiteXmlSerializerRepository = A.Fake<IOSPSuiteXmlSerializerRepository>();
-         _container = A.Fake<Utility.Container.IContainer>();
+         _container = A.Fake<IContainer>();
          sut = new ImporterPresenterForTest(
             _importerView,
             _mapper,
@@ -258,7 +259,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.Parameters).Returns(Enumerable.Empty<DataFormatParameter>().ToList());
-         _args = new FormatChangedEventArgs() { Format = dataFormat };
+         _args = new FormatChangedEventArgs() {Format = dataFormat};
       }
 
       protected override void Because()
@@ -280,7 +281,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _args = new TabChangedEventArgs() { TabData = new UnformattedData() };
+         _args = new TabChangedEventArgs() {TabData = new UnformattedData()};
       }
 
       protected override void Because()
@@ -304,7 +305,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -344,7 +345,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _dataSource.ValidateDataSourceUnits(A<IReadOnlyList<ColumnInfo>>.Ignored)).Throws<ErrorUnitException>();
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -395,6 +396,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_setting_empty_source_file : concern_for_ImporterPresenter
    {
       protected string path = "path";
+
       protected override void Context()
       {
          base.Context();
@@ -439,8 +441,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
       }
 
       [Observation]
@@ -448,9 +449,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          //id1 should be filtered from the mappings since it has null in the columnName
          A.CallTo(() => _dataSource.SetMappings
-         (
-            A<string>.Ignored, 
-            A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
+            (
+               A<string>.Ignored,
+               A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
          ).MustHaveHappened();
       }
    }
