@@ -28,10 +28,7 @@ namespace OSPSuite.Core.Domain.Data
       protected List<float> _values;
       public IDimension Dimension { get; set; }
 
-      public bool ColumnValueIsBelowLLOQ(int rowIndex)
-      {
-         return rowIndex < Values.Count && DataInfo.LLOQ != null && this[rowIndex] < DataInfo.LLOQ.Value;
-      }
+      internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
 
       /// <summary>
       ///    Indicates whether the column should be displayed by default or is use for internal use only
@@ -59,6 +56,11 @@ namespace OSPSuite.Core.Domain.Data
          var defaultUnitName = dimension != null ? dimension.DefaultUnitName : string.Empty;
          DataInfo = new DataInfo(ColumnOrigins.Undefined) {DisplayUnitName = defaultUnitName};
          IsInternal = false;
+      }
+
+      public bool ColumnValueIsBelowLLOQ(int rowIndex)
+      {
+         return rowIndex < Values.Count && DataInfo.LLOQ != null && this[rowIndex] < DataInfo.LLOQ.Value;
       }
 
       public DataRepository Repository
@@ -225,8 +227,6 @@ namespace OSPSuite.Core.Domain.Data
                 (Values[rightIndex] - Values[leftIndex]) * (baseValue - BaseGrid[leftIndex]) /
                 (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
       }
-
-      internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
 
       public override string ToString() => Name;
 
