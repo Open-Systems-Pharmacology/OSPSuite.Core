@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -108,6 +109,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                missingKeys.Add(headerName);
             }
          }
+      }
+
+      protected string GetUnitInLastBracketsFromString(string header)
+      {
+         var resultWithBrackets = Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
+         return resultWithBrackets.Trim().Substring(1, resultWithBrackets.Length - 2).Trim(); //remove the brackets and whitespaces from end and beginning
+      }
+      protected string GetAndValidateUnitFromString(string units, IReadOnlyList<IDimension> supportedDimensions)
+      {
+         return units
+            .Split(',') //we split in case there are more than one units separated with ,
+            //only accepts valid and supported units
+            .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string)unitName))) ?? UnitDescription.InvalidUnit;     //default = ?
       }
 
       protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
