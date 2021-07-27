@@ -180,15 +180,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          catch (Exception e)
          {
             {
-               var eMessage = e.Message;
-               //ToDo: here this if with all those cases should be refactored. probably not for v10.
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is EmptyDataSetsException
-                      || e is InvalidDimensionException || e is InconsistentDimensionBetweenUnitsException))
-               {
-                  eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
-               }
+               _dialogCreator.MessageBoxError
+               (
+                  e is AbstractImporterExceptions ? 
+                  e.Message : 
+                  Captions.Importer.UnexpectedExceptionWhenLoading
+               );
                
-               _dialogCreator.MessageBoxError(eMessage);
                foreach (var sheetName in args.Sheets.Keys)
                {
                   _importerDataPresenter.Sheets.Remove(sheetName);

@@ -3,7 +3,7 @@ using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class PossibleUnsupportedSheetFormatException : OSPSuiteException
+   public class PossibleUnsupportedSheetFormatException : AbstractImporterExceptions
    {
       public PossibleUnsupportedSheetFormatException( string sheetName) : base(Error.PossibleUnsupportedSheetFormatException(sheetName))
       {
