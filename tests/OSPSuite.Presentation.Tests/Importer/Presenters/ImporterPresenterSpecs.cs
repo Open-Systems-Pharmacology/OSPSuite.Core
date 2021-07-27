@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.BDDHelper.Extensions;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Importer.Presenters
 {
@@ -59,6 +60,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
       protected Utility.Container.IContainer _container;
       protected IDataSourceFile _dataSourceFile;
+      protected ImporterConfiguration _importerConfiguration;
 
       protected override void Context()
       {
@@ -128,7 +130,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _ospSuiteXmlSerializerRepository,
             _container,
             _dataSource);
-         sut.LoadConfiguration(A.Fake<OSPSuite.Core.Import.ImporterConfiguration>(), "");
+         _importerConfiguration = A.Fake<ImporterConfiguration>();
+         sut.LoadConfiguration(_importerConfiguration, "");
          sut.SetSettings(_metaDataCategories, new List<ColumnInfo>(), _dataImporterSettings);
       }
 
@@ -413,6 +416,34 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void must_validate_mapping()
       {
          A.CallTo(() => _columnMappingPresenter.ValidateMapping()).MustHaveHappened();
+      }
+   }
+
+   public class When_loading_configuration : concern_for_ImporterPresenter
+   {
+
+      protected override void Because()
+      {
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", A.Fake<DataSheet>());
+         var dataFormat = A.Fake<IDataFormat>();
+         A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>()
+         {
+            new MetaDataFormatParameter(null, "id1", false),
+            new MetaDataFormatParameter("value", "id2", false)
+         });
+         A.CallTo(() => _dataSourceFile.Format).Returns(dataFormat);
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+      }
+
+      [Observation]
+      public void must_filter_empty_mappings()
+      {
+         A.CallTo(() => _dataSource.SetMappings
+         (
+            A<string>.Ignored, 
+            A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.Count() == 1 && c.ElementAt(0).Id == "id2"))
+         ).MustHaveHappened();
       }
    }
 }
