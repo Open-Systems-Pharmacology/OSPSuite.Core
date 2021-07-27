@@ -421,11 +421,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_loading_configuration : concern_for_ImporterPresenter
    {
+      private Cache<string, DataSheet> _sheets;
 
-      protected override void Because()
+      protected override void Context()
       {
-         var sheets = new Cache<string, DataSheet>();
-         sheets.Add("sheet1", A.Fake<DataSheet>());
+         base.Context();
+         _sheets = new Cache<string, DataSheet>();
+         _sheets.Add("sheet1", A.Fake<DataSheet>());
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.Parameters).Returns(new List<DataFormatParameter>()
          {
@@ -433,12 +435,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new MetaDataFormatParameter("value", "id2", false)
          });
          A.CallTo(() => _dataSourceFile.Format).Returns(dataFormat);
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = sheets });
+      }
+
+      protected override void Because()
+      {
+         
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() { Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets });
       }
 
       [Observation]
       public void must_filter_empty_mappings()
       {
+         //id1 should be filtered from the mappings since it has null in the columnName
          A.CallTo(() => _dataSource.SetMappings
          (
             A<string>.Ignored, 
