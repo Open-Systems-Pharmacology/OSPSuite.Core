@@ -218,6 +218,7 @@ namespace OSPSuite.Infrastructure.Import
          A.CallTo(() => otherDimension.Name).Returns("mol");
          A.CallTo(() => _dimensionFactory.DimensionForUnit("")).Returns(fractionDimension);
          A.CallTo(() => _dimensionFactory.DimensionForUnit("mol")).Returns(otherDimension);
+         sut.DataSets.Clear();
          sut.DataSets.Add("sheet1", dataSet);
       }
 
