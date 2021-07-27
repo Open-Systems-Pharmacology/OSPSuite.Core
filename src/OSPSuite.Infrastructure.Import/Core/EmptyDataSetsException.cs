@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class EmptyDataSetsException : OSPSuiteException
+   public class EmptyDataSetsException : AbstractImporterExceptions
    {
       public EmptyDataSetsException(IEnumerable<string> dataSetNames) : base(Error.EmptyDataSet($"{string.Join(", ", dataSetNames)}"))
       {
