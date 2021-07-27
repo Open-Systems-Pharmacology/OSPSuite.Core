@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.Data.Filtering.Helpers;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -134,9 +135,27 @@ namespace OSPSuite.Presentation.Presenters.Importer
                continue;
             }
 
-            mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappingColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit ==  null)
+                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               else
+                  mappingColumn.Dimension = dimensionForUnit;
+            }
          }
       }
+
+      private IDimension selectDimensionThatHasUnit(IList<IDimension> dimensions, string unit)
+      {
+         return dimensions.FirstOrDefault(x => x.HasUnit(unit));
+      }
+
+
 
       public void InitializeErrorUnit()
       {

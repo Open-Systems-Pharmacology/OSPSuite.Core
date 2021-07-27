@@ -36,7 +36,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly Utility.Container.IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private ImporterConfiguration _configuration = new ImporterConfiguration();
-      private readonly IDimensionFactory _dimensionFactory;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
 
@@ -50,12 +49,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IDimensionFactory dimensionFactory,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
          Utility.Container.IContainer container
       ) : base(view)
       {
-         _dimensionFactory = dimensionFactory;
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
@@ -184,7 +181,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             {
                var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is EmptyDataSetsException))
+               //ToDo: here this if with all those cases should be refactored. probably not for v10.
+               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException || e is EmptyDataSetsException
+                      || e is InvalidDimensionException || e is InconsistentDimensionBetweenUnitsException))
                {
                   eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
                }
@@ -200,8 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void validateDataSource(IDataSource dataSource)
       {
-         if (!dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
-            throw new ErrorUnitException();
+         dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)

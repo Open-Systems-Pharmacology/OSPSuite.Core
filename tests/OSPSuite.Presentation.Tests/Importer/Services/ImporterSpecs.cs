@@ -11,8 +11,8 @@ using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Presentation.Importer.Services 
 {
@@ -41,10 +41,16 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected IDimension _fakedTimeDimension;
+      protected IDimension _fakedConcentrationDimension;
+      protected IDimension _fakedErrorDimension;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
+         _fakedTimeDimension = A.Fake<IDimension>();
+         _fakedConcentrationDimension = A.Fake<IDimension>();
+         _fakedErrorDimension = A.Fake<IDimension>();
          _basicFormat = A.Fake<UnformattedData>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
@@ -56,11 +62,18 @@ namespace OSPSuite.Presentation.Importer.Services
             new ColumnInfo() { DisplayName = "Error" }
          };
 
+         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+
          A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos, null)).Returns(1);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
+         A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
          sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper);
       }
    }
@@ -208,10 +221,16 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDialogCreator _dialogCreator;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected IDimension _fakedTimeDimension;
+      protected IDimension _fakedConcentrationDimension;
+      protected IDimension _fakedErrorDimension;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
+         _fakedTimeDimension = A.Fake<IDimension>();
+         _fakedConcentrationDimension = A.Fake<IDimension>();
+         _fakedErrorDimension = A.Fake<IDimension>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
          var dataFormat = A.Fake<IDataFormat>();
@@ -231,7 +250,15 @@ namespace OSPSuite.Presentation.Importer.Services
             new MetaDataCategory() {Name = "Route"}
          };
 
-         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat(new DimensionFactory()) });
+         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+
+         A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>()
+            {new DataFormatHeadersWithUnits(), new DataFormatNonmem(), new MixColumnsDataFormat()});
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
