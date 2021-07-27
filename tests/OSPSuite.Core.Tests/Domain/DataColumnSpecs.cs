@@ -204,7 +204,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void retrieving_value_as_array_for_a_column_not_initialized()
       {
-         sut.ValuesAsArray.ShouldBeEqualTo([]);
+         sut.ValuesAsArray.ShouldBeEqualTo(Array.Empty<double>());
       }
 
    }
