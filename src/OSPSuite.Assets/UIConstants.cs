@@ -1298,6 +1298,9 @@ namespace OSPSuite.Assets
 
       public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
 
+      public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
+      public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
+
       public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' seems to be in an unsupported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
 
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";

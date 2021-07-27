@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
@@ -17,15 +18,26 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected IDimension _fakedTimeDimension;
+      protected IDimension _fakedConcentrationDimension;
+      protected IDimension _fakedErrorDimension;
 
       protected override void Context()
       {
+         _fakedTimeDimension = A.Fake<IDimension>();
+         _fakedConcentrationDimension = A.Fake<IDimension>();
+         _fakedErrorDimension = A.Fake<IDimension>();
+
          _columnInfos = new List<ColumnInfo>()
          {
             new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
+
+         _columnInfos.First(x => x.Name == "Time").SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos.First(x => x.Name == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos.First(x => x.Name == "Error").SupportedDimensions.Add(_fakedErrorDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory() {Name = "Organ"},
@@ -35,6 +47,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new MetaDataCategory() {Name = "Molecule"},
             new MetaDataCategory() {Name = "Route"}
          };
+
+         A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
+         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
+         A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
          sut = new DataFormatHeadersWithUnits();
          _basicFormat = new TestUnformattedData
          (

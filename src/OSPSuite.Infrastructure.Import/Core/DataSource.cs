@@ -29,7 +29,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory);
+      void ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -149,8 +149,8 @@ namespace OSPSuite.Infrastructure.Import.Core
          return null;
       }
 
-      //TODO: test it!!!
-      public bool ValidateDataSource(IReadOnlyList<ColumnInfo> columnInfos, IDimensionFactory dimensionFactory)
+      //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
+      private void validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
       {
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
@@ -163,36 +163,86 @@ namespace OSPSuite.Infrastructure.Import.Core
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
 
+                     if (errorColumn.Key == null)
+                        continue;
+
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
                         throw new OSPSuiteException(Error.MismatchingArrayLengths);
 
-                     if (errorColumn.Key == null)
-                        return true;
+                     var errorDimension = errorColumn.Key.Column.Dimension;
+                     var measurementDimension = measurementColumn.Key.Column.Dimension;
 
-                     //this should probably change to smthng that caomes from the Dimension (errorColumn.Key.Column.Dimension)
-                     //also we should check why we are excluding the checking of all these dimensions underneath
-                     //hm...NOPE...here we could also have a different dimension for different values in the column..
-                     //so we should probably differentiate if the unit comes from a column or if it is a specific value
-                     var errorDimension = dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(0).Unit);
-                     if (errorDimension == Constants.Dimension.NO_DIMENSION
-                         || errorDimension == null 
-                         || errorDimension.Name == Constants.Dimension.FRACTION)
-                        continue;
-
-                     for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                     if (errorDimension == null)
                      {
-                        if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
+                        for (var i = 0; i < measurementColumn.Value.Count(); i++)
+                        {
+                           if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
+                              continue;
+
+                           if (column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit)) !=
+                               column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit)))
+                              throw new ErrorUnitException();
+                        }
+                     }
+                     else
+                     {
+                        //if the dimension of the error is dimensionless (fe for geometric standard deviation)
+                        //it is OK for it not to be of the smae dimension as the dimension of the measurement
+                        if (errorDimension == Constants.Dimension.NO_DIMENSION
+                            || errorDimension.Name == Constants.Dimension.FRACTION)
                            continue;
 
-                        if (dimensionFactory.DimensionForUnit(measurementColumn.Value.ElementAt(i).Unit) !=
-                            dimensionFactory.DimensionForUnit(errorColumn.Value.ElementAt(i).Unit))
-                           return false;
+                        if (measurementDimension != errorDimension)
+                           throw new ErrorUnitException();
                      }
                   }
                }
             }
          }
-         return true;
+      }
+      //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
+      //and also that they are all of the same dimension within every data set. 
+      private void validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         foreach (var columnInfo in columnInfos)
+         {
+            foreach (var dataSet in DataSets)
+            {
+               foreach (var set in dataSet.Data)
+               {
+                  var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
+
+                  if (column.Key == null)
+                        continue;
+
+                  //if unit comes from a column
+                  if (column.Key.Column.Dimension == null)
+                  {
+                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(column.Value.ElementAt(0).Unit));
+
+                     for (var i = 0; i < column.Value.Count(); i++)
+                     {
+                        if (double.IsNaN(column.Value.ElementAt(i).Measurement))
+                           continue;
+
+                        //if the unit specified does not belong to one of the supported dimensions of the mapping
+                        if (!columnInfo.SupportedDimensions.Any(x => x.HasUnit(column.Value.ElementAt(i).Unit)))
+                           throw new InvalidDimensionException(column.Value.ElementAt(i).Unit, columnInfo.DisplayName);
+
+                        //if the unit specified is not of the same dimension as the other units of the same data set
+                        if (columnInfo.SupportedDimensions.First(x => x.HasUnit(column.Value.ElementAt(i).Unit)) != dimensionOfFirstUnit)
+                           throw new InconsistentDimensionBetweenUnitsException(columnInfo.DisplayName);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      void IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         validateUnitsSupportedAndSameDimension(columnInfos);
+         validateErrorAgainstMeasurement(columnInfos);
       }
    }
 
