@@ -111,14 +111,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected string GetUnitInLastBracketsFromString(string header)
+      protected string GetLastBracketsOfString(string header)
       {
-         var resultWithBrackets = Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
-         return resultWithBrackets.Trim().Substring(1, resultWithBrackets.Length - 2).Trim(); //remove the brackets and whitespaces from end and beginning
+         return Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
       }
-      protected string GetAndValidateUnitFromString(string units, IReadOnlyList<IDimension> supportedDimensions)
+      protected string GetAndValidateUnitFromBrackets(string units, IReadOnlyList<IDimension> supportedDimensions)
       {
          return units
+            .Trim().Substring(1, units.Length - 2).Trim() //remove the brackets and whitespaces from end and beginning
             .Split(',') //we split in case there are more than one units separated with ,
             //only accepts valid and supported units
             .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string)unitName))) ?? UnitDescription.InvalidUnit;     //default = ?

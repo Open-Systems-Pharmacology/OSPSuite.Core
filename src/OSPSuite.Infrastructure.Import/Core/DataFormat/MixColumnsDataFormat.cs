@@ -33,11 +33,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       }
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         var units = GetUnitInLastBracketsFromString(description);
+         var units = GetLastBracketsOfString(description);
 
          if (!string.IsNullOrEmpty(units))
          {
-            var unit = GetAndValidateUnitFromString(units, supportedDimensions);
+            var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
             rank++;
             return new UnitDescription(unit);
          }
