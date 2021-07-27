@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import
 {
@@ -156,6 +157,78 @@ namespace OSPSuite.Infrastructure.Import
       }
    }
 
+   public class When_validating_empty_data_source : concern_for_DataSource
+   {
+      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected IDimensionFactory _dimensionFactory;
+
+      protected override void Context()
+      {
+         base.Context();
+         _columnInfos = new List<ColumnInfo>()  {
+            new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
+         };
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s")
+                  },
+                  ColumnInfo = _columnInfos[0]
+               },
+               new List<SimulationPoint>() { }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("mol")
+                  },
+                  ColumnInfo = _columnInfos[1]
+               },
+               new List<SimulationPoint>() { }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("")
+                  },
+                  ColumnInfo = _columnInfos[2]
+               },
+               new List<SimulationPoint>() { }
+            }
+         };
+         var dataSet = new DataSet();
+         dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dimensionFactory = A.Fake<IDimensionFactory>();
+         var fractionDimension = A.Fake<IDimension>();
+         A.CallTo(() => fractionDimension.Name).Returns(Constants.Dimension.FRACTION);
+         var otherDimension = A.Fake<IDimension>();
+         A.CallTo(() => otherDimension.Name).Returns("mol");
+         A.CallTo(() => _dimensionFactory.DimensionForUnit("")).Returns(fractionDimension);
+         A.CallTo(() => _dimensionFactory.DimensionForUnit("mol")).Returns(otherDimension);
+         sut.DataSets.Add("sheet1", dataSet);
+      }
+
+      [Observation]
+      public void throw_on_empty_dataset()
+      {
+         var sheets = new Cache<string, DataSheet>();
+         sheets.Add("sheet1", new DataSheet() { RawData = new UnformattedData() });
+         The.Action(() => sut.AddSheets(sheets, _columnInfos, "")).ShouldThrowAn<EmptyDataSetsException>();
+      }
+   }
    public class When_validating_geometric_error : concern_for_DataSource
    {
       private DataSet _dataSet;
