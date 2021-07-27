@@ -201,5 +201,11 @@ namespace OSPSuite.Core.Domain
          sut.ValuesAsArray.ShouldBeEqualTo(new[] {1d, 2d, 3d});
       }
 
+      [Observation]
+      public void retrieving_value_as_array_for_a_column_not_initialized()
+      {
+         sut.ValuesAsArray.ShouldBeEqualTo([]);
+      }
+
    }
 }
