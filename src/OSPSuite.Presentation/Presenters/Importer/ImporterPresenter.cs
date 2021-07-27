@@ -198,7 +198,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
             Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
