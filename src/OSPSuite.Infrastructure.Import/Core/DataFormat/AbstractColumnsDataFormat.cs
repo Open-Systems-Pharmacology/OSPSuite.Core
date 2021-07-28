@@ -44,8 +44,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var totalRank = 0.0;
          ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
-         ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
+         ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          setSecondaryColumnUnit(columnInfos);
          return totalRank;
       }
@@ -130,7 +130,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h =>
-                  //TODO: Only add this if we make a robust decision on what columns are numeric
                   data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
                   Parameters
                      .OfType<MappingDataFormatParameter>()
@@ -163,15 +162,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, IReadOnlyList<MetaDataCategory> metaDataCategories, ref double rank)
       {
-         var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
-         foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
+         var columnsCopy = keys.ToList();
+         foreach (var header in columnsCopy.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
             _parameters.Add(new MetaDataFormatParameter(header, header));
-         }
-         foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
-         {
-            keys.Remove(header);
          }
       }
 
