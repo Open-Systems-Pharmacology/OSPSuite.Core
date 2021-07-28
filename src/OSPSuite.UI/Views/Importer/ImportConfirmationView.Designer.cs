@@ -321,6 +321,7 @@ namespace OSPSuite.UI.Views.Importer
          this.dataPanelControl.Location = new System.Drawing.Point(720, 12);
          this.dataPanelControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.dataPanelControl.Name = "dataPanelControl";
+         this.dataPanelControl.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
          this.dataPanelControl.Size = new System.Drawing.Size(750, 332);
          this.dataPanelControl.TabIndex = 44;
          // 

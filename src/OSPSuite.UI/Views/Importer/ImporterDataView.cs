@@ -61,6 +61,7 @@ namespace OSPSuite.UI.Views.Importer
          var customButton = new CustomHeaderButton(ButtonPredefines.Combo) { ToolTip = "Select Page" };
          importerTabControl.CustomHeaderButtons.Add(customButton);
          importerTabControl.CustomHeaderButtonClick += onTabControlCustomHeaderButtonClick;
+         dataViewingGridView.OptionsView.ShowIndicator = false;
       }
 
       private void onTabControlCustomHeaderButtonClick(object sender, CustomHeaderButtonEventArgs e)
