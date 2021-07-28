@@ -35,9 +35,6 @@ namespace OSPSuite.UI.Views.Importer
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly RepositoryItemButtonEdit _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
 
-      private readonly RepositoryItemButtonEdit _addButtonRepository =
-         new UxRepositoryItemButtonImage(ApplicationIcons.Add, Captions.Importer.AddInformationDescription);
-
       private readonly RepositoryItemPopupContainerEdit _repositoryMappingPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly RepositoryItemPopupContainerEdit _repositoryMetaDataPopupContainerEdit = new RepositoryItemPopupContainerEdit();
       private readonly RepositoryItemPopupContainerEdit _disabledPopupContainerEdit = new RepositoryItemPopupContainerEdit();
@@ -225,9 +222,6 @@ namespace OSPSuite.UI.Views.Importer
 
       private RepositoryItem removeRepository(ColumnMappingDTO model)
       {
-         if (model.Source is AddGroupByFormatParameter)
-            return _addButtonRepository;
-
          return model.Source == null || model.Source is AddGroupByFormatParameter
             ? _disabledRemoveButtonRepository
             : _removeButtonRepository;

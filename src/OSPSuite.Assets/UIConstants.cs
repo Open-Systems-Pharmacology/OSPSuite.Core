@@ -411,6 +411,7 @@ namespace OSPSuite.Assets
          public static readonly string ApplyConfiguration = "Load configuration";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group By";
+         public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";

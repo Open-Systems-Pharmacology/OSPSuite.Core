@@ -103,7 +103,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             new ColumnMappingDTO(
                ColumnMappingDTO.ColumnType.AddGroupBy,
                Captions.Importer.AddGroupByTitle,
-               new AddGroupByFormatParameter(""),
+               new AddGroupByFormatParameter(Captions.Importer.SelectToAdd),
                _importer.GetImageIndex(new GroupByDataFormatParameter(""))
             )
          ).ToList();
@@ -440,6 +440,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             options.Add(new RowOptionDTO() {Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)});
          }
+
+         if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.AddGroupBy)
+            options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.Add) });
 
          options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
          var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);
