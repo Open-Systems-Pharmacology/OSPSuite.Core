@@ -64,7 +64,6 @@ namespace OSPSuite.Presentation.Services
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
          categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GROUP_ID));
 
          return categories;
       }
