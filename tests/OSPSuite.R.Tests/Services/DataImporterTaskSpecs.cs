@@ -6,6 +6,7 @@ using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace OSPSuite.R.Services
 {
@@ -101,6 +102,18 @@ namespace OSPSuite.R.Services
          (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
          (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
          sut.ImportXslxFromConfiguration(configuration, getFileFullName("sample1.xlsx")).ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_create_configuration_from_data_respecting_meta_data_columns()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("011.xlsx"));
+         configuration.Parameters.OfType<MappingDataFormatParameter>().Any(p => p.MappedColumn.Name == "Time" && p.ColumnName == "Time [min]").ShouldBeTrue();
+         configuration.Parameters.OfType<MappingDataFormatParameter>().Any(p => p.MappedColumn.Name == "Concentration" && p.ColumnName == "Measurement [mg/ml]").ShouldBeTrue();
+         configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Organ" && p.ColumnName == "Organ").ShouldBeTrue();
+         configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Study Id" && p.ColumnName == "Study Id").ShouldBeTrue();
+         configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Subject Id" && p.ColumnName == "Subject Id").ShouldBeTrue();
+
       }
 
       [Observation]

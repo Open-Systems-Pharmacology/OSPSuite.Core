@@ -61,6 +61,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\011.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\importerConfiguration1.csv.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
