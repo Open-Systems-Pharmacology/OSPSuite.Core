@@ -33,6 +33,7 @@ namespace OSPSuite.Presentation.Services
       protected IDimension _molarConcentrationDimension;
       protected IDimension _massConcentrationDimension;
       protected IDimension _timeConcentrationDimension;
+      protected IDimension _fractionConcentrationDimension;
 
       protected override void Context()
       {
@@ -47,6 +48,7 @@ namespace OSPSuite.Presentation.Services
          _molarConcentrationDimension = _dimensionFactory.Dimension("Concentration (molar)");
          _massConcentrationDimension = _dimensionFactory.Dimension("Concentration (mass)");
          _timeConcentrationDimension = _dimensionFactory.Dimension("Time");
+         _fractionConcentrationDimension = _dimensionFactory.Dimension("Fraction");
          _importerConfiguration = new ImporterConfiguration();
          _importerConfiguration.FileName = "IntegrationSample1.xlsx";
          _importerConfiguration.NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}";
@@ -106,6 +108,7 @@ namespace OSPSuite.Presentation.Services
 
          concentrationInfo.SupportedDimensions.Add(_molarConcentrationDimension);
          concentrationInfo.SupportedDimensions.Add(_massConcentrationDimension);
+         concentrationInfo.SupportedDimensions.Add(_fractionConcentrationDimension);
          return concentrationInfo;
       }
 
@@ -248,5 +251,41 @@ namespace OSPSuite.Presentation.Services
                "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
       }
    }
+
+   public class When_importing_with_inconsistent_units_in_column : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = new List<DataFormatParameter>
+         {
+            new MappingDataFormatParameter("time  [h]",
+               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
+            new MappingDataFormatParameter("conc  [mg/l]",
+               new Column()
+               {
+                  Name = "Concentration", Dimension = _timeConcentrationDimension, Unit = new UnitDescription("s")
+               }),
+            new MappingDataFormatParameter("SD [mg/l]",
+               new Column()
+               {
+                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
+                  Unit = new UnitDescription("mg/l")
+               }),
+            new MetaDataFormatParameter("VenousBlood", "Organ", false),
+            new MetaDataFormatParameter(null, "Molecule", false)
+         };
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_throw_exception()
+      {
+         The.Action(() =>
+            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
 }
 
