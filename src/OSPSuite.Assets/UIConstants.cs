@@ -410,7 +410,8 @@ namespace OSPSuite.Assets
          public static readonly string SaveConfiguration = "Save configuration";
          public static readonly string ApplyConfiguration = "Load configuration";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
-         public static readonly string GroupByTitle = "Group by";
+         public static readonly string GroupByTitle = "Group By";
+         public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";
@@ -446,7 +447,7 @@ namespace OSPSuite.Assets
          public static readonly string UseFiltersForImport = "Use filters for importing data";
          public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
 
-         public static readonly string AddGroupByTitle = "Add group by";
+         public static readonly string AddGroupByTitle = "Add Group By";
          public static readonly string MetaDataTitle = "Meta data";
          public static readonly string IgnoredParameterTitle = "Ignored parameter";
          public static readonly string NotConfiguredField = "Field not configured yet";
@@ -1294,8 +1295,12 @@ namespace OSPSuite.Assets
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+      public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with folowwing empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
       public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+
+      public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
+      public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
 
       public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' seems to be in an unsupported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
 
@@ -2347,7 +2352,7 @@ namespace OSPSuite.Assets
       /// <summary>
       ///    Color used for a plot back color (everything but diagram)
       /// </summary>
-      public static Color ChartBack = Color.Transparent;
+      public static Color ChartBack = Color.White;
 
       /// <summary>
       ///    Color used for a diagram back color

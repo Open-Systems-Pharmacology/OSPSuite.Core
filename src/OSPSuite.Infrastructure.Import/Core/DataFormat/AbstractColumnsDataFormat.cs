@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Core.Import;
 
@@ -42,8 +44,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var totalRank = 0.0;
          ExtractQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
-         ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
+         ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          setSecondaryColumnUnit(columnInfos);
          return totalRank;
       }
@@ -70,25 +72,26 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
 
-      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank);
+      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions,  ref double rank);
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
-         foreach (var header in columnInfos.Select(ci => ci.DisplayName))
+         foreach (var header in columnInfos)
          {
-            var headerKey = keys.FindHeader(header);
+            var headerName = header.DisplayName;
+            var headerKey = keys.FindHeader(headerName);
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, data, keys, ref rank);
+               var units = ExtractUnits(headerKey, data, keys, header.SupportedDimensions, ref rank);
 
                var col = new Column()
                {
-                  Name = header,
+                  Name = headerName,
                   Unit = units,
                   LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                };
-               if (columnInfos.First(ci => ci.DisplayName == header).IsAuxiliary())
+               if (columnInfos.First(ci => ci.DisplayName == headerName).IsAuxiliary())
                {
                   if(units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
@@ -103,9 +106,22 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             }
             else
             {
-               missingKeys.Add(header);
+               missingKeys.Add(headerName);
             }
          }
+      }
+
+      protected string GetLastBracketsOfString(string header)
+      {
+         return Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
+      }
+      protected string GetAndValidateUnitFromBrackets(string units, IReadOnlyList<IDimension> supportedDimensions)
+      {
+         return units
+            .Trim().Substring(1, units.Length - 2).Trim() //remove the brackets and whitespaces from end and beginning
+            .Split(',') //we split in case there are more than one units separated with ,
+            //only accepts valid and supported units
+            .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string)unitName))) ?? UnitDescription.InvalidUnit;     //default = ?
       }
 
       protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
@@ -114,7 +130,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var headerKey = keys.FirstOrDefault
                (h =>
-                  //TODO: Only add this if we make a robust decision on what columns are numeric
                   data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
                   Parameters
                      .OfType<MappingDataFormatParameter>()
@@ -122,7 +137,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, data, keys, ref rank);
+            var units = ExtractUnits(headerKey, data, keys, columnInfos.First(ci => ci.DisplayName == header).SupportedDimensions,  ref rank);
 
             var col = new Column()
             {
@@ -147,15 +162,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, IReadOnlyList<MetaDataCategory> metaDataCategories, ref double rank)
       {
-         var discreteColumns = keys.Where(h => data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Discrete).ToList();
-         foreach (var header in discreteColumns.Where(h => metaDataCategories.Any(c => c.Name == h)))
+         var columnsCopy = keys.ToList();
+         foreach (var header in columnsCopy.Where(h => metaDataCategories.Any(c => c.Name == h)))
          {
             keys.Remove(header);
             _parameters.Add(new MetaDataFormatParameter(header, header));
-         }
-         foreach (var header in discreteColumns.Where(h => metaDataCategories.All(c => c.Name != h)))
-         {
-            keys.Remove(header);
          }
       }
 

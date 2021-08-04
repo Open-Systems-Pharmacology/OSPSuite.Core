@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -24,16 +25,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return null;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         var units = Regex.Match(description, @"\[.+\]").Value;
+         var units = GetLastBracketsOfString(description);
+         
          if (string.IsNullOrEmpty(units))
             return new UnitDescription();
-         var unit = units
-            .Substring(1, units.Length - 2) //remove the brackets
-            .Trim() //remove whitespace
-            .Split(',') //split comma separated list
-            .FirstOrDefault() ?? UnitDescription.InvalidUnit; //default = ?
+
+         var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
          if (unit != UnitDescription.InvalidUnit)
          {
             rank++;

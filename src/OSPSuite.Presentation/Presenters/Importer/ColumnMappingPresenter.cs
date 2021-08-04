@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevExpress.Data.Filtering.Helpers;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -36,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IDimensionFactory dimensionFactory
       ) : base(view)
       {
-         _importer = importer;
+         _importer = importer; 
          _dimensionFactory = dimensionFactory;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
@@ -102,7 +103,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             new ColumnMappingDTO(
                ColumnMappingDTO.ColumnType.AddGroupBy,
                Captions.Importer.AddGroupByTitle,
-               new AddGroupByFormatParameter(""),
+               new AddGroupByFormatParameter(Captions.Importer.SelectToAdd),
                _importer.GetImageIndex(new GroupByDataFormatParameter(""))
             )
          ).ToList();
@@ -134,9 +135,27 @@ namespace OSPSuite.Presentation.Presenters.Importer
                continue;
             }
 
-            mappingColumn.Dimension = !mappingColumn.Unit.ColumnName.IsNullOrEmpty() ? null : _dimensionFactory.DimensionForUnit(mappingColumn.Unit.SelectedUnit);
+            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappingColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit ==  null)
+                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               else
+                  mappingColumn.Dimension = dimensionForUnit;
+            }
          }
       }
+
+      private IDimension selectDimensionThatHasUnit(IList<IDimension> dimensions, string unit)
+      {
+         return dimensions.FirstOrDefault(x => x.HasUnit(unit));
+      }
+
+
 
       public void InitializeErrorUnit()
       {
@@ -204,12 +223,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter) model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).First(u => !string.IsNullOrEmpty(u)), _mappingParameterEditorPresenter.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
          }
          else
          {
-            column.Unit = _mappingParameterEditorPresenter.Unit;
+            column.Unit = _mappingParameterEditorPresenter.Unit;  
             column.Dimension = _mappingParameterEditorPresenter.Dimension;
          }
 
@@ -421,6 +440,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             options.Add(new RowOptionDTO() {Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)});
          }
+
+         if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.AddGroupBy)
+            options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.Add) });
 
          options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
          var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);

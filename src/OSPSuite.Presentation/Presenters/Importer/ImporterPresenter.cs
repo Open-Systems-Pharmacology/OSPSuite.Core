@@ -4,19 +4,20 @@ using System.Linq;
 using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Services;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Serialization;
-using OSPSuite.Core.Serialization.Xml;
-using OSPSuite.Core.Domain.UnitSystem;
-using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -33,10 +34,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly INanPresenter _nanPresenter;
       protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
-      private readonly Utility.Container.IContainer _container;
+      private readonly IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private ImporterConfiguration _configuration = new ImporterConfiguration();
-      private readonly IDimensionFactory _dimensionFactory;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
 
@@ -50,12 +50,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IDimensionFactory dimensionFactory,
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         Utility.Container.IContainer container
+         IContainer container
       ) : base(view)
       {
-         _dimensionFactory = dimensionFactory;
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
          _columnMappingPresenter = columnMappingPresenter;
@@ -164,9 +162,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _dialogCreator.MessageBoxError(exception.Message);
             return;
          }
+
          var configuration = UpdateAndGetConfiguration();
          configuration.Id = id;
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs {DataRepositories = dataRepositories});
       }
 
       private void loadSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
@@ -175,33 +174,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
-            foreach (var sheet in args.Sheets.Keys)
-               _configuration.AddToLoadedSheets(sheet);
-
+            args.Sheets.Keys.Each(_configuration.AddToLoadedSheets);
             _configuration.FilterString = args.Filter;
          }
          catch (Exception e)
          {
-            {
-               var eMessage = e.Message;
-               if (! (e is NanException || e is ErrorUnitException || e is MissingColumnException || e is PossibleUnsupportedSheetFormatException))
-               {
-                  eMessage = Captions.Importer.UnexpectedExceptionWhenLoading;
-               }
-               
-               _dialogCreator.MessageBoxError(eMessage);
-               foreach (var sheetName in args.Sheets.Keys)
-               {
-                  _importerDataPresenter.Sheets.Remove(sheetName);
-               }
-            }
+            var message = e is AbstractImporterException ? e.Message : Captions.Importer.UnexpectedExceptionWhenLoading;
+            _dialogCreator.MessageBoxError(message);
+            args.Sheets.Keys.Each(_importerDataPresenter.Sheets.Remove);
          }
       }
 
       private void validateDataSource(IDataSource dataSource)
       {
-         if (!dataSource.ValidateDataSource(_columnInfos, _dimensionFactory))
-            throw new ErrorUnitException();
+         dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
@@ -212,7 +198,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
             Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
@@ -296,7 +282,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public bool SetSourceFile(string path)
       {
          _dataSourceFile = _importerDataPresenter.SetDataSource(path);
-         
+
          if (_dataSourceFile == null)
             return false;
 
@@ -343,7 +329,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (listOfNonExistingColumns.Any())
          {
-            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns( string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
+            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns(string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
 
             if (confirm == ViewResult.No)
                return;
@@ -381,6 +367,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
          }
+
          try
          {
             var namingConvention = configuration.NamingConventions;
@@ -395,7 +382,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      public ImporterConfiguration UpdateAndGetConfiguration() {
+      public ImporterConfiguration UpdateAndGetConfiguration()
+      {
          _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
          _configuration.FilterString = _importerDataPresenter.GetFilter();
          return _configuration;

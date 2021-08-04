@@ -6,7 +6,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class ParsedDataSet
    {
-      protected IEnumerable<InstantiatedMetaData> Description { get; set; }
+      public IEnumerable<InstantiatedMetaData> Description { get; protected set; }
 
       //new class with column AND everything I need from the colInfo
       public IReadOnlyDictionary<ExtendedColumn, IList<SimulationPoint>> Data { get; protected set; }

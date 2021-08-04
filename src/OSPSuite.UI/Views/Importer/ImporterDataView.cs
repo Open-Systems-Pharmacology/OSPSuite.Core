@@ -4,7 +4,9 @@ using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraTab;
+using DevExpress.XtraTab.Buttons;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -56,6 +58,50 @@ namespace OSPSuite.UI.Views.Importer
          useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
          dataViewingGridView.ColumnFilterChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
 
+         var customButton = new CustomHeaderButton(ButtonPredefines.Combo) { ToolTip = "Select Page" };
+         importerTabControl.CustomHeaderButtons.Add(customButton);
+         importerTabControl.CustomHeaderButtonClick += onTabControlCustomHeaderButtonClick;
+         dataViewingGridView.OptionsView.ShowIndicator = false;
+      }
+
+      private void onTabControlCustomHeaderButtonClick(object sender, CustomHeaderButtonEventArgs e)
+      {
+         var popupMenu = new DXPopupMenu { MenuViewType = MenuViewType.Menu };
+         foreach (XtraTabPage page in importerTabControl.TabPages)
+         {
+            var menuitem = new DXMenuItem(page.Text);
+            menuitem.Click += onPageListMenuItemClick;
+            menuitem.Tag = popupMenu;
+            if (page.Image != null)
+               menuitem.Image = page.Image;
+            popupMenu.Items.Add(menuitem);
+         }
+         var menuPos = importerTabControl.PointToClient(MousePosition);
+         MenuManagerHelper.ShowMenu(popupMenu, importerTabControl.LookAndFeel, null, importerTabControl, menuPos);
+      }
+
+
+      private void onPageListMenuItemClick(object sender, EventArgs e)
+      {
+         var menuItem = sender as DXMenuItem;
+         if (menuItem == null) return;
+         foreach (XtraTabPage page in importerTabControl.TabPages)
+         {
+            if (page.Text != menuItem.Caption) continue;
+            importerTabControl.SelectedTabPage = page;
+            importerTabControl.MakePageVisible(page);
+            break;
+         }
+         //dispose dynamically created objects.
+         var popupMenu = menuItem.Tag as DXPopupMenu;
+         if (popupMenu == null) return;
+         foreach (DXMenuItem item in popupMenu.Items)
+         {
+            item.Click -= onPageListMenuItemClick;
+            item.Dispose();
+         }
+         popupMenu.Items.Clear();
+         popupMenu.Dispose();
       }
 
       public void AttachPresenter(IImporterDataPresenter dataPresenter)

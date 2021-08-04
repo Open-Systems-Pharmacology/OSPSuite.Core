@@ -42,6 +42,7 @@ namespace OSPSuite.UI.Views.ObservedData
          {
             gridView.Columns.Remove(_removeColumn);
          }
+         gridView.OptionsView.ShowIndicator = false;
 
          _editable = false;
       }

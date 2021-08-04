@@ -88,16 +88,23 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_create_error_column_with_name()
+      public void should_add_the_column_to_the_underlying_repository()
+      {
+         var col = _loadedRepository.ObservationColumns().First();
+         var errorColumn = sut.AddErrorColumn(col, "yError", AuxiliaryType.ArithmeticStdDev.ToString());
+         _loadedRepository.Columns.ShouldContain(errorColumn);
+      }
+
+      [Observation]
+      public void should_create_error_column_with_geometric_error()
       {
          var col = _loadedRepository.ObservationColumns().First();
          var name = new ShortGuid().ToString();
-         var errorColumn = sut.AddErrorColumn(col, name, AuxiliaryType.ArithmeticStdDev.ToString());
+         var errorColumn = sut.AddErrorColumn(col, name, AuxiliaryType.GeometricStdDev.ToString());
          errorColumn.Name.ShouldBeEqualTo(name);
-         errorColumn.Dimension.ShouldBeEqualTo(col.Dimension);
+         errorColumn.Dimension.ShouldBeEqualTo(Api.GetDimensionTask().DimensionByName("Dimensionless"));
          errorColumn.BaseGrid.ShouldBeEqualTo(_loadedRepository.BaseGrid);
-         errorColumn.DisplayUnit.ShouldBeEqualTo(col.DisplayUnit);
-         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.ArithmeticStdDev);
+         errorColumn.DataInfo.AuxiliaryType.ShouldBeEqualTo(AuxiliaryType.GeometricStdDev);
          errorColumn.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.ObservationAuxiliary);
          col.RelatedColumns.ShouldContain(errorColumn);
       }
@@ -122,6 +129,57 @@ namespace OSPSuite.R.Services
       {
          base.Cleanup();
          FileHelper.DeleteFile(_dataRepositoryFile);
+      }
+   }
+
+   public class When_adding_metadata : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData("TOTO", _dimensionTask.DimensionByName(Constants.Dimension.TIME), _dimensionTask.DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION));
+      }
+
+      [Observation]
+      public void should_create_meta_data()
+      {
+         sut.AddMetaData(_dataRepository, "meta_data", "value");
+         _dataRepository.ExtendedPropertyValueFor("meta_data").ShouldBeEqualTo("value");
+      }
+
+      [Observation]
+      public void should_update_the_meta_data_if_it_already_exists ()
+      {
+         sut.AddMetaData(_dataRepository, "meta_data", "value");
+         sut.AddMetaData(_dataRepository, "meta_data", "updated_value");
+         _dataRepository.ExtendedPropertyValueFor("meta_data").ShouldBeEqualTo("updated_value");
+      }
+   }
+   
+   public class When_removing_metadata : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData("TOTO");
+         sut.AddMetaData(_dataRepository, "meta_data", "value");
+      }
+
+      [Observation]
+      public void should_not_crash_if_the_meta_data_by_key_does_not_exist()
+      {
+         sut.RemoveMetaData(_dataRepository, "NOPE");
+      }
+
+      [Observation]
+      public void should_update_the_meta_data_if_it_already_exists()
+      {
+         sut.RemoveMetaData(_dataRepository, "meta_data");
+         _dataRepository.ExtendedProperties.Contains("meta_data").ShouldBeFalse();
       }
    }
 }

@@ -1,20 +1,58 @@
-﻿using OSPSuite.Assets;
+﻿using System;
+using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Exceptions;
-using System;
 
 namespace OSPSuite.R.Services
 {
    public interface IDataRepositoryTask
    {
+      /// <summary>
+      ///    Loads the data repository located at <paramref name="fileName" />
+      /// </summary>
+      /// <param name="fileName">Full path of the pkml file containing the data repository to load</param>
+      /// <returns>The data repository</returns>
       DataRepository LoadDataRepository(string fileName);
 
+      /// <summary>
+      ///    Saves the data repository to file
+      /// </summary>
+      /// <param name="dataRepository">Data repository to save</param>
+      /// <param name="fileName">Full path where the <paramref name="dataRepository" /> will be saved</param>
       void SaveDataRepository(DataRepository dataRepository, string fileName);
 
+      /// <summary>
+      ///    Returns the Error column associated with the <paramref name="column" /> or <c>null</c> if none is defined
+      /// </summary>
       DataColumn GetErrorColumn(DataColumn column);
 
+      /// <summary>
+      ///    Adds an error column associated to the <paramref name="column" />. The error type is one of ArithmeticStdDev or
+      ///    GeometricStdDev as string.
+      ///    The column will also be added to the data repository where <paramref name="column" /> is defined
+      /// </summary>
+      /// <param name="column">Column for which an error column should be created</param>
+      /// <param name="name">Name of the error column</param>
+      /// <param name="errorType">Error type for error column</param>
+      /// <returns></returns>
       DataColumn AddErrorColumn(DataColumn column, string name, string errorType);
+
+      /// <summary>
+      ///    Adds a new meta data by key. If the meta already exists, it will be overwritten
+      /// </summary>
+      /// <param name="dataRepository">DataRepository for which the new meta data should be added/updated</param>
+      /// <param name="key">Key identifying the meta data</param>
+      /// <param name="value">Value</param>
+      void AddMetaData(DataRepository dataRepository, string key, string value);
+
+      /// <summary>
+      ///    Removes the meta data by key if it exists
+      /// </summary>
+      /// <param name="dataRepository">DataRepository for which the meta data should be removed</param>
+      /// <param name="key">Key of the meta data to remove</param>
+      void RemoveMetaData(DataRepository dataRepository, string key);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask
@@ -49,20 +87,38 @@ namespace OSPSuite.R.Services
 
       public DataColumn AddErrorColumn(DataColumn column, string name, string errorType)
       {
-         var errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid);
-
-         if (string.IsNullOrEmpty(errorType))
-            errorType = AuxiliaryType.ArithmeticStdDev.ToString();
-
-         AuxiliaryType auxiliaryType;
-         if (!Enum.TryParse(errorType, out auxiliaryType))
+         if (!Enum.TryParse(errorType, out AuxiliaryType auxiliaryType))
             throw new OSPSuiteException(Error.InvalidAuxiliaryType);
-            
+
+         DataColumn errorColumn;
+         switch (auxiliaryType)
+         {
+            case AuxiliaryType.ArithmeticStdDev:
+               errorColumn = new DataColumn(name, column.Dimension, column.BaseGrid) {DisplayUnit = column.DisplayUnit};
+               break;
+            case AuxiliaryType.GeometricStdDev:
+               errorColumn = new DataColumn(name, Constants.Dimension.NO_DIMENSION, column.BaseGrid);
+               break;
+            default:
+               throw new OSPSuiteException(Error.InvalidAuxiliaryType);
+         }
+
          errorColumn.DataInfo.AuxiliaryType = auxiliaryType;
-         errorColumn.DisplayUnit = column.DisplayUnit;
          errorColumn.DataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
          column.AddRelatedColumn(errorColumn);
-	      return errorColumn;
+         //May be null if the method is called for an orphan column... Does not make sense
+         column.Repository?.Add(errorColumn);
+         return errorColumn;
+      }
+
+      public void AddMetaData(DataRepository dataRepository, string key, string value)
+      {
+         dataRepository.ExtendedProperties[key] = new ExtendedProperty<string> {Name = key, Value = value};
+      }
+
+      public void RemoveMetaData(DataRepository dataRepository, string key)
+      {
+         dataRepository.ExtendedProperties.Remove(key);
       }
    }
 }
