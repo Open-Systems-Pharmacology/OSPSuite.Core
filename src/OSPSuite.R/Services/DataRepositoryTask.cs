@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -38,6 +40,15 @@ namespace OSPSuite.R.Services
       /// <param name="errorType">Error type for error column</param>
       /// <returns></returns>
       DataColumn AddErrorColumn(DataColumn column, string name, string errorType);
+
+      /// <summary>
+      ///    Removes the <paramref name="column" /> from the <paramref name="dataRepository" />. if the column is a related
+      ///    column, the association will also be removed. If the column is a base grid column, it can only be removed if the
+      ///    data repository has no other column
+      /// </summary>
+      /// <param name="dataRepository">DataRepository containing the column to remove</param>
+      /// <param name="column">Column to remove</param>
+      void RemoveColumn(DataRepository dataRepository, DataColumn column);
 
       /// <summary>
       ///    Adds a new meta data by key. If the meta already exists, it will be overwritten
@@ -109,6 +120,22 @@ namespace OSPSuite.R.Services
          //May be null if the method is called for an orphan column... Does not make sense
          column.Repository?.Add(errorColumn);
          return errorColumn;
+      }
+
+      public void RemoveColumn(DataRepository dataRepository, DataColumn column)
+      {
+         var baseGrid = dataRepository.BaseGrid;
+         //We remove the base grid and there is another column depending on it...error 
+         if (Equals(baseGrid, column) && dataRepository.Count() > 1)
+            throw new OSPSuiteException(Error.CannotRemoveBaseGridColumnStillInUse);
+
+         //we remove the column and all its related column
+         dataRepository.Remove(column);
+         column.RelatedColumns.Each(dataRepository.Remove);
+
+         //now remove the column from related column if it is, for instance, an error column
+         var allColumnsReferencingTheColumnToRemove = dataRepository.Columns.Where(x => x.RelatedColumns.Contains(column)).ToList();
+         allColumnsReferencingTheColumnToRemove.Each(x => x.RelatedColumnsCache.Remove(column.DataInfo.AuxiliaryType));
       }
 
       public void AddMetaData(DataRepository dataRepository, string key, string value)

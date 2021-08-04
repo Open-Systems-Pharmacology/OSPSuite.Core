@@ -9,6 +9,7 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
 using System;
 using System.Linq;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -180,6 +181,66 @@ namespace OSPSuite.R.Services
       {
          sut.RemoveMetaData(_dataRepository, "meta_data");
          _dataRepository.ExtendedProperties.Contains("meta_data").ShouldBeFalse();
+      }
+   }
+
+   public class When_removing_a_column_from_a_data_repository : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_removing_a_base_grid_and_the_data_repository_has_other_column()
+      {
+         var baseGrid = _dataRepository.BaseGrid;
+         The.Action(()=>sut.RemoveColumn(_dataRepository, baseGrid)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_remove_the_base_grid_if_it_is_not_used_anywhere()
+      {
+         var baseGrid = _dataRepository.BaseGrid;
+         _dataRepository.AllButBaseGridAsArray.Each(x=>sut.RemoveColumn(_dataRepository, x));
+         sut.RemoveColumn(_dataRepository, baseGrid);
+         _dataRepository.Columns.ShouldBeEmpty();
+      }
+
+
+      [Observation]
+      public void should_remove_the_column_and_related_column_associated_with_the_column()
+      {
+         var baseGrid = _dataRepository.BaseGrid;
+         var column = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+         var errorColumn = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+         errorColumn.DataInfo.AuxiliaryType = AuxiliaryType.ArithmeticStdDev;
+         column.AddRelatedColumn(errorColumn);
+         _dataRepository.Add(column);
+         //2 from the creation and new columns + error = 4
+         _dataRepository.Columns.Count().ShouldBeEqualTo(4);
+         sut.RemoveColumn(_dataRepository, column);
+         _dataRepository.Columns.Contains(column).ShouldBeFalse();
+         _dataRepository.Columns.Contains(errorColumn).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_remove_the_column_from_the_related_column_association_if_it_is_being_used_as_association()
+      {
+         var baseGrid = _dataRepository.BaseGrid;
+         var column = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+         var errorColumn = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+         errorColumn.DataInfo.AuxiliaryType = AuxiliaryType.ArithmeticStdDev;
+         column.AddRelatedColumn(errorColumn);
+         _dataRepository.Add(column);
+         //2 from the creation and new columns + error = 4
+         _dataRepository.Columns.Count().ShouldBeEqualTo(4);
+         sut.RemoveColumn(_dataRepository, errorColumn);
+         _dataRepository.Columns.Contains(errorColumn).ShouldBeFalse();
+         column.RelatedColumns.ShouldBeEmpty();
       }
    }
 }

@@ -1267,6 +1267,7 @@ namespace OSPSuite.Assets
       public static readonly string InvalidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
+      public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";
 
@@ -1295,16 +1296,16 @@ namespace OSPSuite.Assets
       public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
       public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
       public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
-      public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with folowwing empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
+      public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
-      public static string MissingColumnException(string missingColumn) => $"The mappped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
 
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
 
       public static string PossibleUnsupportedSheetFormatException(string sheetName) => $"The sheet '{sheetName}' seems to be in an unsupported format. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details on supported formats";
 
-      public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
+      public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification parameter '{identificationParameterName}'";
 
       public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
