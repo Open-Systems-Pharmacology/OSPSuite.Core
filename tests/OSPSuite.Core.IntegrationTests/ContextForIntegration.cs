@@ -22,7 +22,6 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
-using OSPSuite.UI.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 
@@ -50,7 +49,6 @@ namespace OSPSuite.Core
          container.Register<IDataSourceFileParser, DataSourceFileParser>();
          container.Register<ICsvDataSourceFile, CsvDataSourceFile>();
          container.Register<IImportLogger, ImportLogger>();
-         container.Register<ICsvSeparatorSelector, CsvSeparatorSelector>();
          container.Register<IExcelDataSourceFile, ExcelDataSourceFile>();
          container.Register<IDataSetToDataRepositoryMapper, DataSetToDataRepositoryMapper>();
          container.Register<IDataFormat, MixColumnsDataFormat>();
@@ -82,6 +80,11 @@ namespace OSPSuite.Core
          var progressManager = A.Fake<IProgressManager>();
          A.CallTo(() => progressManager.Create()).Returns(A.Fake<IProgressUpdater>());
          container.RegisterImplementationOf(progressManager);
+
+         var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(';');
+         container.RegisterImplementationOf(csvSeparatorSelector);
+
 
          using (container.OptimizeDependencyResolution())
          {

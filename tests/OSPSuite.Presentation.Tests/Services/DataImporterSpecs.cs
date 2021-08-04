@@ -165,11 +165,11 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void use_sheet_names_when_importing_simple_data_from_csv()
+      public void should_import_simple_data_from_csv()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               "IntegrationSample1.csv")).Count.ShouldBeEqualTo(0);
+               "IntegrationSample1.csv")).Count.ShouldBeEqualTo(1);
       }
 
       [Observation]
@@ -181,7 +181,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_return_null_on_non_existent_file_name()
+      public void should_return_empty_on_non_existent_file_name()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
@@ -198,7 +198,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_return_null_on_invalid_file_format()
+      public void should_return_empty_on_invalid_file_format()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
