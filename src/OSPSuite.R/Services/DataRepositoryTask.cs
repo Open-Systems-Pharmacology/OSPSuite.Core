@@ -135,7 +135,7 @@ namespace OSPSuite.R.Services
 
          //now remove the column from related column if it is, for instance, an error column
          var allColumnsReferencingTheColumnToRemove = dataRepository.Columns.Where(x => x.RelatedColumns.Contains(column)).ToList();
-         allColumnsReferencingTheColumnToRemove.Each(x=>x.RelatedColumnsCache.Remove(column.DataInfo.AuxiliaryType));
+         allColumnsReferencingTheColumnToRemove.Each(x => x.RelatedColumnsCache.Remove(column.DataInfo.AuxiliaryType));
       }
 
       public void AddMetaData(DataRepository dataRepository, string key, string value)
