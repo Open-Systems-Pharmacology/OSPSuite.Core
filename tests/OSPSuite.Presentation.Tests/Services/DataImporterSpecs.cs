@@ -4,16 +4,15 @@ using System.Collections.Generic;
 using System.IO;
 using OSPSuite.Assets;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Exceptions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -54,7 +53,7 @@ namespace OSPSuite.Presentation.Services
          _importerConfiguration.NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}";
 
          _importerConfiguration.AddToLoadedSheets("Sheet1");
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
@@ -81,6 +80,7 @@ namespace OSPSuite.Presentation.Services
 
          return columns;
       }
+
       private ColumnInfo createTimeColumn()
       {
          var timeColumn = new ColumnInfo
@@ -205,16 +205,50 @@ namespace OSPSuite.Presentation.Services
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
       }
 
-      //currently not working
-      /*
-            [Observation]
-            public void should_inform_on_missing_mapping()
-            {
-               sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-                  getFileFullName(
-                     "IntegrationSampleMissingMapping.xlsx")).Count.ShouldBeEqualTo(0);
-            }
-      */
+      [Observation]
+      public void should_throw_correct_exception_on_missing_mapping()
+      {
+         The.Action(() =>
+            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSampleMissingMapping.xlsx"))).ShouldThrowAn<MissingColumnException>();
+      }
+   }
+
+   [Ignore("waiting for exception handling issue to be fixed - till then red")]
+   public class When_importing_data_with_missing_columns : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = new List<DataFormatParameter>
+         {
+            new MappingDataFormatParameter("time  [h]",
+               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
+            new MappingDataFormatParameter("conc  [mg/l]",
+               new Column()
+               {
+                  Name = "Concentration", Dimension = _massConcentrationDimension, Unit = new UnitDescription("mg/l")
+               }),
+            new MappingDataFormatParameter("SD [mg/l]",
+               new Column()
+               {
+                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
+                  Unit = new UnitDescription("mg/l")
+               }),
+            new MetaDataFormatParameter("VenousBlood", "Organ", false),
+            new MetaDataFormatParameter(null, "Molecule", false)
+         };
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_throw_correct_exception_on_missing_mapping()
+      {
+         The.Action(() =>
+            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSampleMissingMapping.xlsx"))).ShouldThrowAn<MissingColumnException>();
+      }
    }
 
    public class When_importing_data_from_incorrect_configuration : concern_for_DataImporter
@@ -247,8 +281,8 @@ namespace OSPSuite.Presentation.Services
       {
          The.Action(() =>
             sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-            getFileFullName(
-               "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
+               getFileFullName(
+                  "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -282,10 +316,9 @@ namespace OSPSuite.Presentation.Services
       {
          The.Action(() =>
             sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-            getFileFullName(
-               "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
+               getFileFullName(
+                  "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
       }
    }
-
 }
 
