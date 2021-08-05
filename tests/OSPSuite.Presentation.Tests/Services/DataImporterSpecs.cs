@@ -204,15 +204,6 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
       }
-
-      [Observation]
-      public void should_throw_correct_exception_on_missing_mapping()
-      {
-         The.Action(() =>
-            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSampleMissingMapping.xlsx"))).ShouldThrowAn<MissingColumnException>();
-      }
    }
 
    [Ignore("waiting for exception handling issue to be fixed - till then red")]
