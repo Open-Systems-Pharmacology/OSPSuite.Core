@@ -18,18 +18,18 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _time = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1},"Time", "s");
+         _time = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "s");
          _time.AddUnit("min", 60, 0);
          _time.AddUnit("h", 3600, 0);
 
-         _length = new Dimension(new BaseDimensionRepresentation {LengthExponent = 1},"Length", "m");
+         _length = new Dimension(new BaseDimensionRepresentation {LengthExponent = 1}, "Length", "m");
          _length.AddUnit("mm", 0.001, 0);
 
-         _mass = new Dimension(new BaseDimensionRepresentation {MassExponent = 1},"Mass", "kg");
+         _mass = new Dimension(new BaseDimensionRepresentation {MassExponent = 1}, "Mass", "kg");
          _mass.AddUnit("mg", 0.000001, 0.0);
 
-         _dimensionless = new Dimension(new BaseDimensionRepresentation(),"Dimensionless", " ");
-         
+         _dimensionless = new Dimension(new BaseDimensionRepresentation(), "Dimensionless", " ");
+
          _baseGrid = new BaseGrid("BaseGrid", _time);
          _baseGrid.Values = new[] {-1.0F, 0.0F, 2.0F};
          sut = new DataColumn("Colin", _length, _baseGrid);
@@ -128,7 +128,6 @@ namespace OSPSuite.Core.Domain
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
       }
 
-    
       [Observation]
       public void TestAddRelatedColumnArithmeticStdDevWithWrongDimension()
       {
@@ -171,7 +170,7 @@ namespace OSPSuite.Core.Domain
       {
          const float constValue = 123.456F;
 
-         sut.Values = new[] { constValue };
+         sut.Values = new[] {constValue};
 
          var values = sut.Values;
 
@@ -180,11 +179,10 @@ namespace OSPSuite.Core.Domain
          for (int i = 0; i < values.Count; i++)
             values[i].ShouldBeEqualTo(constValue);
 
-         sut.Values = new []{1.0F};
+         sut.Values = new[] {1.0F};
          values = sut.Values;
          for (int i = 0; i < values.Count; i++)
             values[i].ShouldBeEqualTo(1.0F);
-
       }
 
       [Observation]
@@ -205,6 +203,20 @@ namespace OSPSuite.Core.Domain
       public void retrieving_value_as_array_for_a_column_not_initialized()
       {
          sut.ValuesAsArray.ShouldBeEqualTo(Array.Empty<double>());
+      }
+
+      [Observation]
+      public void getting_the_lloq_value_as_double()
+      {
+         sut.DataInfo.LLOQ = 5f;
+         sut.DataInfo.LLOQAsDouble.ShouldBeEqualTo(5d);
+      }
+
+      [Observation]
+      public void setting_the_lloq_value_as_double()
+      {
+         sut.DataInfo.LLOQAsDouble = 5d;
+         sut.DataInfo.LLOQ.ShouldBeEqualTo(5f);
       }
 
    }
