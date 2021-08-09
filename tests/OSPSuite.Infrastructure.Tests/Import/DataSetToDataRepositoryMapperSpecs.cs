@@ -237,6 +237,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
+         var temp = _dataSourceLLOQ.DataSetAt(0);
          _result = sut.ConvertImportDataSet(_dataSourceLLOQ.DataSetAt(0));
       }
 
@@ -250,6 +251,12 @@ namespace OSPSuite.Infrastructure.Import
       public void should_add_maximum_lloq_value_to_data_repository()
       {
          _result.DataRepository.ObservationColumns().First().DataInfo.LLOQ.ShouldBeEqualTo(2.0f);
+      }
+
+      [Observation]
+      public void values_should_also_be_assigned_the_maximum_lloq_value()
+      {
+         _result.DataRepository.ObservationColumns().First().Values.ToArray().ShouldBeEqualTo(new float[] { 10.0f, 1.0f, 1.0f });
       }
    }
 
