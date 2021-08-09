@@ -179,8 +179,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (Exception e)
          {
-            var message = e is AbstractImporterException ? e.Message : Captions.Importer.UnexpectedExceptionWhenLoading;
-            _dialogCreator.MessageBoxError(message);
+            _dialogCreator.MessageBoxError(e.Message);
             args.Sheets.Keys.Each(_importerDataPresenter.Sheets.Remove);
          }
       }
@@ -266,10 +265,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
          }
-         catch (Exception e) when (e is NanException || e is ErrorUnitException)
+         catch (Exception e)
          {
             _dialogCreator.MessageBoxError(e.Message);
-            _view.DisableConfirmationView();
+            if (e is NanException || e is ErrorUnitException)
+               _view.DisableConfirmationView();
          }
       }
 
@@ -374,7 +374,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
             _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
-         catch (Exception e) when (e is NanException || e is ErrorUnitException)
+         catch (Exception e)
          {
             _dialogCreator.MessageBoxError(e.Message);
          }
