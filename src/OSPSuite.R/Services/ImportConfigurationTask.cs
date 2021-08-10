@@ -1,15 +1,19 @@
 ﻿using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Extensions;
+using System.Linq;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
 {
    public interface IImportConfigurationTask
    {
-      MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
-      void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time);
-      MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
-      void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement);
-      MappingDataFormatParameter GetError(ImporterConfiguration configuration);
-      void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error);
+      MappingDataFormatParameter GetTime(ImporterConfiguration configuration, ColumnInfo[] columnInfos);
+      void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time, ColumnInfo[] columnInfos);
+      MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration, ColumnInfo[] columnInfos);
+      void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement, ColumnInfo[] columnInfos);
+      MappingDataFormatParameter GetError(ImporterConfiguration configuration, ColumnInfo[] columnInfos);
+      void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error, ColumnInfo[] columnInfos);
       DataFormatParameter[] GetAllGroupingColumns(ImporterConfiguration configuration);
       void AddGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter);
       void RemoveGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter);
@@ -22,62 +26,90 @@ namespace OSPSuite.R.Services
    {
       public void AddGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter)
       {
-         throw new System.NotImplementedException();
+         configuration.AddParameter(parameter);
       }
 
       public void AddLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         throw new System.NotImplementedException();
+         configuration.AddToLoadedSheets(sheet);
       }
 
       public DataFormatParameter[] GetAllGroupingColumns(ImporterConfiguration configuration)
       {
-         throw new System.NotImplementedException();
+         return configuration.Parameters.Where(p => (p is MetaDataFormatParameter) || (p is GroupByDataFormatParameter)).ToArray();
       }
 
       public string[] GetAllLoadedSheets(ImporterConfiguration configuration)
       {
-         throw new System.NotImplementedException();
+         return configuration.LoadedSheets.ToArray();
       }
 
-      public MappingDataFormatParameter GetError(ImporterConfiguration configuration)
+      public MappingDataFormatParameter GetError(ImporterConfiguration configuration, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsAuxiliary());
       }
 
-      public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration)
+      public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p =>
+         {
+            var columnInfo = columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name);
+            return !(columnInfo.IsAuxiliary() || columnInfo.IsBase());
+         });
       }
 
-      public MappingDataFormatParameter GetTime(ImporterConfiguration configuration)
+      public MappingDataFormatParameter GetTime(ImporterConfiguration configuration, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsBase());
       }
 
       public void RemoveGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter)
       {
-         throw new System.NotImplementedException();
+         configuration.Parameters.Remove(parameter);
       }
 
       public void RemoveLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         throw new System.NotImplementedException();
+         configuration.RemoveFromLoadedSheets(sheet);
       }
 
-      public void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error)
+      public void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         var errorParameter = GetError(configuration, columnInfos);
+         if (errorParameter != null)
+            configuration.Parameters.Remove(errorParameter);
+
+         if (error == null)
+            return;
+
+         error.MappedColumn.Name = columnInfos.First(ci => ci.IsAuxiliary()).DisplayName;
+         configuration.AddParameter(error);
       }
 
-      public void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement)
+      public void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         var measurementParameter = GetMeasurement(configuration, columnInfos);
+         if (measurementParameter != null)
+            configuration.Parameters.Remove(measurementParameter);
+
+         if (measurement == null)
+            return;
+
+         measurement.MappedColumn.Name = columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName;
+         configuration.AddParameter(measurement);
       }
 
-      public void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time)
+      public void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time, ColumnInfo[] columnInfos)
       {
-         throw new System.NotImplementedException();
+         var timeParameter = GetError(configuration, columnInfos);
+         if (timeParameter != null)
+            configuration.Parameters.Remove(timeParameter);
+
+         if (time == null)
+            return;
+
+         time.MappedColumn.Name = columnInfos.First(ci => ci.IsBase()).DisplayName;
+         configuration.AddParameter(time);
       }
    }
 }

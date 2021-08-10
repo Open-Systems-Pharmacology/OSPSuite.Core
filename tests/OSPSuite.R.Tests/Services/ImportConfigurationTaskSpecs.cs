@@ -1,18 +1,20 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Import;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
-using System;
-using System.IO;
-using System.Linq;
+using OSPSuite.Infrastructure.Import.Core;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
 {
    public abstract class concern_for_ImportConfigurationTask : ContextForIntegration<IImportConfigurationTask>
    {
       protected ImporterConfiguration _configuration;
+      protected ColumnInfo[] _columnInfos = new ColumnInfo[] 
+      {
+         new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
+         new ColumnInfo() { DisplayName = "Measurement", IsMandatory = true, BaseGridName = "Time" },
+         new ColumnInfo() { DisplayName = "Error", IsMandatory = false, BaseGridName = "Time", RelatedColumnOf = "Measurement" }
+      };
       protected override void Context()
       {
          base.Context();
@@ -26,28 +28,28 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_get_and_set_time()
       {
-         sut.GetTime(_configuration).ShouldBeNull();
+         sut.GetTime(_configuration, _columnInfos).ShouldBeNull();
          var time = new MappingDataFormatParameter();
-         sut.SetTime(_configuration, time);
-         sut.GetTime(_configuration).ShouldBeEqualTo(time);
+         sut.SetTime(_configuration, time, _columnInfos);
+         sut.GetTime(_configuration, _columnInfos).ShouldBeEqualTo(time);
       }
 
       [Observation]
       public void should_get_and_set_concentration()
       {
-         sut.GetMeasurement(_configuration).ShouldBeNull();
+         sut.GetMeasurement(_configuration, _columnInfos).ShouldBeNull();
          var concentration = new MappingDataFormatParameter();
-         sut.SetMeasurement(_configuration, concentration);
-         sut.GetMeasurement(_configuration).ShouldBeEqualTo(concentration);
+         sut.SetMeasurement(_configuration, concentration, _columnInfos);
+         sut.GetMeasurement(_configuration, _columnInfos).ShouldBeEqualTo(concentration);
       }
 
       [Observation]
       public void should_get_and_set_error()
       {
-         sut.GetError(_configuration).ShouldBeNull();
+         sut.GetError(_configuration, _columnInfos).ShouldBeNull();
          var error = new MappingDataFormatParameter();
-         sut.SetError(_configuration, error);
-         sut.GetError(_configuration).ShouldBeEqualTo(error);
+         sut.SetError(_configuration, error, _columnInfos);
+         sut.GetError(_configuration, _columnInfos).ShouldBeEqualTo(error);
       }
 
       [Observation]
