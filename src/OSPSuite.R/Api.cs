@@ -69,6 +69,8 @@ namespace OSPSuite.R
 
       public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
 
+      public static IImportConfigurationTask GetImportConfigurationTask() => resolveTask<IImportConfigurationTask>();
+
       private static T resolveTask<T>()
       {
          try
