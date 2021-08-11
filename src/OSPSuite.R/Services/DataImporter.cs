@@ -109,26 +109,20 @@ namespace OSPSuite.R.Services
       }
 
       public IReadOnlyList<DataRepository> ImportFromConfiguration(
-         ImporterConfiguration configuration, 
-         IReadOnlyList<MetaDataCategory> metaDataCategories, 
-         IReadOnlyList<ColumnInfo> columnInfos, 
+         ImporterConfiguration configuration,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string dataFileName)
       {
          if (string.IsNullOrEmpty(dataFileName) || !File.Exists(dataFileName))
             throw new OSPSuiteException(Error.InvalidFile);
 
-         try
-         {
-            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
-            if (importedData.MissingSheets.Count != 0)
-               _logger.AddWarning(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
-            return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
-         }
-         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException)
-         {
-            throw new OSPSuiteException(e.Message);
-         }
+
+         var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
+         if (importedData.MissingSheets.Count != 0)
+            _logger.AddWarning(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
+         return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
       }
 
       public IReadOnlyList<ColumnInfo> DefaultPKSimImportConfiguration()

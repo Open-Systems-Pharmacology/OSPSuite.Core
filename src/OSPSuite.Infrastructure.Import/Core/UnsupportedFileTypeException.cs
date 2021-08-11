@@ -3,7 +3,7 @@ using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class UnsupportedFileTypeException : OSPSuiteException
+   public class UnsupportedFileTypeException : AbstractImporterException
    {
       public UnsupportedFileTypeException() : base(Error.UnsupportedFileType)
       {

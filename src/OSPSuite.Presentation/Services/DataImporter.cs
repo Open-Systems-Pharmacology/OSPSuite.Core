@@ -125,7 +125,7 @@ namespace OSPSuite.Presentation.Services
                _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
             return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
          }
-         catch (Exception e)
+         catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return new List<DataRepository>();

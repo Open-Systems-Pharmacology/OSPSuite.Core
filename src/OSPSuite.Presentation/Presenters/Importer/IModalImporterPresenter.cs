@@ -69,7 +69,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (!_importerPresenter.SetSourceFile(path))
                return emptyImport;
          }
-         catch (Exception e) when (e is UnsupportedFormatException || e is UnsupportedFileTypeException || e is InvalidObservedDataFileException)
+         catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return emptyImport;
