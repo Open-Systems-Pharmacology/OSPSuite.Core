@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Extensions;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
@@ -68,7 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unit = columnAndData.Value.First().Unit; //could this be null????
+         var unit = columnAndData.Value.First().Unit;
          var warningFlag = false;
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(unit));
 
@@ -76,11 +77,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
          else
          {
-            
             if (!containsColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName))
             {
-               //convertParsedDataColumn(dataRepository, importDataTable.Columns.ItemByName(colInfo.BaseGridName));
-               throw new Exception();
+               throw new BaseGridColumnNotFoundException(columnAndData.Key.ColumnInfo.BaseGridName);
             }
             var baseGrid = findColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName) as BaseGrid;
             dataColumn = new DataColumn(columnAndData.Key.ColumnInfo.Name, dimension, baseGrid);
@@ -188,7 +187,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       {
          var column = columns.FirstOrDefault(col => col.Name == name);
          if (column == null)
-            throw new Exception(name);//this should actually be named
+            throw new ColumnNotFoundException(name);
          return column;
       }
       private static void addExtendedPropertyForSource(string fileName, string sheetName,  DataRepository dataRepository)
