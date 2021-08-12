@@ -52,6 +52,7 @@ namespace OSPSuite.R.Services
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
       private UserDefinedPKParameter _userDefinedPKParameter;
+      private UserDefinedPKParameter _userDefinedCLParameter;
 
       public override void GlobalContext()
       {
@@ -65,6 +66,9 @@ namespace OSPSuite.R.Services
          //Should calculate CMax/100
          _userDefinedPKParameter = new UserDefinedPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.C_max};
          pkParametersTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
+
+         _userDefinedCLParameter = new UserDefinedPKParameter { Name = "MyCL",  StandardPKParameter = StandardPKParameter.CL };
+         pkParametersTask.AddUserDefinedPKParameter(_userDefinedCLParameter);
 
          var containerTask = Api.GetContainerTask();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
@@ -81,6 +85,9 @@ namespace OSPSuite.R.Services
       {
          var allPKParameterSensitivities = _result.AllPKParameterSensitivities.Where(x => x.PKParameterName == _userDefinedPKParameter.Name);
          allPKParameterSensitivities.Any().ShouldBeTrue();
+
+         var allPKParameterCLSensitivities = _result.AllPKParameterSensitivities.Where(x => x.PKParameterName == _userDefinedCLParameter.Name);
+         allPKParameterCLSensitivities.Any().ShouldBeTrue();
       }
    }
 
