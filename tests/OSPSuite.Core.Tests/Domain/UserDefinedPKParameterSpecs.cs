@@ -72,7 +72,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-
    public class When_estimating_the_drug_mass_per_body_weight_for_a_user_defined_parameter_with_interval_definition_not_matching_the_options : concern_for_UserDefinedPKParameter
    {
       [Observation]
@@ -105,27 +104,23 @@ namespace OSPSuite.Core.Domain
       {
          sut.StartApplicationIndex = 0;
          var intervals = new[] {_interval0, _interval1, _interval2, _interval3, _interval4};
-         sut.EstimateDrugMassPerBodyWeight(_options).ShouldBeEqualTo(intervals.Sum(x=>x.DrugMassPerBodyWeight));
+         sut.EstimateDrugMassPerBodyWeight(_options).ShouldBeEqualTo(intervals.Sum(x => x.DrugMassPerBodyWeight));
 
 
          sut.StartApplicationIndex = 1;
-         intervals = new[] { _interval1, _interval2, _interval3, _interval4 };
+         intervals = new[] {_interval1, _interval2, _interval3, _interval4};
          sut.EstimateDrugMassPerBodyWeight(_options).ShouldBeEqualTo(intervals.Sum(x => x.DrugMassPerBodyWeight));
 
          sut.StartApplicationIndex = null;
          sut.EndApplicationIndex = 3;
-         intervals = new[] { _interval0, _interval1, _interval2};
+         intervals = new[] {_interval0, _interval1, _interval2};
          sut.EstimateDrugMassPerBodyWeight(_options).ShouldBeEqualTo(intervals.Sum(x => x.DrugMassPerBodyWeight));
-
 
 
          sut.StartApplicationIndex = 1;
          sut.EndApplicationIndex = 3;
-         intervals = new[] { _interval1, _interval2 };
+         intervals = new[] {_interval1, _interval2};
          sut.EstimateDrugMassPerBodyWeight(_options).ShouldBeEqualTo(intervals.Sum(x => x.DrugMassPerBodyWeight));
-
       }
-
    }
-
 }

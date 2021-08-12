@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       AUC_inf_norm,
       AUC_tEnd_inf,
       AUC_tEnd_inf_norm,
+      CL,
       MRT,
       FractionAucEndToInf,
       Thalf,
@@ -69,7 +70,7 @@ namespace OSPSuite.Core.Domain.PKAnalyses
       public double? EndTimeOffset { get; set; }
       
       /// <summary>
-      /// Normalization Factory parameter that will be used to calculate a normalized parameter. Not that if specified, only the normalized parameter will be added
+      /// Normalization Factory parameter that will be used to calculate a normalized parameter. Note that if specified, only the normalized parameter will be added
       /// </summary>
       public double? NormalizationFactor { get; set; }
 
