@@ -60,17 +60,17 @@ namespace OSPSuite.UI.Views.Importer
 
          var customButton = new CustomHeaderButton(ButtonPredefines.Combo) { ToolTip = "Select Page" };
          importerTabControl.CustomHeaderButtons.Add(customButton);
-         importerTabControl.CustomHeaderButtonClick += onTabControlCustomHeaderButtonClick;
+         importerTabControl.CustomHeaderButtonClick += (s,a) => OnEvent(onTabControlCustomHeaderButtonClick);
          dataViewingGridView.OptionsView.ShowIndicator = false;
       }
 
-      private void onTabControlCustomHeaderButtonClick(object sender, CustomHeaderButtonEventArgs e)
+      private void onTabControlCustomHeaderButtonClick()
       {
          var popupMenu = new DXPopupMenu { MenuViewType = MenuViewType.Menu };
          foreach (XtraTabPage page in importerTabControl.TabPages)
          {
             var menuitem = new DXMenuItem(page.Text);
-            menuitem.Click += onPageListMenuItemClick;
+            menuitem.Click += (s, a) => OnEvent(onPageListMenuItemClick, s, a);
             menuitem.Tag = popupMenu;
             if (page.Image != null)
                menuitem.Image = page.Image;

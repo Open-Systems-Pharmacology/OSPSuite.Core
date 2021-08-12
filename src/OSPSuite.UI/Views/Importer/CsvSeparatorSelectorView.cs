@@ -13,7 +13,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
          fillSeparatorComboBox();
-         separatorComboBoxEdit.EditValueChanged += onSeparatorChanged;
+         separatorComboBoxEdit.EditValueChanged += (s, a) => OnEvent(onSeparatorChanged);
       }
 
       public override void InitializeResources()
@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      private void onSeparatorChanged(object sender, EventArgs e)
+      private void onSeparatorChanged()
       {
          _presenter.SelectedSeparator = char.Parse(separatorComboBoxEdit.SelectedItem.ToString());
       }
