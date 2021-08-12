@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 using System.Collections.Generic;
 
 namespace OSPSuite.Infrastructure.Import.Core

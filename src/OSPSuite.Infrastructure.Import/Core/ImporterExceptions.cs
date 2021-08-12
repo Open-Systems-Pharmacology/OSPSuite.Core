@@ -1,25 +1,37 @@
 ﻿using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
-   public class EmptyNamingConventionsException : OSPSuiteException
+   public class EmptyNamingConventionsException : AbstractImporterException
    {
       public EmptyNamingConventionsException() : base(Error.NamingConventionEmpty)
       {
       }
    }
 
-   public class NullNamingConventionsException : OSPSuiteException
+   public class NullNamingConventionsException : AbstractImporterException
    {
       public NullNamingConventionsException() : base(Error.NamingConventionNull)
       {
       }
    }
 
-   public class InconsistentMoleculeAndMolWeightException : OSPSuiteException
+   public class InconsistentMoleculeAndMolWeightException : AbstractImporterException
    {
       public InconsistentMoleculeAndMolWeightException() : base(Error.InconsistentMoleculeAndMolWeightException)
+      {
+      }
+   }
+
+   public class ColumnNotFoundException : AbstractImporterException
+   {
+      public ColumnNotFoundException(string columnName) : base(Error.ColumnNotFound(columnName))
+      {
+      }
+   }
+   public class BaseGridColumnNotFoundException : AbstractImporterException
+   {
+      public BaseGridColumnNotFoundException(string columnName) : base(Error.BaseGridColumnNotFoundException(columnName))
       {
       }
    }

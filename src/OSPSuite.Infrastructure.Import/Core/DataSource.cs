@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Dynamic;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
@@ -167,7 +166,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                         continue;
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
-                        throw new OSPSuiteException(Error.MismatchingArrayLengths);
+                        throw new MismatchingArrayLengthsException();
 
                      var errorDimension = errorColumn.Key.Column.Dimension;
                      var measurementDimension = measurementColumn.Key.Column.Dimension;
