@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using OSPSuite.Assets;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -189,7 +188,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_throw_on_invalid_file_type()
+      public void should_correctly_notify_and_return_empty_on_invalid_file_type()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
@@ -198,15 +197,15 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_return_empty_on_invalid_file_format()
+      public void should_correctly_notify_and_return_empty_on_invalid_file_format()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
+          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
       }
    }
 
-   [Ignore("waiting for exception handling issue to be fixed - till then red")]
    public class When_importing_data_with_missing_columns : concern_for_DataImporter
    {
       protected override void Because()
@@ -233,12 +232,11 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_throw_correct_exception_on_missing_mapping()
+      public void should_correctly_notify_the_user_on_missing_mapping()
       {
-         The.Action(() =>
-            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSampleMissingMapping.xlsx"))).ShouldThrowAn<MissingColumnException>();
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName("IntegrationSampleMissingMapping.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'SD [mg/l]' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
    }
 
