@@ -64,7 +64,7 @@ namespace OSPSuite.UI.Views.Importer
          initializeButton(_repositoryMetaDataPopupContainerEdit, _metaDataPopupControl, closeUpMetaData);
 
          _disabledPopupContainerEdit.Enabled = false;
-         _disabledPopupContainerEdit.QueryDisplayText += (o, e) => e.DisplayText = " ";
+         _disabledPopupContainerEdit.QueryDisplayText += (o, e) => OnEvent(() => e.DisplayText = " ");
       }
 
       private void queryDisplayText(QueryDisplayTextEventArgs e)
@@ -87,8 +87,8 @@ namespace OSPSuite.UI.Views.Importer
          button.Buttons[0].Kind = ButtonPredefines.Combo;
          button.PopupControl = control;
          button.CloseOnOuterMouseClick = false;
-         button.QueryDisplayText += (o, e) => queryDisplayText(e);
-         button.CloseUp += (o, e) => closeUpHandler(e);
+         button.QueryDisplayText += (o, e) => OnEvent(queryDisplayText, e);
+         button.CloseUp += (o, e) => OnEvent(closeUpHandler, e);
          button.CloseUpKey = new KeyShortcut(Keys.Enter);
          button.AllowDropDownWhenReadOnly = DefaultBoolean.False;
       }

@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.Importer
          _unitComboBox.EditValueChanged += (s, a) => OnEvent(onUnitComboBoxTextChanged);
          _columnComboBox.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
          _columnLayoutControlItem.Text = Captions.Importer.Column;
-         _columnsToggleSwitch.IsOnChanged += onIsOnChanged;
+         _columnsToggleSwitch.IsOnChanged += (s, a) => OnEvent(onIsOnChanged);
          _dimensionsComboBox.EditValueChanged += (s, a) => OnEvent(onDimensionComboBoxTextChanged);
          _columnComboBox.EditValueChanged += (s, a) => OnEvent(onColumnComboBoxTextChanged);
       }
@@ -45,10 +45,10 @@ namespace OSPSuite.UI.Views.Importer
       {
          _columnsToggleSwitch.IsOn = columnMapping;
          _useDimensionSelector = useDimensionSelector;
-         onIsOnChanged(null, null);
+         onIsOnChanged();
       }
 
-      private void onIsOnChanged(object sender, EventArgs e)
+      private void onIsOnChanged()
       {
          if (_isErrorEditor)
             return;

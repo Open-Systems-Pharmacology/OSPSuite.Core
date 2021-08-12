@@ -17,7 +17,7 @@ namespace OSPSuite.UI.Views.Importer
       public LloqEditorView()
       {
          InitializeComponent();
-         LloqToggleSwitch.IsOnChanged += onIsOnChanged;
+         LloqToggleSwitch.IsOnChanged += (s,a) => OnEvent(onIsOnChanged);
          lloqToggleLayoutControlItem.Text = Captions.Importer.ImportLLOQFromColumn;
       }
 
@@ -27,30 +27,17 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
-      private void onIsOnChanged(object sender, EventArgs e)
+      private void onIsOnChanged()
       {
          if (LloqToggleSwitch.IsOn)
          {
             LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never;
             LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Always;
-            //LloqColumnPanelControl.Visible = true;
-            //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-
-            //onColumnComboBoxTextChanged();
          }
          else
          {
             LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Always;
             LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Never;
-
-            //LloqColumnLayoutControlItem.TextVisible = true;
-            //LloqColumnPanelControl.Visible = false;
-
-            //ColumnsComboBoxLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
-
-            //here we have to instead present the text
-            //_columnLayoutControlItem.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-            //onUnitComboBoxTextChanged();
          }
       }
       public void FillComboBox(IEnumerable<string> columns, string defaultValue)
