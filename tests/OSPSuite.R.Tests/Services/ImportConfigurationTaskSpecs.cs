@@ -1,7 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Import;
-using OSPSuite.Infrastructure.Import.Core;
+using System;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
@@ -22,38 +21,38 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_get_and_set_time()
       {
-         sut.GetTime(_configuration).ShouldBeNull();
-         var time = new MappingDataFormatParameter();
-         sut.SetTime(_configuration, time);
-         sut.GetTime(_configuration).ShouldBeEqualTo(time);
+         var time = sut.GetTime(_configuration);
+         var columnName = new Guid().ToString();
+         time.ColumnName = columnName;
+         sut.GetTime(_configuration).ColumnName.ShouldBeEqualTo(columnName);
       }
 
       [Observation]
       public void should_get_and_set_concentration()
       {
-         sut.GetMeasurement(_configuration).ShouldBeNull();
-         var concentration = new MappingDataFormatParameter();
-         sut.SetMeasurement(_configuration, concentration);
-         sut.GetMeasurement(_configuration).ShouldBeEqualTo(concentration);
+         var concentration = sut.GetMeasurement(_configuration);
+         var columnName = new Guid().ToString();
+         concentration.ColumnName = columnName;
+         sut.GetMeasurement(_configuration).ColumnName.ShouldBeEqualTo(columnName);
       }
 
       [Observation]
       public void should_get_and_set_error()
       {
-         sut.GetError(_configuration).ShouldBeNull();
-         var error = new MappingDataFormatParameter();
-         sut.SetError(_configuration, error);
-         sut.GetError(_configuration).ShouldBeEqualTo(error);
+         var error = sut.GetError(_configuration);
+         var columnName = new Guid().ToString();
+         error.ColumnName = columnName;
+         sut.GetError(_configuration).ColumnName.ShouldBeEqualTo(columnName);
       }
 
       [Observation]
       public void should_get_add_and_remove_all_grouping_columns()
       {
          sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
-         var grouping = new GroupByDataFormatParameter("column1");
-         sut.AddGroupingColumn(_configuration, grouping);
-         sut.GetAllGroupingColumns(_configuration).ShouldContain(grouping);
-         sut.RemoveGroupingColumn(_configuration, grouping);
+         var groupingColumn = "column1";
+         sut.AddGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).ShouldContain(groupingColumn);
+         sut.RemoveGroupingColumn(_configuration, groupingColumn);
          sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
       }
 

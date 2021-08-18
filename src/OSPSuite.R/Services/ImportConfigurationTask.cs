@@ -11,16 +11,13 @@ namespace OSPSuite.R.Services
    public interface IImportConfigurationTask
    {
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
-//      MappingDataFormatParameter AddTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
-//      MappingDataFormatParameter AddMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
-      //     MappingDataFormatParameter AddError(ImporterConfiguration configuration);
 
       void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn);
-      DataFormatParameter[] GetAllGroupingColumns(ImporterConfiguration configuration);
+      string[] GetAllGroupingColumns(ImporterConfiguration configuration);
       void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
-      void RemoveGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter);
+      void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
       void AddLoadedSheet(ImporterConfiguration configuration, string sheet);
       void RemoveLoadedSheet(ImporterConfiguration configuration, string sheet);
@@ -45,9 +42,9 @@ namespace OSPSuite.R.Services
          configuration.AddToLoadedSheets(sheet);
       }
 
-      public DataFormatParameter[] GetAllGroupingColumns(ImporterConfiguration configuration)
+      public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.Where(p => (p is MetaDataFormatParameter) || (p is GroupByDataFormatParameter)).ToArray();
+         return configuration.Parameters.Where(p => (p is MetaDataFormatParameter) || (p is GroupByDataFormatParameter)).Select(p => p.ColumnName).ToArray();
       }
 
       public string[] GetAllLoadedSheets(ImporterConfiguration configuration)
@@ -74,30 +71,15 @@ namespace OSPSuite.R.Services
          return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsBase());
       }
 
-      public void RemoveGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter)
+      public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
-         configuration.Parameters.Remove(parameter);
+         configuration.Parameters.Remove(configuration.Parameters.First(p => p.ColumnName == columnName));
       }
 
       public void RemoveLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
          configuration.RemoveFromLoadedSheets(sheet);
       }
-
-      //public MappingDataFormatParameter AddError(ImporterConfiguration configuration)
-      //{
-      //   //TODO
-      //}
-
-      //public MappingDataFormatParameter AddMeasurement(ImporterConfiguration configuration)
-      //{
-      //   //TODO
-      //}
-
-      //public MappingDataFormatParameter AddTime(ImporterConfiguration configuration)
-      //{
-      //   //TODO
-      //}
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
       {
