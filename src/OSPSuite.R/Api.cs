@@ -3,14 +3,10 @@ using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
-using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Bootstrap;
 using OSPSuite.R.Domain;
-using OSPSuite.R.Domain.UnitSystem;
 using OSPSuite.R.Services;
-using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
@@ -68,8 +64,6 @@ namespace OSPSuite.R
       public static IConcurrentSimulationRunner GetConcurrentSimulationRunner() => resolveTask<IConcurrentSimulationRunner>();
 
       public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
-
-      public static IImportConfigurationTask GetImportConfigurationTask() => resolveTask<IImportConfigurationTask>();
 
       private static T resolveTask<T>()
       {

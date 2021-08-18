@@ -12,10 +12,13 @@ namespace OSPSuite.R.Services
 {
    public abstract class concern_for_DataImporter : ContextForIntegration<IDataImporterTask>
    {
+      protected ImporterConfiguration _configuration;
+
       protected override void Context()
       {
          base.Context();
          sut = Api.GetDataImporterTask();
+         _configuration = sut.CreateConfiguration();
       }
 
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
@@ -161,6 +164,68 @@ namespace OSPSuite.R.Services
          configurationCopy.NamingConventions.ShouldBeEqualTo(configuration.NamingConventions);
          configurationCopy.NanSettings.ShouldBeEqualTo(configuration.NanSettings);
          configurationCopy.Parameters.Each((p, i) => p.EquivalentTo(configuration.Parameters[i]).ShouldBeTrue());
+      }
+
+      [Observation]
+      public void should_get_and_set_time()
+      {
+         var time = sut.GetTime(_configuration);
+         var columnName = new Guid().ToString();
+         time.ColumnName = columnName;
+         sut.GetTime(_configuration).ColumnName.ShouldBeEqualTo(columnName);
+      }
+
+      [Observation]
+      public void should_get_and_set_concentration()
+      {
+         var concentration = sut.GetMeasurement(_configuration);
+         var columnName = new Guid().ToString();
+         concentration.ColumnName = columnName;
+         sut.GetMeasurement(_configuration).ColumnName.ShouldBeEqualTo(columnName);
+      }
+
+      [Observation]
+      public void should_get_and_set_error()
+      {
+         var error = sut.GetError(_configuration);
+         var columnName = new Guid().ToString();
+         error.ColumnName = columnName;
+         sut.GetError(_configuration).ColumnName.ShouldBeEqualTo(columnName);
+      }
+
+      [Observation]
+      public void should_add_and_remove_error()
+      {
+         sut.GetError(_configuration).ShouldNotBeNull();
+         var error = new MappingDataFormatParameter();
+         sut.AddError(_configuration, error);
+         sut.GetError(_configuration).ShouldBeEqualTo(error);
+         sut.RemoveError(_configuration);
+         sut.GetError(_configuration).ShouldBeNull();
+         sut.AddError(_configuration, error);
+         sut.GetError(_configuration).ShouldBeEqualTo(error);
+      }
+
+      [Observation]
+      public void should_get_add_and_remove_all_grouping_columns()
+      {
+         sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
+         var groupingColumn = "column1";
+         sut.AddGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).ShouldContain(groupingColumn);
+         sut.RemoveGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_get_add_and_remove_all_loaded_sheets()
+      {
+         sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
+         var sheet = "sheet1";
+         sut.SetAllLoadedSheet(_configuration, new[] { sheet });
+         sut.GetAllLoadedSheets(_configuration).ShouldContain(sheet);
+         _configuration.ClearLoadedSheets();
+         sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
       }
    }
 }
