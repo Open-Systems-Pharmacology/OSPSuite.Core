@@ -75,9 +75,9 @@ namespace OSPSuite.R.Services
       {
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
          var sheet = "sheet1";
-         sut.AddLoadedSheet(_configuration, sheet);
+         sut.SetAllLoadedSheet(_configuration, new[] { sheet });
          sut.GetAllLoadedSheets(_configuration).ShouldContain(sheet);
-         sut.RemoveLoadedSheet(_configuration, sheet);
+         _configuration.ClearLoadedSheets();
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
       }
    }

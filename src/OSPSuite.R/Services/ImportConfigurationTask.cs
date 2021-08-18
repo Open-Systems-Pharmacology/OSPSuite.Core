@@ -2,6 +2,7 @@
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -21,8 +22,7 @@ namespace OSPSuite.R.Services
       void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
       void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
-      void AddLoadedSheet(ImporterConfiguration configuration, string sheet);
-      void RemoveLoadedSheet(ImporterConfiguration configuration, string sheet);
+      void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheet);
    }
 
    public class ImportConfigurationTask : IImportConfigurationTask
@@ -52,9 +52,10 @@ namespace OSPSuite.R.Services
          configuration.AddParameter(parameter);
       }
 
-      public void AddLoadedSheet(ImporterConfiguration configuration, string sheet)
+      public void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets)
       {
-         configuration.AddToLoadedSheets(sheet);
+         configuration.ClearLoadedSheets();
+         sheets.Each(sheet => configuration.AddToLoadedSheets(sheet));
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
@@ -96,11 +97,6 @@ namespace OSPSuite.R.Services
       public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
          configuration.Parameters.Remove(configuration.Parameters.First(p => p.ColumnName == columnName));
-      }
-
-      public void RemoveLoadedSheet(ImporterConfiguration configuration, string sheet)
-      {
-         configuration.RemoveFromLoadedSheets(sheet);
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
