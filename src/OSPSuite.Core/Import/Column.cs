@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Import
 
       public string SelectedUnit { get; private set; }
 
-      public string ColumnName { get; }
+      public string ColumnName { get; set; }
 
       public UnitDescription()
       {

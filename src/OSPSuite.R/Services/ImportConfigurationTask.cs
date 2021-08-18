@@ -11,13 +11,15 @@ namespace OSPSuite.R.Services
    public interface IImportConfigurationTask
    {
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
-      void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time);
+//      MappingDataFormatParameter AddTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
-      void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement);
+//      MappingDataFormatParameter AddMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
-      void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error);
+      //     MappingDataFormatParameter AddError(ImporterConfiguration configuration);
+
+      void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn);
       DataFormatParameter[] GetAllGroupingColumns(ImporterConfiguration configuration);
-      void AddGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter);
+      void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
       void RemoveGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter);
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
       void AddLoadedSheet(ImporterConfiguration configuration, string sheet);
@@ -32,8 +34,9 @@ namespace OSPSuite.R.Services
          _columnInfos = ((DataImporter)dataImporter).DefaultPKSimImportConfiguration();
       }
 
-      public void AddGroupingColumn(ImporterConfiguration configuration, DataFormatParameter parameter)
+      public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
+         DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
          configuration.AddParameter(parameter);
       }
 
@@ -81,43 +84,32 @@ namespace OSPSuite.R.Services
          configuration.RemoveFromLoadedSheets(sheet);
       }
 
-      public void SetError(ImporterConfiguration configuration, MappingDataFormatParameter error)
+      //public MappingDataFormatParameter AddError(ImporterConfiguration configuration)
+      //{
+      //   //TODO
+      //}
+
+      //public MappingDataFormatParameter AddMeasurement(ImporterConfiguration configuration)
+      //{
+      //   //TODO
+      //}
+
+      //public MappingDataFormatParameter AddTime(ImporterConfiguration configuration)
+      //{
+      //   //TODO
+      //}
+
+      public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
       {
-         var errorParameter = GetError(configuration);
-         if (errorParameter != null)
-            configuration.Parameters.Remove(errorParameter);
-
-         if (error == null)
-            return;
-
-         error.MappedColumn.Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName;
-         configuration.AddParameter(error);
-      }
-
-      public void SetMeasurement(ImporterConfiguration configuration, MappingDataFormatParameter measurement)
-      {
-         var measurementParameter = GetMeasurement(configuration);
-         if (measurementParameter != null)
-            configuration.Parameters.Remove(measurementParameter);
-
-         if (measurement == null)
-            return;
-
-         measurement.MappedColumn.Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName;
-         configuration.AddParameter(measurement);
-      }
-
-      public void SetTime(ImporterConfiguration configuration, MappingDataFormatParameter time)
-      {
-         var timeParameter = GetError(configuration);
-         if (timeParameter != null)
-            configuration.Parameters.Remove(timeParameter);
-
-         if (time == null)
-            return;
-
-         time.MappedColumn.Name = _columnInfos.First(ci => ci.IsBase()).DisplayName;
-         configuration.AddParameter(time);
+         if (isUnitFromColumn)
+         {
+            parameter.MappedColumn.Unit.ColumnName = parameter.MappedColumn.Unit.SelectedUnit;
+            parameter.MappedColumn.Dimension = null;
+         } else
+         {
+            parameter.MappedColumn.Unit.ColumnName = null;
+            // 2DO set dimension from unit
+         }
       }
    }
 }

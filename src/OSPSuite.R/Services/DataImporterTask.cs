@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 using IContainer = OSPSuite.Utility.Container.IContainer;
+using OSPSuite.Core.Import;
+using System.Linq;
+using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -130,7 +133,34 @@ namespace OSPSuite.R.Services
 
       public ImporterConfiguration CreateConfiguration()
       {
-         return new ImporterConfiguration();
+         ImporterConfiguration configuration = new ImporterConfiguration();
+
+         Column timeColumn = new Column()
+         {
+            Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
+            Dimension = _dimensionFactory.Dimension("Time"),
+            Unit = new UnitDescription("h")
+         };
+         configuration.AddParameter(new MappingDataFormatParameter("Time", timeColumn));
+
+         Column measurementColumn = new Column()
+         {
+            Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
+            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
+            Unit = new UnitDescription("µmol/l")
+         };
+         configuration.AddParameter(new MappingDataFormatParameter("Measurement", measurementColumn));
+
+         Column errorColumn = new Column()
+         {
+            Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
+            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
+            Unit = new UnitDescription("µmol/l"),
+            ErrorStdDev = "Arithmetic Standard Deviation"
+         };
+         configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
+
+         return configuration;
       }
 
       public ImporterConfiguration CreateConfigurationFor(string dataFileName)
