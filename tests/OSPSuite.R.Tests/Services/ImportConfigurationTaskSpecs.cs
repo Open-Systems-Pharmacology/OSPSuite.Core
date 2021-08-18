@@ -1,5 +1,6 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Import;
 using System;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -43,6 +44,19 @@ namespace OSPSuite.R.Services
          var columnName = new Guid().ToString();
          error.ColumnName = columnName;
          sut.GetError(_configuration).ColumnName.ShouldBeEqualTo(columnName);
+      }
+
+      [Observation]
+      public void should_add_and_remove_error()
+      {
+         sut.GetError(_configuration).ShouldNotBeNull();
+         var error = new MappingDataFormatParameter();
+         sut.AddError(_configuration, error);
+         sut.GetError(_configuration).ShouldBeEqualTo(error);
+         sut.RemoveError(_configuration);
+         sut.GetError(_configuration).ShouldBeNull();
+         sut.AddError(_configuration, error);
+         sut.GetError(_configuration).ShouldBeEqualTo(error);
       }
 
       [Observation]

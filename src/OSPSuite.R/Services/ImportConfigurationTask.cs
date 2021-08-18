@@ -13,6 +13,8 @@ namespace OSPSuite.R.Services
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
+      void AddError(ImporterConfiguration configuration, MappingDataFormatParameter errorColumn);
+      void RemoveError(ImporterConfiguration configuration);
 
       void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn);
       string[] GetAllGroupingColumns(ImporterConfiguration configuration);
@@ -29,6 +31,19 @@ namespace OSPSuite.R.Services
       public ImportConfigurationTask(IDataImporter dataImporter)
       {
          _columnInfos = ((DataImporter)dataImporter).DefaultPKSimImportConfiguration();
+      }
+
+      public void AddError(ImporterConfiguration configuration, MappingDataFormatParameter errorColumn)
+      {
+         var errorParameter = GetError(configuration);
+         if (errorParameter != null)
+            configuration.Parameters.Remove(errorParameter);
+
+         if (errorColumn == null)
+            return;
+
+         errorColumn.MappedColumn.Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName;
+         configuration.AddParameter(errorColumn);
       }
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
@@ -69,6 +84,13 @@ namespace OSPSuite.R.Services
       public MappingDataFormatParameter GetTime(ImporterConfiguration configuration)
       {
          return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsBase());
+      }
+
+      public void RemoveError(ImporterConfiguration configuration)
+      {
+         var errorParameter = GetError(configuration);
+         if (errorParameter != null)
+            configuration.Parameters.Remove(errorParameter);
       }
 
       public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
