@@ -205,6 +205,9 @@ namespace OSPSuite.R.Services
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
+         if (configuration.Parameters.Any(p => p.ColumnName == columnName))
+            return;
+
          DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
          configuration.AddParameter(parameter);
       }
