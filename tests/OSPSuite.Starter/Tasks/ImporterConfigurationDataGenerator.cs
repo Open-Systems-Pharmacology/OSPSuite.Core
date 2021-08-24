@@ -361,8 +361,8 @@ namespace OSPSuite.Starter.Tasks
          var concentrationInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Concentration",
-            DisplayName = "Concentration",
+            Name = "Measurement",
+            DisplayName = "Measurement",
             IsMandatory = true,
             BaseGridName = timeColumn.Name
          };

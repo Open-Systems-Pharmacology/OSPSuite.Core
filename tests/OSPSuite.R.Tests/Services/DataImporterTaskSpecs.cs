@@ -218,6 +218,32 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_not_duplicate_grouping_columns()
+      {
+         sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
+         var groupingColumn = "column1";
+         sut.AddGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
+         sut.AddGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
+
+      }
+
+      [Observation]
+      public void should_not_throw_when_removing_non_existing_grouping_columns()
+      {
+         sut.GetAllGroupingColumns(_configuration).ShouldBeEmpty();
+         var groupingColumn = "column1";
+         sut.RemoveGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(0);
+         sut.AddGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
+         sut.RemoveGroupingColumn(_configuration, groupingColumn);
+         sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(0);
+
+      }
+
+      [Observation]
       public void should_get_add_and_remove_all_loaded_sheets()
       {
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();

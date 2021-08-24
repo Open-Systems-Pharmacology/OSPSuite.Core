@@ -210,8 +210,11 @@ namespace OSPSuite.R.Services
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
-            DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
-            configuration.AddParameter(parameter);
+         if (configuration.Parameters.Any(p => p.ColumnName == columnName))
+            return;
+
+         DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
+         configuration.AddParameter(parameter);
       }
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets)
@@ -264,7 +267,10 @@ namespace OSPSuite.R.Services
 
       public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
-         configuration.Parameters.Remove(configuration.Parameters.First(p => p.ColumnName == columnName));
+         var column = configuration.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
+         if (column == null)
+            return;
+         configuration.Parameters.Remove(column);
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
