@@ -251,5 +251,16 @@ namespace OSPSuite.R.Services
          _configuration.ClearLoadedSheets();
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
       }
+
+      [Observation]
+      public void should_get_add_and_remove_all_loaded_sheets_from_single_string()
+      {
+         sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
+         var sheet = "sheet1";
+         sut.SetAllLoadedSheet(_configuration, sheet);
+         sut.GetAllLoadedSheets(_configuration).ShouldContain(sheet);
+         _configuration.ClearLoadedSheets();
+         sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
+      }
    }
 }
