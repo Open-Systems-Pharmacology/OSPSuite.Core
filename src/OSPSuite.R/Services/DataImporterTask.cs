@@ -12,19 +12,20 @@ using OSPSuite.Core.Import;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.R.Services
 {
    public interface IDataImporterTask
    {
       ImporterConfiguration CreateConfiguration();
-      ImporterConfiguration GetConfiguration(string fileName);
-      ImporterConfiguration CreateConfigurationFor(string dataFileName);
+      ImporterConfiguration GetConfiguration(string filePath);
+      ImporterConfiguration CreateConfigurationFor(string dataPath);
       void SaveConfiguration(ImporterConfiguration configuration, string path);
-      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(string configurationFileName, string dataFileName);
-      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataFileName);
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationFileName, string dataFileName, char columnSeparator);
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataFileName, char columnSeparator);
+      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(string configurationPath, string dataPath);
+      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataPath);
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator);
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator);
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
@@ -78,49 +79,49 @@ namespace OSPSuite.R.Services
       }
 
       public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
-         string configurationFileName,
-         string dataFileName)
+         string configurationPath,
+         string dataPath)
       {
          return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationFileName), 
+            GetConfiguration(configurationPath), 
             _metaDataCategories, 
             _columnInfos, 
             _dataImporterSettings, 
-            dataFileName
+            dataPath
          );
       }
 
       public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
          ImporterConfiguration configuration,
-         string dataFileName)
+         string dataPath)
       {
          return _dataImporter.ImportFromConfiguration(
             configuration,
             _metaDataCategories,
             _columnInfos,
             _dataImporterSettings,
-            dataFileName
+            dataPath
          );
       }
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
-         string configurationFileName,
-         string dataFileName,
+         string configurationPath,
+         string dataPath,
          char columnSeparator)
       {
          _csvSeparatorSelector.CsvSeparator = columnSeparator;
          return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationFileName),
+            GetConfiguration(configurationPath),
             _metaDataCategories,
             _columnInfos,
             _dataImporterSettings,
-            dataFileName
+            dataPath
          );
       }
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          ImporterConfiguration configuration,
-         string dataFileName,
+         string dataPath,
          char columnSeparator)
       {
          _csvSeparatorSelector.CsvSeparator = columnSeparator;
@@ -129,17 +130,17 @@ namespace OSPSuite.R.Services
             _metaDataCategories,
             _columnInfos,
             _dataImporterSettings,
-            dataFileName
+            dataPath
          );
       }
 
-      public ImporterConfiguration GetConfiguration(string fileName)
+      public ImporterConfiguration GetConfiguration(string filePath)
       {
          using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
 
-            var xel = XElement.Load(fileName);
+            var xel = XElement.Load(filePath);
             return serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
          }
       }
@@ -150,30 +151,32 @@ namespace OSPSuite.R.Services
       /// <returns>A new configuration object</returns>
       public ImporterConfiguration CreateConfiguration()
       {
-         ImporterConfiguration configuration = new ImporterConfiguration();
+         var configuration = new ImporterConfiguration();
 
-         Column timeColumn = new Column()
+         var dimension = _dimensionFactory.Dimension(Constants.TIME);
+         var timeColumn = new Column()
          {
             Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
-            Dimension = _dimensionFactory.Dimension("Time"),
-            Unit = new UnitDescription("h")
+            Dimension = dimension,
+            Unit = new UnitDescription(dimension.BaseUnit.ToString())
          };
-         configuration.AddParameter(new MappingDataFormatParameter("Time", timeColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.TIME, timeColumn));
 
-         Column measurementColumn = new Column()
+         dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         var measurementColumn = new Column()
          {
             Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
-            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
-            Unit = new UnitDescription("µmol/l")
+            Dimension = dimension,
+            Unit = new UnitDescription(dimension.BaseUnit.ToString())
          };
-         configuration.AddParameter(new MappingDataFormatParameter("Measurement", measurementColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.MEASUREMENT, measurementColumn));
 
          return configuration;
       }
 
-      public ImporterConfiguration CreateConfigurationFor(string dataFileName)
+      public ImporterConfiguration CreateConfigurationFor(string dataPath)
       {
-         return _dataImporter.ConfigurationFromData(dataFileName, _columnInfos, _metaDataCategories);
+         return _dataImporter.ConfigurationFromData(dataPath, _columnInfos, _metaDataCategories);
       }
 
       public void SaveConfiguration(ImporterConfiguration configuration, string path)
@@ -195,17 +198,17 @@ namespace OSPSuite.R.Services
       {
          //Add a new error column only of the configuration does not have an error column yet
          var errorParameter = GetError(configuration);
-         if (errorParameter == null)
+         if (errorParameter != null)
+            return;
+         
+         var errorColumn = new Column()
          {
-            Column errorColumn = new Column()
-            {
-               Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
-               Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
-               Unit = new UnitDescription("µmol/l"),
-               ErrorStdDev = "Arithmetic Standard Deviation"
-            };
-            configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
-         }
+            Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
+            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
+            Unit = new UnitDescription("µmol/l"),
+            ErrorStdDev = "Arithmetic Standard Deviation"
+         };
+         configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
       }
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
@@ -223,15 +226,16 @@ namespace OSPSuite.R.Services
          sheets.Each(sheet => configuration.AddToLoadedSheets(sheet));
       }
 
-      public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheets)
+      public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         configuration.ClearLoadedSheets();
-         configuration.AddToLoadedSheets(sheets);
+         SetAllLoadedSheet(configuration, new[] { sheet });
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.Where(p => (p is MetaDataFormatParameter) || (p is GroupByDataFormatParameter)).Select(p => p.ColumnName).ToArray();
+         return configuration.Parameters
+            .Where(p => (p is MetaDataFormatParameter) || (p is GroupByDataFormatParameter))
+            .Select(p => p.ColumnName).ToArray();
       }
 
       public string[] GetAllLoadedSheets(ImporterConfiguration configuration)
@@ -241,7 +245,9 @@ namespace OSPSuite.R.Services
 
       public MappingDataFormatParameter GetError(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsAuxiliary());
+         return configuration.Parameters
+            .OfType<MappingDataFormatParameter>()
+            .FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsAuxiliary());
       }
 
       public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration)

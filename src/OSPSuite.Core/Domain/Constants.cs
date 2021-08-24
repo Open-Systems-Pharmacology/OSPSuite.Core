@@ -33,6 +33,7 @@ namespace OSPSuite.Core.Domain
       public const string ACTIVE = "Active";
       public const string PASSIVE = "Passive";
       public const string TIME = "Time";
+      public const string MEASUREMENT = "Measurement";
       public const string ROOT_CONTAINER_TAG = "RootContainer";
       public const string ALL_TAG = "All";
       public const string CONCENTRATION_FORMULA = "ConcFormula";
