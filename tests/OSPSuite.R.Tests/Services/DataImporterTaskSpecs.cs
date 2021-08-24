@@ -118,7 +118,7 @@ namespace OSPSuite.R.Services
       {
          var configuration = sut.CreateConfigurationFor(getFileFullName("011.xlsx"));
          configuration.Parameters.OfType<MappingDataFormatParameter>().Any(p => p.MappedColumn.Name == "Time" && p.ColumnName == "Time [min]").ShouldBeTrue();
-         configuration.Parameters.OfType<MappingDataFormatParameter>().Any(p => p.MappedColumn.Name == "Concentration" && p.ColumnName == "Measurement [mg/ml]").ShouldBeTrue();
+         configuration.Parameters.OfType<MappingDataFormatParameter>().Any(p => p.MappedColumn.Name == "Measurement" && p.ColumnName == "Measurement [mg/ml]").ShouldBeTrue();
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Organ" && p.ColumnName == "Organ").ShouldBeTrue();
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Study Id" && p.ColumnName == "Study Id").ShouldBeTrue();
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Subject Id" && p.ColumnName == "Subject Id").ShouldBeTrue();
@@ -187,6 +187,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_get_and_set_error()
       {
+         sut.AddError(_configuration);
          var error = sut.GetError(_configuration);
          var columnName = new Guid().ToString();
          error.ColumnName = columnName;
@@ -196,14 +197,11 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_add_and_remove_error()
       {
+         sut.GetError(_configuration).ShouldBeNull();
+         sut.AddError(_configuration);
          sut.GetError(_configuration).ShouldNotBeNull();
-         var error = new MappingDataFormatParameter();
-         sut.AddError(_configuration, error);
-         sut.GetError(_configuration).ShouldBeEqualTo(error);
          sut.RemoveError(_configuration);
          sut.GetError(_configuration).ShouldBeNull();
-         sut.AddError(_configuration, error);
-         sut.GetError(_configuration).ShouldBeEqualTo(error);
       }
 
       [Observation]
