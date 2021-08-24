@@ -28,7 +28,7 @@ namespace OSPSuite.R.Services
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
-      void AddError(ImporterConfiguration configuration, MappingDataFormatParameter errorColumn);
+      void AddError(ImporterConfiguration configuration);
       void RemoveError(ImporterConfiguration configuration);
       void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn);
       string[] GetAllGroupingColumns(ImporterConfiguration configuration);
@@ -36,6 +36,7 @@ namespace OSPSuite.R.Services
       void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheet);
+      void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet);
       bool IgnoreSheetNamesAtImport { get; set; }
    }
 
@@ -143,6 +144,10 @@ namespace OSPSuite.R.Services
          }
       }
 
+      /// <summary>
+      /// Creates an emtpy configuration with the columns "Time" and "Measurement".
+      /// </summary>
+      /// <returns>A new configuration object</returns>
       public ImporterConfiguration CreateConfiguration()
       {
          ImporterConfiguration configuration = new ImporterConfiguration();
@@ -163,15 +168,6 @@ namespace OSPSuite.R.Services
          };
          configuration.AddParameter(new MappingDataFormatParameter("Measurement", measurementColumn));
 
-         Column errorColumn = new Column()
-         {
-            Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
-            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
-            Unit = new UnitDescription("µmol/l"),
-            ErrorStdDev = "Arithmetic Standard Deviation"
-         };
-         configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
-
          return configuration;
       }
 
@@ -190,29 +186,44 @@ namespace OSPSuite.R.Services
          }
       }
 
-      public void AddError(ImporterConfiguration configuration, MappingDataFormatParameter errorColumn)
+      /// <summary>
+      /// Add an error column to the configuration if no error column is present.
+      /// If the configuration already has an error column, the mehtod does nothing.
+      /// </summary>
+      /// <param name="configuration">Configuration object</param>
+      public void AddError(ImporterConfiguration configuration)
       {
+         //Add a new error column only of the configuration does not have an error column yet
          var errorParameter = GetError(configuration);
-         if (errorParameter != null)
-            configuration.Parameters.Remove(errorParameter);
-
-         if (errorColumn == null)
-            return;
-
-         errorColumn.MappedColumn.Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName;
-         configuration.AddParameter(errorColumn);
+         if (errorParameter == null)
+         {
+            Column errorColumn = new Column()
+            {
+               Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
+               Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
+               Unit = new UnitDescription("µmol/l"),
+               ErrorStdDev = "Arithmetic Standard Deviation"
+            };
+            configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
+         }
       }
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
-         DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
-         configuration.AddParameter(parameter);
+            DataFormatParameter parameter = new GroupByDataFormatParameter(columnName);
+            configuration.AddParameter(parameter);
       }
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets)
       {
          configuration.ClearLoadedSheets();
          sheets.Each(sheet => configuration.AddToLoadedSheets(sheet));
+      }
+
+      public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheets)
+      {
+         configuration.ClearLoadedSheets();
+         configuration.AddToLoadedSheets(sheets);
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
@@ -266,7 +277,7 @@ namespace OSPSuite.R.Services
          else
          {
             parameter.MappedColumn.Unit.ColumnName = null;
-            // 2DO set dimension from unit
+            parameter.MappedColumn.Dimension = _dimensionFactory.DimensionForUnit(parameter.MappedColumn.Unit.SelectedUnit);
          }
       }
    }
