@@ -256,7 +256,10 @@ namespace OSPSuite.R.Services
 
       public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
       {
-         configuration.Parameters.Remove(configuration.Parameters.First(p => p.ColumnName == columnName));
+         var column = configuration.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
+         if (column == null)
+            return;
+         configuration.Parameters.Remove(column);
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)
