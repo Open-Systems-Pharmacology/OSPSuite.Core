@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,71 +14,6 @@ using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
-   public class ConcurrentRunSimulationBatch : IDisposable
-   {
-      public string Id { get; }
-      public IModelCoreSimulation Simulation { get; }
-      public List<SimulationBatchRunValues> SimulationBatchRunValues { get; } = new List<SimulationBatchRunValues>();
-      public SimulationBatchOptions SimulationBatchOptions { get; }
-
-      public string[] RunValuesIds => SimulationBatchRunValues.Select(srv => srv.Id).ToArray();
-
-      private readonly ConcurrentQueue<SimulationBatch> _simulationBatches = new ConcurrentQueue<SimulationBatch>();
-
-      internal int MissingBatchesCount => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count);
-
-      public ConcurrentRunSimulationBatch(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
-      {
-         Simulation = simulation;
-         SimulationBatchOptions = simulationBatchOptions;
-         Id = generateId();
-      }
-
-      internal SimulationBatch AddNewBatch()
-      {
-         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
-         _simulationBatches.Enqueue(batch);
-         return batch;
-      }
-
-      public IReadOnlyCollection<SimulationBatch> SimulationBatches => _simulationBatches;
-
-      public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
-      {
-         var id = generateId();
-         simulationBatchRunValues.Id = id;
-         SimulationBatchRunValues.Add(simulationBatchRunValues);
-         return id;
-      }
-
-      private string generateId() => Guid.NewGuid().ToString();
-
-      protected virtual void Cleanup()
-      {
-         _simulationBatches.Each(x => x.Dispose());
-      }
-
-      #region Disposable properties
-
-      private bool _disposed;
-
-      public void Dispose()
-      {
-         if (_disposed) return;
-
-         Cleanup();
-         GC.SuppressFinalize(this);
-         _disposed = true;
-      }
-
-      ~ConcurrentRunSimulationBatch()
-      {
-         Cleanup();
-      }
-
-      #endregion
-   }
-
    internal class SimulationBatchRunOptions
    {
       public IModelCoreSimulation Simulation { get; set; }
@@ -103,8 +37,8 @@ namespace OSPSuite.R.Services
       /// <summary>
       ///    Adds a SimulationBatch to the list of SimulationBatches
       /// </summary>
-      /// <param name="simulationWithBatchOptions">the options to run the batch</param>
-      void AddSimulationBatchOption(ConcurrentRunSimulationBatch simulationWithBatchOptions);
+      /// <param name="simulationBatch">the concurrent batch to add</param>
+      void AddSimulationBatch(ConcurrentRunSimulationBatch simulationBatch);
 
       /// <summary>
       ///    Clear all data for freshly start
@@ -144,15 +78,14 @@ namespace OSPSuite.R.Services
          _simulations.Add(simulation);
       }
 
-      public void AddSimulationBatchOption(ConcurrentRunSimulationBatch settings)
+      public void AddSimulationBatch(ConcurrentRunSimulationBatch simulationBatch)
       {
-         _listOfConcurrentRunSimulationBatch.Add(settings);
+         _listOfConcurrentRunSimulationBatch.Add(simulationBatch);
       }
 
       public void Clear()
       {
          _simulations.Clear();
-         _listOfConcurrentRunSimulationBatch.Each(x => x.Dispose());
          _listOfConcurrentRunSimulationBatch.Clear();
          _cancellationTokenSource?.Cancel();
       }
@@ -219,7 +152,7 @@ namespace OSPSuite.R.Services
 
             //After one RunConcurrently call, we need to forget the SimulationBatchRunValues and expect the new set of values. So the caller has to
             //specify new SimulationBatchRunValues before each RunConcurrently call.
-            _listOfConcurrentRunSimulationBatch.ForEach(settings => settings.SimulationBatchRunValues.Clear());
+            _listOfConcurrentRunSimulationBatch.Each(x => x.ClearRunValues());
             return results.Values;
          }
 
