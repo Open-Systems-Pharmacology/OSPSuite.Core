@@ -37,10 +37,7 @@ namespace OSPSuite.R.Domain
          return batch;
       }
 
-      public void ClearRunValues()
-      {
-         _simulationBatchRunValues.Clear();
-      }
+      public void ClearRunValues() => _simulationBatchRunValues.Clear();
 
       public IReadOnlyCollection<SimulationBatch> SimulationBatches => _simulationBatches;
 
