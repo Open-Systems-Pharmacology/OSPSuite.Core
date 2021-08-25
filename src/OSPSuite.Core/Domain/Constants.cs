@@ -33,7 +33,6 @@ namespace OSPSuite.Core.Domain
       public const string ACTIVE = "Active";
       public const string PASSIVE = "Passive";
       public const string TIME = "Time";
-      public const string MEASUREMENT = "Measurement";
       public const string ROOT_CONTAINER_TAG = "RootContainer";
       public const string ALL_TAG = "All";
       public const string CONCENTRATION_FORMULA = "ConcFormula";
@@ -299,6 +298,7 @@ namespace OSPSuite.Core.Domain
          public const string MOLAR_AMOUNT = "Amount";
          public const string MASS_AMOUNT = "Mass";
          public const string TIME = "Time";
+         public const string MEASUREMENT = "Measurement";
          public const string RHS_DIMENSION_SUFFIX = " per time";
          public const string RESOLUTION = "Resolution";
          public const string AMOUNT_PER_TIME = "Amount per time";

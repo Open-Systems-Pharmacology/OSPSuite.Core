@@ -1,5 +1,4 @@
 ﻿using System;
-using NPOI.POIFS.Crypt;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
