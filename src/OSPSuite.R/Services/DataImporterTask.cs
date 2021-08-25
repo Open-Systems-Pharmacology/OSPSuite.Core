@@ -200,12 +200,13 @@ namespace OSPSuite.R.Services
          var errorParameter = GetError(configuration);
          if (errorParameter != null)
             return;
-         
+
+         var measurementUnitDescription = GetMeasurement(configuration).MappedColumn.Unit;
          var errorColumn = new Column()
          {
             Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
             Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
-            Unit = new UnitDescription("µmol/l"),
+            Unit = new UnitDescription(measurementUnitDescription.SelectedUnit, measurementUnitDescription.ColumnName),
             ErrorStdDev = "Arithmetic Standard Deviation"
          };
          configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
@@ -283,13 +284,15 @@ namespace OSPSuite.R.Services
       {
          if (isUnitFromColumn)
          {
-            parameter.MappedColumn.Unit.ColumnName = parameter.MappedColumn.Unit.SelectedUnit;
+            var oldUnit = parameter.MappedColumn.Unit.SelectedUnit;
+            parameter.MappedColumn.Unit = new UnitDescription(oldUnit, oldUnit);
             parameter.MappedColumn.Dimension = null;
          }
          else
          {
-            parameter.MappedColumn.Unit.ColumnName = null;
-            parameter.MappedColumn.Dimension = _dimensionFactory.DimensionForUnit(parameter.MappedColumn.Unit.SelectedUnit);
+            var oldUnit = parameter.MappedColumn.Unit.SelectedUnit;
+            parameter.MappedColumn.Unit = new UnitDescription(oldUnit);
+            parameter.MappedColumn.Dimension = _dimensionFactory.DimensionForUnit(oldUnit);
          }
       }
    }
