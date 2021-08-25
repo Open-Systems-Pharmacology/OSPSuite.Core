@@ -1,5 +1,4 @@
-﻿using OSPSuite.UI.Controls;
-
+﻿
 namespace OSPSuite.UI.Views.Importer
 {
    partial class ImportConfirmationView
@@ -179,7 +178,6 @@ namespace OSPSuite.UI.Views.Importer
          this.buttonAdd.Size = new System.Drawing.Size(330, 27);
          this.buttonAdd.StyleController = this.layoutControl1;
          this.buttonAdd.TabIndex = 10;
-         this.buttonAdd.Text = "Add keys";
          // 
          // layoutControlGroup1
          // 

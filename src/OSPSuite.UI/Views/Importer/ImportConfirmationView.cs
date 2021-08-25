@@ -31,6 +31,7 @@ namespace OSPSuite.UI.Views.Importer
          InitializeComponent();
 
          namingConventionLayout.Text = Captions.Importer.NamingPattern;
+         buttonAdd.Text = Captions.Importer.AddKeys;
          buttonAdd.Click += (s, a) => OnEvent(() =>
             namingConventionComboBoxEdit.EditValue += 
                (string.IsNullOrEmpty(namingConventionComboBoxEdit.EditValue.ToString()) ? "" : separatorComboBoxEdit.SelectedItem.ToString()) +
