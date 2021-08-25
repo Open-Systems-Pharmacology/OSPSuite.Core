@@ -153,23 +153,23 @@ namespace OSPSuite.R.Services
       {
          var configuration = new ImporterConfiguration();
 
-         var dimension = _dimensionFactory.Dimension(Constants.TIME);
+         var dimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          var timeColumn = new Column()
          {
             Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
             Dimension = dimension,
-            Unit = new UnitDescription(dimension.BaseUnit.ToString())
+            Unit = new UnitDescription(dimension.DefaultUnitName)
          };
-         configuration.AddParameter(new MappingDataFormatParameter(Constants.TIME, timeColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.Dimension.TIME, timeColumn));
 
          dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var measurementColumn = new Column()
          {
             Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
             Dimension = dimension,
-            Unit = new UnitDescription(dimension.BaseUnit.ToString())
+            Unit = new UnitDescription(dimension.DefaultUnitName)
          };
-         configuration.AddParameter(new MappingDataFormatParameter(Constants.MEASUREMENT, measurementColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.Dimension.MEASUREMENT, measurementColumn));
 
          return configuration;
       }
