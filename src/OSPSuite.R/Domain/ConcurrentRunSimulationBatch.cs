@@ -11,7 +11,7 @@ namespace OSPSuite.R.Domain
    {
       public string Id { get; }
       public IModelCoreSimulation Simulation { get; }
-      public readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
+      private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
       public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues => _simulationBatchRunValues;
 
