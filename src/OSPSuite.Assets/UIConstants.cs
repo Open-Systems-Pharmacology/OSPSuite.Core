@@ -361,7 +361,7 @@ namespace OSPSuite.Assets
          public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
          public static readonly string ClearMapping = "Clear Mapping";
          public static readonly string Format = "Format: ";
-         public static readonly string AddKeys = "Add keys";
+         public static readonly string AddKeys = "Add Keys";
          public static readonly string Columns = "Columns";
          public static readonly string Mappings = "Mappings";
          public static readonly string FormatPlain = "Format";
@@ -386,7 +386,7 @@ namespace OSPSuite.Assets
          public static readonly string ExtraColumn = "Edit Extra Fields";
          public static readonly string ErrorColumn = "Error";
          public static readonly string ErrorType = "Error type";
-         public static readonly string LoadAllSheets = "Add all sheets";
+         public static readonly string LoadAllSheets = "Add All Sheets";
          public static readonly string SourceTab = "Source";
          public static readonly string ConfirmationTab = "Confirmation";
          public static readonly string PreviewLayout = "Preview";
@@ -397,7 +397,7 @@ namespace OSPSuite.Assets
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
          public static readonly string ImportUnitFromColumn = "Import unit from a column";
          public static readonly string Column = "Column";
-         public static readonly string LoadCurrentSheet = "Add current sheet";
+         public static readonly string LoadCurrentSheet = "Add Current Sheet";
          public static readonly string AllSheetsAlreadyImported = "All imported";
          public static readonly string SheetsAlreadyImported = "Imported";
          public static readonly string CloseAllTabsButThis = "Close all tabs but this";
@@ -407,8 +407,8 @@ namespace OSPSuite.Assets
          public static readonly string Title = "Import Observed Data";
          public static readonly string LLOQ = "LLOQ";
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
-         public static readonly string SaveConfiguration = "Save configuration";
-         public static readonly string ApplyConfiguration = "Load configuration";
+         public static readonly string SaveConfiguration = "Save Configuration";
+         public static readonly string ApplyConfiguration = "Load Configuration";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";
