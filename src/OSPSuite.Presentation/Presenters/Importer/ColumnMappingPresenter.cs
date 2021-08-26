@@ -252,13 +252,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else //in this case the column is a measurement column
          {
-            var columns = new List<string>() {column.LloqColumn};
-            if (!string.IsNullOrEmpty(column.LloqColumn))
-            {
-               columns.Add("");
-            }
-
-            columns.AddRange(availableColumns());
             column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;
          }
 
