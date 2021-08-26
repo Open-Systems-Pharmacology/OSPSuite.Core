@@ -30,7 +30,7 @@ namespace OSPSuite.R.Services
       public void should_throw_on_invalid_file_name()
       {
          The.Action(() => 
-            sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample_non_existent.xlsx"))
+            sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample_non_existent.xlsx"))
          ).ShouldThrowAn<OSPSuiteException>();
       }
 
@@ -38,20 +38,20 @@ namespace OSPSuite.R.Services
       public void should_throw_on_invalid_file_format()
       {
          The.Action(() =>
-            sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("importerConfiguration1.xml"))
+            sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("importerConfiguration1.xml"))
          ).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_import_simple_data()
       {
-         sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
+         sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
 
       [Observation]
       public void should_throw_on_invalid_file_type()
       {
-         The.Action(() => sut.ImportXslxFromConfiguration(sut.CreateConfiguration(), getFileFullName("simple.pkml")).Count.ShouldBeEqualTo(0)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ImportExcelFromConfiguration(sut.CreateConfiguration(), getFileFullName("simple.pkml")).Count.ShouldBeEqualTo(0)).ShouldThrowAn<OSPSuiteException>();
       }
 
 
@@ -71,7 +71,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_on_empty_file_name()
       {
-         The.Action(() => sut.ImportXslxFromConfiguration(getFileFullName("importerConfiguration1.xml"), "")).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration1.xml"), "")).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
@@ -83,7 +83,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_import_simple_data_with_configuration_object()
       {
-         sut.ImportXslxFromConfiguration(sut.GetConfiguration(getFileFullName("importerConfiguration1.xml")), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
+         sut.ImportExcelFromConfiguration(sut.GetConfiguration(getFileFullName("importerConfiguration1.xml")), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
 
 
@@ -110,7 +110,7 @@ namespace OSPSuite.R.Services
          (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("h");
          (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
          (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mg/l");
-         sut.ImportXslxFromConfiguration(configuration, getFileFullName("sample1.xlsx")).ShouldNotBeNull();
+         sut.ImportExcelFromConfiguration(configuration, getFileFullName("sample1.xlsx")).ShouldNotBeNull();
       }
 
       [Observation]

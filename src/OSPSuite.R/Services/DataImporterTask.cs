@@ -1,18 +1,15 @@
-﻿using OSPSuite.Core.Domain.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Services;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
-using IContainer = OSPSuite.Utility.Container.IContainer;
-using OSPSuite.Core.Import;
-using System.Linq;
 using OSPSuite.Infrastructure.Import.Extensions;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
 {
@@ -22,8 +19,8 @@ namespace OSPSuite.R.Services
       ImporterConfiguration GetConfiguration(string filePath);
       ImporterConfiguration CreateConfigurationFor(string dataPath);
       void SaveConfiguration(ImporterConfiguration configuration, string path);
-      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(string configurationPath, string dataPath);
-      IReadOnlyList<DataRepository> ImportXslxFromConfiguration(ImporterConfiguration configuration, string dataPath);
+      IReadOnlyList<DataRepository> ImportExcelFromConfiguration(string configurationPath, string dataPath);
+      IReadOnlyList<DataRepository> ImportExcelFromConfiguration(ImporterConfiguration configuration, string dataPath);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator);
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
@@ -36,7 +33,7 @@ namespace OSPSuite.R.Services
       void AddGroupingColumn(ImporterConfiguration configuration, string columnName);
       void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName);
       string[] GetAllLoadedSheets(ImporterConfiguration configuration);
-      void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheet);
+      void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets);
       void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet);
       bool IgnoreSheetNamesAtImport { get; set; }
    }
@@ -44,54 +41,54 @@ namespace OSPSuite.R.Services
    public class DataImporterTask : IDataImporterTask
    {
       private readonly IDataImporter _dataImporter;
-      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly DataImporterSettings _dataImporterSettings;
       private readonly IReadOnlyList<ColumnInfo> _columnInfos;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly IContainer _container;
+      private readonly IPKMLPersistor _pkmlPersistor;
       private readonly ICsvDynamicSeparatorSelector _csvSeparatorSelector;
 
       public DataImporterTask(
-         IDataImporter dataImporter, 
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
+         IDataImporter dataImporter,
          ICsvDynamicSeparatorSelector csvSeparatorSelector,
-         IDimensionFactory dimensionFactory, 
-         IContainer container
+         IDimensionFactory dimensionFactory,
+         IPKMLPersistor pkmlPersistor
       )
       {
          _dataImporter = dataImporter;
-         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _dimensionFactory = dimensionFactory;
-         _container = container;
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories();
-         _dataImporterSettings = new DataImporterSettings();
-         _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
-         _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
-         _dataImporterSettings.IgnoreSheetNamesAtImport = true;
-         _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
+         _pkmlPersistor = pkmlPersistor;
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories();
+         _dataImporterSettings = new DataImporterSettings
+         {
+            NameOfMetaDataHoldingMoleculeInformation = Constants.ObservedData.MOLECULE,
+            NameOfMetaDataHoldingMolecularWeightInformation = Constants.ObservedData.MOLECULAR_WEIGHT,
+            IgnoreSheetNamesAtImport = true
+         };
+         _columnInfos = ((DataImporter) _dataImporter).DefaultPKSimImportConfiguration();
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
-      public bool IgnoreSheetNamesAtImport {
+      public bool IgnoreSheetNamesAtImport
+      {
          get => _dataImporterSettings.IgnoreSheetNamesAtImport;
          set => _dataImporterSettings.IgnoreSheetNamesAtImport = value;
       }
 
-      public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
+      public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          string configurationPath,
          string dataPath)
       {
          return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationPath), 
-            _metaDataCategories, 
-            _columnInfos, 
-            _dataImporterSettings, 
+            GetConfiguration(configurationPath),
+            _metaDataCategories,
+            _columnInfos,
+            _dataImporterSettings,
             dataPath
          );
       }
 
-      public IReadOnlyList<DataRepository> ImportXslxFromConfiguration(
+      public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          ImporterConfiguration configuration,
          string dataPath)
       {
@@ -136,17 +133,11 @@ namespace OSPSuite.R.Services
 
       public ImporterConfiguration GetConfiguration(string filePath)
       {
-         using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
-         {
-            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
-
-            var xel = XElement.Load(filePath);
-            return serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
-         }
+         return _pkmlPersistor.Load<ImporterConfiguration>(filePath);
       }
 
       /// <summary>
-      /// Creates an emtpy configuration with the columns "Time" and "Measurement".
+      ///    Creates an empty configuration with the columns "Time" and "Measurement".
       /// </summary>
       /// <returns>A new configuration object</returns>
       public ImporterConfiguration CreateConfiguration()
@@ -154,7 +145,7 @@ namespace OSPSuite.R.Services
          var configuration = new ImporterConfiguration();
 
          var dimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
-         var timeColumn = new Column()
+         var timeColumn = new Column
          {
             Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
             Dimension = dimension,
@@ -163,7 +154,7 @@ namespace OSPSuite.R.Services
          configuration.AddParameter(new MappingDataFormatParameter(Constants.TIME, timeColumn));
 
          dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
-         var measurementColumn = new Column()
+         var measurementColumn = new Column
          {
             Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
             Dimension = dimension,
@@ -181,17 +172,12 @@ namespace OSPSuite.R.Services
 
       public void SaveConfiguration(ImporterConfiguration configuration, string path)
       {
-         using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
-         {
-            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
-
-            serializer.Serialize(configuration, serializationContext).Save(path);
-         }
+         _pkmlPersistor.SaveToPKML(configuration, path);
       }
 
       /// <summary>
-      /// Add an error column to the configuration if no error column is present.
-      /// If the configuration already has an error column, the mehtod does nothing.
+      ///    Add an error column to the configuration if no error column is present.
+      ///    If the configuration already has an error column, the method does nothing.
       /// </summary>
       /// <param name="configuration">Configuration object</param>
       public void AddError(ImporterConfiguration configuration)
@@ -202,14 +188,14 @@ namespace OSPSuite.R.Services
             return;
 
          var measurementUnitDescription = GetMeasurement(configuration).MappedColumn.Unit;
-         var errorColumn = new Column()
+         var errorColumn = new Column
          {
             Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
-            Dimension = _dimensionFactory.Dimension("Concentration (molar)"),
+            Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION),
             Unit = new UnitDescription(measurementUnitDescription.SelectedUnit, measurementUnitDescription.ColumnName),
-            ErrorStdDev = "Arithmetic Standard Deviation"
+            ErrorStdDev = Constants.STD_DEV_ARITHMETIC
          };
-         configuration.AddParameter(new MappingDataFormatParameter("Error", errorColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.ERROR, errorColumn));
       }
 
       public void AddGroupingColumn(ImporterConfiguration configuration, string columnName)
@@ -224,12 +210,12 @@ namespace OSPSuite.R.Services
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string[] sheets)
       {
          configuration.ClearLoadedSheets();
-         sheets.Each(sheet => configuration.AddToLoadedSheets(sheet));
+         sheets.Each(configuration.AddToLoadedSheets);
       }
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         SetAllLoadedSheet(configuration, new[] { sheet });
+         SetAllLoadedSheet(configuration, new[] {sheet});
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
