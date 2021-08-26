@@ -33,6 +33,8 @@ namespace OSPSuite.Core.Domain
       public const string ACTIVE = "Active";
       public const string PASSIVE = "Passive";
       public const string TIME = "Time";
+      public const string MEASUREMENT = "Measurement";
+      public const string ERROR = "Error";
       public const string ROOT_CONTAINER_TAG = "RootContainer";
       public const string ALL_TAG = "All";
       public const string CONCENTRATION_FORMULA = "ConcFormula";
@@ -448,7 +450,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string ORGAN = "Organ";
          public static readonly string COMPARTMENT = "Compartment";
          public static readonly string MOLECULE = "Molecule";
-         public static readonly string MOLECULARWEIGHT = "Molecular Weight";
+         public static readonly string MOLECULAR_WEIGHT = "Molecular Weight";
          public static readonly string SPECIES = "Species";
          public static readonly string STUDY_ID = "Study Id";
          public static readonly string SUBJECT_ID = "Subject Id";

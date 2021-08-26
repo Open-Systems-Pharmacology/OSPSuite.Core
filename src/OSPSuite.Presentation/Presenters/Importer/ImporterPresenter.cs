@@ -40,6 +40,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ImporterConfiguration _configuration = new ImporterConfiguration();
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
+      private readonly IPKMLPersistor _pkmlPersistor;
 
       public ImporterPresenter(
          IImporterView view,
@@ -51,9 +52,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         IContainer container
-      ) : base(view)
+         IPKMLPersistor pkmlPersistor) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
@@ -62,8 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
          _dataSource = new DataSource(importer);
-         _container = container;
-         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
+         _pkmlPersistor = pkmlPersistor;
          _importer = importer;
          _dialogCreator = dialogCreator;
 
@@ -298,15 +296,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var fileName = _dialogCreator.AskForFileToSave(Captions.Importer.SaveConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
 
-         if (string.IsNullOrEmpty(fileName)) return;
+         if (string.IsNullOrEmpty(fileName)) 
+            return;
 
-         using (var serializationContext = SerializationTransaction.Create(_container))
-         {
-            _configuration = UpdateAndGetConfiguration();
-            var serializer = _modelingXmlSerializerRepository.SerializerFor(_configuration);
-            var element = serializer.Serialize(_configuration, serializationContext);
-            element.Save(fileName);
-         }
+         _configuration = UpdateAndGetConfiguration();
+         _pkmlPersistor.SaveToPKML(_configuration, fileName);
       }
 
       public void LoadConfiguration(ImporterConfiguration configuration, string fileName)

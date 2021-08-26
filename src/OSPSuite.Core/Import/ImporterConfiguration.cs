@@ -25,5 +25,7 @@ namespace OSPSuite.Core.Import
       public string Id { get; set; }
 
       public void AddToLoadedSheets(string sheet) => _loadedSheets.Add(sheet);
+      public void RemoveFromLoadedSheets(string sheet) => _loadedSheets.Remove(sheet);
+      public void ClearLoadedSheets() => _loadedSheets.Clear();
    }
 }

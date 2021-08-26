@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Services
          categories.Add(moleculeCategory);
 
          // Add non-mandatory metadata categories
-         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULARWEIGHT);
+         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULAR_WEIGHT);
          molecularWeightCategory.MinValue = 0;
          molecularWeightCategory.MinValueAllowed = false;
          categories.Add(molecularWeightCategory);

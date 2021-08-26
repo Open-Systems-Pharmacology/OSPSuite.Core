@@ -114,7 +114,10 @@ namespace OSPSuite.Core.Import
 
    public class MappingDataFormatParameter : DataFormatParameter
    {
-      public MappingDataFormatParameter() { }
+      public MappingDataFormatParameter() 
+      {
+         MappedColumn = new Column();
+      }
 
       public MappingDataFormatParameter(string columnName, Column mappedColumn) : base(columnName)
       {

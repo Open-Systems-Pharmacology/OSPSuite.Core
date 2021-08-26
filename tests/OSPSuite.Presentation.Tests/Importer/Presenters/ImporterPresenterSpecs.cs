@@ -34,10 +34,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository,
-         IContainer container,
+         IPKMLPersistor pkmlPersistor,
          IDataSource dataSource
-      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, modelingXmlSerializerRepository, container)
+      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, pkmlPersistor)
       {
          _dataSource = dataSource;
       }
@@ -62,6 +61,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IContainer _container;
       protected IDataSourceFile _dataSourceFile;
       protected ImporterConfiguration _importerConfiguration;
+      protected IPKMLPersistor _pkmlPeristor;
 
       protected override void Context()
       {
@@ -116,8 +116,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnMappingPresenter = A.Fake<IColumnMappingPresenter>();
          _sourceFilePresenter = A.Fake<ISourceFilePresenter>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         _ospSuiteXmlSerializerRepository = A.Fake<IOSPSuiteXmlSerializerRepository>();
-         _container = A.Fake<IContainer>();
+         _pkmlPeristor = A.Fake<IPKMLPersistor>();
+
          sut = new ImporterPresenterForTest(
             _importerView,
             _mapper,
@@ -128,8 +128,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _columnMappingPresenter,
             _sourceFilePresenter,
             _dialogCreator,
-            _ospSuiteXmlSerializerRepository,
-            _container,
+            _pkmlPeristor,
             _dataSource);
          _importerConfiguration = A.Fake<ImporterConfiguration>();
          sut.LoadConfiguration(_importerConfiguration, "");

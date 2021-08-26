@@ -86,7 +86,7 @@ namespace OSPSuite.R.Services
          categories.Add(moleculeCategory);
 
          // Add non-mandatory metadata categories
-         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULARWEIGHT);
+         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULAR_WEIGHT);
          molecularWeightCategory.MinValue = 0;
          molecularWeightCategory.MinValueAllowed = false;
          categories.Add(molecularWeightCategory);
@@ -147,13 +147,13 @@ namespace OSPSuite.R.Services
       {
          var timeColumn = new ColumnInfo
          {
-            DefaultDimension = _dimensionFactory.Dimension("Time"),
-            Name = "Time",
-            DisplayName = "Time",
+            DefaultDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME),
+            Name = Constants.TIME,
+            DisplayName = Constants.TIME,
             IsMandatory = true,
          };
 
-         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Time"));
+         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension(Constants.Dimension.TIME));
          return timeColumn;
       }
 
@@ -162,8 +162,8 @@ namespace OSPSuite.R.Services
          var concentrationInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Concentration",
-            DisplayName = "Concentration",
+            Name = Constants.MEASUREMENT,
+            DisplayName = Constants.MEASUREMENT,
             IsMandatory = true,
             BaseGridName = timeColumn.Name
          };
@@ -178,8 +178,8 @@ namespace OSPSuite.R.Services
          var errorInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Error",
-            DisplayName = "Error",
+            Name = Constants.ERROR,
+            DisplayName = Constants.ERROR,
             IsMandatory = false,
             BaseGridName = timeColumn.Name,
             RelatedColumnOf = concentrationInfo.Name

@@ -116,9 +116,9 @@ namespace OSPSuite.Starter.Tasks
          var categories = new List<MetaDataCategory>();
          var molWeightCategory = new MetaDataCategory
          {
-            Name = Constants.ObservedData.MOLECULARWEIGHT,
-            DisplayName = Constants.ObservedData.MOLECULARWEIGHT,
-            Description = Constants.ObservedData.MOLECULARWEIGHT,
+            Name = Constants.ObservedData.MOLECULAR_WEIGHT,
+            DisplayName = Constants.ObservedData.MOLECULAR_WEIGHT,
+            Description = Constants.ObservedData.MOLECULAR_WEIGHT,
             MetaDataType = typeof(double),
             IsMandatory = false,
             MinValue = 0,
@@ -361,8 +361,8 @@ namespace OSPSuite.Starter.Tasks
          var concentrationInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Concentration",
-            DisplayName = "Concentration",
+            Name = "Measurement",
+            DisplayName = "Measurement",
             IsMandatory = true,
             BaseGridName = timeColumn.Name
          };
