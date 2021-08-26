@@ -160,7 +160,7 @@ namespace OSPSuite.R.Services
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
-         configuration.AddParameter(new MappingDataFormatParameter(Constants.Dimension.TIME, timeColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.TIME, timeColumn));
 
          dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var measurementColumn = new Column()
@@ -169,7 +169,7 @@ namespace OSPSuite.R.Services
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
-         configuration.AddParameter(new MappingDataFormatParameter(Constants.Dimension.MEASUREMENT, measurementColumn));
+         configuration.AddParameter(new MappingDataFormatParameter(Constants.MEASUREMENT, measurementColumn));
 
          return configuration;
       }

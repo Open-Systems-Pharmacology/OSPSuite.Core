@@ -153,13 +153,13 @@ namespace OSPSuite.R.Services
       {
          var timeColumn = new ColumnInfo
          {
-            DefaultDimension = _dimensionFactory.Dimension("Time"),
-            Name = "Time",
-            DisplayName = "Time",
+            DefaultDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME),
+            Name = Constants.TIME,
+            DisplayName = Constants.TIME,
             IsMandatory = true,
          };
 
-         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Time"));
+         timeColumn.SupportedDimensions.Add(_dimensionFactory.Dimension(Constants.Dimension.TIME));
          return timeColumn;
       }
 
@@ -168,8 +168,8 @@ namespace OSPSuite.R.Services
          var concentrationInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Measurement",
-            DisplayName = "Measurement",
+            Name = Constants.MEASUREMENT,
+            DisplayName = Constants.MEASUREMENT,
             IsMandatory = true,
             BaseGridName = timeColumn.Name
          };
@@ -184,8 +184,8 @@ namespace OSPSuite.R.Services
          var errorInfo = new ColumnInfo
          {
             DefaultDimension = _molarConcentrationDimension,
-            Name = "Error",
-            DisplayName = "Error",
+            Name = Constants.ERROR,
+            DisplayName = Constants.ERROR,
             IsMandatory = false,
             BaseGridName = timeColumn.Name,
             RelatedColumnOf = concentrationInfo.Name
