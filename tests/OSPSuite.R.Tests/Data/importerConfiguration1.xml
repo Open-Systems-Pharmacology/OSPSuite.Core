@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImporterConfiguration fileName="sample1.xlsx" namingConventions="{Source}.{Sheet}.{Organ}.{Molecule}">
+<ImporterConfiguration fileName="sample1.xlsx" namingConventions="{Source}.{Sheet}.{Organ}.{Molecule}" version="15">
   <Parameters>
     <MappingDataFormatParameter columnName="time  [h]">
       <MappedColumn name="Time" dimension="Time">
