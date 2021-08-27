@@ -54,6 +54,8 @@ namespace OSPSuite.UI.Views.Importer
 
          columnMappingGridView.OptionsView.ShowButtonMode = ShowButtonModeEnum.ShowOnlyInEditor;
          columnMappingGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseDown;
+         columnMappingGridView.OptionsCustomization.AllowSort = false;
+         columnMappingGridView.OptionsCustomization.AllowFilter = false;
          columnMappingGridView.MouseDown += (o, e) => OnEvent(onMouseDown, o, e);
          columnMappingGrid.ToolTipController = new ToolTipController().Initialize(imageListRetriever);
          columnMappingGrid.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(onGetActiveObjectInfo, o, e);
