@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -68,7 +69,7 @@ namespace OSPSuite.UI.Views.Importer
          Text = Captions.Importer.LloqColumnEditorTitle;
          LloqDescriptionLabelControl.Text = Captions.Importer.LloqDescription;
          LloqColumnPanelControl.Dock = DockStyle.Fill;
-         LloqColumnLayoutControlItem.Text = Captions.Importer.Column;
+         LloqColumnLayoutControlItem.Text = Captions.Importer.Column.FormatForLabel();
          //LloqDescriptionLabelLayoutControlItem.Visibility = LayoutVisibility.Never; //actually this should depend on the file
       }
    }

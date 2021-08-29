@@ -110,7 +110,6 @@ namespace OSPSuite.UI.Views.Importer
          // 
          this.manualnputLayoutControlItem.Control = this.manualInput;
          this.manualnputLayoutControlItem.Location = new System.Drawing.Point(0, 0);
-         this.manualnputLayoutControlItem.Name = "manual input";
          this.manualnputLayoutControlItem.Size = new System.Drawing.Size(752, 26);
          this.manualnputLayoutControlItem.TextSize = new System.Drawing.Size(74, 16);
          // 

@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          InitializeComponent();
 
-         namingConventionLayout.Text = Captions.Importer.NamingPattern;
+         namingConventionLayout.Text = Captions.Importer.NamingPattern.FormatForLabel();
          buttonAdd.Text = Captions.Importer.AddKeys;
          buttonAdd.Click += (s, a) => OnEvent(() =>
             namingConventionComboBoxEdit.EditValue += 
@@ -53,7 +53,10 @@ namespace OSPSuite.UI.Views.Importer
             );
          });
          namingConventionComboBoxEdit.TextChanged += (s, a) => OnEvent(onNamingConventionChanged, s, a);
-         separatorControlItem.Text = Captions.Importer.Separator;
+         separatorControlItem.Text = Captions.Importer.Separator.FormatForLabel();
+         namingElementLayoutControlItem.Text = Captions.Importer.NamingElement.FormatForLabel();
+         namingPatternLayoutControlGroup.Text = Captions.Importer.CreateNamingPattern;
+         dataSetsLayoutControlItem.Text =Captions.Importer.DataSets;
          buttonAddLayoutControlItem.AdjustButtonSize();
          importButtonLayoutControlItem.AdjustButtonSize();
          namingPatternDropDownLabelControl.AsDescription();
