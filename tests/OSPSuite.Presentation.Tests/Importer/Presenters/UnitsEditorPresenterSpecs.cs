@@ -48,7 +48,19 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SetParams(true, A<bool>.Ignored)).MustHaveHappened();
       }
    }
+   public class When_options_set_from_column_with_empty_name : concern_for_UnitsEditorPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetOptions(new Column() { Unit = new UnitDescription("min", "") }, A.Fake<IReadOnlyList<IDimension>>(), A.Fake<IEnumerable<string>>());
+      }
 
+      [Observation]
+      public void column_mapping_flag_is_calculated()
+      {
+         A.CallTo(() => _view.SetParams(false, A<bool>.Ignored)).MustHaveHappened();
+      }
+   }
    public class When_options_set_no_dimensions : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
