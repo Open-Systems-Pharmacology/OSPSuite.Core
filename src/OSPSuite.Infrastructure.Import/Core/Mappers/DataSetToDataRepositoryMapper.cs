@@ -115,12 +115,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unit != null && !string.IsNullOrEmpty(value.Unit))
-               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension.FindUnit(value.Unit, true), adjustedValue);
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, true), adjustedValue);
             else
                values[i++] = (float) adjustedValue;
          }
          if (lloqValue != null)
-            dataInfo.LLOQ = Convert.ToSingle(dimension.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit), lloqValue.Lloq));
+            dataInfo.LLOQ = Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit), lloqValue.Lloq));
 
          dataColumn.Values = values;
 
