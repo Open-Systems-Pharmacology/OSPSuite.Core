@@ -30,16 +30,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dimensions = dimensions;
 
          _columnMapping = importDataColumn.Unit.ColumnName != null;
-         View.SetParams(_columnMapping, useDimensionSelector);
          Dimension = importDataColumn.Dimension;
-
          if (Dimension != null && !_dimensions.Contains(Dimension))
             Dimension = _dimensions.FirstOrDefault();
 
+         _selectedUnit = importDataColumn.Unit.SelectedUnit;
          FillDimensions(importDataColumn.Unit.SelectedUnit);
          fillUnits(importDataColumn.Unit.SelectedUnit);
-         _selectedUnit = importDataColumn.Unit.SelectedUnit;
+         
          View.FillColumnComboBox(availableColumns);
+         View.SetParams(_columnMapping, useDimensionSelector);
       }
 
       public void SelectDimension(string dimensionName)
@@ -50,7 +50,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
                         _dimensions.FirstOrDefault() ??
                         Constants.Dimension.NO_DIMENSION;
 
-            _selectedUnit = Dimension.DefaultUnit.Name;
+            if (_selectedUnit == null || !Dimension.HasUnit(_selectedUnit))
+               _selectedUnit = Dimension.DefaultUnit.Name;
+            
             SetUnit();
             fillUnits(_selectedUnit);
          });
