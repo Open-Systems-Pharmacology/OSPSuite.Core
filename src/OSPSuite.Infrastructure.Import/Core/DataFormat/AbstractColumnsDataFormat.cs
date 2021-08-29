@@ -272,11 +272,17 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
-
          if (columnDescription == null)
             throw new MissingColumnException(currentParameter.ColumnName);
 
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
+
+         ColumnDescription unitColumnDescription = null;
+         if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
+            unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
+         if (unitColumnDescription == null)
+            throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
+
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
          
          if (double.TryParse(element, out var result))
