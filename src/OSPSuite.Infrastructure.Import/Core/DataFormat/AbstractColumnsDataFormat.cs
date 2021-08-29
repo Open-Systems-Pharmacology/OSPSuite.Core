@@ -277,11 +277,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
 
-         ColumnDescription unitColumnDescription = null;
-         if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
-            unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
-         if (unitColumnDescription == null)
-            throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
+         if (!currentParameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+         {
+            ColumnDescription unitColumnDescription = null;
+            if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
+               unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
+            if (unitColumnDescription == null)
+               throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
+         }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
          
