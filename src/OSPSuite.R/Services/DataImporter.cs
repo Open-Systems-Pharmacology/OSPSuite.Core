@@ -191,10 +191,17 @@ namespace OSPSuite.R.Services
          return errorInfo;
       }
 
-      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          var configuration = new ImporterConfiguration();
-         configuration.CloneParametersFrom(_importer.LoadFile(columnInfos, dataPath, metaDataCategories).Format.Parameters.ToList());
+
+         var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
+         if (!string.IsNullOrEmpty(sheetName))
+         {
+            _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName);
+         }
+
+         configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());
          configuration.FileName = dataPath;
          configuration.Id = Guid.NewGuid().ToString();
          configuration.NamingConventions = "";

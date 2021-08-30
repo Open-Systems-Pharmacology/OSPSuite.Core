@@ -82,7 +82,8 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="dataPath">File containing data</param>
       /// <param name="columnInfos">Column infos description</param>
       /// <param name="metaDataCategories">meta data description</param>
+      /// <param name="sheetName">name of the sheet to base the configuration on</param>
       /// <returns></returns>
-      ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null);
    }
 }
