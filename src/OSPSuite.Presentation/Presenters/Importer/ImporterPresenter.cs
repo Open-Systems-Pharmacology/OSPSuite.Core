@@ -335,6 +335,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          }
 
+         var listOfNonExistingUnitColumns = mappings.Where(parameter => !parameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.Unit.ColumnName)).ToList();
+         foreach (var element in listOfNonExistingUnitColumns)
+         {
+            element.MappedColumn.Unit = new UnitDescription();
+            element.MappedColumn.Dimension = null;
+         }
+        
          _configuration = configuration;
          _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
