@@ -40,8 +40,8 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.dataSetsLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.namingConventionLayout = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.namingPatternLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.namingElementLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.separatorControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.buttonAddLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem4 = new DevExpress.XtraLayout.EmptySpaceItem();
@@ -70,8 +70,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataSetsLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingPatternLayoutControlGroup)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingElementLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.separatorControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).BeginInit();
@@ -186,7 +186,7 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.dataSetsLayoutControlItem,
             this.namingConventionLayout,
-            this.layoutControlGroup2,
+            this.namingPatternLayoutControlGroup,
             this.emptySpaceItem1,
             this.layoutControlItem1});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
@@ -200,7 +200,6 @@ namespace OSPSuite.UI.Views.Importer
          this.dataSetsLayoutControlItem.Location = new System.Drawing.Point(0, 573);
          this.dataSetsLayoutControlItem.Name = "dataSetsLayoutControlItem";
          this.dataSetsLayoutControlItem.Size = new System.Drawing.Size(692, 181);
-         this.dataSetsLayoutControlItem.Text = "Data Sets";
          this.dataSetsLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
          this.dataSetsLayoutControlItem.TextSize = new System.Drawing.Size(142, 16);
          // 
@@ -212,29 +211,27 @@ namespace OSPSuite.UI.Views.Importer
          this.namingConventionLayout.Size = new System.Drawing.Size(692, 26);
          this.namingConventionLayout.TextSize = new System.Drawing.Size(142, 16);
          // 
-         // layoutControlGroup2
+         // namingPatternLayoutControlGroup
          // 
-         this.layoutControlGroup2.ExpandButtonVisible = true;
-         this.layoutControlGroup2.ExpandOnDoubleClick = true;
-         this.layoutControlGroup2.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem5,
+         this.namingPatternLayoutControlGroup.ExpandButtonVisible = true;
+         this.namingPatternLayoutControlGroup.ExpandOnDoubleClick = true;
+         this.namingPatternLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.namingElementLayoutControlItem,
             this.separatorControlItem,
             this.buttonAddLayoutControlItem,
             this.emptySpaceItem4,
             this.layoutControlItem6});
-         this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup2.Name = "layoutControlGroup2";
-         this.layoutControlGroup2.Size = new System.Drawing.Size(692, 449);
-         this.layoutControlGroup2.Text = "Create Naming Pattern";
+         this.namingPatternLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.namingPatternLayoutControlGroup.Name = "namingPatternLayoutControlGroup";
+         this.namingPatternLayoutControlGroup.Size = new System.Drawing.Size(692, 449);
          // 
-         // layoutControlItem5
+         // namingElementLayoutControlItem
          // 
-         this.layoutControlItem5.Control = this.keysListBox;
-         this.layoutControlItem5.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlItem5.Name = "layoutControlItem5";
-         this.layoutControlItem5.Size = new System.Drawing.Size(668, 322);
-         this.layoutControlItem5.Text = "Naming Element";
-         this.layoutControlItem5.TextSize = new System.Drawing.Size(142, 16);
+         this.namingElementLayoutControlItem.Control = this.keysListBox;
+         this.namingElementLayoutControlItem.Location = new System.Drawing.Point(0, 0);
+         this.namingElementLayoutControlItem.Name = "namingElementLayoutControlItem";
+         this.namingElementLayoutControlItem.Size = new System.Drawing.Size(668, 322);
+         this.namingElementLayoutControlItem.TextSize = new System.Drawing.Size(142, 16);
          // 
          // separatorControlItem
          // 
@@ -426,8 +423,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataSetsLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namingConventionLayout)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingPatternLayoutControlGroup)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.namingElementLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.separatorControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.buttonAddLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).EndInit();
@@ -467,7 +464,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.SplitterItem splitterItem2;
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
+      private DevExpress.XtraLayout.LayoutControlItem namingElementLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem dataSetsLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem namingConventionLayout;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
@@ -475,7 +472,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.LayoutControlItem separatorControlItem;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem3;
       private DevExpress.XtraLayout.LayoutControlItem importButtonLayoutControlItem;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup2;
+      private DevExpress.XtraLayout.LayoutControlGroup namingPatternLayoutControlGroup;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem4;
       private DevExpress.XtraEditors.LabelControl namingPatternPanelLabelControl;

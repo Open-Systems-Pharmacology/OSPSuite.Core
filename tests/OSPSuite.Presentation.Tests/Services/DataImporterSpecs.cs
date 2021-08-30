@@ -240,6 +240,40 @@ namespace OSPSuite.Presentation.Services
       }
    }
 
+   public class When_importing_data_with_missing_unit_columns : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = new List<DataFormatParameter>
+         {
+            new MappingDataFormatParameter("time  [h]",
+               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h", "timeUnitColumn")}),
+            new MappingDataFormatParameter("conc  [mg/l]",
+               new Column()
+               {
+                  Name = "Concentration", Dimension = _massConcentrationDimension, Unit = new UnitDescription("mg/l")
+               }),
+            new MappingDataFormatParameter("SD [mg/l]",
+               new Column()
+               {
+                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
+                  Unit = new UnitDescription("mg/l")
+               }),
+            new MetaDataFormatParameter("VenousBlood", "Organ", false),
+            new MetaDataFormatParameter(null, "Molecule", false)
+         };
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_set_unit_of_missing_column_to_undefined()
+      {
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName("IntegrationSampleMissingMapping.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'timeUnitColumn' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+      }
+   }
+
    public class When_importing_data_from_incorrect_configuration : concern_for_DataImporter
    {
       protected override void Because()

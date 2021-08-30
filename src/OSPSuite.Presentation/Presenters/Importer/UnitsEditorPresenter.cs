@@ -29,7 +29,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
-         _columnMapping = importDataColumn.Unit.ColumnName != null;
+         _columnMapping = !importDataColumn.Unit.ColumnName.IsNullOrEmpty();
+         View.SetParams(_columnMapping, useDimensionSelector);
          Dimension = importDataColumn.Dimension;
          if (Dimension != null && !_dimensions.Contains(Dimension))
             Dimension = _dimensions.FirstOrDefault();

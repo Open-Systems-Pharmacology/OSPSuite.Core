@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -17,7 +18,7 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         this.manualnputLayoutControlItem.Text = Captions.Importer.ManualInput;
+         manualnputLayoutControlItem.Text = Captions.Importer.ManualInput.FormatForLabel();
       }
 
       public string Input => manualInput.Text;
