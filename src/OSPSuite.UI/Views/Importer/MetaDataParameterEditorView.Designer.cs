@@ -59,14 +59,14 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Margin = new System.Windows.Forms.Padding(6);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(796, 82);
+         this.layoutControl.Size = new System.Drawing.Size(415, 82);
          this.layoutControl.TabIndex = 38;
          // 
          // manualInput
          // 
          this.manualInput.Location = new System.Drawing.Point(101, 24);
          this.manualInput.Name = "manualInput";
-         this.manualInput.Size = new System.Drawing.Size(671, 22);
+         this.manualInput.Size = new System.Drawing.Size(290, 22);
          this.manualInput.StyleController = this.layoutControl;
          this.manualInput.TabIndex = 0;
          // 
@@ -75,7 +75,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlGroup1});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(796, 82);
+         this.Root.Size = new System.Drawing.Size(415, 82);
          this.Root.TextVisible = false;
          // 
          // layoutControlGroup1
@@ -86,7 +86,7 @@ namespace OSPSuite.UI.Views.Importer
             this.manualInputControlGroup});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(776, 62);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(395, 62);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // emptySpaceItem1
@@ -94,7 +94,7 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem1.AllowHotTrack = false;
          this.emptySpaceItem1.Location = new System.Drawing.Point(0, 50);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(776, 12);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(395, 12);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // manualInputControlGroup
@@ -103,7 +103,7 @@ namespace OSPSuite.UI.Views.Importer
             this.manualnputLayoutControlItem});
          this.manualInputControlGroup.Location = new System.Drawing.Point(0, 0);
          this.manualInputControlGroup.Name = "ErrorLayoutControlGroup";
-         this.manualInputControlGroup.Size = new System.Drawing.Size(776, 50);
+         this.manualInputControlGroup.Size = new System.Drawing.Size(395, 50);
          this.manualInputControlGroup.TextVisible = false;
          // 
          // manualnputLayoutControlItem
@@ -127,7 +127,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Controls.Add(this.layoutControl);
          this.Margin = new System.Windows.Forms.Padding(8);
          this.Name = "MetaDataParameterEditorView";
-         this.Size = new System.Drawing.Size(796, 82);
+         this.Size = new System.Drawing.Size(415, 82);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

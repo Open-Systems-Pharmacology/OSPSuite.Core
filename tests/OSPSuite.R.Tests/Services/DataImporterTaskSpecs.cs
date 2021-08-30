@@ -94,6 +94,12 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_import_simple_data_from_xls_without_naming_pattern()
+      {
+         sut.ImportExcelFromConfiguration(sut.GetConfiguration(getFileFullName("dataImporterConfiguration_noSheets.xml")), getFileFullName("CompiledDataSet_oneSheet.xlsx")).ShouldNotBeNull();
+      }
+
+      [Observation]
       public void should_create_configuration()
       {
          sut.CreateConfiguration().ShouldNotBeNull();
