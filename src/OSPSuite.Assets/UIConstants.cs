@@ -392,6 +392,9 @@ namespace OSPSuite.Assets
          public static readonly string PreviewLayout = "Preview";
          public static readonly string SourceLayout = "Source";
          public static readonly string Separator = "Separator";
+         public static readonly string DataSets = "Data Sets";
+         public static readonly string NamingElement = "Naming Element";
+         public static readonly string CreateNamingPattern = "Create Naming Pattern";
          public static readonly string Dimension = "Dimension";
          public static readonly string Unit = "Unit";
          public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
