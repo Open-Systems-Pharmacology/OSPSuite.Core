@@ -49,9 +49,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             Dimension = _dimensions.FirstOrDefault(d => string.Equals(d.Name, dimensionName)) ??
                         _dimensions.FirstOrDefault() ??
                         Constants.Dimension.NO_DIMENSION;
-
+            //checking whether _selectedUnit is not supported by the current dimension, meaning that the user 
+            //has selected a new dimension and the unit must be reset to the default unit of this dimension
             if (_selectedUnit == null || !Dimension.HasUnit(_selectedUnit))
-               _selectedUnit = Dimension.DefaultUnit.Name;
+               _selectedUnit = Dimension.DefaultUnitName;
             
             SetUnit();
             fillUnits(_selectedUnit);
