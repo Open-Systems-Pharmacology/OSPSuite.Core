@@ -85,7 +85,7 @@ namespace OSPSuite.R.Services
             _columnInfos,
             _dataImporterSettings,
             dataPath
-         );
+         ).ToArray();
       }
 
       public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
@@ -98,7 +98,7 @@ namespace OSPSuite.R.Services
             _columnInfos,
             _dataImporterSettings,
             dataPath
-         );
+         ).ToArray();
       }
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
@@ -113,7 +113,7 @@ namespace OSPSuite.R.Services
             _columnInfos,
             _dataImporterSettings,
             dataPath
-         );
+         ).ToArray();
       }
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
@@ -128,7 +128,7 @@ namespace OSPSuite.R.Services
             _columnInfos,
             _dataImporterSettings,
             dataPath
-         );
+         ).ToArray();
       }
 
       public ImporterConfiguration GetConfiguration(string filePath)
