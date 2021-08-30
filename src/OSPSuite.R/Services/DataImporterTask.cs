@@ -58,14 +58,14 @@ namespace OSPSuite.R.Services
          _dataImporter = dataImporter;
          _dimensionFactory = dimensionFactory;
          _pkmlPersistor = pkmlPersistor;
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings
          {
             NameOfMetaDataHoldingMoleculeInformation = Constants.ObservedData.MOLECULE,
             NameOfMetaDataHoldingMolecularWeightInformation = Constants.ObservedData.MOLECULAR_WEIGHT,
             IgnoreSheetNamesAtImport = true
          };
-         _columnInfos = ((DataImporter) _dataImporter).DefaultPKSimImportConfiguration();
+         _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
@@ -133,7 +133,20 @@ namespace OSPSuite.R.Services
 
       public ImporterConfiguration GetConfiguration(string filePath)
       {
-         return _pkmlPersistor.Load<ImporterConfiguration>(filePath);
+         var configuration = _pkmlPersistor.Load<ImporterConfiguration>(filePath);
+         if (string.IsNullOrEmpty(configuration.NamingConventions))
+         {
+            var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+            var keys = new List<string>()
+            {
+               Constants.FILE,
+               Constants.SHEET
+            };
+            keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
+            keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
+            configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
+         }
+         return configuration;
       }
 
       /// <summary>
@@ -215,7 +228,7 @@ namespace OSPSuite.R.Services
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         SetAllLoadedSheet(configuration, new[] {sheet});
+         SetAllLoadedSheet(configuration, new[] { sheet });
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
