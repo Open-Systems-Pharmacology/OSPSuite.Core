@@ -14,33 +14,29 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
 {
-   public class DataImporter : IDataImporter
+   public class DataImporter : AbstractDataImporter
    {
-      private readonly IDialogCreator _dialogCreator;
-      private readonly IImporter _importer;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IDimension _molarConcentrationDimension;
       private readonly IDimension _massConcentrationDimension;
       private readonly IOSPSuiteLogger _logger;
 
-      public DataImporter(IDialogCreator dialogCreator, IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory)
+      public DataImporter(IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory) : base(importer)
       {
          _logger = logger;
-         _dialogCreator = dialogCreator;
-         _importer = importer;
          _dimensionFactory = dimensionFactory;
          _molarConcentrationDimension = _dimensionFactory.Dimension("Concentration (molar)");
          _massConcentrationDimension = _dimensionFactory.Dimension("Concentration (mass)");
       }
 
-      public bool AreFromSameMetaDataCombination(
+      public override bool AreFromSameMetaDataCombination(
          DataRepository sourceDataRepository, 
          DataRepository targetDataRepository)
       {
          throw new NotImplementedException();
       }
 
-      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(
+      public override ReloadDataSets CalculateReloadDataSetsFromConfiguration(
          IReadOnlyList<DataRepository> dataSetsToImport, 
          IReadOnlyList<DataRepository> existingDataSets)
       {
@@ -62,7 +58,7 @@ namespace OSPSuite.R.Services
          return category;
       }
 
-      public IList<MetaDataCategory> DefaultMetaDataCategories()
+      public override IList<MetaDataCategory> DefaultMetaDataCategories()
       {
          var categories = new List<MetaDataCategory>();
 
@@ -99,7 +95,7 @@ namespace OSPSuite.R.Services
          return categories;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+      public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
          IReadOnlyList<ColumnInfo> columnInfos, 
          DataImporterSettings dataImporterSettings,
@@ -108,7 +104,7 @@ namespace OSPSuite.R.Services
          throw new NotImplementedException();
       }
 
-      public IReadOnlyList<DataRepository> ImportFromConfiguration(
+      public override IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
@@ -189,23 +185,6 @@ namespace OSPSuite.R.Services
          errorInfo.SupportedDimensions.Add(_massConcentrationDimension);
          errorInfo.SupportedDimensions.Add(_dimensionFactory.NoDimension);
          return errorInfo;
-      }
-
-      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
-      {
-         var configuration = new ImporterConfiguration();
-
-         var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
-         if (!string.IsNullOrEmpty(sheetName))
-         {
-            _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName);
-         }
-
-         configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());
-         configuration.FileName = dataPath;
-         configuration.Id = Guid.NewGuid().ToString();
-         configuration.NamingConventions = "";
-         return configuration;
       }
    }
 }

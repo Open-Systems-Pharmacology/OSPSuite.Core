@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
@@ -85,5 +86,39 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="sheetName">name of the sheet to base the configuration on</param>
       /// <returns></returns>
       ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null);
+   }
+
+   public abstract class AbstractDataImporter : IDataImporter
+   {
+      protected readonly IImporter _importer;
+
+      public AbstractDataImporter(
+         IImporter importer
+      )
+      {
+         _importer = importer;
+      }
+
+      public abstract bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
+      public abstract ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport, IReadOnlyList<DataRepository> existingDataSets);
+      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
+      {
+         var configuration = new ImporterConfiguration();
+
+         var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
+         if (!string.IsNullOrEmpty(sheetName))
+         {
+            _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName);
+         }
+
+         configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());
+         configuration.FileName = dataPath;
+         configuration.Id = Guid.NewGuid().ToString();
+         configuration.NamingConventions = "";
+         return configuration;
+      }
+      public abstract IList<MetaDataCategory> DefaultMetaDataCategories();
+      public abstract (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
+      public abstract IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
    }
 }
