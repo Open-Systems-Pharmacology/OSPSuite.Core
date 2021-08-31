@@ -17,9 +17,9 @@ namespace OSPSuite.R.Services
    {
       ImporterConfiguration CreateConfiguration();
       ImporterConfiguration GetConfiguration(string filePath);
-      ImporterConfiguration CreateConfigurationFor(string dataPath);
+      ImporterConfiguration CreateConfigurationFor(string dataPath, string sheetName = null);
       void SaveConfiguration(ImporterConfiguration configuration, string path);
-      IReadOnlyList<DataRepository> ImportExcelFromConfiguration(string configurationPath, string dataPath);
+      IReadOnlyList<DataRepository> ImportExcelFromConfiguration(string configurationPath, string dataPath = null);
       IReadOnlyList<DataRepository> ImportExcelFromConfiguration(ImporterConfiguration configuration, string dataPath);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator);
       IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator);
@@ -178,9 +178,9 @@ namespace OSPSuite.R.Services
          return configuration;
       }
 
-      public ImporterConfiguration CreateConfigurationFor(string dataPath)
+      public ImporterConfiguration CreateConfigurationFor(string dataPath, string sheetName = null)
       {
-         return _dataImporter.ConfigurationFromData(dataPath, _columnInfos, _metaDataCategories);
+         return _dataImporter.ConfigurationFromData(dataPath, _columnInfos, _metaDataCategories, sheetName);
       }
 
       public void SaveConfiguration(ImporterConfiguration configuration, string path)

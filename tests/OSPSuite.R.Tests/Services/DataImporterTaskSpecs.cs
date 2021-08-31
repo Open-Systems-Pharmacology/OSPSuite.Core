@@ -120,6 +120,22 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_configuration_from_data_and_sheet_name()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample2.xlsx"));
+         configuration.Parameters.Count.ShouldBeEqualTo(3);
+         configuration.Parameters[0].ColumnName.ShouldBeEqualTo("time  [h]");
+         configuration.Parameters[1].ColumnName.ShouldBeEqualTo("conc  [mg/l]");
+         configuration.Parameters[2].ColumnName.ShouldBeEqualTo("SD [mg/l]");
+
+         configuration = sut.CreateConfigurationFor(getFileFullName("sample2.xlsx"), "Sheet2");
+         configuration.Parameters.Count.ShouldBeEqualTo(3);
+         configuration.Parameters[0].ColumnName.ShouldBeEqualTo("time  [s]");
+         configuration.Parameters[1].ColumnName.ShouldBeEqualTo("measurement  [mg/l]");
+         configuration.Parameters[2].ColumnName.ShouldBeEqualTo("molecule");
+      }
+
+      [Observation]
       public void should_create_configuration_from_data_respecting_meta_data_columns()
       {
          var configuration = sut.CreateConfigurationFor(getFileFullName("011.xlsx"));

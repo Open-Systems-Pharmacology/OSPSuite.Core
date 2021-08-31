@@ -163,7 +163,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       protected virtual void ExtractGeneralParameters(List<string> keys, IUnformattedData data, IReadOnlyList<MetaDataCategory> metaDataCategories, ref double rank)
       {
          var columnsCopy = keys.ToList();
-         foreach (var header in columnsCopy.Where(h => metaDataCategories.Any(c => c.Name == h)))
+         foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
          {
             keys.Remove(header);
             _parameters.Add(new MetaDataFormatParameter(header, header));

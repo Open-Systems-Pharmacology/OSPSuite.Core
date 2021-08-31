@@ -14,24 +14,22 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Services
 {
-   public class DataImporter : IDataImporter
+   public class DataImporter : AbstractDataImporter
    {
       private readonly IDialogCreator _dialogCreator;
-      private readonly IImporter _importer;
       private readonly IApplicationController _applicationController;
 
       public DataImporter(
          IDialogCreator dialogCreator,
          IImporter importer,
          IApplicationController applicationController
-      )
+      ) : base(importer)
       {
          _dialogCreator = dialogCreator;
-         _importer = importer;
          _applicationController = applicationController;
       }
 
-      public IList<MetaDataCategory> DefaultMetaDataCategories()
+      public override IList<MetaDataCategory> DefaultMetaDataCategories()
       {
          var categories = new List<MetaDataCategory>();
 
@@ -83,7 +81,7 @@ namespace OSPSuite.Presentation.Services
          return category;
       }
 
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+      public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
@@ -99,7 +97,7 @@ namespace OSPSuite.Presentation.Services
          }
       }
 
-      public IReadOnlyList<DataRepository> ImportFromConfiguration(
+      public override IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos,
@@ -132,7 +130,7 @@ namespace OSPSuite.Presentation.Services
          }
       }
 
-      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
+      public override ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
          IReadOnlyList<DataRepository> existingDataSets)
       {
          var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet));
@@ -156,7 +154,7 @@ namespace OSPSuite.Presentation.Services
          return result;
       }
 
-      public bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository)
+      public override bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository)
       {
          return targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
             keyValuePair.Key == Constants.FILE || //Ignore source file
@@ -167,16 +165,6 @@ namespace OSPSuite.Presentation.Services
       private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)
       {
          return dataRepositoryList.Any(dataRepo => AreFromSameMetaDataCombination(dataRepo, targetDataRepository));
-      }
-
-      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos,IReadOnlyList<MetaDataCategory> metaDataCategories)
-      {
-         var configuration = new ImporterConfiguration();
-         configuration.CloneParametersFrom(_importer.LoadFile(columnInfos, dataPath, metaDataCategories).Format.Parameters.ToList());
-         configuration.FileName = dataPath;
-         configuration.Id = Guid.NewGuid().ToString();
-         configuration.NamingConventions = "";
-         return configuration;
       }
    }
 }
