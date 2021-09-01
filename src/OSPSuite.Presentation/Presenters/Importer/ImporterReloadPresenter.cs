@@ -14,14 +14,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public class ImporterReloadPresenter : AbstractDisposablePresenter<IImporterReloadView, IImporterReloadPresenter>, IImporterReloadPresenter
    {
-
-
       public ImporterReloadPresenter(
          IImporterReloadView view) : base(view)
       {
       }
 
-      public bool ShouldClose { get; }
       public void Show()
       {
          _view.Display();
