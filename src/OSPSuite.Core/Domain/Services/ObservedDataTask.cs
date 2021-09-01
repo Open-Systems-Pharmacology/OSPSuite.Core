@@ -18,8 +18,6 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Deletes the <paramref name="observedData" /> from the project.
-      ///    If <paramref name="promptBeforeDeleting"/> then prompts the user before deleting
-      ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c>
       /// </summary>
       bool Delete(DataRepository observedData);
 

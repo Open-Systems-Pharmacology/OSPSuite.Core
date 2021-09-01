@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -15,9 +12,7 @@ using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -35,8 +30,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly INanPresenter _nanPresenter;
       protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
-      private readonly IContainer _container;
-      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private ImporterConfiguration _configuration = new ImporterConfiguration();
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
@@ -134,7 +127,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             if (!SetSourceFile(dataSourceFileName)) return;
          }
-         catch (AbstractImporterException e)  
+         catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
             return;
@@ -296,7 +289,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var fileName = _dialogCreator.AskForFileToSave(Captions.Importer.SaveConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
 
-         if (string.IsNullOrEmpty(fileName)) 
+         if (string.IsNullOrEmpty(fileName))
             return;
 
          _configuration = UpdateAndGetConfiguration();
@@ -341,7 +334,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             element.MappedColumn.Unit = new UnitDescription();
             element.MappedColumn.Dimension = null;
          }
-        
+
          _configuration = configuration;
          _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
@@ -395,15 +388,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
 
-         if (fileName.IsNullOrEmpty()) return;
-         using (var serializationContext = SerializationTransaction.Create(_container, _container.Resolve<IDimensionFactory>()))
-         {
-            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
-            var xel = XElement.Load(fileName);
-            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+         if (fileName.IsNullOrEmpty())
+            return;
 
-            applyConfiguration(configuration);
-         }
+         var configuration = _pkmlPersistor.Load<ImporterConfiguration>(fileName);
+         applyConfiguration(configuration);
       }
 
       public event EventHandler<ImportTriggeredEventArgs> OnTriggerImport = delegate { };
