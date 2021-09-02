@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.Data
       private static string valueMapper(IEnumerable<IExtendedProperty> properties, IExtendedProperty value)
       {
          if (value.ValueAsObject == null)
-            return "";
+            return string.Empty;
          return valueMapper(properties, value.ValueAsObject.ToString());
       }
 
