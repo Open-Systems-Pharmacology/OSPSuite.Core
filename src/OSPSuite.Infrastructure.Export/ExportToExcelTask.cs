@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using OSPSuite.Utility;
@@ -23,7 +19,7 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="workBookConfiguration"></param>
       public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
-         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel,  workBookConfiguration );
+         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel, workBookConfiguration);
       }
 
       /// <summary>
@@ -36,7 +32,7 @@ namespace OSPSuite.Infrastructure.Export
       public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
          var tables = dataTables.ToList();
-         if (workBookConfiguration == null) 
+         if (workBookConfiguration == null)
             workBookConfiguration = new WorkbookConfiguration();
 
          for (var i = 0; i < tables.Count(); i++)
@@ -70,7 +66,7 @@ namespace OSPSuite.Infrastructure.Export
 
          ISheet sheet;
 
-         if ( !dataTable.TableName.Equals(""))
+         if (!dataTable.TableName.Equals(""))
          {
             sheet = workBook.CreateSheet(dataTable.TableName);
          }
@@ -91,7 +87,7 @@ namespace OSPSuite.Infrastructure.Export
             cell.CellStyle = workBookConfiguration.HeadersStyle;
          }
 
- //        row.RowStyle = style;
+         //        row.RowStyle = style;
 
          for (var i = 0; i < rowCount; i++)
          {
@@ -116,7 +112,7 @@ namespace OSPSuite.Infrastructure.Export
 
          for (var c = 0; c < columnCount; c++)
          {
-            sheet.AutoSizeColumn(c); 
+            sheet.AutoSizeColumn(c);
          }
       }
    }

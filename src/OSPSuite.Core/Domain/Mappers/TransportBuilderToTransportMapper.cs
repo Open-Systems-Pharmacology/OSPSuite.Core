@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -60,13 +62,20 @@ namespace OSPSuite.Core.Domain.Mappers
 
          parameter.AddTag(ObjectPathKeywords.MOLECULE);
          parameter.AddTag(ObjectPathKeywords.NEIGHBORHOOD);
-         parameter.AddTag(transportTypeTagFor(transportBuilder));
+         transportTypeTagsFor(transportBuilder).Each(parameter.AddTag);
          return parameter;
       }
 
-      private string transportTypeTagFor(ITransportBuilder transportBuilder)
+      private IEnumerable<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
       {
-         return transportBuilder.TransportType.Is(TransportType.Active) ? Constants.ACTIVE : Constants.PASSIVE;
+         if (transportBuilder.TransportType.Is(TransportType.Passive))
+         {
+            yield return Constants.PASSIVE;
+            yield break;
+         }
+
+         yield return Constants.ACTIVE;
+         yield return transportBuilder.TransportType.Is(TransportType.Influx) ? Constants.INFLUX : Constants.NOT_INFLUX;
       }
    }
 }

@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Builder
 
    /// <summary>
    ///    Base builder interface for all builder creating amount changing objects
-   ///    Contains all informations used for every kind of amount change
+   ///    Contains all information used for every kind of amount change
    /// </summary>
    public abstract class ProcessBuilder : Container, IProcessBuilder
    {
@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateProcessRateParameter
       {
-         get { return _createProcessRateParameter; }
+         get => _createProcessRateParameter;
          set
          {
             _createProcessRateParameter = value;
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool ProcessRateParameterPersistable
       {
-         get { return _processRateParameterPersistable; }
+         get => _processRateParameterPersistable;
          set
          {
             _processRateParameterPersistable = CreateProcessRateParameter && value;
@@ -61,24 +61,15 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
-      public IEnumerable<IParameter> Parameters
-      {
-         get { return GetChildren<IParameter>(); }
-      }
+      public IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
 
-      public void AddParameter(IParameter parameter)
-      {
-         Add(parameter);
-      }
+      public void AddParameter(IParameter parameter) => Add(parameter);
 
-      public void RemoveParameter(IParameter parameter)
-      {
-         RemoveChild(parameter);
-      }
+      public void RemoveParameter(IParameter parameter) => RemoveChild(parameter);
 
       public IFormula Formula
       {
-         get { return _formula; }
+         get => _formula;
          set
          {
             _formula = value;
