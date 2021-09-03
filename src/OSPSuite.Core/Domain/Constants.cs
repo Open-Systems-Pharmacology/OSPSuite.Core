@@ -31,6 +31,8 @@ namespace OSPSuite.Core.Domain
       public const int NOT_FOUND_INDEX = -1;
 
       public const string ACTIVE = "Active";
+      public const string INFLUX = "Influx";
+      public const string NOT_INFLUX = "NotInflux";
       public const string PASSIVE = "Passive";
       public const string TIME = "Time";
       public const string MEASUREMENT = "Measurement";
