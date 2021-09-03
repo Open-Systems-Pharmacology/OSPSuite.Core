@@ -8,6 +8,9 @@ using System.Reflection;
 using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Drawing;
+using DevExpress.XtraEditors.ViewInfo;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Localization;
@@ -20,6 +23,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -173,6 +177,35 @@ namespace OSPSuite.UI.Controls
       private bool rowHasFocus(int rowHandle)
       {
          return (FocusedRowHandle == rowHandle) && OptionsSelection.EnableAppearanceFocusedRow;
+      }
+
+      public void RaiseButtonClick(MouseEventArgs e)
+      {
+         var column = ColumnAt(e);
+         if (column == null)
+            return;
+
+         var rowHandle = RowHandleAt(e);
+         if (rowHandle < 0)
+            return;
+
+         //Adapted from https://supportcenter.devexpress.com/ticket/details/t230842/grid-the-buttonclick-event-is-not-raised-immediately-when-multi-selection-is-enabled
+         FocusedRowHandle = rowHandle;
+         FocusedColumn = column;
+         ShowEditor();
+         //force button click  
+         var edit = ActiveEditor.DowncastTo<ButtonEdit>();
+         var p = GridControl.PointToScreen(e.Location);
+         p = edit.PointToClient(p);
+         var ehi = (edit.GetViewInfo() as ButtonEditViewInfo).CalcHitInfo(p);
+         if (ehi == null)
+            return;
+
+         if (ehi.HitTest == EditHitTest.Button)
+         {
+            edit.PerformClick(ehi.HitObject.DowncastTo<EditorButtonObjectInfoArgs>().Button);
+            ((DXMouseEventArgs) e).Handled = true;
+         }
       }
 
       private void removeArrowRowIndicator(object sender, RowIndicatorCustomDrawEventArgs e)
