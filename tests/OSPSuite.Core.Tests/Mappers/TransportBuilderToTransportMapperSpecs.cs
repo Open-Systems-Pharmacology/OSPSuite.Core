@@ -70,6 +70,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _buildConfiguration.AddBuilderReference(_transport, _passiveTransportBuilder)).MustHaveHappened();
       }
    }
+
    public class When_mapping_an_active_influx_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
       private ITransportBuilder _transportBuilder;
@@ -132,7 +133,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_set_the_tag_influx()
       {
-         _processRateParameter.Tags.Contains(Constants.NOT_INFLUX).ShouldBeTrue();
+         _processRateParameter.Tags.Contains(Constants.INFLUX).ShouldBeTrue();
       }
 
       [Observation]
@@ -147,7 +148,6 @@ namespace OSPSuite.Core.Mappers
          _transport.Formula.ShouldNotBeEqualTo(_processRateParameter.Formula);
       }
    }
-
 
    public class When_mapping_an_active_efflux_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
