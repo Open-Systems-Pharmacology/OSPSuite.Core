@@ -134,6 +134,7 @@ namespace OSPSuite.Core.Mappers
       public void should_have_set_the_tag_influx()
       {
          _processRateParameter.Tags.Contains(Constants.INFLUX).ShouldBeTrue();
+         _processRateParameter.Tags.Contains(Constants.NOT_INFLUX).ShouldBeFalse();
       }
 
       [Observation]
@@ -203,6 +204,12 @@ namespace OSPSuite.Core.Mappers
       }
 
       [Observation]
+      public void should_not_have_set_the_passive_tag()
+      {
+         _processRateParameter.Tags.Contains(Constants.PASSIVE).ShouldBeFalse();
+      }
+
+      [Observation]
       public void should_have_set_the_tag_active()
       {
          _processRateParameter.Tags.Contains(Constants.ACTIVE).ShouldBeTrue();
@@ -211,6 +218,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_set_the_tag_not_influx()
       {
+         _processRateParameter.Tags.Contains(Constants.INFLUX).ShouldBeFalse();
          _processRateParameter.Tags.Contains(Constants.NOT_INFLUX).ShouldBeTrue();
       }
 
@@ -260,6 +268,12 @@ namespace OSPSuite.Core.Mappers
       public void should_have_set_the_tag_passive()
       {
          _processRateParameter.Tags.Contains(Constants.PASSIVE).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_not_have_set_the_tag_active()
+      {
+         _processRateParameter.Tags.Contains(Constants.ACTIVE).ShouldBeFalse();
       }
    }
 }

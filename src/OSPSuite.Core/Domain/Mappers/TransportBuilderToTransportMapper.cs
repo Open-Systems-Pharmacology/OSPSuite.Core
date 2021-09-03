@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
       {
-         transport.AddChildren( _parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
+         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
       }
 
       private IParameter processRateParameterFor(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
@@ -66,16 +66,13 @@ namespace OSPSuite.Core.Domain.Mappers
          return parameter;
       }
 
-      private IEnumerable<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
+      private IReadOnlyList<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
       {
-         if (transportBuilder.TransportType.Is(TransportType.Passive))
-         {
-            yield return Constants.PASSIVE;
-            yield break;
-         }
+         if (!transportBuilder.TransportType.Is(TransportType.Active))
+            return new[] {Constants.PASSIVE};
 
-         yield return Constants.ACTIVE;
-         yield return transportBuilder.TransportType.Is(TransportType.Influx) ? Constants.INFLUX : Constants.NOT_INFLUX;
+         var activeType = transportBuilder.TransportType.Is(TransportType.Influx) ? Constants.INFLUX : Constants.NOT_INFLUX;
+         return new[] {Constants.ACTIVE, activeType};
       }
    }
 }
