@@ -73,6 +73,30 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_retrieving_intersecting_metadata_with_null_values : concern_for_DataRepositoryExtensions
+   {
+      private IEnumerable<IExtendedProperty> _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         var repository = new DataRepository();
+         repository.ExtendedProperties.Add(GenerateExtendedProperty("key1", null));
+         sut.Add(repository);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.IntersectingMetaData();
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         _result.ToList().ShouldNotBeNull();
+      }
+   }
+
    public class When_retrieving_intersecting_metadata_from_one_repository : concern_for_DataRepositoryExtensions
    {
       private List<IExtendedProperty> _metaDataList;
