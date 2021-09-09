@@ -30,15 +30,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dimensions = dimensions;
 
          _columnMapping = !importDataColumn.Unit.ColumnName.IsNullOrEmpty();
-         View.SetParams(_columnMapping, useDimensionSelector);
          Dimension = importDataColumn.Dimension;
          if (Dimension != null && !_dimensions.Contains(Dimension))
             Dimension = _dimensions.FirstOrDefault();
 
          _selectedUnit = importDataColumn.Unit.SelectedUnit;
          FillDimensions(importDataColumn.Unit.SelectedUnit);
-         fillUnits(importDataColumn.Unit.SelectedUnit);
-         
+
          View.FillColumnComboBox(availableColumns);
          View.SetParams(_columnMapping, useDimensionSelector);
       }
