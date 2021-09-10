@@ -715,6 +715,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             OnMappingCompleted(this, new EventArgs());
          }
+
+         //at the end refresh the data in the columnMappingView grid, to ensure consistency 
          View.RefreshData();
       }
 
