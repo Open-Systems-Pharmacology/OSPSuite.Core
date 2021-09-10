@@ -205,7 +205,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          mappingSource.ColumnName = _metaDataParameterEditorPresenter.Input;
          mappingSource.IsColumn = false;
          ValidateMapping();
-         _view.RefreshData();
          _view.CloseEditor();
       }
 
@@ -234,7 +233,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model.ColumnInfo.IsBase())
          {
             ValidateMapping();
-            _view.RefreshData();
             _view.CloseEditor();
             return;
          }
@@ -256,8 +254,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          ValidateMapping();
-
-         _view.RefreshData();
          _view.CloseEditor();
       }
 
@@ -622,7 +618,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          ValidateMapping();
-         View.RefreshData();
       }
 
       public void AddGroupBy(AddGroupByFormatParameter source)
@@ -720,6 +715,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             OnMappingCompleted(this, new EventArgs());
          }
+
+         //at the end refresh the data in the columnMappingView grid, to ensure consistency 
+         View.RefreshData();
       }
 
       public event EventHandler OnMappingCompleted = delegate { };
