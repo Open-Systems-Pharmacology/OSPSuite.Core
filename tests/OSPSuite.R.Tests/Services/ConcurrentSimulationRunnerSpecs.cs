@@ -182,4 +182,82 @@ namespace OSPSuite.R.Services
          res[0].Succeeded.ShouldBeTrue();
       }
    }
+
+   public class When_running_some_simulation_concurrently : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private ConcurrentRunSimulationBatch _simulationBatch1;
+      private SimulationBatchRunValues _parValues1;
+      private SimulationBatchRunValues _parValues2;
+      private ConcurrentRunSimulationBatch _simulationBatch2;
+      private ConcurrentRunSimulationBatch _simulationBatch3;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+
+         _simulationBatch1 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         _simulationBatch2 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         _simulationBatch3 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+
+         _parValues1 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] { 3.5, 0.53 }
+         };
+    
+
+         _simulationBatch1.AddSimulationBatchRunValues(_parValues1);
+         _simulationBatch2.AddSimulationBatchRunValues(_parValues1);
+         _simulationBatch3.AddSimulationBatchRunValues(_parValues1);
+         sut.AddSimulationBatch(_simulationBatch1);
+         sut.AddSimulationBatch(_simulationBatch2);
+         sut.AddSimulationBatch(_simulationBatch3);
+      }
+
+    
+      [Observation]
+      public void should_initialize_the_batch_in_parallel()
+      {
+         var res = sut.RunConcurrently();
+         res[0].Succeeded.ShouldBeTrue();
+      }
+   }
+
 }

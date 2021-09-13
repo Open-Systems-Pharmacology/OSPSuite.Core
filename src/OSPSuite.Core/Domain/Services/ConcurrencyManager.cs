@@ -44,9 +44,9 @@ namespace OSPSuite.Core.Domain.Services
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
       Task<IReadOnlyDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
       (
-         int numberOfCoresToUse, 
-         CancellationToken cancellationToken, 
-         IReadOnlyList<TData> data, 
+         int numberOfCoresToUse,
+         CancellationToken cancellationToken,
+         IReadOnlyList<TData> data,
          Func<TData, string> id,
          Func<int, CancellationToken, TData, Task<TResult>> action
       ) where TResult : class;
@@ -55,11 +55,12 @@ namespace OSPSuite.Core.Domain.Services
    public class ConcurrencyManager : IConcurrencyManager
    {
       private readonly int _maximumNumberOfCoresToUse = Math.Max(1, Environment.ProcessorCount - 1);
+
       public async Task<IReadOnlyDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
       (
-         int numberOfCoresToUse, 
-         CancellationToken cancellationToken, 
-         IReadOnlyList<TData> data, 
+         int numberOfCoresToUse,
+         CancellationToken cancellationToken,
+         IReadOnlyList<TData> data,
          Func<TData, string> id,
          Func<int, CancellationToken, TData, Task<TResult>> action
       ) where TResult : class
@@ -70,7 +71,8 @@ namespace OSPSuite.Core.Domain.Services
          numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
 
          var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
-         //Starts one task per core
+
+         //Starts one task per core <= THIS IS NOT QUITE RIGHT I BELIEVE
          var tasks = Enumerable.Range(0, numberOfCoresToUse).Select(async coreIndex =>
          {
             //While there is data left
@@ -82,26 +84,25 @@ namespace OSPSuite.Core.Domain.Services
                var result = await returnWithExceptionHandling(
                   coreIndex,
                   cancellationToken,
-                  action, 
+                  action,
                   datum,
                   id
                );
                results.TryAdd(datum, result);
             }
-         }).ToList();
+         });
 
          await Task.WhenAll(tasks);
          //all tasks are completed. Can return results
 
-         var tt = results.Values;
          return results;
       }
 
       private async Task<ConcurrencyManagerResult<TResult>> returnWithExceptionHandling<TData, TResult>
       (
-         int coreId, 
-         CancellationToken cancellationToken, 
-         Func<int, CancellationToken, TData, Task<TResult>> task, 
+         int coreId,
+         CancellationToken cancellationToken,
+         Func<int, CancellationToken, TData, Task<TResult>> task,
          TData input, Func<TData, string> id
       ) where TResult : class
       {
