@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.R.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
@@ -66,7 +68,7 @@ namespace OSPSuite.R.Services
       string[] AllAvailableDimensionNames();
 
       /// <summary>
-      ///    Returns the name of all units defined in the suite for the given <paramref name="dimensionName"/>
+      ///    Returns the name of all units defined in the suite for the given <paramref name="dimensionName" />
       /// </summary>
       string[] AllAvailableUnitNamesFor(string dimensionName);
 
@@ -92,7 +94,7 @@ namespace OSPSuite.R.Services
          _dimensionFactory = dimensionFactory;
       }
 
-      public bool HasUnit(string dimensionName, string unit) => DimensionByName(dimensionName).HasUnit(unit);
+      public bool HasUnit(string dimensionName, string unit) => DimensionByName(dimensionName).SupportsUnit(unit, ignoreCase: true);
 
       public string BaseUnitFor(string dimensionName) => DimensionByName(dimensionName).BaseUnit.Name;
 
@@ -241,7 +243,10 @@ namespace OSPSuite.R.Services
       {
          var converterContext = new DoubleArrayContext(dimension, molWeight);
          var mergedDimension = _dimensionFactory.MergedDimensionFor(converterContext);
-         var unit = mergedDimension.Unit(targetUnit);
+         var unit = mergedDimension.FindUnit(targetUnit, ignoreCase: true);
+         if (unit == null)
+            throw new OSPSuiteException(Error.UnitIsNotDefinedInDimension(targetUnit, dimension.Name));
+
          return mergedDimension.BaseUnitValuesToUnitValues(unit, valuesInBaseUnit);
       }
 
@@ -249,7 +254,10 @@ namespace OSPSuite.R.Services
       {
          var converterContext = new DoubleArrayContext(dimension, molWeight);
          var mergedDimension = _dimensionFactory.MergedDimensionFor(converterContext);
-         var unit = mergedDimension.Unit(displayUnit);
+         var unit = mergedDimension.FindUnit(displayUnit, ignoreCase: true);
+         if (unit == null)
+            throw new OSPSuiteException(Error.UnitIsNotDefinedInDimension(displayUnit, dimension.Name));
+
          return mergedDimension.UnitValuesToBaseUnitValues(unit, valuesInDisplayUnit);
       }
    }

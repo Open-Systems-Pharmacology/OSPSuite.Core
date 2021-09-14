@@ -108,7 +108,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var unit = dimension.Unit(unitName);
          if (unit == null)
-            throw new OSPSuiteException(Error.UnitIsNotDefinedInDimension(dimension.Name, unitName));
+            throw new OSPSuiteException(Error.UnitIsNotDefinedInDimension(unitName, dimension.Name));
 
          return dimension.UnitValueToBaseUnitValue(unit, valueInUnit);
       }
