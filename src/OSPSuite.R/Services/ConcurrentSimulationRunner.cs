@@ -108,7 +108,7 @@ namespace OSPSuite.R.Services
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
             data => new Guid().ToString(),
-            (core, ct, settings) => Task.Run(settings.AddNewBatch, ct), _cancellationTokenSource.Token);
+            (core, settings, ct) => Task.Run(settings.AddNewBatch, ct), _cancellationTokenSource.Token);
       }
 
       public async Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync()
