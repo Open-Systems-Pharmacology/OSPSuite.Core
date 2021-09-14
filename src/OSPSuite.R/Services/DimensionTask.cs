@@ -94,11 +94,7 @@ namespace OSPSuite.R.Services
          _dimensionFactory = dimensionFactory;
       }
 
-      public bool HasUnit(string dimensionName, string unit)
-      {
-         var dimension = DimensionByName(dimensionName);
-         return dimension.HasUnit(unit) || dimension.SupportsUnit(unit, ignoreCase: true);
-      }
+      public bool HasUnit(string dimensionName, string unit) => DimensionByName(dimensionName).SupportsUnit(unit, ignoreCase: true);
 
       public string BaseUnitFor(string dimensionName) => DimensionByName(dimensionName).BaseUnit.Name;
 
