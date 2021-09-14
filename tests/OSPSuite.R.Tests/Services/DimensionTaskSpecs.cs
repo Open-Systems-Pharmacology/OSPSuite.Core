@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
@@ -22,6 +25,20 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "g", new[] {1d, 2d, 3d});
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000, 2000, 3000d);
+      }
+   }
+
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_another_case : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "G", new[] {1d, 2d, 3d});
       }
 
       [Observation]
@@ -94,6 +111,37 @@ namespace OSPSuite.R.Services
       public void should_be_able_to_convert_the_array()
       {
          _result.ShouldOnlyContainInOrder(10);
+      }
+   }
+
+   public class When_converting_a_double_value_from_mass_unit_to_molar_unit_using_another_case : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         //50 kg/mol
+         _result = sut.ConvertToBaseUnit(Constants.Dimension.MOLAR_AMOUNT, "KG", 500, molWeight: 50);
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(10);
+      }
+   }
+
+   public class When_converting_a_double_value_from_mass_unit_to_molar_unit_using_a_unit_that_does_not_4exist : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception_containing_the_name_of_the_unit_and_the_dimension()
+      {
+         try
+         {
+            sut.ConvertToBaseUnit(Constants.Dimension.MOLAR_AMOUNT, "TOTO", 500);
+         }
+         catch (Exception e)
+         {
+            e.Message.ShouldBeEqualTo(Error.UnitIsNotDefinedInDimension("TOTO", Constants.Dimension.MOLAR_AMOUNT));
+         } 
       }
    }
 
@@ -203,6 +251,12 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_return_the_true_if_the_dimension_has_unit_written_in_a_different_case()
+      {
+         sut.HasUnit("Mass", "KG").ShouldBeTrue();
+      }
+
+      [Observation]
       public void should_return_the_false_if_the_dimension_does_not_have_the_unit()
       {
          sut.HasUnit("Mass", "cm").ShouldBeFalse();
@@ -228,7 +282,6 @@ namespace OSPSuite.R.Services
       {
          sut.HasDimension("NOPE").ShouldBeFalse();
       }
-
    }
 
    public class When_retrieving_the_dimensions_for_standard_pk_parameters : concern_for_DimensionTask
