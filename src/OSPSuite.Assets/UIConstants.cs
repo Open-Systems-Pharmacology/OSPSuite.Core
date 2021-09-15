@@ -412,6 +412,7 @@ namespace OSPSuite.Assets
          public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
          public static readonly string SaveConfiguration = "Save Configuration";
          public static readonly string ApplyConfiguration = "Load Configuration";
+         public static readonly string ActionWillEraseLoadedData = "This action will result in dropping all the loaded sheets. Do you want to continue?";
          public static readonly string OpenFile = "Select the file you would like to apply configuration on";
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";

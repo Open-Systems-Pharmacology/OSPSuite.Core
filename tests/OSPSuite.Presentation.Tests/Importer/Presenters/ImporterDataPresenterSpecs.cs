@@ -175,7 +175,36 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_hidig_all_already_loaded_tabs : concern_for_ImporterDataPresenter
+
+   public class When_dropping_loaded_sheets : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+         sut.ImportDataForConfirmation("sheet1");
+         sut.ImportDataForConfirmation("sheet2");
+      }
+
+      protected override void Because()
+      {
+         sut.ResetLoadedSheets();
+      }
+
+      [Observation]
+      public void sheets_should_have_been_cleared()
+      {
+         sut.Sheets.Keys.Count().ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void import_buttons_should_have_been_reset()
+      {
+         A.CallTo(() => _view.ResetImportButtons()).MustHaveHappened();
+      }
+   }
+
+   public class When_hiding_all_already_loaded_tabs : concern_for_ImporterDataPresenter
    {
       protected override void Context()
       {
