@@ -234,6 +234,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onResetMappingBasedOnCurrentSheet(object sender, EventArgs e)
       {
+         if (confirmDroppingOfLoadedSheets())
+            return;
+
          try
          {
             _importerDataPresenter.GetFormatBasedOnCurrentSheet();
@@ -242,6 +245,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _dialogCreator.MessageBoxError(Captions.Importer.SheetFormatNotSupported);
          }
+         _view.DisableConfirmationView();
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
@@ -312,8 +316,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void applyConfiguration(ImporterConfiguration configuration)
       {
          var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
-         var mappings = configuration.Parameters.OfType<MappingDataFormatParameter>();
-         var listOfNonExistingColumns = mappings.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
+         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
 
          if (listOfNonExistingColumns.Any())
          {
@@ -328,6 +331,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          }
 
+         var mappings = configuration.Parameters.OfType<MappingDataFormatParameter>();
          var listOfNonExistingUnitColumns = mappings.Where(parameter => !parameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.Unit.ColumnName)).ToList();
          foreach (var element in listOfNonExistingUnitColumns)
          {
@@ -335,8 +339,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
             element.MappedColumn.Dimension = null;
          }
 
+         _importerDataPresenter.ResetLoadedSheets();
+         _view.DisableConfirmationView();
+
          _configuration = configuration;
-         _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
+
+         if (!_configuration.NamingConventions.IsNullOrEmpty())
+            _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
+
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
 
          _columnMappingPresenter.SetDataFormat(_dataSourceFile.Format);
@@ -377,6 +387,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
+      private bool confirmDroppingOfLoadedSheets()
+      {
+         return _dataSource.DataSets.Count != 0 && _dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData) != ViewResult.Yes;
+      }
+
       public ImporterConfiguration UpdateAndGetConfiguration()
       {
          _configuration.CloneParametersFrom(_dataSourceFile.Format.Parameters.ToList());
@@ -386,11 +401,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void LoadConfigurationWithoutImporting()
       {
-         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
+         if (confirmDroppingOfLoadedSheets())
+               return;
+
+         var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER,
+            Constants.DirectoryKey.OBSERVED_DATA);
 
          if (fileName.IsNullOrEmpty())
             return;
-
+         
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(fileName);
          applyConfiguration(configuration);
       }

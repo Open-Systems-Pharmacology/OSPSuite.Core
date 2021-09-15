@@ -206,8 +206,6 @@ namespace OSPSuite.UI.Views.Importer
 
       public void SetGridSource(string tabName = null)
       {
-         allImportButtonsDisabledFlag = false;
-
          dataViewingGridControl.DataSource = null;
          dataViewingGridView.Columns.Clear();
 

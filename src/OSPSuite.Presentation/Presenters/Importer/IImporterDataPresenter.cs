@@ -62,5 +62,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void TriggerOnDataChanged();
       void SetFilter(string FilterString);
       void GetFormatBasedOnCurrentSheet();
+      void ResetLoadedSheets();
    }
 }
