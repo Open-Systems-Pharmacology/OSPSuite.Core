@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Services
          }
          builder.AddSerilog(
            new LoggerConfiguration()
-             .WriteTo.File( logFileFullPath, rollOnFileSizeLimit: true, restrictedToMinimumLevel: serilogLevel, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {Exception}")
+             .WriteTo.File( logFileFullPath, rollOnFileSizeLimit: true)
              .CreateLogger()
          );
          return builder;
