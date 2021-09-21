@@ -18,7 +18,7 @@ namespace OSPSuite.Infrastructure.Services
 
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
-         var logger = _loggerCreator.GetOrCreateLogger(string.IsNullOrEmpty(categoryName) ? DEFAULT_LOGGER_CATEGORY : categoryName);
+         var logger = _loggerCreator.GetOrCreateLogger(string.IsNullOrEmpty(categoryName) ? DefaultCategoryName : categoryName);
          switch (logLevel)
          {
             case LogLevel.Trace:

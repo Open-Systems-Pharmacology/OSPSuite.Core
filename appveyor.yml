@@ -50,6 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
+    - 1302-log-file-naming
 
 test:
   assemblies:
