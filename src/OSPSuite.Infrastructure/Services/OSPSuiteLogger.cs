@@ -5,15 +5,15 @@ namespace OSPSuite.Infrastructure.Services
 {
    public class OSPSuiteLogger : IOSPSuiteLogger
    {
-      public string DefaultCategoryName { get; set; }
-
       protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
+
+      public string DefaultCategoryName { get; set; } = DEFAULT_LOGGER_CATEGORY;
+
       private readonly ILoggerCreator _loggerCreator;
 
-      public OSPSuiteLogger(ILoggerCreator loggerCreator, string defaultCategoryName = DEFAULT_LOGGER_CATEGORY)
+      public OSPSuiteLogger(ILoggerCreator loggerCreator)
       {
          _loggerCreator = loggerCreator;
-         DefaultCategoryName = defaultCategoryName;
       }
 
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
