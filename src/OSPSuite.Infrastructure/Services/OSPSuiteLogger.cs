@@ -3,12 +3,12 @@ using OSPSuite.Core.Services;
 
 namespace OSPSuite.Infrastructure.Services
 {
-   public class OSPLogger : IOSPSuiteLogger
+   public class OSPSuiteLogger : IOSPSuiteLogger
    {
       protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
       private readonly ILoggerCreator _loggerCreator;
 
-      public OSPLogger(ILoggerCreator loggerCreator)
+      public OSPSuiteLogger(ILoggerCreator loggerCreator)
       {
          _loggerCreator = loggerCreator;
       }
