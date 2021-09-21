@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Services
          }
          builder.AddSerilog(
            new LoggerConfiguration()
-             .WriteTo.File( logFileFullPath, rollOnFileSizeLimit: true)
+             .WriteTo.File( logFileFullPath, fileSizeLimitBytes: 100000, rollOnFileSizeLimit: true)
              .CreateLogger()
          );
          return builder;
