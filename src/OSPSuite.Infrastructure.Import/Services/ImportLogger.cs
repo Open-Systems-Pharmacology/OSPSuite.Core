@@ -28,6 +28,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          _entries = new List<LogEntry>();
       }
 
+      public string DefaultCategoryName { get; set; }
+
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
          _entries.Add(new LogEntry(logLevel, message));

@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 
 namespace OSPSuite.Core.Services
 {
    public interface IOSPSuiteLogger
    {
+      string DefaultCategoryName { get; set; }
+
       /// <summary>
       ///    Logs the <paramref name="message" /> using the provided <paramref name="logLevel" /> for the
       ///    <paramref name="categoryName" />
