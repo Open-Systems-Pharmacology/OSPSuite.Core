@@ -33,7 +33,7 @@ namespace OSPSuite.Infrastructure.Services
       [Observation]
       public void should_invoke_new_action()
       {
-         var logger = new OSPLogger(sut);
+         var logger = new OSPSuiteLogger(sut);
          logger.AddToLog("test", new LogLevel(), "testcategory");
          A.CallTo(() => _f1.Invoke(A<ILoggingBuilder>.Ignored)).MustHaveHappened();
       }
@@ -54,7 +54,7 @@ namespace OSPSuite.Infrastructure.Services
             sut.AddLoggingBuilderConfiguration(functions[i]);
          }
 
-         var logger = new OSPLogger(sut);
+         var logger = new OSPSuiteLogger(sut);
          logger.AddToLog("test", new LogLevel(), "testcategory");
 
          for (var i = 0; i < iterations; i++)

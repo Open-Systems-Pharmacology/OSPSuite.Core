@@ -3,19 +3,22 @@ using OSPSuite.Core.Services;
 
 namespace OSPSuite.Infrastructure.Services
 {
-   public class OSPLogger : IOSPSuiteLogger
+   public class OSPSuiteLogger : IOSPSuiteLogger
    {
       protected const string DEFAULT_LOGGER_CATEGORY = "OSPSuite";
+
+      public string DefaultCategoryName { get; set; } = DEFAULT_LOGGER_CATEGORY;
+
       private readonly ILoggerCreator _loggerCreator;
 
-      public OSPLogger(ILoggerCreator loggerCreator)
+      public OSPSuiteLogger(ILoggerCreator loggerCreator)
       {
          _loggerCreator = loggerCreator;
       }
 
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
-         var logger = _loggerCreator.GetOrCreateLogger(string.IsNullOrEmpty(categoryName) ? DEFAULT_LOGGER_CATEGORY : categoryName);
+         var logger = _loggerCreator.GetOrCreateLogger(string.IsNullOrEmpty(categoryName) ? DefaultCategoryName : categoryName);
          switch (logLevel)
          {
             case LogLevel.Trace:

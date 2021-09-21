@@ -9,6 +9,8 @@ namespace OSPSuite.R.Domain
 {
    public class RLogger : IOSPSuiteLogger
    {
+      public string DefaultCategoryName { get; set; }
+
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
          Console.WriteLine($"{logLevel} - {message}");

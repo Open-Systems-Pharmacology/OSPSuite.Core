@@ -14,7 +14,7 @@ namespace OSPSuite.Infrastructure
          {
             scan.AssemblyContainingType<InfrastructureRegister>();
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
-            scan.ExcludeType<OSPLogger>();
+            scan.ExcludeType<OSPSuiteLogger>();
             scan.ExcludeType<LoggerCreator>(); ;
          });
 
@@ -26,7 +26,7 @@ namespace OSPSuite.Infrastructure
       {
          var loggerCreator = new LoggerCreator();
          container.RegisterImplementationOf((ILoggerCreator)loggerCreator);
-         container.Register<IOSPSuiteLogger, OSPLogger>(LifeStyle.Singleton);
+         container.Register<IOSPSuiteLogger, OSPSuiteLogger>(LifeStyle.Singleton);
       }
 
       private static void registerThirdPartyComponents(IContainer container)
