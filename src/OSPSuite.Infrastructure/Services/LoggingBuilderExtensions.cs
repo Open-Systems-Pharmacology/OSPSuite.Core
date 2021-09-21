@@ -36,7 +36,7 @@ namespace OSPSuite.Infrastructure.Services
          //1073741824 is as far as I understand the maximum possible fileSizeLimitBytes
          builder.AddSerilog(
            new LoggerConfiguration()
-             .WriteTo.File( logFileFullPath, fileSizeLimitBytes: 1073741824, rollOnFileSizeLimit: true, restrictedToMinimumLevel: serilogLevel, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {Exception}")
+             .WriteTo.File( logFileFullPath, fileSizeLimitBytes: 1073741824, rollOnFileSizeLimit: true, restrictedToMinimumLevel: serilogLevel, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {Exception} \n")
              .CreateLogger()
          );
          return builder;
