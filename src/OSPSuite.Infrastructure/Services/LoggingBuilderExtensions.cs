@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace OSPSuite.Infrastructure.Services
@@ -36,7 +37,8 @@ namespace OSPSuite.Infrastructure.Services
          //1073741824 is as far as I understand the maximum possible fileSizeLimitBytes
          builder.AddSerilog(
            new LoggerConfiguration()
-             .WriteTo.File( logFileFullPath, fileSizeLimitBytes: 1073741824, rollOnFileSizeLimit: true, restrictedToMinimumLevel: serilogLevel, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {NewLine:l} {Exception}")
+              .MinimumLevel.ControlledBy(new LoggingLevelSwitch { MinimumLevel = serilogLevel })
+              .WriteTo.File( logFileFullPath, fileSizeLimitBytes: 1073741824, rollOnFileSizeLimit: true, restrictedToMinimumLevel: serilogLevel, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {NewLine:l} {Exception}")
              .CreateLogger()
          );
          return builder;
