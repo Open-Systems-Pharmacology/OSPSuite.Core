@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 1305-log-level
 
 test:
   assemblies:
