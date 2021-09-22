@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
             ColumnId = dataColumn.Id,
             QuantityPath = quantityPath,
             Values = dataColumn.Values.ToArray(),
-            Sensitivities = parameters.ToDictionary(p => p, p => simModel?.SensitivityValuesFor(quantityPath, p))
+            Sensitivities = parameters.Select(p => new SensitivitiesWithParameter() { ParameterName = p, Sensitivities = simModel?.SensitivityValuesFor(quantityPath, p) }).ToArray()
          };
       }
    }

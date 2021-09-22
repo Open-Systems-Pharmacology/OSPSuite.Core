@@ -7,6 +7,12 @@ using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
 {
+   public class SensitivitiesWithParameter
+   {
+      public string ParameterName { get; set; }
+      public double[] Sensitivities { get; set; }
+   }
+
    /// <summary>
    ///    Represents the simulation values for a quantity identified by quantity path
    /// </summary>
@@ -20,7 +26,7 @@ namespace OSPSuite.Core.Domain.Data
 
       private float[] _values;
 
-      private IReadOnlyDictionary<string, double[]> _sensitivities = new Dictionary<string, double[]>();
+      private SensitivitiesWithParameter[] _sensitivities = new SensitivitiesWithParameter[] { };
 
       /// <summary>
       ///    Only required because charts requires ColumnId to defined curves
@@ -49,10 +55,10 @@ namespace OSPSuite.Core.Domain.Data
          set => _values = value ?? new float[] {};
       }
 
-      public virtual IReadOnlyDictionary<string, double[]> Sensitivities
+      public virtual SensitivitiesWithParameter[] Sensitivities
       {
          get => _sensitivities;
-         set => _sensitivities = value ?? new Dictionary<string, double[]>();
+         set => _sensitivities = value ?? new SensitivitiesWithParameter[] { };
       }
 
       public virtual IReadOnlyList<string> PathList

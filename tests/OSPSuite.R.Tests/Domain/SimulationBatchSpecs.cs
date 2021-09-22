@@ -108,7 +108,7 @@ namespace OSPSuite.R.Domain
       [Observation]
       public void should_calculate_sensitivities()
       {
-         _results.Each(r => r.Each(x => x.Sensitivities.Values.Each(s =>s.Count().ShouldBeEqualTo(x.Values.Count()))));
+         _results.Each(r => r.Each(x => x.Sensitivities.Each(s => s.Sensitivities.Count().ShouldBeEqualTo(x.Values.Count()))));
       }
    }
 
