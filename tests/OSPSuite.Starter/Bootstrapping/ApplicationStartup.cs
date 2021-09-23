@@ -47,7 +47,7 @@ namespace OSPSuite.Starter.Bootstrapping
             .AddLoggingBuilderConfiguration(builder =>
                builder
                   .SetMinimumLevel(logLevel)
-                  .AddFile("log.txt", logLevel)
+                  .AddFile("log.txt", logLevel, false)
             );
       }
 

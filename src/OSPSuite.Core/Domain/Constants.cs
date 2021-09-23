@@ -625,5 +625,10 @@ namespace OSPSuite.Core.Domain
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
          public static readonly string Undefined = "Undefined";
       }
+
+      public static class LoggerConstants
+      {
+         public const string DEFAULT_LOG_ENTRY_TEMPLATE = "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {NewLine:l} {Exception}";
+      }
    }
 }
