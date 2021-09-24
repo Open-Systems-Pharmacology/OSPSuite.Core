@@ -48,15 +48,12 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             parameterIdentificationRuns.Each(notifyRun);
             var parallelOptions = createParallelOptions(token);
 
-            await Task.Run(() =>
-            {
-               Parallel.ForEach(parameterIdentificationRuns, parallelOptions,
-                  run =>
-                  {
-                     parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-                     results.Add(run.Run(token));
-                  });
-            }, token);
+            await Task.Run(() => Parallel.ForEach(parameterIdentificationRuns, parallelOptions,
+               run =>
+               {
+                  parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                  results.Add(run.Run(token));
+               }), token);
 
             updateParameterIdentificationResults(results);
          }
