@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Services
    {
       protected ParameterIdentification _parameterIdentification;
       protected OptimizationRunResult _runResult;
-      protected ICache<ISimulation, ISimModelBatch> _simModelBatches;
+      protected Dictionary<ISimulation, ISimModelBatch> _simModelBatches;
       protected JacobianMatrix _result;
       protected List<OutputMapping> _allOutputMappings;
       protected List<IdentificationParameter> _allVariableIdentificationParameters;
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Services
       {
          _parameterIdentification = A.Fake<ParameterIdentification>();
          _runResult = A.Fake<OptimizationRunResult>();
-         _simModelBatches = new Cache<ISimulation, ISimModelBatch>();
+         _simModelBatches = new Dictionary<ISimulation, ISimModelBatch>();
          _allOutputMappings = new List<OutputMapping>();
          _allVariableIdentificationParameters = new List<IdentificationParameter>();
 
