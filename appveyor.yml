@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 1307-multiple-log-files
 
 test:
   assemblies:
