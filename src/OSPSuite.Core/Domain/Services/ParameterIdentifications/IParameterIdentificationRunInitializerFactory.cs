@@ -4,10 +4,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
    public interface IParameterIdentificationRunInitializerFactory
    {
-      T Create<T>() where T : IParameterIdentifcationRunInitializer;
+      T Create<T>() where T : IParameterIdentificationRunInitializer;
    }
 
-   class ParameterIdentificationRunInitializerFactory : DynamicFactory<IParameterIdentifcationRunInitializer>, IParameterIdentificationRunInitializerFactory
+   class ParameterIdentificationRunInitializerFactory : DynamicFactory<IParameterIdentificationRunInitializer>, IParameterIdentificationRunInitializerFactory
    {
       public ParameterIdentificationRunInitializerFactory(Utility.Container.IContainer container) : base(container)
       {

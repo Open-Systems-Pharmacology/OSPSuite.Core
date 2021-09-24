@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using System.Threading;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -38,7 +39,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.InitializeRun().Result;
+         _result = sut.InitializeRun(CancellationToken.None).Result;
       }
 
       [Observation]

@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
    public interface IParameterIdentificationRun : IDisposable
    {
-      void InitializeWith(IParameterIdentifcationRunInitializer runInitializer);
+      void InitializeWith(IParameterIdentificationRunInitializer runInitializer);
       ParameterIdentificationRunResult Run(CancellationToken cancellationToken);
       event EventHandler<ParameterIdentificationRunStatusEventArgs> RunStatusChanged;
       OptimizationRunResult BestResult { get; }
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private IResidualCalculator _residualCalculator;
       private IOptimizationAlgorithm _optimizationAlgorithm;
       private CancellationToken _cancellationToken;
-      private IParameterIdentifcationRunInitializer _runInitializer;
+      private IParameterIdentificationRunInitializer _runInitializer;
       private List<IdentificationParameter> _variableParameters;
       private List<IdentificationParameter> _fixedParameters;
 
@@ -82,14 +82,14 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _jacobianMatrixCalculator = jacobianMatrixCalculator;
       }
 
-      public void InitializeWith(IParameterIdentifcationRunInitializer runInitializer)
+      public void InitializeWith(IParameterIdentificationRunInitializer runInitializer)
       {
          _runInitializer = runInitializer;
       }
 
-      private void initialize()
+      private void initialize(CancellationToken cancellationToken)
       {
-         _parameterIdentification = _runInitializer.InitializeRun().Result;
+         _parameterIdentification = _runInitializer.InitializeRun(cancellationToken).Result;
          RunResult.Description = _parameterIdentification.Description;
          _optimizationAlgorithm = _optimizationAlgorithmMapper.MapFrom(_parameterIdentification.AlgorithmProperties);
          _residualCalculator = _residualCalculatorFactory.CreateFor(_parameterIdentification.Configuration);
@@ -124,7 +124,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          try
          {
             RunResult.Status = RunStatus.Running;
-            initialize();
+            initialize(cancellationToken);
 
             var variableParameterConstraints = retrieveVariableParameterConstraints();
             RunResult.Properties = _optimizationAlgorithm.Optimize(variableParameterConstraints, performRun);
@@ -223,7 +223,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var parallelOptions = new ParallelOptions
          {
             CancellationToken = _cancellationToken,
-            MaxDegreeOfParallelism = _parameterIdentification.IsSingleRun ? _coreUserSettings.MaximumNumberOfCoresToUse : 1
+            MaxDegreeOfParallelism = _coreUserSettings.MaximumNumberOfCoresToUse
          };
 
          try

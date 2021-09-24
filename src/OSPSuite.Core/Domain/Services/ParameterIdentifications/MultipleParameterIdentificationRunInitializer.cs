@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
@@ -7,7 +8,7 @@ using OSPSuite.Core.Maths.Random;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
-   public class MultipleParameterIdentificationRunInitializer : ParameterIdentifcationRunInitializer
+   public class MultipleParameterIdentificationRunInitializer : ParameterIdentificationRunInitializer
    {
       private RandomGenerator _randomGenerator;
 
@@ -21,16 +22,17 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _randomGenerator = randomGenerator;
       }
 
-      public override Task<ParameterIdentification> InitializeRun()
+      public override Task<ParameterIdentification> InitializeRun(CancellationToken cancellationToken)
       {
          return Task.Run(() =>
          {
+            cancellationToken.ThrowIfCancellationRequested();
             var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
             //Index is zero based
             newParameterIdentification.Description = Captions.ParameterIdentification.RandomStartValueRunNameFor(RunIndex + 1);
             randomizeStartValuesFor(newParameterIdentification);
             return newParameterIdentification;
-         });
+         }, cancellationToken);
       }
 
       private void randomizeStartValuesFor(ParameterIdentification parameterIdentification)
