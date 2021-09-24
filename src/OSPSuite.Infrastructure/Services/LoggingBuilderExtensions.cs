@@ -41,6 +41,11 @@ namespace OSPSuite.Infrastructure.Services
 
          foreach (var logFile in logFileFullPaths)
          {
+            //this is a workaround to avoid having the date automatically appended to the log file name
+            //(eg log_20210921.txt, when input name is simply log.txt).
+            //Setting rollOnFileSizeLimit disables that, since the first log is log.txt, the next log_001.txt and so on
+            //since we do not expect to ever reach the log limit (in the qualificationRunner fe), this results in one file
+            //1073741824 is as far as I understand the maximum possible fileSizeLimitBytes
             loggerConfiguration.WriteTo.File(logFile, fileSizeLimitBytes: 1073741824, rollOnFileSizeLimit: true,
                restrictedToMinimumLevel: serilogLevel,
                shared: shared, outputTemplate: outputTemplate);

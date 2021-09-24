@@ -37,12 +37,6 @@ namespace OSPSuite.Core.Qualification
       public string MappingFile { get; set; }
 
       /// <summary>
-      ///    Path of log file that will be created for the qualification runner.
-      ///    and will include all entries from all qualification processes run.
-      /// </summary>
-      public string QRSharedLogPath { get; set; }
-
-      /// <summary>
       ///    Temp folder where potential artifacts can be exported
       /// </summary>
       public string TempFolder { get; set; }
