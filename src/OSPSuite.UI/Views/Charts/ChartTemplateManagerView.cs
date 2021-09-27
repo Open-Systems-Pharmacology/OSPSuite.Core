@@ -124,8 +124,8 @@ namespace OSPSuite.UI.Views.Charts
 
       private void initButton(EditorButton button, ApplicationIcon icon, string toolTip)
       {
-         button.Image = icon.ToImage(IconSizes.Size16x16);
-         button.SuperTip = _toolTipCreator.CreateToolTip(toolTip,image: button.Image);
+         button.ImageOptions.SvgImage = icon;
+         button.SuperTip = _toolTipCreator.CreateToolTip(toolTip,image: icon);
       }
 
       public event EventHandler<ViewResizedEventArgs> HeightChanged;

@@ -11,10 +11,10 @@ namespace OSPSuite.UI.Services
       private readonly IPresentationUserSettings _userSettings;
       private bool _initialized;
 
-      private ImageCollection _allImages16x16;
-      private ImageCollection _allImages32x32;
-      private ImageCollection _allImages24x24;
-      private ImageCollection _allImages48x48;
+      private SvgImageCollection _allImages16x16;
+      private SvgImageCollection _allImages32x32;
+      private SvgImageCollection _allImages24x24;
+      private SvgImageCollection _allImages48x48;
 
       public ImageListRetriever(IApplicationIconsToImageCollectionMapper mapper, IPresentationUserSettings userSettings)
       {
@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Services
          _userSettings = userSettings;
       }
 
-      public ImageCollection AllImages16x16
+      public SvgImageCollection AllImages16x16
       {
          get
          {
@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public ImageCollection AllImages24x24
+      public SvgImageCollection AllImages24x24
       {
          get
          {
@@ -40,7 +40,7 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public ImageCollection AllImages32x32
+      public SvgImageCollection AllImages32x32
       {
          get
          {
@@ -50,7 +50,7 @@ namespace OSPSuite.UI.Services
       }
 
 
-      private ImageCollection allImageForSize(IconSize iconSize)
+      private SvgImageCollection allImageForSize(IconSize iconSize)
       {
          if (iconSize == IconSizes.Size16x16)
             return _allImages16x16;
@@ -88,17 +88,17 @@ namespace OSPSuite.UI.Services
          _initialized = true;
       }
 
-      public ImageCollection AllImagesForTreeView
+      public SvgImageCollection AllImagesForTreeView
       {
          get { return allImageForSize(_userSettings.IconSizeTreeView); }
       }
 
-      public ImageCollection AllImagesForContextMenu
+      public SvgImageCollection AllImagesForContextMenu
       {
          get { return allImageForSize(_userSettings.IconSizeContextMenu); }
       }
 
-      public ImageCollection AllImagesForTabs
+      public SvgImageCollection AllImagesForTabs
       {
          get { return allImageForSize(_userSettings.IconSizeTab); }
       }

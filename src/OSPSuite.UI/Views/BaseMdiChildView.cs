@@ -29,7 +29,7 @@ namespace OSPSuite.UI.Views
             Release();
          };
 
-         Icon = ApplicationIcon.WithSize(IconSizes.Size16x16);
+         IconOptions.SvgImage = ApplicationIcon;
          MdiParent = owner as Form;
       }
 

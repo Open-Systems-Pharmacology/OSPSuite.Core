@@ -6,12 +6,12 @@ namespace OSPSuite.UI.Services
 {
    public interface IImageListRetriever : IStartable
    {
-      ImageCollection AllImages16x16 { get; }
-      ImageCollection AllImages24x24 { get; }
-      ImageCollection AllImages32x32 { get; }
-      ImageCollection AllImagesForContextMenu { get; }
-      ImageCollection AllImagesForTreeView { get; }
-      ImageCollection AllImagesForTabs { get; }
+      SvgImageCollection AllImages16x16 { get; }
+      SvgImageCollection AllImages24x24 { get; }
+      SvgImageCollection AllImages32x32 { get; }
+      SvgImageCollection AllImagesForContextMenu { get; }
+      SvgImageCollection AllImagesForTreeView { get; }
+      SvgImageCollection AllImagesForTabs { get; }
       int ImageIndex(string imageName);
       int ImageIndex(ApplicationIcon icon);
    }

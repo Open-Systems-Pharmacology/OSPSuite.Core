@@ -21,7 +21,7 @@ namespace OSPSuite.UI.Views.Charts
    {
       private readonly IMenuBarItemToBarItemMapper _barItemMapper;
       private IChartEditorPresenter _presenter;
-      private readonly ImageCollection _allImages;
+      private readonly SvgImageCollection _allImages;
       private readonly BarEditItem _barEditItemForUsedIn;
 
       public ChartEditorView(IMenuBarItemToBarItemMapper barItemMapper, IImageListRetriever imageListRetriever)
@@ -94,7 +94,7 @@ namespace OSPSuite.UI.Views.Charts
          //required to set the image in the top menu
          if (button.ImageIndex >= 0)
          {
-            button.Glyph = _allImages.Images[button.ImageIndex];
+            button.ImageOptions.SvgImage = _allImages[button.ImageIndex];
             button.PaintStyle = BarItemPaintStyle.CaptionGlyph;
          }
 

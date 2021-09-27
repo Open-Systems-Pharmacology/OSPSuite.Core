@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using DevExpress.Utils;
+using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
@@ -14,7 +15,7 @@ namespace OSPSuite.UI.Services
 {
    public interface IToolTipCreator
    {
-      SuperToolTip CreateToolTip(string content, string title = null, Image image = null, IWithIcon withIcon = null);
+      SuperToolTip CreateToolTip(string content, string title = null, SvgImage image = null, IWithIcon withIcon = null);
       SuperToolTip ToolTipFor(JournalPageDTO journalPageDTO);
       SuperToolTip ToolTipFor(ValueOrigin valueOrigin);
       SuperToolTip ToolTipFor(RelatedItem relatedItem);
@@ -27,9 +28,9 @@ namespace OSPSuite.UI.Services
 
    public class ToolTipCreator : IToolTipCreator
    {
-      public SuperToolTip CreateToolTip(string content, string title = null, Image image = null, IWithIcon withIcon = null)
+      public SuperToolTip CreateToolTip(string content, string title = null, SvgImage image = null, IWithIcon withIcon = null)
       {
-         var imageToUse = image ?? (withIcon == null ? null : ApplicationIcons.IconFor(withIcon).ToImage());
+         var imageToUse = image ?? (withIcon == null ? null : ApplicationIcons.IconFor(withIcon));
          // Create an object to initialize the SuperToolTip.
          var superToolTip = CreateToolTip();
          var setupArgs = new SuperToolTipSetupArgs();
@@ -37,7 +38,9 @@ namespace OSPSuite.UI.Services
             setupArgs.Title.Text = title;
 
          setupArgs.Contents.Text = convertHtml(content);
-         setupArgs.Contents.Image = imageToUse;
+         setupArgs.Contents.ImageOptions.SvgImage= imageToUse;
+         setupArgs.Contents.ImageOptions.SvgImageSize = IconSizes.Size16x16 ;
+
          superToolTip.Setup(setupArgs);
          return superToolTip;
       }
@@ -107,7 +110,7 @@ namespace OSPSuite.UI.Services
             foreach (var relatedItem in relatedItems)
             {
                var item = toolTip.Items.Add(relatedItem.Display);
-               item.Image = ApplicationIcons.IconByName(relatedItem.IconName);
+               item.ImageOptions.SvgImage= ApplicationIcons.IconByName(relatedItem.IconName);
             }
          }
 

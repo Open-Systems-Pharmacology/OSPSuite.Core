@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using DevExpress.Utils.Svg;
 using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
@@ -66,7 +67,7 @@ namespace OSPSuite.Presentation.Presentation
          //does not exist in PI anymore
          _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60, 0, 100, Scalings.Linear));
 
-         A.CallTo(_rangeImageCreator).WithReturnType<Image>().Returns(ApplicationIcons.OK);
+         A.CallTo(_rangeImageCreator).WithReturnType<SvgImage>().Returns(ApplicationIcons.OK);
       }
 
       protected override void Because()

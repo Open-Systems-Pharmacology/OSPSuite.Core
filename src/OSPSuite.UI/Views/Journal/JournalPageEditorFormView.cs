@@ -26,7 +26,7 @@ namespace OSPSuite.UI.Views.Journal
       {
          base.InitializeResources();
          Caption = Captions.Journal.JournalEditorView;
-         Icon = ApplicationIcons.PageEdit.WithSize(IconSizes.Size32x32);
+         // Icon = ApplicationIcons.PageEdit.WithSize(IconSizes.Size32x32);
          ShowInTaskbar = true;
          StartPosition = FormStartPosition.Manual;
       }

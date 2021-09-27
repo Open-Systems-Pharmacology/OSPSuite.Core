@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Validation;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -68,12 +68,12 @@ namespace OSPSuite.Presentation.DTO
          get { return Messages.ToString("\n"); }
       }
 
-      public Image Image
+      public SvgImage Image
       {
          get { return imageFrom(Status); }
       }
 
-      private Image imageFrom(NotificationType status)
+      private SvgImage imageFrom(NotificationType status)
       {
          switch (status)
          {

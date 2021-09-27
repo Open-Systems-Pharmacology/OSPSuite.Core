@@ -103,8 +103,8 @@ namespace OSPSuite.UI.Views
          layoutItemCancel.AdjustButtonSize();
          layoutItemExtra.AdjustButtonSize();
          layoutControlBase.AutoScroll = false;
-         btnOk.Image = ApplicationIcons.OK.ToImage(IconSizes.Size16x16);
-         btnCancel.Image = ApplicationIcons.Cancel.ToImage(IconSizes.Size16x16);
+         btnOk.ImageOptions.SvgImage = ApplicationIcons.OK.ToSvgImage();
+         btnCancel.ImageOptions.SvgImage = ApplicationIcons.Cancel.ToSvgImage();
          btnOk.ImageLocation = ImageLocation.MiddleRight;
          btnCancel.ImageLocation = ImageLocation.MiddleRight;
          MaximizeBox = false; 

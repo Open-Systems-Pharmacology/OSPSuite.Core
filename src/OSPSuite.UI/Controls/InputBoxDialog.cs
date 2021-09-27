@@ -34,8 +34,8 @@ namespace OSPSuite.UI.Controls
          btnOk.Shortcut = Keys.Control | Keys.Enter;
          btnCancel.Text = Captions.CancelButton;
 
-         btnOk.Image = ApplicationIcons.OK.ToImage(IconSizes.Size16x16);
-         btnCancel.Image = ApplicationIcons.Cancel.ToImage(IconSizes.Size16x16);
+         btnOk.ImageOptions.SvgImage = ApplicationIcons.OK;
+         btnCancel.ImageOptions.SvgImage = ApplicationIcons.Cancel;
          btnOk.ImageLocation = ImageLocation.MiddleRight;
          btnCancel.ImageLocation = ImageLocation.MiddleRight;
          MaximizeBox = false;

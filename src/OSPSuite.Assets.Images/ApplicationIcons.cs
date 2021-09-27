@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using DevExpress.Utils.Svg;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -11,6 +12,10 @@ namespace OSPSuite.Assets
    {
       private static readonly ICache<string, ApplicationIcon> _allIcons = new Cache<string, ApplicationIcon>(icon => icon.IconName);
       private static IList<ApplicationIcon> _allIconsList;
+
+      //TODO DELETE
+      public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
+
 
       public static readonly ApplicationIcon Absorption = AddNamedIcon("Absorption");
       public static readonly ApplicationIcon ActiveEfflux = AddNamedIcon("Efflux", "ActiveEfflux");
@@ -487,11 +492,11 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Endometrium = AddNamedIcon("Endometrium");
       public static readonly ApplicationIcon Endosome = AddNamedIcon("Endosome");
       public static readonly ApplicationIcon Fetus = AddNamedIcon("Fetus");
-      public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
+      // public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
       public static readonly ApplicationIcon Myometrium = AddNamedIcon("Endometrium", "Myometrium");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
+      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
 
       public static readonly ApplicationIcon EmptyIcon = createEmptyIcon();
 
@@ -527,7 +532,11 @@ namespace OSPSuite.Assets
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
          if (iconAsBytes == null)
-            return createEmptyIcon();
+         {
+            var icon = _allIcons["PLACENTA"];
+            _allIcons.Add(name, icon);
+            return icon;
+         }
 
          var appIcon = new ApplicationIcon(iconAsBytes)
          {
@@ -539,24 +548,10 @@ namespace OSPSuite.Assets
          return appIcon;
       }
 
-//
-//      public static ApplicationIcon AddNamedIcon(byte[] icon, string iconName)
-//      {
-//         var name = iconName.ToUpperInvariant();
-//         var appIcon = new ApplicationIcon(icon)
-//         {
-//            IconName = name,
-//            Index = _allIcons.Count
-//         };
-//
-//         _allIcons.Add(appIcon);
-//         return appIcon;
-//      }
-
-      public static byte[] getIcon(string iconName)
+      private static byte[] getIcon(string iconName)
       {
          var assembly = Assembly.GetExecutingAssembly();
-         var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".ico";
+         var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".svg";
          using (var stream = assembly.GetManifestResourceStream(resourceName))
          {
             if (stream == null)
@@ -595,8 +590,7 @@ namespace OSPSuite.Assets
       {
          return IconByNameOrDefault(withIcon?.IconName, EmptyIcon);
       }
-
-
+      
       private static ApplicationIcon dynamicIconFor(string template, string entity, ApplicationIcon defaultIcon)
       {
          var iconName = string.Format(template, entity);

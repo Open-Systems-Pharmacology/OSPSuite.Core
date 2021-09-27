@@ -61,7 +61,7 @@ namespace OSPSuite.UI.Views
       public void Initialize(string caption, ApplicationIcon icon, string issueTrackerUrl, string productName)
       {
          Text = caption;
-         Icon = icon;
+         IconOptions.SvgImage = icon;
          _issueTrackerUrl = issueTrackerUrl;
          Description = Captions.ExceptionViewDescription(issueTrackerUrl, html:false);
          issueTrackerLink.Text = Captions.IssueTrackerLinkFor(productName);

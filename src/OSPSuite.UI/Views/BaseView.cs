@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views
       public virtual void InitializeResources()
       {
          //Set default icons for all views. Specific icons should be overwritten
-         Icon = ApplicationIcons.DefaultIcon.WithSize(IconSizes.Size16x16);
+         IconOptions.SvgImage = ApplicationIcons.DefaultIcon;
       }
 
       public virtual void InitializeBinding()

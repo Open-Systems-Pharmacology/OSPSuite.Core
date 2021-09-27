@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views.Commands
       {
          base.InitializeResources();
          Text = Captions.Commands.LabelViewCaption;
-         Icon = ApplicationIcons.LabelAdd;
+         IconOptions.SvgImage = ApplicationIcons.LabelAdd;
          layoutItemLabel.Text = Captions.Label.FormatForLabel();
          layoutItemComments.Text = Captions.Comments;
       }

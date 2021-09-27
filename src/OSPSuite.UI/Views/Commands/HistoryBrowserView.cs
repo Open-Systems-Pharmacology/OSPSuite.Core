@@ -49,7 +49,7 @@ namespace OSPSuite.UI.Views.Commands
          tbRollBackState.EditValue = 0;
          tbRollBackStateEditor.ButtonClick += (o, e) => _presenter.RollBack(tbRollBackState.EditValue.ConvertedTo<int>());
          tbRollBackStateEditor.Buttons[0].Kind = ButtonPredefines.Glyph;
-         tbRollBackStateEditor.Buttons[0].Image = ApplicationIcons.Run.ToImage(IconSizes.Size16x16);
+         tbRollBackStateEditor.Buttons[0].ImageOptions.SvgImage = ApplicationIcons.Run;
          tbRollBackStateEditor.Buttons[0].ToolTip = tbRollBackState.Caption;
          tbRollBackStateEditor.TextEditStyle = TextEditStyles.DisableTextEditor;
          _barManager.AllowCustomization = false;

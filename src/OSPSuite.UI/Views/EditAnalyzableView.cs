@@ -94,7 +94,7 @@ namespace OSPSuite.UI.Views
             if (page.Tag != simulationAnalysisPresenter)
                continue;
 
-            page.Image = icon.ToImage(UIConstants.ICON_SIZE_TAB);
+            page.ImageOptions.SvgImage = icon;
          }
       }
 

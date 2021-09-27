@@ -51,7 +51,7 @@ namespace OSPSuite.UI.Views
          UpdateStyles();
 
          PopupBarManager = new BarManager {Form = this};
-         _removeAlertButton = new AlertButton(ApplicationIcons.Cancel, AlertButtonStyle.Button) {Hint = ToolTips.DoNotShowVersionUpdate};
+         _removeAlertButton = new AlertButton {Hint = ToolTips.DoNotShowVersionUpdate, ImageOptions = {SvgImage = ApplicationIcons.Cancel } };
       }
 
       public virtual void Initialize()
@@ -121,7 +121,7 @@ namespace OSPSuite.UI.Views
          if (ActiveView == null) return;
          var page = xtraTabbedMdiManager.Pages[ActiveMdiChild];
          if (page == null) return;
-         page.Image = ActiveView.ApplicationIcon.ToImage(IconSizes.Size16x16);
+         page.ImageOptions.SvgImage = ActiveView.ApplicationIcon;
       }
 
       private void pageRemoved(object sender, MdiTabPageEventArgs e)
@@ -134,7 +134,7 @@ namespace OSPSuite.UI.Views
       {
          var activeView = viewFromPage(e);
          if (activeView == null) return;
-         e.Page.Image = activeView.ApplicationIcon.ToImage(IconSizes.Size16x16);
+         e.Page.ImageOptions.SvgImage = activeView.ApplicationIcon;
       }
 
       public void ShowHelp()
@@ -144,7 +144,8 @@ namespace OSPSuite.UI.Views
 
       public void DisplayNotification(string caption, string notification, string url)
       {
-         var info = new AlertInfo(caption, notification, ApplicationIcon.ToImage(IconSizes.Size32x32)) {Tag = url};
+         var info = new AlertInfo(caption, notification) {Tag = url};
+         info.ImageOptions.SvgImage = ApplicationIcon;
          alertControl.FormMaxCount = 1;
          alertControl.Show(this, info);
       }

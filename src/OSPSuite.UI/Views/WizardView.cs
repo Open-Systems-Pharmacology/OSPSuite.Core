@@ -164,12 +164,12 @@ namespace OSPSuite.UI.Views
          layoutItemPrevious.AdjustButtonSize();
          layoutItemOK.AdjustButtonSize();
          layoutItemCancel.AdjustButtonSize();
-         btnPrevious.Image = ApplicationIcons.Previous.ToImage(IconSizes.Size16x16);
-         btnNext.Image = ApplicationIcons.Next.ToImage(IconSizes.Size16x16);
+         btnPrevious.ImageOptions.SvgImage = ApplicationIcons.Previous;
+         btnNext.ImageOptions.SvgImage= ApplicationIcons.Next;
          btnPrevious.ImageLocation = ImageLocation.MiddleLeft;
          btnNext.ImageLocation = ImageLocation.MiddleRight;
-         btnOk.Image = ApplicationIcons.OK.ToImage(IconSizes.Size16x16);
-         btnCancel.Image = ApplicationIcons.Cancel.ToImage(IconSizes.Size16x16);
+         btnOk.ImageOptions.SvgImage= ApplicationIcons.OK;
+         btnCancel.ImageOptions.SvgImage = ApplicationIcons.Cancel;
          btnOk.ImageLocation = ImageLocation.MiddleRight;
          btnCancel.ImageLocation = ImageLocation.MiddleRight;
          MinimizeBox = false;
