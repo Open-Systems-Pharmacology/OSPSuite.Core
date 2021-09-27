@@ -159,7 +159,6 @@ namespace OSPSuite.Infrastructure.Import
 
    public class When_validating_empty_data_source : concern_for_DataSource
    {
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IDimensionFactory _dimensionFactory;
 
       protected override void Context()

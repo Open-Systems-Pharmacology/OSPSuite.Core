@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
@@ -16,8 +17,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Context()
       {
-         var dim = new Dimension();
-         dim.AddUnit("mg", 1, 0);
+         var dim = new Dimension(new BaseDimensionRepresentation(), "Weight", "mg");
 
          sut = new TransportBuilder()
             .WithName("T1")

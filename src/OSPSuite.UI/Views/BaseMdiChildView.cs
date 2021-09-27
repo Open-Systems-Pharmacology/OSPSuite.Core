@@ -18,7 +18,6 @@ namespace OSPSuite.UI.Views
       public BaseMdiChildView(IView owner)
       {
          InitializeComponent();
-         ApplicationIcon = ApplicationIcons.DefaultIcon;
 
          //this is call whenever the form closes, either after 'x' or when CloseView is called from 
          //the presenter
@@ -28,8 +27,6 @@ namespace OSPSuite.UI.Views
             _presenter.OnFormClosed();
             Release();
          };
-
-         IconOptions.SvgImage = ApplicationIcon;
          MdiParent = owner as Form;
       }
 
@@ -56,10 +53,7 @@ namespace OSPSuite.UI.Views
          _presenter = null;
       }
 
-      public virtual ISingleStartPresenter Presenter
-      {
-         get { return _presenter; }
-      }
+      public virtual ISingleStartPresenter Presenter => _presenter;
 
       protected override bool GetAllowSkin()
       {

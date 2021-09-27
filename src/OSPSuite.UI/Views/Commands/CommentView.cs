@@ -36,12 +36,12 @@ namespace OSPSuite.UI.Views.Commands
          base.InitializeResources();
          lblCommandDescription.AutoSizeMode = LabelAutoSizeMode.Vertical;
          layoutItemComments.Text = Captions.Comments;
-         IconOptions.SvgImage = ApplicationIcons.Edit;
+         ApplicationIcon = ApplicationIcons.Edit;
       }
 
       public string CommandDescription
       {
-         set { lblCommandDescription.Text = value; }
+         set => lblCommandDescription.Text = value;
       }
 
       public void AttachPresenter(ICommentPresenter presenter)

@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Presenters
          var entityType = _objectTypeResolver.TypeFor(objectToClone);
          _view.Caption = Captions.ParameterIdentification.Clone;
          _view.NameDescription = Captions.CloneObjectBase(entityType, objectToClone.Name);
-         _view.Image = ApplicationIcons.Clone;
+         _view.ApplicationIcon = ApplicationIcons.Clone;
          _renameObjectBaseDTO = _renameObjectBaseDTOFactory.CreateFor(objectToClone);
          _renameObjectBaseDTO.AllowSameNameAsOriginalInDifferentCase = false;
          _renameObjectBaseDTO.Description = objectToClone.Description;

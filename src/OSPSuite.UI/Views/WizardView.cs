@@ -1,6 +1,4 @@
 using System.Windows.Forms;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraBars;
 using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
@@ -10,6 +8,8 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 using Keys = System.Windows.Forms.Keys;
 
 namespace OSPSuite.UI.Views
@@ -47,8 +47,8 @@ namespace OSPSuite.UI.Views
 
       public bool PreviousEnabled
       {
-         set { btnPrevious.Enabled = value; }
-         get { return btnPrevious.Enabled ; }
+         set => btnPrevious.Enabled = value;
+         get => btnPrevious.Enabled;
       }
 
       public void InitializeWizard()
@@ -58,15 +58,12 @@ namespace OSPSuite.UI.Views
          TabControl.SelectedPageChanging += (o, e) => onSelectedPageChanging(e.PrevPage.TabIndex, e.Page.TabIndex);
       }
 
-      public int SelectedPageIndex
-      {
-         get { return TabControl.SelectedTabPageIndex; }
-      }
+      public int SelectedPageIndex => TabControl.SelectedTabPageIndex;
 
       public bool CancelEnabled
       {
-         set { btnCancel.Enabled = value; }
-         get { return btnCancel.Enabled; }
+         set => btnCancel.Enabled = value;
+         get => btnCancel.Enabled;
       }
 
       protected override void OnFormClosing(FormClosingEventArgs e)
@@ -79,25 +76,26 @@ namespace OSPSuite.UI.Views
             else
                e.Cancel = !WizardPresenter.ShouldClose;
          }
+
          base.OnFormClosing(e);
       }
 
       private void onSelectedPageChanging(int previousIndex, int index)
       {
          this.DoWithinLatch(() =>
-                            this.DoWithinWaitCursor(() => WizardPresenter.WizardCurrent(previousIndex, index)));
+            this.DoWithinWaitCursor(() => WizardPresenter.WizardCurrent(previousIndex, index)));
       }
 
       public bool OkEnabled
       {
-         set { btnOk.Enabled = value; }
-         get { return btnOk.Enabled; }
+         set => btnOk.Enabled = value;
+         get => btnOk.Enabled;
       }
 
       public bool NextEnabled
       {
-         set { btnNext.Enabled = value; }
-         get { return btnNext.Enabled; }
+         set => btnNext.Enabled = value;
+         get => btnNext.Enabled;
       }
 
       public void SetButtonsVisible(bool nextVisible, bool okVisible)
@@ -144,44 +142,28 @@ namespace OSPSuite.UI.Views
          this.DoWithinLatch(() => this.ActivateTab(subPresenterItem));
       }
 
-      public virtual XtraTabControl TabControl
-      {
-         get
-         {
-            //this should be implemented in all derived views
-            return null;
-         }
-      }
+      public virtual XtraTabControl TabControl =>
+         //this should be implemented in all derived views
+         null;
 
       public override void InitializeResources()
       {
          base.InitializeResources();
-         btnNext.Text = Captions.NextButton;
-         btnPrevious.Text = Captions.PreviousButton;
-         btnOk.Text = Captions.OKButton;
-         btnCancel.Text = Captions.CancelButton;
+         btnNext.InitWithImage(ApplicationIcons.Next, Captions.NextButton, ImageLocation.MiddleRight);
+         btnPrevious.InitWithImage(ApplicationIcons.Previous, Captions.PreviousButton, ImageLocation.MiddleLeft);
+         btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
+         btnOk.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          layoutItemNext.AdjustButtonSize();
          layoutItemPrevious.AdjustButtonSize();
          layoutItemOK.AdjustButtonSize();
          layoutItemCancel.AdjustButtonSize();
-         btnPrevious.ImageOptions.SvgImage = ApplicationIcons.Previous;
-         btnNext.ImageOptions.SvgImage= ApplicationIcons.Next;
-         btnPrevious.ImageLocation = ImageLocation.MiddleLeft;
-         btnNext.ImageLocation = ImageLocation.MiddleRight;
-         btnOk.ImageOptions.SvgImage= ApplicationIcons.OK;
-         btnCancel.ImageOptions.SvgImage = ApplicationIcons.Cancel;
-         btnOk.ImageLocation = ImageLocation.MiddleRight;
-         btnCancel.ImageLocation = ImageLocation.MiddleRight;
          MinimizeBox = false;
          MaximizeBox = false;
          layoutControlGroup.HideBorderIfRequired();
          btnOk.Shortcut = Keys.Control | Keys.Enter;
       }
 
-      public bool Canceled
-      {
-         get { return DialogResult == DialogResult.Cancel; }
-      }
+      public bool Canceled => DialogResult == DialogResult.Cancel;
 
       public virtual void CloseView()
       {

@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Windows.Forms;
-using OSPSuite.DataBinding;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
    public partial class BaseView : XtraForm, IView
    {
       public event EventHandler CaptionChanged = delegate { };
-      public virtual ApplicationIcon ApplicationIcon { get; set; }
+
       private IPresenter _basePresenter;
+      private ApplicationIcon _applicationIcon;
 
       public BaseView()
       {
@@ -30,7 +31,18 @@ namespace OSPSuite.UI.Views
       public virtual void InitializeResources()
       {
          //Set default icons for all views. Specific icons should be overwritten
-         IconOptions.SvgImage = ApplicationIcons.DefaultIcon;
+         ApplicationIcon = ApplicationIcons.DefaultIcon;
+      }
+
+      public virtual ApplicationIcon ApplicationIcon
+      {
+         get => _applicationIcon;
+         set
+         {
+            _applicationIcon = value;
+            IconOptions.SvgImage = value;
+            IconOptions.SvgImageSize = IconSizes.Size16x16;
+         }
       }
 
       public virtual void InitializeBinding()

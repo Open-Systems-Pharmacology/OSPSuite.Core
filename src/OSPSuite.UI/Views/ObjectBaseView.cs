@@ -12,7 +12,6 @@ namespace OSPSuite.UI.Views
    public partial class ObjectBaseView : BaseModalView, IObjectBaseView
    {
       private readonly ScreenBinder<ObjectBaseDTO> _screenBinder;
-      private ApplicationIcon _image;
 
       //only for design time
       public ObjectBaseView() : this(null)
@@ -33,17 +32,7 @@ namespace OSPSuite.UI.Views
          set => layoutItemName.Text = value.FormatForLabel(checkCase: false);
          get => layoutItemName.Text;
       }
-
-      public ApplicationIcon Image
-      {
-         get => _image;
-         set
-         {
-            _image = value;
-            IconOptions.SvgImage = value;
-         }
-      }
-
+      
       public void AttachPresenter(IObjectBasePresenter presenter)
       {
          //nothing to do here
@@ -105,7 +94,7 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         IconOptions.SvgImage = ApplicationIcons.Rename;
+         ApplicationIcon = ApplicationIcons.Rename;
          layoutItemName.Text = Captions.Rename.FormatForLabel();
          layoutItemDescription.Text = Captions.Description.FormatForLabel();
       }

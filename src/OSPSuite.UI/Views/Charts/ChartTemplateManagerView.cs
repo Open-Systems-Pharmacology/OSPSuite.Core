@@ -124,7 +124,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void initButton(EditorButton button, ApplicationIcon icon, string toolTip)
       {
-         button.ImageOptions.SvgImage = icon;
+         button.SetImage(icon);
          button.SuperTip = _toolTipCreator.CreateToolTip(toolTip,image: icon);
       }
 

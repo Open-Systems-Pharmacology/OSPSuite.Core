@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Presenters
          string entityType = _objectTypeResolver.TypeFor(entity);
          _view.Caption = Captions.EditDescription;
          _view.NameDescription = Captions.RenameEntityCaption(entityType, entity.Name);
-         _view.Image = ApplicationIcons.Description;
+         _view.ApplicationIcon = ApplicationIcons.Description;
       }
 
       protected override ObjectBaseDTO CreateDTOFor(IObjectBase entity)

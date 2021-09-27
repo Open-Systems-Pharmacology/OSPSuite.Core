@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          base.InitializeResources();
          Caption = Captions.SensitivityAnalysis.FeedbackView;
-         // Icon = ApplicationIcons.SensitivityAnalysisVisualFeedback;
+         ApplicationIcon= ApplicationIcons.SensitivityAnalysisVisualFeedback;
 
          _lblInfo.AsFullViewText(Captions.SensitivityAnalysis.NoSensitivityAnalysisRunning);
          _lblInfo.Left = 5;
