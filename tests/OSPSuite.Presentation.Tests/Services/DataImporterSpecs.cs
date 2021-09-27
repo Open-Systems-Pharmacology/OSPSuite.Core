@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using FakeItEasy;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
@@ -33,23 +34,26 @@ namespace OSPSuite.Presentation.Services
       protected IDimension _timeConcentrationDimension;
       protected IDimension _fractionConcentrationDimension;
 
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _dimensionFactory = IoC.Container.Resolve<IDimensionFactory>();
+         _molarConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         _massConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
+         _timeConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
+         _fractionConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.FRACTION);
+      }
+
       protected override void Context()
       {
          base.Context();
          _dialogCreator = A.Fake<IDialogCreator>();
          _importer = IoC.Container.Resolve<IImporter>();
          _applicationController = A.Fake<ApplicationController>();
-         _dimensionFactory = IoC.Container.Resolve<IDimensionFactory>();
 
          sut = new DataImporter(_dialogCreator, _importer, _applicationController);
 
-         _molarConcentrationDimension = _dimensionFactory.Dimension("Concentration (molar)");
-         _massConcentrationDimension = _dimensionFactory.Dimension("Concentration (mass)");
-         _timeConcentrationDimension = _dimensionFactory.Dimension("Time");
-         _fractionConcentrationDimension = _dimensionFactory.Dimension("Fraction");
-         _importerConfiguration = new ImporterConfiguration();
-         _importerConfiguration.FileName = "IntegrationSample1.xlsx";
-         _importerConfiguration.NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}";
+         _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
 
          _importerConfiguration.AddToLoadedSheets("Sheet1");
          _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();

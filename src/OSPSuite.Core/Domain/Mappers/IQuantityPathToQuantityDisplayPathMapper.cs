@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public virtual string DisplayPathAsStringFor(ISimulation simulation, DataColumn column, bool addSimulationName = false)
       {
-         addSimulationName = addSimulationName || column.IsObservedData();
+         addSimulationName = addSimulationName || column.IsObservation();
          return displayPathAsStringFor(simulation, column, addSimulationName);
       }
 
