@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
@@ -48,11 +47,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SetParams(true, A<bool>.Ignored)).MustHaveHappened();
       }
    }
+
    public class When_options_set_from_column_with_empty_name : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() { Unit = new UnitDescription("min", "") }, A.Fake<IReadOnlyList<IDimension>>(), A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min", "")}, A.Fake<IReadOnlyList<IDimension>>(), A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -61,11 +61,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SetParams(false, A<bool>.Ignored)).MustHaveHappened();
       }
    }
+
    public class When_options_set_no_dimensions : concern_for_UnitsEditorPresenter
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension = A.Fake<IDimension>()},  new List<IDimension>() {}, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension = A.Fake<IDimension>()}, new List<IDimension>() { }, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]
@@ -79,7 +80,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       protected override void Because()
       {
-         sut.SetOptions(new Column() {Unit = new UnitDescription("min"), Dimension =DomainHelperForSpecs.TimeDimensionForSpecs() }, new List<IDimension>() {new Dimension(), new Dimension()}, A.Fake<IEnumerable<string>>());
+         sut.SetOptions(new Column
+         {
+            Unit = new UnitDescription("min"), Dimension = DomainHelperForSpecs.TimeDimensionForSpecs()
+         }, new List<IDimension>()
+         {
+            DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.FractionDimensionForSpecs(),
+         }, A.Fake<IEnumerable<string>>());
       }
 
       [Observation]

@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (isCalculationColumn(dataColumn, rootContainer, quantityPath))
             return _pathToPathElementsMapper.MapFrom(rootContainer, quantityPath);
 
-         if (dataColumn.IsObservedData())
+         if (dataColumn.IsObservation())
             return ObservedDataPathElementsFor(dataColumn, quantityPath);
 
          if (dataColumn.IsBaseGrid())

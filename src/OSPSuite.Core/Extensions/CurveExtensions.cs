@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Extensions
       /// <param name="curve"></param>
       public static void UpdateStyleForObservedData(this Curve curve)
       {
-         if (curve.yData == null || !curve.yData.IsObservedData())
+         if (curve.yData == null || !curve.yData.IsObservation())
             return;
 
          curve.Symbol = Symbols.Circle;
