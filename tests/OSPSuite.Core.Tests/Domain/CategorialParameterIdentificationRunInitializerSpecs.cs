@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -18,16 +19,20 @@ namespace OSPSuite.Core.Domain
       protected ISimulation _simulation;
       protected ISimulation _clonedSimulation;
       protected IParameterIdentificationRun _parameterIdentificationRun;
+      private ICoreUserSettings _coreUserSettings;
+      private Utility.Container.IContainer _container;
 
       protected override void Context()
       {
          _cloneManager = A.Fake<ICloneManagerForModel>();
          _simulationFactory = A.Fake<ICoreSimulationFactory>();
          _parameterIdentificationRun = A.Fake<IParameterIdentificationRun>();
-
+         _coreUserSettings= A.Fake<ICoreUserSettings>();
          _descriptionCreator = A.Fake<ICategorialParameterIdentificationDescriptionCreator>();
-
-         sut = new CategorialParameterIdentificationRunInitializer(_cloneManager, _parameterIdentificationRun, _simulationFactory, _descriptionCreator);
+         _container = A.Fake<Utility.Container.IContainer>();
+         A.CallTo(() => _container.Resolve<ICoreSimulationFactory>()).Returns(_simulationFactory);
+         _coreUserSettings.MaximumNumberOfCoresToUse = 1;
+         sut = new CategorialParameterIdentificationRunInitializer(_cloneManager, _parameterIdentificationRun, _container, _descriptionCreator, _coreUserSettings);
 
          _parameterIdentification = new ParameterIdentification();
          _parameterIdentification.Configuration.RunMode = new CategorialParameterIdentificationRunMode();
@@ -53,7 +58,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_initializing_ategorial_parameter_identification_run : concern_for_CategorialParameterIdentificationRunInitializer
+   public class When_initializing_categorial_parameter_identification_run : concern_for_CategorialParameterIdentificationRunInitializer
    {
       private ParameterIdentification _result;
       private CalculationMethodCombination _combination;
@@ -68,7 +73,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.InitializeRun().Result;
+         _result = sut.InitializeRun(CancellationToken.None).Result;
       }
 
       [Observation]

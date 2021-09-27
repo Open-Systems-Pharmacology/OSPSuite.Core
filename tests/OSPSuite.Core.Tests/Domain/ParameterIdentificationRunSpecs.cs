@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
       protected CancellationTokenSource _cancellationTokenSource;
       protected CancellationToken _cancellationToken;
       protected IJacobianMatrixCalculator _jacobianMatrixCalculator;
-      private IParameterIdentifcationRunInitializer _runInitializer;
+      private IParameterIdentificationRunInitializer _runInitializer;
 
       protected override void Context()
       {
@@ -103,8 +103,8 @@ namespace OSPSuite.Core.Domain
          _cancellationTokenSource = new CancellationTokenSource();
          _cancellationToken = _cancellationTokenSource.Token;
 
-         _runInitializer = A.Fake<IParameterIdentifcationRunInitializer>();
-         A.CallTo(() => _runInitializer.InitializeRun()).ReturnsAsync(_parameterIdentification);
+         _runInitializer = A.Fake<IParameterIdentificationRunInitializer>();
+         A.CallTo(() => _runInitializer.InitializeRun(_cancellationToken)).ReturnsAsync(_parameterIdentification);
 
          PerformExtraInitializationSteps();
          sut.InitializeWith(_runInitializer);

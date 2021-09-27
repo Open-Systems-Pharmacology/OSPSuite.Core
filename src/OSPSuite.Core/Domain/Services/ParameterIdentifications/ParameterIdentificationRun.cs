@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
    public interface IParameterIdentificationRun : IDisposable
    {
-      void InitializeWith(IParameterIdentifcationRunInitializer runInitializer);
+      void InitializeWith(IParameterIdentificationRunInitializer runInitializer);
       ParameterIdentificationRunResult Run(CancellationToken cancellationToken);
       event EventHandler<ParameterIdentificationRunStatusEventArgs> RunStatusChanged;
       OptimizationRunResult BestResult { get; }
@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IOutputSelectionUpdater _outputSelectionUpdater;
       private readonly ICoreUserSettings _coreUserSettings;
       private readonly IJacobianMatrixCalculator _jacobianMatrixCalculator;
-      private readonly Cache<ISimulation, ISimModelBatch> _allSimModelBatches = new Cache<ISimulation, ISimModelBatch>();
+      private readonly ConcurrentDictionary<ISimulation, ISimModelBatch> _allSimModelBatches = new ConcurrentDictionary<ISimulation, ISimModelBatch>();
       private readonly List<float> _totalErrorHistory = new List<float>();
 
       private readonly Cache<string, IdentificationParameterHistory> _parametersHistory =
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private IResidualCalculator _residualCalculator;
       private IOptimizationAlgorithm _optimizationAlgorithm;
       private CancellationToken _cancellationToken;
-      private IParameterIdentifcationRunInitializer _runInitializer;
+      private IParameterIdentificationRunInitializer _runInitializer;
       private List<IdentificationParameter> _variableParameters;
       private List<IdentificationParameter> _fixedParameters;
 
@@ -82,18 +82,25 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _jacobianMatrixCalculator = jacobianMatrixCalculator;
       }
 
-      public void InitializeWith(IParameterIdentifcationRunInitializer runInitializer)
+      public void InitializeWith(IParameterIdentificationRunInitializer runInitializer)
       {
          _runInitializer = runInitializer;
       }
 
-      private void initialize()
+      private void initialize(CancellationToken cancellationToken)
       {
-         _parameterIdentification = _runInitializer.InitializeRun().Result;
+         _parameterIdentification = _runInitializer.InitializeRun(cancellationToken).Result;
          RunResult.Description = _parameterIdentification.Description;
          _optimizationAlgorithm = _optimizationAlgorithmMapper.MapFrom(_parameterIdentification.AlgorithmProperties);
          _residualCalculator = _residualCalculatorFactory.CreateFor(_parameterIdentification.Configuration);
-         _parameterIdentification.AllSimulations.Each(s => _allSimModelBatches.Add(s, createSimModelBatch(s)));
+         var parallelOptions = createParallelOptions(_cancellationToken);
+
+         Parallel.ForEach(_parameterIdentification.AllSimulations, parallelOptions, simulation =>
+         {
+            parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+            _allSimModelBatches.TryAdd(simulation, createSimModelBatch(simulation));
+         });
+         
          initializeParameterHistoryCache();
          _variableParameters = _parameterIdentification.AllVariableIdentificationParameters.ToList();
          _fixedParameters = _parameterIdentification.AllFixedIdentificationParameters.ToList();
@@ -124,7 +131,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          try
          {
             RunResult.Status = RunStatus.Running;
-            initialize();
+            initialize(cancellationToken);
 
             var variableParameterConstraints = retrieveVariableParameterConstraints();
             RunResult.Properties = _optimizationAlgorithm.Optimize(variableParameterConstraints, performRun);
@@ -154,7 +161,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       protected virtual void Cleanup()
       {
-         _allSimModelBatches.Each(x => x.Dispose());
+         _allSimModelBatches.Values.Each(x => x.Dispose());
          _allSimModelBatches.Clear();
          _variableParameters?.Clear();
          _fixedParameters?.Clear();
@@ -170,7 +177,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          RunResult.Status = RunStatus.CalculatingSensitivity;
          raiseRunStatusChanged(BestResult);
 
-         _allSimModelBatches.Each(x => x.InitializeForSensitivity());
+         _allSimModelBatches.Values.Each(x => x.InitializeForSensitivity());
          updateValuesAndCalculate(RunResult.BestResult.Values);
          RunResult.JacobianMatrix = _jacobianMatrixCalculator.CalculateFor(_parameterIdentification, RunResult.BestResult, _allSimModelBatches);
       }
@@ -220,28 +227,31 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private IReadOnlyList<SimulationRunResults> runSimulations()
       {
          var simulationResults = new ConcurrentBag<SimulationRunResults>();
-         var parallelOptions = new ParallelOptions
-         {
-            CancellationToken = _cancellationToken,
-            MaxDegreeOfParallelism = _parameterIdentification.IsSingleRun ? _coreUserSettings.MaximumNumberOfCoresToUse : 1
-         };
-
+         var parallelOptions = createParallelOptions(_cancellationToken);
+            
          try
          {
-            Parallel.ForEach(_allSimModelBatches, parallelOptions, simulationBatch =>
+            Parallel.ForEach(_allSimModelBatches.Values, parallelOptions, simulationBatch =>
             {
-               simulationResults.Add(simulationBatch.RunSimulation());
                parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+               simulationResults.Add(simulationBatch.RunSimulation());
             });
          }
          catch (OperationCanceledException)
          {
-            _allSimModelBatches.Each(s => s.StopSimulation());
+            _allSimModelBatches.Values.Each(s => s.StopSimulation());
             throw;
          }
 
          return simulationResults.ToList();
       }
+
+      private ParallelOptions createParallelOptions(CancellationToken cancellationToken) =>
+         new ParallelOptions
+         {
+            CancellationToken = cancellationToken,
+            MaxDegreeOfParallelism = _coreUserSettings.MaximumNumberOfCoresToUse
+         };
 
       private void updateParameterValues(IReadOnlyList<OptimizedParameterValue> values)
       {

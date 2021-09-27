@@ -10,12 +10,12 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
    public interface IJacobianMatrixCalculator
    {
-      JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, ICache<ISimulation, ISimModelBatch> simModelBatches);
+      JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<ISimulation, ISimModelBatch> simModelBatches);
    }
 
    public class JacobianMatrixCalculator : IJacobianMatrixCalculator
    {
-      public JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, ICache<ISimulation, ISimModelBatch> simModelBatches)
+      public JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<ISimulation, ISimModelBatch> simModelBatches)
       {
          var allVariableIdentificationParameters = parameterIdentification.AllVariableIdentificationParameters.ToList();
          var matrix = new JacobianMatrix(allVariableIdentificationParameters.AllNames());
