@@ -37,19 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Icons\BiDirectional.svg" />
-    <None Remove="Icons\Breasts.svg" />
-    <None Remove="Icons\Endometrium.svg" />
-    <None Remove="Icons\Endosome.svg" />
-    <None Remove="Icons\Placenta.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\BiDirectional.svg" />
-    <EmbeddedResource Include="Icons\Breasts.svg" />
-    <EmbeddedResource Include="Icons\Endometrium.svg" />
-    <EmbeddedResource Include="Icons\Endosome.svg" />
-    <EmbeddedResource Include="Icons\Placenta.svg" />
+    <EmbeddedResource Include="Icons\*.svg" />
   </ItemGroup>
 
   <ItemGroup>

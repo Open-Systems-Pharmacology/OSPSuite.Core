@@ -12,6 +12,7 @@ namespace OSPSuite.UI.Extensions
          if (icon == null)
             return barItem;
 
+         //TODO This does not seeem to be supported yet
          barItem.ImageOptions.SvgImage = transparentImage(icon, IconSizes.Size16x16);
          // barItem.gl..LargeGlyph. = transparentImage(icon, IconSizes.Size32x32);
 

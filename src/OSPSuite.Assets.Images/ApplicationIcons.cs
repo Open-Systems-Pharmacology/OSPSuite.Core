@@ -531,6 +531,8 @@ namespace OSPSuite.Assets
       {
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
+
+         //TODO remove when all icons are available as SVG
          if (iconAsBytes == null)
          {
             var icon = _allIcons["PLACENTA"];

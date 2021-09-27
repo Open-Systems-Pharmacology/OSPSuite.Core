@@ -19,7 +19,7 @@ namespace OSPSuite.UI.Controls
       
       public ApplicationIcon Image
       {
-         set => panelNote.ArrowImage = null;
+         set => panelNote.ArrowImage = value.ToImage(IconSizes.Size32x32);
       }
 
       public int MaxLines

@@ -30,24 +30,19 @@ namespace OSPSuite.UI.Controls
       {
          lblPrompt.AsDescription();
 
-         btnOk.Text =Captions.OKButton;
          btnOk.Shortcut = Keys.Control | Keys.Enter;
          btnCancel.Text = Captions.CancelButton;
 
-         btnOk.ImageOptions.SvgImage = ApplicationIcons.OK;
-         btnCancel.ImageOptions.SvgImage = ApplicationIcons.Cancel;
-         btnOk.ImageLocation = ImageLocation.MiddleRight;
-         btnCancel.ImageLocation = ImageLocation.MiddleRight;
+         btnOk.InitWithImage(ApplicationIcons.OK, IconSizes.Size16x16, Captions.OKButton,  ImageLocation.MiddleRight);
+         btnCancel.InitWithImage(ApplicationIcons.Cancel, IconSizes.Size16x16, Captions.CancelButton,  ImageLocation.MiddleRight);
+
          MaximizeBox = false;
          MinimizeBox = false;
          layoutItemOk.AdjustButtonSize();
          layoutItemCancel.AdjustButtonSize();
       }
 
-      internal string InputResponse
-      {
-         get { return cbInput.Text; }
-      }
+      internal string InputResponse => cbInput.Text;
 
       public static string Show(string prompt, string title, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null)
       {
@@ -87,9 +82,9 @@ namespace OSPSuite.UI.Controls
          if (string.IsNullOrEmpty(value))
             errorProvider.SetError(cbInput, "Please enter a value");
          else if (NotAllowedValues.Contains(value))
-            errorProvider.SetError(cbInput, String.Format("{0} is not allowed", e.NewValue));
+            errorProvider.SetError(cbInput, $"{e.NewValue} is not allowed");
          else
-            errorProvider.SetError(cbInput, String.Empty);
+            errorProvider.SetError(cbInput, string.Empty);
 
          btnOk.Enabled = !errorProvider.HasErrors;
       }

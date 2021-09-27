@@ -24,6 +24,7 @@ namespace OSPSuite.UI.RepositoryItems
       public EditorButton UpdateButton(EditorButton editorButton, ApplicationIcon applicationIcon, string toolTip = null)
       {
          editorButton.ImageOptions.SvgImage = applicationIcon;
+         editorButton.ImageOptions.SvgImageSize = IconSizes.Size16x16;
          editorButton.ToolTip = toolTip;
          return editorButton;
       }
