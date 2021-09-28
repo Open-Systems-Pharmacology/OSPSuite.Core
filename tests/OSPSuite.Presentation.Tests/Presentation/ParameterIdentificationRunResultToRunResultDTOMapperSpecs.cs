@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Presentation
          //does not exist in PI anymore
          _optimizationRunResult.AddValue(new OptimizedParameterValue("P DOES NOT EXIST", 50, 60, 0, 100, Scalings.Linear));
 
-         A.CallTo(_rangeImageCreator).WithReturnType<SvgImage>().Returns(ApplicationIcons.OK);
+         A.CallTo(_rangeImageCreator).WithReturnType<Image>().Returns(ApplicationIcons.OK.ToImage());
       }
 
       protected override void Because()

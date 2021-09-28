@@ -37,7 +37,8 @@ namespace OSPSuite.Assets
 
       public virtual Image ToImage(IconSize imageSize)
       {
-         return _bitmap?.Render(imageSize, null);
+         return _bitmap?.Render(imageSize, null)
+            ?? new Bitmap(imageSize.Width, imageSize.Height);
          /*Bitmap target = new Bitmap(
             (int)imageSize.Width,
             (int)imageSize.Height);
