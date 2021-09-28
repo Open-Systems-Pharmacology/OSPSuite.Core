@@ -95,7 +95,7 @@ namespace OSPSuite.UI.Views
             if (page.Tag != simulationAnalysisPresenter)
                continue;
 
-            page.SetImage(icon);
+            page.SetImage(icon, UIConstants.ICON_SIZE_TAB);
          }
       }
 

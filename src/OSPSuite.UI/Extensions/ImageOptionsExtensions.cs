@@ -17,6 +17,7 @@ namespace OSPSuite.UI.Extensions
       public static void SetImage(this XtraTabPage owner, ApplicationIcon icon, IconSize iconSize = null) =>
          SetImage(owner.ImageOptions, icon, iconSize);
       
+
       public static void SetImage(this ImageCollectionImageOptions imageOptions, ApplicationIcon icon, IconSize iconSize = null)
       {
          imageOptions.SvgImage = icon;

@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
+using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.RepositoryItems
 {
@@ -23,8 +24,7 @@ namespace OSPSuite.UI.RepositoryItems
 
       public EditorButton UpdateButton(EditorButton editorButton, ApplicationIcon applicationIcon, string toolTip = null)
       {
-         editorButton.ImageOptions.SvgImage = applicationIcon;
-         editorButton.ImageOptions.SvgImageSize = IconSizes.Size16x16;
+         editorButton.SetImage(applicationIcon);
          editorButton.ToolTip = toolTip;
          return editorButton;
       }

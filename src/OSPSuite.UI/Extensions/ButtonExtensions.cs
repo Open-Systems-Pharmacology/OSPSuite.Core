@@ -13,8 +13,7 @@ namespace OSPSuite.UI.Extensions
 
       public static SimpleButton InitWithImage(this SimpleButton button, ApplicationIcon applicationIcon, IconSize iconSize, string text = null, ImageLocation imageLocation = ImageLocation.MiddleLeft, string toolTip = null)
       {
-         button.ImageOptions.SvgImage = applicationIcon;
-         button.ImageOptions.SvgImageSize = iconSize;
+         button.ImageOptions.SetImage(applicationIcon, iconSize);
          button.ImageLocation = imageLocation;
          if (text != null)
             button.Text = text;

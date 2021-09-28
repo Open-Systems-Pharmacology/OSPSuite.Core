@@ -33,8 +33,8 @@ namespace OSPSuite.UI.Controls
          btnOk.Shortcut = Keys.Control | Keys.Enter;
          btnCancel.Text = Captions.CancelButton;
 
-         btnOk.InitWithImage(ApplicationIcons.OK, IconSizes.Size16x16, Captions.OKButton,  ImageLocation.MiddleRight);
-         btnCancel.InitWithImage(ApplicationIcons.Cancel, IconSizes.Size16x16, Captions.CancelButton,  ImageLocation.MiddleRight);
+         btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
+         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
 
          MaximizeBox = false;
          MinimizeBox = false;

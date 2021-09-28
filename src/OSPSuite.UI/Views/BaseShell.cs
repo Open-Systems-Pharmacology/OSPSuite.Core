@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraBars.Alerter;
@@ -24,6 +20,9 @@ using OSPSuite.Presentation.Regions;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
@@ -53,10 +52,10 @@ namespace OSPSuite.UI.Views
          PopupBarManager = new BarManager {Form = this};
          _removeAlertButton = new AlertButton
          {
-            Hint = ToolTips.DoNotShowVersionUpdate,  
+            Hint = ToolTips.DoNotShowVersionUpdate,
             Style = AlertButtonStyle.Button,
-            ImageOptions = {SvgImage = ApplicationIcons.Cancel }
          };
+         _removeAlertButton.ImageOptions.SetImage(ApplicationIcons.Cancel);
       }
 
       public virtual void Initialize()
@@ -149,7 +148,7 @@ namespace OSPSuite.UI.Views
       public void DisplayNotification(string caption, string notification, string url)
       {
          var info = new AlertInfo(caption, notification) {Tag = url};
-         info.ImageOptions.SetImage(ApplicationIcon);
+         info.ImageOptions.SetImage(ApplicationIcon, IconSizes.Size32x32);
          alertControl.FormMaxCount = 1;
          alertControl.Show(this, info);
       }
@@ -224,7 +223,7 @@ namespace OSPSuite.UI.Views
          try
          {
             //Memory leak in .NET Framework. FormerlyActiveMdiChild is not set to null
-            typeof (Form).InvokeMember("FormerlyActiveMdiChild",
+            typeof(Form).InvokeMember("FormerlyActiveMdiChild",
                BindingFlags.Instance | BindingFlags.SetProperty |
                BindingFlags.NonPublic, null,
                this, new object[] {null});
