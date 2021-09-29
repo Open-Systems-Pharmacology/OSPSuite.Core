@@ -147,7 +147,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void updateFeedback(ParameterIdentificationRunState state)
       {
-         _activeFeedbackPresenter.UpdateFeedback(state);
+         _activeFeedbackPresenter?.UpdateFeedback(state);
       }
 
       private bool canRefresh => ShouldRefreshFeedback && _view.Visible;
