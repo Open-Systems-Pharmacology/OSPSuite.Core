@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return Task.Run(() =>
          {
             var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
-            Parallel.ForEach(newParameterIdentification.AllSimulations.ToList(), parallelOptions, originalSimulation =>
+            Parallel.ForEach(newParameterIdentification.AllSimulations, parallelOptions, originalSimulation =>
             {
                parallelOptions.CancellationToken.ThrowIfCancellationRequested();
                var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
