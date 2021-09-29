@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Linq.Dynamic;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -33,8 +29,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class DataSource : IDataSource
    {
-      private IImporter _importer;
-      private ImporterConfiguration _configuration;
+      private readonly IImporter _importer;
+      private readonly ImporterConfiguration _configuration;
       private IEnumerable<MetaDataMappingConverter> _mappings;
       public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
 
