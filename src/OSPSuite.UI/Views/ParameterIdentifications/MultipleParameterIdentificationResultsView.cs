@@ -15,7 +15,6 @@ using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;

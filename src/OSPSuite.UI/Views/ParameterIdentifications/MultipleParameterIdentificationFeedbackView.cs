@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DevExpress.Utils;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.XtraEditors.Controls;
@@ -9,6 +10,7 @@ using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
 
@@ -17,13 +19,15 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
    public partial class MultipleParameterIdentificationFeedbackView : BaseUserControl, IMultipleParameterIdentificationFeedbackView
    {
       private readonly IImageListRetriever _imageListRetriever;
+      private readonly IToolTipCreator _toolTipCreator;
       private IMultipleParameterIdentificationFeedbackPresenter _presenter;
       private readonly GridViewBinder<MultiOptimizationRunResultDTO> _gridViewBinder;
       private readonly RepositoryItemMemoEdit _repositoryItemDescription;
 
-      public MultipleParameterIdentificationFeedbackView(IImageListRetriever imageListRetriever)
+      public MultipleParameterIdentificationFeedbackView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
          _imageListRetriever = imageListRetriever;
+         _toolTipCreator = toolTipCreator;
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<MultiOptimizationRunResultDTO>(gridView);
          _repositoryItemDescription = new RepositoryItemMemoEdit();
@@ -31,6 +35,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.MultiSelect = true;
          gridView.OptionsView.RowAutoHeight = true;
+         var toolTipController = new ToolTipController();
+         toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
+         toolTipController.Initialize(_imageListRetriever);
+         gridControl.ToolTipController = toolTipController;
       }
 
       public void AttachPresenter(IMultipleParameterIdentificationFeedbackPresenter presenter)
@@ -80,6 +88,17 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             .AsReadOnly();
 
          gridView.CustomDrawEmptyForeground += (o, e) => OnEvent(addMessageInEmptyArea, e);
+      }
+
+      private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
+      {
+         var runResultDTO = _gridViewBinder.ElementAt(e);
+
+         if (string.IsNullOrEmpty(runResultDTO?.Message)) 
+            return;
+
+         var superToolTip = _toolTipCreator.CreateToolTip(runResultDTO.Message, image: runResultDTO.StatusIcon);
+         e.Info = _toolTipCreator.ToolTipControlInfoFor(runResultDTO, superToolTip);
       }
 
       private RepositoryItem statusRepositoryFor(MultiOptimizationRunResultDTO runResultDTO)
