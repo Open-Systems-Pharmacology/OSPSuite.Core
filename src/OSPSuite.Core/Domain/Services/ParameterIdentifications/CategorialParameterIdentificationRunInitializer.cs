@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -38,49 +40,35 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       public override Task<ParameterIdentification> InitializeRun(CancellationToken cancellationToken)
       {
-         // var parallelOptions = new ParallelOptions
-         // {
-         //    CancellationToken = cancellationToken,
-         //    MaxDegreeOfParallelism = _coreUserSettings.MaximumNumberOfCoresToUse
-         // };
-
-         //Reverting to sequential until we understand what's going on
-         return Task.Run(() =>
+         var parallelOptions = new ParallelOptions
          {
-            var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
-            newParameterIdentification.AllSimulations.Each(originalSimulation =>
-            {
-               cancellationToken.ThrowIfCancellationRequested();
-               var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
-               newParameterIdentification.SwapSimulations(originalSimulation, newSimulation);
-            });
+            CancellationToken = cancellationToken,
+            MaxDegreeOfParallelism = _coreUserSettings.MaximumNumberOfCoresToUse
+         };
 
-            newParameterIdentification.Description = _descriptionCreator.CreateDescriptionFor(_calculationMethodCombination, _runMode, _isSingleCategory);
-            return newParameterIdentification;
-         }, cancellationToken);
+        // save which simulations was created based on the old simulation so that we can swap OUTSIDE of the parallel loop
+          var concurrentDictionary = new ConcurrentDictionary<ISimulation, ISimulation>(); 
+          return Task.Run(() =>
+          {
+             var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
 
-
-         //save which simulations was created based on the old simulation so that we can swap OUTSIDE of the parallel loop
-         // var concurrentDictionary = new ConcurrentDictionary<ISimulation, ISimulation>(); 
-         // return Task.Run(() =>
-         // {
-         //    var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
-         //    Parallel.ForEach(newParameterIdentification.AllSimulations, parallelOptions, originalSimulation =>
-         //    {
-         //       parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-         //       var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
-         //       concurrentDictionary.TryAdd(originalSimulation, newSimulation);
-         //    });
-         //
-         //    concurrentDictionary.Each(kv =>
-         //    {
-         //       //Key is the old simulation, value is the corresponding updated new simulation
-         //       newParameterIdentification.SwapSimulations(kv.Key, kv.Value);
-         //    });
-         //
-         //    newParameterIdentification.Description = _descriptionCreator.CreateDescriptionFor(_calculationMethodCombination, _runMode, _isSingleCategory);
-         //    return newParameterIdentification;
-         // }, cancellationToken);
+             //ToList() required here as the collection will be modified
+             Parallel.ForEach(newParameterIdentification.AllSimulations.ToList(), parallelOptions, originalSimulation =>
+             {
+                parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
+                concurrentDictionary.TryAdd(originalSimulation, newSimulation);
+             });
+         
+             concurrentDictionary.Each(kv =>
+             {
+                //Key is the old simulation, value is the corresponding updated new simulation
+                newParameterIdentification.SwapSimulations(kv.Key, kv.Value);
+             });
+         
+             newParameterIdentification.Description = _descriptionCreator.CreateDescriptionFor(_calculationMethodCombination, _runMode, _isSingleCategory);
+             return newParameterIdentification;
+          }, cancellationToken);
       }
 
       private ISimulation createNewSimulationFrom(ISimulation simulation, IEnumerable<CalculationMethodWithCompoundName> combination)
