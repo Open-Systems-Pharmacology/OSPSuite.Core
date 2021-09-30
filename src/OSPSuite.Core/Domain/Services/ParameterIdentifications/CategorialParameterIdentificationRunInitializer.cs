@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
              return newParameterIdentification;
           }, cancellationToken);
       }
-
+      
       private ISimulation createNewSimulationFrom(ISimulation simulation, IEnumerable<CalculationMethodWithCompoundName> combination)
       {
          //Always instantiate a new factory as some parameters might be global 
