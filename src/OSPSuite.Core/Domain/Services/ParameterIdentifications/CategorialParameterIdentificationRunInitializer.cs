@@ -46,29 +46,31 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             MaxDegreeOfParallelism = _coreUserSettings.MaximumNumberOfCoresToUse
          };
 
-         //save which simulations was created based on the old simulation so that we can swap OUTSIDE of the parallel loop
-         var concurrentDictionary = new ConcurrentDictionary<ISimulation, ISimulation>(); 
-         return Task.Run(() =>
-         {
-            var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
-            Parallel.ForEach(newParameterIdentification.AllSimulations, parallelOptions, originalSimulation =>
-            {
-               parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-               var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
-               concurrentDictionary.TryAdd(originalSimulation, newSimulation);
-            });
+        // save which simulations was created based on the old simulation so that we can swap OUTSIDE of the parallel loop
+          var concurrentDictionary = new ConcurrentDictionary<ISimulation, ISimulation>(); 
+          return Task.Run(() =>
+          {
+             var newParameterIdentification = _cloneManager.Clone(ParameterIdentification);
 
-            concurrentDictionary.Each(kv =>
-            {
-               //Key is the old simulation, value is the corresponding updated new simulation
-               newParameterIdentification.SwapSimulations(kv.Key, kv.Value);
-            });
-
-            newParameterIdentification.Description = _descriptionCreator.CreateDescriptionFor(_calculationMethodCombination, _runMode, _isSingleCategory);
-            return newParameterIdentification;
-         }, cancellationToken);
+             //ToList() required here as the collection will be modified
+             Parallel.ForEach(newParameterIdentification.AllSimulations.ToList(), parallelOptions, originalSimulation =>
+             {
+                parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                var newSimulation = createNewSimulationFrom(originalSimulation, _calculationMethodCombination.CalculationMethods);
+                concurrentDictionary.TryAdd(originalSimulation, newSimulation);
+             });
+         
+             concurrentDictionary.Each(kv =>
+             {
+                //Key is the old simulation, value is the corresponding updated new simulation
+                newParameterIdentification.SwapSimulations(kv.Key, kv.Value);
+             });
+         
+             newParameterIdentification.Description = _descriptionCreator.CreateDescriptionFor(_calculationMethodCombination, _runMode, _isSingleCategory);
+             return newParameterIdentification;
+          }, cancellationToken);
       }
-
+      
       private ISimulation createNewSimulationFrom(ISimulation simulation, IEnumerable<CalculationMethodWithCompoundName> combination)
       {
          //Always instantiate a new factory as some parameters might be global 
