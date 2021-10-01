@@ -235,7 +235,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual void SwapSimulations(ISimulation oldSimulation, ISimulation newSimulation)
       {
-         AllOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).Each(outputMapping => outputMapping.UpdateSimulation(newSimulation));
+         //Use ToList() here as the collection might be modified as we iterate
+         AllOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).ToList().Each(x => x.UpdateSimulation(newSimulation));
          AllIdentificationParameters.Each(identificationParameter => identificationParameter.SwapSimulation(oldSimulation, newSimulation));
          _allSimulations.Remove(oldSimulation);
          _allSimulations.Add(newSimulation);
