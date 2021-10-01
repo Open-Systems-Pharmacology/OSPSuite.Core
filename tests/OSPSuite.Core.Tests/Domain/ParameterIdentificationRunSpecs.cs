@@ -460,7 +460,7 @@ namespace OSPSuite.Core.Domain
       public void should_set_the_run_status_of_the_underlying_run_result_to_faulted()
       {
          _result.Status.ShouldBeEqualTo(RunStatus.Faulted);
-         _result.Message.ShouldBeEqualTo("Math Error");
+         _result.Message.Contains("Math Error").ShouldBeTrue();
       }
    }
 
