@@ -24,6 +24,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected IUnformattedData _basicFormat;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected Cache<string, ColumnDescription> _headersCache;
       protected string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       protected string[] _groupIds = new string[] { "H", "T2DM" };
 
@@ -46,10 +47,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          };
 
          sut = new DataFormatNonmem();
-         _basicFormat = new TestUnformattedData
-         (
-            new Cache<string, ColumnDescription>()
-            {
+         _headersCache = new Cache<string, ColumnDescription>(){
                {
                   "Organ",
                   new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
@@ -93,7 +91,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                {
                   "Time_unit",
                   new ColumnDescription(10, new List<string>() { "min" }, ColumnDescription.MeasurementLevel.Discrete)
-                  
                },
                {
                   "Concentration_unit",
@@ -110,8 +107,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                      Level = ColumnDescription.MeasurementLevel.Numeric
                   }
                }
-            }
-         );
+            };
+         _basicFormat = new TestUnformattedData(_headersCache);
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -299,6 +296,27 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeEqualTo(0);
             dataset.Data.ElementAt(1).Value.ElementAt(2).Measurement.ShouldBeEqualTo(10);
          }
+      }
+
+      public class When_parsing_headers_with_capital : ConcernforDataFormat_Nonmem
+      {
+         private IUnformattedData _mockedDataCapital;
+         protected override void Because()
+         {
+            _headersCache.Remove("Dose");
+            _headersCache.Add("DOSE",
+                              new ColumnDescription(3, new List<string>() { "75 [g] glucose" }, ColumnDescription.MeasurementLevel.Discrete)
+                           );
+            _mockedDataCapital = new TestUnformattedData(_headersCache);
+            sut.SetParameters(_mockedDataCapital, _columnInfos, _metaDataCategories);
+         }
+
+         [TestCase]
+         public void metadataId_should_be_correctly_assigned_and_not_on_capital_letters()
+         {
+            sut.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == "DOSE").MetaDataId.ShouldBeEqualTo("Dose");
+         }
+
       }
    }
 }
