@@ -166,7 +166,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
          {
             keys.Remove(header);
-            _parameters.Add(new MetaDataFormatParameter(header, header));
+            _parameters.Add(new MetaDataFormatParameter(header, metaDataCategories.Select(c => c.Name).FindHeader(header)));
          }
       }
 
