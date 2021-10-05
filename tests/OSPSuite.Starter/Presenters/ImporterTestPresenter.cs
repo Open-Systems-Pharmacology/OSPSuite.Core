@@ -162,12 +162,12 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
          (
-            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
+            metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );
@@ -178,10 +178,10 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
-            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
+            metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
             dataImporterSettings
          );

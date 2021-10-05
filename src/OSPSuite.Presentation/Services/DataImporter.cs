@@ -29,57 +29,6 @@ namespace OSPSuite.Presentation.Services
          _applicationController = applicationController;
       }
 
-      public override IList<MetaDataCategory> DefaultMetaDataCategories()
-      {
-         var categories = new List<MetaDataCategory>();
-
-         var speciesCategory = createMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
-         categories.Add(speciesCategory);
-
-         var organCategory = createMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
-         organCategory.Description = ObservedData.ObservedDataOrganDescription;
-         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENOUS_BLOOD_ORGAN);
-         organCategory.TopNames.Add(Constants.ObservedData.VENOUS_BLOOD_ORGAN);
-         categories.Add(organCategory);
-
-         var compCategory = createMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
-         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
-         compCategory.TopNames.Add(Constants.ObservedData.PLASMA_COMPARTMENT);
-         categories.Add(compCategory);
-
-         var moleculeCategory = createMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
-         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
-         moleculeCategory.AllowsManualInput = true;
-         categories.Add(moleculeCategory);
-
-         // Add non-mandatory metadata categories
-         var molecularWeightCategory = createMetaDataCategory<double>(Constants.ObservedData.MOLECULAR_WEIGHT);
-         molecularWeightCategory.MinValue = 0;
-         molecularWeightCategory.MinValueAllowed = false;
-         categories.Add(molecularWeightCategory);
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.SUBJECT_ID));
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.DOSE));
-         categories.Add(createMetaDataCategory<string>(Constants.ObservedData.ROUTE));
-
-         return categories;
-      }
-
-      private static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
-      {
-         var category = new MetaDataCategory
-         {
-            Name = descriptiveName,
-            DisplayName = descriptiveName,
-            Description = descriptiveName,
-            MetaDataType = typeof(T),
-            IsMandatory = isMandatory,
-            IsListOfValuesFixed = isListOfValuesFixed
-         };
-
-         return category;
-      }
 
       public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
@@ -133,7 +82,7 @@ namespace OSPSuite.Presentation.Services
       public override ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
          IReadOnlyList<DataRepository> existingDataSets)
       {
-         var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet));
+         var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet)).ToList();
          var dataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet));
          var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
 
