@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -67,7 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       ///    Creates a default list of meta data categories that could still be modified by the caller
       /// </summary>
       /// <returns>a list of meta data categories</returns>
-      IList<MetaDataCategory> DefaultMetaDataCategories();
+      IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories();
 
       /// <summary>
       ///    Compares if two data repositories come from the same data
@@ -78,7 +80,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
 
       /// <summary>
-      ///    Returns a new Configuration autodiscovered from the data contained in dataPath
+      ///    Returns a new Configuration auto discovered from the data contained in dataPath
       /// </summary>
       /// <param name="dataPath">File containing data</param>
       /// <param name="columnInfos">Column infos description</param>
@@ -92,15 +94,14 @@ namespace OSPSuite.Infrastructure.Import.Services
    {
       protected readonly IImporter _importer;
 
-      public AbstractDataImporter(
-         IImporter importer
-      )
+      protected AbstractDataImporter(IImporter importer)
       {
          _importer = importer;
       }
 
       public abstract bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
       public abstract ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport, IReadOnlyList<DataRepository> existingDataSets);
+
       public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
       {
          var configuration = new ImporterConfiguration();
@@ -117,7 +118,61 @@ namespace OSPSuite.Infrastructure.Import.Services
          configuration.NamingConventions = "";
          return configuration;
       }
-      public abstract IList<MetaDataCategory> DefaultMetaDataCategories();
+
+
+      public virtual IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories()
+      {
+         var categories = new List<MetaDataCategory>();
+
+         var speciesCategory = CreateMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
+         categories.Add(speciesCategory);
+
+         var organCategory = CreateMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
+         organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENOUS_BLOOD_ORGAN);
+         organCategory.TopNames.Add(Constants.ObservedData.VENOUS_BLOOD_ORGAN);
+         categories.Add(organCategory);
+
+         var compCategory = CreateMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
+         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         compCategory.TopNames.Add(Constants.ObservedData.PLASMA_COMPARTMENT);
+         categories.Add(compCategory);
+
+         var moleculeCategory = CreateMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
+         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         moleculeCategory.AllowsManualInput = true;
+         categories.Add(moleculeCategory);
+
+         // Add non-mandatory metadata categories
+         var molecularWeightCategory = CreateMetaDataCategory<double>(Constants.ObservedData.MOLECULAR_WEIGHT);
+         molecularWeightCategory.MinValue = 0;
+         molecularWeightCategory.MinValueAllowed = false;
+         categories.Add(molecularWeightCategory);
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.SUBJECT_ID));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.DOSE));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+
+         return categories;
+      }
+
+      protected static MetaDataCategory CreateMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
+      {
+         var category = new MetaDataCategory
+         {
+            Name = descriptiveName,
+            DisplayName = descriptiveName,
+            Description = descriptiveName,
+            MetaDataType = typeof(T),
+            IsMandatory = isMandatory,
+            IsListOfValuesFixed = isListOfValuesFixed
+         };
+
+         return category;
+      }
+
+
       public abstract (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
       public abstract IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
    }
