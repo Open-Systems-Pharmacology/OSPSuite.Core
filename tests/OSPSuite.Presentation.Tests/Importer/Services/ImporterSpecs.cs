@@ -44,6 +44,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
       protected IDimension _fakedErrorDimension;
+      protected IDimensionFactory _fakedDimensionFactory;
 
       public override void GlobalContext()
       {
@@ -51,6 +52,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _fakedTimeDimension = A.Fake<IDimension>();
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
+         _fakedDimensionFactory = A.Fake<IDimensionFactory>();
          _basicFormat = A.Fake<UnformattedData>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
@@ -74,7 +76,7 @@ namespace OSPSuite.Presentation.Importer.Services
          A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
          A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
          A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
-         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper, _fakedDimensionFactory);
       }
    }
 
@@ -224,6 +226,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
       protected IDimension _fakedErrorDimension;
+      protected IDimensionFactory _fakedDimensionFactory;
 
       public override void GlobalContext()
       {
@@ -233,6 +236,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _fakedErrorDimension = A.Fake<IDimension>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
+         _fakedDimensionFactory = A.Fake<IDimensionFactory>();
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new List<ColumnInfo>()
          {
@@ -262,7 +266,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper, _fakedDimensionFactory);
       }
    }
 

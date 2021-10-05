@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Infrastructure.Import.Extensions;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {

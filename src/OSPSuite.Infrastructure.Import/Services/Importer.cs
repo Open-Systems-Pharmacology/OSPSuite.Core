@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
@@ -51,12 +52,14 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IoC _container;
       private readonly IDataSourceFileParser _parser;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
+      private readonly IDimension _molWeightDimension;
 
-      public Importer( IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper)
+      public Importer( IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper, IDimensionFactory dimensionFactory)
       {
          _container = container;
          _parser = parser;
          _dataRepositoryMapper = dataRepositoryMapper;
+         _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
       public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
@@ -187,21 +190,22 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
             var dataRepo = dataRepoMapping.DataRepository;
-            dataRepo.ConfigurationId = id;
+            dataRepo.ConfigurationId = id; 
+            
+            //when the MW does not come from the column but from a the value of of the MW of a specific molecule
+            var molecularWeightFromMoleculeAsString = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
+            var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
-            var moleculeDescription = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
-            var molecularWeightDescription = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-            if (moleculeDescription != null)
+            if (!molecularWeightFromMoleculeAsString.IsNullOrEmpty())
             {
-               if (string.IsNullOrEmpty(molecularWeightDescription))
+               if (molecularWeightValueAsString.IsNullOrEmpty())
                {
-                  molecularWeightDescription = moleculeDescription;
+                  molecularWeightValueAsString = molecularWeightFromMoleculeAsString;
                }
                else
                {
-                  double.TryParse(moleculeDescription, out var moleculeMolWeight);
-                  double.TryParse(molecularWeightDescription, out var molWeight);
+                  double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
+                  double.TryParse(molecularWeightValueAsString, out var molWeight);
 
                   if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
                   {
@@ -210,11 +214,13 @@ namespace OSPSuite.Infrastructure.Import.Services
                }
             }
 
-            if (!string.IsNullOrEmpty(molecularWeightDescription))
+            if (!molecularWeightValueAsString.IsNullOrEmpty())
             {
-               if (double.TryParse(molecularWeightDescription, out var molWeight))
+               if (double.TryParse(molecularWeightValueAsString, out var molWeight))
                {
-                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeight);
+                  //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here, 
+                  //otherwise it would be saved in kg/μmol
+                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
                }
             }
 
@@ -224,6 +230,11 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
 
          return dataRepositories;
+      }
+
+      private double molWeightValueInCoreUnit(double valueInDisplayUnit)
+      {
+         return _molWeightDimension.UnitValueToBaseUnitValue(_molWeightDimension.DefaultUnit, valueInDisplayUnit);
       }
 
       private static string extractMoleculeDescription(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
