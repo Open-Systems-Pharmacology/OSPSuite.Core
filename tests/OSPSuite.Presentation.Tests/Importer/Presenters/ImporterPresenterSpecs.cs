@@ -153,31 +153,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_importing_data : concern_for_ImporterPresenter
-   {
-      [Observation]
-      public void sets_molWeight_from_molecule()
-      {
-         _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
-         ImportTriggeredEventArgs result = null;
-         sut.OnTriggerImport += (_, e) => result = e;
-         sut.ImportData(this, null);
-         var molWeight = 6.0;
-         Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
-      }
-
-      [Observation]
-      public void sets_molWeight_from_molWeight()
-      {
-         _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Mol weight";
-         ImportTriggeredEventArgs result = null;
-         sut.OnTriggerImport += (_, e) => result = e;
-         sut.ImportData(this, null);
-         var molWeight = 22.0;
-         Assert.IsTrue(result.DataRepositories.All(dr => dr.AllButBaseGrid().All(x => x.DataInfo.MolWeight == molWeight)));
-      }
-   }
-
    public class When_setting_settings : concern_for_ImporterPresenter
    {
       protected IReadOnlyList<ColumnInfo> _columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();

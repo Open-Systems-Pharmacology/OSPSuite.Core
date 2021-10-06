@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Services
       protected IApplicationController _applicationController;
       protected IDimensionFactory _dimensionFactory;
       protected ImporterConfiguration _importerConfiguration;
+      protected ImporterConfiguration _importerConfigurationMW;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected DataImporterSettings _dataImporterSettings;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
@@ -54,8 +55,9 @@ namespace OSPSuite.Presentation.Services
          sut = new DataImporter(_dialogCreator, _importer, _applicationController);
 
          _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
-
          _importerConfiguration.AddToLoadedSheets("Sheet1");
+         _importerConfigurationMW = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
+         _importerConfigurationMW.AddToLoadedSheets("Sheet1");
          _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
@@ -156,7 +158,10 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter(null, "Molecule", false)
          };
+         var parameterListMolecularWeight = parameterList;
+         parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
+         _importerConfigurationMW.CloneParametersFrom(parameterListMolecularWeight);
       }
 
       [Observation]
@@ -207,6 +212,26 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
           A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_convert_MW_correctly_excel()
+      {
+         var result = 
+         sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
+      }
+
+      [Observation]
+      public void should_convert_MW_correctly_csv()
+      {
+         var result =
+         sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.csv"));
+         result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
       }
    }
 
