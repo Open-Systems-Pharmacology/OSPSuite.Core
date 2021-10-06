@@ -21,7 +21,9 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IPathToPathElementsMapper _pathToPathElementsMapper;
       private readonly IDataColumnToPathElementsMapper _dataColumnToPathElementsMapper;
 
-      public QuantityPathToQuantityDisplayPathMapper(IObjectPathFactory objectPathFactory, IPathToPathElementsMapper pathToPathElementsMapper,
+      public QuantityPathToQuantityDisplayPathMapper(
+         IObjectPathFactory objectPathFactory, 
+         IPathToPathElementsMapper pathToPathElementsMapper,
          IDataColumnToPathElementsMapper dataColumnToPathElementsMapper)
       {
          _objectPathFactory = objectPathFactory;
