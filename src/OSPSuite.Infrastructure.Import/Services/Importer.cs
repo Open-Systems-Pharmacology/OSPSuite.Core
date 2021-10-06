@@ -218,8 +218,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             {
                if (double.TryParse(molecularWeightValueAsString, out var molWeight))
                {
-                  //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here, 
-                  //otherwise it would be saved in kg/μmol
+                  //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here
                   dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
                }
             }

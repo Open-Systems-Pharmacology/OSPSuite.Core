@@ -154,7 +154,8 @@ namespace OSPSuite.Presentation.Services
                   Unit = new UnitDescription("mg/l")
                }),
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
+            new MetaDataFormatParameter(null, "Molecule", false),
+            new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true)
          };
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
@@ -207,6 +208,16 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
           A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_convert_MW_correctly()
+      {
+         var result = 
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
       }
    }
 
